@@ -1,4 +1,5 @@
-import io.cucumber.testng.AbstractTestNGCucumberTests;
+package tests.cucumber;
+
 import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
@@ -8,9 +9,9 @@ import io.cucumber.testng.CucumberOptions;
                 "html:target/cucumber-reports/cucumber-pretty",
                 "json:target/cucumber-reports/CucumberFirstFeatureReport.json"
         },
-        features = "src/test/resources",
+        features = "classpath:features",
         tags = {"@ExamlpleTag"},
         glue = "steps"
 )
-public class CukeTest extends AbstractTestNGCucumberTests {
+public class CucumberTest extends BaseCucumberTest {
 }

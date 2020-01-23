@@ -5,7 +5,7 @@
 
     <test verbose="1" name="Tests by cucumber">
         <classes>
-            <class name="CukeTest">
+            <class name="tests.cucumber.CucumberTest">
             </class>
         </classes>
     </test>
