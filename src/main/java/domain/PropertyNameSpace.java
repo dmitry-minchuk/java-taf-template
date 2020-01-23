@@ -1,12 +1,12 @@
 package domain;
 
-public enum PropertyName {
+public enum PropertyNameSpace {
     BASE_URL("base_url"),
     SELENIUM_HOST("selenium_host");
 
     private String value;
 
-    PropertyName(String value) {
+    PropertyNameSpace(String value) {
         this.value = value;
     }
 

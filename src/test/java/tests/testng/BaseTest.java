@@ -1,11 +1,14 @@
 package tests.testng;
 
 import com.codeborne.selenide.Configuration;
-import domain.PropertyName;
-import utils.PropertyHandler;
+import domain.PropertyNameSpace;
+import org.testng.annotations.BeforeSuite;
+import utils.ProjectConfiguration;
 
 public abstract class BaseTest {
-    {
-        Configuration.remote = PropertyHandler.getProperty(PropertyName.SELENIUM_HOST);
+    
+    @BeforeSuite
+    public void setConfiguration() {
+        Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
     }
 }

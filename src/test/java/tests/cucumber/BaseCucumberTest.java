@@ -1,12 +1,15 @@
 package tests.cucumber;
 
 import com.codeborne.selenide.Configuration;
-import domain.PropertyName;
+import domain.PropertyNameSpace;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
-import utils.PropertyHandler;
+import org.testng.annotations.BeforeSuite;
+import utils.ProjectConfiguration;
 
 public class BaseCucumberTest extends AbstractTestNGCucumberTests {
-    {
-        Configuration.remote = PropertyHandler.getProperty(PropertyName.SELENIUM_HOST);
+
+    @BeforeSuite
+    public void setConfiguration() {
+        Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
     }
 }
