@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="1" name="Cucumber" annotations="JDK">
+
+    <parameter name="suiteOwner" value="dminchuk"/>
+
+    <test verbose="1" name="Tests by cucumber">
+        <classes>
+            <class name="CukeTest">
+            </class>
+        </classes>
+    </test>
+</suite>
