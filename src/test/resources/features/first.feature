@@ -1,11 +1,8 @@
 @ExamlpleTag
-Feature: First testing feature
+Feature: Testing google page
 
   @Smoke
-  Scenario Outline: first scenario
-    When first parameter is <n>
-    Then second step with string parameter <what>
-
-    Examples: some cukes
-        | n  | what   |
-        | 15 | Hello world!  |
+  Scenario: Searhing something in google...
+    When User navigates to "google.com"
+    And User enters "iphone" in search field "input[name=q]"
+    And User clicks Search Button "div:not([jsname]) > center > input:nth-child(1)"

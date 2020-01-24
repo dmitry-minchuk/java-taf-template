@@ -5,7 +5,7 @@ import com.codeborne.selenide.Selenide;
 import domain.PropertyNameSpace;
 import utils.ProjectConfiguration;
 
-public abstract class BasePage {
+public class BasePage {
     private String urlAppender = "";
 
     public BasePage() {

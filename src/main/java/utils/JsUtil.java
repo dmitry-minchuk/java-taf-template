@@ -2,10 +2,9 @@ package utils;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.function.Function;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public class JsUtil {
     protected static final Logger LOGGER = LogManager.getLogger(JsUtil.class);

@@ -9,7 +9,7 @@ import io.cucumber.testng.CucumberOptions;
                 "html:target/cucumber-reports/cucumber-pretty",
                 "json:target/cucumber-reports/CucumberFirstFeatureReport.json"
         },
-        features = "classpath:features",
+        features = "src/test/resources/features/first.feature",
         tags = {"@ExamlpleTag"},
         glue = "stepdefinitions"
 )
