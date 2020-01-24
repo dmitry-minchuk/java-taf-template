@@ -1,9 +1,9 @@
-package steps;
+package stepdefinitions;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class StepDefinitions {
+public class SampleSteps {
 
     @When("first parameter is {int}")
     public void firstStep(int arg) {

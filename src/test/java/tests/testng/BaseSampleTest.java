@@ -5,7 +5,7 @@ import domain.PropertyNameSpace;
 import org.testng.annotations.BeforeSuite;
 import utils.ProjectConfiguration;
 
-public abstract class BaseTest {
+public abstract class BaseSampleTest {
 
     @BeforeSuite
     public void setConfiguration() {

@@ -11,7 +11,7 @@ import io.cucumber.testng.CucumberOptions;
         },
         features = "classpath:features",
         tags = {"@ExamlpleTag"},
-        glue = "steps"
+        glue = "stepdefinitions"
 )
 public class CucumberTest extends BaseCucumberTest {
 }

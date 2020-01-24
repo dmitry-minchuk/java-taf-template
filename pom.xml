@@ -19,6 +19,8 @@
         <cucumber.tags.version>2.0.4</cucumber.tags.version>
         <cucumber.messages.version>9.0.3</cucumber.messages.version>
         <cucumber.expressions.version>8.3.1</cucumber.expressions.version>
+        <log4j.version>1.2.17</log4j.version>
+
         <maven.project.info.reports.plugin>3.0.0</maven.project.info.reports.plugin>
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
@@ -116,6 +118,11 @@
             <groupId>net.masterthought</groupId>
             <artifactId>maven-cucumber-reporting</artifactId>
             <version>${cucumber.basic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
     </dependencies>
 
