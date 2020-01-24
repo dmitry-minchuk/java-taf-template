@@ -11,5 +11,6 @@ public class BaseCucumberTest extends AbstractTestNGCucumberTests {
     @BeforeSuite
     public void setConfiguration() {
         Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
+        Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
     }
 }
