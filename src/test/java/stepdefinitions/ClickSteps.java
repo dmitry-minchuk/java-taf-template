@@ -25,8 +25,8 @@ public class ClickSteps {
     private final String clickByCssOnChildWithTextInParentWithText = "^User clicks .* \"([^\"]*)\" with text \"([^\"]*)\" on .* \"([^\"]*)\" with text \"([^\"]*)\"$";
     private final String clickByCssOnChildInParentWithText = "^User clicks .* \"([^\"]*)\" on .* \"([^\"]*)\" with text \"([^\"]*)\"$";
     private final String doubleClickByCss = "^User double clicks .* \"([^\"]*)\"$";
-    private final String clickNthElementInCssCollection = "^User clicks {int} item in \"([^\"]*)\" collection$";
-    private final String clickNthElementInCssCollectionWithText = "^User clicks {int} item in \"([^\"]*)\" collection with text \"([^\"]*)\"$";
+    private final String clickNthElementInCssCollection = "^User clicks \"([^\"]*)\" item in \"([^\"]*)\" collection$";
+    private final String clickNthElementInCssCollectionWithText = "^User clicks \"([^\"]*)\" item in \"([^\"]*)\" collection with text \"([^\"]*)\"$";
     private final String clickByCssUntilElementVisible = "^User clicks on .* \"([^\"]*)\" until it visible$";
     private final String clickByCssUntilAnotherElementBecomeVisible = "^User clicks on .* \"([^\"]*)\" until .* \"([^\"]*)\" with text \"([^\"]*)\" will become visible$";
 
@@ -41,17 +41,17 @@ public class ClickSteps {
     }
 
     @When(value = clickNthElementInCssCollection)
-    public void clickNthElementInCssCollection(int i, String locator) {
+    public void clickNthElementInCssCollection(String i, String locator) {
         ElementsCollection collection = ActionsUtil.findElements(How.CSS, locator);
         Assert.assertEquals(collection.size(), i + 1, "Desired element index is out of range!");
-        collection.get(i).click();
+        collection.get(Integer.parseInt(i)).click();
     }
 
     @When(value = clickNthElementInCssCollectionWithText)
-    public void clickNthElementInCssCollectionWithText(int i, String locator, String text) {
+    public void clickNthElementInCssCollectionWithText(String i, String locator, String text) {
         ElementsCollection collection = ActionsUtil.findElements(How.CSS, locator).filter(text(text));
         Assert.assertEquals(collection.size(), i + 1, "Desired element index is out of range!");
-        collection.get(i).click();
+        collection.get(Integer.parseInt(i)).click();
     }
 
     @When(value = clickByCssUntilElementVisible)
@@ -104,11 +104,11 @@ public class ClickSteps {
 
     @When(value = clickByCssOnChildWithTextInParentWithText)
     public void clickByCssOnChildWithTextInParentWithText(String childLocator, String childText, String parentLocator, String parentText) {
-        ActionsUtil.findElements(How.CSS, parentLocator).findBy(text(parentText)).findAll(How.CSS.buildBy(childLocator)).findBy(text(childText)).click();
+        ActionsUtil.findElements(How.CSS, parentLocator).find(text(parentText)).findAll(How.CSS.buildBy(childLocator)).find(text(childText)).click();
     }
 
     @When(value = clickByCssOnChildInParentWithText)
     public void clickByCssOnChildInParentWithText(String childLocator, String parentLocator, String parentText) {
-        ActionsUtil.findElements(How.CSS, parentLocator).findBy(text(parentText)).find(How.CSS.buildBy(childLocator)).click();
+        ActionsUtil.findElements(How.CSS, parentLocator).find(text(parentText)).find(How.CSS.buildBy(childLocator)).click();
     }
 }
