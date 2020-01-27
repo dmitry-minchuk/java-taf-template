@@ -5,14 +5,14 @@ import com.codeborne.selenide.Selenide;
 import domain.PropertyNameSpace;
 import utils.ProjectConfiguration;
 
-public class BasePage {
-    private String urlAppender = "";
+public abstract class BasePage {
+    protected String urlAppender = "";
 
-    public BasePage() {
+    protected BasePage() {
         initBaseUrl();
     }
 
-    public BasePage(String urlAppender) {
+    protected BasePage(String urlAppender) {
         initBaseUrl();
         this.urlAppender = urlAppender;
     }
