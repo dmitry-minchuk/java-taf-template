@@ -4,7 +4,7 @@ import com.codeborne.selenide.Selenide;
 import org.testng.annotations.Test;
 import web.pages.GoogleHomePage;
 
-public class SampleSampleTest extends BaseSampleTest {
+public class SampleTest extends BaseSampleTest {
 
     @Test
     public void homePageTest() {

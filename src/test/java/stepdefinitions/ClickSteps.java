@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
@@ -19,10 +20,19 @@ public class ClickSteps {
     private final String clickByCssWithTextByExecutingScript = "^User clicks .* \"([^\"]*)\" with text \"([^\"]*)\" by executing script$";
     private final String clickByCssWithExactText = "^User clicks .* \"([^\"]*)\" with text equal to \"([^\"]*)\"$";
     private final String clickBrowserBackButton = "User clicks browser back button";
+    private final String clickByCssOnChildInParent = "^User clicks .* \"([^\"]*)\" on .* \"([^\"]*)\"$";
+    private final String clickByCssOnChildWithTextInParentWithText = "^User clicks .* \"([^\"]*)\" with text \"([^\"]*)\" on .* \"([^\"]*)\" with text \"([^\"]*)\"$";
+    private final String clickByCssOnChildInParentWithText = "^User clicks .* \"([^\"]*)\" on .* \"([^\"]*)\" with text \"([^\"]*)\"$";
+    private final String doubleClickByCss = "^User double clicks .* \"([^\"]*)\"$";
 
     @When(value = clickByCss)
     public void clickByCss(String locator) {
         ActionsUtil.findElement(How.CSS, locator).click();
+    }
+
+    @When(value = clickByCss)
+    public void doubleClickByCss(String locator) {
+        ActionsUtil.findElement(How.CSS, locator).doubleClick();
     }
 
     @When(value = clickByCssWithText)
@@ -50,5 +60,20 @@ public class ClickSteps {
     @When(value = clickBrowserBackButton)
     public void clickBrowserBackButton() {
         Selenide.back();
+    }
+
+    @When(value = clickByCssOnChildInParent)
+    public void clickByCssOnChildInParent(String childLocator, String parentLocator) {
+        ActionsUtil.findElement(How.CSS, parentLocator).find(How.CSS.buildBy(childLocator)).click();
+    }
+
+    @When(value = clickByCssOnChildWithTextInParentWithText)
+    public void clickByCssOnChildWithTextInParentWithText(String childLocator, String childText, String parentLocator, String parentText) {
+        ActionsUtil.findElements(How.CSS, parentLocator).findBy(text(parentText)).findAll(How.CSS.buildBy(childLocator)).findBy(text(childText)).click();
+    }
+
+    @When(value = clickByCssOnChildInParentWithText)
+    public void clickByCssOnChildInParentWithText(String childLocator, String parentLocator, String parentText) {
+        ActionsUtil.findElements(How.CSS, parentLocator).findBy(text(parentText)).find(How.CSS.buildBy(childLocator)).click();
     }
 }
