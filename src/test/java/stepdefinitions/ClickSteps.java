@@ -6,11 +6,12 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.support.How;
+import org.testng.Assert;
 import utils.ActionsUtil;
 import utils.JsUtil;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
+import static utils.ActionsUtil.findElement;
 
 public class ClickSteps {
 
@@ -24,15 +25,49 @@ public class ClickSteps {
     private final String clickByCssOnChildWithTextInParentWithText = "^User clicks .* \"([^\"]*)\" with text \"([^\"]*)\" on .* \"([^\"]*)\" with text \"([^\"]*)\"$";
     private final String clickByCssOnChildInParentWithText = "^User clicks .* \"([^\"]*)\" on .* \"([^\"]*)\" with text \"([^\"]*)\"$";
     private final String doubleClickByCss = "^User double clicks .* \"([^\"]*)\"$";
+    private final String clickNthElementInCssCollection = "^User clicks {int} item in \"([^\"]*)\" collection$";
+    private final String clickNthElementInCssCollectionWithText = "^User clicks {int} item in \"([^\"]*)\" collection with text \"([^\"]*)\"$";
+    private final String clickByCssUntilElementVisible = "^User clicks on .* \"([^\"]*)\" until it visible$";
+    private final String clickByCssUntilAnotherElementBecomeVisible = "^User clicks on .* \"([^\"]*)\" until .* \"([^\"]*)\" with text \"([^\"]*)\" will become visible$";
 
     @When(value = clickByCss)
     public void clickByCss(String locator) {
-        ActionsUtil.findElement(How.CSS, locator).click();
+        findElement(How.CSS, locator).click();
     }
 
-    @When(value = clickByCss)
+    @When(value = doubleClickByCss)
     public void doubleClickByCss(String locator) {
-        ActionsUtil.findElement(How.CSS, locator).doubleClick();
+        findElement(How.CSS, locator).doubleClick();
+    }
+
+    @When(value = clickNthElementInCssCollection)
+    public void clickNthElementInCssCollection(int i, String locator) {
+        ElementsCollection collection = ActionsUtil.findElements(How.CSS, locator);
+        Assert.assertEquals(collection.size(), i + 1, "Desired element index is out of range!");
+        collection.get(i).click();
+    }
+
+    @When(value = clickNthElementInCssCollectionWithText)
+    public void clickNthElementInCssCollectionWithText(int i, String locator, String text) {
+        ElementsCollection collection = ActionsUtil.findElements(How.CSS, locator).filter(text(text));
+        Assert.assertEquals(collection.size(), i + 1, "Desired element index is out of range!");
+        collection.get(i).click();
+    }
+
+    @When(value = clickByCssUntilElementVisible)
+    public void clickByCssUntilElementVisible(String locator) {
+        for (int i = 0; i < 15 && ActionsUtil.findElement(How.CSS, locator).is(visible); i++) {
+            ActionsUtil.findElement(How.CSS, locator).click();
+            Selenide.sleep(1000);
+        }
+    }
+
+    @When(value = clickByCssUntilAnotherElementBecomeVisible)
+    public void clickByCssUntilAnotherElementBecomeVisible(String locator1, String locator2, String text) {
+        for (int i = 0; i < 15 && !ActionsUtil.findElements(How.CSS, locator2).find(text(text)).is(visible); i++) {
+            ActionsUtil.findElement(How.CSS, locator1).click();
+            Selenide.sleep(1000);
+        }
     }
 
     @When(value = clickByCssWithText)
