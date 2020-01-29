@@ -1,6 +1,7 @@
 package stepdefinitions;
 
 import io.cucumber.java.en.When;
+import io.qameta.allure.Step;
 import org.openqa.selenium.support.How;
 import utils.ActionsUtil;
 

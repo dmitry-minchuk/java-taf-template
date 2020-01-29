@@ -63,6 +63,11 @@
             <version>${allure.basic.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-selenide</artifactId>
+            <version>${allure.basic.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
@@ -171,7 +176,7 @@
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <suiteXmlFiles>
-                        <suiteXmlFile>${project.build.directory}/test-classes/${suite}.xml</suiteXmlFile>
+                        <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
 <!--                    <argLine>-->
 <!--                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"-->
