@@ -4,6 +4,7 @@ public enum PropertyNameSpace {
     BASE_URL("base_url"),
     ENV("env"),
     SELENIUM_HOST("selenium_host"),
+    SELENIDE_REMOTE("selenide.remote"),
     IMPLICIT_TIMEOUT("implicit_timeout");
 
     private String value;
