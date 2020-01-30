@@ -11,11 +11,11 @@ public abstract class BasePage {
     protected static final Logger LOGGER = LogManager.getLogger(BasePage.class);
     protected String urlAppender = "";
 
-    protected BasePage() {
+    public BasePage() {
         initBaseUrl();
     }
 
-    protected BasePage(String urlAppender) {
+    public BasePage(String urlAppender) {
         initBaseUrl();
         this.urlAppender = urlAppender;
     }

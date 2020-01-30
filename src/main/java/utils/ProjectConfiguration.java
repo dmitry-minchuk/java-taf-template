@@ -30,9 +30,8 @@ public class ProjectConfiguration {
             properties.load(input);
             return properties.getProperty(pn);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex.toString());
         }
-        return null;
     }
 
     public static String getPropertyByEnv(String pn) {
@@ -65,8 +64,7 @@ public class ProjectConfiguration {
             properties.load(input);
             return properties.stringPropertyNames();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex.toString());
         }
-        return null;
     }
 }
