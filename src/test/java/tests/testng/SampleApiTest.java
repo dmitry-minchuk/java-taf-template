@@ -8,6 +8,6 @@ public class SampleApiTest extends BaseSampleTest {
     @Test
     public void testSampleApi() {
         GetSampleResource getSampleResource = new GetSampleResource();
-        getSampleResource.get();
+        getSampleResource.callApi();
     }
 }
