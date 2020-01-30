@@ -21,7 +21,7 @@ public abstract class BaseSampleTest {
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide().enableLogs(LogType.DRIVER, Level.ALL));
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide().screenshots(true).savePageSource(false));
         PropertyConfigurator.configure("src/main/resources/log4j.properties");
-        if(System.getProperty(PropertyNameSpace.SELENIDE_REMOTE.getValue()).isEmpty()) {
+        if(System.getProperty(PropertyNameSpace.SELENIDE_REMOTE.getValue()) == null) {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
