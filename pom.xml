@@ -20,6 +20,7 @@
         <cucumber.messages.version>9.0.3</cucumber.messages.version>
         <cucumber.expressions.version>8.3.1</cucumber.expressions.version>
         <log4j.version>1.2.17</log4j.version>
+        <rest.assured.version>4.2.0</rest.assured.version>
 
         <maven.project.info.reports.plugin>3.0.0</maven.project.info.reports.plugin>
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
@@ -71,7 +72,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -128,6 +128,21 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest.assured.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${rest.assured.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${rest.assured.version}</version>
         </dependency>
     </dependencies>
 
