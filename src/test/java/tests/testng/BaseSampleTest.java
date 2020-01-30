@@ -5,6 +5,8 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import domain.PropertyNameSpace;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.BeforeSuite;
 import utils.ProjectConfiguration;
@@ -12,6 +14,7 @@ import utils.ProjectConfiguration;
 import java.util.logging.Level;
 
 public abstract class BaseSampleTest {
+    protected static final Logger LOGGER = LogManager.getLogger(BaseSampleTest.class);
 
     @BeforeSuite
     public void setConfiguration() {
