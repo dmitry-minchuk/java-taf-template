@@ -1,6 +1,7 @@
 package tests.cucumber;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import domain.PropertyNameSpace;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
@@ -26,5 +27,9 @@ public class BaseCucumberTest extends AbstractTestNGCucumberTests {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
+
+        LOGGER.info("selenide.remote: " + Configuration.remote);
+        LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
+        LOGGER.info("selenide.baseUrl: " + Configuration.baseUrl);
     }
 }

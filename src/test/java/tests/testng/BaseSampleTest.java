@@ -25,5 +25,9 @@ public abstract class BaseSampleTest {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
+
+        LOGGER.info("selenide.remote: " + Configuration.remote);
+        LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
+        LOGGER.info("selenide.baseUrl: " + Configuration.baseUrl);
     }
 }
