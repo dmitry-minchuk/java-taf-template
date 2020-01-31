@@ -21,6 +21,7 @@
         <cucumber.expressions.version>8.3.1</cucumber.expressions.version>
         <log4j.version>1.2.17</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
+        <json.version>20190722</json.version>
 
         <maven.project.info.reports.plugin>3.0.0</maven.project.info.reports.plugin>
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
@@ -143,6 +144,11 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${rest.assured.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
         </dependency>
     </dependencies>
 

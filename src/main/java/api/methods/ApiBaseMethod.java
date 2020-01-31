@@ -3,15 +3,21 @@ package api.methods;
 import domain.PropertyNameSpace;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import utils.ProjectConfiguration;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 public abstract class ApiBaseMethod {
     protected static final Logger LOGGER = LogManager.getLogger(ApiBaseMethod.class);
@@ -45,4 +51,18 @@ public abstract class ApiBaseMethod {
         return response;
     }
 
+    protected JSONObject getJsonFromFile(String path) {
+        JSONObject jsonObject;
+        try {
+            FileInputStream inputStream = new FileInputStream(path);
+            jsonObject = new JSONObject(IOUtils.toString(inputStream, Charset.defaultCharset()));
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage() + e.getCause());
+        }
+        return jsonObject;
+    }
+
+    protected RequestSpecification attachRequestJsonFile(JSONObject jsonObject) {
+        return RestAssured.given().body(jsonObject.toString()).with().contentType(ContentType.JSON);
+    }
 }
