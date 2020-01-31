@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 
 public abstract class ApiBaseMethod {
     protected static final Logger LOGGER = LogManager.getLogger(ApiBaseMethod.class);
+    private static final String TEMPLATE_PATH = "src/test/resources/api/";
     private String fullApiUrl;
 
     public ApiBaseMethod(String path) {
@@ -52,14 +53,18 @@ public abstract class ApiBaseMethod {
     }
 
     protected JSONObject getJsonFromFile(String path) {
-        JSONObject jsonObject;
+        return new JSONObject(getStringFromFile(path));
+    }
+
+    protected String getStringFromFile(String path) {
+        String fileContents;
         try {
-            FileInputStream inputStream = new FileInputStream(path);
-            jsonObject = new JSONObject(IOUtils.toString(inputStream, Charset.defaultCharset()));
+            FileInputStream inputStream = new FileInputStream(TEMPLATE_PATH + path);
+            fileContents = IOUtils.toString(inputStream, Charset.defaultCharset());
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage() + e.getCause());
         }
-        return jsonObject;
+        return fileContents;
     }
 
     protected RequestSpecification attachRequestJsonFile(JSONObject jsonObject) {

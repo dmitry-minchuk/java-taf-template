@@ -1,20 +1,21 @@
 package tests.testng;
 
-import api.methods.GetSampleResource;
-import api.methods.PostSampleResource;
+import api.methods.GetSampleResourceMethod;
+import api.methods.PostSampleResourceMethod;
 import org.testng.annotations.Test;
 
 public class SampleApiTest extends BaseSampleTest {
 
     @Test
     public void testSampleGetApi() {
-        GetSampleResource getSampleResource = new GetSampleResource();
-        getSampleResource.callApi();
+        GetSampleResourceMethod getSampleResourceMethod = new GetSampleResourceMethod();
+        getSampleResourceMethod.callApi();
     }
 
     @Test
     public void testSamplePostApi() {
-        PostSampleResource postSampleResource = new PostSampleResource();
-        postSampleResource.callApi();
+        PostSampleResourceMethod postSampleResourceMethod = new PostSampleResourceMethod();
+        postSampleResourceMethod.callApi();
+        postSampleResourceMethod.validateResponseAgainstSchema();
     }
 }

@@ -4,9 +4,9 @@ import io.restassured.http.Method;
 import io.restassured.response.Response;
 
 
-public class GetSampleResource extends ApiBaseMethod {
+public class GetSampleResourceMethod extends ApiBaseMethod {
 
-    public GetSampleResource() {
+    public GetSampleResourceMethod() {
         super("/get");
     }
 
