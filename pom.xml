@@ -203,6 +203,10 @@
 <!--                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"-->
 <!--                        -Dcucumber.options="&#45;&#45;plugin io.qameta.allure.cucumberjvm5.AllureReporter"-->
 <!--                    </argLine>-->
+                    <systemPropertyVariables>
+                        <propertyName>allure.results.directory</propertyName>
+                        <allure.results.directory>/home/ubuntu/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
                 </configuration>
                 <dependencies>
                     <dependency>
