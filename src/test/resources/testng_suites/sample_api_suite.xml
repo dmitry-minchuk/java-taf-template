@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="1" name="Sample-API" annotations="JDK">
+
+    <parameter name="suiteOwner" value="dminchuk"/>
+
+    <test verbose="1" name="Sample API tests">
+        <classes>
+            <class name="tests.testng.SampleApiTest">
+            </class>
+        </classes>
+    </test>
+</suite>
