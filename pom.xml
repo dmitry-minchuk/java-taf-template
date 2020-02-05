@@ -168,17 +168,6 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure.maven.version}</version>
-                <configuration>
-                    <reportVersion>${allure.basic.version}</reportVersion>
-                    <propertiesFilePath>src/test/resources/allure.properties</propertiesFilePath>
-                    <reportDirectory>/home/ubuntu/allure-report</reportDirectory>
-                    <resultsDirectory>/home/ubuntu/allure-results</resultsDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
 
@@ -243,6 +232,17 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure.maven.version}</version>
+                <configuration>
+                    <reportVersion>${allure.basic.version}</reportVersion>
+                    <propertiesFilePath>src/test/resources/allure.properties</propertiesFilePath>
+                    <reportDirectory>/home/ubuntu/allure-report</reportDirectory>
+                    <resultsDirectory>/home/ubuntu/allure-results</resultsDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
