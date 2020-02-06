@@ -192,7 +192,7 @@
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <systemPropertyVariables>
-                        <allure.results.directory>allure-results</allure.results.directory>
+<!--                        <allure.results.directory>allure-results</allure.results.directory>-->
                     </systemPropertyVariables>
 <!--                    <argLine>-->
 <!--                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"-->

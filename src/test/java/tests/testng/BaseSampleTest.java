@@ -3,6 +3,7 @@ package tests.testng;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import domain.PropertyNameSpace;
+import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import org.apache.log4j.LogManager;
@@ -25,7 +26,7 @@ public abstract class BaseSampleTest {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
-
+        Allure.parameter("allure.results.directory", "/home/ubuntu/allure-results");
         LOGGER.info("selenide.remote: " + Configuration.remote);
         LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
         LOGGER.info("selenide.baseUrl: " + Configuration.baseUrl);
