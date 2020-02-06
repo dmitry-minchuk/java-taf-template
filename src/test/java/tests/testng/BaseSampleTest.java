@@ -3,14 +3,12 @@ package tests.testng;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import domain.PropertyNameSpace;
-import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import io.qameta.allure.util.PropertiesUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.maven.plugin.lifecycle.LifecycleConfiguration;
 import org.testng.annotations.BeforeSuite;
 import utils.ProjectConfiguration;
 
