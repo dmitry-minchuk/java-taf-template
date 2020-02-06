@@ -191,6 +191,9 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
 <!--                    <argLine>-->
 <!--                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"-->
 <!--                        -Dcucumber.options="&#45;&#45;plugin io.qameta.allure.cucumberjvm5.AllureReporter"-->
@@ -239,9 +242,6 @@
                 <version>${allure.maven.version}</version>
                 <configuration>
                     <reportVersion>${allure.basic.version}</reportVersion>
-                    <propertiesFilePath>src/test/resources/allure.properties</propertiesFilePath>
-                    <reportDirectory>/home/ubuntu/allure-report</reportDirectory>
-                    <resultsDirectory>/home/ubuntu/allure-results</resultsDirectory>
                 </configuration>
             </plugin>
         </plugins>
