@@ -1,7 +1,6 @@
 package tests.cucumber;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import domain.PropertyNameSpace;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
