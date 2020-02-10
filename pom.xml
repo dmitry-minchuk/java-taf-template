@@ -86,11 +86,11 @@
             <version>${cucumber.basic.version}</version>
         </dependency>
         <!--This is for beautiful cucumber reporting -->
-<!--        <dependency>-->
-<!--            <groupId>net.masterthought</groupId>-->
-<!--            <artifactId>maven-cucumber-reporting</artifactId>-->
-<!--            <version>${maven.cucumber.reporting.version}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>net.masterthought</groupId>
+            <artifactId>maven-cucumber-reporting</artifactId>
+            <version>${maven.cucumber.reporting.version}</version>
+        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
