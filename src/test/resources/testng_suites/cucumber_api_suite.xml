@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="Cucumber" annotations="JDK">
+<suite verbose="1" name="Cucumber API" annotations="JDK">
 
     <parameter name="suiteOwner" value="dminchuk"/>
 

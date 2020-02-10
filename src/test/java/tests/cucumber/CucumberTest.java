@@ -10,7 +10,7 @@ import io.cucumber.testng.CucumberOptions;
                 "json:target/cucumber-reports/CucumberFirstFeatureReport.json"
         },
         features = "src/test/resources/features/first.feature",
-        tags = {"@ExamlpleTag"},
+        tags = {"@ExampleTag"},
         glue = "stepdefinitions"
 )
 public class CucumberTest extends BaseCucumberTest {
