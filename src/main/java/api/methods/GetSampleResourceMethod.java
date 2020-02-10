@@ -10,6 +10,10 @@ public class GetSampleResourceMethod extends ApiBaseMethod {
         super("/get");
     }
 
+    public GetSampleResourceMethod(String path) {
+        super(path);
+    }
+
     public Response callApi() {
         return callApi(Method.GET, null);
     }

@@ -1,4 +1,4 @@
-@ExamlpleTag
+@ExampleTag
 Feature: Second testing feature
 
   @Regression

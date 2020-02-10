@@ -1,4 +1,4 @@
-@ExamlpleTag
+@ExampleTag
 Feature: Testing google page
 
   @Smoke
