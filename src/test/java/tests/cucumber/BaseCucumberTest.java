@@ -6,7 +6,6 @@ import domain.PropertyNameSpace;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
-import io.qameta.allure.util.PropertiesUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -28,9 +27,9 @@ public class BaseCucumberTest extends AbstractTestNGCucumberTests {
         }
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
 
-        LOGGER.info("allure.results.directory: " + PropertiesUtils.loadAllureProperties().getProperty("allure.results.directory"));
+//        LOGGER.info("allure.results.directory: " + PropertiesUtils.loadAllureProperties().getProperty("allure.results.directory"));
         LOGGER.info("selenide.remote: " + Configuration.remote);
-        LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
+//        LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
         LOGGER.info("selenide.baseUrl: " + Configuration.baseUrl);
     }
 }

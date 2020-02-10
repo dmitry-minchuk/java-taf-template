@@ -27,9 +27,9 @@ public abstract class BaseSampleTest {
         }
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
 
-        LOGGER.info("allure.results.directory: " + PropertiesUtils.loadAllureProperties().getProperty("allure.results.directory"));
+//        LOGGER.info("allure.results.directory: " + PropertiesUtils.loadAllureProperties().getProperty("allure.results.directory"));
         LOGGER.info("selenide.remote: " + Configuration.remote);
-        LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
+//        LOGGER.info("selenide.url: " + System.getProperty("selenide.url"));
         LOGGER.info("selenide.baseUrl: " + Configuration.baseUrl);
     }
 }

@@ -15,10 +15,8 @@
         <testng.version>6.14.3</testng.version>
         <allure.basic.version>2.13.1</allure.basic.version>
         <allure.maven.version>2.8</allure.maven.version>
-        <cucumber.basic.version>5.0.0</cucumber.basic.version>
-        <cucumber.tags.version>2.0.4</cucumber.tags.version>
-        <cucumber.messages.version>9.0.3</cucumber.messages.version>
-        <cucumber.expressions.version>8.3.1</cucumber.expressions.version>
+        <cucumber.basic.version>4.7.2</cucumber.basic.version>
+        <maven.cucumber.reporting.version>4.7.0</maven.cucumber.reporting.version>
         <log4j.version>1.2.17</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
@@ -41,29 +39,27 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-java-commons</artifactId>
             <version>${allure.basic.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-cucumber-jvm</artifactId>
+            <artifactId>allure-cucumber4-jvm</artifactId>
             <version>${allure.basic.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-maven</artifactId>
-            <version>${allure.maven.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
-            <version>${allure.basic.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.qameta.allure</groupId>-->
+<!--            <artifactId>allure-maven</artifactId>-->
+<!--            <version>${allure.maven.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>io.qameta.allure</groupId>-->
+<!--            <artifactId>allure-testng</artifactId>-->
+<!--            <version>${allure.basic.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-selenide</artifactId>
@@ -73,31 +69,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>tag-expressions</artifactId>
-            <version>${cucumber.tags.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>messages</artifactId>
-            <version>${cucumber.messages.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-expressions</artifactId>
-            <version>${cucumber.expressions.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>docstring</artifactId>
-            <version>${cucumber.basic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-plugin</artifactId>
-            <version>${cucumber.basic.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -114,17 +85,12 @@
             <artifactId>cucumber-testng</artifactId>
             <version>${cucumber.basic.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-gherkin</artifactId>
-            <version>${cucumber.basic.version}</version>
-        </dependency>
         <!--This is for beautiful cucumber reporting -->
-        <dependency>
-            <groupId>net.masterthought</groupId>
-            <artifactId>maven-cucumber-reporting</artifactId>
-            <version>${cucumber.basic.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.masterthought</groupId>-->
+<!--            <artifactId>maven-cucumber-reporting</artifactId>-->
+<!--            <version>${maven.cucumber.reporting.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -191,20 +157,16 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
-                    <systemPropertyVariables>
-<!--                        <allure.results.directory>allure-results</allure.results.directory>-->
-                    </systemPropertyVariables>
-<!--                    <argLine>-->
-<!--                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"-->
-<!--                        -Dcucumber.options="&#45;&#45;plugin io.qameta.allure.cucumberjvm5.AllureReporter"-->
-<!--                    </argLine>-->
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        -Dcucumber.options="--plugin io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm"
+                    </argLine>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjweaver</artifactId>
                         <version>${aspectj.version}</version>
-                        <scope>runtime</scope>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -217,7 +179,7 @@
             <plugin>
                 <groupId>net.masterthought</groupId>
                 <artifactId>maven-cucumber-reporting</artifactId>
-                <version>${cucumber.basic.version}</version>
+                <version>${maven.cucumber.reporting.version}</version>
                 <executions>
                     <execution>
                         <id>execution</id>
@@ -236,14 +198,14 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure.maven.version}</version>
-                <configuration>
-                    <reportVersion>${allure.basic.version}</reportVersion>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>io.qameta.allure</groupId>-->
+<!--                <artifactId>allure-maven</artifactId>-->
+<!--                <version>${allure.maven.version}</version>-->
+<!--                <configuration>-->
+<!--                    <reportVersion>${allure.basic.version}</reportVersion>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
