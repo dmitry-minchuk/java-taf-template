@@ -3,8 +3,8 @@ package web.pages;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import domain.PropertyNameSpace;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utils.ProjectConfiguration;
 
 public abstract class BasePage {
