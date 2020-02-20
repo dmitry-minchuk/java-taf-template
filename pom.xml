@@ -12,17 +12,14 @@
         <java.version>1.8</java.version>
         <selenide.version>5.6.1</selenide.version>
         <testng.version>6.14.3</testng.version>
-        <cucumber.basic.version>4.7.2</cucumber.basic.version>
+        <cucumber.basic.version>5.3.0</cucumber.basic.version>
         <rp.cucumber.version>LATEST</rp.cucumber.version>
-        <maven.cucumber.reporting.version>4.7.0</maven.cucumber.reporting.version>
         <log4j.version>2.13.0</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
 
-        <maven.project.info.reports.plugin>3.0.0</maven.project.info.reports.plugin>
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
-        <maven.site.plugin>3.7.1</maven.site.plugin>
 
         <suite>cucumber_suite</suite>
     </properties>
@@ -69,12 +66,6 @@
             <artifactId>cucumber-testng</artifactId>
             <version>${cucumber.basic.version}</version>
         </dependency>
-        <!--This is for beautiful cucumber reporting -->
-        <dependency>
-            <groupId>net.masterthought</groupId>
-            <artifactId>maven-cucumber-reporting</artifactId>
-            <version>${maven.cucumber.reporting.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -112,25 +103,6 @@
         </dependency>
     </dependencies>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${maven.project.info.reports.plugin}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                            <report>licenses</report>
-                            <report>dependency-info</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
-
     <build>
         <plugins>
             <plugin>
@@ -147,41 +119,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin}</version>
                 <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
                     <suiteXmlFiles>
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>${maven.site.plugin}</version>
-            </plugin>
-            <!--This is for beautiful cucumber reporting -->
-            <plugin>
-                <groupId>net.masterthought</groupId>
-                <artifactId>maven-cucumber-reporting</artifactId>
-                <version>${maven.cucumber.reporting.version}</version>
-                <executions>
-                    <execution>
-                        <id>execution</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <projectName>ExecutionResult</projectName>
-                            <outputDirectory>${project.build.directory}/cucumber-reports/cucumber-interactive-report</outputDirectory>
-                            <inputDirectory>${project.build.directory}/cucumber-reports</inputDirectory>
-                            <jsonFiles>
-                                <param>**/*.json</param>
-                            </jsonFiles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-
 </project>
