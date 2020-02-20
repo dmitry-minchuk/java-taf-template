@@ -1,8 +1,6 @@
 package tests.cucumber;
 
-import com.epam.reportportal.testng.ReportPortalTestNGListener;
 import io.cucumber.testng.CucumberOptions;
-import org.testng.annotations.Listeners;
 
 @CucumberOptions(
         strict = true,
@@ -15,6 +13,5 @@ import org.testng.annotations.Listeners;
         glue = "stepdefinitions"
 )
 
-@Listeners(ReportPortalTestNGListener.class)
 public class CucumberTest extends BaseCucumberTest {
 }
