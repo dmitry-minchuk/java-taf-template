@@ -6,9 +6,7 @@ import io.cucumber.testng.CucumberOptions;
         strict = true,
         plugin = {
                 "pretty",
-                "html:target/cucumber-reports/cucumber-pretty",
-                "json:target/cucumber-reports/CucumberReport.json",
-
+                "com.epam.reportportal.cucumber.StepReporter"
         },
         features = "src/test/resources/features/first.feature",
         tags = {"@ExampleTag"},

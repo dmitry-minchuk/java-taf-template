@@ -12,7 +12,7 @@
         <java.version>1.8</java.version>
         <selenide.version>5.6.1</selenide.version>
         <testng.version>6.14.3</testng.version>
-        <cucumber.basic.version>5.3.0</cucumber.basic.version>
+        <cucumber.basic.version>4.7.1</cucumber.basic.version>
         <rp.cucumber.version>LATEST</rp.cucumber.version>
         <log4j.version>2.13.0</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-cucumber</artifactId>
+            <artifactId>agent-java-cucumber4</artifactId>
             <version>${rp.cucumber.version}</version>
         </dependency>
         <dependency>
