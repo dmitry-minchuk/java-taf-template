@@ -10,12 +10,10 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <aspectj.version>1.9.5</aspectj.version>
         <selenide.version>5.6.1</selenide.version>
         <testng.version>6.14.3</testng.version>
-        <allure.basic.version>2.13.1</allure.basic.version>
-        <allure.maven.version>2.8</allure.maven.version>
         <cucumber.basic.version>4.7.2</cucumber.basic.version>
+        <rp.cucumber.version>LATEST</rp.cucumber.version>
         <maven.cucumber.reporting.version>4.7.0</maven.cucumber.reporting.version>
         <log4j.version>2.13.0</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
@@ -29,6 +27,17 @@
         <suite>cucumber_suite</suite>
     </properties>
 
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-epam-reportportal</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/epam/reportportal</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.codeborne</groupId>
@@ -36,34 +45,9 @@
             <version>${selenide.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-java-commons</artifactId>
-            <version>${allure.basic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-cucumber4-jvm</artifactId>
-            <version>${allure.basic.version}</version>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.qameta.allure</groupId>-->
-<!--            <artifactId>allure-maven</artifactId>-->
-<!--            <version>${allure.maven.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.qameta.allure</groupId>-->
-<!--            <artifactId>allure-testng</artifactId>-->
-<!--            <version>${allure.basic.version}</version>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-selenide</artifactId>
-            <version>${allure.basic.version}</version>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-cucumber</artifactId>
+            <version>${rp.cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -167,19 +151,7 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
-                    <!-- When Dcucumber.options="-plugin io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm is set - all other cucumber plugins are disabled -->
-                    <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-                        -Dcucumber.options="--plugin io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm"
-                    </argLine>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjweaver</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -209,14 +181,6 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>io.qameta.allure</groupId>-->
-<!--                <artifactId>allure-maven</artifactId>-->
-<!--                <version>${allure.maven.version}</version>-->
-<!--                <configuration>-->
-<!--                    <reportVersion>${allure.basic.version}</reportVersion>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 
