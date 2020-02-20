@@ -8,13 +8,12 @@ import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
 import utils.ProjectConfiguration;
 
-import java.util.logging.Level;
-
 public class BaseCucumberTest extends AbstractTestNGCucumberTests {
     protected static final Logger LOGGER = LogManager.getLogger(BaseCucumberTest.class);
 
     @BeforeSuite
     public void setConfiguration() {
+
         if(System.getProperty(PropertyNameSpace.SELENIDE_REMOTE.getValue()) == null) {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }

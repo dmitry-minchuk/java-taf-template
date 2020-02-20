@@ -14,6 +14,7 @@
         <testng.version>6.14.3</testng.version>
         <cucumber.basic.version>4.7.1</cucumber.basic.version>
         <rp.cucumber.version>LATEST</rp.cucumber.version>
+        <rp.logging.version>3.0.0</rp.logging.version>
         <log4j.version>2.13.0</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
@@ -100,6 +101,22 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-testng</artifactId>
+            <version>${rp.logging.version}</version>
+        </dependency>
+        <!-- TODO Leave only one dependency, depends on what logger you use: -->
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-logback</artifactId>
+            <version>${rp.logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-log4j</artifactId>
+            <version>${rp.logging.version}</version>
         </dependency>
     </dependencies>
 
