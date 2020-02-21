@@ -1,7 +1,9 @@
 package tests.testng;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import domain.PropertyNameSpace;
+import listeners.SelenideListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
@@ -12,6 +14,7 @@ public abstract class BaseSampleTest {
 
     @BeforeSuite
     public void setConfiguration() {
+        SelenideLogger.addListener("SelenideLogger", new SelenideListener());
         if(System.getProperty(PropertyNameSpace.SELENIDE_REMOTE.getValue()) == null) {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }

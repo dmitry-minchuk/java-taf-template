@@ -102,22 +102,6 @@
             <artifactId>json</artifactId>
             <version>${json.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-testng</artifactId>
-            <version>${rp.logging.version}</version>
-        </dependency>
-        <!-- TODO Leave only one dependency, depends on what logger you use: -->
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>logger-java-logback</artifactId>
-            <version>${rp.logging.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>logger-java-log4j</artifactId>
-            <version>${rp.logging.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -139,14 +123,14 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
+
+                    <!-- Uncomment it if you don't want your build to be failed in case of test errors -->
+                    <testFailureIgnore>true</testFailureIgnore>
+
                     <properties>
                         <property>
                             <name>usedefaultlisteners</name>
-                            <value>false</value> <!-- disabling default listeners is optional -->
-                        </property>
-                        <property>
-                            <name>listener</name>
-                            <value>com.epam.reportportal.testng.ReportPortalTestNGListener</value>
+                            <value>false</value>
                         </property>
                     </properties>
                 </configuration>
