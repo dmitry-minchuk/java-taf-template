@@ -22,5 +22,6 @@ public abstract class BaseSampleTest {
 
         LOGGER.info("selenide.remote: " + Configuration.remote);
         LOGGER.info("selenide.baseUrl: " + Configuration.baseUrl);
+        LOGGER.info("Environment: " + ProjectConfiguration.getProperty(PropertyNameSpace.ENV));
     }
 }
