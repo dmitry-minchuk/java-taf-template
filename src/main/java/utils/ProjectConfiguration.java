@@ -36,7 +36,7 @@ public class ProjectConfiguration {
 
     public static String getPropertyByEnv(String pn) {
         String env = getProperty(PropertyNameSpace.ENV);
-        LOGGER.info("Environment: " + env);
+        LOGGER.debug("Environment: " + env);
 
         if( env.length() == 0) {
             return getProperty(pn);
@@ -53,7 +53,7 @@ public class ProjectConfiguration {
                 throw new RuntimeException("Extra property was found for given env parameter. Env parameter: " + env + ". Found extra parameters: " + sb);
             }
 
-            LOGGER.info(pn + ": " + getProperty(propertyNameList.get(0)));
+            LOGGER.debug(pn + ": " + getProperty(propertyNameList.get(0)));
             return getProperty(propertyNameList.get(0));
         }
     }

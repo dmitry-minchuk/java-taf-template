@@ -7,8 +7,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.ProjectConfiguration;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public abstract class BasePage {
     protected static final Logger LOGGER = LogManager.getLogger(BasePage.class);
+    protected URL absoluteUrl = null;
     protected String urlAppender = "";
 
     public BasePage() {
@@ -21,7 +25,28 @@ public abstract class BasePage {
     }
 
     public void open() {
-        Selenide.open(urlAppender);
+        if (absoluteUrl == null) {
+            Selenide.open(urlAppender);
+        } else {
+            Selenide.open(absoluteUrl);
+        };
+        LOGGER.info(this.getClass().getName() + " was opened.");
+    }
+
+    public void setAbsoluteUrl(String absoluteUrl) {
+        try {
+            this.absoluteUrl = new URL(absoluteUrl);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getPageUrl() {
+        if (absoluteUrl == null) {
+            return ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL) + urlAppender;
+        } else {
+            return absoluteUrl.toString();
+        }
     }
 
     private void initBaseUrl() {
