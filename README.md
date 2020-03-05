@@ -1,5 +1,5 @@
 # Selenide Based Project Template
-This project consists of 2 main branches: _allure_integration_ and _report_portal_integration_. The _branch report_portal_integration_ is also a _master_.
+This project consists of 2 main branches: _allure_integration_ and _report_portal_integration_. The branch _report_portal_integration_ is also a _master_.
 
 ## Core libraries:
 * REST Assured
@@ -105,3 +105,5 @@ Of course you have to include this listener to your TestNG suite:
         <listener class-name="configuration.listeners.SelenideListener"/>
     </listeners>
 ```
+
+To send any data to the RP server there is a configuration file (src/test/resources/reportportal.properties) containing server IP, access token and some other required fileds.
