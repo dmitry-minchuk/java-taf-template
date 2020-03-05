@@ -1,5 +1,5 @@
 # Selenide Based Project Template
-This project consists of 2 main branches: _allure_integration_ and _report_portal_integration_. The branch report_portal_integration is also a _master_.
+This project consists of 2 main branches: _allure_integration_ and _report_portal_integration_. The _branch report_portal_integration_ is also a _master_.
 
 ## Core libraries:
 * REST Assured
