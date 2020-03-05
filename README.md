@@ -55,10 +55,43 @@ Used dependencies:
         <aspectj.version>1.9.5</aspectj.version>
 ```
 
-The way you can get pretty Allure Report may vary depending on your needs: 
+The ways you can get pretty Allure Report may vary depending on your needs: 
 * Jenkins allure plugin. This plugin as being added as the post build step in your job and attaches the report to the every job run results.
-* Allure command line tool installed on your server. This tool can generate report from your _allure-results_ folder in your jenkins job space to any specified _allure-report_ folder on your hard drive. But this way you will get results only for your last test run and will be able to see the .html file through any webserver like nginx.  
+* Allure command line tool installed on your server. This tool can generate report from your _allure-results_ folder in your jenkins job space to any specified _allure-report_ folder on your hard drive. But this way you will get results only for your last test run and will be able to see the .html file through any webserver like nginx. 
+    * Make sure your volumes in docker-compose are shared well. Only this way _nginx_ will see what is going on in jenkins workspace folder in **real time**. If you share volures without using _volumes_from_ nginx will see static data in jenkins folder created when junkins container had just started. What you should use:
+    ```
+    services:
+        jenkins:
+            volumes:
+                - /var/jenkins_home/workspace/allure-report
+        
+        nginx:
+            volumes_from:
+                - jenkins:ro
+    ```
+    * You will need to install _Custom Tools_ plugin for Allure CommandLine execution
+    * Go to Global Tool Configuration and add custom tool 
+    * Fill _Name_ field
+    * Install automatically 
+    * _Label_ field leave empty
+    * Put _Download URL_ entirely
+    * You should set _Subdirectory_ value so that it contains full path to the binary after unzipping. For Allure CommandLine it should be ../allure_2.13.1/bin
+    * Then Go to your job configuration to the _Build Environment_ section and choose there _Install Custom Tools_. Only that way your custom tool become available for the job. 
 * Building full Allure Report with test run history. This is a little bit tricky way also with limited history size. It includes the previous step, but instead of building _allure-report_ from job run _allure-results_ you will have to copy the contents of this folder to any common _allure-results_ via executing bash script as jenkins job bost build step and only then generate _allure-report_.
+    * Install _Post Build Task Plugin_.
+    * To copy allure-results folder to the common folder you have to set _OR_ in _Post Build Task_ and execute following command (this command works only for the first time, and after that it can't update directory contents any more):
+    ```
+    cp -r /var/jenkins_home/workspace/sample_job_2/allure-results /var/jenkins_home/workspace/allure-results
+    ```
+    * To copy allure-results folder contents to the common folder (this command works only when allure-results folder already exists in destination):
+    ```
+    cp -p -f -r /var/jenkins_home/workspace/sample_job_2/allure-results/* /var/jenkins_home/workspace/allure-results
+    ```
+    * And finally execute Allure Command Line command to generate report into any directory you want:
+    ```
+    allure generate --clean /...path.../allure-results -o /...path.../allure-report
+    ```
+    * Now you just should specify the root folder for your webserver the same as _/...path.../allure-report_ and if you don't have any issues with volumes sharing in Docker your webserver will show the generated report (after you reload its container, of course `docker container exec container84h4name35342here nginx -s reload`)
 * Due to possible performance issues in future I consider an option to update _allure-java-commons_ and _allure-generator_ libraries to support mongoDB. Any help is appreciated.
 
 ### Report Portal Reporting
