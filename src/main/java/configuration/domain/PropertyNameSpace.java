@@ -1,4 +1,4 @@
-package domain;
+package configuration.domain;
 
 public enum PropertyNameSpace {
     BASE_URL("base_url"),
@@ -6,7 +6,8 @@ public enum PropertyNameSpace {
     ENV("env"),
     SELENIUM_HOST("selenium_host"), // The host where the selenium server is
     SELENIDE_REMOTE("selenide.remote"), // Name of the selenide property where the SELENIUM_HOST should be set
-    IMPLICIT_TIMEOUT("implicit_timeout");
+    IMPLICIT_TIMEOUT("implicit_timeout"),
+    RETRY_COUNT("retry_count");
 
     private String value;
 

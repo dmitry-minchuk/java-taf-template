@@ -1,6 +1,6 @@
-package utils;
+package configuration;
 
-import domain.PropertyNameSpace;
+import configuration.domain.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +25,10 @@ public class ProjectConfiguration {
     }
 
     public static String getProperty(String pn) {
-        try (InputStream input = new FileInputStream(CONFIG_PATH)) {
+        String systemProperty = System.getProperty(pn);
+        if (systemProperty != null && !"".equals(systemProperty)) {
+            return systemProperty;
+        } else try (InputStream input = new FileInputStream(CONFIG_PATH)) {
             Properties properties = new Properties();
             properties.load(input);
             return properties.getProperty(pn);
@@ -38,7 +41,7 @@ public class ProjectConfiguration {
         String env = getProperty(PropertyNameSpace.ENV);
         LOGGER.debug("Environment: " + env);
 
-        if( env.length() == 0) {
+        if (env.length() == 0) {
             return getProperty(pn);
         } else {
             List<String> propertyNameList = ProjectConfiguration.getProperties().stream().filter(p -> p.contains(".")

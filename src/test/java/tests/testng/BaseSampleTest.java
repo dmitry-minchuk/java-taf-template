@@ -2,12 +2,12 @@ package tests.testng;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import domain.PropertyNameSpace;
-import listeners.SelenideListener;
+import configuration.domain.PropertyNameSpace;
+import configuration.listeners.SelenideListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
-import utils.ProjectConfiguration;
+import configuration.ProjectConfiguration;
 
 public abstract class BaseSampleTest {
     protected static final Logger LOGGER = LogManager.getLogger(BaseSampleTest.class);

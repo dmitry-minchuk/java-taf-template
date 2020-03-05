@@ -2,10 +2,10 @@ package web.pages;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import domain.PropertyNameSpace;
+import configuration.domain.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import utils.ProjectConfiguration;
+import configuration.ProjectConfiguration;
 
 import java.net.MalformedURLException;
 import java.net.URL;

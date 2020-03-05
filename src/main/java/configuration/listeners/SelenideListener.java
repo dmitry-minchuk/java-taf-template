@@ -1,4 +1,4 @@
-package listeners;
+package configuration.listeners;
 
 import com.codeborne.selenide.Screenshots;
 import com.codeborne.selenide.logevents.LogEvent;

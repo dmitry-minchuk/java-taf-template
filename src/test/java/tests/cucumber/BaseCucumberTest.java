@@ -2,13 +2,13 @@ package tests.cucumber;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import domain.PropertyNameSpace;
+import configuration.domain.PropertyNameSpace;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
-import listeners.SelenideListener;
+import configuration.listeners.SelenideListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
-import utils.ProjectConfiguration;
+import configuration.ProjectConfiguration;
 
 public class BaseCucumberTest extends AbstractTestNGCucumberTests {
     protected static final Logger LOGGER = LogManager.getLogger(BaseCucumberTest.class);

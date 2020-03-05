@@ -3,6 +3,10 @@
 
     <parameter name="suiteOwner" value="dminchuk"/>
 
+    <listeners>
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
+    </listeners>
+
     <test verbose="1" name="Sample API tests">
         <classes>
             <class name="tests.testng.SampleApiTest">
