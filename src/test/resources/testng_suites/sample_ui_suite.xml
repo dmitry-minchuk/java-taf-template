@@ -1,7 +1,10 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite verbose="1" name="Sample-UI" annotations="JDK">
 
-    <parameter name="suiteOwner" value="dminchuk"/>
+    <parameter name="retry_count" value="2"/>
+    <parameter name="env" value="STAG"/>
+    <parameter name="cron" value="40 2 * * 1-5"/>
+    <parameter name="enableVnc" value="false"/>
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
