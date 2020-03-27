@@ -2,10 +2,11 @@ package web.pages;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
+import configuration.ProjectConfiguration;
 import configuration.domain.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import configuration.ProjectConfiguration;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,11 +18,13 @@ public abstract class BasePage {
 
     public BasePage() {
         initBaseUrl();
+        LOGGER.info(this.getClass().getName() + " was opened.");
     }
 
     public BasePage(String urlAppender) {
         initBaseUrl();
         this.urlAppender = urlAppender;
+        LOGGER.info(this.getClass().getName() + " was opened.");
     }
 
     public void open() {
@@ -30,7 +33,7 @@ public abstract class BasePage {
         } else {
             Selenide.open(absoluteUrl);
         };
-        LOGGER.info(this.getClass().getName() + " was opened.");
+        WebDriverRunner.getWebDriver().manage().window().maximize();
     }
 
     public void setAbsoluteUrl(String absoluteUrl) {
