@@ -1,5 +1,6 @@
-package api.methods;
+package api.methods.httpbin;
 
+import api.methods.ApiBaseMethod;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.Method;
 import io.restassured.module.jsv.JsonSchemaValidator;
@@ -18,18 +19,18 @@ public class PostSampleResourceMethod extends ApiBaseMethod {
         super("/post");
     }
 
-    public Response callApi() {
+    public Response changeRole() {
         JSONObject jsonObject = getJsonFromFile("post_sample_resource/rq.json");
         jsonObject
                 .getJSONObject("role")
                 .put("base", "driver");
 
-        RequestSpecification rs = new RequestSpecBuilder()
+        RequestSpecification r = new RequestSpecBuilder()
                 .addRequestSpecification(baseRequestSpecification)
                 .addRequestSpecification(attachRequestJsonFile(jsonObject))
                 .build();
 
-        response = callApi(Method.POST, rs);
+        response = callApi(Method.POST, r);
         return response;
     }
 

@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import web.pages.AmazonDealsPage;
 import web.pages.AmazonHomePage;
 
-public class AmazonTest extends BaseSampleTest{
+public class AmazonTest extends BaseTest {
 
     @Test
     public void test1() {

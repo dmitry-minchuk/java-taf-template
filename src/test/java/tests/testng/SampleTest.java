@@ -3,7 +3,7 @@ package tests.testng;
 import org.testng.annotations.Test;
 import web.pages.GoogleHomePage;
 
-public class SampleTest extends BaseSampleTest {
+public class SampleTest extends BaseTest {
 
     @Test
     public void homePageTest() {

@@ -1,5 +1,6 @@
-package api.methods;
+package api.methods.httpbin;
 
+import api.methods.ApiBaseMethod;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 
@@ -14,7 +15,7 @@ public class GetSampleResourceMethod extends ApiBaseMethod {
         super(path);
     }
 
-    public Response callApi() {
+    public Response getAll() {
         return callApi(Method.GET, null);
     }
 }

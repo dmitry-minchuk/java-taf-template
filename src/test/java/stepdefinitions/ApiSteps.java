@@ -1,6 +1,6 @@
 package stepdefinitions;
 
-import api.methods.GetSampleResourceMethod;
+import api.methods.httpbin.GetSampleResourceMethod;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -12,7 +12,7 @@ public class ApiSteps {
     @When(value = requestApiEndpoint)
     public void requestApiEndpoint(String path) {
         GetSampleResourceMethod getSampleResourceMethod = new GetSampleResourceMethod(path);
-        getSampleResourceMethod.callApi();
+        getSampleResourceMethod.getAll();
     }
 
     @Then(value = statusCOde200)

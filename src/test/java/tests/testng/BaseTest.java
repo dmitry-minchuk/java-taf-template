@@ -1,8 +1,6 @@
 package tests.testng;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import configuration.domain.PropertyNameSpace;
 import configuration.listeners.SelenideListener;
@@ -11,8 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
 import configuration.ProjectConfiguration;
 
-public abstract class BaseSampleTest {
-    protected static final Logger LOGGER = LogManager.getLogger(BaseSampleTest.class);
+public abstract class BaseTest {
+    protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
 
     @BeforeSuite
     public void setConfiguration() {
