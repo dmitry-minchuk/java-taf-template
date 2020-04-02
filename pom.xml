@@ -18,6 +18,7 @@
         <log4j.version>2.13.0</log4j.version>
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
+        <jmeter.version>5.2.1</jmeter.version>
 
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
@@ -101,6 +102,21 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_core</artifactId>
+            <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_components</artifactId>
+            <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_http</artifactId>
+            <version>${jmeter.version}</version>
         </dependency>
     </dependencies>
 

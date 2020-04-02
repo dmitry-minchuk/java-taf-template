@@ -36,3 +36,7 @@ selenide-based/selenide-based.iml
 /target/
 /allure-report/
 /allure-results/
+report-output
+src/main/resources/HTMLReports
+src/main/resources/projectFile.jmx
+src/main/resources/report.jtl

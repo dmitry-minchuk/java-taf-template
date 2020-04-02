@@ -24,6 +24,10 @@ public class ProjectConfiguration {
         return getPropertyByEnv(pn.getValue());
     }
 
+    public static String getEnvUrl(PropertyNameSpace pn) {
+        return getPropertyByEnv(pn).replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","");
+    }
+
     public static String getProperty(String pn) {
         String systemProperty = System.getProperty(pn);
         if (systemProperty != null && !"".equals(systemProperty)) {
