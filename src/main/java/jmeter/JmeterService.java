@@ -11,7 +11,6 @@ import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
 import org.apache.jmeter.protocol.http.control.gui.HttpTestSampleGui;
 import org.apache.jmeter.protocol.http.gui.HeaderPanel;
-import org.apache.jmeter.protocol.http.sampler.HTTPSampler;
 import org.apache.jmeter.protocol.http.sampler.HTTPSamplerProxy;
 import org.apache.jmeter.report.config.ConfigurationException;
 import org.apache.jmeter.report.dashboard.GenerationException;
@@ -28,11 +27,12 @@ import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jorphan.collections.HashTree;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import utils.JsUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JmeterService {
     protected static final Logger LOGGER = LogManager.getLogger(JmeterService.class);
@@ -40,20 +40,19 @@ public class JmeterService {
     private final String RESOURCES_PATH = "src/main/resources";
     private final String JMETER_SOURCE_PATH = RESOURCES_PATH + "/jmeter521";
 
-    private HashTree hashTree = new HashTree();
+    private HashTree testPlansHashTree = new HashTree();
+    private HashTree treadGroupsHashTree = new HashTree();
+    private HashTree httpSamplersHashTree = new HashTree();
     private HeaderManager manager = new HeaderManager();
-    private HTTPSamplerProxy httpSampler = new HTTPSamplerProxy();
+    private List<HTTPSamplerProxy> httpSamplerList = new ArrayList<>();
     private LoopController loopController = new LoopController();
-    private SetupThreadGroup setupThreadGroup = new SetupThreadGroup();
+    private List<SetupThreadGroup> threadGroupList = new ArrayList<>();
     private StandardJMeterEngine jmeterEngine = new StandardJMeterEngine();
     private ReportGenerator reportGenerator;
     private SampleResult sampleResult;
-    private String requestName;
 
     //#1
-    public JmeterService(String requestName) {
-        this.requestName = requestName;
-    }
+    public JmeterService() {}
 
     //#2
     public JmeterService setHeaderManager(String accessToken) {
@@ -71,8 +70,9 @@ public class JmeterService {
     }
 
     //#3
-    public JmeterService setHttpSampler(String protocol, String domainName, String path, String httpMethod, int port, String rqBody) {
+    public JmeterService setHttpSampler(String protocol, String domainName, String path, String httpMethod, int port, String rqBody, String requestName) {
         //Note that HTTPS connection is available on 443 port only in common case!
+        HTTPSamplerProxy httpSampler = new HTTPSamplerProxy();
         httpSampler.setDomain(domainName);
         httpSampler.setPort(port);
         httpSampler.setProtocol(protocol);
@@ -88,7 +88,7 @@ public class JmeterService {
 
         httpSampler.setProperty(TestElement.TEST_CLASS, HTTPSamplerProxy.class.getName());
         httpSampler.setProperty(TestElement.GUI_CLASS, HttpTestSampleGui.class.getName());
-
+        httpSamplerList.add(httpSampler);
         return this;
     }
 
@@ -103,13 +103,15 @@ public class JmeterService {
     }
 
     //#5
-    public JmeterService getSetupThreadGroup(String threadGroupName, int threadCount, int rampUp) {
-        setupThreadGroup.setName(threadGroupName);
-        setupThreadGroup.setNumThreads(threadCount);
-        setupThreadGroup.setRampUp(rampUp);
-        setupThreadGroup.setSamplerController(loopController);
-        setupThreadGroup.setProperty(TestElement.TEST_CLASS, ThreadGroup.class.getName());
-        setupThreadGroup.setProperty(TestElement.GUI_CLASS, ThreadGroupGui.class.getName());
+    public JmeterService setThreadGroup(String threadGroupName, int threadCount, int rampUp) {
+        SetupThreadGroup threadGroup = new SetupThreadGroup();
+        threadGroup.setName(threadGroupName);
+        threadGroup.setNumThreads(threadCount);
+        threadGroup.setRampUp(rampUp);
+        threadGroup.setSamplerController(loopController);
+        threadGroup.setProperty(TestElement.TEST_CLASS, ThreadGroup.class.getName());
+        threadGroup.setProperty(TestElement.GUI_CLASS, ThreadGroupGui.class.getName());
+        threadGroupList.add(threadGroup);
         return this;
     }
 
@@ -125,25 +127,29 @@ public class JmeterService {
         testPlan.setProperty(TestElement.TEST_CLASS, TestPlan.class.getName());
         testPlan.setProperty(TestElement.GUI_CLASS, TestPlanGui.class.getName());
         testPlan.setUserDefinedVariables((Arguments) new ArgumentsPanel().createTestElement());
-        hashTree.add(testPlan);
 
-        HashTree groupTree = hashTree.add(testPlan, setupThreadGroup);
-        groupTree.add(httpSampler);
-        groupTree.add(manager);
-        sampleResult = httpSampler.sample();
+        for(SetupThreadGroup threadGroup: threadGroupList) {
+            treadGroupsHashTree = testPlansHashTree.add(testPlan, threadGroup);
+            for(HTTPSamplerProxy httpSampler: httpSamplerList) {
+                if(httpSampler.getName().equalsIgnoreCase(threadGroup.getName())) {
+                    treadGroupsHashTree.add(httpSampler);
+                    treadGroupsHashTree.add(manager);
+                }
+            }
+        }
 
         try {
-            SaveService.saveTree(hashTree, new FileOutputStream(RESOURCES_PATH + "/projectFile.jmx"));
+            SaveService.saveTree(testPlansHashTree, new FileOutputStream(RESOURCES_PATH + "/projectFile.jmx"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        setReportEnvironment(hashTree, new Summariser("summaryOfResults"));
+        setReportEnvironment(testPlansHashTree, new Summariser("summaryOfResults"));
         return this;
     }
 
     //#7
-    public SampleResult run() {
-        jmeterEngine.configure(hashTree);
+    public void run() {
+        jmeterEngine.configure(testPlansHashTree);
         jmeterEngine.run();
 
         try {
@@ -151,7 +157,6 @@ public class JmeterService {
         } catch (GenerationException e) {
             e.printStackTrace();
         }
-        return sampleResult;
     }
 
     private synchronized void setReportEnvironment(HashTree hashTree, Summariser summariser) {

@@ -7,16 +7,18 @@ import org.apache.jmeter.protocol.http.sampler.HTTPSamplerProxy;
 import org.testng.annotations.Test;
 
 public class SampleLoadTest extends BaseTest {
-    String domain = ProjectConfiguration.getEnvUrl(PropertyNameSpace.BASE_API_URL);
+    String domain = ProjectConfiguration.getEnvUrl(PropertyNameSpace.LOAD_URL);
 
     @Test
-    public void requestToCompany() {
-        JmeterService jmeterService = new JmeterService("HttpBin Get Request");
+    public void testGetRequest() {
+        JmeterService jmeterService = new JmeterService();
         jmeterService
                 .setHeaderManager()
-                .setHttpSampler(HTTPSamplerProxy.PROTOCOL_HTTPS, domain, "", HTTPSamplerProxy.GET, 443, "")
+                .setHttpSampler(HTTPSamplerProxy.PROTOCOL_HTTPS, domain, "", HTTPSamplerProxy.GET, 443,"", "1_user")
+                .setHttpSampler(HTTPSamplerProxy.PROTOCOL_HTTPS, domain, "", HTTPSamplerProxy.GET, 443,"", "1000_user")
                 .setLoopController(1)
-                .getSetupThreadGroup("Test_1", 10, 15)
+                .setThreadGroup("1_user", 1, 15)
+                .setThreadGroup("1000_user", 1000, 15)
                 .build()
                 .run();
     }

@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="1" name="Sample-Jmeter" annotations="JDK">
+
+<!--    <parameter name="retry_count" value="2"/>-->
+<!--    <parameter name="env" value="STAG"/>-->
+<!--    <parameter name="cron" value="40 2 * * 1-5"/>-->
+<!--    <parameter name="enableVnc" value="false"/>-->
+
+    <listeners>
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
+    </listeners>
+
+    <test verbose="1" name="Sample Jmeter tests">
+        <classes>
+            <class name="tests.testng.SampleLoadTest">
+            </class>
+        </classes>
+    </test>
+</suite>
