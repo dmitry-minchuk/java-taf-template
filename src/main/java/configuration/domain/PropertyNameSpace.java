@@ -5,6 +5,8 @@ public enum PropertyNameSpace {
     BASE_API_URL("base_api_url"),
     LOAD_URL("load_url"),
     ENV("env"),
+    BROWSER("browser"),
+    BROWSER_VERSION("browser_version"),
     SELENIUM_HOST("selenium_host"), // The host where the selenium server is
     SELENIDE_REMOTE("selenide.remote"), // Name of the selenide property where the SELENIUM_HOST should be set
     IMPLICIT_TIMEOUT("implicit_timeout"),

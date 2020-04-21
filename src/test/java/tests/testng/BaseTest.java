@@ -18,6 +18,8 @@ public abstract class BaseTest {
         if(System.getProperty(PropertyNameSpace.SELENIDE_REMOTE.getValue()) == null) {
             Configuration.remote = ProjectConfiguration.getProperty(PropertyNameSpace.SELENIUM_HOST);
         }
+//        Configuration.browser = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER);
+//        Configuration.browserVersion = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER_VERSION);
         Configuration.timeout = Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT));
 
         LOGGER.info("selenide.remote: " + Configuration.remote);
