@@ -159,12 +159,7 @@ public class JmeterService {
     public void run() {
         jmeterEngine.configure(testPlansHashTree);
         jmeterEngine.run();
-
-        try {
-            reportGenerator.generate();
-        } catch (GenerationException e) {
-            e.printStackTrace();
-        }
+        generateHtmlReport();
     }
 
     private synchronized void setReportEnvironment(HashTree hashTree, Summariser summariser) {
@@ -188,6 +183,15 @@ public class JmeterService {
             } catch (IOException e) {
                 LOGGER.info(e.getMessage());
             }
+        }
+    }
+
+    private void generateHtmlReport() {
+        try {
+            reportGenerator.generate();
+        } catch (GenerationException e) {
+            LOGGER.info(e.getMessage());
+            e.printStackTrace();
         }
     }
 }
