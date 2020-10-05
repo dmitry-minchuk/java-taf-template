@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>SelenideBased</artifactId>
+    <artifactId>selenide-based-project-template</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <selenide.version>5.6.1</selenide.version>
         <testng.version>6.14.3</testng.version>
         <cucumber.basic.version>4.7.1</cucumber.basic.version>

@@ -37,8 +37,10 @@ import java.util.List;
 public class JmeterService {
     protected static final Logger LOGGER = LogManager.getLogger(JmeterService.class);
 
-    private final String RESOURCES_PATH = "src/main/resources";
-    private final String JMETER_SOURCE_PATH = RESOURCES_PATH + "/jmeter521";
+    private static final String JMETER_HOME_PATH = "src/main/resources/jmeter";
+    private static final String JMETER_JTL_REPORT_PATH = JMETER_HOME_PATH + "/jmeterReport.jtl";
+    private static final String JMETER_JMX_REPORT_PATH = JMETER_HOME_PATH + "/jmeterSuite.jmx";
+    private static final String JMETER_HTML_REPORT_PATH = JMETER_HOME_PATH + "/htmlReport";
 
     private HashTree testPlansHashTree = new HashTree();
     private HashTree treadGroupsHashTree = new HashTree();
@@ -50,6 +52,12 @@ public class JmeterService {
     private StandardJMeterEngine jmeterEngine = new StandardJMeterEngine();
     private ReportGenerator reportGenerator;
     private SampleResult sampleResult;
+    private static List<File> jmeterFolders = new ArrayList<>();
+    static {
+        jmeterFolders.add(new File(JMETER_JTL_REPORT_PATH));
+        jmeterFolders.add(new File(JMETER_HTML_REPORT_PATH));
+        jmeterFolders.add(new File("report-output"));
+    }
 
     //#1
     public JmeterService() {}
@@ -117,10 +125,10 @@ public class JmeterService {
 
     //#6
     public JmeterService build() {
-        JMeterUtils.setJMeterHome(JMETER_SOURCE_PATH);
-        JMeterUtils.loadJMeterProperties(JMETER_SOURCE_PATH + "/bin/jmeter.properties");
+        JMeterUtils.setJMeterHome(JMETER_HOME_PATH);
+        JMeterUtils.loadJMeterProperties(JMETER_HOME_PATH + "/bin/jmeter.properties");
         JMeterUtils.initLocale();
-        JMeterUtils.setProperty("jmeter.reportgenerator.exporter.html.property.output_dir", "src/main/resources/HTMLReports");
+        JMeterUtils.setProperty("jmeter.reportgenerator.exporter.html.property.output_dir", JMETER_HTML_REPORT_PATH);
 
         //Create the tesPlan item
         TestPlan testPlan = new TestPlan();
@@ -139,7 +147,7 @@ public class JmeterService {
         }
 
         try {
-            SaveService.saveTree(testPlansHashTree, new FileOutputStream(RESOURCES_PATH + "/projectFile.jmx"));
+            SaveService.saveTree(testPlansHashTree, new FileOutputStream(JMETER_JMX_REPORT_PATH));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -160,27 +168,26 @@ public class JmeterService {
     }
 
     private synchronized void setReportEnvironment(HashTree hashTree, Summariser summariser) {
-        String logFile = RESOURCES_PATH + "/report.jtl";
-        File file = new File(logFile);
-
-        if (file.exists()) {
-            try {
-                FileUtils.forceDelete(file);
-                FileUtils.forceDelete(new File("report-output"));
-                FileUtils.forceDelete(new File("src/main/resources/HTMLReports"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        jmeterFolders.forEach(this::delete);
 
         ResultCollector logger = new ResultCollector(summariser);
-        logger.setFilename(logFile);
+        logger.setFilename(JMETER_JTL_REPORT_PATH);
         hashTree.add(hashTree.getArray()[0], logger);
 
         try {
-            reportGenerator = new ReportGenerator(logFile, logger);
+            reportGenerator = new ReportGenerator(JMETER_JTL_REPORT_PATH, logger);
         } catch (ConfigurationException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void delete(File file) {
+        if (file.exists()) {
+            try {
+                FileUtils.forceDelete(file);
+            } catch (IOException e) {
+                LOGGER.info(e.getMessage());
+            }
         }
     }
 }
