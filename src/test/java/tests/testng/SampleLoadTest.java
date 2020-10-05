@@ -15,10 +15,10 @@ public class SampleLoadTest extends BaseTest {
         jmeterService
                 .setHeaderManager()
                 .setHttpSampler(HTTPSamplerProxy.PROTOCOL_HTTPS, domain, "", HTTPSamplerProxy.GET, 443,"", "1_user")
-                .setHttpSampler(HTTPSamplerProxy.PROTOCOL_HTTPS, domain, "", HTTPSamplerProxy.GET, 443,"", "1000_user")
+                .setHttpSampler(HTTPSamplerProxy.PROTOCOL_HTTPS, domain, "", HTTPSamplerProxy.GET, 443,"", "100_user")
                 .setLoopController(1)
                 .setThreadGroup("1_user", 1, 15)
-                .setThreadGroup("1000_user", 1000, 15)
+                .setThreadGroup("100_user", 100, 15)
                 .build()
                 .run();
     }
