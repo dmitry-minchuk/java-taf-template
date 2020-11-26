@@ -179,3 +179,5 @@ so you can just put this file there or use official selenoid documentation to se
 Also before `selenoid/vnc:firefox_47.0` or `selenoid/vnc:chrome_87.0` become available in selenoid_ui you have to pull these images to the Docker that you are using to run you Selenoid:
 
 `docker pull selenoid/vnc:firefox_47.0`
+
+Make sure you have enabled `enableVNC: true` capability to see the video. Right now it's being enabled in `CustomCapabilitiesProvider.java` by default. In plans to move it to `config.properties`.
