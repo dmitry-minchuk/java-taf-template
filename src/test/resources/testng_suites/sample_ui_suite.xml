@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="Sample-UI" annotations="JDK">
+<suite verbose="1" name="Sample-UI" annotations="JDK" parallel="methods" thread-count="1">
 
     <parameter name="retry_count" value="2"/>
     <parameter name="env" value="STAG"/>
