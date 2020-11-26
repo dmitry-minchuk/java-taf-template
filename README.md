@@ -140,3 +140,42 @@ Of course you have to include this listener to your TestNG suite:
 ```
 
 To send any data to the RP server there is a configuration file (src/test/resources/reportportal.properties) containing server IP, access token and some other required fileds.
+
+### Selenoid VNC
+
+To enable VNC in selenoid browser containers you should create a proper `browsers.json` file:
+
+```
+    {
+    	"firefox": {
+    		"default": "47.0",
+    		"versions": {
+    			"47.0": {
+    				"image": "selenoid/vnc:firefox_47.0",
+    				"port": "4444",
+    				"path": "/wd/hub",
+    				"tmpfs": {"/tmp":"size=512m"}
+    			}
+    		}
+    	},
+    	"chrome": {
+    		"default": "87.0",
+    		"versions": {
+    			"87.0": {
+    				"image": "selenoid/vnc:chrome_87.0",
+    				"port": "4444",
+    				"tmpfs": {"/tmp":"size=512m"}
+    			}
+    		}
+    	}
+    }
+```
+and put it somewhere selenoid will be able to see it. By default on MacOS correct folder is being generated here:
+
+![browsers.json](src/main/resources/img/browsers-json.png)
+
+so you can just put this file there or use official selenoid documentation to set the correct `browsers.json` path.
+
+Also before `selenoid/vnc:firefox_47.0` or `selenoid/vnc:chrome_87.0` become available in selenoid_ui you have to pull these images to the Docker that you are using to run you Selenoid:
+
+`docker pull selenoid/vnc:firefox_47.0`
