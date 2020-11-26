@@ -131,12 +131,20 @@ public class SelenideListener implements LogEventListener {
 }
 ```
 
-Of course you have to include this listener to your TestNG suite:
+Of course you have to include this listener to your SelenideConfiguration. Keep in mind that SelenideListener will be added to the current thread only.
 
 ```
-    <listeners>
-        <listener class-name="configuration.listeners.SelenideListener"/>
-    </listeners>
+        @BeforeMethod
+        public void methodSpecificConfiguration() {
+            //SelenideLogger is setting listener to current thread only
+            SelenideLogger.addListener(LISTENER_NAME, new SelenideListener());
+        }
+    
+        @AfterMethod
+        public void methodSpecificConfigurationCleanUp() {
+            //SelenideLogger is deleting listener from current thread just to make sure we don't have redundant listener instances
+            SelenideLogger.removeListener(LISTENER_NAME);
+        }
 ```
 
 To send any data to the RP server there is a configuration file (src/test/resources/reportportal.properties) containing server IP, access token and some other required fileds.
