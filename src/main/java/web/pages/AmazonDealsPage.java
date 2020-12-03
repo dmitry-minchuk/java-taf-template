@@ -4,6 +4,7 @@ import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
+import web.components.Deals;
 import web.components.Header;
 
 import static com.codeborne.selenide.Selenide.$$x;
@@ -13,7 +14,7 @@ public class AmazonDealsPage extends BasePage{
 
     private SelenideElement dealsHeader = $x("//h1//b[contains(text(), 'Deals')]");
     private SelenideElement cellPhonesCheckbox = $x("//label[span[contains(text(), 'Cell Phones')]]//input[@type='checkbox']");
-    private ElementsCollection dealContainers = $$x("//div[contains(@class, 'dealContainer')]");
+    public Deals deals = new Deals("//div[contains(@class, 'dealContainer')]");
     public Header header = new Header("//header");
 
     public boolean isPageOpened() {
@@ -22,10 +23,10 @@ public class AmazonDealsPage extends BasePage{
 
     public void filterElements() {
         cellPhonesCheckbox.click();
-        dealContainers.shouldHave(CollectionCondition.sizeGreaterThan(0));
+        deals.getElementsCollection().shouldHave(CollectionCondition.sizeGreaterThan(0));
     }
 
     public String getContainerProductName(int num) {
-        return dealContainers.get(num).find(By.xpath(".//a[@id='dealTitle']")).getText();
+        return deals.getElementsTitle(num);
     }
 }
