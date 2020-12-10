@@ -1,12 +1,12 @@
 package configuration.listeners;
 
-import org.testng.IAnnotationTransformer3;
+import org.testng.IAnnotationTransformer;
 import org.testng.annotations.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-public class AnnotationTransformer implements IAnnotationTransformer3 {
+public class AnnotationTransformer implements IAnnotationTransformer {
 
     @Override
     public void transform(IListenersAnnotation annotation, Class testClass) {
