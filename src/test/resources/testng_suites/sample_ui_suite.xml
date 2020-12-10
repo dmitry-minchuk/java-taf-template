@@ -8,7 +8,7 @@
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
-        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener" />
+<!--        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener" />-->
     </listeners>
 
     <test verbose="1" name="Sample UI tests">
