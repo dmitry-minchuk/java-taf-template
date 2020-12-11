@@ -13,10 +13,10 @@
         <selenide.version>5.15.1</selenide.version>
         <testng.version>7.3.0</testng.version>
         <cucumber.basic.version>4.7.1</cucumber.basic.version>
-        <rp.cucumber.version>LATEST</rp.cucumber.version>
+        <agent.java.cucumber4>5.0.1</agent.java.cucumber4>
         <agent.java.testng.version>5.0.8</agent.java.testng.version>
-        <rp.logging.version>LATEST</rp.logging.version>
-        <log4j.version>2.13.0</log4j.version>
+        <logger.java.log4j>5.0.3</logger.java.log4j>
+<!--        <log4j.version>LATEST</log4j.version>-->
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
         <jmeter.version>5.2.1</jmeter.version>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-cucumber4</artifactId>
-            <version>${rp.cucumber.version}</version>
+            <version>${agent.java.cucumber4}</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
@@ -75,20 +75,25 @@
             <version>${cucumber.basic.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-log4j</artifactId>
+            <version>${logger.java.log4j}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-core</artifactId>-->
+<!--            <version>${log4j.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-slf4j-impl</artifactId>-->
+<!--            <version>${log4j.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-api</artifactId>-->
+<!--            <version>${log4j.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -148,11 +153,17 @@
 
                     <!-- Uncomment it if you don't want your build to be failed in case of test errors -->
                     <testFailureIgnore>true</testFailureIgnore>
+                    <!-- ADD working directory to get TestNG know we to find suite files -->
+                    <workingDirectory>./</workingDirectory>
 
                     <properties>
                         <property>
                             <name>usedefaultlisteners</name>
                             <value>false</value>
+                        </property>
+                        <property>
+                            <name>listener</name>
+                            <value>com.epam.reportportal.testng.ReportPortalTestNGListener</value>
                         </property>
                     </properties>
                 </configuration>
