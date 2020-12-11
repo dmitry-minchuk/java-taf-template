@@ -44,11 +44,12 @@
             <artifactId>selenide</artifactId>
             <version>${selenide.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-cucumber4</artifactId>
-            <version>${agent.java.cucumber4}</version>
-        </dependency>
+<!--        You MUST leave only one: gent-java-cucumber4 or agent-java-testng !!!  -->
+<!--        <dependency>-->
+<!--            <groupId>com.epam.reportportal</groupId>-->
+<!--            <artifactId>agent-java-cucumber4</artifactId>-->
+<!--            <version>${agent.java.cucumber4}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-testng</artifactId>
