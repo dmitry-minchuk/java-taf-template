@@ -3,10 +3,6 @@
 
     <parameter name="suiteOwner" value="dminchuk"/>
 
-    <listeners>
-        <listener class-name="configuration.listeners.AnnotationTransformer"/>
-    </listeners>
-
     <test verbose="1" name="Tests by cucumber">
         <classes>
             <class name="tests.cucumber.CucumberTest">
