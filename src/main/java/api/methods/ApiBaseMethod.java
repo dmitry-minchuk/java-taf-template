@@ -28,8 +28,9 @@ public abstract class ApiBaseMethod {
         fullApiUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_API_URL) + path;
     }
 
-    public Response callApi(Method method, RequestSpecification requestSpecification) {
+    public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {
         LOGGER.info(String.format("%1$s%1$s%2$s%3$sHTTP REQUEST%3$s%2$s", System.lineSeparator(), "-", "="));
+        RestAssured.useRelaxedHTTPSValidation();
         Response response;
 
         try {
@@ -50,6 +51,10 @@ public abstract class ApiBaseMethod {
                 .all();
 
         return response;
+    }
+
+    public Response callApi(Method method, RequestSpecification requestSpecification) {
+        return callApi(method, requestSpecification, fullApiUrl);
     }
 
     protected JSONObject getJsonFromFile(String path) {

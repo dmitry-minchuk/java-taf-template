@@ -1,0 +1,53 @@
+{
+  "additionalInfo": "string",
+  "coachId": 0,
+  "cost": 0,
+  "description": "string",
+  "fixedMembers": true,
+  "groupLessons": true,
+  "isApproveSubscribe": true,
+  "isInner": true,
+  "isRepeating": true,
+  "language": 0,
+  "lessonList": [
+    {
+      "date": 0,
+      "duration": 0,
+      "lessonGroupType": "CURRENT",
+      "place": "string",
+      "prevLessonId": 0,
+      "setAttendance": true
+    }
+  ],
+  "locationModel": {
+    "id": 0,
+    "location": "string",
+    "timeZone": "string"
+  },
+  "maxSize": 0,
+  "place": "string",
+  "repeatModel": {
+    "endDate": 0,
+    "lessonList": [
+      {
+        "day": 0,
+        "duration": 0,
+        "place": "string",
+        "setAttendance": true,
+        "time": 0
+      }
+    ],
+    "startDate": 0,
+    "timeZoneOffset": 0
+  },
+  "shortInfo": "string",
+  "tagList": [
+    {
+      "approved": true,
+      "id": 0,
+      "specialty": "string"
+    }
+  ],
+  "title": "string",
+  "trainingId": 0
+}
