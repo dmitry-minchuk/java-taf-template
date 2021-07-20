@@ -5,12 +5,14 @@ import api.methods.httpbin.GetSampleResourceMethod;
 import api.methods.httpbin.PostSampleResourceMethod;
 import api.methods.httpbin.PutAnythingMethod;
 import api.methods.movies.GetMovieByMethod;
+import com.epam.reportportal.service.ReportPortal;
 import io.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.*;
+import java.util.Date;
 
 public class SampleApiTest extends BaseTest {
 
@@ -45,10 +47,11 @@ public class SampleApiTest extends BaseTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        ReportPortal.emitLog("Body: ", "INFO", new Date(), image);
     }
 
     // Movie Database tests
-    @Test
+//    @Test
     public void testGetMovieByName() {
         String actorName = "Robert Downey Jr.";
 

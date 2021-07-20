@@ -20,7 +20,7 @@ public class PostSampleResourceMethod extends ApiBaseMethod {
     }
 
     public Response changeRole() {
-        JSONObject jsonObject = getJsonFromFile("post_sample_resource/rq.json");
+        JSONObject jsonObject = getJsonFromFile("post-sample-resource/rq.json");
         jsonObject
                 .getJSONObject("role")
                 .put("base", "driver");
@@ -38,6 +38,6 @@ public class PostSampleResourceMethod extends ApiBaseMethod {
         response
                 .then()
                 .assertThat()
-                .body(JsonSchemaValidator.matchesJsonSchema(getStringFromFile("post_sample_resource/rs-schema.json")));
+                .body(JsonSchemaValidator.matchesJsonSchema(getStringFromFile("post-sample-resource/rs-schema.json")));
     }
 }
