@@ -11,14 +11,15 @@
     <properties>
         <java.version>11</java.version>
         <log4j.version>2.17.2</log4j.version>
-        <selenide.version>5.15.1</selenide.version>
+        <selenide.version>6.4.0</selenide.version>
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <junit.platform.version>1.8.1</junit.platform.version>
-<!--        <testng.version>7.3.0</testng.version>-->
+        <testcontainers.version>1.17.1</testcontainers.version>
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
+        <commons.version>2.11.0</commons.version>
 
         <suite>testng</suite>
     </properties>
@@ -56,13 +57,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.17.1</version>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.17.1</version>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -95,6 +96,11 @@
             <artifactId>log4j-api</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -112,11 +118,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin}</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                </configuration>
             </plugin>
         </plugins>
     </build>
