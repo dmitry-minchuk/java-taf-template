@@ -1,29 +1,27 @@
 package tests.testng;
 
 import api.methods.tms.*;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class TmsApiTest extends BaseTest{
     private String jwt;
 
-    @BeforeMethod
+//    @BeforeMethod
     public void getAuth() {
         jwt = new GetAuthMethod().getJWT();
     }
 
-    @Test
+//    @Test
     public void test() {
         new GetAllTrainingsMethod(jwt).callAPI();;
         new PostTrainingMethod(jwt).callAPI();
     }
 
-    @Test
+//    @Test
     public void test2() {
         new GetTrainingByIdMethod(jwt).callAPI("3");
     }
 
-    @Test
+//    @Test
     public void test3() {
 //        new GetAllCoachesMethod(jwt).callAPI();
         String trainingId = "3";

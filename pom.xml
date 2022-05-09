@@ -10,33 +10,18 @@
 
     <properties>
         <java.version>11</java.version>
+        <log4j.version>2.17.2</log4j.version>
         <selenide.version>5.15.1</selenide.version>
-        <testng.version>7.3.0</testng.version>
-        <cucumber.basic.version>4.7.1</cucumber.basic.version>
-        <agent.java.cucumber4>5.0.1</agent.java.cucumber4>
-        <agent.java.testng.version>5.0.8</agent.java.testng.version>
-        <logger.java.log4j>5.0.3</logger.java.log4j>
-<!--        <log4j.version>LATEST</log4j.version>-->
+        <junit.jupiter.version>5.8.1</junit.jupiter.version>
+        <junit.platform.version>1.8.1</junit.platform.version>
+<!--        <testng.version>7.3.0</testng.version>-->
         <rest.assured.version>4.2.0</rest.assured.version>
         <json.version>20190722</json.version>
-        <jmeter.version>5.2.1</jmeter.version>
-
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
 
-        <suite>cucumber_suite</suite>
+        <suite>testng</suite>
     </properties>
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-epam-reportportal</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/epam/reportportal</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -44,57 +29,42 @@
             <artifactId>selenide</artifactId>
             <version>${selenide.version}</version>
         </dependency>
-<!--        You MUST leave only one: agent-java-cucumber4 or agent-java-testng !!!  -->
-<!--        <dependency>-->
-<!--            <groupId>com.epam.reportportal</groupId>-->
-<!--            <artifactId>agent-java-cucumber4</artifactId>-->
-<!--            <version>${agent.java.cucumber4}</version>-->
-<!--        </dependency>-->
         <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-testng</artifactId>
-            <version>${agent.java.testng.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-core</artifactId>
-            <version>${cucumber.basic.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.basic.version}</version>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-testng</artifactId>
-            <version>${cucumber.basic.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.17.1</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>logger-java-log4j</artifactId>
-            <version>${logger.java.log4j}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.17.1</version>
+            <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.logging.log4j</groupId>-->
-<!--            <artifactId>log4j-core</artifactId>-->
-<!--            <version>${log4j.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.logging.log4j</groupId>-->
-<!--            <artifactId>log4j-slf4j-impl</artifactId>-->
-<!--            <version>${log4j.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.logging.log4j</groupId>-->
-<!--            <artifactId>log4j-api</artifactId>-->
-<!--            <version>${log4j.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -116,19 +86,14 @@
             <version>${json.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_core</artifactId>
-            <version>${jmeter.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_components</artifactId>
-            <version>${jmeter.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_http</artifactId>
-            <version>${jmeter.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
     </dependencies>
 
@@ -151,22 +116,6 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
                     </suiteXmlFiles>
-
-                    <!-- Uncomment it if you don't want your build to be failed in case of test errors -->
-                    <testFailureIgnore>true</testFailureIgnore>
-                    <!-- ADD working directory to get TestNG know we to find suite files -->
-                    <workingDirectory>./</workingDirectory>
-
-                    <properties>
-                        <property>
-                            <name>usedefaultlisteners</name>
-                            <value>false</value>
-                        </property>
-                        <property>
-                            <name>listener</name>
-                            <value>com.epam.reportportal.testng.ReportPortalTestNGListener</value>
-                        </property>
-                    </properties>
                 </configuration>
             </plugin>
         </plugins>

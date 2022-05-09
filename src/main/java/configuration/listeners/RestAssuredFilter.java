@@ -1,6 +1,5 @@
 package configuration.listeners;
 
-import com.epam.reportportal.service.ReportPortal;
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
 import io.restassured.http.Header;
@@ -10,8 +9,6 @@ import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Date;
 
 public class RestAssuredFilter implements Filter {
     protected static final Logger LOGGER = LogManager.getLogger(RestAssuredFilter.class);
@@ -37,8 +34,6 @@ public class RestAssuredFilter implements Filter {
                     prettyRequest.append("Body: ").append(newLine).append(response.getBody().prettyPrint());
                 }
 
-//        ReportPortal.emitLog(prettyRequest.toString(),"INFO", new Date());
-//        ReportPortal.emitLog(prettyResponse.toString(),"INFO", new Date());
         LOGGER.info(prettyRequest.toString());
         LOGGER.info(prettyResponse.toString());
         return response;

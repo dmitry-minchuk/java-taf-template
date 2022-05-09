@@ -5,38 +5,37 @@ import api.methods.httpbin.GetSampleResourceMethod;
 import api.methods.httpbin.PostSampleResourceMethod;
 import api.methods.httpbin.PutAnythingMethod;
 import api.methods.movies.GetMovieByMethod;
-import com.epam.reportportal.service.ReportPortal;
 import io.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
-import java.io.*;
-import java.util.Date;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class SampleApiTest extends BaseTest {
 
     // HTTPBIN tests
-    @Test
+//    @Test
     public void testSampleGetApi() {
         GetSampleResourceMethod getSampleResourceMethod = new GetSampleResourceMethod();
         getSampleResourceMethod.getAll();
     }
 
-    @Test
+//    @Test
     public void testSamplePostApi() {
         PostSampleResourceMethod postSampleResourceMethod = new PostSampleResourceMethod();
         postSampleResourceMethod.changeRole();
         postSampleResourceMethod.validateResponseAgainstSchema();
     }
 
-    @Test
+//    @Test
     public void testPutAnythingApi() {
         PutAnythingMethod putAnythingMethod = new PutAnythingMethod("010100111000100101110101010");
         putAnythingMethod.putValue();
     }
 
-    @Test
+//    @Test
     public void testGetImageApi() {
         GetImageMethod getImageMethod = new GetImageMethod();
         Response response = getImageMethod.getImage();
@@ -47,7 +46,6 @@ public class SampleApiTest extends BaseTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ReportPortal.emitLog("Body: ", "INFO", new Date(), image);
     }
 
     // Movie Database tests
@@ -59,6 +57,6 @@ public class SampleApiTest extends BaseTest {
         Response response = getMovieByMethod.getMovieByName("Avengers");
         String movieId = getMovieByMethod.getImdbId(response.getBody().asString(), 0);
         response = getMovieByMethod.getMovieById(movieId);
-        Assert.assertTrue(getMovieByMethod.getMovieActors(response.getBody().asString()).contains(actorName), "Actor Name is not as expected!");
+//        Assert.assertTrue(getMovieByMethod.getMovieActors(response.getBody().asString()).contains(actorName), "Actor Name is not as expected!");
     }
 }
