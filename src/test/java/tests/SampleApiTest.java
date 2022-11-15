@@ -1,4 +1,4 @@
-package tests.testng;
+package tests;
 
 import api.methods.httpbin.GetImageMethod;
 import api.methods.httpbin.GetSampleResourceMethod;

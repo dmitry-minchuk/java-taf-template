@@ -1,29 +1,34 @@
 package web.pages;
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.testng.Assert;
 import web.components.Deals;
 import web.components.Header;
 
-import static com.codeborne.selenide.Selenide.$$x;
-import static com.codeborne.selenide.Selenide.$x;
-
 public class AmazonDealsPage extends BasePage{
 
-    private SelenideElement dealsHeader = $x("//h1//b[contains(text(), 'Deals')]");
-    private SelenideElement cellPhonesCheckbox = $x("//label[span[contains(text(), 'Cell Phones')]]//input[@type='checkbox']");
-    public Deals deals = new Deals("//div[contains(@class, 'dealContainer')]");
-    public Header header = new Header("//header");
+    @FindBy(xpath = "//h1//b[contains(text(), 'Deals')]")
+    private WebElement dealsHeader;
+
+    @FindBy(xpath = "//label[span[contains(text(), 'Cell Phones')]]//input[@type='checkbox']")
+    private WebElement cellPhonesCheckbox;
+
+    public Deals deals = new Deals(getDriver(), By.xpath("//div[contains(@class, 'dealContainer')]"));
+    public Header header = new Header(getDriver(), By.xpath("//header"));
+
+    public AmazonDealsPage() {
+        super();
+    }
 
     public boolean isPageOpened() {
         return dealsHeader.isDisplayed();
     }
 
-    public void filterElements() {
+    public void filterElementsAndValidateAmount() {
         cellPhonesCheckbox.click();
-        deals.getElementsCollection().shouldHave(CollectionCondition.sizeGreaterThan(0));
+        Assert.assertFalse(deals.getElementsCollection().isEmpty(), "No elements found!");
     }
 
     public String getContainerProductName(int num) {

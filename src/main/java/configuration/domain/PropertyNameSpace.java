@@ -7,6 +7,7 @@ public enum PropertyNameSpace {
     ENV("env"),
     BROWSER("browser"),
     BROWSER_VERSION("browser_version"),
+    PLATFORM("platform"),
     SELENIUM_HOST("selenium_host"), // The host where the selenium server is
     SELENIDE_REMOTE("selenide.remote"), // Name of the selenide property where the SELENIUM_HOST should be set
     IMPLICIT_TIMEOUT("implicit_timeout"),

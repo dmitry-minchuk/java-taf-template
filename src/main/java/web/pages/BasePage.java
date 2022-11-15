@@ -1,58 +1,55 @@
 package web.pages;
 
-import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.WebDriverRunner;
 import configuration.ProjectConfiguration;
 import configuration.domain.PropertyNameSpace;
+import configuration.driver.DriverFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public abstract class BasePage {
     protected static final Logger LOGGER = LogManager.getLogger(BasePage.class);
-    protected URL absoluteUrl = null;
+    protected String baseUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL);
+    protected String absoluteUrl = null;
     protected String urlAppender = "";
+    private static WebDriver driver = null;
 
     public BasePage() {
-        initBaseUrl();
         LOGGER.info(this.getClass().getName() + " was opened.");
+        PageFactory.initElements(getDriver(), this);
     }
 
     public BasePage(String urlAppender) {
-        initBaseUrl();
         this.urlAppender = urlAppender;
         LOGGER.info(this.getClass().getName() + " was opened.");
+        PageFactory.initElements(getDriver(), this);
     }
 
     public void open() {
-        if (absoluteUrl == null) {
-            Selenide.open(urlAppender);
-        } else {
-            Selenide.open(absoluteUrl);
-        };
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        if (absoluteUrl == null)
+            getDriver().get(baseUrl + urlAppender);
+        else
+            getDriver().get(absoluteUrl);
+        getDriver().manage().window().maximize();
     }
 
-    public void setAbsoluteUrl(String absoluteUrl) {
-        try {
-            this.absoluteUrl = new URL(absoluteUrl);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    public WebDriver getDriver() {
+        if(driver != null)
+            return driver;
+        else
+            driver = DriverFactory.getDriver();
+        return driver;
     }
 
-    public String getPageUrl() {
+    protected String getPageUrl() {
         if (absoluteUrl == null) {
-            return ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL) + urlAppender;
+            return baseUrl + urlAppender;
         } else {
             return absoluteUrl.toString();
         }
-    }
-
-    private void initBaseUrl() {
-            Configuration.baseUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL);
     }
 }

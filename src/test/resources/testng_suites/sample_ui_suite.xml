@@ -13,7 +13,7 @@
 
     <test verbose="1" name="Sample UI tests">
         <classes>
-            <class name="tests.testng.SampleTest">
+            <class name="tests.SampleTest">
             </class>
         </classes>
     </test>

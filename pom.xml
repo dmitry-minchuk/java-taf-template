@@ -5,15 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>selenide-based-project-template</artifactId>
+    <artifactId>selenium-based-project-template</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>
-        <selenide.version>6.1.1</selenide.version>
+        <selenium.version>4.6.0</selenium.version>
         <testng.version>7.3.0</testng.version>
-        <cucumber.basic.version>4.7.1</cucumber.basic.version>
-        <agent.java.cucumber4>5.0.1</agent.java.cucumber4>
         <agent.java.testng.version>5.0.8</agent.java.testng.version>
         <logger.java.log4j>5.0.3</logger.java.log4j>
         <log4j.version>2.16.0</log4j.version>
@@ -24,32 +22,15 @@
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
 
-        <suite>cucumber_suite</suite>
+        <suite>sample_api_suite</suite>
     </properties>
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-epam-reportportal</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/epam/reportportal</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>com.codeborne</groupId>
-            <artifactId>selenide</artifactId>
-            <version>${selenide.version}</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
-<!--        You MUST leave only one: agent-java-cucumber4 or agent-java-testng !!!  -->
-<!--        <dependency>-->
-<!--            <groupId>com.epam.reportportal</groupId>-->
-<!--            <artifactId>agent-java-cucumber4</artifactId>-->
-<!--            <version>${agent.java.cucumber4}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-testng</artifactId>
@@ -59,21 +40,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-core</artifactId>
-            <version>${cucumber.basic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.basic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-testng</artifactId>
-            <version>${cucumber.basic.version}</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>

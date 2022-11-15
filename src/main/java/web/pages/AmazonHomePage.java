@@ -1,13 +1,16 @@
 package web.pages;
 
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
-
-import static com.codeborne.selenide.Selenide.$;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class AmazonHomePage extends BasePage {
 
-    private SelenideElement todaysDealsLink = $(By.xpath("//div[@id='nav-xshop']//a[contains(text(), 'Deals')]"));
+    @FindBy(xpath = "//div[@id='nav-xshop']//a[contains(text(), 'Deals')]")
+    private WebElement todaysDealsLink;
+
+    public AmazonHomePage() {
+        super();
+    }
 
     public AmazonDealsPage clickDealsLink() {
         todaysDealsLink.click();

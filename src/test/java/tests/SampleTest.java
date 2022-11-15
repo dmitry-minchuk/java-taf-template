@@ -1,4 +1,4 @@
-package tests.testng;
+package tests;
 
 import org.testng.annotations.Test;
 import web.pages.GoogleHomePage;

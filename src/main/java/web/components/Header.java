@@ -1,31 +1,35 @@
 package web.components;
 
-import com.codeborne.selenide.SelenideElement;
-
-import static com.codeborne.selenide.Selenide.$x;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 public class Header {
-    private SelenideElement selfElement;
+    private WebDriver driver;
+    private WebElement selfElement;
 
-    public Header(String xpathSelector) {
-        selfElement = $x(xpathSelector);
+    public Header(WebDriver driver, By by) {
+        this.driver = driver;
+        selfElement = this.driver.findElement(by);
     }
 
     public void selectSearchArea(String searchArea, String searchQuery) {
-        getSiteSearchSelector().selectOption(searchArea);
-        getSiteSearchField().setValue(searchQuery);
+        getSiteSearchSelector().selectByValue(searchArea);
+        getSiteSearchField().sendKeys(searchQuery);
         getSiteSearchBtn().click();
     }
 
-    public SelenideElement getSiteSearchSelector() {
-        return selfElement.$x(".//form[@name='site-search']//select");
+    public Select getSiteSearchSelector() {
+        WebElement searchSelectorElement = selfElement.findElement(By.xpath(".//form[@name='site-search']//select"));
+        return new Select(searchSelectorElement);
     }
 
-    public SelenideElement getSiteSearchField() {
-        return selfElement.$x(".//form[@name='site-search']//input[@type='text']");
+    public WebElement getSiteSearchField() {
+        return selfElement.findElement(By.xpath(".//form[@name='site-search']//input[@type='text']"));
     }
 
-    public SelenideElement getSiteSearchBtn() {
-        return selfElement.$x(".//form[@name='site-search']//input[@type='submit']");
+    public WebElement getSiteSearchBtn() {
+        return selfElement.findElement(By.xpath(".//form[@name='site-search']//input[@type='submit']"));
     }
 }

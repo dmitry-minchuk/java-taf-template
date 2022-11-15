@@ -1,21 +1,34 @@
 package web.components;
 
-import com.codeborne.selenide.ElementsCollection;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
 
-import static com.codeborne.selenide.Selenide.$$x;
+import java.util.List;
 
 public class Deals {
-    private ElementsCollection dealList;
+    private WebDriver driver;
+    private List<WebElement> dealList;
 
-    public Deals(String xpathSelector) {
-        dealList = $$x(xpathSelector);
+    public Deals(WebDriver driver, By by) {
+        this.driver = driver;
+        dealList = this.driver.findElements(by);
     }
 
     public String getElementsTitle(int index) {
-        return dealList.get(index).$x(".//a[@id='dealTitle']").getText();
+        int i = 1;
+        for(WebElement deal: dealList) {
+            if(i == index)
+                return deal.findElement(By.xpath(".//a[@id='dealTitle']")).getText();
+            i++;
+        }
+        return null;
     }
 
-    public ElementsCollection getElementsCollection() {
+    public List<WebElement> getElementsCollection() {
         return dealList;
     }
 }

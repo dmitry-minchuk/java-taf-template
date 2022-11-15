@@ -1,4 +1,4 @@
-package tests.testng;
+package tests;
 
 import api.methods.tms.*;
 import org.testng.annotations.BeforeMethod;
