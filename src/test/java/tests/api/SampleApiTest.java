@@ -1,4 +1,4 @@
-package tests;
+package tests.api;
 
 import api.methods.httpbin.GetImageMethod;
 import api.methods.httpbin.GetSampleResourceMethod;
@@ -10,6 +10,7 @@ import io.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import tests.BaseTest;
 
 import java.io.*;
 import java.util.Date;

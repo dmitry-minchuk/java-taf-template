@@ -9,11 +9,11 @@ import web.components.Header;
 
 public class AmazonDealsPage extends BasePage{
 
-    @FindBy(xpath = "//h1//b[contains(text(), 'Deals')]")
-    private WebElement dealsHeader;
-
     @FindBy(xpath = "//label[span[contains(text(), 'Cell Phones')]]//input[@type='checkbox']")
     private WebElement cellPhonesCheckbox;
+
+    @FindBy(xpath = "//ol[@class='a-carousel']//span[contains(text(), 'All Deals')]")
+    private WebElement allDealsCarouselBtn;
 
     public Deals deals = new Deals(getDriver(), By.xpath("//div[contains(@class, 'dealContainer')]"));
     public Header header = new Header(getDriver(), By.xpath("//header"));
@@ -23,7 +23,7 @@ public class AmazonDealsPage extends BasePage{
     }
 
     public boolean isPageOpened() {
-        return dealsHeader.isDisplayed();
+        return allDealsCarouselBtn.isDisplayed();
     }
 
     public void filterElementsAndValidateAmount() {

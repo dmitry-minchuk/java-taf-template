@@ -1,6 +1,7 @@
-package tests;
+package tests.ui;
 
 import org.testng.annotations.Test;
+import tests.BaseTest;
 import web.pages.GoogleHomePage;
 
 public class SampleTest extends BaseTest {

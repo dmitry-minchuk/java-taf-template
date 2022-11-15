@@ -1,10 +1,11 @@
-package tests;
+package tests.api;
 
 import api.methods.tms.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import tests.BaseTest;
 
-public class TmsApiTest extends BaseTest{
+public class TmsApiTest extends BaseTest {
     private String jwt;
 
     @BeforeMethod

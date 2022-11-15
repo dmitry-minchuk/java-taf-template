@@ -10,6 +10,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 
 public abstract class BasePage {
     protected static final Logger LOGGER = LogManager.getLogger(BasePage.class);
@@ -40,8 +41,10 @@ public abstract class BasePage {
     public WebDriver getDriver() {
         if(driver != null)
             return driver;
-        else
+        else {
             driver = DriverFactory.getDriver();
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT))));
+        }
         return driver;
     }
 

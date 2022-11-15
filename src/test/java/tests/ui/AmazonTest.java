@@ -1,7 +1,8 @@
-package tests;
+package tests.ui;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import tests.BaseTest;
 import web.pages.AmazonDealsPage;
 import web.pages.AmazonHomePage;
 

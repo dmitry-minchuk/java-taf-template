@@ -29,7 +29,7 @@ public class DriverFactory {
     }
 
     private static AbstractDriverOptions<?> buildBrowserOptions(AbstractDriverOptions<?> browserOptions) {
-        browserOptions.setPageLoadStrategy(PageLoadStrategy.NONE);
+        browserOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         return browserOptions;
     }
 

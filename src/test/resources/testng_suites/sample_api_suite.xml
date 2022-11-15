@@ -13,7 +13,7 @@
 
     <test verbose="1" name="Sample API tests">
         <classes>
-            <class name="tests.SampleApiTest">
+            <class name="tests.api.SampleApiTest">
             </class>
         </classes>
     </test>

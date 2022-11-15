@@ -15,7 +15,8 @@ public class Header {
     }
 
     public void selectSearchArea(String searchArea, String searchQuery) {
-        getSiteSearchSelector().selectByValue(searchArea);
+        getSiteSearchSelector().getWrappedElement().click();
+        getSiteSearchSelector().selectByVisibleText(searchArea);
         getSiteSearchField().sendKeys(searchQuery);
         getSiteSearchBtn().click();
     }
