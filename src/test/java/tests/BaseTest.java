@@ -2,11 +2,13 @@ package tests;
 
 import configuration.ProjectConfiguration;
 import configuration.domain.PropertyNameSpace;
+import configuration.listeners.EventLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Listeners;
 
 public abstract class BaseTest {
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
