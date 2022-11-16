@@ -31,7 +31,7 @@ public abstract class BasePage {
     }
 
     public void open() {
-        if (absoluteUrl == null)
+        if(absoluteUrl == null)
             getDriver().get(baseUrl + urlAppender);
         else
             getDriver().get(absoluteUrl);
@@ -43,7 +43,7 @@ public abstract class BasePage {
             return driver;
         else {
             driver = DriverFactory.getDriver();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT))));
+//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT))));
         }
         return driver;
     }

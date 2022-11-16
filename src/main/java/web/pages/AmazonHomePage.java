@@ -2,6 +2,8 @@ package web.pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import utils.Waiter;
 
 public class AmazonHomePage extends BasePage {
 
@@ -16,7 +18,8 @@ public class AmazonHomePage extends BasePage {
     }
 
     public AmazonDealsPage clickDealsLink() {
-        locationPopupDismissBtn.click();
+        if(Waiter.waitUntil(getDriver(), ExpectedConditions.visibilityOf(locationPopupDismissBtn), 2))
+            locationPopupDismissBtn.click();
         todaysDealsLink.click();
         return new AmazonDealsPage();
     }

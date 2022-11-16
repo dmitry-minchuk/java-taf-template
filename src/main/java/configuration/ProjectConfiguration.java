@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ProjectConfiguration {
     protected static final Logger LOGGER = LogManager.getLogger(ProjectConfiguration.class);
-    private final static String CONFIG_PATH = "src/main/resources/config.properties";
+    private final static String CONFIG_PATH = "src/test/resources/config.properties";
 
     public static String getProperty(PropertyNameSpace pn) {
         return getProperty(pn.getValue());
