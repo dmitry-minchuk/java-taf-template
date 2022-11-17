@@ -1,6 +1,5 @@
 package configuration.listeners;
 
-import configuration.driver.DriverFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
@@ -10,8 +9,8 @@ import org.openqa.selenium.support.events.WebDriverListener;
 
 import java.util.Arrays;
 
-public class EventLogger implements WebDriverListener {
-    protected static final Logger LOGGER = LogManager.getLogger(DriverFactory.class);
+public class DriverEventLogger implements WebDriverListener {
+    protected static final Logger LOGGER = LogManager.getLogger(DriverEventLogger.class);
 
     @Override
     public void beforeGet(WebDriver driver, String url) {

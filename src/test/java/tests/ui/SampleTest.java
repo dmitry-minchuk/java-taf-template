@@ -8,7 +8,7 @@ public class SampleTest extends BaseTest {
 
     @Test
     public void homePageTest() {
-        GoogleHomePage googleHomePage = new GoogleHomePage();
+        GoogleHomePage googleHomePage = new GoogleHomePage(getDriver());
         googleHomePage.open();
         googleHomePage.search("iphone");
     }

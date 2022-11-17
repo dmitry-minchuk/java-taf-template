@@ -17,35 +17,27 @@ public abstract class BasePage {
     protected String baseUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL);
     protected String absoluteUrl = null;
     protected String urlAppender = "";
-    private static WebDriver driver = null;
+    protected WebDriver driver = null;
 
-    public BasePage() {
+    public BasePage(WebDriver driver) {
+        this.driver = driver;
         LOGGER.info(this.getClass().getName() + " was opened.");
-        PageFactory.initElements(getDriver(), this);
+        PageFactory.initElements(this.driver, this);
     }
 
-    public BasePage(String urlAppender) {
+    public BasePage(WebDriver driver, String urlAppender) {
+        this.driver = driver;
         this.urlAppender = urlAppender;
         LOGGER.info(this.getClass().getName() + " was opened.");
-        PageFactory.initElements(getDriver(), this);
+        PageFactory.initElements(this.driver, this);
     }
 
     public void open() {
         if(absoluteUrl == null)
-            getDriver().get(baseUrl + urlAppender);
+            driver.get(baseUrl + urlAppender);
         else
-            getDriver().get(absoluteUrl);
-        getDriver().manage().window().maximize();
-    }
-
-    public WebDriver getDriver() {
-        if(driver != null)
-            return driver;
-        else {
-            driver = DriverFactory.getDriver();
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.IMPLICIT_TIMEOUT))));
-        }
-        return driver;
+            driver.get(absoluteUrl);
+        driver.manage().window().maximize();
     }
 
     protected String getPageUrl() {

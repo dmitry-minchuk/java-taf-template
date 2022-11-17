@@ -1,5 +1,6 @@
 package web.pages;
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -13,14 +14,14 @@ public class AmazonHomePage extends BasePage {
     @FindBy(xpath = "//input[@data-action-type='DISMISS' and following-sibling::span[contains(text(), \"Don't Change\")]]")
     private WebElement locationPopupDismissBtn;
 
-    public AmazonHomePage() {
-        super();
+    public AmazonHomePage(WebDriver driver) {
+        super(driver);
     }
 
     public AmazonDealsPage clickDealsLink() {
-        if(Waiter.waitUntil(getDriver(), ExpectedConditions.visibilityOf(locationPopupDismissBtn), 2))
+        if(Waiter.waitUntil(driver, ExpectedConditions.visibilityOf(locationPopupDismissBtn), 2))
             locationPopupDismissBtn.click();
         todaysDealsLink.click();
-        return new AmazonDealsPage();
+        return new AmazonDealsPage(driver);
     }
 }

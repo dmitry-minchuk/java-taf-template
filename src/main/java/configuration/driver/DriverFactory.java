@@ -2,7 +2,7 @@ package configuration.driver;
 
 import configuration.ProjectConfiguration;
 import configuration.domain.PropertyNameSpace;
-import configuration.listeners.EventLogger;
+import configuration.listeners.DriverEventLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.PageLoadStrategy;
@@ -22,17 +22,17 @@ public class DriverFactory {
     protected static final Logger LOGGER = LogManager.getLogger(DriverFactory.class);
 
     public static WebDriver getDriver() {
-        EventLogger eventLogger = new EventLogger();
+        DriverEventLogger driverEventLogger = new DriverEventLogger();
         String driverName = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER);
         switch (driverName) {
             case "chrome":
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.setLogLevel(ChromeDriverLogLevel.ALL);
-                return new EventFiringDecorator(eventLogger).decorate(new RemoteWebDriver(getSeleniumHost(), addCommonBrowserOptions(new ChromeOptions())));
+                return new EventFiringDecorator(driverEventLogger).decorate(new RemoteWebDriver(getSeleniumHost(), addCommonBrowserOptions(chromeOptions)));
             case "firefox":
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 firefoxOptions.setLogLevel(FirefoxDriverLogLevel.INFO);
-                return new EventFiringDecorator(eventLogger).decorate(new RemoteWebDriver(getSeleniumHost(), addCommonBrowserOptions(new FirefoxOptions())));
+                return new EventFiringDecorator(driverEventLogger).decorate(new RemoteWebDriver(getSeleniumHost(), addCommonBrowserOptions(firefoxOptions)));
         }
         throw new RuntimeException("DriverName unknown: " + driverName);
     }

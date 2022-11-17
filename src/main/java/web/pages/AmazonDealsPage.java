@@ -1,6 +1,7 @@
 package web.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.testng.Assert;
@@ -15,11 +16,11 @@ public class AmazonDealsPage extends BasePage{
     @FindBy(xpath = "//ol[@class='a-carousel']//span[contains(text(), 'All Deals')]")
     private WebElement allDealsCarouselBtn;
 
-    public Deals deals = new Deals(getDriver(), By.xpath("//div[contains(@class, 'dealContainer')]"));
-    public Header header = new Header(getDriver(), By.xpath("//header"));
+    public Deals deals = new Deals(driver, By.xpath("//div[contains(@class, 'dealContainer')]"));
+    public Header header = new Header(driver, By.xpath("//header"));
 
-    public AmazonDealsPage() {
-        super();
+    public AmazonDealsPage(WebDriver driver) {
+        super(driver);
     }
 
     public boolean isPageOpened() {
