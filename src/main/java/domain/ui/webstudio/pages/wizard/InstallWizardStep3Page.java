@@ -1,6 +1,7 @@
-package domain.ui.webstudio.pages;
+package domain.ui.webstudio.pages.wizard;
 
 import domain.ui.BasePage;
+import domain.ui.webstudio.pages.LoginPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

@@ -1,4 +1,4 @@
-package domain.ui.webstudio.pages;
+package domain.ui.webstudio.pages.wizard;
 
 import domain.ui.BasePage;
 import org.openqa.selenium.WebDriver;

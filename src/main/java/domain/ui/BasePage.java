@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
+import java.util.Objects;
+
 public abstract class BasePage {
     protected static final Logger LOGGER = LogManager.getLogger(BasePage.class);
     protected String baseUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL);
@@ -35,11 +37,8 @@ public abstract class BasePage {
         driver.manage().window().maximize();
     }
 
-    protected String getPageUrl() {
-        if (absoluteUrl == null) {
-            return baseUrl + urlAppender;
-        } else {
-            return absoluteUrl.toString();
-        }
+    public boolean isPageOpened() {
+        String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, () -> baseUrl + urlAppender);
+        return driver.getCurrentUrl().equalsIgnoreCase(urlExpected);
     }
 }
