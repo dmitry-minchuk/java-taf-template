@@ -19,17 +19,17 @@ public class DriverEventLogger implements WebDriverListener {
 
     @Override
     public void beforeClick(WebElement element) {
-        LOGGER.info(String.format("Click on element: '%s'", element.getAccessibleName()));
+        LOGGER.info(String.format("Click on element: '%s'", getElementIdentifier(element)));
     }
 
     @Override
     public void beforeSendKeys(WebElement element, CharSequence... keysToSend) {
-        LOGGER.info(String.format("Type text '%s' into '%s'", Arrays.toString(keysToSend), element.getAccessibleName()));
+        LOGGER.info(String.format("Type text '%s' into '%s'", Arrays.toString(keysToSend), getElementIdentifier(element)));
     }
 
     @Override
     public void beforeClear(WebElement element) {
-        LOGGER.info(String.format("Clear '%s'", element.getAccessibleName()));
+        LOGGER.info(String.format("Clear '%s'", getElementIdentifier(element)));
     }
 
     @Override
@@ -50,5 +50,11 @@ public class DriverEventLogger implements WebDriverListener {
     @Override
     public void beforeClose(WebDriver driver) {
         LOGGER.info(String.format("Closing browser tab '%s' with title '%s'", driver.getWindowHandle(), driver.getTitle()));
+    }
+
+    private String getElementIdentifier(WebElement element) {
+        if(!element.getAccessibleName().isBlank() && !element.getAccessibleName().isBlank())
+            return element.getAccessibleName();
+        return element.getTagName();
     }
 }

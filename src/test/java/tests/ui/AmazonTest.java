@@ -3,8 +3,8 @@ package tests.ui;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
-import web.pages.AmazonDealsPage;
-import web.pages.AmazonHomePage;
+import domain.ui.pages.AmazonDealsPage;
+import domain.ui.pages.AmazonHomePage;
 
 public class AmazonTest extends BaseTest {
 

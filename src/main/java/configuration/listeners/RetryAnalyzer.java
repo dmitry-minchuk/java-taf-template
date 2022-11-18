@@ -1,6 +1,6 @@
 package configuration.listeners;
 
-import configuration.domain.PropertyNameSpace;
+import configuration.PropertyNameSpace;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 import configuration.ProjectConfiguration;

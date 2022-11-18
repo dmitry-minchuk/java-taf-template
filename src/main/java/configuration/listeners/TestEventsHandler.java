@@ -1,7 +1,7 @@
 package configuration.listeners;
 
 import configuration.ProjectConfiguration;
-import configuration.domain.PropertyNameSpace;
+import configuration.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.ISuite;

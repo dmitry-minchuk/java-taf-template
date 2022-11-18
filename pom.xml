@@ -32,19 +32,9 @@
             <version>${selenium.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-testng</artifactId>
-            <version>${agent.java.testng.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>logger-java-log4j</artifactId>
-            <version>${logger.java.log4j}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -112,17 +102,6 @@
                     <testFailureIgnore>true</testFailureIgnore>
                     <!-- ADD working directory to get TestNG know we to find suite files -->
                     <workingDirectory>./</workingDirectory>
-
-                    <properties>
-                        <property>
-                            <name>usedefaultlisteners</name>
-                            <value>false</value>
-                        </property>
-                        <property>
-                            <name>listener</name>
-                            <value>com.epam.reportportal.testng.ReportPortalTestNGListener</value>
-                        </property>
-                    </properties>
                 </configuration>
             </plugin>
         </plugins>

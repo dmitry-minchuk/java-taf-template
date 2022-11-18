@@ -15,4 +15,3 @@
         </Root>
     </Loggers>
 </Configuration>
-<!--PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %c{1} [%t%X{threadId}] [%p] %m%n"/-->
