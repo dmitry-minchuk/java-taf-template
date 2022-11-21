@@ -1,5 +1,6 @@
 package domain.ui.webstudio.pages;
 
+import domain.servicemodels.UserData;
 import domain.ui.BasePage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import org.openqa.selenium.WebDriver;
@@ -21,9 +22,9 @@ public class LoginPage extends BasePage {
         super(driver, "/");
     }
 
-    public EditorPage login(String login, String password) {
-        loginTextField.sendKeys(login);
-        passwordTextField.sendKeys(password);
+    public EditorPage login(UserData user) {
+        loginTextField.sendKeys(user.getLogin());
+        passwordTextField.sendKeys(user.getPassword());
         signInBtn.click();
         return new EditorPage(driver);
     }
