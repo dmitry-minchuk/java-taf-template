@@ -1,4 +1,4 @@
-package domain.servicemodels;
+package domain.serviceclasses.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

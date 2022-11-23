@@ -1,4 +1,4 @@
-package domain.servicemodels;
+package domain.serviceclasses.constants;
 
 public enum User {
     ADMIN("admin"),

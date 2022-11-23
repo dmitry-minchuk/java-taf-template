@@ -1,6 +1,6 @@
 package domain.ui.webstudio.pages;
 
-import domain.servicemodels.UserData;
+import domain.serviceclasses.models.UserData;
 import domain.ui.BasePage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import org.openqa.selenium.WebDriver;

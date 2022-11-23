@@ -7,8 +7,8 @@
 
     <test verbose="1" name="Sample UI tests">
         <classes>
-            <class name="tests.ui.webstudio.SimpleTest12"/>
-            <class name="tests.ui.webstudio.SimpleTest34"/>
+            <class name="tests.ui.webstudio.SampleTest12"/>
+            <class name="tests.ui.webstudio.SampleTest34"/>
         </classes>
     </test>
 </suite>
