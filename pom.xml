@@ -19,11 +19,12 @@
         <json.version>20190722</json.version>
         <apache.commons.version>2.11.0</apache.commons.version>
         <lombok.version>1.18.24</lombok.version>
+        <testcontainers.version>1.17.6</testcontainers.version>
 
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
 
-        <suite>sample_api_suite</suite>
+        <suite>sample_ui_suite</suite>
     </properties>
 
     <dependencies>
@@ -81,6 +82,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>selenium</artifactId>
+            <version>${testcontainers.version}</version>
         </dependency>
     </dependencies>
 

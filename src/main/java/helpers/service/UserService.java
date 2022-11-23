@@ -1,9 +1,8 @@
 package helpers.service;
 
 import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
-import domain.servicemodels.User;
-import domain.servicemodels.UserData;
+import domain.serviceclasses.constants.User;
+import domain.serviceclasses.models.UserData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
