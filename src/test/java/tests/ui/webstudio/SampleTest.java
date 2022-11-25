@@ -8,16 +8,10 @@ import helpers.service.UserService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-public class SampleTest12 extends BaseTest {
+public class SampleTest extends BaseTest {
 
     @Test
-    public void simpleTest1() {
-        EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        editorPage.currentUserComponent.openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
-    }
-
-    @Test
-    public void simpleTest2() {
+    public void test() {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
         editorPage.currentUserComponent.openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
     }

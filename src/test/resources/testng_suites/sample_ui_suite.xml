@@ -2,13 +2,13 @@
 <suite verbose="1" name="Sample-UI-tests" annotations="JDK" parallel="classes" thread-count="2">
 
     <listeners>
-<!--        <listener class-name="configuration.listeners.AnnotationTransformer"/>-->
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
     </listeners>
 
     <test verbose="1" name="Sample UI tests">
         <classes>
-            <class name="tests.ui.webstudio.SampleTest12"/>
-            <class name="tests.ui.webstudio.SampleTest34"/>
+            <class name="tests.ui.webstudio.SampleTest"/>
+            <class name="tests.ui.webstudio.SampleTest2"/>
         </classes>
     </test>
 </suite>
