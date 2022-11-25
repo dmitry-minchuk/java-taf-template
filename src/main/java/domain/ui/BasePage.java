@@ -1,44 +1,36 @@
 package domain.ui;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
+import configuration.appcontainer.AppContainerPool;
+import configuration.driver.DriverPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
 import java.util.Objects;
 
 public abstract class BasePage {
     protected static final Logger LOGGER = LogManager.getLogger(BasePage.class);
-    protected String baseUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_URL);
     protected String absoluteUrl = null;
     protected String urlAppender = "";
-    protected WebDriver driver = null;
 
-    public BasePage(WebDriver driver) {
-        this.driver = driver;
+    public BasePage() {
         LOGGER.info(this.getClass().getName() + " was opened.");
-        PageFactory.initElements(this.driver, this);
+        PageFactory.initElements(DriverPool.getDriver(), this);
     }
 
-    public BasePage(WebDriver driver, String urlAppender) {
-        this.driver = driver;
+    public BasePage(String urlAppender) {
         this.urlAppender = urlAppender;
         LOGGER.info(this.getClass().getName() + " was opened.");
-        PageFactory.initElements(this.driver, this);
+        PageFactory.initElements(DriverPool.getDriver(), this);
     }
 
     public void open() {
-        if(absoluteUrl == null)
-            driver.get(baseUrl + urlAppender);
-        else
-            driver.get(absoluteUrl);
-        driver.manage().window().maximize();
+        DriverPool.getDriver().get(AppContainerPool.get().getAppHostUrl() + urlAppender);
+        DriverPool.getDriver().manage().window().maximize();
     }
 
     public boolean isPageOpened() {
-        String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, () -> baseUrl + urlAppender);
-        return driver.getCurrentUrl().equalsIgnoreCase(urlExpected);
+        String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, () -> AppContainerPool.get().getAppHostUrl() + urlAppender);
+        return DriverPool.getDriver().getCurrentUrl().equalsIgnoreCase(urlExpected);
     }
 }

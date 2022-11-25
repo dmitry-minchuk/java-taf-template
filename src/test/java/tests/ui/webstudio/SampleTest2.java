@@ -8,16 +8,10 @@ import helpers.service.UserService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-public class SampleTest34 extends BaseTest {
+public class SampleTest2 extends BaseTest {
 
     @Test
-    public void simpleTest2() {
-        EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        editorPage.currentUserComponent.openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
-    }
-
-    @Test
-    public void simpleTest4() {
+    public void test() throws InterruptedException {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
         editorPage.currentUserComponent.openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
     }

@@ -1,6 +1,7 @@
 package domain.api;
 
 import configuration.PropertyNameSpace;
+import configuration.appcontainer.AppContainerPool;
 import configuration.listeners.RestAssuredFilter;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -26,7 +27,7 @@ public abstract class ApiBaseMethod {
     private String fullApiUrl;
 
     public ApiBaseMethod(String path) {
-        fullApiUrl = ProjectConfiguration.getPropertyByEnv(PropertyNameSpace.BASE_API_URL) + path;
+        fullApiUrl = AppContainerPool.get().getAppHostUrl();
     }
 
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {

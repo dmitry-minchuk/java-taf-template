@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components;
 
+import configuration.driver.DriverPool;
 import domain.ui.BasePage;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -9,12 +10,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class TabSwitcherComponent {
-    private WebDriver driver;
     private WebElement selfElement;
 
-    public TabSwitcherComponent(WebDriver driver, By by) {
-        this.driver = driver;
-        selfElement = this.driver.findElement(by);
+    public TabSwitcherComponent(By by) {
+        selfElement = DriverPool.getDriver().findElement(by);
     }
 
     public BasePage selectTab(TabName tabName) {
@@ -22,11 +21,11 @@ public class TabSwitcherComponent {
         selfElement.findElement(By.xpath(String.format(tabLocator, tabName.getValue()))).click();
 
         if(tabName.equals(TabName.EDITOR)) {
-            return new EditorPage(driver);
+            return new EditorPage();
         } else if(tabName.equals(TabName.REPOSITORY)) {
-            return new RepositoryPage(driver);
+            return new RepositoryPage();
         } else
-            return new AdminPage(driver);
+            return new AdminPage();
     }
 
     public static enum TabName {

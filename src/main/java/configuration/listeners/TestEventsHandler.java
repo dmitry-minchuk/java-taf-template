@@ -13,6 +13,6 @@ public class TestEventsHandler implements ITestListener, ISuiteListener {
 
     @Override
     public void onStart(ISuite suite) {
-        LOGGER.info("Environment: " + ProjectConfiguration.getProperty(PropertyNameSpace.ENV));
+        LOGGER.info("Suite started: " + suite.getName());
     }
 }
