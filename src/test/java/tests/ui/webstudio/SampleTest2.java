@@ -11,7 +11,7 @@ import tests.BaseTest;
 public class SampleTest2 extends BaseTest {
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
         editorPage.currentUserComponent.openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
     }
