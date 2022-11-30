@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="Sample-UI-tests" annotations="JDK" parallel="classes" thread-count="2">
+<suite verbose="1" name="Sample-UI-tests" annotations="JDK" parallel="methods" thread-count="2">
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
@@ -9,6 +9,7 @@
         <classes>
             <class name="tests.ui.webstudio.SampleTest"/>
             <class name="tests.ui.webstudio.SampleTest2"/>
+<!--            <class name="tests.ui.webstudio.SampleTest3"/>-->
         </classes>
     </test>
 </suite>
