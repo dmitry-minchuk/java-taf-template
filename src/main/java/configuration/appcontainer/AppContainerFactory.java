@@ -2,10 +2,10 @@ package configuration.appcontainer;
 
 import configuration.ProjectConfiguration;
 import configuration.PropertyNameSpace;
-import configuration.driver.DockerNetwork;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
@@ -15,10 +15,10 @@ public class AppContainerFactory {
     private final static String DEPLOYED_APP_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
     private final static String DOCKER_IMAGE_NAME = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
 
-    public static AppContainerData createContainer(String containerName) {
+    public static AppContainerData createContainer(String containerName, Network network) {
         GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(DOCKER_IMAGE_NAME));
         container.addExposedPort(APP_PORT);
-        container.withNetwork(DockerNetwork.getNetwork());
+        container.withNetwork(network);
         container.withNetworkAliases(containerName);
         container.start();
         container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH));
