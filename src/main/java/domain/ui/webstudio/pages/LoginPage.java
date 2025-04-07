@@ -1,5 +1,6 @@
 package domain.ui.webstudio.pages;
 
+import configuration.core.SmartWebElement;
 import domain.serviceclasses.models.UserData;
 import domain.ui.BasePage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -9,13 +10,13 @@ import org.openqa.selenium.support.FindBy;
 public class LoginPage extends BasePage {
 
     @FindBy(id = "loginName")
-    private WebElement loginTextField;
+    private SmartWebElement loginTextField;
 
     @FindBy(id = "loginPassword")
-    private WebElement passwordTextField;
+    private SmartWebElement passwordTextField;
 
     @FindBy(id = "loginSubmit")
-    private WebElement signInBtn;
+    private SmartWebElement signInBtn;
 
     public LoginPage() {
         super("/");

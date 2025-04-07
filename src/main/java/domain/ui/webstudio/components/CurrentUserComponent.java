@@ -1,22 +1,27 @@
 package domain.ui.webstudio.components;
 
+import configuration.core.SmartWebElement;
 import configuration.driver.DriverPool;
+import domain.ui.BasePageComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
-public class CurrentUserComponent {
-    private WebElement selfElement;
+public class CurrentUserComponent extends BasePageComponent {
 
-    public CurrentUserComponent(By by) {
-        selfElement = DriverPool.getDriver().findElement(by);
-    }
+    @FindBy(xpath = "./a")
+    private SmartWebElement dropdownToggle;
+
+    @FindBy(xpath = ".//li/a[contains(text(), '%s')]")
+    private SmartWebElement menuOption;
+
+    public CurrentUserComponent() {}
 
     public void openDropdownMenuAndSelect(MenuElements element) {
-        selfElement.findElement(By.xpath("./a")).click();
-        String menuElementLocator = String.format(".//li/a[contains(text(), '%s')]", element.getValue());
-        selfElement.findElement(By.xpath(menuElementLocator)).click();
-        DriverPool.getDriver().switchTo().alert().accept();
+        dropdownToggle.click();
+        menuOption.format(element.getValue()).click();
+        getDriver().switchTo().alert().accept();
     }
 
     public static enum MenuElements {

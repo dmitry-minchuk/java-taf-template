@@ -1,5 +1,6 @@
 package domain.ui.webstudio.pages.wizard;
 
+import configuration.core.SmartWebElement;
 import domain.ui.BasePage;
 import domain.ui.webstudio.pages.LoginPage;
 import org.openqa.selenium.WebElement;
@@ -8,13 +9,13 @@ import org.openqa.selenium.support.FindBy;
 public class InstallWizardStep3Page extends BasePage {
 
     @FindBy(xpath = "//input[@value='multi']")
-    private WebElement multiUserRadioBtn;
+    private SmartWebElement multiUserRadioBtn;
 
     @FindBy(xpath = "//input[@name='step3Form:adAdminUsers']")
-    private WebElement adminUsersTextField;
+    private SmartWebElement adminUsersTextField;
 
     @FindBy(xpath = "//input[@value='Finish']")
-    private WebElement finishBtn;
+    private SmartWebElement finishBtn;
 
     public InstallWizardStep3Page() {
         super("/faces/pages/modules/install/step3.xhtml");
