@@ -6,6 +6,7 @@ import domain.ui.BasePageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
 
 public class TabSwitcherComponent extends BasePageComponent {
@@ -26,6 +27,7 @@ public class TabSwitcherComponent extends BasePageComponent {
         };
     }
 
+    @Getter
     public static enum TabName {
         EDITOR("EDITOR"),
         REPOSITORY("REPOSITORY"),
@@ -35,10 +37,6 @@ public class TabSwitcherComponent extends BasePageComponent {
 
         TabName(String value) {
             this.value = value;
-        }
-
-        public String getValue() {
-            return value;
         }
     }
 }
