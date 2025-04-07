@@ -38,11 +38,11 @@ public class SmartElementFactory {
                 try {
                     if (field.getType().equals(SmartWebElement.class)) {
                         By locator = buildBy(field);
-                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocator() : null;
-                        field.set(page, new SmartWebElement(driver, locator, Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)), null, root));
+                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
+                        field.set(page, new SmartWebElement(driver, locator, Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)), root));
                     } else if (isListOfSmartElements(field)) {
                         By locator = buildBy(field);
-                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocator() : null;
+                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
                         field.set(page, createSmartElementList(driver, locator, root));
                     } else if (BasePageComponent.class.isAssignableFrom(field.getType())) {
                         By componentLocator = buildBy(field);
@@ -53,11 +53,8 @@ public class SmartElementFactory {
                         initElements(driver, component);
                     } else if (isListOfPageComponents(field)) {
                         By listLocator = buildBy(field);
-                        if (page instanceof BasePageComponent && ((BasePageComponent) page).getRootLocator() != null) {
-                            field.set(page, createPageComponentList(driver, field, new RelativeBy(((BasePageComponent) page).getRootLocator(), listLocator)));
-                        } else {
-                            field.set(page, createPageComponentList(driver, field, listLocator));
-                        }
+                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
+                        field.set(page, createPageComponentList(driver, field, root, listLocator));
                     }
                 } catch (Exception e) {
                     throw new RuntimeException("Can't set field: " + field.getName(), e);
@@ -90,28 +87,35 @@ public class SmartElementFactory {
     }
 
     private static List<SmartWebElement> createSmartElementList(WebDriver driver, By locator, By parentLocator) {
-        List<WebElement> elements = driver.findElements(parentLocator != null ? new RelativeBy(parentLocator, locator) : locator);
+        List<WebElement> elements = (parentLocator != null)
+                ? driver.findElements(parentLocator).stream().flatMap(parent -> parent.findElements(locator).stream()).toList()
+                : driver.findElements(locator);
         List<SmartWebElement> smartList = new ArrayList<>();
         for (int i = 0; i < elements.size(); i++) {
-            smartList.add(new SmartWebElement(driver, new IndexedBy(locator, i), Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)), null, parentLocator));
+            smartList.add(new SmartWebElement(driver, new IndexedBy(locator, i), Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)), driver.findElements(parentLocator).get(0), null));
         }
         return smartList;
     }
 
+    private static List<SmartWebElement> createSmartElementList(WebDriver driver, By locator) {
+        return createSmartElementList(driver, locator, null);
+    }
+
     @SuppressWarnings("unchecked")
-    private static <T extends BasePageComponent> List<T> createPageComponentList(WebDriver driver, Field field, By locator) throws Exception {
-        List<WebElement> elements = driver.findElements(locator);
+    private static <T extends BasePageComponent> List<T> createPageComponentList(WebDriver driver, Field field, By parentLocator, By listLocator) throws Exception {
+        List<WebElement> elements = (parentLocator != null)
+                ? driver.findElements(parentLocator).stream().flatMap(parent -> parent.findElements(listLocator).stream()).toList()
+                : driver.findElements(listLocator);
         List<T> componentList = new ArrayList<>();
 
         Type genericType = field.getGenericType();
         ParameterizedType pt = (ParameterizedType) genericType;
         Class<T> componentType = (Class<T>) pt.getActualTypeArguments()[0];
 
-        for (int i = 0; i < elements.size(); i++) {
+        for (WebElement element : elements) {
             T component = componentType.getDeclaredConstructor().newInstance();
-            component.init(driver, new IndexedBy(locator, i));
+            component.init(driver, element);
             componentList.add(component);
-            // Recursively initialize elements within the component
             initElements(driver, component);
         }
 
@@ -141,43 +145,6 @@ public class SmartElementFactory {
         if (!findBy.partialLinkText().isEmpty()) return By.partialLinkText(findBy.partialLinkText());
         if (!findBy.xpath().isEmpty()) return By.xpath(findBy.xpath());
         throw new IllegalArgumentException("No valid locator in @FindBy");
-    }
-
-    private static class RelativeBy extends By {
-        private final By rootLocator;
-        private final By childLocator;
-
-        public RelativeBy(By rootLocator, By childLocator) {
-            this.rootLocator = rootLocator;
-            this.childLocator = childLocator;
-        }
-
-        @Override
-        public List<WebElement> findElements(SearchContext context) {
-            List<WebElement> rootElements = context.findElements(rootLocator);
-            if (rootElements.isEmpty()) {
-                return Collections.emptyList();
-            }
-            List<WebElement> foundElements = new ArrayList<>();
-            for (WebElement rootElement : rootElements) {
-                foundElements.addAll(rootElement.findElements(childLocator));
-            }
-            return foundElements;
-        }
-
-        @Override
-        public WebElement findElement(SearchContext context) {
-            List<WebElement> rootElements = context.findElements(rootLocator);
-            if (rootElements.isEmpty()) {
-                throw new NoSuchElementException("Cannot find root element(s) with locator: " + rootLocator);
-            }
-            return rootElements.get(0).findElement(childLocator);
-        }
-
-        @Override
-        public String toString() {
-            return rootLocator.toString() + " -> " + childLocator.toString();
-        }
     }
 
     private static class IndexedBy extends By {
