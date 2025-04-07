@@ -1,31 +1,29 @@
 package domain.ui.webstudio.components;
 
-import configuration.driver.DriverPool;
+import configuration.core.SmartWebElement;
 import domain.ui.BasePage;
+import domain.ui.BasePageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
-public class TabSwitcherComponent {
-    private WebElement selfElement;
+public class TabSwitcherComponent extends BasePageComponent {
 
-    public TabSwitcherComponent(By by) {
-        selfElement = DriverPool.getDriver().findElement(by);
-    }
+    @FindBy(xpath = "./a[text()='%s']")
+    private SmartWebElement tabElement;
+
+    public TabSwitcherComponent() {}
 
     public BasePage selectTab(TabName tabName) {
-        String tabLocator = "./a[text()='%s']";
-        selfElement.findElement(By.xpath(String.format(tabLocator, tabName.getValue()))).click();
+        tabElement.format(tabName.getValue()).click();
 
-        if(tabName.equals(TabName.EDITOR)) {
-            return new EditorPage();
-        } else if(tabName.equals(TabName.REPOSITORY)) {
-            return new RepositoryPage();
-        } else
-            return new AdminPage();
+        return switch (tabName) {
+            case EDITOR -> new EditorPage();
+            case REPOSITORY -> new RepositoryPage();
+            case ADMIN -> new AdminPage();
+            default -> throw new IllegalArgumentException("Unknown TabName: " + tabName);
+        };
     }
 
     public static enum TabName {

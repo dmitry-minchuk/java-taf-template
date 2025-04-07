@@ -1,5 +1,6 @@
 package domain.ui.webstudio.pages.wizard;
 
+import configuration.core.SmartWebElement;
 import domain.ui.BasePage;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,7 +8,7 @@ import org.openqa.selenium.support.FindBy;
 public class InstallWizardStartPage extends BasePage {
 
     @FindBy(xpath = "//input[@value='Start']")
-    private WebElement startBtn;
+    private SmartWebElement startBtn;
 
     public InstallWizardStartPage() {
         super("/faces/pages/modules/install/index.xhtml");
