@@ -20,12 +20,10 @@ public abstract class BasePageComponent {
     @Getter
     private WebElement rootElement;
     private WebDriver driver;
-    private int timeoutInSeconds;
+    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
 
     // Protected constructor to be called by subclasses
-    protected BasePageComponent() {
-        this.timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
-    }
+    protected BasePageComponent() {}
 
     // Overloaded init method to accept By locator
     public void init(WebDriver driver, By rootLocatorBy) {
