@@ -14,9 +14,9 @@ import java.time.Duration;
 
 public class SmartWebElement {
 
+    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
     private final WebDriver driver;
     private final By locator;
-    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
     private final int numberOfAttempts = 3;
     private WebElement parentElement;
     private By parentLocator;
@@ -39,8 +39,9 @@ public class SmartWebElement {
         this.parentLocator = parentLocator;
     }
 
-    public WebElement getWrappedElement() {
+    public WebElement getUnwrappedElement() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+        Waiter.sleep(50);
         if (parentLocator != null) {
             WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(parentLocator));
             return parent.findElement(locator);
@@ -112,10 +113,9 @@ public class SmartWebElement {
 
     private void retryOnStale(VoidConsumerWithException action) {
         int attempts = numberOfAttempts;
-        Waiter.sleep(50);
         while (attempts-- > 0) {
             try {
-                action.accept(getWrappedElement());
+                action.accept(getUnwrappedElement());
                 return;
             } catch (StaleElementReferenceException e) {
                 // retry
@@ -124,11 +124,16 @@ public class SmartWebElement {
         throw new StaleElementReferenceException("Element still stale after multiple attempts: " + locator);
     }
 
+    @FunctionalInterface
+    private interface VoidConsumerWithException {
+        void accept(WebElement el);
+    }
+
     private <T> T retryOnStale(SupplierWithException<T> action) {
         int attempts = numberOfAttempts;
         while (attempts-- > 0) {
             try {
-                return action.get(getWrappedElement());
+                return action.get(getUnwrappedElement());
             } catch (StaleElementReferenceException e) {
                 // retry
             }
@@ -139,10 +144,5 @@ public class SmartWebElement {
     @FunctionalInterface
     private interface SupplierWithException<T> {
         T get(WebElement el);
-    }
-
-    @FunctionalInterface
-    private interface VoidConsumerWithException {
-        void accept(WebElement el);
     }
 }

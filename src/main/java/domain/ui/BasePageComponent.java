@@ -4,10 +4,7 @@ import configuration.ProjectConfiguration;
 import configuration.PropertyNameSpace;
 import configuration.core.SmartElementFactory;
 import lombok.Getter;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,12 +12,13 @@ import java.time.Duration;
 
 public abstract class BasePageComponent {
 
+    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
     @Getter
     private By rootLocatorBy;
     @Getter
     private WebElement rootElement;
+    @Getter
     private WebDriver driver;
-    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
 
     // Protected constructor to be called by subclasses
     protected BasePageComponent() {}
@@ -42,22 +40,19 @@ public abstract class BasePageComponent {
     }
 
     // Check if component is displayed
-    public boolean isDisplayed() {
+    public boolean isPresent() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         try {
             if (rootElement != null) {
+                wait.until(ExpectedConditions.visibilityOf(rootElement));
                 return rootElement.isDisplayed();
             } else if (rootLocatorBy != null) {
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
-                return wait.until(ExpectedConditions.presenceOfElementLocated(rootLocatorBy)).isDisplayed();
+                WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(rootLocatorBy));
+                return element.isDisplayed();
             }
-            return false; // If nor rootElement neither rootLocatorBy not set
-        } catch (NoSuchElementException e) {
+            return false;
+        } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
             return false;
         }
-    }
-
-    // Allows getting the driver in component subclasses
-    protected WebDriver getDriver() {
-        return driver;
     }
 }

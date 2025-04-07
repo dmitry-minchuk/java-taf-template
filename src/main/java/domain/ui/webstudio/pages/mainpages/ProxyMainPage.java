@@ -8,6 +8,7 @@ import domain.ui.webstudio.components.TabSwitcherComponent;
 import org.openqa.selenium.support.FindBy;
 
 public abstract class ProxyMainPage extends BasePage {
+
     @FindBy(css = "#rb > span")
     public CurrentUserComponent currentUserComponent;
 
