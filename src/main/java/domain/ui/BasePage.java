@@ -31,6 +31,6 @@ public abstract class BasePage {
 
     public boolean isPageOpened() {
         String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, () -> AppContainerPool.get().getAppHostUrl() + urlAppender);
-        return DriverPool.getDriver().getCurrentUrl().equalsIgnoreCase(urlExpected);
+        return Objects.requireNonNull(DriverPool.getDriver().getCurrentUrl()).equalsIgnoreCase(urlExpected);
     }
 }
