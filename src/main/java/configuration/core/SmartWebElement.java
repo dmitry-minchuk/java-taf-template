@@ -2,7 +2,11 @@ package configuration.core;
 
 import configuration.ProjectConfiguration;
 import configuration.PropertyNameSpace;
-import org.openqa.selenium.*;
+import helpers.utils.Waiter;
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -12,33 +16,25 @@ public class SmartWebElement {
 
     private final WebDriver driver;
     private final By locator;
-    private final int timeoutInSeconds;
+    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
     private final int numberOfAttempts = 3;
     private WebElement parentElement;
     private By parentLocator;
 
-
     public SmartWebElement(WebDriver driver, By locator) {
-        this(driver, locator, Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)));
-    }
-
-    public SmartWebElement(WebDriver driver, By locator, int timeoutInSeconds) {
         this.driver = driver;
         this.locator = locator;
-        this.timeoutInSeconds = timeoutInSeconds;
     }
 
-    public SmartWebElement(WebDriver driver, By locator, int timeoutInSeconds, By parentLocator) {
+    public SmartWebElement(WebDriver driver, By locator, By parentLocator) {
         this.driver = driver;
         this.locator = locator;
-        this.timeoutInSeconds = timeoutInSeconds;
         this.parentLocator = parentLocator;
     }
 
-    public SmartWebElement(WebDriver driver, By locator, int timeoutInSeconds, WebElement parentElement, By parentLocator) {
+    public SmartWebElement(WebDriver driver, By locator, WebElement parentElement, By parentLocator) {
         this.driver = driver;
         this.locator = locator;
-        this.timeoutInSeconds = timeoutInSeconds;
         this.parentElement = parentElement;
         this.parentLocator = parentLocator;
     }
@@ -84,7 +80,7 @@ public class SmartWebElement {
     public SmartWebElement format(Object... args) {
         String formattedLocatorString = formatByToString(this.locator, args);
         By formattedBy = createByFromLocatorString(formattedLocatorString);
-        return new SmartWebElement(this.driver, formattedBy, this.timeoutInSeconds, this.parentElement, this.parentLocator);
+        return new SmartWebElement(this.driver, formattedBy, this.parentElement, this.parentLocator);
     }
 
     private String formatByToString(By by, Object... args) {
@@ -111,12 +107,12 @@ public class SmartWebElement {
         } else if (locatorString.startsWith("partial link=")) {
             return By.partialLinkText(locatorString.substring(13));
         }
-        // Add more checks for other By types if needed
         return By.xpath(locatorString); // Default to XPath if type is not clearly identified
     }
 
     private void retryOnStale(VoidConsumerWithException action) {
         int attempts = numberOfAttempts;
+        Waiter.sleep(50);
         while (attempts-- > 0) {
             try {
                 action.accept(getWrappedElement());

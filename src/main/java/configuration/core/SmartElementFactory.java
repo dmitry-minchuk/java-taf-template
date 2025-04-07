@@ -1,7 +1,5 @@
 package configuration.core;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
 import domain.ui.BasePageComponent;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindAll;
@@ -39,7 +37,7 @@ public class SmartElementFactory {
                     if (field.getType().equals(SmartWebElement.class)) {
                         By locator = buildBy(field);
                         By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
-                        field.set(page, new SmartWebElement(driver, locator, Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)), root));
+                        field.set(page, new SmartWebElement(driver, locator, root));
                     } else if (isListOfSmartElements(field)) {
                         By locator = buildBy(field);
                         By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
@@ -92,7 +90,8 @@ public class SmartElementFactory {
                 : driver.findElements(locator);
         List<SmartWebElement> smartList = new ArrayList<>();
         for (int i = 0; i < elements.size(); i++) {
-            smartList.add(new SmartWebElement(driver, new IndexedBy(locator, i), Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)), driver.findElements(parentLocator).get(0), null));
+            assert parentLocator != null;
+            smartList.add(new SmartWebElement(driver, new IndexedBy(locator, i), driver.findElements(parentLocator).getFirst(), null));
         }
         return smartList;
     }
