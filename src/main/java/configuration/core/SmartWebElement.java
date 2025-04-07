@@ -28,6 +28,13 @@ public class SmartWebElement {
         this.timeoutInSeconds = timeoutInSeconds;
     }
 
+    public SmartWebElement(WebDriver driver, By locator, int timeoutInSeconds, By parentLocator) {
+        this.driver = driver;
+        this.locator = locator;
+        this.timeoutInSeconds = timeoutInSeconds;
+        this.parentLocator = parentLocator;
+    }
+
     public SmartWebElement(WebDriver driver, By locator, int timeoutInSeconds, WebElement parentElement, By parentLocator) {
         this.driver = driver;
         this.locator = locator;
@@ -38,9 +45,7 @@ public class SmartWebElement {
 
     public WebElement getWrappedElement() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
-        if (parentElement != null) {
-            return wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(parentElement, locator));
-        } else if (parentLocator != null) {
+        if (parentLocator != null) {
             WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(parentLocator));
             return parent.findElement(locator);
         } else {
