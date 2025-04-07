@@ -1,11 +1,8 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.SmartWebElement;
-import configuration.driver.DriverPool;
 import domain.ui.BasePageComponent;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
 
 public class CurrentUserComponent extends BasePageComponent {
@@ -24,6 +21,7 @@ public class CurrentUserComponent extends BasePageComponent {
         getDriver().switchTo().alert().accept();
     }
 
+    @Getter
     public static enum MenuElements {
         USER_DETAILS("User details"),
         USER_SETTINGS("User settings"),
@@ -34,10 +32,6 @@ public class CurrentUserComponent extends BasePageComponent {
 
         MenuElements(String value) {
             this.value = value;
-        }
-
-        public String getValue() {
-            return value;
         }
     }
 }

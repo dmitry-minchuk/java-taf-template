@@ -3,7 +3,6 @@ package domain.ui.webstudio.pages.wizard;
 import configuration.core.SmartWebElement;
 import domain.ui.BasePage;
 import domain.ui.webstudio.pages.LoginPage;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class InstallWizardStep3Page extends BasePage {
