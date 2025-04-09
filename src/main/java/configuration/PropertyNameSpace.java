@@ -7,7 +7,10 @@ public enum PropertyNameSpace {
     WEB_ELEMENT_EXPLICIT_WAIT("web_element_explicit_wait"),
     DEFAULT_APP_PORT("default_app_port"),
     DOCKER_IMAGE_NAME("docker_image_name"),
-    DEPLOYED_APP_PATH("deployed_app_path");
+    DEPLOYED_APP_PATH("deployed_app_path"),
+    GIT_URL_RULESERVICE("git.url.ruleservice"),
+    GIT_LOGIN_RULESERVICE("git.login.ruleservice"),
+    GIT_TOKEN_RULESERVICE("git.token.ruleservice");
 
     private String value;
 
