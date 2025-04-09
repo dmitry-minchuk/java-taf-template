@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserService {
@@ -15,17 +16,21 @@ public class UserService {
     private static final String SPLITTER = "::";
     private static final String USER_NAME_DATA_PATTERN = "%s.login";
     private static final String USER_PASSWORD_DATA_PATTERN = "%s.password";
-    private static final List<UserData> userList = new ArrayList<>();
+    private static List<UserData> userList = new ArrayList<>();
 
     public static UserData getUser(User user) {
         if (userList.isEmpty()) {
             initUserList();
+            userList = Collections.unmodifiableList(userList); // Multithreading support
         }
         return userList.stream().filter(u -> u.getLogin().equals(user.getValue())).findFirst().orElseThrow(
                 () -> new RuntimeException("No such user in the pool: " + user.getValue()));
     }
 
-    private static void initUserList() {
+    private static synchronized void initUserList() { // Multithreading support
+        if (!userList.isEmpty()) {
+            return;
+        }
         String userPool = ProjectConfiguration.getProperty(USER_POOL);
         LOGGER.debug("User pool initialization. User: " + userPool);
         if (userPool.isEmpty()) {

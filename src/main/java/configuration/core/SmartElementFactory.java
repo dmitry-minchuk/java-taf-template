@@ -23,7 +23,7 @@ public class SmartElementFactory {
         List<Class<?>> classHierarchy = new ArrayList<>();
 
         while (currentClass != null && currentClass != Object.class) {
-            classHierarchy.add(0, currentClass);
+            classHierarchy.addFirst(currentClass);
             currentClass = currentClass.getSuperclass();
         }
 
