@@ -1,7 +1,7 @@
 package configuration.driver;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import configuration.listeners.DriverEventLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

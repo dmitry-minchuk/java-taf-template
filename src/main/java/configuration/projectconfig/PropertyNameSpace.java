@@ -1,4 +1,4 @@
-package configuration;
+package configuration.projectconfig;
 
 public enum PropertyNameSpace {
     BROWSER("browser"),

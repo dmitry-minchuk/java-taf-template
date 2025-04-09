@@ -1,7 +1,7 @@
 package configuration.core;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.Waiter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;

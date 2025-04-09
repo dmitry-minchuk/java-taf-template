@@ -1,7 +1,7 @@
 package configuration.appcontainer;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 
 import java.util.HashMap;
 import java.util.Map;
