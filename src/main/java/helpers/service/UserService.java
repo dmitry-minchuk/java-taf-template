@@ -1,6 +1,6 @@
 package helpers.service;
 
-import configuration.ProjectConfiguration;
+import configuration.projectconfig.ProjectConfiguration;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import org.apache.logging.log4j.LogManager;

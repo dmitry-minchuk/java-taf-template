@@ -1,7 +1,7 @@
 package domain.ui;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import configuration.core.SmartElementFactory;
 import lombok.Getter;
 import org.openqa.selenium.*;

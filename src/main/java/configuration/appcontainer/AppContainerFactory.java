@@ -1,7 +1,7 @@
 package configuration.appcontainer;
 
-import configuration.ProjectConfiguration;
-import configuration.PropertyNameSpace;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
@@ -13,8 +13,6 @@ import org.testcontainers.utility.MountableFile;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
-
-import static java.util.Collections.singletonList;
 
 public class AppContainerFactory {
     protected static final Logger LOGGER = LogManager.getLogger(AppContainerFactory.class);
