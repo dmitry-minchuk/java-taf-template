@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,14 +27,10 @@ public class FileUtil {
             String relativePath = getRelativePath(matchingFiles, absoluteHostResourcesPath);
             return CONTAINER_RESOURCE_PATH + "/" + relativePath.replace(File.separator, "/");
         } else {
-            try {
-                throw new FileNotFoundException(String.format("File '%s' not found here %s or found more than one: %s",
-                        fileName,
-                        HOST_RESOURCE_PATH,
-                        PrintUtil.prettyPrintObjectCollection.apply(matchingFiles)));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            throw new RuntimeException(String.format("File '%s' not found here %s or found more than one: %s",
+                    fileName,
+                    HOST_RESOURCE_PATH,
+                    PrintUtil.prettyPrintObjectCollection.apply(matchingFiles)));
         }
     }
 
