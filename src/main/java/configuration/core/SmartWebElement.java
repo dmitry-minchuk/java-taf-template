@@ -2,7 +2,7 @@ package configuration.core;
 
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
-import helpers.utils.Waiter;
+import helpers.utils.WaitUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -41,7 +41,7 @@ public class SmartWebElement {
 
     public WebElement getUnwrappedElement() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
-        Waiter.sleep(50);
+        WaitUtil.sleep(50);
         if (parentLocator != null) {
             WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(parentLocator));
             return parent.findElement(locator);

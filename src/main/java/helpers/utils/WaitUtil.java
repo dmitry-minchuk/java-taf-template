@@ -9,8 +9,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class Waiter {
-    protected final static Logger LOGGER = LogManager.getLogger(Waiter.class);
+public class WaitUtil {
+    protected final static Logger LOGGER = LogManager.getLogger(WaitUtil.class);
     private static final int WAIT_POLL_INTERVAL_MS = 200;
 
     public static boolean waitUntil(WebDriver driver, ExpectedCondition<?> condition, long timeoutSec) {
