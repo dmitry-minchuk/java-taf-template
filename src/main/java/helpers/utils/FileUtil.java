@@ -43,11 +43,9 @@ public class FileUtil {
         String localAbsolutePath = matchingFiles.getFirst().getAbsolutePath();
         String relativePath = "";
         if (localAbsolutePath.startsWith(absoluteHostResourcesPath)) {
-            // Обрезаем HOST_RESOURCES_FOLDER (включая сам этот путь)
             relativePath = localAbsolutePath.substring(absoluteHostResourcesPath.length());
-            // Проверяем, не является ли relativePath пустой строкой (если запрошен сам каталог resources)
             if (!relativePath.isEmpty() && relativePath.startsWith(File.separator)) {
-                relativePath = relativePath.substring(File.separator.length()); // Удаляем начальный разделитель
+                relativePath = relativePath.substring(File.separator.length());
             }
         }
         return relativePath;
