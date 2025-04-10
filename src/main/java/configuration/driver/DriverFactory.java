@@ -52,6 +52,7 @@ public class DriverFactory {
         BrowserWebDriverContainer<?> container = new BrowserWebDriverContainer<>(dockerImageName);
         container.withCapabilities(addCommonBrowserOptions(options));
         container.withNetwork(network);
+        container.withEnv("SE_VNC_NO_PASSWORD", "1");
         container.addExposedPort(VNC_PORT);
 
         container.withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
