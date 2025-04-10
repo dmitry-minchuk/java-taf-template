@@ -16,19 +16,19 @@ public class TabSwitcherComponent extends BasePageComponent {
 
     public TabSwitcherComponent() {}
 
-    public BasePage selectTab(TabName tabName) {
+    @SuppressWarnings("unchecked")
+    public <T extends BasePage> T selectTab(TabName tabName) {
         tabElement.format(tabName.getValue()).click();
 
         return switch (tabName) {
-            case EDITOR -> new EditorPage();
-            case REPOSITORY -> new RepositoryPage();
-            case ADMIN -> new AdminPage();
-            default -> throw new IllegalArgumentException("Unknown TabName: " + tabName);
+            case EDITOR -> (T) new EditorPage();
+            case REPOSITORY -> (T) new RepositoryPage();
+            case ADMIN -> (T) new AdminPage();
         };
     }
 
     @Getter
-    public static enum TabName {
+    public enum TabName {
         EDITOR("EDITOR"),
         REPOSITORY("REPOSITORY"),
         ADMIN("ADMIN");

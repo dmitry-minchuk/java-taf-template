@@ -22,7 +22,7 @@ public class CurrentUserComponent extends BasePageComponent {
     }
 
     @Getter
-    public static enum MenuElements {
+    public enum MenuElements {
         USER_DETAILS("User details"),
         USER_SETTINGS("User settings"),
         HELP("Help"),

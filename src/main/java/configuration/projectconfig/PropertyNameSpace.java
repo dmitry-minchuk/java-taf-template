@@ -8,6 +8,8 @@ public enum PropertyNameSpace {
     DEFAULT_APP_PORT("default_app_port"),
     DOCKER_IMAGE_NAME("docker_image_name"),
     DEPLOYED_APP_PATH("deployed_app_path"),
+    HOST_RESOURCE_PATH("hostResourcePath"),
+    CONTAINER_RESOURCE_PATH("containerResourcePath"),
     GIT_URL_RULESERVICE("git.url.ruleservice"),
     GIT_LOGIN_RULESERVICE("git.login.ruleservice"),
     GIT_TOKEN_RULESERVICE("git.token.ruleservice");

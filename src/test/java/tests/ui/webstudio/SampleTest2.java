@@ -13,6 +13,6 @@ public class SampleTest2 extends BaseTest {
     @Test
     public void test() {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        editorPage.currentUserComponent.openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
+        editorPage.getCurrentUserComponent().openDropdownMenuAndSelect(CurrentUserComponent.MenuElements.SIGN_OUT);
     }
 }

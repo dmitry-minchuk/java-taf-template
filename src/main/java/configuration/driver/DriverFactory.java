@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
@@ -21,6 +22,8 @@ import java.util.function.Function;
 
 public class DriverFactory {
     protected static final Logger LOGGER = LogManager.getLogger(DriverFactory.class);
+    private final static String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
+    private final static String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
     private static final Integer VNC_PORT = 7900;
 
     private static final Map<String, Function<Network, ContainerizedDriver>> DRIVER_MAP = Map.of(
@@ -50,6 +53,8 @@ public class DriverFactory {
         container.withCapabilities(addCommonBrowserOptions(options));
         container.withNetwork(network);
         container.addExposedPort(VNC_PORT);
+
+        container.withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
 
         container.start();
         LOGGER.info("Localhost accessible URL for selenium VNC: http://localhost:{}", container.getMappedPort(VNC_PORT));
