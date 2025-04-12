@@ -1,7 +1,7 @@
 # UI Automation Framework Rules
 
 * **Pages:**
-    * Must have a public constructor accepting a `WebDriver` instance.
+    * Must have a public constructor with `super()` reference to parent constructor in BasePage.
     * Elements and Components within Pages are initialized using `@FindBy` annotations within the Page class.
 
 * **Components (`BasePageComponent` descendants):**

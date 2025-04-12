@@ -18,6 +18,7 @@
         <apache.commons.version>2.18.0</apache.commons.version>
         <lombok.version>1.18.30</lombok.version>
         <testcontainers.version>1.20.6</testcontainers.version>
+        <javafaker.version>1.0.2</javafaker.version>
 
         <maven.compiler.plugin>3.14.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.5.3</maven.surefire.plugin>
@@ -90,6 +91,11 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>selenium</artifactId>
             <version>${testcontainers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>${javafaker.version}</version>
         </dependency>
     </dependencies>
 
