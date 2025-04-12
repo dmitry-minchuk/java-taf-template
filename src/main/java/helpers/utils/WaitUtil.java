@@ -15,17 +15,15 @@ public class WaitUtil {
 
     public static boolean waitUntil(WebDriver driver, ExpectedCondition<?> condition, long timeoutSec) {
         boolean result;
-        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSec), Duration.ofMillis(WAIT_POLL_INTERVAL_MS)).ignoring(WebDriverException.class)
-                .ignoring(NoSuchSessionException.class);
+        sleep(100);
+        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSec), Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
+                .ignoring(Exception.class);
         try {
             wait.until(condition);
             result = true;
-            LOGGER.debug("waitUntil: finished true...");
-        } catch (NoSuchElementException | TimeoutException e) {
-            LOGGER.debug("waitUntil: NoSuchElementException | TimeoutException e..." + condition.toString());
-            result = false;
+            LOGGER.debug("WaitUntil: finished successfully");
         } catch (Exception e) {
-            LOGGER.error("waitUntil: " + condition.toString(), e);
+            LOGGER.error("WaitUntil: {}", condition.toString(), e);
             result = false;
         }
         return result;

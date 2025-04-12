@@ -1,6 +1,7 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.SmartWebElement;
+import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.CreateNewProjectComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import helpers.utils.StringUtil;
@@ -17,6 +18,9 @@ public class RepositoryPage extends ProxyMainPage {
     @FindBy(xpath = "//div[@id='modalNewProject_container']")
     private CreateNewProjectComponent createNewProjectComponent;
 
+    @FindBy(xpath = "//div[@id='modalConfigureCommitInfo_container']")
+    private ConfigureCommitInfoComponent configureCommitInfoComponent;
+
     public RepositoryPage() {
         super("/faces/pages/modules/repository/index.xhtml");
     }
@@ -30,6 +34,8 @@ public class RepositoryPage extends ProxyMainPage {
         createProjectLink.click();
         ExcelFilesComponent excelFilesComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.EXCEL_FILES);
         excelFilesComponent.createProjectFromExcelFile(fileName, projectName);
+        if(configureCommitInfoComponent.isPresent())
+            configureCommitInfoComponent.fillCommitInfoWithRandomData();
         refreshBtn.click();
     }
 

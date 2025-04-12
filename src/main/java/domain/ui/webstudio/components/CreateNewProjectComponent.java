@@ -8,7 +8,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class CreateNewProjectComponent extends BasePageComponent {
 
-    @FindBy(xpath = ".//div[@id='modalNewProject_content']//span[contains(text(), '%s')]")
+    @FindBy(xpath = ".//span[@class='rf-tab-lbl' and contains(text(), '%s')]")
     private SmartWebElement tabElement;
 
     @FindBy(xpath = ".//form[@name='createProjectFormTempl']")

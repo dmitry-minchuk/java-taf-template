@@ -3,21 +3,19 @@ package configuration.core;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.WaitUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 public class SmartWebElement {
 
+    protected final static Logger LOGGER = LogManager.getLogger(SmartWebElement.class);
     private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
     private final WebDriver driver;
     private final By locator;
-    private final int numberOfAttempts = 3;
     private WebElement parentElement;
     private By parentLocator;
 
@@ -40,43 +38,42 @@ public class SmartWebElement {
     }
 
     public WebElement getUnwrappedElement() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
-        WaitUtil.sleep(50);
         if (parentLocator != null) {
-            WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(parentLocator));
+            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(parentLocator), timeoutInSeconds);
+            WebElement parent = driver.findElement(parentLocator);
             return parent.findElement(locator);
         } else {
-            return wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(locator), timeoutInSeconds);
+            return driver.findElement(locator);
         }
     }
 
     public void click() {
-        retryOnStale(WebElement::click);
+        getUnwrappedElement().click();
     }
 
     public void sendKeys(CharSequence... keysToSend) {
-        retryOnStale(el -> {
-            el.clear();
-            el.sendKeys(keysToSend);
-            return null;
-        });
+        getUnwrappedElement().clear();
+        getUnwrappedElement().sendKeys(keysToSend);
     }
 
     public String getText() {
-        return retryOnStale(WebElement::getText);
+        return getUnwrappedElement().getText();
     }
 
     public boolean isDisplayed() {
-        return retryOnStale(WebElement::isDisplayed);
+        return getUnwrappedElement().isDisplayed();
     }
 
     public String getAttribute(String name) {
-        return retryOnStale((SupplierWithException<String>) el -> el.getDomAttribute(name));
+        return getUnwrappedElement().getDomAttribute(name);
     }
 
     public void clear() {
-        retryOnStale(WebElement::getText);
+        getUnwrappedElement().getText();
     }
+
+    // SmartWebElement.format(locator) logic here:
 
     public SmartWebElement format(Object... args) {
         String formattedLocatorString = formatByToString(this.locator, args);
@@ -109,40 +106,5 @@ public class SmartWebElement {
             return By.partialLinkText(locatorString.substring(13));
         }
         return By.xpath(locatorString); // Default to XPath if type is not clearly identified
-    }
-
-    private void retryOnStale(VoidConsumerWithException action) {
-        int attempts = numberOfAttempts;
-        while (attempts-- > 0) {
-            try {
-                action.accept(getUnwrappedElement());
-                return;
-            } catch (StaleElementReferenceException e) {
-                // retry
-            }
-        }
-        throw new StaleElementReferenceException("Element still stale after multiple attempts: " + locator);
-    }
-
-    @FunctionalInterface
-    private interface VoidConsumerWithException {
-        void accept(WebElement el);
-    }
-
-    private <T> T retryOnStale(SupplierWithException<T> action) {
-        int attempts = numberOfAttempts;
-        while (attempts-- > 0) {
-            try {
-                return action.get(getUnwrappedElement());
-            } catch (StaleElementReferenceException e) {
-                // retry
-            }
-        }
-        throw new StaleElementReferenceException("Element still stale after multiple attempts: " + locator);
-    }
-
-    @FunctionalInterface
-    private interface SupplierWithException<T> {
-        T get(WebElement el);
     }
 }

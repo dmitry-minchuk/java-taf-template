@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SmartElementFactory {
+public class SmartPageFactory {
 
     public static void initElements(WebDriver driver, Object page) {
         Class<?> currentClass = page.getClass();
@@ -105,19 +105,18 @@ public class SmartElementFactory {
         List<WebElement> elements = (parentLocator != null)
                 ? driver.findElements(parentLocator).stream().flatMap(parent -> parent.findElements(listLocator).stream()).toList()
                 : driver.findElements(listLocator);
-        List<T> componentList = new ArrayList<>();
 
+        List<T> componentList = new ArrayList<>();
         Type genericType = field.getGenericType();
         ParameterizedType pt = (ParameterizedType) genericType;
         Class<T> componentType = (Class<T>) pt.getActualTypeArguments()[0];
 
-        for (WebElement element : elements) {
+        for (int i = 0; i < elements.size(); i++) {
             T component = componentType.getDeclaredConstructor().newInstance();
-            component.init(driver, element);
+            component.init(driver, new IndexedBy(listLocator, i)); // Используем IndexedBy
             componentList.add(component);
             initElements(driver, component);
         }
-
         return componentList;
     }
 
@@ -126,10 +125,10 @@ public class SmartElementFactory {
             return buildByFromFindBy(field.getAnnotation(FindBy.class));
         } else if (field.isAnnotationPresent(FindBys.class)) {
             FindBy[] findBys = field.getAnnotation(FindBys.class).value();
-            return new ByChained(Arrays.stream(findBys).map(SmartElementFactory::buildByFromFindBy).toArray(By[]::new));
+            return new ByChained(Arrays.stream(findBys).map(SmartPageFactory::buildByFromFindBy).toArray(By[]::new));
         } else if (field.isAnnotationPresent(FindAll.class)) {
             FindBy[] findBys = field.getAnnotation(FindAll.class).value();
-            return new ByAll(Arrays.stream(findBys).map(SmartElementFactory::buildByFromFindBy).toArray(By[]::new));
+            return new ByAll(Arrays.stream(findBys).map(SmartPageFactory::buildByFromFindBy).toArray(By[]::new));
         }
         throw new IllegalArgumentException("No valid locator annotations on field: " + field.getName());
     }

@@ -1,7 +1,7 @@
 package domain.ui;
 
 import configuration.appcontainer.AppContainerPool;
-import configuration.core.SmartElementFactory;
+import configuration.core.SmartPageFactory;
 import configuration.driver.DriverPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,13 +15,13 @@ public abstract class BasePage {
 
     public BasePage() {
         LOGGER.info(this.getClass().getName() + " was opened.");
-        SmartElementFactory.initElements(DriverPool.getDriver(), this);
+        SmartPageFactory.initElements(DriverPool.getDriver(), this);
     }
 
     public BasePage(String urlAppender) {
         this.urlAppender = urlAppender;
         LOGGER.info(this.getClass().getName() + " was opened.");
-        SmartElementFactory.initElements(DriverPool.getDriver(), this);
+        SmartPageFactory.initElements(DriverPool.getDriver(), this);
     }
 
     public void open() {

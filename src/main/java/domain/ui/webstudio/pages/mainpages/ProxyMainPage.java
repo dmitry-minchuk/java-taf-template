@@ -1,7 +1,5 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import configuration.core.SmartElementFactory;
-import configuration.driver.DriverPool;
 import domain.ui.BasePage;
 import domain.ui.webstudio.components.CurrentUserComponent;
 import domain.ui.webstudio.components.TabSwitcherComponent;
@@ -19,7 +17,6 @@ public abstract class ProxyMainPage extends BasePage {
 
     public ProxyMainPage(String urlAppender) {
         super(urlAppender);
-        SmartElementFactory.initElements(DriverPool.getDriver(), this);
     }
 
 }
