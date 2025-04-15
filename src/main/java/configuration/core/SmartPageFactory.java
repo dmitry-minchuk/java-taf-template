@@ -3,21 +3,17 @@ package configuration.core;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.BasePageComponent;
-import helpers.utils.WaitUtil;
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.pagefactory.ByAll;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.*;
+import java.lang.reflect.Proxy;
+import java.util.*;
 
 import static helpers.utils.WaitUtil.waitForElementsList;
 
@@ -46,20 +42,15 @@ public class SmartPageFactory {
                         By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
                         field.set(page, new SmartWebElement(driver, locator, root));
                     } else if (isListOfSmartElements(field)) {
-                        By locator = buildBy(field);
-                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
-                        field.set(page, createSmartElementList(driver, locator, root));
+                        field.set(page, createSmartElementListProxy(driver, field, page));
                     } else if (BasePageComponent.class.isAssignableFrom(field.getType())) {
                         By componentLocator = buildBy(field);
                         BasePageComponent component = (BasePageComponent) field.getType().getDeclaredConstructor().newInstance();
                         component.init(driver, componentLocator);
                         field.set(page, component);
-                        // Recursively initialize elements within the component
                         initElements(driver, component);
                     } else if (isListOfPageComponents(field)) {
-                        By listLocator = buildBy(field);
-                        By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
-                        field.set(page, createPageComponentList(driver, field, root, listLocator));
+                        field.set(page, createPageComponentListProxy(driver, field, page));
                     }
                 } catch (Exception e) {
                     throw new RuntimeException("Can't set field: " + field.getName(), e);
@@ -126,6 +117,51 @@ public class SmartPageFactory {
             initElements(driver, component);
         }
         return componentList;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<SmartWebElement> createSmartElementListProxy(WebDriver driver, Field field, Object page) {
+        return (List<SmartWebElement>) Proxy.newProxyInstance(
+                field.getType().getClassLoader(),
+                new Class[]{field.getType()},
+                new ListProxyHandler(driver, field, page)
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<BasePageComponent> createPageComponentListProxy(WebDriver driver, Field field, Object page) {
+        return (List<BasePageComponent>) Proxy.newProxyInstance(
+                field.getType().getClassLoader(),
+                new Class[]{field.getType()},
+                new ListProxyHandler(driver, field, page)
+        );
+    }
+
+    private static class ListProxyHandler implements InvocationHandler {
+        private final WebDriver driver;
+        private final Field field;
+        private final Object page;
+
+        public ListProxyHandler(WebDriver driver, Field field, Object page) {
+            this.driver = driver;
+            this.field = field;
+            this.page = page;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            By locator = buildBy(field);
+            By root = (page instanceof BasePageComponent) ? ((BasePageComponent) page).getRootLocatorBy() : null;
+
+            if (isListOfSmartElements(field)) {
+                List<SmartWebElement> list = createSmartElementList(driver, locator, root);
+                return method.invoke(list, args);
+            } else if (isListOfPageComponents(field)) {
+                List<BasePageComponent> list = createPageComponentList(driver, field, root, locator);
+                return method.invoke(list, args);
+            }
+            return null;
+        }
     }
 
     private static By buildBy(Field field) {
