@@ -1,6 +1,9 @@
 package configuration.core;
 
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.BasePageComponent;
+import helpers.utils.WaitUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
@@ -16,7 +19,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static helpers.utils.WaitUtil.waitForElementsList;
+
 public class SmartPageFactory {
+
+    private final static int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
 
     public static void initElements(WebDriver driver, Object page) {
         Class<?> currentClass = page.getClass();
@@ -86,8 +93,9 @@ public class SmartPageFactory {
 
     private static List<SmartWebElement> createSmartElementList(WebDriver driver, By locator, By parentLocator) {
         List<WebElement> elements = (parentLocator != null)
-                ? driver.findElements(parentLocator).stream().flatMap(parent -> parent.findElements(locator).stream()).toList()
-                : driver.findElements(locator);
+                ? waitForElementsList(driver, parentLocator, timeoutInSeconds).stream().flatMap(parent -> waitForElementsList(parent, locator, timeoutInSeconds).stream()).toList()
+                : waitForElementsList(driver, locator, timeoutInSeconds);
+
         List<SmartWebElement> smartList = new ArrayList<>();
         for (int i = 0; i < elements.size(); i++) {
             assert parentLocator != null;
@@ -103,8 +111,8 @@ public class SmartPageFactory {
     @SuppressWarnings("unchecked")
     private static <T extends BasePageComponent> List<T> createPageComponentList(WebDriver driver, Field field, By parentLocator, By listLocator) throws Exception {
         List<WebElement> elements = (parentLocator != null)
-                ? driver.findElements(parentLocator).stream().flatMap(parent -> parent.findElements(listLocator).stream()).toList()
-                : driver.findElements(listLocator);
+                ? waitForElementsList(driver, parentLocator, timeoutInSeconds).stream().flatMap(parent -> waitForElementsList(parent, listLocator, timeoutInSeconds).stream()).toList()
+                : waitForElementsList(driver, listLocator, timeoutInSeconds);
 
         List<T> componentList = new ArrayList<>();
         Type genericType = field.getGenericType();
@@ -113,7 +121,7 @@ public class SmartPageFactory {
 
         for (int i = 0; i < elements.size(); i++) {
             T component = componentType.getDeclaredConstructor().newInstance();
-            component.init(driver, new IndexedBy(listLocator, i)); // Используем IndexedBy
+            component.init(driver, new IndexedBy(listLocator, i));
             componentList.add(component);
             initElements(driver, component);
         }
