@@ -5,6 +5,7 @@ import configuration.annotations.JiraTicket;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -23,6 +24,10 @@ public class TestAddProperty extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         String projectName = StringUtil.generateUniqueName("project");
         repositoryPage.createProjectFromExcelFile(projectName, "StudioIssues_TestAddProperty.xlsx");
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getLeftProjectModuleSeleclorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
+        editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_CATEGORY);
+        editorPage.getLeftRulesTreeComponent().selectItemInTree("Rules", "SimpleCalc");
     }
 
 }

@@ -20,7 +20,9 @@ public abstract class BasePageComponent {
     @Getter
     private WebDriver driver;
 
-    protected BasePageComponent() {}
+    protected BasePageComponent() {
+        SmartPageFactory.initElements(driver, this);
+    }
 
     public void init(WebDriver driver, By rootLocatorBy) {
         this.driver = driver;

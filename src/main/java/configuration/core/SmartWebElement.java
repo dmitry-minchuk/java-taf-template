@@ -39,11 +39,12 @@ public class SmartWebElement {
 
     public WebElement getUnwrappedElement() {
         if (parentLocator != null) {
-            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(parentLocator), timeoutInSeconds);
+            WaitUtil.waitUntil(driver, ExpectedConditions.elementToBeClickable(parentLocator), timeoutInSeconds);
             WebElement parent = driver.findElement(parentLocator);
+            WaitUtil.waitUntil(parent, locator, timeoutInSeconds);
             return parent.findElement(locator);
         } else {
-            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(locator), timeoutInSeconds);
+            WaitUtil.waitUntil(driver, ExpectedConditions.elementToBeClickable(locator), timeoutInSeconds);
             return driver.findElement(locator);
         }
     }
