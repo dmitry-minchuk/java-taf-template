@@ -16,6 +16,7 @@ public class SmartWebElement {
 
     protected final static Logger LOGGER = LogManager.getLogger(SmartWebElement.class);
     private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
+    private final int retryTimeoutBetweenActionAttempts = 1000;
     private final WebDriver driver;
     private final By locator;
     private WebElement parentElement;
@@ -65,7 +66,7 @@ public class SmartWebElement {
             } catch (NoSuchElementException | StaleElementReferenceException e) {
                 LOGGER.warn("Element not found or stale during '{}', retrying... (Attempt {}/{})", actionName, attempts + 1, retryCount, e);
                 attempts++;
-                WaitUtil.sleep(500);
+                WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
             }
         }
         element = getUnwrappedElement();
@@ -86,7 +87,7 @@ public class SmartWebElement {
             } catch (NoSuchElementException | StaleElementReferenceException e) {
                 LOGGER.warn("Element not found or stale during '{}', retrying... (Attempt {}/{})", actionName, attempts + 1, retryCount, e);
                 attempts++;
-                WaitUtil.sleep(500);
+                WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
             }
         }
         element = getUnwrappedElement();
