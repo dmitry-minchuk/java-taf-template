@@ -9,6 +9,9 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 public class SmartWebElement {
 
     protected final static Logger LOGGER = LogManager.getLogger(SmartWebElement.class);
@@ -36,6 +39,7 @@ public class SmartWebElement {
         this.parentLocator = parentLocator;
     }
 
+    // Basic logic for element lookup
     public WebElement getUnwrappedElement() {
         if (parentLocator != null) {
             WaitUtil.waitUntil(driver, ExpectedConditions.elementToBeClickable(parentLocator), timeoutInSeconds);
@@ -48,59 +52,85 @@ public class SmartWebElement {
         }
     }
 
-    // I need this because in getUnwrappedElement() there is a WebElement parent between two waiters which can throw Stale exception
-    public WebElement getUnwrappedElementWithRetry() {
-        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds); // SmartPageFactory and BasePage are not correct places for this
+    // Retry logic for applying several attempts to do something with the element
+    protected <T> T performWithRetry(Function<WebElement, T> action, String actionName) {
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
+        WebElement element = null;
         while (attempts < retryCount) {
             try {
-                return getUnwrappedElement();
+                element = getUnwrappedElement();
+                return action.apply(element);
             } catch (NoSuchElementException | StaleElementReferenceException e) {
-                LOGGER.warn("Element not found or stale, retrying... (Attempt {}/{})", attempts + 1, retryCount, e);
+                LOGGER.warn("Element not found or stale during '{}', retrying... (Attempt {}/{})", actionName, attempts + 1, retryCount, e);
                 attempts++;
                 WaitUtil.sleep(500);
             }
         }
-        return getUnwrappedElement();
+        element = getUnwrappedElement();
+        return action.apply(element);
     }
 
+    // Retry logic for applying several attempts to do something with the element
+    protected void performWithRetry(Consumer<WebElement> action, String actionName) {
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
+        int attempts = 0;
+        int retryCount = 3;
+        WebElement element = null;
+        while (attempts < retryCount) {
+            try {
+                element = getUnwrappedElement();
+                action.accept(element);
+                return;
+            } catch (NoSuchElementException | StaleElementReferenceException e) {
+                LOGGER.warn("Element not found or stale during '{}', retrying... (Attempt {}/{})", actionName, attempts + 1, retryCount, e);
+                attempts++;
+                WaitUtil.sleep(500);
+            }
+        }
+        element = getUnwrappedElement();
+        action.accept(element);
+    }
+
+    // Actions for SmartWebElement
     public void click() {
-        getUnwrappedElementWithRetry().click();
+        performWithRetry(WebElement::click, "click");
     }
 
     public void sendKeys(CharSequence... keysToSend) {
-        getUnwrappedElementWithRetry().clear();
-        getUnwrappedElementWithRetry().sendKeys(keysToSend);
+        performWithRetry(element -> {
+            element.clear();
+            element.sendKeys(keysToSend);
+            return null;
+        }, "sendKeys");
     }
 
     public String getText() {
-        return getUnwrappedElementWithRetry().getText();
+        return performWithRetry(WebElement::getText, "getText");
     }
 
     public boolean isDisplayed() {
-        try {
-            return getUnwrappedElementWithRetry().isDisplayed();
-        } catch (NoSuchElementException | StaleElementReferenceException e) {
-            return false;
-        }
+        return performWithRetry(WebElement::isDisplayed, "isDisplayed");
     }
 
     public String getAttribute(String name) {
-        return getUnwrappedElementWithRetry().getDomAttribute(name);
+        return performWithRetry((Function<WebElement, String>) element -> element.getDomAttribute(name), "getAttribute(" + name + ")");
     }
 
     public void clear() {
-        getUnwrappedElementWithRetry().getText();
+        performWithRetry(WebElement::clear, "clear");
     }
 
     public void selectByVisibleText(String text) {
-        Select select = new Select(getUnwrappedElementWithRetry());
-        select.selectByVisibleText(text);
+        performWithRetry(element -> {
+            Select select = new Select(element);
+            select.selectByVisibleText(text);
+            return null; // Consumer не возвращает значение
+        }, "selectByVisibleText(" + text + ")");
     }
 
     // SmartWebElement.format(locator) logic here:
-
     public SmartWebElement format(Object... args) {
         String formattedLocatorString = formatByToString(this.locator, args);
         By formattedBy = createByFromLocatorString(formattedLocatorString);
