@@ -5,10 +5,9 @@ import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 
 public class SmartWebElement {
 
@@ -49,29 +48,55 @@ public class SmartWebElement {
         }
     }
 
+    // I need this because in getUnwrappedElement() there is a WebElement parent between two waiters which can throw Stale exception
+    public WebElement getUnwrappedElementWithRetry() {
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds); // SmartPageFactory and BasePage are not correct places for this
+        int attempts = 0;
+        int retryCount = 3;
+        while (attempts < retryCount) {
+            try {
+                return getUnwrappedElement();
+            } catch (NoSuchElementException | StaleElementReferenceException e) {
+                LOGGER.warn("Element not found or stale, retrying... (Attempt {}/{})", attempts + 1, retryCount, e);
+                attempts++;
+                WaitUtil.sleep(500);
+            }
+        }
+        return getUnwrappedElement();
+    }
+
     public void click() {
-        getUnwrappedElement().click();
+        getUnwrappedElementWithRetry().click();
     }
 
     public void sendKeys(CharSequence... keysToSend) {
-        getUnwrappedElement().clear();
-        getUnwrappedElement().sendKeys(keysToSend);
+        getUnwrappedElementWithRetry().clear();
+        getUnwrappedElementWithRetry().sendKeys(keysToSend);
     }
 
     public String getText() {
-        return getUnwrappedElement().getText();
+        return getUnwrappedElementWithRetry().getText();
     }
 
     public boolean isDisplayed() {
-        return getUnwrappedElement().isDisplayed();
+        try {
+            return getUnwrappedElementWithRetry().isDisplayed();
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+            return false;
+        }
     }
 
     public String getAttribute(String name) {
-        return getUnwrappedElement().getDomAttribute(name);
+        return getUnwrappedElementWithRetry().getDomAttribute(name);
     }
 
     public void clear() {
-        getUnwrappedElement().getText();
+        getUnwrappedElementWithRetry().getText();
+    }
+
+    public void selectByVisibleText(String text) {
+        Select select = new Select(getUnwrappedElementWithRetry());
+        select.selectByVisibleText(text);
     }
 
     // SmartWebElement.format(locator) logic here:
