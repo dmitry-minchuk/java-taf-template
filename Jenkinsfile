@@ -135,7 +135,7 @@ pipeline {
                                              keepAll               : true,
                                              reportDir             : './target/surefire-reports',
                                              reportFiles           : 'index.html',
-                                             reportName            : 'HTML Report',
+                                             reportName            : "HTML Report ${suite.suiteName}",
                                              reportTitles          : '',
                                              useWrapperFileDirectly: true])
                             }
