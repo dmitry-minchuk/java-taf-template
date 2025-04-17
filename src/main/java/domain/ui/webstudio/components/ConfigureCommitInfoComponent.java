@@ -1,8 +1,8 @@
 package domain.ui.webstudio.components;
 
-import com.github.javafaker.Faker;
 import configuration.core.SmartWebElement;
 import domain.ui.BasePageComponent;
+import net.datafaker.Faker;
 import org.openqa.selenium.support.FindBy;
 
 public class ConfigureCommitInfoComponent extends BasePageComponent {

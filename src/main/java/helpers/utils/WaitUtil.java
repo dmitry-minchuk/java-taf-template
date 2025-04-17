@@ -6,6 +6,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -79,6 +80,19 @@ public class WaitUtil {
             LOGGER.error("WaitUtil: Timeout waiting for elements inside rootElement: {}", locator.toString());
             return Collections.emptyList();
         }
+    }
+
+    public static void waitUntilPageIsReady(WebDriver driver, int timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+        wait.until(wd -> ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
+        ExpectedCondition<Boolean> jQueryInactive = wd -> {
+            try {
+                return (Boolean) ((JavascriptExecutor) wd).executeScript("return typeof jQuery == 'undefined' || jQuery.active == 0");
+            } catch (org.openqa.selenium.JavascriptException e) {
+                return true;
+            }
+        };
+        wait.until(jQueryInactive);
     }
 
     public static void sleep(int timeout) {

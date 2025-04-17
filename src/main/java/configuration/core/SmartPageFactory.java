@@ -4,7 +4,6 @@ import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.BasePageComponent;
 import org.openqa.selenium.*;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
@@ -13,7 +12,10 @@ import org.openqa.selenium.support.pagefactory.ByChained;
 
 import java.lang.reflect.*;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static helpers.utils.WaitUtil.waitForElementsList;
 
