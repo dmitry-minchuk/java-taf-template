@@ -80,7 +80,7 @@ pipeline {
                                   sh "docker pull ${webstudio.imageName()}"
                                   sh "docker image tag ${webstudio.imageName()} ${webstudioNameInTests}"
                                   sh "docker pull ${webservice.imageName()}"
-                                  sh "docker image tag ${webserviceNameInTests} ${webserviceNameInTests}"
+                                  sh "docker image tag ${webservice.imageName()} ${webserviceNameInTests}"
                                   sh "docker pull ${webstudiodemo.imageName()}"
                                   sh "docker image tag ${webstudiodemo.imageName()} ${webstudiodemoNameInTests}"
                                 }
