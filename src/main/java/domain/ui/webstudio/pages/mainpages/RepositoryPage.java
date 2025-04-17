@@ -37,7 +37,7 @@ public class RepositoryPage extends ProxyMainPage {
         excelFilesComponent.createProjectFromExcelFile(fileName, projectName);
         if(configureCommitInfoComponent.isPresent())
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
-        WaitUtil.sleep(250);
+        WaitUtil.sleep(250000);
         refreshBtn.click();
     }
 
