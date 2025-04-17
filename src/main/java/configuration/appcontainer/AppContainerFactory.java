@@ -13,6 +13,7 @@ import org.testcontainers.utility.MountableFile;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Map;
 
 public class AppContainerFactory {
@@ -20,7 +21,6 @@ public class AppContainerFactory {
     private final static Integer APP_PORT = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
     private final static String DEPLOYED_APP_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
     private final static String DOCKER_IMAGE_NAME = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
-    public final static Long FOUR_GIGS_MEMORY_LIMIT = 4096L * FileUtils.ONE_MB;
 
     public static AppContainerData createContainer(String containerName,
                                                    Network network,
@@ -31,13 +31,12 @@ public class AppContainerFactory {
         container.addExposedPort(APP_PORT);
         container.withNetwork(network);
         container.withNetworkAliases(containerName);
-        container.setShmSize(FOUR_GIGS_MEMORY_LIMIT);
         if(envVars != null)
             container.withEnv(envVars);
         if(copyFileFromPath != null && copyFileToContainerPath != null)
             container.withCopyFileToContainer(getMountableFile(copyFileFromPath), copyFileToContainerPath);
         container.start();
-        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH));
+        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH).withStartupTimeout(Duration.ofSeconds(120)));
         LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
         LOGGER.info(String.format("App Url accessible from the Selenium container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
         return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
