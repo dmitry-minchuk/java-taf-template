@@ -2,6 +2,7 @@ package configuration.appcontainer;
 
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
@@ -36,7 +37,8 @@ public class AppContainerFactory {
         if(copyFileFromPath != null && copyFileToContainerPath != null)
             container.withCopyFileToContainer(getMountableFile(copyFileFromPath), copyFileToContainerPath);
         container.start();
-        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH).withStartupTimeout(Duration.ofSeconds(120)));
+        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH));
+        WaitUtil.sleep(30000);
         LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
         LOGGER.info(String.format("App Url accessible from the Selenium container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
         return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
