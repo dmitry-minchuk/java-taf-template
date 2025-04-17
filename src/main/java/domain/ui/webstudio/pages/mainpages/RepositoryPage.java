@@ -5,6 +5,7 @@ import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.CreateNewProjectComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import helpers.utils.StringUtil;
+import helpers.utils.WaitUtil;
 import org.openqa.selenium.support.FindBy;
 
 public class RepositoryPage extends ProxyMainPage {
@@ -36,6 +37,7 @@ public class RepositoryPage extends ProxyMainPage {
         excelFilesComponent.createProjectFromExcelFile(fileName, projectName);
         if(configureCommitInfoComponent.isPresent())
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
+        WaitUtil.sleep(180);
         refreshBtn.click();
     }
 
