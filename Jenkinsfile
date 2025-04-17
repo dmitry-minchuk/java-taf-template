@@ -35,7 +35,8 @@ class Job {
 
 def jenkinsLabel = new JenkinsLabel()
 def functionalJobList = [new Job("sample_ui_suite", "webstudio:latest", "", ""),
-                         new Job("sample_ui_suite2", "webstudiodemo:latest", "", jenkinsLabel.slave2SAML.nodeLabel)]
+                         new Job("sample_ui_suite", "webstudio:latest", "", ""),
+                         new Job("sample_ui_suite2", "webstudio:latest", "", jenkinsLabel.slave2SAML.nodeLabel)]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
 pipeline {
