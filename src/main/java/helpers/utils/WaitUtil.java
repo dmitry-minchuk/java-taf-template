@@ -14,7 +14,7 @@ import java.util.List;
 
 public class WaitUtil {
     protected final static Logger LOGGER = LogManager.getLogger(WaitUtil.class);
-    private static final int WAIT_POLL_INTERVAL_MS = 200;
+    private static final int WAIT_POLL_INTERVAL_MS = 500;
 
     public static boolean waitUntil(WebDriver driver, ExpectedCondition<?> condition, long timeoutSec) {
         boolean result;
