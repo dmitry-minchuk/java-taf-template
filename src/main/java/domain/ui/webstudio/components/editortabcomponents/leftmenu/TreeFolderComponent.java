@@ -7,7 +7,6 @@ import org.openqa.selenium.support.FindBy;
 
 public class TreeFolderComponent extends BasePageComponent {
 
-    //span[contains(@class,'rf-trn-hnd-colps') and following-sibling::span/span/span[text()='%s']]
     @FindBy(xpath = ".//span[contains(@class,'rf-trn-hnd-colps')]")
     private SmartWebElement expanderClosed;
 
