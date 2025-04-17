@@ -53,7 +53,7 @@ pipeline {
     }
     parameters {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: 'xxxxxxx', description: 'Source application branch (openl-tablets)')
-        string(name: 'TESTS_BRANCH', defaultValue: 'master', description: 'Autotests branch (openl-tests)')
+        string(name: 'TESTS_BRANCH', defaultValue: 'selenium_testcontainers', description: 'Autotests branch (openl-tests)')
     }
     stages {
         stage('Pull Docker Images') {
