@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
@@ -19,6 +20,7 @@ public class AppContainerFactory {
     private final static Integer APP_PORT = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
     private final static String DEPLOYED_APP_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
     private final static String DOCKER_IMAGE_NAME = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
+    public final static Long FOUR_GIGS_MEMORY_LIMIT = 4096L * FileUtils.ONE_MB;
 
     public static AppContainerData createContainer(String containerName,
                                                    Network network,
@@ -29,6 +31,7 @@ public class AppContainerFactory {
         container.addExposedPort(APP_PORT);
         container.withNetwork(network);
         container.withNetworkAliases(containerName);
+        container.setShmSize(FOUR_GIGS_MEMORY_LIMIT);
         if(envVars != null)
             container.withEnv(envVars);
         if(copyFileFromPath != null && copyFileToContainerPath != null)
