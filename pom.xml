@@ -21,6 +21,7 @@
         <javafaker.version>2.4.3</javafaker.version>
         <assertj.version>3.27.3</assertj.version>
         <reportportal.version>5.4.6</reportportal.version>
+        <logger.java.log4j.version>5.2.3</logger.java.log4j.version>
         <jackson.version>2.15.4</jackson.version>
 
         <maven.compiler.plugin>3.14.0</maven.compiler.plugin>
@@ -109,6 +110,11 @@
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-testng</artifactId>
             <version>${reportportal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-log4j</artifactId>
+            <version>${logger.java.log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
