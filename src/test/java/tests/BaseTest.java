@@ -1,10 +1,12 @@
 package tests;
 
+import com.epam.reportportal.service.ReportPortal;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import configuration.network.NetworkPool;
+import helpers.utils.ScreenShotUtil;
 import helpers.utils.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +15,9 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.Map;
 
 public abstract class BaseTest {
@@ -40,7 +44,10 @@ public abstract class BaseTest {
     }
 
     @AfterMethod
-    public void afterMethod() {
+    public void afterMethod(ITestResult result) {
+        File screenShot = ScreenShotUtil.takeAndSaveScreenshot(DriverPool.getDriver(), ScreenShotUtil.generateScreenshotName(result.getName()));
+        if (result.getStatus() == ITestResult.FAILURE && screenShot != null)
+            ReportPortal.emitLog("Test Failure Screenshot", "INFO",new Date(), screenShot);
         DriverPool.closeDriver();
         AppContainerPool.closeAppContainer();
         NetworkPool.closeNetwork();

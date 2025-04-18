@@ -24,6 +24,8 @@ public class DriverFactory {
     protected static final Logger LOGGER = LogManager.getLogger(DriverFactory.class);
     private final static String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
     private final static String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
+    private final static String HOST_SCREENSHOT_RELATIVE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_SCREENSHOTS_PATH);
+    private final static String CONTAINER_SCREENSHOT_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_SCREENSHOTS_PATH);
     private static final Integer VNC_PORT = 7900;
 
     private static final Map<String, Function<Network, ContainerizedDriver>> DRIVER_MAP = Map.of(
@@ -56,6 +58,7 @@ public class DriverFactory {
         container.addExposedPort(VNC_PORT);
 
         container.withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
+        container.withFileSystemBind(HOST_SCREENSHOT_RELATIVE_PATH, CONTAINER_SCREENSHOT_PATH, BindMode.READ_WRITE);
 
         container.start();
         LOGGER.info("Localhost accessible URL for selenium VNC: http://localhost:{}", container.getMappedPort(VNC_PORT));
