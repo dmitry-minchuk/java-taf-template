@@ -32,6 +32,7 @@ public class ScreenShotUtil {
                 return destinationFile;
             } catch (IOException e) {
                 LOGGER.error("Error while saving screenshot: {}", e.getMessage());
+                LOGGER.error(e.getStackTrace());
                 return null;
             }
         } else {
