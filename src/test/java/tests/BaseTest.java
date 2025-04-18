@@ -45,9 +45,11 @@ public abstract class BaseTest {
 
     @AfterMethod
     public void afterMethod(ITestResult result) {
-        File screenShot = ScreenShotUtil.takeAndSaveScreenshot(DriverPool.getDriver(), ScreenShotUtil.generateScreenshotName(result.getName()));
-        if (result.getStatus() == ITestResult.FAILURE && screenShot != null)
-            ReportPortal.emitLog("Test Failure Screenshot", "INFO",new Date(), screenShot);
+        if (result.getStatus() == ITestResult.FAILURE) {
+            File screenShot = ScreenShotUtil.takeAndSaveScreenshot(DriverPool.getDriver(), ScreenShotUtil.generateScreenshotName(result.getName()));
+            if (screenShot != null)
+                ReportPortal.emitLog("Test Failure Screenshot", "INFO", new Date(), screenShot);
+        }
         DriverPool.closeDriver();
         AppContainerPool.closeAppContainer();
         NetworkPool.closeNetwork();
