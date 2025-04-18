@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ScreenShotUtil {
 
@@ -32,7 +33,7 @@ public class ScreenShotUtil {
                 return destinationFile;
             } catch (IOException e) {
                 LOGGER.error("Error while saving screenshot: {}", e.getMessage());
-                LOGGER.error(e.getStackTrace());
+                LOGGER.error(PrintUtil.prettyPrintObjectCollection.apply(Arrays.stream(e.getStackTrace()).toList()));
                 return null;
             }
         } else {
