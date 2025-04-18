@@ -20,6 +20,7 @@
         <testcontainers.version>1.20.6</testcontainers.version>
         <javafaker.version>2.4.3</javafaker.version>
         <assertj.version>3.27.3</assertj.version>
+        <reportportal.version>5.4.6</reportportal.version>
 
         <maven.compiler.plugin>3.14.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.5.3</maven.surefire.plugin>
@@ -102,6 +103,11 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-testng</artifactId>
+            <version>${reportportal.version}</version>
         </dependency>
     </dependencies>
 
