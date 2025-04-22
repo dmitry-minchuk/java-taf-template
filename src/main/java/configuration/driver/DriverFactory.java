@@ -58,7 +58,6 @@ public class DriverFactory {
         container.addExposedPort(VNC_PORT);
 
         container.withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
-        container.withFileSystemBind(HOST_SCREENSHOT_RELATIVE_PATH, CONTAINER_SCREENSHOT_PATH, BindMode.READ_WRITE);
 
         container.start();
         LOGGER.info("Localhost accessible URL for selenium VNC: http://localhost:{}", container.getMappedPort(VNC_PORT));

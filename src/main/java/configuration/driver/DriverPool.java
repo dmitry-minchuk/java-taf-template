@@ -24,4 +24,8 @@ public class DriverPool {
         return threadLocalDriver.get().getDriver();
     }
 
+    public static ContainerizedDriver getDriverContainer() {
+        return threadLocalDriver.get();
+    }
+
 }
