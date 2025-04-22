@@ -13,9 +13,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ScreenShotUtil {
+public class ScreenshotUtil {
 
-    private static final Logger LOGGER = LogManager.getLogger(ScreenShotUtil.class);
+    private static final Logger LOGGER = LogManager.getLogger(ScreenshotUtil.class);
     private final static String HOST_SCREENSHOT_RELATIVE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_SCREENSHOTS_PATH);
 
     public static File takeAndSaveScreenshot(ContainerizedDriver containerizedDriver) {
