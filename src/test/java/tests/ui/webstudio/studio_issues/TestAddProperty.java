@@ -31,7 +31,6 @@ public class TestAddProperty extends BaseTest {
         editorPage.getLeftProjectModuleSeleclorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
         editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_CATEGORY);
         editorPage.getLeftRulesTreeComponent().selectItemInTree("Rules", "SimpleCalc");
-        assertThat(4).isGreaterThan(5);
         editorPage.getRightTableDetailsComponent().addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue());
         editorPage.getRightTableDetailsComponent().setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details");
         editorPage.getRightTableDetailsComponent().getSaveBtn().click();
