@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.SmartWebElement;
 import domain.ui.BasePageComponent;
-import helpers.utils.FileUtil;
+import helpers.utils.TestDataUtil;
 import org.openqa.selenium.support.FindBy;
 
 public class ExcelFilesComponent extends BasePageComponent {
@@ -23,7 +23,7 @@ public class ExcelFilesComponent extends BasePageComponent {
     }
 
     public void createProjectFromExcelFile(String fileName, String projectName) {
-        String absoluteFilePath = FileUtil.getFilePathFromResources(fileName);
+        String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);
         projectNameField.sendKeys(projectName);
         createProjectBtn.click();

@@ -6,7 +6,8 @@ import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import configuration.network.NetworkPool;
-import helpers.utils.ScreenShotUtil;
+import helpers.utils.LogsUtil;
+import helpers.utils.ScreenshotUtil;
 import helpers.utils.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,8 @@ public abstract class BaseTest {
     @AfterMethod
     public void afterMethod(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE) {
-            File screenShot = ScreenShotUtil.takeAndSaveScreenshot(DriverPool.getDriverContainer());
+            File screenShot = ScreenshotUtil.takeAndSaveScreenshot(DriverPool.getDriverContainer());
+            ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
             if (screenShot != null)
                 ReportPortal.emitLog("Test Failure Screenshot", "INFO", new Date(), screenShot);
         }
