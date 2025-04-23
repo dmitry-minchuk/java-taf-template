@@ -1,5 +1,6 @@
 package tests.ui.webstudio.studio_issues;
 
+import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
@@ -14,6 +15,7 @@ public class TestWithJiraTicket extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-12345")
+    @Description("Test description")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testWithJiraTicket() {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
