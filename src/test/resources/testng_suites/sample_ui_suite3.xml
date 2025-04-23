@@ -2,7 +2,6 @@
 <suite verbose="1" name="Sample-UI-tests-3" annotations="JDK" parallel="tests" thread-count="2">
 
     <listeners>
-        <listener class-name="configuration.listeners.JiraTicketListener"/>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
