@@ -128,7 +128,21 @@ pipeline {
                                 env.BUILD_NUMBER = params.APPLICATION_GIT_COMMIT_HASH_VERSION
                                 withMaven() {
                                     sh("bash -lc 'git branch'")
-                                    sh("bash -lc 'mvn clean test -Drp.endpoint=http://10.23.172.185:8080 -Drp.project=OpenL_Tests -Drp.launch=${suite.suiteName} -Drp.uuid=${RP_UUID} -Drp.attributes=\"build:${APPLICATION_GIT_COMMIT_HASH_VERSION};tests_branch:${TESTS_BRANCH}\" -Dsuite=${suite.suiteName} -Dcontainer.app.path=${suite.containerAppPath} -Dimage.name=${suite.imageName} -Dtestng.dtd.http=true'")
+                                    sh("""bash -lc '
+                                        mvn clean test \\
+                                            -Drp.endpoint=http://10.23.172.185:8080 \\
+                                            -Drp.project=OpenL_Tests \\
+                                            -Drp.launch=${suite.suiteName} \\
+                                            -Drp.uuid=${RP_UUID} \\
+                                            -Drp.attributes="build:${APPLICATION_GIT_COMMIT_HASH_VERSION};tests_branch:${TESTS_BRANCH}" \\
+                                            -Dsuite=${suite.suiteName} \\
+                                            -Dcontainer.app.path=${suite.containerAppPath} \\
+                                            -Dimage.name=${suite.imageName} \\
+                                            -Dtestng.dtd.http=true \\
+                                            -Drp.integration.jira.enabled=true \\
+                                            -Drp.integration.jira.pattern=([A-Z]+-\\d+) \\
+                                            -Drp.integration.jira.url=https://jira.eisgroup.com/browse/\\\$1
+                                    '""")
                                 }
                                 publishHTML([allowMissing          : false,
                                              alwaysLinkToLastBuild : true,
