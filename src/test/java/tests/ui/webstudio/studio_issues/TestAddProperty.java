@@ -2,7 +2,6 @@ package tests.ui.webstudio.studio_issues;
 
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
-import configuration.annotations.JiraTicket;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.TabSwitcherComponent;
@@ -21,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestAddProperty extends BaseTest {
 
     @Test
-    @JiraTicket("EPBDS-6964")
     @TestCaseId("EPBDS-6964")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddProperty() {
@@ -39,17 +37,4 @@ public class TestAddProperty extends BaseTest {
         assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))
                 .isTrue();
     }
-
-    @Test
-    @TestCaseId("EPBDS-12345")
-    public void testWithJiraTicket() {
-        System.out.println("This test is linked to a Jira ticket.");
-    }
-
-    @Test
-    @TestCaseId("EPBDS-34242")
-    public void testWhichIsGoingToFail() {
-        assertThat(4).isGreaterThan(5).as("Some description here");
-    }
-
 }

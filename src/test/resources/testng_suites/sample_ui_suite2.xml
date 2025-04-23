@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="Sample-UI-tests-2" annotations="JDK" parallel="methods" thread-count="2">
+<suite verbose="1" name="Sample-UI-tests-2" annotations="JDK" parallel="tests" thread-count="2">
 
     <listeners>
         <listener class-name="configuration.listeners.JiraTicketListener"/>
@@ -7,10 +7,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test verbose="1" name="UI tests 1">
-        <classes>
-            <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
-        </classes>
-    </test>
-
+    <test name="StudioIssues.TestWhichIsGoingToFail"><classes><class name="tests.ui.webstudio.studio_issues.TestWhichIsGoingToFail"/></classes></test>
+    <test name="StudioIssues.TestWithJiraTicket"><classes><class name="tests.ui.webstudio.studio_issues.TestWithJiraTicket"/></classes></test>
 </suite>
