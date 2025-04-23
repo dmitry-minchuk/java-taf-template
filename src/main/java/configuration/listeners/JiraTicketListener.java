@@ -15,7 +15,7 @@ public class JiraTicketListener implements ITestListener {
         Method method = result.getMethod().getConstructorOrMethod().getMethod();
         if (method.isAnnotationPresent(JiraTicket.class)) {
             JiraTicket jiraTicket = method.getAnnotation(JiraTicket.class);
-            String ticketId = jiraTicket.value();
+            String ticketId = JIRA_BASE_URL + jiraTicket.value();
             // Logic for further usage of ticketId here
         }
     }
