@@ -40,4 +40,16 @@ public class TestAddProperty extends BaseTest {
                 .isTrue();
     }
 
+    @Test
+    @TestCaseId("EPBDS-12345")
+    public void testWithJiraTicket() {
+        System.out.println("This test is linked to a Jira ticket.");
+    }
+
+    @Test
+    @TestCaseId("EPBDS-34242")
+    public void testWhichIsGoingToFail() {
+        assertThat(4).isGreaterThan(5).as("Some description here");
+    }
+
 }
