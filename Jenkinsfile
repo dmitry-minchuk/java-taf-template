@@ -140,7 +140,7 @@ pipeline {
                                             -Dimage.name=${suite.imageName} \\
                                             -Dtestng.dtd.http=true \\
                                             -Drp.integration.jira.enabled=true \\
-                                            -Drp.integration.jira.pattern=([A-Z]+-\\d+) \\
+                                            -Drp.integration.jira.pattern=\\([A-Z]+-\\d+\\) \\
                                             -Drp.integration.jira.url=https://jira.eisgroup.com/browse/\\\$1
                                     '""")
                                 }
