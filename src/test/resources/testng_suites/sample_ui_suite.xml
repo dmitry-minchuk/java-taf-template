@@ -7,15 +7,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test verbose="1" name="UI tests 1">
-        <classes>
-            <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
-        </classes>
-    </test>
-
-    <test verbose="1" name="UI tests 2">
-        <classes>
-            <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
-        </classes>
-    </test>
+    <test name="StudioIssues.TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
+    <test name="StudioIssues.TestWithJiraTicket"><classes><class name="tests.ui.webstudio.studio_issues.TestWithJiraTicket"/></classes></test>
 </suite>
