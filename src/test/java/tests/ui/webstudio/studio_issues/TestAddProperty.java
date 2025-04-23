@@ -1,5 +1,6 @@
 package tests.ui.webstudio.studio_issues;
 
+import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.annotations.JiraTicket;
 import configuration.appcontainer.AppContainerStartParameters;
@@ -21,6 +22,7 @@ public class TestAddProperty extends BaseTest {
 
     @Test
     @JiraTicket("EPBDS-6964")
+    @TestCaseId("EPBDS-6964")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddProperty() {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
