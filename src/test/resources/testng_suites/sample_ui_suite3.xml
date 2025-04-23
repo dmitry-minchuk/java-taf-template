@@ -18,22 +18,4 @@
             <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
         </classes>
     </test>
-
-    <test verbose="1" name="UI tests 3">
-        <classes>
-            <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
-        </classes>
-    </test>
-
-    <test verbose="1" name="UI tests 4">
-        <classes>
-            <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
-        </classes>
-    </test>
-
-    <test verbose="1" name="UI tests 5">
-        <classes>
-            <class name="tests.ui.webstudio.studio_issues.TestAddProperty"/>
-        </classes>
-    </test>
 </suite>
