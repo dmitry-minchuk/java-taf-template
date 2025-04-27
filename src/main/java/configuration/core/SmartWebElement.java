@@ -9,8 +9,11 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class SmartWebElement {
 
@@ -58,41 +61,70 @@ public class SmartWebElement {
         WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
-        WebElement element = null;
+
         while (attempts < retryCount) {
             try {
-                element = getUnwrappedElement();
-                return action.apply(element);
+                WebElement element = getUnwrappedElement(); // теперь element объявлен прямо здесь
+                return suppressSystemErrDuring(() -> action.apply(element));
             } catch (NoSuchElementException | StaleElementReferenceException e) {
-                LOGGER.warn("Element not found or stale during '{}', retrying... (Attempt {}/{})", actionName, attempts + 1, retryCount, e);
                 attempts++;
-                WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
+                if (attempts >= retryCount) {
+                    LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
+                    throw e;
+                } else {
+                    LOGGER.warn("Element not found or stale during <T> Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
+                    WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
+                }
             }
         }
-        element = getUnwrappedElement();
-        return action.apply(element);
+        throw new IllegalStateException("Unexpected error in performWithRetry, all retries exhausted");
     }
+
 
     // Retry logic for applying several attempts to do something with the element
     protected void performWithRetry(Consumer<WebElement> action, String actionName) {
         WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
-        WebElement element = null;
+
         while (attempts < retryCount) {
             try {
-                element = getUnwrappedElement();
-                action.accept(element);
+                WebElement element = getUnwrappedElement();
+                suppressSystemErrDuring(() -> action.accept(element));
                 return;
             } catch (NoSuchElementException | StaleElementReferenceException e) {
-                LOGGER.warn("Element not found or stale during '{}', retrying... (Attempt {}/{})", actionName, attempts + 1, retryCount, e);
                 attempts++;
-                WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
+                if (attempts >= retryCount) {
+                    LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
+                    throw e;
+                } else {
+                    LOGGER.warn("Element not found or stale during Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
+                    WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
+                }
             }
         }
-        element = getUnwrappedElement();
-        action.accept(element);
     }
+
+    private void suppressSystemErrDuring(Runnable runnable) {
+        PrintStream originalErr = System.err;
+        try {
+            System.setErr(new PrintStream(OutputStream.nullOutputStream()));
+            runnable.run();
+        } finally {
+            System.setErr(originalErr);
+        }
+    }
+
+    private <T> T suppressSystemErrDuring(Supplier<T> supplier) {
+        PrintStream originalErr = System.err;
+        try {
+            System.setErr(new PrintStream(OutputStream.nullOutputStream()));
+            return supplier.get();
+        } finally {
+            System.setErr(originalErr);
+        }
+    }
+
 
     // Actions for SmartWebElement
     public void click() {
