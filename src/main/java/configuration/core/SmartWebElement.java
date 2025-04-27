@@ -150,7 +150,7 @@ public class SmartWebElement {
                 return false;
             }
         });
-        performWithRetry(WebElement::click, "click");
+        click();
     }
 
 
