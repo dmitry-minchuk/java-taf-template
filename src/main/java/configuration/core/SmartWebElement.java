@@ -7,10 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -64,22 +67,22 @@ public class SmartWebElement {
 
         while (attempts < retryCount) {
             try {
-                WebElement element = getUnwrappedElement(); // теперь element объявлен прямо здесь
+                WebElement element = getUnwrappedElement();
                 return suppressSystemErrDuring(() -> action.apply(element));
             } catch (NoSuchElementException | StaleElementReferenceException e) {
                 attempts++;
+                WebElement element = getUnwrappedElement();
                 if (attempts >= retryCount) {
                     LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
                 } else {
-                    LOGGER.warn("Element not found or stale during <T> Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
+                    LOGGER.warn("WARNING: Element not found or stale during <T> Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
                     WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
                 }
             }
         }
         throw new IllegalStateException("Unexpected error in performWithRetry, all retries exhausted");
     }
-
 
     // Retry logic for applying several attempts to do something with the element
     protected void performWithRetry(Consumer<WebElement> action, String actionName) {
@@ -98,13 +101,14 @@ public class SmartWebElement {
                     LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
                 } else {
-                    LOGGER.warn("Element not found or stale during Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
+                    LOGGER.warn("WARNING: Element not found or stale during Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
                     WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
                 }
             }
         }
     }
 
+    // Aggressive logging suppression
     private void suppressSystemErrDuring(Runnable runnable) {
         PrintStream originalErr = System.err;
         try {
@@ -115,6 +119,7 @@ public class SmartWebElement {
         }
     }
 
+    // Aggressive logging suppression
     private <T> T suppressSystemErrDuring(Supplier<T> supplier) {
         PrintStream originalErr = System.err;
         try {
@@ -130,6 +135,24 @@ public class SmartWebElement {
     public void click() {
         performWithRetry(WebElement::click, "click");
     }
+
+    public void click(long timeoutInSeconds) {
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
+        WebElement element = getUnwrappedElement();
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(timeoutInSeconds))
+                .pollingEvery(Duration.ofMillis(200))
+                .ignoring(StaleElementReferenceException.class, NoSuchElementException.class);
+        wait.until(driver -> {
+            try {
+                return element.isDisplayed() && element.isEnabled();
+            } catch (StaleElementReferenceException | NoSuchElementException e) {
+                return false;
+            }
+        });
+        performWithRetry(WebElement::click, "click");
+    }
+
 
     public void sendKeys(CharSequence... keysToSend) {
         performWithRetry(element -> {

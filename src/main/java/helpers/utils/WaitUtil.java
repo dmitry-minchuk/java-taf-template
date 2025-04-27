@@ -85,7 +85,7 @@ public class WaitUtil {
         }
     }
 
-    public static void waitUntilPageIsReady(WebDriver driver, int timeoutInSeconds) {
+    public static void waitUntilPageIsReady(WebDriver driver, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         wait.until(wd -> ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
         ExpectedCondition<Boolean> jQueryInactive = wd -> {

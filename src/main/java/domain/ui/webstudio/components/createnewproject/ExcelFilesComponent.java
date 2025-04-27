@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class ExcelFilesComponent extends BasePageComponent {
 
-    @FindBy(xpath = ".//div[@id='createProjectFormFiles:file']//input[@class='rf-fu-inp']")
+    @FindBy(xpath = ".//div[@id='createProjectFormFiles:file']//input[@accept='xls, xlsx, xlsm']")
     private SmartWebElement fileInputField;
 
     @FindBy(xpath = ".//input[@id='createProjectFormFiles:projectName']")

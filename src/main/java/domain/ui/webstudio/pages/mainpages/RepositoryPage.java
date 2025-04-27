@@ -4,6 +4,7 @@ import configuration.core.SmartWebElement;
 import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.CreateNewProjectComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
+import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import org.openqa.selenium.support.FindBy;
 
 public class RepositoryPage extends ProxyMainPage {
@@ -33,6 +34,15 @@ public class RepositoryPage extends ProxyMainPage {
         createProjectLink.click();
         ExcelFilesComponent excelFilesComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.EXCEL_FILES);
         excelFilesComponent.createProjectFromExcelFile(fileName, projectName);
+        if(configureCommitInfoComponent.isPresent())
+            configureCommitInfoComponent.fillCommitInfoWithRandomData();
+        refreshBtn.click(6);
+    }
+
+    public void createProjectFromZipArchive(String projectName, String fileName) {
+        createProjectLink.click();
+        ZipArchiveComponent zipArchiveComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.ZIP_ARCHIVE);
+        zipArchiveComponent.createProjectZipArchive(fileName, projectName);
         if(configureCommitInfoComponent.isPresent())
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
         refreshBtn.click();
