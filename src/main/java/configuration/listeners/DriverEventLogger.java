@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.WebDriverListener;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -67,6 +69,24 @@ public class DriverEventLogger implements WebDriverListener {
     public void beforeClose(WebDriver driver) {
         String logMessage = String.format("Closing browser tab '%s' with title '%s'", driver.getWindowHandle(), driver.getTitle());
         LOGGER.info(logMessage);
+        reportPortalLogger(logMessage);
+    }
+
+    @Override
+    public void onError(Object target, Method method, Object[] args, InvocationTargetException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof org.openqa.selenium.StaleElementReferenceException) {
+            return;
+        }
+
+        String logMessage = String.format(
+                "Exception occurred in method '%s': %s: %s",
+                method.getName(),
+                cause.getClass().getSimpleName(),
+                cause.getMessage()
+        );
+
+        LOGGER.error(logMessage, cause);
         reportPortalLogger(logMessage);
     }
 
