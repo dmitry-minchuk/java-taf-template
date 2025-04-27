@@ -44,11 +44,14 @@ public class WaitUtil {
                 .ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
 
         try {
-            wait.until(webElement -> webElement.findElement(locator));
+            wait.until(webElement -> {
+                WebElement found = webElement.findElement(locator);
+                return found.isDisplayed() ? found : null;
+            });
             result = true;
             LOGGER.debug("WaitUntil: lookup inside rootElement finished successfully");
         } catch (Exception e) {
-            LOGGER.error("WaitUntil: {}", locator.toString(), e);
+            LOGGER.debug("WaitUntil: {}", locator.toString(), e);
             result = false;
         }
         return result;
