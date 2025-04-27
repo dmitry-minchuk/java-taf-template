@@ -76,7 +76,7 @@ public class SmartWebElement {
                     LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
                 } else {
-                    LOGGER.warn("WARNING: Element not found or stale during <T> Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
+                    LOGGER.warn("WARNING (test behavior fix needed): Element NOT_FOUND or STALE during <T> Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
                     WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
                 }
             }
@@ -101,7 +101,7 @@ public class SmartWebElement {
                     LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
                 } else {
-                    LOGGER.warn("WARNING: Element not found or stale during Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
+                    LOGGER.warn("WARNING (test behavior fix needed): Element NOT_FOUND or STALE during Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
                     WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
                 }
             }
