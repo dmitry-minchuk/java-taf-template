@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.createnewproject;
 
-import domain.ui.BasePageComponent;
+import configuration.core.ui.BasePageComponent;
 
 public class TemplateTabComponent extends BasePageComponent {
 

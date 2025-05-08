@@ -1,4 +1,4 @@
-package configuration.core;
+package configuration.core.ui;
 
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
@@ -7,13 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -49,12 +46,12 @@ public class SmartWebElement {
     // Basic logic for element lookup
     public WebElement getUnwrappedElement() {
         if (parentLocator != null) {
-            WaitUtil.waitUntil(driver, ExpectedConditions.elementToBeClickable(parentLocator), timeoutInSeconds);
+            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(parentLocator), timeoutInSeconds);
             WebElement parent = driver.findElement(parentLocator);
             WaitUtil.waitUntil(parent, locator, timeoutInSeconds);
             return parent.findElement(locator);
         } else {
-            WaitUtil.waitUntil(driver, ExpectedConditions.elementToBeClickable(locator), timeoutInSeconds);
+            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(locator), timeoutInSeconds);
             return driver.findElement(locator);
         }
     }
@@ -139,20 +136,9 @@ public class SmartWebElement {
     public void click(long timeoutInSeconds) {
         WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         WebElement element = getUnwrappedElement();
-        Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(timeoutInSeconds))
-                .pollingEvery(Duration.ofMillis(200))
-                .ignoring(StaleElementReferenceException.class, NoSuchElementException.class);
-        wait.until(driver -> {
-            try {
-                return element.isDisplayed() && element.isEnabled();
-            } catch (StaleElementReferenceException | NoSuchElementException e) {
-                return false;
-            }
-        });
+        WaitUtil.waitUntilElementStable(driver, element, timeoutInSeconds);
         click();
     }
-
 
     public void sendKeys(CharSequence... keysToSend) {
         performWithRetry(element -> {
@@ -160,6 +146,13 @@ public class SmartWebElement {
             element.sendKeys(keysToSend);
             return null;
         }, "sendKeys");
+    }
+
+    public void sendKeys(long timeoutInSeconds, CharSequence... keysToSend) {
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
+        WebElement element = getUnwrappedElement();
+        WaitUtil.waitUntilElementStable(driver, element, timeoutInSeconds);
+        sendKeys(keysToSend);
     }
 
     public String getText() {
@@ -182,8 +175,15 @@ public class SmartWebElement {
         performWithRetry(element -> {
             Select select = new Select(element);
             select.selectByVisibleText(text);
-            return null; // Consumer не возвращает значение
+            return null;
         }, "selectByVisibleText(" + text + ")");
+    }
+
+    public void selectByVisibleText(String text, long timeoutInSeconds) {
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
+        WebElement element = getUnwrappedElement();
+        WaitUtil.waitUntilElementStable(driver, element, timeoutInSeconds);
+        selectByVisibleText(text);
     }
 
     // SmartWebElement.format(locator) logic here:

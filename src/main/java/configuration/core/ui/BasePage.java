@@ -1,7 +1,6 @@
-package domain.ui;
+package configuration.core.ui;
 
 import configuration.appcontainer.AppContainerPool;
-import configuration.core.SmartPageFactory;
 import configuration.driver.DriverPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

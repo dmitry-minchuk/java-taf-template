@@ -57,6 +57,21 @@ public class WaitUtil {
         return result;
     }
 
+    public static void waitUntilElementStable(WebDriver driver, WebElement element, long timeoutInSeconds) {
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(timeoutInSeconds))
+                .pollingEvery(Duration.ofMillis(200))
+                .ignoring(StaleElementReferenceException.class, NoSuchElementException.class);
+
+        wait.until(drv -> {
+            try {
+                return element.isDisplayed() && element.isEnabled();
+            } catch (StaleElementReferenceException | NoSuchElementException e) {
+                return false;
+            }
+        });
+    }
+
     public static List<WebElement> waitForElementsList(WebDriver driver, By locator, long timeoutSec) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(java.time.Duration.ofSeconds(timeoutSec))

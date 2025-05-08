@@ -1,6 +1,6 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import domain.ui.BasePage;
+import configuration.core.ui.BasePage;
 import domain.ui.webstudio.components.CurrentUserComponent;
 import domain.ui.webstudio.components.TabSwitcherComponent;
 import lombok.Getter;
