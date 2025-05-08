@@ -1,8 +1,7 @@
-package configuration.core;
+package configuration.core.ui;
 
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
-import domain.ui.BasePageComponent;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;

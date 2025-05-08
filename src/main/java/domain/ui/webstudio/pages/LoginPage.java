@@ -1,10 +1,9 @@
 package domain.ui.webstudio.pages;
 
-import configuration.core.SmartWebElement;
+import configuration.core.ui.SmartWebElement;
 import domain.serviceclasses.models.UserData;
-import domain.ui.BasePage;
+import configuration.core.ui.BasePage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends BasePage {

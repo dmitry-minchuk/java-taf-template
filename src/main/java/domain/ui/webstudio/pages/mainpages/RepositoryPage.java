@@ -1,6 +1,6 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import configuration.core.SmartWebElement;
+import configuration.core.ui.SmartWebElement;
 import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.CreateNewProjectComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;

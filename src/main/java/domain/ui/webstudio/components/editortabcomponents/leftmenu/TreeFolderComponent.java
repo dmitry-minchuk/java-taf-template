@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
-import configuration.core.SmartWebElement;
-import domain.ui.BasePageComponent;
+import configuration.core.ui.SmartWebElement;
+import configuration.core.ui.BasePageComponent;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
 

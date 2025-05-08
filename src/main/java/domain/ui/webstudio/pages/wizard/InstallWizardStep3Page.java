@@ -1,7 +1,7 @@
 package domain.ui.webstudio.pages.wizard;
 
-import configuration.core.SmartWebElement;
-import domain.ui.BasePage;
+import configuration.core.ui.SmartWebElement;
+import configuration.core.ui.BasePage;
 import domain.ui.webstudio.pages.LoginPage;
 import org.openqa.selenium.support.FindBy;
 

@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import domain.ui.BasePageComponent;
+import configuration.core.ui.BasePageComponent;
 
 public class ProjectDetailsComponent extends BasePageComponent {
 

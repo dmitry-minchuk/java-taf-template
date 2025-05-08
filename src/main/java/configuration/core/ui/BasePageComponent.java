@@ -1,6 +1,5 @@
-package domain.ui;
+package configuration.core.ui;
 
-import configuration.core.SmartPageFactory;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.WaitUtil;
@@ -12,7 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public abstract class BasePageComponent {
 
-    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
+    protected final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
     @Getter
     private By rootLocatorBy;
     @Getter

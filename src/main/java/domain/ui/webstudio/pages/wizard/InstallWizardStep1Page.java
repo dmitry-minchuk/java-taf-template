@@ -1,7 +1,7 @@
 package domain.ui.webstudio.pages.wizard;
 
-import configuration.core.SmartWebElement;
-import domain.ui.BasePage;
+import configuration.core.ui.SmartWebElement;
+import configuration.core.ui.BasePage;
 import org.openqa.selenium.support.FindBy;
 
 public class InstallWizardStep1Page extends BasePage {

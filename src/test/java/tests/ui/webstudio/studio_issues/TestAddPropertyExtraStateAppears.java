@@ -16,6 +16,8 @@ import helpers.utils.StringUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class TestAddPropertyExtraStateAppears extends BaseTest {
 
     @Test
@@ -34,6 +36,8 @@ public class TestAddPropertyExtraStateAppears extends BaseTest {
         editorPage.getRightTableDetailsComponent().addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue());
         editorPage.getRightTableDetailsComponent().setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details");
         editorPage.getRightTableDetailsComponent().getSaveBtn().click();
-
+        assertThat(editorPage.getCenterTable().getCellText(1, 1)).isEqualTo("description");
+        assertThat(editorPage.getCenterTable().getCellText(2, 1)).isEqualTo("Result");
+        assertThat(editorPage.getCenterTable().getCellText(3, 1)).contains("= new MyDatatype");
     }
 }
