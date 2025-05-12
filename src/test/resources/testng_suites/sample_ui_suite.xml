@@ -7,5 +7,6 @@
     </listeners>
 
     <test name="StudioIssues.TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
-    <test name="StudioIssues.TestWithJiraTicket"><classes><class name="tests.ui.webstudio.studio_issues.TestWithJiraTicket"/></classes></test>
+    <test name="StudioIssues.TestWithJiraTicket"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyExtraStateAppears"/></classes></test>
+    <test name="StudioIssues.TestAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathStar"/></classes></test>
 </suite>
