@@ -6,7 +6,6 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.TabSwitcherComponent;
-import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
@@ -18,26 +17,27 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestAddPropertyExtraStateAppears extends BaseTest {
+public class TestAddElementToCollectionSet extends BaseTest {
 
     @Test
-    @TestCaseId("EPBDS-11107")
-    @Description("'State' property is added to table instead of inherited")
+    @TestCaseId("EPBDS-10142")
+    @Description("BUG: Error on clicking '+' for input types Collection, Set")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testAddPropertyExtraStateAppears() {
+    public void testAddElementToCollectionSet() {
         EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProjectFromZipArchive(projectName, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
+        repositoryPage.createProjectFromExcelFile(projectName, "TestAddElementToCollectionSet.xlsx");
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Test Project-CW-20200101-20200101");
+        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddElementToCollectionSet");
         editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE);
-        editorPage.getLeftRulesTreeComponent().selectItemInTree("Decision", "MyDatatype");
-        editorPage.getRightTableDetailsComponent().addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue());
-        editorPage.getRightTableDetailsComponent().setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details");
-        editorPage.getRightTableDetailsComponent().getSaveBtn().click();
-        assertThat(editorPage.getCenterTable().getCellText(1, 1)).isEqualTo("description");
-        assertThat(editorPage.getCenterTable().getCellText(2, 1)).isEqualTo("Result");
-        assertThat(editorPage.getCenterTable().getCellText(3, 1)).contains("= new MyDatatype");
+        editorPage.getLeftRulesTreeComponent().selectItemInTree("Spreadsheet", "mySpr");
+        editorPage.getTableToolbarPanelComponent().getRunBtn().click();
+        editorPage.getTableToolbarPanelComponent().getAddElementToCollectionBtn().format("a =").click();
+        assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong.")).isFalse();
+        editorPage.getTableToolbarPanelComponent().getAddedElementsExpander().format("a =").click();
+        editorPage.getTableToolbarPanelComponent().getAddElementToCollectionBtn().format("d =").click();
+        assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong.")).isFalse();
+        editorPage.getTableToolbarPanelComponent().getAddedElementsExpander().format("d =").click();
     }
 }

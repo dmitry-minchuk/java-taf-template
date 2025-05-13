@@ -7,26 +7,26 @@ import org.openqa.selenium.support.FindBy;
 
 public class RightTableDetailsComponent extends BasePageComponent {
 
-    @FindBy(xpath = "//a[@id='addPropBtn']")
+    @FindBy(xpath = ".//a[@id='addPropBtn']")
     private SmartWebElement addPropertyLink;
 
-    @FindBy(xpath = "//div[@id='addPropsPanel']//select")
+    @FindBy(xpath = ".//div[@id='addPropsPanel']//select")
     private SmartWebElement propertyTypeSelector;
 
-    @FindBy(xpath = "//div[@id='addPropsPanel']//input[@value='Add']")
+    @FindBy(xpath = ".//div[@id='addPropsPanel']//input[@value='Add']")
     private SmartWebElement addBtn;
 
-    @FindBy(xpath = "//div[@id='addPropsPanel']//a[text()='Cancel']")
+    @FindBy(xpath = ".//div[@id='addPropsPanel']//a[text()='Cancel']")
     private SmartWebElement cancelBtn;
 
-    @FindBy(xpath = "//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span/input")
+    @FindBy(xpath = ".//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span/input")
     private SmartWebElement propertyInputTextField;
 
-    @FindBy(xpath = "//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span[1][contains(text(),'%s')]")
+    @FindBy(xpath = ".//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span[1][contains(text(),'%s')]")
     private SmartWebElement propertyContent;
 
     @Getter
-    @FindBy(xpath = "//input[@id='savePropsButton']")
+    @FindBy(xpath = ".//input[@id='savePropsButton']")
     private SmartWebElement saveBtn;
 
     public RightTableDetailsComponent() {

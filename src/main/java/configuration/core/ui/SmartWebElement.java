@@ -5,21 +5,21 @@ import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class SmartWebElement {
 
     protected final static Logger LOGGER = LogManager.getLogger(SmartWebElement.class);
     private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
-    private final int retryTimeoutBetweenActionAttempts = 1000;
+    private final int retryTimeoutBetweenActionAttempts = 500;
     private final WebDriver driver;
     private final By locator;
     private WebElement parentElement;
@@ -45,32 +45,40 @@ public class SmartWebElement {
 
     // Basic logic for element lookup
     public WebElement getUnwrappedElement() {
-        if (parentLocator != null) {
-            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(parentLocator), timeoutInSeconds);
-            WebElement parent = driver.findElement(parentLocator);
-            WaitUtil.waitUntil(parent, locator, timeoutInSeconds);
-            return parent.findElement(locator);
-        } else {
-            WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(locator), timeoutInSeconds);
-            return driver.findElement(locator);
+        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
+        int attempts = 0;
+        int retryCount = 3;
+        while (attempts < retryCount) {
+            try {
+                if (parentLocator != null) {
+                    WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(parentLocator), timeoutInSeconds);
+                    WebElement parent = driver.findElement(parentLocator);
+                    WaitUtil.waitUntil(parent, locator, timeoutInSeconds);
+                    return parent.findElement(locator);
+                } else {
+                    WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(locator), timeoutInSeconds);
+                    return driver.findElement(locator);
+                }
+            } catch (WebDriverException e) {
+                attempts++;
+                WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
+            }
         }
+        throw new IllegalStateException("Unexpected error in getUnwrappedElement, all retries exhausted");
     }
 
     // Retry logic for applying several attempts to do something with the element
     protected <T> T performWithRetry(Function<WebElement, T> action, String actionName) {
-        WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
-
         while (attempts < retryCount) {
             try {
                 WebElement element = getUnwrappedElement();
-                return suppressSystemErrDuring(() -> action.apply(element));
-            } catch (NoSuchElementException | StaleElementReferenceException e) {
+                return action.apply(element);
+            } catch (WebDriverException e) {
                 attempts++;
-                WebElement element = getUnwrappedElement();
                 if (attempts >= retryCount) {
-                    LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
+                    LOGGER.debug("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
                 } else {
                     LOGGER.warn("WARNING (test behavior fix needed): Element NOT_FOUND or STALE during <T> Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
@@ -90,12 +98,12 @@ public class SmartWebElement {
         while (attempts < retryCount) {
             try {
                 WebElement element = getUnwrappedElement();
-                suppressSystemErrDuring(() -> action.accept(element));
+                action.accept(element);
                 return;
-            } catch (NoSuchElementException | StaleElementReferenceException e) {
+            } catch (WebDriverException e) {
                 attempts++;
                 if (attempts >= retryCount) {
-                    LOGGER.error("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
+                    LOGGER.debug("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
                 } else {
                     LOGGER.warn("WARNING (test behavior fix needed): Element NOT_FOUND or STALE during Action: '{}', retrying... (Attempt {}/{})", actionName, attempts, retryCount);
@@ -104,29 +112,6 @@ public class SmartWebElement {
             }
         }
     }
-
-    // Aggressive logging suppression
-    private void suppressSystemErrDuring(Runnable runnable) {
-        PrintStream originalErr = System.err;
-        try {
-            System.setErr(new PrintStream(OutputStream.nullOutputStream()));
-            runnable.run();
-        } finally {
-            System.setErr(originalErr);
-        }
-    }
-
-    // Aggressive logging suppression
-    private <T> T suppressSystemErrDuring(Supplier<T> supplier) {
-        PrintStream originalErr = System.err;
-        try {
-            System.setErr(new PrintStream(OutputStream.nullOutputStream()));
-            return supplier.get();
-        } finally {
-            System.setErr(originalErr);
-        }
-    }
-
 
     // Actions for SmartWebElement
     public void click() {
@@ -160,7 +145,11 @@ public class SmartWebElement {
     }
 
     public boolean isDisplayed() {
-        return performWithRetry(WebElement::isDisplayed, "isDisplayed");
+        try {
+            return getUnwrappedElement().isDisplayed();
+        } catch (IllegalStateException e) {
+            return false;
+        }
     }
 
     public String getAttribute(String name) {

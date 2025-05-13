@@ -22,14 +22,14 @@ public class WaitUtil {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(timeoutSec))
                 .pollingEvery(Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
-                .ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+                .ignoring(WebDriverException.class);
 
         try {
             wait.until(condition);
             result = true;
             LOGGER.debug("WaitUntil: finished successfully");
         } catch (Exception e) {
-            LOGGER.error("WaitUntil: {}", condition.toString(), e);
+            LOGGER.debug("WaitUntil: {}", condition.toString(), e);
             result = false;
         }
         return result;
@@ -41,7 +41,7 @@ public class WaitUtil {
         Wait<WebElement> wait = new FluentWait<>(rootElement)
                 .withTimeout(Duration.ofSeconds(timeoutSec))
                 .pollingEvery(Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
-                .ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+                .ignoring(WebDriverException.class);
 
         try {
             wait.until(webElement -> {
@@ -61,7 +61,7 @@ public class WaitUtil {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(timeoutInSeconds))
                 .pollingEvery(Duration.ofMillis(200))
-                .ignoring(StaleElementReferenceException.class, NoSuchElementException.class);
+                .ignoring(WebDriverException.class);
 
         wait.until(drv -> {
             try {
@@ -76,12 +76,12 @@ public class WaitUtil {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(java.time.Duration.ofSeconds(timeoutSec))
                 .pollingEvery(java.time.Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
-                .ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+                .ignoring(WebDriverException.class);
 
         try {
             return wait.until(d -> d.findElements(locator));
         } catch (TimeoutException e) {
-            LOGGER.error("WaitUtil: Timeout waiting for elements: {}", locator.toString());
+            LOGGER.debug("WaitUtil: Timeout waiting for elements: {}", locator.toString());
             return Collections.emptyList();
         }
     }
@@ -90,12 +90,12 @@ public class WaitUtil {
         Wait<WebElement> wait = new FluentWait<>(rootElement)
                 .withTimeout(java.time.Duration.ofSeconds(timeoutSec))
                 .pollingEvery(java.time.Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
-                .ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+                .ignoring(WebDriverException.class);
 
         try {
             return wait.until(element -> element.findElements(locator));
         } catch (TimeoutException e) {
-            LOGGER.error("WaitUtil: Timeout waiting for elements inside rootElement: {}", locator.toString());
+            LOGGER.debug("WaitUtil: Timeout waiting for elements inside rootElement: {}", locator.toString());
             return Collections.emptyList();
         }
     }

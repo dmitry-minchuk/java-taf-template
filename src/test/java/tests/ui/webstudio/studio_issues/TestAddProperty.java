@@ -30,7 +30,7 @@ public class TestAddProperty extends BaseTest {
         String projectName = StringUtil.generateUniqueName("project");
         repositoryPage.createProjectFromExcelFile(projectName, "StudioIssues_TestAddProperty.xlsx");
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getLeftProjectModuleSeleclorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
+        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
         editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_CATEGORY);
         editorPage.getLeftRulesTreeComponent().selectItemInTree("Rules", "SimpleCalc");
         editorPage.getRightTableDetailsComponent().addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue());

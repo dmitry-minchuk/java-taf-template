@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="Sample-UI-tests" annotations="JDK" parallel="tests" thread-count="2">
+<suite verbose="1" name="Sample-UI-tests" annotations="JDK" parallel="tests" thread-count="3">
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
@@ -9,4 +9,6 @@
     <test name="StudioIssues.TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
     <test name="StudioIssues.TestWithJiraTicket"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyExtraStateAppears"/></classes></test>
     <test name="StudioIssues.TestAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathStar"/></classes></test>
+    <test name="StudioIssues.TestAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathExistingModule"/></classes></test>
+    <test name="StudioIssues.TestAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestAddElementToCollectionSet"/></classes></test>
 </suite>
