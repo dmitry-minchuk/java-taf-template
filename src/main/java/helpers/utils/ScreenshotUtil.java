@@ -34,8 +34,8 @@ public class ScreenshotUtil {
                 LOGGER.info("Screenshot saved to host: {}", hostFile.getAbsolutePath());
                 return hostFile;
             } catch (IOException e) {
-                LOGGER.error("Error while saving screenshot to host: {}", e.getMessage());
-                LOGGER.error(PrintUtil.prettyPrintObjectCollection.apply(Arrays.stream(e.getStackTrace()).toList()));
+                LOGGER.debug("Error while saving screenshot to host: {}", e.getMessage());
+                LOGGER.debug(PrintUtil.prettyPrintObjectCollection.apply(Arrays.stream(e.getStackTrace()).toList()));
                 return null;
             }
         } else {

@@ -4,7 +4,7 @@ import configuration.core.ui.SmartWebElement;
 import configuration.core.ui.BasePageComponent;
 import org.openqa.selenium.support.FindBy;
 
-public class LeftProjectModuleSeleclorComponent extends BasePageComponent {
+public class LeftProjectModuleSelectorComponent extends BasePageComponent {
 
     @FindBy(xpath = ".//li/a[@class='projectName' and text()='%s']")
     private SmartWebElement projectNameLink;
@@ -12,7 +12,7 @@ public class LeftProjectModuleSeleclorComponent extends BasePageComponent {
     @FindBy(xpath = ".//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']")
     private SmartWebElement projectModuleLink;
 
-    public LeftProjectModuleSeleclorComponent() {
+    public LeftProjectModuleSelectorComponent() {
     }
 
     public void selectProject(String projectName) {

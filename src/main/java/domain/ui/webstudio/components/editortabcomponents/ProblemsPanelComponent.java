@@ -8,10 +8,10 @@ import java.util.List;
 
 public class ProblemsPanelComponent extends BasePageComponent {
 
-    @FindBy(xpath = "//div[@class='ui-layout-toggler ui-layout-toggler-south ui-layout-toggler-closed ui-layout-toggler-south-closed' and @title='Open']")
+    @FindBy(xpath = ".//div[@class='ui-layout-toggler ui-layout-toggler-south ui-layout-toggler-closed ui-layout-toggler-south-closed' and @title='Open']")
     private SmartWebElement showProblemsLink;
 
-    @FindBy(xpath = "//div[@id='bottom']//span[@id='south-closer']")
+    @FindBy(xpath = ".//div[@id='bottom']//span[@id='south-closer']")
     private SmartWebElement hideProblemPanelLink;
 
     @FindBy(id = "errors-count")
@@ -20,16 +20,16 @@ public class ProblemsPanelComponent extends BasePageComponent {
     @FindBy(id = "warnings-count")
     private SmartWebElement warningsCounter;
 
-    @FindBy(xpath = "//div[@id='errors-panel']//a")
+    @FindBy(xpath = ".//div[@id='errors-panel']//a")
     private List<SmartWebElement> errorsAll;
 
-    @FindBy(xpath = "//div[@id='warnings-panel']//a")
+    @FindBy(xpath = ".//div[@id='warnings-panel']//a")
     private List<SmartWebElement> warningsAll;
 
-    @FindBy(xpath = "//div[@class='panel']//div[@id='progress-info-panel']")
+    @FindBy(xpath = ".//div[@class='panel']//div[@id='progress-info-panel']")
     private SmartWebElement compilationProgressBar;
 
-    @FindBy(xpath = "//div[contains(@class,'ui-layout-resizer')]//div[@class='messagePanel']")
+    @FindBy(xpath = ".//div[contains(@class,'ui-layout-resizer')]//div[@class='messagePanel']")
     private SmartWebElement compilationProgressBarNotSavedProject;
 
     public ProblemsPanelComponent() {
