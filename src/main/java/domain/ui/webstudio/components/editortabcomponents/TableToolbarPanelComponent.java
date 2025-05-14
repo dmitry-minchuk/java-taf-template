@@ -29,6 +29,8 @@ public class TableToolbarPanelComponent extends BasePageComponent {
     @FindBy(xpath = ".//a[.//div[text()='Create Test']]")
     private SmartWebElement createTestBtn;
 
+    // Edit Panel elements
+
     // Run Dropdown elements
 
     @FindBy(xpath = ".//input[@id='inputArgsForm:runButton']")

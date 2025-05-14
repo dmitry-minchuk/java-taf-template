@@ -40,6 +40,10 @@ public class EditorPage extends ProxyMainPage {
     @FindBy(xpath = "//div[@id='tableToolbarPanel']")
     private TableToolbarPanelComponent tableToolbarPanelComponent;
 
+    @Getter
+    @FindBy(xpath = "//div[@class='te_toolbar']")
+    private EditTablePanelComponent editTablePanelComponent;
+
     public EditorPage() {
         super("/");
     }

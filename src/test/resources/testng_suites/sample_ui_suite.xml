@@ -11,4 +11,5 @@
     <test name="StudioIssues.TestAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathStar"/></classes></test>
     <test name="StudioIssues.TestAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathExistingModule"/></classes></test>
     <test name="StudioIssues.TestAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestAddElementToCollectionSet"/></classes></test>
+    <test name="StudioIssues.TestAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestAddDeleteRowWithoutSaving"/></classes></test>
 </suite>
