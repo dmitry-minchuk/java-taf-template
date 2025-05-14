@@ -2,8 +2,10 @@ package configuration.core.ui;
 
 import helpers.utils.WaitUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
 
@@ -40,6 +42,30 @@ public class TableComponent extends BasePageComponent {
 
     public void clickCell(int rowIndex, int columnIndex) {
         getCell(rowIndex, columnIndex).click();
+    }
+
+    public void doubleClickAndPasteTextToCell(int rowIndex, int columnIndex, String text) {
+        doubleClickAndPasteTextToCell(rowIndex, columnIndex, text, true);
+    }
+
+    public void doubleClickAndPasteTextToCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
+        SmartWebElement cell = getCell(rowIndex, columnIndex);
+        WebElement element = cell.getUnwrappedElement();
+
+        new Actions(getDriver())
+                .moveToElement(element)
+                .doubleClick()
+                .perform();
+
+        By inputLocator = By.xpath("//*[@id='_t_te_editorWrapper']");
+        SmartWebElement input = new SmartWebElement(getDriver(), inputLocator);
+        WebElement unwrappedInput = input.getUnwrappedElement();
+
+        unwrappedInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        unwrappedInput.sendKeys(Keys.DELETE);
+        unwrappedInput.sendKeys(text);
+        if (pressEnter)
+            unwrappedInput.sendKeys(Keys.ENTER);
     }
 
     public int getRowCount() {
