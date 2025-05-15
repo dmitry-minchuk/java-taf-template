@@ -44,7 +44,7 @@ public class SmartWebElement {
     }
 
     // Basic logic for element lookup
-    public WebElement getUnwrappedElement() {
+    public WebElement getUnwrappedElement(int timeoutInSeconds) {
         WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
@@ -65,6 +65,10 @@ public class SmartWebElement {
             }
         }
         throw new IllegalStateException("Unexpected error in getUnwrappedElement, all retries exhausted");
+    }
+
+    public WebElement getUnwrappedElement() {
+        return getUnwrappedElement(timeoutInSeconds);
     }
 
     // Retry logic for applying several attempts to do something with the element
@@ -144,12 +148,16 @@ public class SmartWebElement {
         return performWithRetry(WebElement::getText, "getText");
     }
 
-    public boolean isDisplayed() {
+    public boolean isDisplayed(int timeoutInSeconds) {
         try {
-            return getUnwrappedElement().isDisplayed();
+            return getUnwrappedElement(timeoutInSeconds).isDisplayed();
         } catch (IllegalStateException e) {
             return false;
         }
+    }
+
+    public boolean isDisplayed() {
+        return isDisplayed(timeoutInSeconds);
     }
 
     public String getAttribute(String name) {
