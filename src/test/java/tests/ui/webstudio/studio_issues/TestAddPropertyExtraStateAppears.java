@@ -5,17 +5,14 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.LoginService;
-import helpers.service.UserService;
-import helpers.utils.StringUtil;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.ZIP_ARCHIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestAddPropertyExtraStateAppears extends BaseTest {
@@ -25,17 +22,17 @@ public class TestAddPropertyExtraStateAppears extends BaseTest {
     @Description("'State' property is added to table instead of inherited")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddPropertyExtraStateAppears() {
-        EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProjectFromZipArchive(projectName, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
-        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, ZIP_ARCHIVE, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Test Project-CW-20200101-20200101");
-        editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE);
-        editorPage.getLeftRulesTreeComponent().selectItemInTree("Decision", "MyDatatype");
-        editorPage.getRightTableDetailsComponent().addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue());
-        editorPage.getRightTableDetailsComponent().setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details");
-        editorPage.getRightTableDetailsComponent().getSaveBtn().click();
+        editorPage.getLeftRulesTreeComponent()
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "MyDatatype");
+        editorPage.getRightTableDetailsComponent()
+                .addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
+                .setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
+                .getSaveBtn().click();
         assertThat(editorPage.getCenterTable().getCellText(1, 1)).isEqualTo("description");
         assertThat(editorPage.getCenterTable().getCellText(2, 1)).isEqualTo("Result");
         assertThat(editorPage.getCenterTable().getCellText(3, 1)).contains("= new MyDatatype");

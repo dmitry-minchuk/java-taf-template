@@ -32,14 +32,16 @@ public class RightTableDetailsComponent extends BasePageComponent {
     public RightTableDetailsComponent() {
     }
 
-    public void addProperty(String propertyName) {
+    public RightTableDetailsComponent addProperty(String propertyName) {
         addPropertyLink.click();
         propertyTypeSelector.selectByVisibleText(propertyName);
         addBtn.click();
+        return this;
     }
 
-    public void setProperty(String propertyName, String propertyValue) {
+    public RightTableDetailsComponent setProperty(String propertyName, String propertyValue) {
         propertyInputTextField.format(propertyName).sendKeys(propertyValue);
+        return this;
     }
 
     public boolean isPropertySet(String propertyName, String propertyValue) {

@@ -2,11 +2,8 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import configuration.core.ui.SmartWebElement;
 import configuration.core.ui.BasePageComponent;
-import helpers.utils.PrintUtil;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
-
-import java.util.List;
 
 public class TreeFolderComponent extends BasePageComponent {
 
@@ -27,13 +24,12 @@ public class TreeFolderComponent extends BasePageComponent {
         return item.format(itemName);
     }
 
-    public void expandFolder(String folderName) {
-        if(expanderClosed.format(folderName).isDisplayed())
-            expanderClosed.format(folderName).click();
+    public void expandFolder() {
+        if(expanderClosed.isDisplayed(2))
+            expanderClosed.click();
     }
 
-    public void selectItem(String folderName, String itemName) {
-        expandFolder(folderName);
+    public void selectItem(String itemName) {
         getItem(itemName).click();
     }
 }

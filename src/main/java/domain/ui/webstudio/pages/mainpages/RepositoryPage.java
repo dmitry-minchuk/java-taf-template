@@ -31,6 +31,30 @@ public class RepositoryPage extends ProxyMainPage {
         return createNewProjectComponent;
     }
 
+    public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
+        createProjectLink.click();
+        switch (projectType) {
+            case EXCEL_FILES:
+                ExcelFilesComponent excelFilesComponent = createNewProjectComponent.selectTab(projectType);
+                excelFilesComponent.createProjectFromExcelFile(sourceName, projectName);
+                break;
+            case ZIP_ARCHIVE:
+                ZipArchiveComponent zipArchiveComponent = createNewProjectComponent.selectTab(projectType);
+                zipArchiveComponent.createProjectZipArchive(sourceName, projectName);
+                break;
+            case TEMPLATE:
+                TemplateTabComponent templateTabComponent = createNewProjectComponent.selectTab(projectType);
+                templateTabComponent.createProjectFromTemplate(projectName, sourceName);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported project type: " + projectType);
+        }
+        if (configureCommitInfoComponent.isPresent()) {
+            configureCommitInfoComponent.fillCommitInfoWithRandomData();
+        }
+        refreshBtn.click();
+    }
+
     public void createProjectFromExcelFile(String projectName, String fileName) {
         createProjectLink.click();
         ExcelFilesComponent excelFilesComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.EXCEL_FILES);

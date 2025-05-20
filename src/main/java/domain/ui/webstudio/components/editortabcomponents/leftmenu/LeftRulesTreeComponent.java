@@ -29,34 +29,38 @@ public class LeftRulesTreeComponent extends BasePageComponent {
     public LeftRulesTreeComponent() {
     }
 
-    public void setViewFilter(FilterOptions filterOption) {
+    public LeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         viewFilterLink.click();
         viewFilterOptionsLink.format(filterOption.getValue()).click();
+        return this;
     }
 
-    public void selectItemInTree(String folderName, String itemName) {
-        TreeFolderComponent folder = treeFolderComponentList.stream().
-                filter(c -> c.getFolderName().getText().equals(folderName))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
-        folder.selectItem(folderName, itemName);
+    public LeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
+        TreeFolderComponent folder = findFolderInTree(folderName);
+        folder.selectItem(itemName);
+        return this;
+    }
+
+    public LeftRulesTreeComponent expandFolderInTree(String folderName) {
+        TreeFolderComponent folder = findFolderInTree(folderName);
+        folder.expandFolder();
+        return this;
     }
 
     public boolean isItemExistsInTree(String itemName) {
         return treeFolderComponentList.stream().anyMatch(c -> c.getItem(itemName).isDisplayed(1));
     }
 
-    public void expandFolderInTree(String folderName) {
-        TreeFolderComponent folder = treeFolderComponentList.stream().
-                filter(c -> c.getFolderName().getText().equals(folderName))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
-        folder.expandFolder(folderName);
-    }
-
     public boolean isFolderExistsInTree(String folderName) {
         return treeFolderComponentList.stream().
                 anyMatch(c -> c.getFolderName().getText().equals(folderName));
+    }
+
+    private TreeFolderComponent findFolderInTree(String folderName) {
+        return treeFolderComponentList.stream().
+                filter(c -> c.getFolderName().getText().equals(folderName))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
     }
 
     @Getter
