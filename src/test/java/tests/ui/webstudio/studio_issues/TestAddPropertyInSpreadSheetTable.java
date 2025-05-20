@@ -6,18 +6,15 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.LoginService;
-import helpers.service.UserService;
+import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
-import helpers.utils.StringUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestAddPropertyInSpreadSheetTable extends BaseTest {
@@ -27,19 +24,18 @@ public class TestAddPropertyInSpreadSheetTable extends BaseTest {
     @Description("BUG: Exception appears in log file on adding properties for Spreadsheet")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddPropertyInSpreadSheetTable() {
-        EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProjectFromExcelFile(projectName, "TestAddPropertyInSpreadSheetTable.xlsx");
-        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestAddPropertyInSpreadSheetTable.xlsx");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddPropertyInSpreadSheetTable");
-        editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE);
-        editorPage.getLeftRulesTreeComponent().selectItemInTree("Spreadsheet", "SpreadsheetTable");
-        editorPage.getRightTableDetailsComponent().addProperty(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue());
-        editorPage.getRightTableDetailsComponent().setProperty(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory");
-        editorPage.getRightTableDetailsComponent().getSaveBtn().click();
-        assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory"))
-                .isTrue();
+        editorPage.getLeftRulesTreeComponent()
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Spreadsheet")
+                .selectItemInFolder("Spreadsheet", "SpreadsheetTable");
+        editorPage.getRightTableDetailsComponent()
+                .addProperty(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue())
+                .setProperty(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")
+                .getSaveBtn().click();
+        assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")).isTrue();
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }
 }

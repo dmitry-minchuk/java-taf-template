@@ -5,14 +5,11 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.TabSwitcherComponent;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.LoginService;
-import helpers.service.UserService;
-import helpers.utils.StringUtil;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
+
+import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.TEMPLATE;
 
 public class TestAddDeleteDesignRepository extends BaseTest {
 
@@ -21,10 +18,7 @@ public class TestAddDeleteDesignRepository extends BaseTest {
     @Description("Multiple Design Repositories: flat folder git repository, JDBC; Repository filter and sorting")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddDeleteDesignRepository() {
-        EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProjectFromTemplate(projectName, "Sample Project");
+        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, "Sample Project");
         //Finish after new Admin UI is ready
     }
 }

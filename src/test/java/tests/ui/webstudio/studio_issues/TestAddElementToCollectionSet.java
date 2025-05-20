@@ -5,16 +5,14 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.LoginService;
-import helpers.service.UserService;
-import helpers.utils.StringUtil;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestAddElementToCollectionSet extends BaseTest {
@@ -24,20 +22,23 @@ public class TestAddElementToCollectionSet extends BaseTest {
     @Description("BUG: Error on clicking '+' for input types Collection, Set")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddElementToCollectionSet() {
-        EditorPage editorPage = new LoginService().login(UserService.getUser(User.ADMIN));
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProjectFromExcelFile(projectName, "TestAddElementToCollectionSet.xlsx");
-        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestAddElementToCollectionSet.xlsx");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddElementToCollectionSet");
-        editorPage.getLeftRulesTreeComponent().setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE);
-        editorPage.getLeftRulesTreeComponent().selectItemInTree("Spreadsheet", "mySpr");
-        editorPage.getTableToolbarPanelComponent().getRunBtn().click();
-        editorPage.getTableToolbarPanelComponent().getAddElementToCollectionBtn().format("a =").click();
+        editorPage.getLeftRulesTreeComponent()
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Spreadsheet")
+                .selectItemInFolder("Spreadsheet", "mySpr");
+
+        TableToolbarPanelComponent tableToolbarPanel = editorPage.getTableToolbarPanelComponent();
+        tableToolbarPanel.clickRun()
+                .clickAddElementToCollectionBtn("a =");
         assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong.")).isFalse();
-        editorPage.getTableToolbarPanelComponent().getAddedElementsExpander().format("a =").click();
-        editorPage.getTableToolbarPanelComponent().getAddElementToCollectionBtn().format("d =").click();
+        tableToolbarPanel.getRunMenu()
+                .clickAddedElementsExpander("a =")
+                .clickAddElementToCollectionBtn("d =");
         assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong.")).isFalse();
-        editorPage.getTableToolbarPanelComponent().getAddedElementsExpander().format("d =").click();
+        tableToolbarPanel.getRunMenu()
+                .clickAddedElementsExpander("d =");
     }
 }
