@@ -6,6 +6,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
@@ -22,7 +23,13 @@ public class TableComponent extends BasePageComponent {
     }
 
     public SmartWebElement getCell(int rowIndex, int columnIndex) {
-        WebElement tableElement = getRootElement() != null ? getRootElement() : getDriver().findElement(getRootLocatorBy());
+        WebElement tableElement;
+        if(getRootElement() != null)
+            tableElement =  getRootElement();
+        else {
+            WaitUtil.waitUntil(getDriver(), ExpectedConditions.visibilityOfElementLocated(getRootLocatorBy()), timeoutInSeconds);
+            tableElement = getDriver().findElement(getRootLocatorBy());
+        }
         List<WebElement> rows = WaitUtil.waitForElementsList(tableElement, rowLocator, timeoutInSeconds);
         if (rowIndex >= rows.size()) {
             throw new IndexOutOfBoundsException("Row index " + rowIndex + " is out of bounds. Table has " + rows.size() + " rows.");
