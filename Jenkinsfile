@@ -62,6 +62,9 @@ pipeline {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: 'xxxxxxx', description: 'Source application branch (openl-tablets)')
         string(name: 'TESTS_BRANCH', defaultValue: 'selenium_testcontainers', description: 'Autotests branch (openl-tests)')
     }
+    triggers {
+            cron 'H 3 * * *%APPLICATION_GIT_COMMIT_HASH_VERSION=latest_nightly_run&TESTS_BRANCH=selenium_testcontainers'
+    }
     stages {
         stage('Pull Docker Images') {
             steps {
