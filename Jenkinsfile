@@ -3,6 +3,11 @@ package main.jenkins
 def openlTabletsGitIrl = "https://github.com/openl-tablets/openl-tablets.git"
 def openlTestsGitIrl = "https://github.com/dmitry-minchuk/java-taf-template.git"
 
+def image_hub_registry = "https://ghcr.io/"
+def studio = "openl-tablets/webstudio:x"
+def ws = "openl-tablets/ws:x-all"
+def demo = "openl-tablets/demo:x"
+
 class JenkinsNode {
     String nodeLabel
     String ip
@@ -34,9 +39,9 @@ class Job {
 }
 
 def jenkinsLabel = new JenkinsLabel()
-def functionalJobList = [new Job("sample_ui_suite", "webstudio:latest", "", jenkinsLabel.master.nodeLabel),
-                         new Job("sample_ui_suite2", "webstudio:latest", "", jenkinsLabel.slave1.nodeLabel),
-                         new Job("sample_ui_suite3", "webstudio:latest", "", jenkinsLabel.slave2SAML.nodeLabel)]
+def functionalJobList = [new Job("studio_issues", image_hub_registry + studio, "", jenkinsLabel.master.nodeLabel),
+                         new Job("sample_ui_suite2", image_hub_registry + studio, "", jenkinsLabel.slave1.nodeLabel),
+                         new Job("sample_ui_suite3", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel)]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
 pipeline {
@@ -64,26 +69,17 @@ pipeline {
                         [(nodeLabel): {
                             node(nodeLabel) {
                                 deleteDir()
-                                docker.withRegistry('https://ghcr.io/') {
-                                  def webstudio = docker.image('openl-tablets/webstudio:x')
-                                  def webstudioNameInTests = "webstudio:latest"
-                                  def webservice = docker.image('openl-tablets/ws:x-all')
-                                  def webserviceNameInTests = "webservice:latest"
-                                  def webstudiodemo = docker.image('openl-tablets/demo:x')
-                                  def webstudiodemoNameInTests = "webstudiodemo:latest"
+                                docker.withRegistry(image_hub_registry) {
+                                  def studio_image = docker.image(studio)
+                                  def ws_image = docker.image(ws)
+                                  def demo_image = docker.image(demo)
                                   sh "docker system prune -f"
-                                  sh "docker image rm -f ${webstudioNameInTests}"
-                                  sh "docker image rm -f ${webserviceNameInTests}"
-                                  sh "docker image rm -f ${webstudiodemoNameInTests}"
-                                  sh "docker image rm -f ghcr.io/${webstudio.imageName()}"
-                                  sh "docker image rm -f ghcr.io/${webservice.imageName()}"
-                                  sh "docker image rm -f ghcr.io/${webstudiodemo.imageName()}"
-                                  sh "docker pull ${webstudio.imageName()}"
-                                  sh "docker image tag ${webstudio.imageName()} ${webstudioNameInTests}"
-                                  sh "docker pull ${webservice.imageName()}"
-                                  sh "docker image tag ${webservice.imageName()} ${webserviceNameInTests}"
-                                  sh "docker pull ${webstudiodemo.imageName()}"
-                                  sh "docker image tag ${webstudiodemo.imageName()} ${webstudiodemoNameInTests}"
+                                  sh "docker image rm -f ghcr.io/${studio_image.imageName()}"
+                                  sh "docker image rm -f ghcr.io/${ws_image.imageName()}"
+                                  sh "docker image rm -f ghcr.io/${demo_image.imageName()}"
+                                  sh "docker pull ${studio_image.imageName()}"
+                                  sh "docker pull ${ws_image.imageName()}"
+                                  sh "docker pull ${demo_image.imageName()}"
                                 }
                             }
                         }]
@@ -136,8 +132,8 @@ pipeline {
                                             -Drp.uuid=${RP_UUID} \\
                                             -Drp.attributes="build:${APPLICATION_GIT_COMMIT_HASH_VERSION};tests_branch:${TESTS_BRANCH}" \\
                                             -Dsuite=${suite.suiteName} \\
-                                            -Dcontainer.app.path=${suite.containerAppPath} \\
-                                            -Dimage.name=${suite.imageName} \\
+                                            -Ddeployed_app_path=${suite.containerAppPath} \\
+                                            -Ddocker_image_name=${suite.imageName} \\
                                             -Dtestng.dtd.http=true \\
                                     '""")
                                 }
