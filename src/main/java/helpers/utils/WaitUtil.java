@@ -77,6 +77,8 @@ public class WaitUtil {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(timeoutSec))
                 .pollingEvery(Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
+                .ignoring(StaleElementReferenceException.class)
+                .ignoring(NoSuchElementException.class)
                 .ignoring(WebDriverException.class);
 
         try {
@@ -98,6 +100,8 @@ public class WaitUtil {
         Wait<WebElement> wait = new FluentWait<>(rootElement)
                 .withTimeout(Duration.ofSeconds(timeoutSec))
                 .pollingEvery(Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
+                .ignoring(StaleElementReferenceException.class)
+                .ignoring(NoSuchElementException.class)
                 .ignoring(WebDriverException.class);
 
         try {
