@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 public class WaitUtil {
     protected final static Logger LOGGER = LogManager.getLogger(WaitUtil.class);
@@ -74,12 +75,19 @@ public class WaitUtil {
 
     public static List<WebElement> waitForElementsList(WebDriver driver, By locator, long timeoutSec) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(java.time.Duration.ofSeconds(timeoutSec))
-                .pollingEvery(java.time.Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
+                .withTimeout(Duration.ofSeconds(timeoutSec))
+                .pollingEvery(Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
                 .ignoring(WebDriverException.class);
 
         try {
-            return wait.until(d -> d.findElements(locator));
+            return wait.until(driver1 -> {
+                List<WebElement> elements = driver1.findElements(locator);
+                if (elements.isEmpty()) {
+                    return null;
+                } else {
+                    return elements;
+                }
+            });
         } catch (TimeoutException e) {
             LOGGER.debug("WaitUtil: Timeout waiting for elements: {}", locator.toString());
             return Collections.emptyList();
@@ -88,12 +96,19 @@ public class WaitUtil {
 
     public static List<WebElement> waitForElementsList(WebElement rootElement, By locator, long timeoutSec) {
         Wait<WebElement> wait = new FluentWait<>(rootElement)
-                .withTimeout(java.time.Duration.ofSeconds(timeoutSec))
-                .pollingEvery(java.time.Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
+                .withTimeout(Duration.ofSeconds(timeoutSec))
+                .pollingEvery(Duration.ofMillis(WAIT_POLL_INTERVAL_MS))
                 .ignoring(WebDriverException.class);
 
         try {
-            return wait.until(element -> element.findElements(locator));
+            return wait.until(element -> {
+                List<WebElement> elements = element.findElements(locator);
+                if (elements.isEmpty()) {
+                    return null;
+                } else {
+                    return elements;
+                }
+            });
         } catch (TimeoutException e) {
             LOGGER.debug("WaitUtil: Timeout waiting for elements inside rootElement: {}", locator.toString());
             return Collections.emptyList();
