@@ -5,16 +5,9 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.CreateNewProjectComponent;
-import domain.ui.webstudio.components.TabSwitcherComponent;
-import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.LoginService;
-import helpers.service.UserService;
 import helpers.service.WorkflowService;
-import helpers.utils.StringUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
