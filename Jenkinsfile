@@ -3,7 +3,8 @@ package main.jenkins
 def openlTabletsGitIrl = "https://github.com/openl-tablets/openl-tablets.git"
 def openlTestsGitIrl = "https://github.com/dmitry-minchuk/java-taf-template.git"
 
-def image_hub_registry = "https://ghcr.io/"
+def protocol_prefix = "https://"
+def image_hub_registry = "ghcr.io/"
 def studio = "openl-tablets/webstudio:x"
 def ws = "openl-tablets/ws:x-all"
 def demo = "openl-tablets/demo:x"
@@ -69,7 +70,7 @@ pipeline {
                         [(nodeLabel): {
                             node(nodeLabel) {
                                 deleteDir()
-                                docker.withRegistry(image_hub_registry) {
+                                docker.withRegistry(protocol_prefix + image_hub_registry) {
                                   def studio_image = docker.image(studio)
                                   def ws_image = docker.image(ws)
                                   def demo_image = docker.image(demo)
