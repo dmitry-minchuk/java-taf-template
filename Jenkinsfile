@@ -45,6 +45,12 @@ def functionalJobList = [new Job("studio_issues", image_hub_registry + studio, "
                          new Job("studio_rules_editor", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel)]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
+properties([
+    pipelineTriggers([
+        cron('H 3 * * *')
+    ])
+])
+
 pipeline {
     agent {
         label jenkinsLabel.master.nodeLabel
@@ -62,11 +68,6 @@ pipeline {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: 'latest_nightly_run', description: 'Source application branch (openl-tablets)')
         string(name: 'TESTS_BRANCH', defaultValue: 'selenium_testcontainers', description: 'Autotests branch (openl-tests)')
     }
-    properties([
-        pipelineTriggers([
-            cron('H 3 * * *')
-        ])
-    ])
     stages {
         stage('Pull Docker Images') {
             steps {
