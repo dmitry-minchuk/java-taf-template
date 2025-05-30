@@ -50,7 +50,7 @@ pipeline {
         label jenkinsLabel.master.nodeLabel
     }
     triggers {
-            cron('H 3 * * *')
+         cron('H 3 * * *')
     }
     options {
         throttleJobProperty categories: [], limitOneJobWithMatchingParams: false, maxConcurrentPerNode: 3, maxConcurrentTotal: 9, paramsToUseForLimit: '', throttleEnabled: true, throttleOption: 'project'
