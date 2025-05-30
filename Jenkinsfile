@@ -45,15 +45,12 @@ def functionalJobList = [new Job("studio_issues", image_hub_registry + studio, "
                          new Job("studio_rules_editor", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel)]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
-properties([
-    pipelineTriggers([
-        cron('H 3 * * *')
-    ])
-])
-
 pipeline {
     agent {
         label jenkinsLabel.master.nodeLabel
+    }
+    triggers {
+            cron('H 3 * * *')
     }
     options {
         throttleJobProperty categories: [], limitOneJobWithMatchingParams: false, maxConcurrentPerNode: 3, maxConcurrentTotal: 9, paramsToUseForLimit: '', throttleEnabled: true, throttleOption: 'project'
