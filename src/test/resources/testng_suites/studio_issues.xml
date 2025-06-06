@@ -7,6 +7,7 @@
     </listeners>
 
     <test name="StudioIssues.TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
+    <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
     <test name="StudioIssues.TestAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyExtraStateAppears"/></classes></test>
     <test name="StudioIssues.TestAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathStar"/></classes></test>
     <test name="StudioIssues.TestAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathExistingModule"/></classes></test>

@@ -6,7 +6,6 @@ import helpers.utils.WindowSwitcher;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,13 +49,22 @@ public class TableToolbarPanelComponent extends BasePageComponent {
     @FindBy(xpath = ".//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span")
     private SmartWebElement addedElementsExpander;
 
-    // Trace Dropdown elements
+    // Trace Dropdown and opened window elements
 
     @FindBy(xpath = ".//input[@id='inputArgsForm:traceButton']")
     private SmartWebElement traceDropdownBtn;
 
+    @FindBy(xpath = ".//input[@id='inputArgsForm:traceIntoFileButton']")
+    private SmartWebElement traceIntoFileDropdownBtn;
+
     @FindBy(xpath = ".//span[text()='factor = ']/input")
     private List<SmartWebElement> factorTextFields;
+
+    @FindBy(xpath = ".//input[@type='radio' and @name='inputArgsForm:inputTestCaseType' and following-sibling::label[contains(text(),'JSON')]]")
+    private SmartWebElement jsonRadioBtn;
+
+    @FindBy(xpath = ".//textarea[@name='inputArgsForm:jsonInput']")
+    private SmartWebElement jsonTextField;
 
     @FindBy(xpath = "//span[contains(@class, 'fancytree-exp-c')]/span[@class='fancytree-expander']")
     private SmartWebElement traceWindowLeftPanelExpander;
@@ -131,10 +139,23 @@ public class TableToolbarPanelComponent extends BasePageComponent {
             WindowSwitcher.maximizeWindow("Trace");
             return new TraceWindow();
         }
+
+        public TraceMenu clickTraceIntoFile() {
+            traceIntoFileDropdownBtn.click();
+            return this;
+        }
+
+        public TraceMenu selectJSONTrace(String json) {
+            jsonRadioBtn.click();
+            jsonTextField.sendKeys(1, json);
+            return this;
+        }
     }
 
     public interface ITraceMenu {
         ITraceMenu setFactorTextField(String text);
+        ITraceMenu selectJSONTrace(String json);
+        ITraceMenu clickTraceIntoFile();
         ITraceWindow clickTraceInsideMenu();
     }
 
