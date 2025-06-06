@@ -25,7 +25,7 @@ public class TableComponent extends BasePageComponent {
     public SmartWebElement getCell(int rowIndex, int columnIndex) {
         WebElement tableElement;
         if(getRootElement() != null)
-            tableElement =  getRootElement();
+            tableElement = getRootElement();
         else {
             WaitUtil.waitUntil(getDriver(), ExpectedConditions.visibilityOfElementLocated(getRootLocatorBy()), timeoutInSeconds);
             tableElement = getDriver().findElement(getRootLocatorBy());
