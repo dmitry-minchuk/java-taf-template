@@ -34,6 +34,6 @@ public class TestTraceIntoFileJsonRequest extends BaseTest {
                 .selectJSONTrace("{\n  \"myId\": \"string\",\n  \"someArr\": null\n  \"intA\": 0,\n  \"subElement\": null\n  \"someText\": null\n}")
                 .clickTraceIntoFile();
 
-        assertThat(editorPage.getUniversalTextElement().format("Internal Server Error").isDisplayed(5)).isFalse();
+        assertThat(editorPage.getUniversalTextElement().format("Internal Server Error").isDisplayed(5)).isFalse().as("Internal Server Error is shown!");
     }
 }
