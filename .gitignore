@@ -9,6 +9,36 @@ reports
 test-output
 .settings/*
 
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build directories
+build/
+bin/
+out/
+
+# Temporary files
+temp/
+tmp/
+
+# Log files
+*.log
+application.log
+sql.log
+velocity.log
+
 selenide-based/target
 selenide-based/test-output
 selenide-based/reports
