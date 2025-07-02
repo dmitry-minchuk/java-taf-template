@@ -6,8 +6,6 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.core.ui.TableComponent;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.EditTablePanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;

@@ -17,4 +17,5 @@
     <test name="StudioIssues.TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_issues.TestAddDeleteDesignRepository"/></classes></test>
     <test name="StudioIssues.TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
+    <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
 </suite>

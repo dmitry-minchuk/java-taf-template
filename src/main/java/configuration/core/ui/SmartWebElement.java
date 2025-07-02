@@ -164,6 +164,10 @@ public class SmartWebElement {
         return performWithRetry((Function<WebElement, String>) element -> element.getDomAttribute(name), "getAttribute(" + name + ")");
     }
 
+    public String getCssValue(String propertyName) {
+        return performWithRetry((Function<WebElement, String>) element -> element.getCssValue(propertyName), "getCssValue(" + propertyName + ")");
+    }
+
     public void clear() {
         performWithRetry(WebElement::clear, "clear");
     }
