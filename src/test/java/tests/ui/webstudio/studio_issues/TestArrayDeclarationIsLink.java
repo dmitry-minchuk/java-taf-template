@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
-import configuration.core.ui.TableComponent;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
@@ -38,12 +38,9 @@ public class TestArrayDeclarationIsLink extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "DetermineStatusByCodeRule");
         
-        // Get the center table and verify procedure links
-        TableComponent centerTable = editorPage.getCenterTable();
-        
         // Find procedure links with title-datatype class
         List<SmartWebElement> procedureLinks = IntStream.rangeClosed(1, 12)
-                .mapToObj(i -> new SmartWebElement(centerTable.getDriver(), By.xpath("(//td//span[contains(@class,'title-datatype')]/a[text()='Procedure'])[" + i + "]")))
+                .mapToObj(i -> new SmartWebElement(DriverPool.getDriver(), By.xpath("(//td//span[contains(@class,'title-datatype')]/a[text()='Procedure'])[" + i + "]")))
                 .toList();
         
         // Verify count of procedure links
