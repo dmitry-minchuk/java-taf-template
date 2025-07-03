@@ -3,7 +3,6 @@
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
-        <listener class-name="configuration.listeners.RetryAnalyzer"/>
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
