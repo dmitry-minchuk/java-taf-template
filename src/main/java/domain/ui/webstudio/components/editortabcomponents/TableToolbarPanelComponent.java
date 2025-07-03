@@ -4,6 +4,7 @@ import configuration.core.ui.BasePageComponent;
 import configuration.core.ui.SmartWebElement;
 import helpers.utils.WindowSwitcher;
 import lombok.Getter;
+import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
@@ -39,6 +40,15 @@ public class TableToolbarPanelComponent extends BasePageComponent {
     // Edit Panel elements
 
     // RunMenu Dropdown elements
+
+    @FindBy(xpath = ".//a[@title='Create']")
+    private SmartWebElement createItemBtn;
+
+    @FindBy(xpath = ".//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]")
+    private SmartWebElement expandTypes;
+    
+    @FindBy(xpath = ".//select[contains(@name, 'inputArgsForm')]")
+    private SmartWebElement selectType;
 
     @FindBy(xpath = ".//input[@id='inputArgsForm:runButton']")
     private SmartWebElement runDropdownBtn;
@@ -111,6 +121,23 @@ public class TableToolbarPanelComponent extends BasePageComponent {
             return this;
         }
 
+        public RunMenu clickCreateItem() {
+            createItemBtn.click();
+            return this;
+        }
+
+        public RunMenu clickExpandCollection() {
+            expandTypes.click();
+            return this;
+        }
+
+        public List<String> getAliasDropdownValues() {
+            return selectType.getUnwrappedElement().findElements(By.tagName("option"))
+                    .stream()
+                    .map(e -> e.getAttribute("value"))
+                    .collect(Collectors.toList());
+        }
+
         public RunMenu clickAddedElementsExpander(String containsText) {
             addedElementsExpander.format(containsText).click();
             return this;
@@ -121,6 +148,9 @@ public class TableToolbarPanelComponent extends BasePageComponent {
         IRunMenu clickRunInsideMenu();
         IRunMenu clickAddElementToCollectionBtn(String containsText);
         IRunMenu clickAddedElementsExpander(String containsText);
+        IRunMenu clickCreateItem();
+        IRunMenu clickExpandCollection();
+        List<String> getAliasDropdownValues();
     }
 
     protected class TraceMenu implements ITraceMenu {
@@ -145,6 +175,13 @@ public class TableToolbarPanelComponent extends BasePageComponent {
             return this;
         }
 
+        public List<String> getAliasDropdownValues() {
+            return selectType.getUnwrappedElement().findElements(By.tagName("option"))
+                    .stream()
+                    .map(e -> e.getAttribute("value"))
+                    .collect(Collectors.toList());
+        }
+
         public TraceMenu selectJSONTrace(String json) {
             jsonRadioBtn.click();
             jsonTextField.sendKeys(1, json);
@@ -157,6 +194,7 @@ public class TableToolbarPanelComponent extends BasePageComponent {
         ITraceMenu selectJSONTrace(String json);
         ITraceMenu clickTraceIntoFile();
         ITraceWindow clickTraceInsideMenu();
+        List<String> getAliasDropdownValues();
     }
 
     public class TraceWindow implements ITraceWindow {
