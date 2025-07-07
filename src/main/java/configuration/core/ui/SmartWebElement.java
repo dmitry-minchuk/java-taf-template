@@ -160,6 +160,10 @@ public class SmartWebElement {
         return isDisplayed(timeoutInSeconds);
     }
 
+    public boolean isEnabled() {
+        return performWithRetry(WebElement::isEnabled, "isEnabled");
+    }
+
     public String getAttribute(String name) {
         return performWithRetry((Function<WebElement, String>) element -> element.getDomAttribute(name), "getAttribute(" + name + ")");
     }
