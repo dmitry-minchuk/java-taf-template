@@ -17,9 +17,6 @@ public class LeftRulesTreeComponent extends BasePageComponent {
     }) //Looking for all folders (even nested) - so actions on nested ones will depend on ancestor-folders
     private List<TreeFolderComponent> treeFolderComponentList;
 
-    @FindBy(xpath = ".//div[@id='rulesTree']/div")
-    private List<SmartWebElement> testList;
-
     @FindBy(xpath = ".//div[@class='filter-view']/span/a")
     private SmartWebElement viewFilterLink;
 
