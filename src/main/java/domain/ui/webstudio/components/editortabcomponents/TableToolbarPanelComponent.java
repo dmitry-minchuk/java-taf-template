@@ -13,28 +13,28 @@ import java.util.stream.Collectors;
 public class TableToolbarPanelComponent extends BasePageComponent {
 
     @Getter
-    @FindBy(xpath = ".//a[.//div[text()='Edit']]")
+    @FindBy(xpath = ".//a[.//div[text()='Edit'] or .//tr/td/span[text()='Edit']]")
     private SmartWebElement editBtn;
 
     @Getter
-    @FindBy(xpath = ".//a[.//div[text()='Open']]")
+    @FindBy(xpath = ".//a[.//div[text()='Open'] or .//tr/td/span[text()='Open']]")
     private SmartWebElement openBtn;
 
     @Getter
-    @FindBy(xpath = ".//a[.//div[text()='Copy']]")
+    @FindBy(xpath = ".//a[.//div[text()='Copy'] or .//tr/td/span[text()='Copy']]")
     private SmartWebElement copyBtn;
 
     @Getter
-    @FindBy(xpath = ".//a[.//div[text()='Remove']]")
+    @FindBy(xpath = ".//a[.//div[text()='Remove'] or .//tr/td/span[text()='Remove']]")
     private SmartWebElement removeBtn;
 
-    @FindBy(xpath = ".//a[.//div[text()='Run']]")
+    @FindBy(xpath = ".//a[.//div[text()='Run'] or .//tr/td/span[text()='Run']]")
     private SmartWebElement runBtn;
 
-    @FindBy(xpath = ".//a[.//div[text()='Trace']]")
+    @FindBy(xpath = ".//a[.//div[text()='Trace'] or .//tr/td/span[text()='Trace']]")
     private SmartWebElement traceBtn;
 
-    @FindBy(xpath = ".//a[.//div[text()='Create Test']]")
+    @FindBy(xpath = ".//a[.//div[text()='Create Test'] or .//tr/td/span[text()='Create Test']]")
     private SmartWebElement createTestBtn;
 
     // Edit Panel elements
