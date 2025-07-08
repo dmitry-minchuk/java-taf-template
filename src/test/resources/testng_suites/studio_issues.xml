@@ -20,4 +20,5 @@
     <test name="StudioIssues.TestArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayOfAliasValuesInRunTrace"/></classes></test>
     <test name="StudioIssues.TestButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestButtonDeployAvailableDeployConfiguration"/></classes></test>
     <test name="StudioIssues.TestCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestCallRuleWithSpreadsheetResultConstructor"/></classes></test>
+    <test name="StudioIssues.TestClassCastException"><classes><class name="tests.ui.webstudio.studio_issues.TestClassCastException"/></classes></test>
 </suite>

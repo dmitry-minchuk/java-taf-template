@@ -20,6 +20,12 @@ public class TestResultValidationComponent extends BasePageComponent {
     @FindBy(xpath = ".//tr//span[@class='case-success']")
     private List<SmartWebElement> passedTestCells;
 
+    @FindBy(xpath = ".//table[@class='table']")
+    private SmartWebElement resultTable;
+
+    @FindBy(xpath = ".//table[@class='table']//tr[1]")
+    private SmartWebElement resultTableHeader;
+
     public boolean isTestTableFailed() {
         return !failedTestCells.isEmpty();
     }
@@ -53,7 +59,18 @@ public class TestResultValidationComponent extends BasePageComponent {
                 .isEqualTo(isPresent);
     }
 
+    public boolean isResultTablePresent() {
+        return resultTable.isDisplayed(2);
+    }
+
+    public String getResultTableHeader() {
+        if (resultTableHeader.isDisplayed(2)) {
+            return resultTableHeader.getText();
+        }
+        return "";
+    }
+
     public SmartWebElement getTestResultRow(String testName) {
-        return new SmartWebElement(getDriver(), By.xpath("//table[@class='table']//tr[contains(@class, 'test-result-row') and .//td[text()='" + testName + "']]"));
+        return new SmartWebElement(getDriver(), By.xpath(".//table[@class='table']//tr[contains(@class, 'test-result-row') and .//td[text()='" + testName + "']]"));
     }
 }
