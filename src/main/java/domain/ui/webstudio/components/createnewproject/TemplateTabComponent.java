@@ -23,7 +23,7 @@ public class TemplateTabComponent extends BasePageComponent {
 
     public void createProjectFromTemplate(String projectName, String templateName) {
         projectTemplate.format(templateName).click();
-        projectNameField.sendKeys(projectName);
+        projectNameField.sendKeys(5, projectName);
         createProjectBtn.click();
     }
 }

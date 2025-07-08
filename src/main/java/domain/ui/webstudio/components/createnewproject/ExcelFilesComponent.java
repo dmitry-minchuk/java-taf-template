@@ -25,7 +25,7 @@ public class ExcelFilesComponent extends BasePageComponent {
     public void createProjectFromExcelFile(String fileName, String projectName) {
         String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);
-        projectNameField.sendKeys(projectName);
+        projectNameField.sendKeys(5, projectName);
         createProjectBtn.click();
     }
 }

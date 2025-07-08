@@ -17,4 +17,13 @@ public class WorkflowService {
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         return projectName;
     }
+
+    public static String loginCreateProjectFromZipOpenEditor(User user, String zipFileName) {
+        EditorPage editorPage = new LoginService().login(UserService.getUser(user));
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        String projectName = StringUtil.generateUniqueName("project");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, projectName, zipFileName);
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        return projectName;
+    }
 }

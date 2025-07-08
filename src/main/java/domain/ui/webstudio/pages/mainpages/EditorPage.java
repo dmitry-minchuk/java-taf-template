@@ -48,6 +48,10 @@ public class EditorPage extends ProxyMainPage {
     @FindBy(xpath = "//div[@id='content' and contains(@class,'ui-layout-center')]")
     private TestResultValidationComponent testResultValidationComponent;
 
+    @Getter
+    @FindBy(xpath = "//div[@id='content']")
+    private EditorMainContentProblemsPanelComponent editorMainContentProblemsPanelComponent;
+
     public EditorPage() {
         super("/");
     }
