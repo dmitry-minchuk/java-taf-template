@@ -19,4 +19,5 @@
     <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
     <test name="StudioIssues.TestArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayOfAliasValuesInRunTrace"/></classes></test>
     <test name="StudioIssues.TestButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestButtonDeployAvailableDeployConfiguration"/></classes></test>
+    <test name="StudioIssues.TestCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestCallRuleWithSpreadsheetResultConstructor"/></classes></test>
 </suite>

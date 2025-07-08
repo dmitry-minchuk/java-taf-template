@@ -44,6 +44,10 @@ public class EditorPage extends ProxyMainPage {
     @FindBy(xpath = "//div[@class='te_toolbar']")
     private EditTablePanelComponent editTablePanelComponent;
 
+    @Getter
+    @FindBy(xpath = "//div[@id='content' and contains(@class,'ui-layout-center')]")
+    private TestResultValidationComponent testResultValidationComponent;
+
     public EditorPage() {
         super("/");
     }
