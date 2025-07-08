@@ -67,4 +67,17 @@ public class ProblemsPanelComponent extends BasePageComponent {
         return warningsAll.stream().map(SmartWebElement::getText).toList();
     }
 
+    public void selectProblemByIndex(int index) {
+        if (index > 0 && index <= errorsAll.size()) {
+            errorsAll.get(index - 1).click();
+        }
+    }
+
+    public void selectProblemByText(String text) {
+        errorsAll.stream()
+                .filter(error -> error.getText().contains(text))
+                .findFirst()
+                .ifPresent(SmartWebElement::click);
+    }
+
 }

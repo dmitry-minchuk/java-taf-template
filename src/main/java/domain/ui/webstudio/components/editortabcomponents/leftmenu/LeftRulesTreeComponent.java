@@ -23,6 +23,9 @@ public class LeftRulesTreeComponent extends BasePageComponent {
     @FindBy(xpath = ".//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']")
     private SmartWebElement viewFilterOptionsLink;
 
+    @FindBy(xpath = ".//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a")
+    private SmartWebElement selectedTreeItem;
+
     public LeftRulesTreeComponent() {
     }
 
@@ -51,6 +54,13 @@ public class LeftRulesTreeComponent extends BasePageComponent {
     public boolean isFolderExistsInTree(String folderName) {
         return treeFolderComponentList.stream().
                 anyMatch(c -> c.getFolderName().getText().equals(folderName));
+    }
+
+    public String getSelectedItemText() {
+        if (selectedTreeItem.isDisplayed(2)) {
+            return selectedTreeItem.getText();
+        }
+        return "";
     }
 
     private TreeFolderComponent findFolderInTree(String folderName) {
