@@ -16,7 +16,7 @@ public abstract class ProxyMainPage extends BasePage {
     private SmartWebElement userLogo;
 
     @Getter
-    @FindBy(xpath = "//div/div[@id='ll']")
+    @FindBy(xpath = "//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]")
     private TabSwitcherComponent tabSwitcherComponent;
 
     @FindBy(xpath = "//div[@class='message closable']")

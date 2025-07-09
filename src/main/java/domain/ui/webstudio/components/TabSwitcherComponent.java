@@ -11,7 +11,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class TabSwitcherComponent extends BasePageComponent {
 
-    @FindBy(xpath = "./a[text()='%s']")
+    @FindBy(xpath = "./li[./span[text()='%s']]")
     private SmartWebElement tabElement;
 
     public TabSwitcherComponent() {}
@@ -23,15 +23,13 @@ public class TabSwitcherComponent extends BasePageComponent {
         return switch (tabName) {
             case EDITOR -> (T) new EditorPage();
             case REPOSITORY -> (T) new RepositoryPage();
-            case ADMIN -> (T) new AdminPage();
         };
     }
 
     @Getter
     public enum TabName {
-        EDITOR("EDITOR"),
-        REPOSITORY("REPOSITORY"),
-        ADMIN("ADMIN");
+        EDITOR("Editor"),
+        REPOSITORY("Repository");
 
         private String value;
 
