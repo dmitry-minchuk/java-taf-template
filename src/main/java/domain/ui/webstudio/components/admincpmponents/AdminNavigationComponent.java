@@ -15,7 +15,7 @@ public class AdminNavigationComponent extends BasePageComponent {
     }
 
     public void clickNavigationItem(NavigationItem item) {
-        navigationItem.format(item.getValue()).click(3);
+        navigationItem.format(item.getValue()).click(1);
     }
 
     public void clickMyProfile() {

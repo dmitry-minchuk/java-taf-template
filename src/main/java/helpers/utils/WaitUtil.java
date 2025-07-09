@@ -132,9 +132,9 @@ public class WaitUtil {
         wait.until(jQueryInactive);
     }
 
-    public static void sleep(int timeout) {
+    public static void sleep(int timeoutMillis) {
         try {
-            Thread.sleep(timeout);
+            Thread.sleep(timeoutMillis);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

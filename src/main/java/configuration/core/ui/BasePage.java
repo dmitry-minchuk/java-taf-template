@@ -38,4 +38,9 @@ public abstract class BasePage {
         String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, () -> AppContainerPool.get().getAppHostUrl() + urlAppender);
         return Objects.requireNonNull(DriverPool.getDriver().getCurrentUrl()).equalsIgnoreCase(urlExpected);
     }
+
+    public void refresh() {
+        String url = DriverPool.getDriver().getCurrentUrl();
+        DriverPool.getDriver().get(url);
+    }
 }

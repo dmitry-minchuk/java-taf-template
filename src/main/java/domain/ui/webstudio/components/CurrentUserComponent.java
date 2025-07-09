@@ -14,7 +14,7 @@ public class CurrentUserComponent extends BasePageComponent {
 
     public CurrentUserComponent() {
         super();
-        WaitUtil.sleep(1);
+        WaitUtil.sleep(1000);
     }
 
     public void select(MenuElements element) {
