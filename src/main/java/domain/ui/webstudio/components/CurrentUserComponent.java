@@ -2,31 +2,37 @@ package domain.ui.webstudio.components;
 
 import configuration.core.ui.SmartWebElement;
 import configuration.core.ui.BasePageComponent;
+import domain.ui.webstudio.pages.mainpages.AdminPage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
 
 public class CurrentUserComponent extends BasePageComponent {
 
-    @FindBy(xpath = "./a")
-    private SmartWebElement dropdownToggle;
-
-    @FindBy(xpath = ".//li/a[contains(text(), '%s')]")
+    @FindBy(xpath = ".//li[@class='ant-menu-item' and ./span[text()='%s']]")
     private SmartWebElement menuOption;
 
-    public CurrentUserComponent() {}
+    public CurrentUserComponent() {
+        super();
+        WaitUtil.sleep(1);
+    }
 
-    public void openDropdownMenuAndSelect(MenuElements element) {
-        dropdownToggle.click();
+    public void select(MenuElements element) {
         menuOption.format(element.getValue()).click();
-        getDriver().switchTo().alert().accept();
+    }
+
+    public AdminPage navigateToAdministration() {
+        select(MenuElements.ADMINISTRATION);
+        return new AdminPage();
     }
 
     @Getter
     public enum MenuElements {
-        USER_DETAILS("User details"),
-        USER_SETTINGS("User settings"),
+        MY_PROFILE("My Profile"),
+        MY_SETTINGS("My Settings"),
+        ADMINISTRATION("Administration"),
         HELP("Help"),
-        SIGN_OUT("Sign out");
+        SIGN_OUT("Sign Out");
 
         private String value;
 

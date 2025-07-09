@@ -9,9 +9,11 @@ import org.openqa.selenium.support.FindBy;
 
 public abstract class ProxyMainPage extends BasePage {
 
-    @Getter
-    @FindBy(css = "#rb > span")
+    @FindBy(xpath = "//div[@class='ant-drawer-content-wrapper']")
     private CurrentUserComponent currentUserComponent;
+
+    @FindBy(xpath = "//div[@class='user-logo']/span")
+    private SmartWebElement userLogo;
 
     @Getter
     @FindBy(xpath = "//div/div[@id='ll']")
@@ -33,6 +35,12 @@ public abstract class ProxyMainPage extends BasePage {
 
     public boolean isStudioMessageDisplayed(String text) {
         return message.isDisplayed() && message.getText().contains(text);
+    }
+
+    public CurrentUserComponent getCurrentUserComponent() {
+        userLogo.click();
+        currentUserComponent.isPresent();
+        return currentUserComponent;
     }
 
 }
