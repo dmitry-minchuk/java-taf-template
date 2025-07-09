@@ -6,8 +6,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 public class TestDataUtil {
 
@@ -44,6 +46,32 @@ public class TestDataUtil {
             }
         }
         return relativePath;
+    }
+
+    public static Properties loadEmailProperties(String fileName) {
+        Properties properties = new Properties();
+        try {
+            File resourcesDir = new File(HOST_RESOURCE_PATH);
+            Collection<File> foundFiles = FileUtils.listFiles(resourcesDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+            List<File> matchingFiles = foundFiles.stream()
+                    .filter(file -> file.getName().contains(fileName))
+                    .toList();
+
+            if (matchingFiles.size() == 1) {
+                File propertiesFile = matchingFiles.getFirst();
+                try (InputStream input = FileUtils.openInputStream(propertiesFile)) {
+                    properties.load(input);
+                }
+            } else {
+                throw new RuntimeException(String.format("File '%s' not found here %s or found more than one: %s",
+                        fileName,
+                        HOST_RESOURCE_PATH,
+                        PrintUtil.prettyPrintObjectCollection.apply(matchingFiles)));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load properties from file '" + fileName + "': " + e.getMessage(), e);
+        }
+        return properties;
     }
 }
 

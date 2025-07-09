@@ -7,4 +7,7 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
+    <test name="StudioSmoke.TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
+    <test name="StudioSmoke.TestAdminSystem"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystem"/></classes></test>
+
 </suite>
