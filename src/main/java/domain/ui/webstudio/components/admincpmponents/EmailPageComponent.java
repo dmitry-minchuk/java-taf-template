@@ -2,6 +2,7 @@ package domain.ui.webstudio.components.admincpmponents;
 
 import configuration.core.ui.BasePageComponent;
 import configuration.core.ui.SmartWebElement;
+import helpers.utils.WaitUtil;
 import org.openqa.selenium.support.FindBy;
 
 public class EmailPageComponent extends BasePageComponent {
@@ -15,11 +16,17 @@ public class EmailPageComponent extends BasePageComponent {
     @FindBy(xpath = ".//div[./div/label[@title='Username']]//div/input")
     private SmartWebElement emailUsernameField;
 
-    @FindBy(xpath = ".//div[./div/label[@title='Password']]//div/input")
+    @FindBy(xpath = ".//input[@id='password']")
     private SmartWebElement emailPasswordField;
 
     @FindBy(xpath = ".//button[./span[text()='Apply']]")
     private SmartWebElement applyBtn;
+
+    @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm-confirm')]//button[./span[text()='OK']]")
+    private SmartWebElement okBtn;
+
+    @FindBy(xpath = ".//span[contains(@aria-label,'eye')]")
+    private SmartWebElement showPasswordBtn;
 
     public void enableEmailVerification() {
         if (!isEmailVerificationEnabled()) {
@@ -34,22 +41,18 @@ public class EmailPageComponent extends BasePageComponent {
     }
 
     public boolean isEmailVerificationEnabled() {
-        String checked = emailVerificationCheckbox.getAttribute("checked");
-        return checked != null && (checked.equals("true") || checked.equals("checked"));
+        return emailUrlField.isDisplayed(1);
     }
 
     public void setEmailUrl(String url) {
-        emailUrlField.clear();
         emailUrlField.sendKeys(url);
     }
 
     public void setEmailUsername(String username) {
-        emailUsernameField.clear();
         emailUsernameField.sendKeys(username);
     }
 
     public void setEmailPassword(String password) {
-        emailPasswordField.clear();
         emailPasswordField.sendKeys(password);
     }
 
@@ -70,6 +73,9 @@ public class EmailPageComponent extends BasePageComponent {
         setEmailUsername(username);
         setEmailPassword(password);
         applyBtn.click();
+        WaitUtil.sleep(1000);
+        okBtn.click();
+        WaitUtil.sleep(5000);
     }
 
     public void enableEmailVerificationWithCredentials(String url, String username, String password) {
@@ -77,6 +83,7 @@ public class EmailPageComponent extends BasePageComponent {
         setEmailCredentials(url, username, password);
     }
 
-    public void togglePasswordVisibility() {}
-
+    public void togglePasswordVisibility() {
+        showPasswordBtn.click();
+    }
 }
