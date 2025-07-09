@@ -90,7 +90,7 @@ public class SmartWebElement {
                 }
             }
         }
-        throw new IllegalStateException("Unexpected error in performWithRetry, all retries exhausted");
+        throw new IllegalStateException("Perform_with_Retry did not succeed - all retries exhausted");
     }
 
     // Retry logic for applying several attempts to do something with the element
