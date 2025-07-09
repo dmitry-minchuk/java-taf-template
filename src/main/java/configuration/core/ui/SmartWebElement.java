@@ -66,7 +66,8 @@ public class SmartWebElement {
                 WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
             }
         }
-        throw new IllegalStateException("Unexpected error in getUnwrappedElement, all retries exhausted", exception.getCause());
+        throw new IllegalStateException(String.format("Unexpected error in getUnwrappedElement, all retries exhausted:\n%s",
+                exception.getMessage()), exception.getCause());
     }
 
     public WebElement getUnwrappedElement() {
@@ -94,7 +95,8 @@ public class SmartWebElement {
                 }
             }
         }
-        throw new IllegalStateException("Perform_with_Retry did not succeed - all retries exhausted", exception.getCause());
+        throw new IllegalStateException(String.format("Perform_with_Retry did not succeed - all retries exhausted:\n%s",
+                exception.getMessage()), exception.getCause());
     }
 
     // Retry logic for applying several attempts to do something with the element
@@ -121,7 +123,8 @@ public class SmartWebElement {
                 }
             }
         }
-        throw new IllegalStateException("Perform_with_Retry did not succeed - all retries exhausted", exception.getCause());
+        throw new IllegalStateException(String.format("Perform_with_Retry did not succeed - all retries exhausted:\n%s",
+                exception.getMessage()), exception.getCause());
     }
 
     // Actions for SmartWebElement
