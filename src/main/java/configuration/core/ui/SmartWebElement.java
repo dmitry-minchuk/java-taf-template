@@ -45,6 +45,7 @@ public class SmartWebElement {
 
     // Basic logic for element lookup
     public WebElement getUnwrappedElement(int timeoutInSeconds) {
+        WebDriverException exception = null;
         WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
@@ -61,10 +62,11 @@ public class SmartWebElement {
                 }
             } catch (WebDriverException e) {
                 attempts++;
+                exception = e;
                 WaitUtil.sleep(retryTimeoutBetweenActionAttempts);
             }
         }
-        throw new IllegalStateException("Unexpected error in getUnwrappedElement, all retries exhausted");
+        throw new IllegalStateException("Unexpected error in getUnwrappedElement, all retries exhausted", exception.getCause());
     }
 
     public WebElement getUnwrappedElement() {
@@ -73,6 +75,7 @@ public class SmartWebElement {
 
     // Retry logic for applying several attempts to do something with the element
     protected <T> T performWithRetry(Function<WebElement, T> action, String actionName) {
+        WebDriverException exception = null;
         int attempts = 0;
         int retryCount = 3;
         while (attempts < retryCount) {
@@ -81,6 +84,7 @@ public class SmartWebElement {
                 return action.apply(element);
             } catch (WebDriverException e) {
                 attempts++;
+                exception = e;
                 if (attempts >= retryCount) {
                     LOGGER.debug("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
@@ -90,11 +94,12 @@ public class SmartWebElement {
                 }
             }
         }
-        throw new IllegalStateException("Perform_with_Retry did not succeed - all retries exhausted");
+        throw new IllegalStateException("Perform_with_Retry did not succeed - all retries exhausted", exception.getCause());
     }
 
     // Retry logic for applying several attempts to do something with the element
     protected void performWithRetry(Consumer<WebElement> action, String actionName) {
+        WebDriverException exception = null;
         WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
         int attempts = 0;
         int retryCount = 3;
@@ -106,6 +111,7 @@ public class SmartWebElement {
                 return;
             } catch (WebDriverException e) {
                 attempts++;
+                exception = e;
                 if (attempts >= retryCount) {
                     LOGGER.debug("Failed to perform '{}' after {} attempts", actionName, retryCount, e);
                     throw e;
@@ -115,6 +121,7 @@ public class SmartWebElement {
                 }
             }
         }
+        throw new IllegalStateException("Perform_with_Retry did not succeed - all retries exhausted", exception.getCause());
     }
 
     // Actions for SmartWebElement
