@@ -28,34 +28,22 @@ public abstract class ApiBaseMethod {
         fullApiUrl = AppContainerPool.get().getAppHostUrl();
     }
 
+    public Response callApi(Method method, RequestSpecification requestSpecification) {
+        return callApi(method, requestSpecification, fullApiUrl);
+    }
+
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {
-        LOGGER.info(String.format("%1$s%1$s%2$s%3$sHTTP REQUEST%3$s%2$s", System.lineSeparator(), "-", "="));
         RestAssured.useRelaxedHTTPSValidation();
         Response response;
-
         try {
             response = RestAssured
                     .given(((requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification))
                     .filter(new RestAssuredFilter())
-                    .log()
-                    .all()
                     .request(method, new URL(fullApiUrl));
         } catch (MalformedURLException e) {
-            LOGGER.info("Api method is trying to call following URL: " + fullApiUrl);
             throw new RuntimeException(e.toString());
         }
-
-        LOGGER.info(String.format("%1$s%1$s%2$s%3$sHTTP RESPONSE%3$s%2$s", System.lineSeparator(), "-", "="));
-        response
-                .then()
-                .log()
-                .all();
-
         return response;
-    }
-
-    public Response callApi(Method method, RequestSpecification requestSpecification) {
-        return callApi(method, requestSpecification, fullApiUrl);
     }
 
     protected JSONObject getJsonFromFile(String path) {
