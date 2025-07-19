@@ -158,12 +158,21 @@ public class SmartWebElement {
         return performWithRetry(WebElement::getText, "getText");
     }
 
-    public boolean isDisplayed(int timeoutInSeconds) {
-        try {
-            return getUnwrappedElement(timeoutInSeconds).isDisplayed();
-        } catch (IllegalStateException e) {
-            return false;
+    public boolean isDisplayed(int timeoutInSeconds, boolean useRawElementWait) {
+        if (useRawElementWait) {
+            // Parent locator is not considered here (no component_locator in path) - so in some cases this might show false positive results
+            return WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(locator), timeoutInSeconds);
+        } else {
+            try {
+                return getUnwrappedElement(timeoutInSeconds).isDisplayed();
+            } catch (IllegalStateException e) {
+                return false;
+            }
         }
+    }
+
+    public boolean isDisplayed(int timeoutInSeconds) {
+        return isDisplayed(timeoutInSeconds, false);
     }
 
     public boolean isDisplayed() {
