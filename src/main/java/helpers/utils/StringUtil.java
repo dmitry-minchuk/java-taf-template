@@ -86,4 +86,13 @@ public class StringUtil {
         });
         return sb.toString();
     };
+
+    public static String formatJsonResponse(String responseBody) {
+        try {
+            JSONObject jsonObject = new JSONObject(responseBody);
+            return jsonObject.toString(4);
+        } catch (Exception e) {
+            return responseBody;
+        }
+    }
 }
