@@ -332,56 +332,67 @@ src/main/java/domain/ui/webstudio/
 
 ### Application Info API Integration ✅
 
-**New Feature**: Automated application version logging on startup using container-internal API calls
+**New Feature**: Automated application version logging on startup using proper HTTP API calls with clean RestAssured logging
 
 #### Implementation:
-- **ApplicationInfoApi** - Container-based API class for retrieving application information via `/web/public/info/openl.json`
-- **Testcontainers Integration** - Uses `execInContainer()` with `wget` for network-isolated container API calls
+- **GetApplicationInfoMethod** - HTTP-based API class extending ApiBaseMethod for retrieving application information via `/web/public/info/openl.json`
+- **REST Assured Integration** - Uses proper HTTP client with mapped container ports for external access
+- **Clean Logging Architecture** - Optimized RestAssuredFilter with pretty JSON formatting without auto-logging triggers
 - **BaseTest Integration** - Simple one-line application info logging during test setup
 - **Property-based Configuration** - Uses DEFAULT_APP_PORT and DEPLOYED_APP_PATH from config.properties
-- **Builder Pattern Logging** - Compact one-liner with version, build date, and URL information
 
 #### Key Features:
-1. **Container-Internal API Calls**: Uses Testcontainers `execInContainer()` with `wget` to avoid network isolation issues
-2. **Automatic Logging**: Application info logged as one-liner on every test startup
-3. **Property Integration**: Uses existing port and path configuration from config.properties
-4. **Compact Output**: Single log line with essential information (version, build, URL)
-5. **Error Handling**: Graceful handling of API unavailability with fallback message
-6. **Test Coverage**: Dedicated test class for API functionality
-7. **OpenL-specific Fields**: Correctly extracts `openl.version` and `openl.build.date` from API response
+1. **HTTP API Calls**: Uses REST Assured with `container.getMappedPort()` for proper host-to-container communication
+2. **Automatic Logging**: Application info logged as one-liner on every test startup  
+3. **Clean API Logging**: RestAssuredFilter provides structured request/response logging without duplication
+4. **Pretty JSON Formatting**: Response bodies formatted with proper indentation using `StringUtil.formatJsonResponse()`
+5. **JsonPath Extraction**: Handles JSON fields with dots using quoted field names: `"'openl.version'"`
+6. **Error Handling**: Graceful handling of API unavailability with fallback message
+7. **No Auto-logging Triggers**: Uses `asString()` instead of `prettyPrint()` to avoid REST Assured auto-logging
 
 #### Technical Implementation:
 ```java
-// Container-internal API call using wget
-Container.ExecResult result = AppContainerPool.get().getAppContainer()
-    .execInContainer("wget", "-q", "-O", "-", "http://localhost:8080/web/public/info/openl.json");
+// HTTP API call with mapped port
+int mappedPort = AppContainerPool.get().getAppContainer().getMappedPort(appPort);
+String fullUrl = "http://localhost:" + mappedPort + deployedAppPath + INFO_ENDPOINT;
+Response response = callApi(Method.GET, null, fullUrl, true);
 
-// JSON parsing with OpenL-specific field names
-JSONObject json = new JSONObject(result.getStdout());
-String version = json.optString("openl.version", "unknown");
-String buildDate = json.optString("openl.build.date", "unknown");
+// JsonPath extraction with quoted field names for dots
+String responseBody = response.asString();
+JsonPath jsonPath = JsonPath.from(responseBody);
+String version = jsonPath.getString("'openl.version'");
+String buildDate = jsonPath.getString("'openl.build.date'");
+String buildNumber = jsonPath.getString("'openl.build.number'");
 ```
 
-#### Usage:
-```java
-// One-line application info (automatically called in BaseTest)
-ApplicationInfoApi api = new ApplicationInfoApi();
-String info = api.getApplicationInfoOneLiner();
-// Output: "Application started: version=6.0.0-SNAPSHOT, build=2025-07-18, commit=90a60f5fbb8b"
+#### Clean Logging Output:
+```
+-=HTTP REQUEST=-
+GET http://localhost:62524/web/public/info/openl.json
+Header: Accept : */*
 
-// Individual methods still available
-String version = api.getApplicationVersion(); // Gets openl.version string
-String commit = api.getApplicationCommitHash(); // Gets openl.build.number (commit hash)
-boolean responsive = api.isApplicationResponsive(); // Health check via container exec
-JSONObject json = api.getApplicationInfoAsJson(); // Full JSON object from container
-Container.ExecResult raw = api.getApplicationInfo(); // Raw wget execution result
+-=HTTP RESPONSE=-
+200 HTTP/1.1 200 OK
+Header: Server : Jetty(12.0.23)
+Header: Content-Type : application/json
+Header: Transfer-Encoding : chunked
+Body: 
+{
+    "openl.build.number": "90a60f5fbb8b",
+    "openl.version": "6.0.0-SNAPSHOT",
+    "openl.build.date": "2025-07-18",
+    ...
+}
+
+Application started: version=6.0.0-SNAPSHOT, build=2025-07-18, commit=90a60f5fbb8b
 ```
 
 #### Architecture Benefits:
-- **Network Isolation Compliant**: Works with Docker subnetwork isolation in Testcontainers
-- **Container-Native**: Executes API calls from within the application container
-- **Minimal Dependencies**: Uses built-in `wget` available in OpenL container
-- **Reliable**: No external HTTP client dependencies or network routing issues
+- **Proper HTTP Architecture**: Uses standard REST Assured patterns with ApiBaseMethod inheritance
+- **Container Port Mapping**: Works with Docker port mapping for external host access
+- **Clean Logging**: Only RestAssuredFilter output, no duplicate or auto-logging triggers
+- **JSON Field Handling**: Correctly handles dotted field names in JSON responses
+- **Performance Optimized**: Single response body access prevents stream consumption issues
 
 ### Migration Status: COMPLETE SUCCESS WITH FULL OPTIMIZATION! 🎉 ✅
 
