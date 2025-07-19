@@ -21,7 +21,6 @@ public class EmailPageComponent extends BasePageComponent {
     @FindBy(xpath = ".//button[./span[text()='Apply']]")
     private SmartWebElement applyBtn;
 
-
     @FindBy(xpath = ".//span[contains(@aria-label,'eye')]")
     private SmartWebElement showPasswordBtn;
 
@@ -38,7 +37,7 @@ public class EmailPageComponent extends BasePageComponent {
     }
 
     public boolean isEmailVerificationEnabled() {
-        return emailUrlField.isDisplayed(1);
+        return emailUrlField.isDisplayed(2, true);
     }
 
     public void setEmailUrl(String url) {

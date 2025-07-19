@@ -6,7 +6,7 @@ import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import configuration.network.NetworkPool;
-import domain.api.ApplicationInfoApi;
+import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
 import helpers.utils.ScreenshotUtil;
 import helpers.utils.StringUtil;
@@ -45,7 +45,7 @@ public abstract class BaseTest {
         }
         
         // Log application info in one line
-        LOGGER.info(new ApplicationInfoApi().getApplicationInfoOneLiner());
+        LOGGER.info(new GetApplicationInfoMethod().getApplicationInfoOneLiner());
     }
 
     @AfterMethod
