@@ -1,8 +1,7 @@
-package domain.ui.webstudio.components.admincpmponents;
+package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.BasePageComponent;
 import configuration.core.ui.SmartWebElement;
-import helpers.utils.WaitUtil;
 import org.openqa.selenium.support.FindBy;
 
 public class SystemSettingsPageComponent extends BasePageComponent {

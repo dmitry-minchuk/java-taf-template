@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.admincpmponents.EmailPageComponent;
+import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.LoginService;
