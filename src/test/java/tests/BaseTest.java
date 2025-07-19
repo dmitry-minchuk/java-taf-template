@@ -6,6 +6,7 @@ import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import configuration.network.NetworkPool;
+import domain.api.ApplicationInfoApi;
 import helpers.utils.LogsUtil;
 import helpers.utils.ScreenshotUtil;
 import helpers.utils.StringUtil;
@@ -42,6 +43,9 @@ public abstract class BaseTest {
         } else {
             AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);
         }
+        
+        // Log application info in one line
+        LOGGER.info(new ApplicationInfoApi().getApplicationInfoOneLiner());
     }
 
     @AfterMethod
