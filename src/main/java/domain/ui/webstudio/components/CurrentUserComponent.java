@@ -19,11 +19,61 @@ public class CurrentUserComponent extends BasePageComponent {
 
     public void select(MenuElements element) {
         menuOption.format(element.getValue()).click();
+        WaitUtil.sleep(1000);
     }
 
+    // Navigation Methods
+    
+    public AdminPage navigateToMyProfile() {
+        select(MenuElements.MY_PROFILE);
+        return new AdminPage();
+    }
+
+    
+    public AdminPage navigateToMySettings() {
+        select(MenuElements.MY_SETTINGS);
+        return new AdminPage();
+    }
+
+    
     public AdminPage navigateToAdministration() {
         select(MenuElements.ADMINISTRATION);
         return new AdminPage();
+    }
+
+    
+    public void openHelp() {
+        select(MenuElements.HELP);
+    }
+
+    
+    public void signOut() {
+        select(MenuElements.SIGN_OUT);
+    }
+
+    // Utility Methods
+    
+    public boolean isMenuDisplayed() {
+        return menuOption.format(MenuElements.MY_PROFILE.getValue()).isDisplayed(2);
+    }
+
+    
+    public boolean isMenuElementAvailable(MenuElements element) {
+        return menuOption.format(element.getValue()).isDisplayed(2);
+    }
+
+    
+    public String getMenuElementText(MenuElements element) {
+        return menuOption.format(element.getValue()).getText();
+    }
+
+    
+    public boolean clickMenuElementIfAvailable(MenuElements element) {
+        if (isMenuElementAvailable(element)) {
+            select(element);
+            return true;
+        }
+        return false;
     }
 
     @Getter

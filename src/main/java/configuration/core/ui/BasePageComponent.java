@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public abstract class BasePageComponent {
@@ -18,6 +19,10 @@ public abstract class BasePageComponent {
     private WebElement rootElement;
     @Getter
     private WebDriver driver;
+
+    @Getter
+    @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm')]")
+    protected ConfirmationPopupComponent confirmationPopup;
 
     protected BasePageComponent() {
         SmartPageFactory.initElements(driver, this);

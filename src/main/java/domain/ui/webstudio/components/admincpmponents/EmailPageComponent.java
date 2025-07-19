@@ -22,8 +22,6 @@ public class EmailPageComponent extends BasePageComponent {
     @FindBy(xpath = ".//button[./span[text()='Apply']]")
     private SmartWebElement applyBtn;
 
-    @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm-confirm')]//button[./span[text()='OK']]")
-    private SmartWebElement okBtn;
 
     @FindBy(xpath = ".//span[contains(@aria-label,'eye')]")
     private SmartWebElement showPasswordBtn;
@@ -73,9 +71,7 @@ public class EmailPageComponent extends BasePageComponent {
         setEmailUsername(username);
         setEmailPassword(password);
         applyBtn.click();
-        WaitUtil.sleep(1000);
-        okBtn.click();
-        WaitUtil.sleep(5000);
+        getConfirmationPopup().confirm();
     }
 
     public void enableEmailVerificationWithCredentials(String url, String username, String password) {

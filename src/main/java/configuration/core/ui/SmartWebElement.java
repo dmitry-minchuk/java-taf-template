@@ -174,6 +174,10 @@ public class SmartWebElement {
         return performWithRetry(WebElement::isEnabled, "isEnabled");
     }
 
+    public boolean isSelected() {
+        return performWithRetry(WebElement::isSelected, "isSelected");
+    }
+
     public String getAttribute(String name) {
         return performWithRetry((Function<WebElement, String>) element -> element.getDomAttribute(name), "getAttribute(" + name + ")");
     }

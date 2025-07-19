@@ -18,6 +18,10 @@ public abstract class BasePage {
     @FindBy(xpath = "//*[contains(text(), '%s')]")
     protected SmartWebElement universalTextElement;
 
+    @Getter
+    @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm')]")
+    protected ConfirmationPopupComponent confirmationPopup;
+
     public BasePage() {
         LOGGER.info(this.getClass().getName() + " was opened.");
         SmartPageFactory.initElements(DriverPool.getDriver(), this);
