@@ -1,5 +1,6 @@
 package configuration.listeners;
 
+import helpers.utils.StringUtil;
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
 import io.restassured.http.Header;
@@ -9,6 +10,7 @@ import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 public class RestAssuredFilter implements Filter {
     protected static final Logger LOGGER = LogManager.getLogger(RestAssuredFilter.class);
@@ -30,8 +32,11 @@ public class RestAssuredFilter implements Filter {
         prettyResponse
                 .append(response.getStatusCode()).append(emptySpace).append(response.getStatusLine())
                 .append(handleHeaders(response.headers()));
-                if(response.getBody().prettyPrint() != null) {
-                    prettyResponse.append("Body: ").append(newLine).append(response.getBody().prettyPrint());
+                // Use asString() and manually format JSON to avoid auto-logging triggers
+                String responseBody = response.getBody().asString();
+                if(responseBody != null && !responseBody.isEmpty()) {
+                    String prettyJson = StringUtil.formatJsonResponse(responseBody);
+                    prettyResponse.append("Body: ").append(newLine).append(prettyJson);
                 }
 
         LOGGER.info(prettyRequest.toString());
