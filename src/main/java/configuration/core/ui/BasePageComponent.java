@@ -20,12 +20,13 @@ public abstract class BasePageComponent {
     @Getter
     private WebDriver driver;
 
-    @Getter
-    @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm')]")
+    @Getter // We want confirmationPopup available from BasePage and from BasePageComponent - but it's impossible at the same time with the same name in @FindBy
     protected ConfirmationPopupComponent confirmationPopup;
 
     protected BasePageComponent() {
         SmartPageFactory.initElements(driver, this);
+        confirmationPopup = new ConfirmationPopupComponent();
+        SmartPageFactory.initElements(driver, confirmationPopup);
     }
 
     public void init(WebDriver driver, By rootLocatorBy) {
@@ -33,6 +34,8 @@ public abstract class BasePageComponent {
         this.rootLocatorBy = rootLocatorBy;
         this.rootElement = null;
         SmartPageFactory.initElements(driver, this);
+        confirmationPopup = new ConfirmationPopupComponent();
+        SmartPageFactory.initElements(driver, confirmationPopup);
     }
 
     public boolean isPresent() {

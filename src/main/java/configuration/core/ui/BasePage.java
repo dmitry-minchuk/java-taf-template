@@ -18,19 +18,22 @@ public abstract class BasePage {
     @FindBy(xpath = "//*[contains(text(), '%s')]")
     protected SmartWebElement universalTextElement;
 
-    @Getter
-    @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm')]")
+    @Getter // We want confirmationPopup available from BasePage and from BasePageComponent - but it's impossible at the same time with the same name in @FindBy
     protected ConfirmationPopupComponent confirmationPopup;
 
     public BasePage() {
         LOGGER.info(this.getClass().getName() + " was opened.");
         SmartPageFactory.initElements(DriverPool.getDriver(), this);
+        confirmationPopup = new ConfirmationPopupComponent();
+        SmartPageFactory.initElements(DriverPool.getDriver(), confirmationPopup);
     }
 
     public BasePage(String urlAppender) {
         this.urlAppender = urlAppender;
         LOGGER.info(this.getClass().getName() + " was opened.");
         SmartPageFactory.initElements(DriverPool.getDriver(), this);
+        confirmationPopup = new ConfirmationPopupComponent();
+        SmartPageFactory.initElements(DriverPool.getDriver(), confirmationPopup);
     }
 
     public void open() {
