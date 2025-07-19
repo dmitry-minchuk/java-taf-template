@@ -28,22 +28,28 @@ public abstract class ApiBaseMethod {
         fullApiUrl = AppContainerPool.get().getAppHostUrl();
     }
 
-    public Response callApi(Method method, RequestSpecification requestSpecification) {
-        return callApi(method, requestSpecification, fullApiUrl);
-    }
-
-    public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {
+    public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl, boolean withLogs) {
         RestAssured.useRelaxedHTTPSValidation();
         Response response;
         try {
-            response = RestAssured
-                    .given(((requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification))
-                    .filter(new RestAssuredFilter())
-                    .request(method, new URL(fullApiUrl));
+            if (withLogs) {
+                response = RestAssured
+                        .given(((requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification))
+                        .filter(new RestAssuredFilter())
+                        .request(method, new URL(fullApiUrl));
+            } else {
+                response = RestAssured
+                        .given(((requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification))
+                        .request(method, new URL(fullApiUrl));
+            }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.toString());
         }
         return response;
+    }
+
+    public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {
+        return callApi(method, requestSpecification, fullApiUrl, true);
     }
 
     protected JSONObject getJsonFromFile(String path) {
