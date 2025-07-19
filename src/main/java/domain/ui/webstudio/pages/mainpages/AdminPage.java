@@ -1,16 +1,16 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import domain.ui.webstudio.components.admincpmponents.AdminNavigationComponent;
+import domain.ui.webstudio.components.admincomponents.AdminNavigationComponent;
 import lombok.Getter;
-import domain.ui.webstudio.components.admincpmponents.EmailPageComponent;
-import domain.ui.webstudio.components.admincpmponents.MyProfilePageComponent;
-import domain.ui.webstudio.components.admincpmponents.MySettingsPageComponent;
-import domain.ui.webstudio.components.admincpmponents.NotificationPageComponent;
-import domain.ui.webstudio.components.admincpmponents.RepositoriesPageComponent;
-import domain.ui.webstudio.components.admincpmponents.SecurityPageComponent;
-import domain.ui.webstudio.components.admincpmponents.SystemSettingsPageComponent;
-import domain.ui.webstudio.components.admincpmponents.TagsPageComponent;
-import domain.ui.webstudio.components.admincpmponents.UsersPageComponent;
+import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
+import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
+import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.NotificationPageComponent;
+import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
+import domain.ui.webstudio.components.admincomponents.SecurityPageComponent;
+import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
+import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import org.openqa.selenium.support.FindBy;
 
 public class AdminPage extends ProxyMainPage {

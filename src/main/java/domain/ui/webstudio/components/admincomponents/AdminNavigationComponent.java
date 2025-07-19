@@ -1,4 +1,4 @@
-package domain.ui.webstudio.components.admincpmponents;
+package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.BasePageComponent;
 import configuration.core.ui.SmartWebElement;
