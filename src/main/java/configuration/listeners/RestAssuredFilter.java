@@ -31,7 +31,7 @@ public class RestAssuredFilter implements Filter {
                 .append(response.getStatusCode()).append(emptySpace).append(response.getStatusLine())
                 .append(handleHeaders(response.headers()));
                 if(response.getBody().prettyPrint() != null) {
-                    prettyRequest.append("Body: ").append(newLine).append(response.getBody().prettyPrint());
+                    prettyResponse.append("Body: ").append(newLine).append(response.getBody().prettyPrint());
                 }
 
         LOGGER.info(prettyRequest.toString());

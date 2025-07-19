@@ -21,7 +21,7 @@ public class GetApplicationInfoMethod extends ApiBaseMethod {
         String deployedAppPath = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
         int mappedPort = AppContainerPool.get().getAppContainer().getMappedPort(appPort);
         String fullUrl = "http://localhost:" + mappedPort + deployedAppPath + INFO_ENDPOINT;
-        LOGGER.info("Retrieving application info from: {}", fullUrl);
+        LOGGER.debug("Retrieving application info from: {}", fullUrl);
         return callApi(Method.GET, null, fullUrl);
     }
 
