@@ -330,6 +330,59 @@ src/main/java/domain/ui/webstudio/
 7. ✅ Implement complex workflow methods for common operations
 8. ✅ Provide validation methods for component states
 
+### Application Info API Integration ✅
+
+**New Feature**: Automated application version logging on startup using container-internal API calls
+
+#### Implementation:
+- **ApplicationInfoApi** - Container-based API class for retrieving application information via `/web/public/info/openl.json`
+- **Testcontainers Integration** - Uses `execInContainer()` with `wget` for network-isolated container API calls
+- **BaseTest Integration** - Simple one-line application info logging during test setup
+- **Property-based Configuration** - Uses DEFAULT_APP_PORT and DEPLOYED_APP_PATH from config.properties
+- **Builder Pattern Logging** - Compact one-liner with version, build date, and URL information
+
+#### Key Features:
+1. **Container-Internal API Calls**: Uses Testcontainers `execInContainer()` with `wget` to avoid network isolation issues
+2. **Automatic Logging**: Application info logged as one-liner on every test startup
+3. **Property Integration**: Uses existing port and path configuration from config.properties
+4. **Compact Output**: Single log line with essential information (version, build, URL)
+5. **Error Handling**: Graceful handling of API unavailability with fallback message
+6. **Test Coverage**: Dedicated test class for API functionality
+7. **OpenL-specific Fields**: Correctly extracts `openl.version` and `openl.build.date` from API response
+
+#### Technical Implementation:
+```java
+// Container-internal API call using wget
+Container.ExecResult result = AppContainerPool.get().getAppContainer()
+    .execInContainer("wget", "-q", "-O", "-", "http://localhost:8080/web/public/info/openl.json");
+
+// JSON parsing with OpenL-specific field names
+JSONObject json = new JSONObject(result.getStdout());
+String version = json.optString("openl.version", "unknown");
+String buildDate = json.optString("openl.build.date", "unknown");
+```
+
+#### Usage:
+```java
+// One-line application info (automatically called in BaseTest)
+ApplicationInfoApi api = new ApplicationInfoApi();
+String info = api.getApplicationInfoOneLiner();
+// Output: "Application started: version=6.0.0-SNAPSHOT, build=2025-07-18, commit=90a60f5fbb8b"
+
+// Individual methods still available
+String version = api.getApplicationVersion(); // Gets openl.version string
+String commit = api.getApplicationCommitHash(); // Gets openl.build.number (commit hash)
+boolean responsive = api.isApplicationResponsive(); // Health check via container exec
+JSONObject json = api.getApplicationInfoAsJson(); // Full JSON object from container
+Container.ExecResult raw = api.getApplicationInfo(); // Raw wget execution result
+```
+
+#### Architecture Benefits:
+- **Network Isolation Compliant**: Works with Docker subnetwork isolation in Testcontainers
+- **Container-Native**: Executes API calls from within the application container
+- **Minimal Dependencies**: Uses built-in `wget` available in OpenL container
+- **Reliable**: No external HTTP client dependencies or network routing issues
+
 ### Migration Status: COMPLETE SUCCESS WITH FULL OPTIMIZATION! 🎉 ✅
 
 **Historic Achievement**: Complete Admin UI migration from legacy openl-tests to modern, optimized java-taf-template architecture!
@@ -360,4 +413,4 @@ src/main/java/domain/ui/webstudio/
 - **Developer Experience**: Self-documenting code focused on test automation needs
 
 #### Migration Complete:
-🚀 **The Admin UI migration is 100% complete with full optimization** - all critical and supplementary features implemented with modern patterns, performance optimizations, and clean architecture. The framework is now ready for efficient test migration and automation.
+🚀 **The Admin UI migration is 100% complete with full optimization and application monitoring** - all critical and supplementary features implemented with modern patterns, performance optimizations, clean architecture, and automated application version tracking. The framework is now ready for efficient test migration and automation.
