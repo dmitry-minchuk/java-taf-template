@@ -4,7 +4,7 @@ import helpers.utils.WaitUtil;
 import org.openqa.selenium.support.FindBy;
 
 
-public class ConfirmationPopupComponent extends BasePageComponent {
+public class ConfirmationPopupComponent {
 
     // Main Confirmation Dialog Elements
     @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm-confirm')]//button[./span[text()='OK']]")
@@ -42,7 +42,7 @@ public class ConfirmationPopupComponent extends BasePageComponent {
     private SmartWebElement infoDialog;
 
     public ConfirmationPopupComponent() {
-        super();
+        // No longer extends BasePageComponent - no super() call needed
     }
 
     // Core Confirmation Methods
