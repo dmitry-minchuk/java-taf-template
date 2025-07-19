@@ -22,17 +22,17 @@ public class GetApplicationInfoMethod extends ApiBaseMethod {
         int mappedPort = AppContainerPool.get().getAppContainer().getMappedPort(appPort);
         String fullUrl = "http://localhost:" + mappedPort + deployedAppPath + INFO_ENDPOINT;
         LOGGER.debug("Retrieving application info from: {}", fullUrl);
-        return callApi(Method.GET, null, fullUrl);
+        return callApi(Method.GET, null, fullUrl, true);
     }
 
     public JSONObject getApplicationInfoAsJson() {
         Response response = getApplicationInfo();
         if (response.getStatusCode() != 200) {
             LOGGER.error("Failed to retrieve application info. Status: {}, Body: {}", 
-                response.getStatusCode(), response.getBody().asString());
+                response.getStatusCode(), response.asString());
             throw new RuntimeException("Failed to retrieve application info. Status: " + response.getStatusCode());
         }
-        return new JSONObject(response.getBody().asString());
+        return new JSONObject(response.asString());
     }
 
     public String getApplicationInfoOneLiner() {
