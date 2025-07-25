@@ -64,7 +64,7 @@ public class LogsUtil {
     }
 
     public static void inspectLogFile(AppContainerData appContainerData) {
-        WaitUtil.sleep(1000);
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - use proper container wait strategies instead
         List<String> logs = Arrays.asList(appContainerData.getAppContainer().getLogs().split("\\r?\\n"));
         LOGGER.info("Analyzed rows in log file: " + logs.size());
         String error = "ERROR [";

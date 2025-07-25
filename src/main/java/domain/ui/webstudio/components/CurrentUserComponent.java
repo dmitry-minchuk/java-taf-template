@@ -14,12 +14,12 @@ public class CurrentUserComponent extends BasePageComponent {
 
     public CurrentUserComponent() {
         super();
-        WaitUtil.sleep(1000);
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - components should use proper element waiting
     }
 
     public void select(MenuElements element) {
         menuOption.format(element.getValue()).click();
-        WaitUtil.sleep(1000);
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - Playwright's click() waits for element to be actionable
     }
 
     // Navigation Methods

@@ -78,7 +78,7 @@ public class RepositoryContentTabPropertiesComponent extends BasePageComponent {
 
     public String getProperty(Property name) {
         WaitUtil.waitUntil(getDriver(), org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated(propertiesTable.getRootLocatorBy()), timeoutInSeconds);
-        WaitUtil.sleep(1000);
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - element visibility wait is sufficient
         return propertiesTable.getCell(findRowByText(name.text), 1).getText();
     }
 
