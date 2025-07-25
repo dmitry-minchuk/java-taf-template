@@ -44,6 +44,26 @@ public class PlaywrightExpectUtil {
     }
     
     /**
+     * PLAYWRIGHT MIGRATION: Overloaded method for Locator parameter
+     */
+    public static boolean expectVisible(Page page, Locator locator) {
+        return expectVisible(page, locator, DEFAULT_TIMEOUT_MS);
+    }
+    
+    public static boolean expectVisible(Page page, Locator locator, int timeoutMs) {
+        try {
+            PlaywrightAssertions.assertThat(locator)
+                .isVisible(new com.microsoft.playwright.assertions.LocatorAssertions.IsVisibleOptions()
+                    .setTimeout(timeoutMs));
+            LOGGER.debug("Element visible: {}", locator);
+            return true;
+        } catch (Exception e) {
+            LOGGER.debug("Element not visible within timeout: {} ({}ms)", locator, timeoutMs);
+            return false;
+        }
+    }
+    
+    /**
      * PLAYWRIGHT MIGRATION: Replace WaitUtil.waitUntil() for element presence
      */
     public static boolean expectAttached(Page page, String selector) {
