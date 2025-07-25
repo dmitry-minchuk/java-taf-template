@@ -3,6 +3,7 @@ package helpers.service;
 import com.microsoft.playwright.Page;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import helpers.utils.PlaywrightExpectUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,16 +24,22 @@ public class PlaywrightLoginService {
     /**
      * Login with the specified user credentials
      * @param user UserData containing username and password
-     * @return PlaywrightAdminPage after successful login
+     * @return PlaywrightEditorPage after successful login (same as Selenium version)
      */
-    public PlaywrightAdminPage login(UserData user) {
+    public PlaywrightEditorPage login(UserData user) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
-        // Navigate to login page - assuming app is already accessible via navigateToApp()
-        // Wait for login form to be visible
-        var usernameField = page.locator("input[name='username'], input#username, input[type='text']").first();
-        var passwordField = page.locator("input[name='password'], input#password, input[type='password']").first();
-        var loginButton = page.locator("button[type='submit'], input[type='submit'], button:has-text('Login'), button:has-text('Sign in')").first();
+        // Navigate to login page using localhost URL for LOCAL mode (Playwright runs on host)
+        configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
+        int mappedPort = appData.getAppContainer().getMappedPort(8080); // APP_PORT from AppContainerFactory
+        String loginUrl = "http://localhost:" + mappedPort + "/";
+        page.navigate(loginUrl);
+        LOGGER.info("Navigated to login page: {}", loginUrl);
+        
+        // Wait for login form to be visible - using specific IDs from Selenium LoginPage
+        var usernameField = page.locator("input#loginName");
+        var passwordField = page.locator("input#loginPassword");  
+        var loginButton = page.locator("input#loginSubmit");
         
         // Wait for login form elements to be visible
         PlaywrightExpectUtil.expectVisible(page, usernameField);
@@ -49,11 +56,11 @@ public class PlaywrightLoginService {
         // Click login button
         loginButton.click();
         
-        // Wait for successful login - looking for main application UI
+        // Wait for successful login - look for editor page elements
         PlaywrightExpectUtil.expectVisible(page, page.locator("body"));
         
         LOGGER.info("Successfully logged in as: {}", user.getLogin());
-        return new PlaywrightAdminPage(page); // This is not correct - we are not on AdminPage, we are on EditorPage
+        return new PlaywrightEditorPage(); // Return EditorPage as in Selenium version
     }
     
     /**

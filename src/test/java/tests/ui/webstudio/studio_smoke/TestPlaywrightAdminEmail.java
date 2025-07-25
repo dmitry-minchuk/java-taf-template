@@ -9,9 +9,12 @@ import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.PlaywrightEmailPageComponent;
 import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import helpers.service.PlaywrightLoginService;
 import helpers.service.UserService;
 import helpers.utils.TestDataUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -24,6 +27,8 @@ import java.util.Properties;
  */
 public class TestPlaywrightAdminEmail extends BaseTest {
 
+    private static final Logger LOGGER = LogManager.getLogger(TestPlaywrightAdminEmail.class);
+
     @Test
     @TestCaseId("IPBQA-32798-PW")
     @Description("Playwright - Admin UI 'Email' page - Email verification configuration test")
@@ -33,16 +38,13 @@ public class TestPlaywrightAdminEmail extends BaseTest {
         // Initialize Playwright page for test execution
         Page page = PlaywrightDriverPool.getPage();
         
-        // Navigate to local application (for LOCAL mode)
-        PlaywrightDriverPool.navigateTo("http://localhost:8090");
-        
-        // Step 1: Login with admin user using Playwright login service
+        // Step 1: Login with admin user using Playwright login service (same as Selenium)
+        // The BaseTest container setup automatically provides the correct URL
         PlaywrightLoginService loginService = new PlaywrightLoginService(page);
-        // TODO: loginService.login() must lead us to EditorPage
-        loginService.login(UserService.getUser(User.ADMIN));
+        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        // TODO: Getting to AdminPage must be done the same way as it is done in Selenium version of the test: AdminPage adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
-        PlaywrightAdminPage adminPage = loginService.navigateToAdministration();
+        // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())
+        PlaywrightAdminPage adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
         PlaywrightEmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
 
         // Step 3: Verify "Email" tab contains inactive checkbox "Enable email address verification"
@@ -58,10 +60,11 @@ public class TestPlaywrightAdminEmail extends BaseTest {
         // Enable email verification and set credentials
         emailPageComponent.enableEmailVerificationWithCredentials(emailUrl, emailUsername, emailPassword);
 
-        // Step 5: Login again (user gets logged out after applying settings)
+        // Step 5: Login again after applying settings (following exact Selenium TestAdminEmail logic)
+        // User should be logged out after applying settings, so login again
         loginService = new PlaywrightLoginService(page);
-        adminPage = loginService.login(UserService.getUser(User.ADMIN));
-        adminPage = loginService.navigateToAdministration();
+        editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
         emailPageComponent = adminPage.navigateToEmailPage();
         
         // Step 6: Verify settings persistence after restart
@@ -78,11 +81,5 @@ public class TestPlaywrightAdminEmail extends BaseTest {
         emailPageComponent.togglePasswordVisibility();
         Assert.assertNotEquals(emailPageComponent.getEmailPassword(), emailPassword,
             "Password should not be displayed in plain text even after toggle");
-            
-        System.out.println("✅ Playwright Admin Email test completed successfully!");
-        System.out.println("   - Email verification configuration: PASSED");
-        System.out.println("   - Settings persistence validation: PASSED");
-        System.out.println("   - Password security verification: PASSED");
-        System.out.println("   - Using native Playwright wait strategies throughout");
     }
 }
