@@ -1,9 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
-import helpers.utils.PlaywrightExpectUtil;
+import configuration.core.ui.PlaywrightWebElement;
+import configuration.driver.PlaywrightDriverPool;
+import org.openqa.selenium.support.FindBy;
 
 /**
  * Playwright version of EmailPageComponent for Admin UI Email verification configuration
@@ -11,32 +12,37 @@ import helpers.utils.PlaywrightExpectUtil;
  */
 public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
 
-    // Playwright locators using CSS selectors (more reliable than XPath)
-    private final Locator emailVerificationCheckbox;
-    private final Locator emailUrlField;
-    private final Locator emailUsernameField;
-    private final Locator emailPasswordField;
-    private final Locator applyBtn;
-    private final Locator showPasswordBtn;
+    private final Page page;
 
-    public PlaywrightEmailPageComponent(Page page) {
-        super(page);
-        
-        // Initialize locators with CSS selectors optimized for Playwright
-        this.emailVerificationCheckbox = page.locator("input[type='checkbox']");
-        this.emailUrlField = page.locator("div:has(label[title='URL']) input");
-        this.emailUsernameField = page.locator("div:has(label[title='Username']) input");
-        this.emailPasswordField = page.locator("input#password");
-        this.applyBtn = page.locator("button:has(span:text('Apply'))");
-        this.showPasswordBtn = page.locator("span[aria-label*='eye']");
+    public PlaywrightEmailPageComponent() {
+        // Get the Page from PlaywrightDriverPool to access Playwright features
+        this.page = PlaywrightDriverPool.getPage();
     }
+
+    // Using @FindBy annotations with specific IDs from actual HTML structure
+    @FindBy(xpath = "//input[@id='isActive']")
+    private PlaywrightWebElement emailVerificationCheckbox;
+
+    @FindBy(xpath = "//input[@id='url']")
+    private PlaywrightWebElement emailUrlField;
+
+    @FindBy(xpath = "//input[@id='username']")
+    private PlaywrightWebElement emailUsernameField;
+
+    @FindBy(xpath = "//input[@id='password']")
+    private PlaywrightWebElement emailPasswordField;
+
+    @FindBy(xpath = "//button[./span[text()='Apply']]")
+    private PlaywrightWebElement applyBtn;
+
+    @FindBy(xpath = "//span[contains(@aria-label,'eye')]")
+    private PlaywrightWebElement showPasswordBtn;
 
     /**
      * Enable email verification by clicking the checkbox if not already enabled
      */
     public void enableEmailVerification() {
         if (!isEmailVerificationEnabled()) {
-            PlaywrightExpectUtil.expectVisible(page, emailVerificationCheckbox);
             emailVerificationCheckbox.click();
         }
     }
@@ -46,18 +52,19 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
      */
     public void disableEmailVerification() {
         if (isEmailVerificationEnabled()) {
-            PlaywrightExpectUtil.expectVisible(page, emailVerificationCheckbox);
             emailVerificationCheckbox.click();
         }
     }
 
     /**
      * Check if email verification is enabled by checking if URL field is visible
+     * Uses Playwright's visibility checking with timeout
      * @return true if email verification is enabled (URL field is visible)
      */
     public boolean isEmailVerificationEnabled() {
         try {
-            return PlaywrightExpectUtil.expectVisible(page, emailUrlField, 2000);
+            // Use Playwright's native visibility check with 2 second timeout (like Selenium version)
+            return emailUrlField.isVisible(2000);
         } catch (Exception e) {
             return false;
         }
@@ -65,63 +72,64 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
 
     /**
      * Set the email URL in the URL field
+     * Uses Playwright's clear() and fill() methods
      * @param url SMTP server URL
      */
     public void setEmailUrl(String url) {
-        PlaywrightExpectUtil.expectVisible(page, emailUrlField);
         emailUrlField.clear();
         emailUrlField.fill(url);
     }
 
     /**
      * Set the email username in the username field
+     * Uses Playwright's clear() and fill() methods
      * @param username Email username
      */
     public void setEmailUsername(String username) {
-        PlaywrightExpectUtil.expectVisible(page, emailUsernameField);
         emailUsernameField.clear();
         emailUsernameField.fill(username);
     }
 
     /**
      * Set the email password in the password field
+     * Uses Playwright's clear() and fill() methods
      * @param password Email password
      */
     public void setEmailPassword(String password) {
-        PlaywrightExpectUtil.expectVisible(page, emailPasswordField);
         emailPasswordField.clear();
         emailPasswordField.fill(password);
     }
 
     /**
      * Get the current value of the email URL field
+     * Uses Playwright's inputValue() method
      * @return Current URL field value
      */
     public String getEmailUrl() {
-        PlaywrightExpectUtil.expectVisible(page, emailUrlField);
         return emailUrlField.inputValue();
     }
 
     /**
      * Get the current value of the email username field
+     * Uses Playwright's inputValue() method
      * @return Current username field value
      */
     public String getEmailUsername() {
-        PlaywrightExpectUtil.expectVisible(page, emailUsernameField);
         return emailUsernameField.inputValue();
     }
 
     /**
      * Get the current value of the email password field
+     * Uses Playwright's inputValue() method
      * @return Current password field value (usually masked)
      */
     public String getEmailPassword() {
-        PlaywrightExpectUtil.expectVisible(page, emailPasswordField);
         return emailPasswordField.inputValue();
     }
 
     /**
      * Set email credentials and apply the configuration
+     * Uses Playwright's dialog handling with onDialog
      * @param url SMTP server URL
      * @param username Email username  
      * @param password Email password
@@ -131,15 +139,14 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
         setEmailUsername(username);
         setEmailPassword(password);
         
-        PlaywrightExpectUtil.expectVisible(page, applyBtn);
-        applyBtn.click();
-        
-        // Handle confirmation popup using Playwright's built-in dialog handling
+        // Set up Playwright's dialog handler before clicking Apply
         page.onDialog(dialog -> {
             if (dialog.type().equals("confirm")) {
                 dialog.accept();
             }
         });
+        
+        applyBtn.click();
     }
 
     /**
@@ -157,7 +164,6 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
      * Toggle the password visibility by clicking the eye icon
      */
     public void togglePasswordVisibility() {
-        PlaywrightExpectUtil.expectVisible(page, showPasswordBtn);
         showPasswordBtn.click();
     }
 }
