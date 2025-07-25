@@ -97,6 +97,6 @@ public class PlaywrightLoginService {
         // Step 4: Wait for admin page to load - look for admin navigation menu
         PlaywrightExpectUtil.expectVisible(page, page.locator("div#main-menu, [data-menu-id]"));
         
-        return new PlaywrightAdminPage(page);
+        return new PlaywrightAdminPage();
     }
 }

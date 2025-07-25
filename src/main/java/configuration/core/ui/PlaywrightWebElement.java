@@ -10,10 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 
-/**
- * Playwright-based replacement for SmartWebElement
- * Uses Playwright's native wait strategies instead of custom waits
- */
+// Playwright-based element wrapper with native wait strategies
 public class PlaywrightWebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(PlaywrightWebElement.class);
@@ -26,15 +23,12 @@ public class PlaywrightWebElement {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
-        // Convert seconds to milliseconds for Playwright
         this.timeoutInMilliseconds = Integer.parseInt(
             ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
         ) * 1000;
     }
     
-    /**
-     * Constructor for child locators (similar to SmartWebElement's parent functionality)
-     */
+    // Constructor for child locators
     public PlaywrightWebElement(PlaywrightWebElement parent, String selector) {
         this.page = parent.page;
         this.selector = selector;
@@ -42,55 +36,55 @@ public class PlaywrightWebElement {
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
     }
     
-    // Core Actions - Using Playwright's native wait strategies
+    // Core Actions
     
     public void click() {
         LOGGER.debug("Clicking element with selector: {}", selector);
-        locator.click(new Locator.ClickOptions().setTimeout(timeoutInMilliseconds));
+        locator.click();
     }
     
+    @Deprecated
     public void click(long timeoutInSeconds) {
-        LOGGER.debug("Clicking element with selector: {} (timeout: {}s)", selector, timeoutInSeconds);
-        locator.click(new Locator.ClickOptions().setTimeout((int)(timeoutInSeconds * 1000)));
+        LOGGER.debug("Clicking element with selector: {} (deprecated timeout method)", selector);
+        locator.click();
     }
     
     public void fill(String text) {
         LOGGER.debug("Filling element with selector: {} with text: {}", selector, text);
-        // Playwright's fill automatically clears first, then types
-        locator.fill(text, new Locator.FillOptions().setTimeout(timeoutInMilliseconds));
+        locator.fill(text);
     }
     
+    @Deprecated
     public void fill(String text, long timeoutInSeconds) {
-        LOGGER.debug("Filling element with selector: {} with text: {} (timeout: {}s)", selector, text, timeoutInSeconds);
-        locator.fill(text, new Locator.FillOptions().setTimeout((int)(timeoutInSeconds * 1000)));
+        LOGGER.debug("Filling element with selector: {} with text: {} (deprecated timeout method)", selector, text);
+        locator.fill(text);
     }
     
     public String getText() {
         LOGGER.debug("Getting text from element with selector: {}", selector);
-        return locator.textContent(new Locator.TextContentOptions().setTimeout(timeoutInMilliseconds));
+        return locator.textContent();
     }
     
     public String getAttribute(String name) {
         LOGGER.debug("Getting attribute '{}' from element with selector: {}", name, selector);
-        return locator.getAttribute(name, new Locator.GetAttributeOptions().setTimeout(timeoutInMilliseconds));
+        return locator.getAttribute(name);
     }
     
-    // Visibility and State Checks - Using Playwright's expect patterns
+    // Visibility and State Checks
     
     public boolean isVisible() {
-        return isVisible(timeoutInMilliseconds / 1000);
-    }
-    
-    public boolean isVisible(int timeoutInSeconds) {
         try {
-            locator.waitFor(new Locator.WaitForOptions()
-                .setState(WaitForSelectorState.VISIBLE)
-                .setTimeout(timeoutInSeconds * 1000));
-            return true;
+            LOGGER.debug("Checking visibility of element with selector: {}", selector);
+            return locator.isVisible();
         } catch (Exception e) {
-            LOGGER.debug("Element not visible within timeout: {}", selector);
+            LOGGER.debug("Element not visible: {}", selector);
             return false;
         }
+    }
+    
+    @Deprecated
+    public boolean isVisible(int timeoutInSeconds) {
+        return isVisible();
     }
     
     public boolean isDisplayed() {
@@ -103,7 +97,7 @@ public class PlaywrightWebElement {
     
     public boolean isEnabled() {
         try {
-            return locator.isEnabled(new Locator.IsEnabledOptions().setTimeout(timeoutInMilliseconds));
+            return locator.isEnabled();
         } catch (Exception e) {
             LOGGER.debug("Element enabled check failed for selector: {}", selector);
             return false;
@@ -112,7 +106,7 @@ public class PlaywrightWebElement {
     
     public boolean isSelected() {
         try {
-            return locator.isChecked(new Locator.IsCheckedOptions().setTimeout(timeoutInMilliseconds));
+            return locator.isChecked();
         } catch (Exception e) {
             LOGGER.debug("Element selected check failed for selector: {}", selector);
             return false;
@@ -123,15 +117,16 @@ public class PlaywrightWebElement {
     
     public void selectByVisibleText(String text) {
         LOGGER.debug("Selecting option '{}' in element with selector: {}", text, selector);
-        locator.selectOption(text, new Locator.SelectOptionOptions().setTimeout(timeoutInMilliseconds));
+        locator.selectOption(text);
     }
     
+    @Deprecated
     public void selectByVisibleText(String text, long timeoutInSeconds) {
-        LOGGER.debug("Selecting option '{}' in element with selector: {} (timeout: {}s)", text, selector, timeoutInSeconds);
-        locator.selectOption(text, new Locator.SelectOptionOptions().setTimeout((int)(timeoutInSeconds * 1000)));
+        LOGGER.debug("Selecting option '{}' in element with selector: {} (deprecated timeout method)", text, selector);
+        locator.selectOption(text);
     }
     
-    // Format functionality (similar to SmartWebElement.format())
+    // Format functionality
     
     public PlaywrightWebElement format(Object... args) {
         String formattedSelector = String.format(this.selector, args);
@@ -139,52 +134,50 @@ public class PlaywrightWebElement {
         return new PlaywrightWebElement(this.page, formattedSelector);
     }
     
-    // Utility methods for compatibility
+    // Utility methods
     
     public void clear() {
         LOGGER.debug("Clearing element with selector: {}", selector);
-        locator.clear(new Locator.ClearOptions().setTimeout(timeoutInMilliseconds));
+        locator.clear();
     }
     
     public void sendKeys(CharSequence... keysToSend) {
         String text = String.join("", keysToSend);
         LOGGER.debug("Sending keys '{}' to element with selector: {}", text, selector);
-        // Clear first, then type (similar to SmartWebElement behavior)
         clear();
-        locator.type(text, new Locator.TypeOptions().setTimeout(timeoutInMilliseconds));
+        locator.type(text);
     }
     
+    @Deprecated
     public void sendKeys(long timeoutInSeconds, CharSequence... keysToSend) {
         String text = String.join("", keysToSend);
-        LOGGER.debug("Sending keys '{}' to element with selector: {} (timeout: {}s)", text, selector, timeoutInSeconds);
+        LOGGER.debug("Sending keys '{}' to element with selector: {} (deprecated timeout method)", text, selector);
         clear();
-        locator.type(text, new Locator.TypeOptions().setTimeout((int)(timeoutInSeconds * 1000)));
+        locator.type(text);
     }
     
-    // Wait methods using Playwright's native waiting
+    // Explicit wait methods
     
     public void waitForVisible() {
-        LOGGER.debug("Waiting for element to be visible: {}", selector);
+        LOGGER.debug("Explicitly waiting for element to be visible: {}", selector);
         locator.waitFor(new Locator.WaitForOptions()
-            .setState(WaitForSelectorState.VISIBLE)
-            .setTimeout(timeoutInMilliseconds));
+            .setState(WaitForSelectorState.VISIBLE));
     }
     
     public void waitForVisible(long timeoutInSeconds) {
-        LOGGER.debug("Waiting for element to be visible: {} (timeout: {}s)", selector, timeoutInSeconds);
+        LOGGER.debug("Explicitly waiting for element to be visible: {} (timeout: {}s)", selector, timeoutInSeconds);
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.VISIBLE)
             .setTimeout((int)(timeoutInSeconds * 1000)));
     }
     
     public void waitForHidden() {
-        LOGGER.debug("Waiting for element to be hidden: {}", selector);
+        LOGGER.debug("Explicitly waiting for element to be hidden: {}", selector);
         locator.waitFor(new Locator.WaitForOptions()
-            .setState(WaitForSelectorState.HIDDEN)
-            .setTimeout(timeoutInMilliseconds));
+            .setState(WaitForSelectorState.HIDDEN));
     }
     
-    // Getter methods for debugging and advanced usage
+    // Getter methods
     
     public String getSelector() {
         return selector;

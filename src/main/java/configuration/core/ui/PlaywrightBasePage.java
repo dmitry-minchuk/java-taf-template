@@ -6,7 +6,6 @@ import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.support.FindBy;
 
 import java.util.Objects;
 
@@ -21,33 +20,25 @@ public abstract class PlaywrightBasePage {
     protected Page page;
 
     @Getter
-    @FindBy(xpath = "//*[contains(text(), '%s')]")
-    protected PlaywrightWebElement universalTextElement;
-
-    @Getter
     protected ConfirmationPopupComponent confirmationPopup;
 
     public PlaywrightBasePage() {
         this.page = PlaywrightDriverPool.getPage();
         LOGGER.info("{} was opened.", this.getClass().getName());
-        PlaywrightPageFactory.initElements(page, this);
         
         // Initialize confirmation popup
         confirmationPopup = new ConfirmationPopupComponent();
         confirmationPopup.initPlaywright(page, ""); // Empty selector for global popup
-        PlaywrightPageFactory.initElements(page, confirmationPopup);
     }
 
     public PlaywrightBasePage(String urlAppender) {
         this.urlAppender = urlAppender;
         this.page = PlaywrightDriverPool.getPage();
         LOGGER.info("{} was opened with URL appender: {}", this.getClass().getName(), urlAppender);
-        PlaywrightPageFactory.initElements(page, this);
         
         // Initialize confirmation popup
         confirmationPopup = new ConfirmationPopupComponent();
         confirmationPopup.initPlaywright(page, ""); // Empty selector for global popup
-        PlaywrightPageFactory.initElements(page, confirmationPopup);
     }
 
     /**
