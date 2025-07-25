@@ -38,7 +38,7 @@ public class LeftRepositoryTreeComponent extends BasePageComponent {
     }
 
     private RepositoryTreeFolderComponent findFolderInTree(String folderName) {
-        WaitUtil.sleep(1000);  // fix this later
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - use proper element waiting in component initialization
         return treeFolderComponentList.stream()
                 .filter(c -> c.getFolderName().getText().equals(folderName))
                 .findFirst()

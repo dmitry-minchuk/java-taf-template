@@ -1,5 +1,6 @@
 package configuration.core.ui;
 
+import com.microsoft.playwright.Page;
 import helpers.utils.WaitUtil;
 import org.openqa.selenium.support.FindBy;
 
@@ -41,8 +42,19 @@ public class ConfirmationPopupComponent {
     @FindBy(xpath = "//div[contains(@class,'ant-modal-confirm-info')]")
     private SmartWebElement infoDialog;
 
+    private Page page; // For Playwright mode
+    
     public ConfirmationPopupComponent() {
         // No longer extends BasePageComponent - no super() call needed
+    }
+    
+    /**
+     * PLAYWRIGHT MIGRATION: Initialize with Playwright page
+     */
+    public void initPlaywright(Page page, String rootSelector) {
+        this.page = page;
+        // Note: rootSelector ignored for global confirmation popup
+        // Components will be initialized by PlaywrightPageFactory separately
     }
 
     // Core Confirmation Methods
@@ -53,7 +65,7 @@ public class ConfirmationPopupComponent {
         } else if (confirmBtn.isDisplayed(2)) {
             confirmBtn.click();
         }
-        WaitUtil.sleep(2000);
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - waitForDialogToDisappear() provides proper waiting
         waitForDialogToDisappear();
     }
 
@@ -64,7 +76,7 @@ public class ConfirmationPopupComponent {
         } else if (cancelBtn.isDisplayed(2)) {
             cancelBtn.click();
         }
-        WaitUtil.sleep(1000);
+        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - waitForDialogToDisappear() provides proper waiting
         waitForDialogToDisappear();
     }
 
