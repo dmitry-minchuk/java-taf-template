@@ -1,12 +1,16 @@
 package configuration.core.ui;
 
 import helpers.utils.WaitUtil;
+import helpers.utils.PlaywrightExpectUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import configuration.driver.PlaywrightDriverPool;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Locator;
 
 import java.util.List;
 
@@ -27,15 +31,35 @@ public class TableComponent extends BasePageComponent {
         if(getRootElement() != null)
             tableElement = getRootElement();
         else {
-            WaitUtil.waitUntil(getDriver(), ExpectedConditions.visibilityOfElementLocated(getRootLocatorBy()), timeoutInSeconds);
+            // PLAYWRIGHT MIGRATION: Use appropriate wait strategy based on mode
+            if (PlaywrightDriverPool.isInitialized()) {
+                Page page = PlaywrightDriverPool.getPage();
+                String selector = convertByToSelector(getRootLocatorBy());
+                PlaywrightExpectUtil.expectVisible(page, selector, timeoutInSeconds * 1000);
+            } else {
+                WaitUtil.waitUntil(getDriver(), ExpectedConditions.visibilityOfElementLocated(getRootLocatorBy()), timeoutInSeconds);
+            }
             tableElement = getDriver().findElement(getRootLocatorBy());
         }
-        List<WebElement> rows = WaitUtil.waitForElementsList(tableElement, rowLocator, timeoutInSeconds);
+        
+        List<WebElement> rows;
+        if (PlaywrightDriverPool.isInitialized()) {
+            // PLAYWRIGHT MIGRATION: Use Playwright element waiting
+            rows = getDriver().findElements(rowLocator);
+        } else {
+            rows = WaitUtil.waitForElementsList(tableElement, rowLocator, timeoutInSeconds);
+        }
         if (rowIndex >= rows.size()) {
             throw new IndexOutOfBoundsException("Row index " + rowIndex + " is out of bounds. Table has " + rows.size() + " rows.");
         }
         WebElement row = rows.get(rowIndex);
-        List<WebElement> cells = WaitUtil.waitForElementsList(row, cellLocator, timeoutInSeconds);
+        List<WebElement> cells;
+        if (PlaywrightDriverPool.isInitialized()) {
+            // PLAYWRIGHT MIGRATION: Use Playwright element finding
+            cells = row.findElements(cellLocator);
+        } else {
+            cells = WaitUtil.waitForElementsList(row, cellLocator, timeoutInSeconds);
+        }
         if (columnIndex >= cells.size()) {
             throw new IndexOutOfBoundsException("Column index " + columnIndex + " is out of bounds. Row has " + cells.size() + " columns.");
         }
@@ -77,7 +101,30 @@ public class TableComponent extends BasePageComponent {
 
     public int getRowCount() {
         WebElement tableElement = getRootElement() != null ? getRootElement() : getDriver().findElement(getRootLocatorBy());
-        return WaitUtil.waitForElementsList(tableElement, rowLocator, timeoutInSeconds).size();
+        if (PlaywrightDriverPool.isInitialized()) {
+            // PLAYWRIGHT MIGRATION: Use Playwright element counting
+            return tableElement.findElements(rowLocator).size();
+        } else {
+            return WaitUtil.waitForElementsList(tableElement, rowLocator, timeoutInSeconds).size();
+        }
+    }
+    
+    /**
+     * PLAYWRIGHT MIGRATION: Convert Selenium By locator to CSS selector
+     */
+    private String convertByToSelector(By locator) {
+        String locatorString = locator.toString();
+        if (locatorString.startsWith("By.xpath:")) {
+            // For now, return a generic selector - proper XPath conversion would be complex
+            return "[data-testid], table, .ant-table";
+        } else if (locatorString.startsWith("By.id:")) {
+            return "#" + locatorString.substring("By.id: ".length());
+        } else if (locatorString.startsWith("By.className:")) {
+            return "." + locatorString.substring("By.className: ".length());
+        } else if (locatorString.startsWith("By.cssSelector:")) {
+            return locatorString.substring("By.cssSelector: ".length());
+        }
+        return "[data-testid], table, .ant-table"; // Fallback
     }
 }
 

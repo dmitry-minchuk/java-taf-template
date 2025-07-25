@@ -15,8 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import helpers.utils.WaitUtil;
 
-import static helpers.utils.WaitUtil.waitForElementsList;
+// PLAYWRIGHT MIGRATION: Added WaitUtil import for conditional usage
 
 public class SmartPageFactory {
 
@@ -85,8 +86,8 @@ public class SmartPageFactory {
 
     private static List<SmartWebElement> createSmartElementList(WebDriver driver, By locator, By parentLocator) {
         List<WebElement> elements = (parentLocator != null)
-                ? waitForElementsList(driver, parentLocator, timeoutInSeconds).stream().flatMap(parent -> waitForElementsList(parent, locator, timeoutInSeconds).stream()).toList()
-                : waitForElementsList(driver, locator, timeoutInSeconds);
+                ? WaitUtil.waitForElementsList(driver, parentLocator, timeoutInSeconds).stream().flatMap(parent -> WaitUtil.waitForElementsList(parent, locator, timeoutInSeconds).stream()).toList()
+                : WaitUtil.waitForElementsList(driver, locator, timeoutInSeconds);
 
         List<SmartWebElement> smartList = new ArrayList<>();
         for (int i = 0; i < elements.size(); i++) {
@@ -103,8 +104,8 @@ public class SmartPageFactory {
     @SuppressWarnings("unchecked")
     private static <T extends BasePageComponent> List<T> createPageComponentList(WebDriver driver, Field field, By parentLocator, By listLocator) throws Exception {
         List<WebElement> elements = (parentLocator != null)
-                ? waitForElementsList(driver, parentLocator, timeoutInSeconds).stream().flatMap(parent -> waitForElementsList(parent, listLocator, timeoutInSeconds).stream()).toList()
-                : waitForElementsList(driver, listLocator, timeoutInSeconds);
+                ? WaitUtil.waitForElementsList(driver, parentLocator, timeoutInSeconds).stream().flatMap(parent -> WaitUtil.waitForElementsList(parent, listLocator, timeoutInSeconds).stream()).toList()
+                : WaitUtil.waitForElementsList(driver, listLocator, timeoutInSeconds);
 
         List<T> componentList = new ArrayList<>();
         Type genericType = field.getGenericType();

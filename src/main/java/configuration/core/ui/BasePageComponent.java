@@ -4,6 +4,8 @@ import com.microsoft.playwright.Page;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.WaitUtil;
+import helpers.utils.PlaywrightExpectUtil;
+import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,8 +82,8 @@ public abstract class BasePageComponent {
             // Selenium mode
             return WaitUtil.waitUntil(driver, ExpectedConditions.visibilityOfElementLocated(rootLocatorBy), timeoutInSeconds);
         } else if (page != null && rootSelector != null && !rootSelector.isEmpty()) {
-            // Playwright mode
-            return isPresentPlaywright();
+            // PLAYWRIGHT MIGRATION: Use PlaywrightExpectUtil instead of separate method
+            return PlaywrightExpectUtil.expectVisible(page, rootSelector, timeoutInSeconds * 1000);
         } else {
             LOGGER.warn("Component not properly initialized - neither Selenium nor Playwright context available");
             return false;
@@ -143,5 +145,85 @@ public abstract class BasePageComponent {
      */
     public boolean isSeleniumMode() {
         return driver != null;
+    }
+    
+    // ============================================
+    // PHASE 2.5: DUAL-MODE WAIT STRATEGY UTILITIES
+    // ============================================
+    
+    /**
+     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode element visibility wait
+     * Uses appropriate wait strategy based on current mode (Selenium/Playwright)
+     */
+    protected boolean waitForElementVisible(By seleniumLocator, String playwrightSelector) {
+        return waitForElementVisible(seleniumLocator, playwrightSelector, timeoutInSeconds);
+    }
+    
+    protected boolean waitForElementVisible(By seleniumLocator, String playwrightSelector, int timeoutSeconds) {
+        if (PlaywrightDriverPool.isInitialized() && page != null) {
+            // Playwright mode: Use PlaywrightExpectUtil
+            return PlaywrightExpectUtil.expectVisible(page, playwrightSelector, timeoutSeconds * 1000);
+        } else if (driver != null) {
+            // Selenium mode: Use WaitUtil
+            return WaitUtil.waitUntil(driver, org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated(seleniumLocator), timeoutSeconds);
+        } else {
+            LOGGER.warn("Component not properly initialized - neither Selenium nor Playwright context available");
+            return false;
+        }
+    }
+    
+    /**
+     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode element presence wait
+     */
+    protected boolean waitForElementPresent(By seleniumLocator, String playwrightSelector) {
+        return waitForElementPresent(seleniumLocator, playwrightSelector, timeoutInSeconds);
+    }
+    
+    protected boolean waitForElementPresent(By seleniumLocator, String playwrightSelector, int timeoutSeconds) {
+        if (PlaywrightDriverPool.isInitialized() && page != null) {
+            // Playwright mode: Use PlaywrightExpectUtil
+            return PlaywrightExpectUtil.expectAttached(page, playwrightSelector, timeoutSeconds * 1000);
+        } else if (driver != null) {
+            // Selenium mode: Use WaitUtil
+            return WaitUtil.waitUntil(driver, org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated(seleniumLocator), timeoutSeconds);
+        } else {
+            LOGGER.warn("Component not properly initialized - neither Selenium nor Playwright context available");
+            return false;
+        }
+    }
+    
+    /**
+     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode page ready wait
+     */
+    protected void waitForPageReady() {
+        if (PlaywrightDriverPool.isInitialized() && page != null) {
+            // Playwright mode: Use PlaywrightExpectUtil
+            PlaywrightExpectUtil.expectPageReady(page);
+        } else if (driver != null) {
+            // Selenium mode: Use WaitUtil
+            WaitUtil.waitUntilPageIsReady(driver, timeoutInSeconds);
+        }
+    }
+    
+    /**
+     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode element stable wait
+     */
+    protected boolean waitForElementStable(By seleniumLocator, String playwrightSelector) {
+        return waitForElementStable(seleniumLocator, playwrightSelector, timeoutInSeconds);
+    }
+    
+    protected boolean waitForElementStable(By seleniumLocator, String playwrightSelector, int timeoutSeconds) {
+        if (PlaywrightDriverPool.isInitialized() && page != null) {
+            // Playwright mode: Use PlaywrightExpectUtil
+            return PlaywrightExpectUtil.expectElementStable(page, playwrightSelector, timeoutSeconds * 1000);
+        } else if (driver != null) {
+            // Selenium mode: Use WaitUtil
+            org.openqa.selenium.WebElement element = driver.findElement(seleniumLocator);
+            WaitUtil.waitUntilElementStable(driver, element, timeoutSeconds);
+            return true;
+        } else {
+            LOGGER.warn("Component not properly initialized - neither Selenium nor Playwright context available");
+            return false;
+        }
     }
 }
