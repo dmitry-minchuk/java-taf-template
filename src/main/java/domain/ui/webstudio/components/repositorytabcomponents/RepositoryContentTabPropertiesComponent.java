@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.BasePageComponent;
 import configuration.core.ui.SmartWebElement;
 import configuration.core.ui.TableComponent;
-import helpers.utils.WaitUtil;
+// PLAYWRIGHT MIGRATION Phase 2.5: Removed specific wait imports - using BasePageComponent utilities
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -77,7 +77,8 @@ public class RepositoryContentTabPropertiesComponent extends BasePageComponent {
     };
 
     public String getProperty(Property name) {
-        WaitUtil.waitUntil(getDriver(), org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated(propertiesTable.getRootLocatorBy()), timeoutInSeconds);
+        // PLAYWRIGHT MIGRATION Phase 2.5: Use dual-mode wait utility from BasePageComponent
+        waitForElementVisible(propertiesTable.getRootLocatorBy(), "table.formfields");
         // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - element visibility wait is sufficient
         return propertiesTable.getCell(findRowByText(name.text), 1).getText();
     }

@@ -1,7 +1,6 @@
 package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
-import helpers.utils.WaitUtil;
 import org.openqa.selenium.support.FindBy;
 
 
