@@ -22,6 +22,7 @@ Rules of Engagement
 2. Ask Questions: If you lack information, ask clarifying questions.
 3. Explain Your Code: For every code snippet, provide a brief explanation of what it does and why you chose that specific solution.
 4. Maintain a Log: After each successful step, we will update CLAUDE.md, adding the decisions made and the final code. Start every response with an update to this file.
+5. Do not add Java-doc. 
 
 Bellow you can see previous implementation on Selenium:
 ## Build and Test Commands
