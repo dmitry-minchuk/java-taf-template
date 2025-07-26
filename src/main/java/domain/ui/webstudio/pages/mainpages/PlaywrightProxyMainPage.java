@@ -6,7 +6,6 @@ import domain.ui.webstudio.components.PlaywrightCurrentUserComponent;
 
 public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
-    private PlaywrightCurrentUserComponent currentUserComponent;
     private PlaywrightWebElement userLogo;
     private PlaywrightWebElement message;
 
@@ -16,9 +15,8 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
     }
 
     private void initializeComponents() {
-        userLogo = new PlaywrightWebElement(page, "div.user-logo span");
-        message = new PlaywrightWebElement(page, "div.message.closable");
-        currentUserComponent = new PlaywrightCurrentUserComponent();
+        userLogo = new PlaywrightWebElement(page, "div.user-logo span", "User Logo");
+        message = new PlaywrightWebElement(page, "div.message.closable", "Studio Message");
     }
 
     public String getStudioMessage() {
@@ -35,7 +33,8 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
     public PlaywrightCurrentUserComponent getCurrentUserComponent() {
         userLogo.click();
-        page.locator("div.ant-drawer-content-wrapper").waitFor();
-        return currentUserComponent;
+        var userMenuDrawer = new PlaywrightWebElement(page, "div.ant-drawer-content-wrapper", "User Menu Drawer");
+        userMenuDrawer.waitForVisible();
+        return new PlaywrightCurrentUserComponent(userMenuDrawer);
     }
 }
