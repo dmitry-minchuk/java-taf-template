@@ -116,6 +116,7 @@ Components → PlaywrightDriverPool (Unified Interface)
 - ✅ **Component Compatibility**: All components work unchanged with automatic mode routing
 - ✅ **Framework Independence**: Playwright framework completely decoupled from BaseTest
 - ✅ **BaseTest Ready for Deletion**: Test infrastructure dependency eliminated
+- ✅ **Configuration-Based**: Fixed hardcoded port 8090 to use configured DEFAULT_APP_PORT (8080)
 
 #### **PHASE 4: Full Docker Ecosystem Migration** 🚀 **FINAL PHASE**
 **Objective**: Complete Docker-based testing with all infrastructure functions

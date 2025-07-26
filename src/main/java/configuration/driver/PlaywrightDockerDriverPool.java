@@ -302,8 +302,13 @@ public class PlaywrightDockerDriverPool {
             return url; // No container network, return original URL
         }
         
-        // Phase 3.4: Convert localhost URLs to container network URLs
-        if (url.contains("localhost:8090") || url.contains("127.0.0.1:8090")) {
+        // Phase 3.4: Convert localhost URLs to container network URLs using configured port
+        String defaultAppPort = configuration.projectconfig.ProjectConfiguration.getProperty(
+            configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT);
+        String localhostPattern = "localhost:" + defaultAppPort;
+        String loopbackPattern = "127.0.0.1:" + defaultAppPort;
+        
+        if (url.contains(localhostPattern) || url.contains(loopbackPattern)) {
             // Get app container name from AppContainerPool
             try {
                 configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
