@@ -1,21 +1,24 @@
 # Java Test Automation Framework (TAF) Template
 
-A modern, containerized test automation framework built on **TestContainers**, **REST Assured**, and **Selenium WebDriver** for testing web applications with a component-based Page Object Model architecture.
+A modern, containerized test automation framework built on **TestContainers**, **REST Assured**, and **Playwright** for testing web applications with a component-based Page Object Model architecture.
 
 ## 🚀 Framework Overview
 
 This framework provides a robust foundation for UI and API test automation with:
 
 - **🐳 Containerized Testing**: Docker-based isolation using TestContainers
-- **🔧 Component Architecture**: Reusable UI components with smart element handling
+- **🔧 Component Architecture**: Reusable UI components with scoped element handling
 - **📡 API Integration**: Clean REST Assured patterns with optimized logging
-- **⚡ Performance Optimized**: Built-in waits, retry logic, and efficient element interactions
+- **⚡ Performance Optimized**: Native Playwright waits, retry logic, and efficient element interactions
 - **🎯 Test Management**: Comprehensive test lifecycle management and reporting
+- **📁 File Operations**: Complete file upload/download support for both execution modes
+- **🔄 Dual Execution Modes**: LOCAL and DOCKER modes with automatic detection
 
 ### Core Technologies
 - **Java 21** with Maven build system
 - **TestContainers** for Docker-based test environments
-- **Selenium WebDriver** for UI automation
+- **Playwright** for modern UI automation with native waiting
+- **Selenium WebDriver** for legacy test support (dual-mode capability)
 - **REST Assured** for API testing
 - **TestNG** for test framework and parallel execution
 - **Docker** for application and browser containerization
@@ -24,22 +27,30 @@ This framework provides a robust foundation for UI and API test automation with:
 
 ### 🧩 Page Object Model Rules
 
-#### **Pages (`BasePage` descendants):**
-- Must have a public constructor with `super()` reference to parent constructor in BasePage
-- Elements and Components within Pages are initialized using `@FindBy` annotations within the Page class
+#### **Modern Playwright Architecture:**
+
+#### **Pages (`PlaywrightBasePage` descendants):**
 - Handle URL navigation, page-level operations, and component composition
+- Use `PlaywrightDriverPool.getPage()` for unified page access across execution modes
+- Support both LOCAL and DOCKER execution modes transparently
 
-#### **Components (`BasePageComponent` descendants):**
-- Must have a public no-argument constructor
-- Instances are declared as fields and initialized **solely** using `@FindBy` annotations within a Page or another Component
-- Direct instantiation of Components using `new` within Page or Component classes is **prohibited**
-- The `init(WebDriver driver, By locator)` method (inherited from `BasePageComponent`) is called by `SmartPageFactory` for initialization
-- Provide reusable UI functionality across multiple pages
+#### **Components (`PlaywrightBasePageComponent` descendants):**
+- Support component scoping with root locator boundaries
+- Initialize child elements using `createScopedElement()` for proper DOM scoping
+- Support nested component hierarchy: Page → Component → SubComponent → Element
+- Use `createScopedComponent()` for dynamic component creation with type safety
 
-#### **Elements (`SmartWebElement`):**
-- Instances are initialized directly using `new SmartWebElement(driver, locator, root)` within Page or Component classes
-- Declared as private fields annotated with `@FindBy`, `@FindBys`, or `@FindAll`
-- Enhanced WebElement wrapper with built-in waiting strategies and retry logic
+#### **Elements (`PlaywrightWebElement`):**
+- Enhanced Playwright locator wrapper with built-in waiting strategies
+- Support parent/child locator relationships for component scoping
+- Native Playwright auto-wait eliminates custom wait logic
+- Readable element names for enhanced debugging experience
+
+#### **Legacy Selenium Support:**
+- **Selenium Pages**: `BasePage` descendants for legacy tests
+- **Selenium Components**: `BasePageComponent` with `@FindBy` annotation support  
+- **Selenium Elements**: `SmartWebElement` with Selenium WebDriver integration
+- Full backward compatibility maintained during migration period
 
 ### 🎯 Element Access Patterns
 
@@ -58,15 +69,29 @@ This framework provides a robust foundation for UI and API test automation with:
 
 ## 🐳 Container Architecture
 
+### Dual Execution Modes
+
+#### **LOCAL Mode** (Default)
+- **Playwright Host Execution**: Playwright runs on host machine for direct debugging
+- **Application Container**: Isolated application instances using TestContainers
+- **Port Mapping**: Dynamic port allocation with `getMappedPort()` for host access
+- **File Operations**: Direct filesystem access for uploads/downloads
+
+#### **DOCKER Mode** (CI/CD Optimized)
+- **Playwright Containers**: Isolated Playwright instances using Microsoft official images
+- **Application Containers**: Isolated application instances in same Docker network
+- **Network Communication**: Container-to-container communication via Docker networks
+- **File Operations**: Volume mapping for uploads, container extraction for downloads
+
 ### TestContainers Integration
 - **Application Containers**: Isolated instances of the application under test
-- **Selenium Containers**: Containerized WebDriver instances for browser automation
+- **Browser Containers**: Containerized Playwright instances for complete isolation
 - **Network Isolation**: Docker networks for secure container communication
-- **Port Mapping**: Dynamic port allocation with `getMappedPort()` for external access
+- **Automatic Mode Detection**: Framework selects appropriate execution mode based on configuration
 
 ### Container Lifecycle
-1. **Test Setup**: Creates Docker network, starts application and Selenium containers
-2. **Test Execution**: Runs tests with containerized browser against containerized application
+1. **Test Setup**: Creates Docker network, starts application and browser containers
+2. **Test Execution**: Runs tests with native Playwright waits against containerized application
 3. **Test Teardown**: Collects logs, takes screenshots on failure, cleans up containers
 
 ## 📡 API Testing Architecture
@@ -115,14 +140,22 @@ Complete implementation of Admin UI components for OpenL Tablets WebStudio:
 # Compile the project
 mvn clean compile
 
-# Run all tests
+# Run all tests (Playwright LOCAL mode by default)
 mvn clean test
 
 # Run specific test suite
 mvn clean test -Dsuite=<suite_name>
 
-# Run single test
+# Run single test with execution mode
 mvn clean test -Dtest=<TestClassName>
+
+# Playwright execution modes
+mvn clean test -Dexecution.mode=PLAYWRIGHT_LOCAL   # Default: Host Playwright
+mvn clean test -Dexecution.mode=PLAYWRIGHT_DOCKER  # Container Playwright
+mvn clean test -Dexecution.mode=SELENIUM           # Legacy Selenium mode
+
+# Example: Run admin email test in Docker mode
+mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKER
 ```
 
 ### Key Configuration Files
@@ -134,17 +167,28 @@ mvn clean test -Dtest=<TestClassName>
 - `web_element_explicit_wait`: Default element wait timeout (10 seconds)
 - `test_retry_count`: Number of retry attempts for failed tests
 - `browser`: Browser type (chrome/firefox)
-- `default_app_port`: Application container port
+- `default_app_port`: Application container port  
 - `deployed_app_path`: Application context path
+- `host_resource_path`: Test data directory (src/test/resources)
+- `container_resource_path`: Container volume mount path (/test_resources)
+- `execution.mode`: Execution mode (PLAYWRIGHT_LOCAL/PLAYWRIGHT_DOCKER/SELENIUM)
+
+### Playwright-Specific Properties
+- `enable_screenshot_on_failure`: Automatic screenshot capture (true)
+- `enable_video_recording`: Video recording for test sessions (false)
+- `playwright_downloads_path`: Download directory (target/downloads)
+- `playwright_videos_path`: Video storage directory (target/videos)
 
 ## 📊 Test Execution & Reporting
 
 ### Test Lifecycle
-1. **Container Setup**: Automatic Docker container orchestration
-2. **Element Initialization**: Smart factory-based element and component initialization
-3. **Test Execution**: Robust test execution with built-in retry mechanisms
-4. **Result Collection**: Screenshot capture, log collection, and reporting integration
-5. **Container Cleanup**: Automatic resource cleanup and container termination
+1. **Mode Detection**: Automatic execution mode detection based on configuration
+2. **Container Setup**: Docker container orchestration for app and browser (if needed)
+3. **Driver Initialization**: Playwright or Selenium driver setup with unified interface
+4. **Test Execution**: Native Playwright waits with component-scoped element interactions
+5. **File Operations**: Seamless file upload/download support across execution modes
+6. **Result Collection**: Enhanced screenshot capture, log collection, and ReportPortal integration  
+7. **Container Cleanup**: Automatic resource cleanup and container termination
 
 ### Reporting Integration
 - **ReportPortal**: Advanced test reporting with screenshots and logs
@@ -156,8 +200,10 @@ mvn clean test -Dtest=<TestClassName>
 1. **Prerequisites**: Java 21, Maven, Docker
 2. **Clone Repository**: `git clone <repository-url>`
 3. **Configure Properties**: Update `src/test/resources/config.properties`
-4. **Run Tests**: `mvn clean test -Dsuite=studio_smoke`
-5. **View Reports**: Check `target/` directory for test reports and screenshots
+4. **Choose Execution Mode**:
+   - **LOCAL** (default): `mvn clean test -Dsuite=studio_smoke`
+   - **DOCKER**: `mvn clean test -Dsuite=studio_smoke -Dexecution.mode=PLAYWRIGHT_DOCKER`
+5. **View Reports**: Check `target/` directory for test reports, screenshots, and videos
 
 ## 🎯 Best Practices
 
