@@ -38,7 +38,6 @@ public class AppContainerFactory {
             container.withCopyFileToContainer(getMountableFile(copyFileFromPath), copyFileToContainerPath);
         container.start();
         container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH));
-        // PLAYWRIGHT MIGRATION: Removed WaitUtil.sleep() - container.waitingFor() provides proper waiting for app readiness
         LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
         LOGGER.info(String.format("App Url accessible from the Selenium container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
         return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));

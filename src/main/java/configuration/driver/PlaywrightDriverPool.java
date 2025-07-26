@@ -8,6 +8,9 @@ import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Path;
+import java.util.function.Consumer;
+
 /**
  * Unified Playwright driver pool with automatic mode detection and delegation
  * Supports both local and Docker execution modes with transparent switching
@@ -381,5 +384,48 @@ public class PlaywrightDriverPool {
             case SELENIUM -> throw new UnsupportedOperationException(
                 "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         }
+    }
+    
+    
+    /**
+     * Get current execution mode for debugging purposes
+     */
+    public static ExecutionMode getCurrentExecutionMode() {
+        return getExecutionMode();
+    }
+    
+    /**
+     * Get comprehensive debugging information about current state
+     * Includes execution mode, browser state, and file system configuration
+     */
+    public static String getDebugInfo() {
+        ExecutionMode mode = getExecutionMode();
+        StringBuilder info = new StringBuilder();
+        info.append(String.format("Execution Mode: %s\n", mode));
+        
+        switch (mode) {
+            case PLAYWRIGHT_LOCAL -> {
+                PlaywrightContext context = threadLocalContext.get();
+                if (context != null) {
+                    info.append(String.format("Browser: %s\n", context.getBrowser().browserType().name()));
+                    info.append(String.format("Page URL: %s\n", context.getPage().url()));
+                } else {
+                    info.append("Context: Not initialized\n");
+                }
+            }
+            case PLAYWRIGHT_DOCKER -> {
+                info.append(PlaywrightDockerDriverPool.getDockerInfo());
+            }
+            case SELENIUM -> {
+                info.append("Selenium mode - use DriverPool for debugging\n");
+            }
+        }
+        
+        // Add basic configuration information
+        info.append("\nConfiguration:\n");
+        String hostResourcePath = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
+        info.append(String.format("Host Resource Path: %s\n", hostResourcePath));
+        
+        return info.toString();
     }
 }
