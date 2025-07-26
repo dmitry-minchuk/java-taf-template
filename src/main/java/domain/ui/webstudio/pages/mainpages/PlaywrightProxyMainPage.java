@@ -8,6 +8,7 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
     private PlaywrightWebElement userLogo;
     private PlaywrightWebElement message;
+    private PlaywrightWebElement userMenuDrawer;
 
     public PlaywrightProxyMainPage(String urlAppender) {
         super(urlAppender);
@@ -17,6 +18,7 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
     private void initializeComponents() {
         userLogo = new PlaywrightWebElement(page, "div.user-logo span", "User Logo");
         message = new PlaywrightWebElement(page, "div.message.closable", "Studio Message");
+        userMenuDrawer = new PlaywrightWebElement(page, "div.ant-drawer-content-wrapper", "User Menu Drawer");
     }
 
     public String getStudioMessage() {
@@ -33,7 +35,6 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
     public PlaywrightCurrentUserComponent getCurrentUserComponent() {
         userLogo.click();
-        var userMenuDrawer = new PlaywrightWebElement(page, "div.ant-drawer-content-wrapper", "User Menu Drawer");
         userMenuDrawer.waitForVisible();
         return new PlaywrightCurrentUserComponent(userMenuDrawer);
     }
