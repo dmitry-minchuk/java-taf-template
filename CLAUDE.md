@@ -47,12 +47,75 @@ Rules of Engagement
 - ✅ **Zero Custom Waits**: Eliminated all WaitUtil.sleep() calls in favor of Playwright's auto-wait
 - ✅ **Performance Improvement**: Significantly improved test execution speed and reliability
 
-#### **PHASE 3: Docker Integration** ✅ **COMPLETED**
+#### **PHASE 3: Docker Integration** ✅ **COMPLETED WITH UNIFIED ARCHITECTURE**
 - ✅ **PlaywrightDockerDriverPool**: Docker-aware Playwright driver with container networking
 - ✅ **Container Networking**: Host-accessible URL resolution for Playwright-on-host execution
 - ✅ **Test Migration**: Successfully migrated testAdminEmail to testPlaywrightAdminEmail
 - ✅ **Application Bug Discovery**: Documented user logout behavior inconsistency
-- ✅ **Production Ready**: Optimized for Docker environments with proper resource management
+- ✅ **Unified Driver Pool**: Self-contained mode detection with automatic delegation architecture
+- ✅ **Docker Initialization Migration**: Moved Docker setup logic from BaseTest to PlaywrightDriverPool
+- ✅ **Centralized Container Setup**: Shared setupAppContainer method for reduced code duplication
+- ✅ **Self-Contained Framework**: Playwright framework now fully independent of test infrastructure
+
+### **PHASE 3: UNIFIED ARCHITECTURE COMPLETED** ✅ **SUCCESS**
+
+#### **Problem Resolution Summary**
+**Issue Resolved**: Docker tests were failing with `IllegalStateException: Playwright not initialized for current thread` due to architectural coupling between test infrastructure and Playwright framework.
+
+**Solution Implemented**: Complete architectural overhaul with unified driver pool delegation and self-contained mode detection.
+
+#### **PHASE 3 Final Implementation** ✅ **COMPLETED**
+
+##### **Phase 3.1: Self-Contained Mode Detection** ✅ **COMPLETED**
+1. ✅ **Moved ExecutionMode to PlaywrightDriverPool**: Framework now has internal mode detection independent of BaseTest
+2. ✅ **System Property Based Detection**: Uses `execution.mode` system property with PLAYWRIGHT_LOCAL default
+3. ✅ **Framework Independence**: Playwright classes no longer depend on test infrastructure
+
+##### **Phase 3.2: Unified Driver Pool Implementation** ✅ **COMPLETED**
+1. ✅ **Intelligent Delegation**: PlaywrightDriverPool automatically routes all methods to appropriate implementation
+   ```java
+   public static Page getPage() {
+       ExecutionMode mode = getExecutionMode();
+       return switch (mode) {
+           case PLAYWRIGHT_LOCAL -> getLocalPage();
+           case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getPage();
+           case SELENIUM -> throw new UnsupportedOperationException("Use DriverPool for Selenium mode");
+       };
+   }
+   ```
+
+2. ✅ **Complete Method Delegation**: All driver methods delegate based on execution mode:
+   - `getPage()`, `getBrowser()`, `getBrowserContext()`
+   - `takeScreenshot()`, `closePlaywright()`, `isInitialized()`
+   - `navigateToApp()` with mode-specific URL resolution
+
+##### **Phase 3.3: Docker Initialization Migration** ✅ **COMPLETED**
+1. ✅ **Centralized Initialization**: New `PlaywrightDriverPool.initializePlaywright(Network)` method
+2. ✅ **BaseTest Simplification**: BaseTest now calls unified initialization interface
+3. ✅ **Shared Container Setup**: Extracted `setupAppContainer()` method reduces code duplication
+4. ✅ **Framework Encapsulation**: Docker setup logic moved from test infrastructure to driver framework
+
+##### **Phase 3.4: Enhanced Navigation Support** ✅ **COMPLETED**
+1. ✅ **Unified navigateToApp()**: Automatic URL resolution for both LOCAL and DOCKER modes
+2. ✅ **Container Port Mapping**: LOCAL mode uses mapped ports for host accessibility
+3. ✅ **Network Awareness**: DOCKER mode handles container-to-container communication
+
+#### **Architecture After PHASE 3 Completion** ✅ **ACHIEVED**
+```
+Components → PlaywrightDriverPool (Unified Interface)
+                    ↓
+            [Self-Contained Mode Detection]
+                    ↓
+    LOCAL Mode → PlaywrightDriverPool.getLocalPage()
+    DOCKER Mode → PlaywrightDockerDriverPool.getPage()
+```
+
+#### **Success Criteria Validation** ✅ **ALL ACHIEVED**
+- ✅ **Docker Tests**: `mvn test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKER` PASSES
+- ✅ **LOCAL Tests**: `mvn test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL` PASSES  
+- ✅ **Component Compatibility**: All components work unchanged with automatic mode routing
+- ✅ **Framework Independence**: Playwright framework completely decoupled from BaseTest
+- ✅ **BaseTest Ready for Deletion**: Test infrastructure dependency eliminated
 
 #### **PHASE 4: Full Docker Ecosystem Migration** 🚀 **FINAL PHASE**
 **Objective**: Complete Docker-based testing with all infrastructure functions
