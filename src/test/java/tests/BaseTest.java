@@ -104,24 +104,11 @@ public abstract class BaseTest {
         LOGGER.info("Initializing test with Playwright: {}", 
                    result.getMethod().getMethodName());
         
-        // Initialize Playwright (no network needed for Phase 1)
-        PlaywrightDriverPool.setPlaywright();
+        // Set up app container first
+        setupAppContainer(result, null);
         
-        // Set up app container (same as Selenium mode)
-        String appContainerName = StringUtil.generateUniqueName("appcontainer");
-        Method testMethod = result.getMethod().getConstructorOrMethod().getMethod();
-        AppContainerConfig configAnnotation = testMethod.getAnnotation(AppContainerConfig.class);
-        Map<String, String> containerConfig;
-
-        if (configAnnotation != null) {
-            containerConfig = configAnnotation.startParams().getParameterMap();
-            String copyFileFromPath = configAnnotation.copyFileFromPath().isEmpty() ? null : configAnnotation.copyFileFromPath();
-            String copyFileToContainerPath = configAnnotation.copyFileToContainerPath().isEmpty() ? null : configAnnotation.copyFileToContainerPath();
-            // Phase 1: App container without network dependency
-            AppContainerPool.setAppContainer(appContainerName, null, containerConfig, copyFileFromPath, copyFileToContainerPath);
-        } else {
-            AppContainerPool.setAppContainer(appContainerName, null, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);
-        }
+        // Initialize Playwright through unified interface (no network needed for Phase 1)
+        PlaywrightDriverPool.initializePlaywright(null);
     }
     
     /**
@@ -135,10 +122,18 @@ public abstract class BaseTest {
         Network network = Network.newNetwork();
         NetworkPool.setNetwork(network);
         
-        // Initialize Playwright with Docker awareness and network
-        PlaywrightDockerDriverPool.setPlaywrightDocker(network);
+        // Set up app container with network
+        setupAppContainer(result, network);
         
-        // Set up app container with network (same as Selenium mode)
+        // Initialize Playwright through unified interface with network
+        PlaywrightDriverPool.initializePlaywright(network);
+    }
+    
+    /**
+     * Shared app container setup for Playwright modes
+     * Phase 3: Centralized container configuration logic
+     */
+    private void setupAppContainer(ITestResult result, Network network) {
         String appContainerName = StringUtil.generateUniqueName("appcontainer");
         Method testMethod = result.getMethod().getConstructorOrMethod().getMethod();
         AppContainerConfig configAnnotation = testMethod.getAnnotation(AppContainerConfig.class);
@@ -148,7 +143,6 @@ public abstract class BaseTest {
             containerConfig = configAnnotation.startParams().getParameterMap();
             String copyFileFromPath = configAnnotation.copyFileFromPath().isEmpty() ? null : configAnnotation.copyFileFromPath();
             String copyFileToContainerPath = configAnnotation.copyFileToContainerPath().isEmpty() ? null : configAnnotation.copyFileToContainerPath();
-            // Phase 3: App container with network for container-to-container communication
             AppContainerPool.setAppContainer(appContainerName, network, containerConfig, copyFileFromPath, copyFileToContainerPath);
         } else {
             AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);

@@ -9,15 +9,37 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Playwright-based replacement for DriverPool
- * Manages Playwright Browser and Page instances with thread-safe access
- * Phase 1: Local execution only (no Docker containers)
+ * Unified Playwright driver pool with automatic mode detection and delegation
+ * Supports both local and Docker execution modes with transparent switching
  */
 public class PlaywrightDriverPool {
     
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDriverPool.class);
     
+    // Execution modes for Playwright framework (moved from BaseTest for independence)
+    public enum ExecutionMode {
+        SELENIUM,           // Original Selenium with Docker containers  
+        PLAYWRIGHT_LOCAL,   // Local Playwright execution
+        PLAYWRIGHT_DOCKER   // Docker-aware Playwright execution
+    }
+    
     private static final ThreadLocal<PlaywrightContext> threadLocalContext = new ThreadLocal<>();
+    
+    /**
+     * Get current execution mode from system properties
+     * Self-contained mode detection independent of test infrastructure
+     */
+    private static ExecutionMode getExecutionMode() {
+        String mode = System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL");
+        
+        try {
+            ExecutionMode execMode = ExecutionMode.valueOf(mode.toUpperCase());
+            return execMode;
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Unknown execution mode '{}', defaulting to PLAYWRIGHT_LOCAL", mode);
+            return ExecutionMode.PLAYWRIGHT_LOCAL;
+        }
+    }
     
     /**
      * Container for Playwright components per thread
@@ -151,9 +173,38 @@ public class PlaywrightDriverPool {
     }
     
     /**
-     * Get the current Page instance for this thread
+     * Initialize Playwright based on execution mode with self-contained setup
+     * Phase 3: Unified initialization independent of test infrastructure
+     */
+    public static void initializePlaywright(org.testcontainers.containers.Network network) {
+        ExecutionMode mode = getExecutionMode();
+        switch (mode) {
+            case PLAYWRIGHT_LOCAL -> setPlaywright();
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.setPlaywrightDocker(network);
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        }
+        LOGGER.info("Playwright initialized in {} mode", mode);
+    }
+
+    /**
+     * Get the current Page instance for this thread with automatic mode detection
+     * Unified interface that delegates to appropriate driver pool based on execution mode
      */
     public static Page getPage() {
+        ExecutionMode mode = getExecutionMode();
+        return switch (mode) {
+            case PLAYWRIGHT_LOCAL -> getLocalPage();
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getPage();
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        };
+    }
+    
+    /**
+     * Get Page for LOCAL mode (original implementation)
+     */
+    private static Page getLocalPage() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
             throw new IllegalStateException("Playwright not initialized for current thread. Call setPlaywright() first.");
@@ -162,9 +213,35 @@ public class PlaywrightDriverPool {
     }
     
     /**
-     * Get the current Browser instance for this thread
+     * Get the current Browser instance for this thread with automatic mode detection
      */
     public static Browser getBrowser() {
+        ExecutionMode mode = getExecutionMode();
+        return switch (mode) {
+            case PLAYWRIGHT_LOCAL -> getLocalBrowser();
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getBrowser();
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        };
+    }
+    
+    /**
+     * Get the current BrowserContext instance for this thread with automatic mode detection
+     */
+    public static BrowserContext getBrowserContext() {
+        ExecutionMode mode = getExecutionMode();
+        return switch (mode) {
+            case PLAYWRIGHT_LOCAL -> getLocalBrowserContext();
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getBrowserContext();
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        };
+    }
+    
+    /**
+     * Get Browser for LOCAL mode (original implementation)
+     */
+    private static Browser getLocalBrowser() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
             throw new IllegalStateException("Playwright not initialized for current thread. Call setPlaywright() first.");
@@ -173,9 +250,9 @@ public class PlaywrightDriverPool {
     }
     
     /**
-     * Get the current BrowserContext instance for this thread
+     * Get BrowserContext for LOCAL mode (original implementation)
      */
-    public static BrowserContext getBrowserContext() {
+    private static BrowserContext getLocalBrowserContext() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
             throw new IllegalStateException("Playwright not initialized for current thread. Call setPlaywright() first.");
@@ -195,9 +272,22 @@ public class PlaywrightDriverPool {
     }
     
     /**
-     * Close Playwright and clean up resources for current thread
+     * Close Playwright and clean up resources for current thread with automatic mode detection
      */
     public static void closePlaywright() {
+        ExecutionMode mode = getExecutionMode();
+        switch (mode) {
+            case PLAYWRIGHT_LOCAL -> closeLocalPlaywright();
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.closePlaywrightDocker();
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        }
+    }
+    
+    /**
+     * Close Playwright for LOCAL mode (original implementation)
+     */
+    private static void closeLocalPlaywright() {
         PlaywrightContext context = threadLocalContext.get();
         if (context != null) {
             LOGGER.info("Closing Playwright for thread: {}", Thread.currentThread().getName());
@@ -209,10 +299,16 @@ public class PlaywrightDriverPool {
     }
     
     /**
-     * Check if Playwright is initialized for current thread
+     * Check if Playwright is initialized for current thread with automatic mode detection
      */
     public static boolean isInitialized() {
-        return threadLocalContext.get() != null;
+        ExecutionMode mode = getExecutionMode();
+        return switch (mode) {
+            case PLAYWRIGHT_LOCAL -> threadLocalContext.get() != null;
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.isInitialized();
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        };
     }
     
     /**
@@ -247,5 +343,43 @@ public class PlaywrightDriverPool {
         page.navigate(url, new Page.NavigateOptions()
                 .setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
                 .setTimeout(30000)); // 30 seconds timeout
+    }
+    
+    /**
+     * Navigate to application container URL with automatic mode detection
+     * Phase 3: Unified application navigation for all modes
+     */
+    public static void navigateToApp() {
+        ExecutionMode mode = getExecutionMode();
+        switch (mode) {
+            case PLAYWRIGHT_LOCAL -> {
+                // For local mode, use mapped port URL
+                try {
+                    configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
+                    if (appData != null) {
+                        var container = appData.getAppContainer();
+                        Integer defaultAppPort = Integer.parseInt(
+                            configuration.projectconfig.ProjectConfiguration.getProperty(
+                                configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT));
+                        Integer mappedPort = container.getMappedPort(defaultAppPort);
+                        
+                        String deployedAppPath = configuration.projectconfig.ProjectConfiguration.getProperty(
+                            configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
+                        
+                        String hostUrl = String.format("http://localhost:%d%s", mappedPort, deployedAppPath);
+                        LOGGER.info("Navigating to application via host URL (LOCAL): {}", hostUrl);
+                        navigateTo(hostUrl);
+                    } else {
+                        LOGGER.warn("No application container found for navigation");
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("Failed to navigate to application container: {}", e.getMessage());
+                    throw new RuntimeException("Application container navigation failed", e);
+                }
+            }
+            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.navigateToApp();
+            case SELENIUM -> throw new UnsupportedOperationException(
+                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
+        }
     }
 }
