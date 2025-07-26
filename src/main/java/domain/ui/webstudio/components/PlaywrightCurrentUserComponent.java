@@ -18,11 +18,11 @@ public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent 
     }
 
     private void initializeComponents() {
-        myProfileMenuItem = new PlaywrightWebElement(page, "//li[@class='ant-menu-item' and ./span[text()='My Profile']]");
-        mySettingsMenuItem = new PlaywrightWebElement(page, "//li[@class='ant-menu-item' and ./span[text()='My Settings']]");
-        administrationMenuItem = new PlaywrightWebElement(page, "//li[@class='ant-menu-item' and ./span[text()='Administration']]");
-        helpMenuItem = new PlaywrightWebElement(page, "//li[@class='ant-menu-item' and ./span[text()='Help']]");
-        signOutMenuItem = new PlaywrightWebElement(page, "//li[@class='ant-menu-item' and ./span[text()='Sign Out']]");
+        myProfileMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('My Profile'))");
+        mySettingsMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('My Settings'))");
+        administrationMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Administration'))");
+        helpMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Help'))");
+        signOutMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Sign Out'))");
     }
 
     public void navigateToMyProfile() {
@@ -41,6 +41,7 @@ public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent 
     public void signOut() {
         select(MenuElements.SIGN_OUT);
     }
+
     private void select(MenuElements element) {
         switch (element) {
             case MY_PROFILE:

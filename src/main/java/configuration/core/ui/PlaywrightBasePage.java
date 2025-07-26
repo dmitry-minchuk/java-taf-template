@@ -9,10 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
-/**
- * Playwright-based replacement for BasePage
- * Handles page navigation and initialization using Playwright
- */
 public abstract class PlaywrightBasePage {
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePage.class);
     protected String absoluteUrl = null;

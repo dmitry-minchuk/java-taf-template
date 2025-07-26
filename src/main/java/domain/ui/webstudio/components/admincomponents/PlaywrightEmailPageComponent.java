@@ -82,7 +82,8 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
         setEmailUrl(url);
         setEmailUsername(username);
         setEmailPassword(password);
-        
+
+        // Handle browser confirmation dialogs using Playwright's native dialog handling
         page.onDialog(dialog -> {
             if (dialog.type().equals("confirm")) {
                 dialog.accept();

@@ -16,6 +16,9 @@ import java.util.List;
  * Uses Playwright's native expect() patterns and wait strategies
  * Phase 2: Eliminate custom wait logic in favor of Playwright's built-in capabilities
  */
+
+// DEPRECATED: This utility class should be avoided - use native Playwright expect() and waitFor() methods instead.
+// Use only in emergency cases where native Playwright capabilities are insufficient.
 public class PlaywrightExpectUtil {
     
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightExpectUtil.class);
