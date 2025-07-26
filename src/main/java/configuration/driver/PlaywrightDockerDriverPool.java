@@ -6,6 +6,7 @@ import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
@@ -27,6 +28,10 @@ public class PlaywrightDockerDriverPool {
     // Playwright Docker image constants
     private static final String PLAYWRIGHT_DOCKER_IMAGE = "mcr.microsoft.com/playwright/java";
     private static final String DEFAULT_PLAYWRIGHT_VERSION = "v1.48.0-noble";
+    
+    // File system binding configuration - same as DriverFactory for consistency
+    private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
+    private static final String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
     
     /**
      * Container for Playwright Docker components per thread
@@ -157,7 +162,9 @@ public class PlaywrightDockerDriverPool {
                     cmd.withTty(true);
                 })
                 .withPrivilegedMode(false) // Security best practice
-                .withSharedMemorySize(2147483648L); // 2GB shared memory for browsers
+                .withSharedMemorySize(2147483648L) // 2GB shared memory for browsers
+                // FILE SYSTEM BINDING: Enable file upload/download support
+                .withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
         
         // Browser-specific optimizations
         switch (browserName.toLowerCase()) {
@@ -173,6 +180,7 @@ public class PlaywrightDockerDriverPool {
         }
         
         LOGGER.info("Creating Playwright Docker container with image: {}", dockerImageName);
+        LOGGER.info("Volume mapping configured: {} (host) -> {} (container)", HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH);
         container.start();
         
         LOGGER.info("Playwright Docker container started successfully - Container ID: {}", container.getContainerId());
@@ -205,7 +213,6 @@ public class PlaywrightDockerDriverPool {
      */
     private static Browser launchContainerizedBrowser(Playwright playwright, String browserName) {
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
-                // TODO: we need headless=false, investigate what are setSlowMo and setDevtools.
                 .setHeadless(true) // Always headless in containers
                 .setSlowMo(0)
                 .setDevtools(false);
@@ -482,5 +489,32 @@ public class PlaywrightDockerDriverPool {
         }
         
         return info.toString();
+    }
+    
+    /**
+     * Get the current Playwright container for file operations
+     */
+    public static GenericContainer<?> getPlaywrightContainer() {
+        PlaywrightDockerContext context = threadLocalContext.get();
+        if (context == null) {
+            throw new IllegalStateException("Playwright Docker not initialized for current thread. Call setPlaywrightDocker() first.");
+        }
+        return context.getPlaywrightContainer();
+    }
+    
+    /**
+     * Download file by triggering download action in Docker mode
+     * Uses container extraction for file access
+     */
+    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) throws java.io.IOException {
+        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
+    }
+    
+    /**
+     * Download file by triggering download action with custom timeout in Docker mode
+     * Uses container extraction for file access
+     */
+    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) throws java.io.IOException {
+        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger, timeoutMs);
     }
 }

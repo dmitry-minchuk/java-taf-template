@@ -95,4 +95,11 @@ public class StringUtil {
             return responseBody;
         }
     }
+    
+    public static String sanitizeFileName(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return "unnamed";
+        }
+        return fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+    }
 }
