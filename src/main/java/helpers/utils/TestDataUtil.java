@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+// This class is for searching and getting test_data files by name
 public class TestDataUtil {
     private final static String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
     private final static String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);

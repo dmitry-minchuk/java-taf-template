@@ -386,6 +386,21 @@ public class PlaywrightDriverPool {
         }
     }
     
+    /**
+     * Download file by triggering download action
+     * Unified download method with automatic mode detection
+     */
+    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) throws java.io.IOException {
+        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
+    }
+    
+    /**
+     * Download file by triggering download action with custom timeout
+     * Unified download method with automatic mode detection
+     */
+    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) throws java.io.IOException {
+        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger, timeoutMs);
+    }
     
     /**
      * Get current execution mode for debugging purposes

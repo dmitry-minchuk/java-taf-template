@@ -12,6 +12,10 @@ public enum PropertyNameSpace {
     CONTAINER_RESOURCE_PATH("container_resource_path"),
     HOST_SCREENSHOTS_PATH("host_screenshot_path"),
     HOST_APP_LOGS_PATH("host_app_logs_path"),
+    ENABLE_VIDEO_RECORDING("enable_video_recording"),
+    ENABLE_SCREENSHOT_ON_FAILURE("enable_screenshot_on_failure"),
+    PLAYWRIGHT_DOWNLOADS_PATH("playwright_downloads_path"),
+    PLAYWRIGHT_VIDEOS_PATH("playwright_videos_path"),
     GIT_URL_RULESERVICE("git.url.ruleservice"),
     GIT_LOGIN_RULESERVICE("git.login.ruleservice"),
     GIT_TOKEN_RULESERVICE("git.token.ruleservice");

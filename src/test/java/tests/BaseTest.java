@@ -10,6 +10,7 @@ import configuration.driver.PlaywrightDockerDriverPool;
 import configuration.network.NetworkPool;
 import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
+import helpers.utils.PlaywrightReportPortalUtil;
 import helpers.utils.ScreenshotUtil;
 import helpers.utils.StringUtil;
 import org.apache.logging.log4j.LogManager;
@@ -153,16 +154,13 @@ public abstract class BaseTest {
      * PLAYWRIGHT PHASE 1: Local Playwright test cleanup (no Docker)
      */
     private void cleanupPlaywrightLocalTest(ITestResult result) {
+        String testName = result.getMethod().getMethodName();
+        
         if (result.getStatus() == ITestResult.FAILURE) {
-            // Take screenshot with Playwright
-            byte[] screenshot = PlaywrightDriverPool.takeScreenshot();
-            if (screenshot != null) {
-                // Create temporary file for ReportPortal
-                File tempScreenshot = createTempScreenshotFile(screenshot);
-                if (tempScreenshot != null) {
-                    ReportPortal.emitLog("Test Failure Screenshot", "INFO", new Date(), tempScreenshot);
-                }
-            }
+            // Enhanced ReportPortal logging with PlaywrightReportPortalUtil
+            PlaywrightReportPortalUtil.attachScreenshotOnFailure(testName);
+            PlaywrightReportPortalUtil.attachPageContent("Page Content at Failure");
+            PlaywrightReportPortalUtil.attachExecutionInfo();
             
             // Log application logs (same as Selenium mode)
             ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
@@ -179,16 +177,13 @@ public abstract class BaseTest {
      * PLAYWRIGHT PHASE 3: Docker-aware Playwright test cleanup
      */
     private void cleanupPlaywrightDockerTest(ITestResult result) {
+        String testName = result.getMethod().getMethodName();
+        
         if (result.getStatus() == ITestResult.FAILURE) {
-            // Take screenshot with Playwright Docker
-            byte[] screenshot = PlaywrightDockerDriverPool.takeScreenshot();
-            if (screenshot != null) {
-                // Create temporary file for ReportPortal
-                File tempScreenshot = createTempScreenshotFile(screenshot);
-                if (tempScreenshot != null) {
-                    ReportPortal.emitLog("Test Failure Screenshot", "INFO", new Date(), tempScreenshot);
-                }
-            }
+            // Enhanced ReportPortal logging with PlaywrightReportPortalUtil
+            PlaywrightReportPortalUtil.attachScreenshotOnFailure(testName);
+            PlaywrightReportPortalUtil.attachPageContent("Page Content at Failure");
+            PlaywrightReportPortalUtil.attachExecutionInfo();
             
             // Log application logs (same as Selenium mode)
             ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
@@ -242,20 +237,6 @@ public abstract class BaseTest {
         NetworkPool.closeNetwork();
     }
     
-    /**
-     * Create temporary file from Playwright screenshot bytes
-     */
-    private File createTempScreenshotFile(byte[] screenshotBytes) {
-        try {
-            File tempFile = File.createTempFile("playwright-screenshot-", ".png");
-            tempFile.deleteOnExit();
-            java.nio.file.Files.write(tempFile.toPath(), screenshotBytes);
-            return tempFile;
-        } catch (Exception e) {
-            LOGGER.error("Failed to create temporary screenshot file: {}", e.getMessage());
-            return null;
-        }
-    }
     
     /**
      * Check if test is running in Playwright mode (local or Docker)
