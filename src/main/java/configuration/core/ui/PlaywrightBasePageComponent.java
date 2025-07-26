@@ -50,8 +50,7 @@ public abstract class PlaywrightBasePageComponent {
         }
     }
     
-    protected <T extends PlaywrightBasePageComponent> T createScopedComponent(
-            Class<T> componentClass, String selector, String componentName) {
+    protected <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
         try {
             PlaywrightWebElement childLocator = createScopedElement(selector, componentName);
             return componentClass.getConstructor(PlaywrightWebElement.class).newInstance(childLocator);
@@ -61,8 +60,7 @@ public abstract class PlaywrightBasePageComponent {
         }
     }
     
-    protected <T extends PlaywrightBasePageComponent> T createScopedComponent(
-            Class<T> componentClass, PlaywrightWebElement childLocator) {
+    protected <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
         try {
             return componentClass.getConstructor(PlaywrightWebElement.class).newInstance(childLocator);
         } catch (Exception e) {
