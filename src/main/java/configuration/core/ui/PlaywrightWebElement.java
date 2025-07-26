@@ -24,7 +24,7 @@ public class PlaywrightWebElement {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
-        this.elementName = generateElementName(selector);
+        this.elementName = "Element";
         this.timeoutInMilliseconds = Integer.parseInt(
             ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
         ) * 1000;
@@ -34,18 +34,17 @@ public class PlaywrightWebElement {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
-        this.elementName = elementName;
+        this.elementName = elementName != null ? elementName : "Element";
         this.timeoutInMilliseconds = Integer.parseInt(
             ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
         ) * 1000;
     }
     
-    // Constructor for child locators
     public PlaywrightWebElement(PlaywrightWebElement parent, String selector) {
         this.page = parent.page;
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
-        this.elementName = generateElementName(selector);
+        this.elementName = "Element";
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
     }
     
@@ -53,53 +52,10 @@ public class PlaywrightWebElement {
         this.page = parent.page;
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
-        this.elementName = elementName;
+        this.elementName = elementName != null ? elementName : "Element";
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
     }
     
-    private String generateElementName(String selector) {
-        // Extract meaningful name from selector
-        if (selector.contains("id=")) {
-            String id = selector.substring(selector.indexOf("id=") + 3);
-            if (id.contains("'") || id.contains("\"")) {
-                id = id.substring(1, id.indexOf(id.charAt(0), 1));
-            }
-            return "Element[" + id + "]";
-        }
-        
-        if (selector.contains("text('") || selector.contains("text(\"")) {
-            int start = selector.indexOf("text(") + 6;
-            int end = selector.indexOf(selector.charAt(start - 1), start);
-            String text = selector.substring(start, end);
-            return "Element[" + text + "]";
-        }
-        
-        if (selector.contains(":has(span:text('") || selector.contains(":has(span:text(\"")) {
-            int start = selector.indexOf(":has(span:text(") + 16;
-            int end = selector.indexOf(selector.charAt(start - 1), start);
-            String text = selector.substring(start, end);
-            return "Element[" + text + "]";
-        }
-        
-        if (selector.startsWith("#")) {
-            return "Element[" + selector.substring(1) + "]";
-        }
-        
-        if (selector.contains("class=") || selector.contains(".")) {
-            String className = selector.contains(".") ? 
-                selector.substring(selector.indexOf(".") + 1).split("[\\s\\[\\:]")[0] :
-                selector.substring(selector.indexOf("class=") + 6).split("'\"")[0];
-            return "Element[" + className + "]";
-        }
-        
-        if (selector.contains("input")) return "InputField";
-        if (selector.contains("button")) return "Button";
-        if (selector.contains("div")) return "Container";
-        if (selector.contains("span")) return "TextElement";
-        if (selector.contains("li")) return "ListItem";
-        
-        return "Element[" + selector.substring(0, Math.min(20, selector.length())) + "]";
-    }
     
     // Core Actions
     

@@ -6,8 +6,6 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
 public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
-
-    private final Page page;
     
     private PlaywrightWebElement emailVerificationCheckbox;
     private PlaywrightWebElement emailUrlField;
@@ -18,17 +16,21 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
 
     public PlaywrightEmailPageComponent() {
         super(PlaywrightDriverPool.getPage());
-        this.page = PlaywrightDriverPool.getPage();
+        initializeEmailComponents();
+    }
+    
+    public PlaywrightEmailPageComponent(PlaywrightWebElement rootLocator) {
+        super(rootLocator);
         initializeEmailComponents();
     }
 
     private void initializeEmailComponents() {
-        emailVerificationCheckbox = new PlaywrightWebElement(page, "//input[@id='isActive']");
-        emailUrlField = new PlaywrightWebElement(page, "//input[@id='url']");
-        emailUsernameField = new PlaywrightWebElement(page, "//input[@id='username']");
-        emailPasswordField = new PlaywrightWebElement(page, "//input[@id='password']");
-        applyBtn = new PlaywrightWebElement(page, "//button[./span[text()='Apply']]");
-        showPasswordBtn = new PlaywrightWebElement(page, "//span[contains(@aria-label,'eye')]");
+        emailVerificationCheckbox = createScopedElement("input#isActive", "Email Verification Checkbox");
+        emailUrlField = createScopedElement("input#url", "Email URL Field");
+        emailUsernameField = createScopedElement("input#username", "Email Username Field");
+        emailPasswordField = createScopedElement("input#password", "Email Password Field");
+        applyBtn = createScopedElement("button:has(span:text('Apply'))", "Apply Button");
+        showPasswordBtn = createScopedElement("span[aria-label*='eye']", "Show Password Button");
     }
 
     public void enableEmailVerification() {

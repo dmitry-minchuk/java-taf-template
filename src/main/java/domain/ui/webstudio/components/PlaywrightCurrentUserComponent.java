@@ -16,13 +16,18 @@ public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent 
         super(configuration.driver.PlaywrightDriverPool.getPage());
         initializeComponents();
     }
+    
+    public PlaywrightCurrentUserComponent(PlaywrightWebElement rootLocator) {
+        super(rootLocator);
+        initializeComponents();
+    }
 
     private void initializeComponents() {
-        myProfileMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('My Profile'))");
-        mySettingsMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('My Settings'))");
-        administrationMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Administration'))");
-        helpMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Help'))");
-        signOutMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Sign Out'))");
+        myProfileMenuItem = createScopedElement("li.ant-menu-item:has(span:text('My Profile'))", "My Profile Menu Item");
+        mySettingsMenuItem = createScopedElement("li.ant-menu-item:has(span:text('My Settings'))", "My Settings Menu Item");
+        administrationMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Administration'))", "Administration Menu Item");
+        helpMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Help'))", "Help Menu Item");
+        signOutMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Sign Out'))", "Sign Out Menu Item");
     }
 
     public void navigateToMyProfile() {
