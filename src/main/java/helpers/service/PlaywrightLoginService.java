@@ -4,7 +4,6 @@ import com.microsoft.playwright.Page;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.utils.PlaywrightExpectUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,46 +20,33 @@ public class PlaywrightLoginService {
         this.page = page;
     }
     
-    /**
-     * Login with the specified user credentials
-     * @param user UserData containing username and password
-     * @return PlaywrightEditorPage after successful login (same as Selenium version)
-     */
     public PlaywrightEditorPage login(UserData user) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
         // Navigate to login page using localhost URL for LOCAL mode (Playwright runs on host)
         configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
-        int mappedPort = appData.getAppContainer().getMappedPort(8080); // APP_PORT from AppContainerFactory
+        int mappedPort = appData.getAppContainer().getMappedPort(8080);
         String loginUrl = "http://localhost:" + mappedPort + "/";
         page.navigate(loginUrl);
         LOGGER.info("Navigated to login page: {}", loginUrl);
         
-        // Wait for login form to be visible - using specific IDs from Selenium LoginPage
+        // Wait for login form to be visible and fill credentials
         var usernameField = page.locator("input#loginName");
-        var passwordField = page.locator("input#loginPassword");  
+        var passwordField = page.locator("input#loginPassword");
         var loginButton = page.locator("input#loginSubmit");
         
-        // Wait for login form elements to be visible
-        PlaywrightExpectUtil.expectVisible(page, usernameField);
-        PlaywrightExpectUtil.expectVisible(page, passwordField);
-        PlaywrightExpectUtil.expectVisible(page, loginButton);
-        
-        // Fill credentials
-        usernameField.clear();
+        usernameField.waitFor();
         usernameField.fill(user.getLogin());
         
-        passwordField.clear();
         passwordField.fill(user.getPassword());
         
-        // Click login button
         loginButton.click();
         
-        // Wait for successful login - look for editor page elements
-        PlaywrightExpectUtil.expectVisible(page, page.locator("body"));
+        // Wait for successful login - editor page should load
+        page.waitForURL("**/", new Page.WaitForURLOptions().setTimeout(10000));
         
         LOGGER.info("Successfully logged in as: {}", user.getLogin());
-        return new PlaywrightEditorPage(); // Return EditorPage as in Selenium version
+        return new PlaywrightEditorPage();
     }
     
     /**
@@ -76,26 +62,20 @@ public class PlaywrightLoginService {
         // Original Selenium: //div[@class='user-logo']/span
         var userLogo = page.locator("div.user-logo span");
         
-        PlaywrightExpectUtil.expectVisible(page, userLogo);
+        userLogo.waitFor();
         userLogo.click();
         LOGGER.info("User logo clicked successfully");
         
-        // Step 2: Wait for Ant Design drawer to appear
-        // Original Selenium: //div[@class='ant-drawer-content-wrapper']
         var userMenuDrawer = page.locator("div.ant-drawer-content-wrapper");
-        PlaywrightExpectUtil.expectVisible(page, userMenuDrawer);
+        userMenuDrawer.waitFor();
         LOGGER.info("User menu drawer opened successfully");
         
-        // Step 3: Click Administration menu item within the drawer
-        // Original Selenium: .//li[@class='ant-menu-item' and ./span[text()='Administration']]
         var administrationMenuItem = page.locator("li.ant-menu-item:has(span:text('Administration'))");
-        
-        PlaywrightExpectUtil.expectVisible(page, administrationMenuItem);
+        administrationMenuItem.waitFor();
         administrationMenuItem.click();
         LOGGER.info("Administration menu item clicked");
         
-        // Step 4: Wait for admin page to load - look for admin navigation menu
-        PlaywrightExpectUtil.expectVisible(page, page.locator("div#main-menu, [data-menu-id]"));
+        page.locator("div#main-menu, [data-menu-id]").first().waitFor();
         
         return new PlaywrightAdminPage();
     }

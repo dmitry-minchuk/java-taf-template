@@ -3,7 +3,6 @@ package domain.ui.webstudio.pages.mainpages;
 import configuration.core.ui.PlaywrightBasePage;
 import configuration.core.ui.PlaywrightWebElement;
 import domain.ui.webstudio.components.PlaywrightCurrentUserComponent;
-import lombok.Getter;
 
 public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
@@ -13,13 +12,12 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
     public PlaywrightProxyMainPage(String urlAppender) {
         super(urlAppender);
-        // Initialize components manually using Playwright locators
         initializeComponents();
     }
 
     private void initializeComponents() {
-        userLogo = new PlaywrightWebElement(page, "//div[@class='user-logo']/span");
-        message = new PlaywrightWebElement(page, "//div[@class='message closable']");
+        userLogo = new PlaywrightWebElement(page, "div.user-logo span");
+        message = new PlaywrightWebElement(page, "div.message.closable");
         currentUserComponent = new PlaywrightCurrentUserComponent();
     }
 
@@ -37,6 +35,7 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
     public PlaywrightCurrentUserComponent getCurrentUserComponent() {
         userLogo.click();
+        page.locator("div.ant-drawer-content-wrapper").waitFor();
         return currentUserComponent;
     }
 }
