@@ -18,11 +18,23 @@ public class PlaywrightWebElement {
     private final Page page;
     private final String selector;
     private final Locator locator;
+    private String elementName;
     
     public PlaywrightWebElement(Page page, String selector) {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
+        this.elementName = generateElementName(selector);
+        this.timeoutInMilliseconds = Integer.parseInt(
+            ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
+        ) * 1000;
+    }
+    
+    public PlaywrightWebElement(Page page, String selector, String elementName) {
+        this.page = page;
+        this.selector = selector;
+        this.locator = page.locator(selector);
+        this.elementName = elementName;
         this.timeoutInMilliseconds = Integer.parseInt(
             ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
         ) * 1000;
@@ -33,51 +45,107 @@ public class PlaywrightWebElement {
         this.page = parent.page;
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
+        this.elementName = generateElementName(selector);
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
+    }
+    
+    public PlaywrightWebElement(PlaywrightWebElement parent, String selector, String elementName) {
+        this.page = parent.page;
+        this.selector = selector;
+        this.locator = parent.locator.locator(selector);
+        this.elementName = elementName;
+        this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
+    }
+    
+    private String generateElementName(String selector) {
+        // Extract meaningful name from selector
+        if (selector.contains("id=")) {
+            String id = selector.substring(selector.indexOf("id=") + 3);
+            if (id.contains("'") || id.contains("\"")) {
+                id = id.substring(1, id.indexOf(id.charAt(0), 1));
+            }
+            return "Element[" + id + "]";
+        }
+        
+        if (selector.contains("text('") || selector.contains("text(\"")) {
+            int start = selector.indexOf("text(") + 6;
+            int end = selector.indexOf(selector.charAt(start - 1), start);
+            String text = selector.substring(start, end);
+            return "Element[" + text + "]";
+        }
+        
+        if (selector.contains(":has(span:text('") || selector.contains(":has(span:text(\"")) {
+            int start = selector.indexOf(":has(span:text(") + 16;
+            int end = selector.indexOf(selector.charAt(start - 1), start);
+            String text = selector.substring(start, end);
+            return "Element[" + text + "]";
+        }
+        
+        if (selector.startsWith("#")) {
+            return "Element[" + selector.substring(1) + "]";
+        }
+        
+        if (selector.contains("class=") || selector.contains(".")) {
+            String className = selector.contains(".") ? 
+                selector.substring(selector.indexOf(".") + 1).split("[\\s\\[\\:]")[0] :
+                selector.substring(selector.indexOf("class=") + 6).split("'\"")[0];
+            return "Element[" + className + "]";
+        }
+        
+        if (selector.contains("input")) return "InputField";
+        if (selector.contains("button")) return "Button";
+        if (selector.contains("div")) return "Container";
+        if (selector.contains("span")) return "TextElement";
+        if (selector.contains("li")) return "ListItem";
+        
+        return "Element[" + selector.substring(0, Math.min(20, selector.length())) + "]";
     }
     
     // Core Actions
     
     public void click() {
-        LOGGER.debug("Clicking element with selector: {}", selector);
+        LOGGER.info("Clicking {}", elementName);
         locator.click();
     }
     
     @Deprecated
     public void click(long timeoutInSeconds) {
-        LOGGER.debug("Clicking element with selector: {} (deprecated timeout method)", selector);
+        LOGGER.info("Clicking {} (deprecated timeout method)", elementName);
         locator.click();
     }
     
     public void fill(String text) {
-        LOGGER.debug("Filling element with selector: {} with text: {}", selector, text);
+        LOGGER.info("Filling {} with text: '{}'", elementName, text);
         locator.fill(text);
     }
     
     @Deprecated
     public void fill(String text, long timeoutInSeconds) {
-        LOGGER.debug("Filling element with selector: {} with text: {} (deprecated timeout method)", selector, text);
+        LOGGER.info("Filling {} with text: '{}' (deprecated timeout method)", elementName, text);
         locator.fill(text);
     }
     
     public String getText() {
-        LOGGER.debug("Getting text from element with selector: {}", selector);
-        return locator.textContent();
+        String text = locator.textContent();
+        LOGGER.info("Getting text from {}: '{}'", elementName, text);
+        return text;
     }
     
     public String getAttribute(String name) {
-        LOGGER.debug("Getting attribute '{}' from element with selector: {}", name, selector);
-        return locator.getAttribute(name);
+        String value = locator.getAttribute(name);
+        LOGGER.info("Getting attribute '{}' from {}: '{}'", name, elementName, value);
+        return value;
     }
     
     // Visibility and State Checks
     
     public boolean isVisible() {
         try {
-            LOGGER.debug("Checking visibility of element with selector: {}", selector);
-            return locator.isVisible();
+            boolean visible = locator.isVisible();
+            LOGGER.info("Checking visibility of {}: {}", elementName, visible);
+            return visible;
         } catch (Exception e) {
-            LOGGER.debug("Element not visible: {}", selector);
+            LOGGER.info("Checking visibility of {}: false (exception)", elementName);
             return false;
         }
     }
@@ -97,18 +165,22 @@ public class PlaywrightWebElement {
     
     public boolean isEnabled() {
         try {
-            return locator.isEnabled();
+            boolean enabled = locator.isEnabled();
+            LOGGER.info("Checking if {} is enabled: {}", elementName, enabled);
+            return enabled;
         } catch (Exception e) {
-            LOGGER.debug("Element enabled check failed for selector: {}", selector);
+            LOGGER.info("Checking if {} is enabled: false (exception)", elementName);
             return false;
         }
     }
     
     public boolean isSelected() {
         try {
-            return locator.isChecked();
+            boolean selected = locator.isChecked();
+            LOGGER.info("Checking if {} is selected: {}", elementName, selected);
+            return selected;
         } catch (Exception e) {
-            LOGGER.debug("Element selected check failed for selector: {}", selector);
+            LOGGER.info("Checking if {} is selected: false (exception)", elementName);
             return false;
         }
     }
@@ -116,13 +188,13 @@ public class PlaywrightWebElement {
     // Selection methods for dropdowns
     
     public void selectByVisibleText(String text) {
-        LOGGER.debug("Selecting option '{}' in element with selector: {}", text, selector);
+        LOGGER.info("Selecting option '{}' in {}", text, elementName);
         locator.selectOption(text);
     }
     
     @Deprecated
     public void selectByVisibleText(String text, long timeoutInSeconds) {
-        LOGGER.debug("Selecting option '{}' in element with selector: {} (deprecated timeout method)", text, selector);
+        LOGGER.info("Selecting option '{}' in {} (deprecated timeout method)", text, elementName);
         locator.selectOption(text);
     }
     
@@ -130,20 +202,20 @@ public class PlaywrightWebElement {
     
     public PlaywrightWebElement format(Object... args) {
         String formattedSelector = String.format(this.selector, args);
-        LOGGER.debug("Formatting selector from '{}' to '{}'", this.selector, formattedSelector);
+        LOGGER.info("Formatting selector for {}", elementName);
         return new PlaywrightWebElement(this.page, formattedSelector);
     }
     
     // Utility methods
     
     public void clear() {
-        LOGGER.debug("Clearing element with selector: {}", selector);
+        LOGGER.info("Clearing {}", elementName);
         locator.clear();
     }
     
     public void sendKeys(CharSequence... keysToSend) {
         String text = String.join("", keysToSend);
-        LOGGER.debug("Sending keys '{}' to element with selector: {}", text, selector);
+        LOGGER.info("Sending keys '{}' to {}", text, elementName);
         clear();
         locator.type(text);
     }
@@ -151,7 +223,7 @@ public class PlaywrightWebElement {
     @Deprecated
     public void sendKeys(long timeoutInSeconds, CharSequence... keysToSend) {
         String text = String.join("", keysToSend);
-        LOGGER.debug("Sending keys '{}' to element with selector: {} (deprecated timeout method)", text, selector);
+        LOGGER.info("Sending keys '{}' to {} (deprecated timeout method)", text, elementName);
         clear();
         locator.type(text);
     }
@@ -159,20 +231,20 @@ public class PlaywrightWebElement {
     // Explicit wait methods
     
     public void waitForVisible() {
-        LOGGER.debug("Explicitly waiting for element to be visible: {}", selector);
+        LOGGER.info("Waiting for {} to be visible", elementName);
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.VISIBLE));
     }
     
     public void waitForVisible(long timeoutInSeconds) {
-        LOGGER.debug("Explicitly waiting for element to be visible: {} (timeout: {}s)", selector, timeoutInSeconds);
+        LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInSeconds);
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.VISIBLE)
             .setTimeout((int)(timeoutInSeconds * 1000)));
     }
     
     public void waitForHidden() {
-        LOGGER.debug("Explicitly waiting for element to be hidden: {}", selector);
+        LOGGER.info("Waiting for {} to be hidden", elementName);
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.HIDDEN));
     }
