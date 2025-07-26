@@ -86,6 +86,229 @@ Rules of Engagement
 - ✅ Full CI/CD pipeline compatibility maintained
 - ❓ Performance benchmarks showing optimized execution across all modes
 
+======================================================================================================
+
+### **COMPREHENSIVE MIGRATION PLAN: TestAddProperty → TestPlaywrightAddProperty + PlaywrightWorkflowService**
+
+#### **EXPANDED PHASE 4 TASK: Complete WorkflowService & Editor Component Migration**
+
+**Overview**: Complete migration includes creating PlaywrightWorkflowService and all supporting Playwright components for the full login → project creation → editor workflow. This provides comprehensive file upload validation and establishes the complete Playwright repository workflow.
+
+#### **DETAILED ANALYSIS**
+
+**WorkflowService Dependencies Chain:**
+1. **PlaywrightLoginService** ✅ **COMPLETED** - Already exists and functional
+2. **PlaywrightWorkflowService** ❌ **MISSING** - Needs creation 
+3. **PlaywrightRepositoryPage** ❌ **MISSING** - Tab switching and project creation
+4. **PlaywrightTabSwitcherComponent** ❌ **MISSING** - Editor/Repository tab navigation  
+5. **PlaywrightCreateNewProjectComponent** ❌ **MISSING** - Project creation modal
+6. **PlaywrightExcelFilesComponent** ❌ **MISSING** - File upload functionality (validates file operations!)
+7. **PlaywrightEditorPage** ❌ **PARTIAL** - Needs complete component integration
+
+**Key File Upload Validation:**
+- **ExcelFilesComponent.createProjectFromExcelFile()** uses `TestDataUtil.getFilePathFromResources()` + `fileInputField.sendKeys(absoluteFilePath)`
+- **Perfect test case** for validating LOCAL/DOCKER file upload functionality 
+- **Validates volume mapping** and Playwright file upload across execution modes
+
+#### **COMPREHENSIVE MIGRATION PLAN**
+
+**PHASE A: Documentation & Planning**
+1. **Update CLAUDE.md** with complete WorkflowService migration scope
+2. **Document file upload validation** as key validation target
+3. **Add todos** for comprehensive component migration
+
+**PHASE B: Core WorkflowService Migration**
+
+**B1. Create PlaywrightWorkflowService**
+- **File**: `src/main/java/helpers/service/PlaywrightWorkflowService.java`  
+- **Methods**: 
+  - `loginCreateProjectOpenEditor(User, TabName, String)` → returns String projectName
+  - `loginCreateProjectFromZipOpenEditor(User, String)` → returns String projectName
+- **Dependencies**: PlaywrightLoginService, PlaywrightRepositoryPage, PlaywrightEditorPage
+- **Architecture**: Static methods matching original WorkflowService interface
+
+**B2. Update TestPlaywrightAddProperty**
+- **Change**: Use PlaywrightWorkflowService instead of WorkflowService
+- **Validation**: Maintains exact same test logic with Playwright implementation
+
+**PHASE C: Repository & Navigation Components**
+
+**C1. Create PlaywrightRepositoryPage**
+- **File**: `src/main/java/domain/ui/webstudio/pages/mainpages/PlaywrightRepositoryPage.java`
+- **Base Class**: PlaywrightProxyMainPage
+- **Key Components**:
+  - PlaywrightTabSwitcherComponent (navigation)
+  - PlaywrightCreateNewProjectComponent (project creation modal)
+- **Methods**: `createProject(TabName, String, String)` - **KEY FILE UPLOAD METHOD**
+- **URL**: `/faces/pages/modules/repository/index.xhtml`
+
+**C2. Create PlaywrightTabSwitcherComponent**  
+- **File**: `src/main/java/domain/ui/webstudio/components/PlaywrightTabSwitcherComponent.java`
+- **Base Class**: PlaywrightBasePageComponent
+- **Key Elements**: 
+  - `tabElement`: `"./li[./span[text()='%s']]"`
+- **Methods**: `selectTab(TabName)` → returns PlaywrightEditorPage | PlaywrightRepositoryPage
+- **Enum**: TabName (EDITOR, REPOSITORY)
+
+**C3. Create PlaywrightCreateNewProjectComponent**
+- **File**: `src/main/java/domain/ui/webstudio/components/PlaywrightCreateNewProjectComponent.java`
+- **Base Class**: PlaywrightBasePageComponent  
+- **Key Elements**:
+  - `tabElement`: `".//span[@class='rf-tab-lbl' and contains(text(), '%s')]"`
+- **Sub-Components**:
+  - PlaywrightExcelFilesComponent
+  - PlaywrightZipArchiveComponent (if needed)
+- **Methods**: `selectTab(TabName)` → returns specific component type
+- **Enum**: TabName (EXCEL_FILES, ZIP_ARCHIVE, TEMPLATE, etc.)
+
+**PHASE D: File Upload Components (Critical for Validation)**
+
+**D1. Create PlaywrightExcelFilesComponent**
+- **File**: `src/main/java/domain/ui/webstudio/components/createnewproject/PlaywrightExcelFilesComponent.java`
+- **Base Class**: PlaywrightBasePageComponent
+- **Key Elements**:
+  - `fileInputField`: `".//div[@id='createProjectFormFiles:file']//input[@accept='xls, xlsx, xlsm']"`
+  - `projectNameField`: `".//input[@id='createProjectFormFiles:projectName']"`  
+  - `createProjectBtn`: `"#createProjectFormFiles:sbtFilesBtn"`
+- **Critical Method**: `createProjectFromExcelFile(String fileName, String projectName)`
+  - **File Upload Logic**: `TestDataUtil.getFilePathFromResources()` + `setInputFiles()`
+  - **VALIDATES**: LOCAL/DOCKER file upload functionality across execution modes
+  - **Test Target**: StudioIssues_TestAddProperty.xlsx upload
+
+**D2. Create PlaywrightZipArchiveComponent (Future)**
+- **File**: `src/main/java/domain/ui/webstudio/components/createnewproject/PlaywrightZipArchiveComponent.java`
+- **Purpose**: ZIP file upload support for comprehensive testing
+- **Methods**: `createProjectZipArchive(String fileName, String projectName)`
+
+**PHASE E: Editor Components (From Original Plan)**
+
+**E1. Complete PlaywrightEditorPage Implementation**
+- **File**: `src/main/java/domain/ui/webstudio/pages/mainpages/PlaywrightEditorPage.java`
+- **Required Components**:
+  - PlaywrightLeftProjectModuleSelectorComponent
+  - PlaywrightLeftRulesTreeComponent  
+  - PlaywrightRightTableDetailsComponent
+  - PlaywrightTabSwitcherComponent (inherited)
+- **Integration**: Use component composition with getter methods
+
+**E2. Create PlaywrightLeftProjectModuleSelectorComponent**
+- **File**: `src/main/java/domain/ui/webstudio/components/editortabcomponents/leftmenu/PlaywrightLeftProjectModuleSelectorComponent.java`
+- **Base Class**: PlaywrightBasePageComponent
+- **Key Elements**:
+  - `projectNameLink`: `".//li/a[@class='projectName' and text()='%s']"`
+  - `projectModuleLink`: `".//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']"`
+- **Methods**: `selectProject()`, `selectModule()`
+
+**E3. Create PlaywrightLeftRulesTreeComponent**
+- **File**: `src/main/java/domain/ui/webstudio/components/editortabcomponents/leftmenu/PlaywrightLeftRulesTreeComponent.java`
+- **Dependencies**: PlaywrightTreeFolderComponent (list)
+- **Key Elements**:
+  - `viewFilterLink`: `".//div[@class='filter-view']/span/a"`
+  - `viewFilterOptionsLink`: `".//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']"`
+  - `treeFolderComponentList`: Complex multi-condition locator list
+- **Methods**: `setViewFilter()`, `expandFolderInTree()`, `selectItemInFolder()`
+- **Enum**: FilterOptions (BY_CATEGORY, etc.)
+
+**E4. Create PlaywrightTreeFolderComponent** 
+- **File**: `src/main/java/domain/ui/webstudio/components/editortabcomponents/leftmenu/PlaywrightTreeFolderComponent.java`
+- **Base Class**: PlaywrightBasePageComponent
+- **Key Elements**:
+  - `expanderClosed`: `".//span[contains(@class,'rf-trn-hnd-colps')]"`
+  - `folderName`: `".//span/span/span"`
+  - `item`: `".//a[span[text()='%s']]"`
+- **Methods**: `expandFolder()`, `selectItem()`, `getItem()`
+
+**E5. Create PlaywrightRightTableDetailsComponent**
+- **File**: `src/main/java/domain/ui/webstudio/components/editortabcomponents/PlaywrightRightTableDetailsComponent.java`
+- **Base Class**: PlaywrightBasePageComponent
+- **Key Elements**:
+  - `addPropertyLink`: `".//a[@id='addPropBtn']"`
+  - `propertyTypeSelector`: `".//div[@id='addPropsPanel']//select"`
+  - `addBtn`: `".//div[@id='addPropsPanel']//input[@value='Add']"`
+  - `propertyInputTextField`: Dynamic locator with property name parameter
+  - `propertyContent`: Validation locator for property value
+  - `saveBtn`: `".//input[@id='savePropsButton']"`
+- **Methods**: `addProperty()`, `setProperty()`, `isPropertySet()`, `getSaveBtn()`
+- **Enum**: DropdownOptions (DESCRIPTION, CATEGORY, TAGS)
+
+**PHASE F: Testing & Validation**
+
+**F1. File Upload Validation Testing**
+- **Test**: PlaywrightExcelFilesComponent upload functionality
+- **Validation Points**:
+  - LOCAL mode: Direct file path to `setInputFiles()`
+  - DOCKER mode: Volume mapping + container file access
+  - File resolution: `TestDataUtil.getFilePathFromResources()` works correctly
+  - Upload success: Project creation completes without errors
+
+**F2. End-to-End Workflow Testing**
+- **Test**: Complete TestPlaywrightAddProperty execution
+- **Workflow**: Login → Repository → Create Project (FILE UPLOAD) → Editor → Property Addition → Validation
+- **Success Criteria**: All components work together seamlessly
+
+**F3. Architecture Validation**
+- **Component Scoping**: Verify component boundaries and element scoping
+- **Fluent Interfaces**: Confirm method chaining works correctly  
+- **Native Waits**: Ensure Playwright auto-wait replaces custom waits
+
+**PHASE G: Documentation & Completion**
+
+**G1. Update CLAUDE.md**
+- **Mark completed**: PlaywrightWorkflowService migration
+- **Document**: File upload validation success
+- **Update**: PHASE 4 completion progress
+
+**G2. Architecture Documentation**
+- **Component Hierarchy**: Document complete component tree
+- **File Upload Architecture**: Document LOCAL/DOCKER file handling
+- **Migration Patterns**: Establish patterns for future component migrations
+
+#### **SUCCESS CRITERIA**
+✅ **PlaywrightWorkflowService** provides complete login → project creation workflow  
+✅ **File Upload Validation** works in both LOCAL and DOCKER modes  
+✅ **TestPlaywrightAddProperty** runs end-to-end successfully  
+✅ **Component Architecture** follows established Playwright patterns  
+✅ **Volume Mapping** validated through actual file upload operations  
+✅ **Native Playwright Waits** replace all Selenium timing logic  
+
+#### **FILES TO CREATE/MODIFY (Complete List)**
+
+**Service Layer:**
+1. `PlaywrightWorkflowService.java` (new)
+
+**Pages:**
+2. `PlaywrightRepositoryPage.java` (new)
+3. `PlaywrightEditorPage.java` (complete implementation)
+
+**Core Components:**
+4. `PlaywrightTabSwitcherComponent.java` (new)
+5. `PlaywrightCreateNewProjectComponent.java` (new)
+
+**File Upload Components:**
+6. `PlaywrightExcelFilesComponent.java` (new) - **KEY VALIDATION TARGET**
+7. `PlaywrightZipArchiveComponent.java` (future)
+
+**Editor Components:**
+8. `PlaywrightLeftProjectModuleSelectorComponent.java` (new)
+9. `PlaywrightLeftRulesTreeComponent.java` (new)  
+10. `PlaywrightTreeFolderComponent.java` (new)
+11. `PlaywrightRightTableDetailsComponent.java` (new)
+
+**Test:**
+12. `TestPlaywrightAddProperty.java` (updated to use PlaywrightWorkflowService)
+
+**Documentation:**
+13. `CLAUDE.md` (progress update)
+
+#### **ESTIMATED IMPACT**
+- **New Components**: 10 Playwright components for complete repository + editor workflow
+- **File Upload Validation**: Comprehensive LOCAL/DOCKER mode testing through actual workflow
+- **Architecture Establishment**: Complete pattern for complex multi-page Playwright workflows  
+- **PHASE 4 Progress**: Major milestone towards infrastructure migration completion
+- **Volume Mapping Validation**: Real-world testing of Docker file system integration
+
+===================================================================================================
+
 #### **PHASE 4: Infrastructure Migration** ✅ **COMPLETED**
 - ✅ **File Upload Support**: Volume mapping with TestDataUtil integration
 - ✅ **File Download Support**: PlaywrightDownloadUtil with LOCAL/DOCKER mode handling
