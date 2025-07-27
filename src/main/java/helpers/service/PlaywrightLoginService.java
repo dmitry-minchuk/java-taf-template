@@ -49,12 +49,7 @@ public class PlaywrightLoginService {
         return new PlaywrightEditorPage();
     }
     
-    /**
-     * Navigate to Administration page by opening User Menu first, then clicking Administration
-     * Based on getCurrentUserComponent().navigateToAdministration() implementation
-     * Flow: Click user-logo span → Wait for ant-drawer → Click Administration → Navigate to Admin Page
-     * @return PlaywrightAdminPage for admin operations
-     */
+    // Navigate to Administration via User Menu: user-logo span → ant-drawer → Administration → Admin Page
     public PlaywrightAdminPage navigateToAdministration() {
         LOGGER.info("Navigating to Administration via User Menu");
         

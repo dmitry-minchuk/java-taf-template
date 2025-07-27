@@ -11,10 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
-/**
- * Unified Playwright driver pool with automatic mode detection and delegation
- * Supports both local and Docker execution modes with transparent switching
- */
+// Unified Playwright driver pool with automatic mode detection for local and Docker execution
 public class PlaywrightDriverPool {
     
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDriverPool.class);
@@ -28,10 +25,7 @@ public class PlaywrightDriverPool {
     
     private static final ThreadLocal<PlaywrightContext> threadLocalContext = new ThreadLocal<>();
     
-    /**
-     * Get current execution mode from system properties
-     * Self-contained mode detection independent of test infrastructure
-     */
+    // Get current execution mode from system properties with fallback to local mode
     private static ExecutionMode getExecutionMode() {
         String mode = System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL");
         
@@ -44,9 +38,7 @@ public class PlaywrightDriverPool {
         }
     }
     
-    /**
-     * Container for Playwright components per thread
-     */
+    // Container for Playwright components per thread
     private static class PlaywrightContext {
         private final Playwright playwright;
         private final Browser browser;
@@ -89,10 +81,7 @@ public class PlaywrightDriverPool {
         }
     }
     
-    /**
-     * Initialize Playwright for local execution
-     * Phase 1: No Docker containers, direct browser launch
-     */
+    // Initialize Playwright for local execution with direct browser launch
     public static void setPlaywright() {
         if (threadLocalContext.get() == null) {
             try {
@@ -175,10 +164,7 @@ public class PlaywrightDriverPool {
         return browser.newContext(contextOptions);
     }
     
-    /**
-     * Initialize Playwright based on execution mode with self-contained setup
-     * Phase 3: Unified initialization independent of test infrastructure
-     */
+    // Initialize Playwright based on execution mode with unified setup
     public static void initializePlaywright(org.testcontainers.containers.Network network) {
         ExecutionMode mode = getExecutionMode();
         switch (mode) {
@@ -190,10 +176,7 @@ public class PlaywrightDriverPool {
         LOGGER.info("Playwright initialized in {} mode", mode);
     }
 
-    /**
-     * Get the current Page instance for this thread with automatic mode detection
-     * Unified interface that delegates to appropriate driver pool based on execution mode
-     */
+    // Get current Page instance with automatic mode detection and delegation
     public static Page getPage() {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
@@ -204,9 +187,7 @@ public class PlaywrightDriverPool {
         };
     }
     
-    /**
-     * Get Page for LOCAL mode (original implementation)
-     */
+    // Get Page for LOCAL mode
     private static Page getLocalPage() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
@@ -215,9 +196,7 @@ public class PlaywrightDriverPool {
         return context.getPage();
     }
     
-    /**
-     * Get the current Browser instance for this thread with automatic mode detection
-     */
+    // Get current Browser instance with automatic mode detection
     public static Browser getBrowser() {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
@@ -228,9 +207,7 @@ public class PlaywrightDriverPool {
         };
     }
     
-    /**
-     * Get the current BrowserContext instance for this thread with automatic mode detection
-     */
+    // Get current BrowserContext instance with automatic mode detection
     public static BrowserContext getBrowserContext() {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
@@ -241,9 +218,7 @@ public class PlaywrightDriverPool {
         };
     }
     
-    /**
-     * Get Browser for LOCAL mode (original implementation)
-     */
+    // Get Browser for LOCAL mode
     private static Browser getLocalBrowser() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
@@ -252,9 +227,7 @@ public class PlaywrightDriverPool {
         return context.getBrowser();
     }
     
-    /**
-     * Get BrowserContext for LOCAL mode (original implementation)
-     */
+    // Get BrowserContext for LOCAL mode
     private static BrowserContext getLocalBrowserContext() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
@@ -274,9 +247,7 @@ public class PlaywrightDriverPool {
         return context.getPlaywright();
     }
     
-    /**
-     * Close Playwright and clean up resources for current thread with automatic mode detection
-     */
+    // Close Playwright and clean up resources with automatic mode detection
     public static void closePlaywright() {
         ExecutionMode mode = getExecutionMode();
         switch (mode) {
@@ -287,9 +258,7 @@ public class PlaywrightDriverPool {
         }
     }
     
-    /**
-     * Close Playwright for LOCAL mode (original implementation)
-     */
+    // Close Playwright for LOCAL mode
     private static void closeLocalPlaywright() {
         PlaywrightContext context = threadLocalContext.get();
         if (context != null) {
@@ -301,9 +270,7 @@ public class PlaywrightDriverPool {
         }
     }
     
-    /**
-     * Check if Playwright is initialized for current thread with automatic mode detection
-     */
+    // Check if Playwright is initialized with automatic mode detection
     public static boolean isInitialized() {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
@@ -314,10 +281,7 @@ public class PlaywrightDriverPool {
         };
     }
     
-    /**
-     * Create a new page in the current browser context
-     * Useful for tests that need multiple tabs/pages
-     */
+    // Create a new page in the current browser context for multiple tabs/pages
     public static Page createNewPage() {
         BrowserContext context = getBrowserContext();
         Page newPage = context.newPage();
@@ -325,10 +289,7 @@ public class PlaywrightDriverPool {
         return newPage;
     }
     
-    /**
-     * Take screenshot with current page
-     * Utility method for debugging and test reporting
-     */
+    // Take screenshot with current page for debugging and test reporting
     public static byte[] takeScreenshot() {
         Page page = getPage();
         return page.screenshot(new Page.ScreenshotOptions()
@@ -336,10 +297,7 @@ public class PlaywrightDriverPool {
                 .setType(ScreenshotType.PNG));
     }
     
-    /**
-     * Navigate to URL using current page
-     * Convenience method with default options
-     */
+    // Navigate to URL using current page with default options
     public static void navigateTo(String url) {
         Page page = getPage();
         LOGGER.info("Navigating to URL: {}", url);
@@ -348,10 +306,7 @@ public class PlaywrightDriverPool {
                 .setTimeout(30000)); // 30 seconds timeout
     }
     
-    /**
-     * Navigate to application container URL with automatic mode detection
-     * Phase 3: Unified application navigation for all modes
-     */
+    // Navigate to application container URL with automatic mode detection
     public static void navigateToApp() {
         ExecutionMode mode = getExecutionMode();
         switch (mode) {

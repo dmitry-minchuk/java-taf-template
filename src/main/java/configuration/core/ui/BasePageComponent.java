@@ -15,10 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-/**
- * Updated BasePageComponent to support both Selenium and Playwright during migration
- * Phase 1: Dual support for backward compatibility
- */
+// Base component supporting both Selenium and Playwright during migration
 public abstract class BasePageComponent {
 
     protected static final Logger LOGGER = LogManager.getLogger(BasePageComponent.class);
@@ -45,9 +42,7 @@ public abstract class BasePageComponent {
         // Default constructor - initialization will happen via init() methods
     }
 
-    /**
-     * SELENIUM MIGRATION: Original Selenium initialization method (kept for backward compatibility)
-     */
+    // Selenium initialization method (kept for backward compatibility)
     public void init(WebDriver driver, By rootLocatorBy) {
         this.driver = driver;
         this.rootLocatorBy = rootLocatorBy;
@@ -59,9 +54,7 @@ public abstract class BasePageComponent {
         SmartPageFactory.initElements(driver, confirmationPopup);
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION: New Playwright initialization method
-     */
+    // Playwright initialization method
     public void initPlaywright(Page page, String rootSelector) {
         this.page = page;
         this.rootSelector = rootSelector;
@@ -74,9 +67,7 @@ public abstract class BasePageComponent {
         PlaywrightPageFactory.initElements(page, confirmationPopup);
     }
 
-    /**
-     * SELENIUM MIGRATION: Original presence check using Selenium
-     */
+    // Presence check supporting both Selenium and Playwright modes
     public boolean isPresent() {
         if (driver != null && rootLocatorBy != null) {
             // Selenium mode
@@ -90,9 +81,7 @@ public abstract class BasePageComponent {
         }
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION: New presence check using Playwright
-     */
+    // Playwright-specific presence check
     public boolean isPresentPlaywright() {
         if (page == null) {
             throw new IllegalStateException("Playwright page not initialized. Call initPlaywright() first.");
@@ -111,16 +100,9 @@ public abstract class BasePageComponent {
         }
     }
     
-    /**
-     * Wait for component to be visible (Playwright mode)
-     */
     public void waitForVisible() {
         waitForVisible(timeoutInSeconds * 1000); // Convert to milliseconds
     }
-    
-    /**
-     * Wait for component to be visible with timeout (Playwright mode)
-     */
     public void waitForVisible(int timeoutMs) {
         if (page == null) {
             throw new IllegalStateException("Playwright page not initialized. Call initPlaywright() first.");
@@ -133,16 +115,10 @@ public abstract class BasePageComponent {
         }
     }
     
-    /**
-     * Check if component is using Playwright mode
-     */
     public boolean isPlaywrightMode() {
         return page != null;
     }
     
-    /**
-     * Check if component is using Selenium mode
-     */
     public boolean isSeleniumMode() {
         return driver != null;
     }
@@ -151,10 +127,7 @@ public abstract class BasePageComponent {
     // PHASE 2.5: DUAL-MODE WAIT STRATEGY UTILITIES
     // ============================================
     
-    /**
-     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode element visibility wait
-     * Uses appropriate wait strategy based on current mode (Selenium/Playwright)
-     */
+    // Dual-mode element visibility wait using appropriate strategy based on current mode
     protected boolean waitForElementVisible(By seleniumLocator, String playwrightSelector) {
         return waitForElementVisible(seleniumLocator, playwrightSelector, timeoutInSeconds);
     }
@@ -172,9 +145,7 @@ public abstract class BasePageComponent {
         }
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode element presence wait
-     */
+    // Dual-mode element presence wait
     protected boolean waitForElementPresent(By seleniumLocator, String playwrightSelector) {
         return waitForElementPresent(seleniumLocator, playwrightSelector, timeoutInSeconds);
     }
@@ -192,9 +163,7 @@ public abstract class BasePageComponent {
         }
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode page ready wait
-     */
+    // Dual-mode page ready wait
     protected void waitForPageReady() {
         if (PlaywrightDriverPool.isInitialized() && page != null) {
             // Playwright mode: Use PlaywrightExpectUtil
@@ -205,9 +174,7 @@ public abstract class BasePageComponent {
         }
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION Phase 2.5: Dual-mode element stable wait
-     */
+    // Dual-mode element stable wait
     protected boolean waitForElementStable(By seleniumLocator, String playwrightSelector) {
         return waitForElementStable(seleniumLocator, playwrightSelector, timeoutInSeconds);
     }

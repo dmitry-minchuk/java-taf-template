@@ -31,21 +31,10 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
         projectModuleLink = createScopedElement("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
     }
 
-    /**
-     * Select a project by clicking on its name
-     * Opens ProjectDetailsComponent
-     * @param projectName Name of the project to select
-     */
     public void selectProject(String projectName) {
         projectNameLink.format(projectName).click();
     }
 
-    /**
-     * Select a specific module within a project
-     * Opens ProjectModuleDetailsComponent
-     * @param projectName Name of the project containing the module
-     * @param projectModuleName Name of the module to select
-     */
     public void selectModule(String projectName, String projectModuleName) {
         projectModuleLink.format(projectName, projectModuleName).click();
     }

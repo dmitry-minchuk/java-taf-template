@@ -5,11 +5,7 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.TestDataUtil;
 
-/**
- * Playwright version of ExcelFilesComponent - KEY VALIDATION TARGET for file upload functionality
- * Validates LOCAL/DOCKER mode file upload using volume mapping and TestDataUtil integration
- * This component is critical for testing the complete file operations workflow
- */
+// Playwright version of ExcelFilesComponent for file upload functionality validation
 public class PlaywrightExcelFilesComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement fileInputField;
@@ -41,15 +37,7 @@ public class PlaywrightExcelFilesComponent extends PlaywrightBasePageComponent {
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
-    /**
-     * Create project from Excel file - CRITICAL METHOD for file upload validation
-     * This method validates that file upload works correctly in both LOCAL and DOCKER modes
-     * Uses TestDataUtil.getFilePathFromResources() which returns correct path based on execution mode
-     * Uses Playwright's native setInputFiles() for reliable file upload
-     * 
-     * @param fileName Name of the Excel file in test resources (e.g., "StudioIssues_TestAddProperty.xlsx")
-     * @param projectName Unique project name to use
-     */
+    // CRITICAL METHOD for file upload validation across LOCAL/DOCKER modes
     public void createProjectFromExcelFile(String fileName, String projectName) {
         String filePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.setInputFiles(filePath);

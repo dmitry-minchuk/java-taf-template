@@ -8,10 +8,7 @@ import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
 import helpers.utils.StringUtil;
 
-/**
- * Playwright version of WorkflowService providing complete login → project creation → editor workflow
- * Supports both LOCAL and DOCKER execution modes with automatic delegation
- */
+// Playwright version of WorkflowService for complete login → project creation → editor workflow
 public class PlaywrightWorkflowService {
     public static String loginCreateProjectOpenEditor(User user, CreateNewProjectComponent.TabName projectType, String sourceName) {
         PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());

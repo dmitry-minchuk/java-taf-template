@@ -37,10 +37,7 @@ public abstract class PlaywrightBasePage {
         confirmationPopup.initPlaywright(page, ""); // Empty selector for global popup
     }
 
-    /**
-     * Navigate to the page URL
-     * Uses Playwright's native navigation with wait conditions
-     */
+    // Navigate to page URL with Playwright's native wait conditions
     public void open() {
         String url = AppContainerPool.get().getAppHostUrl() + urlAppender;
         LOGGER.info("Opening page: {}", url);
@@ -54,9 +51,6 @@ public abstract class PlaywrightBasePage {
         page.setViewportSize(1920, 1080);
     }
 
-    /**
-     * Check if the current page URL matches expected URL
-     */
     public boolean isPageOpened() {
         String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, 
             () -> AppContainerPool.get().getAppHostUrl() + urlAppender);
@@ -68,10 +62,7 @@ public abstract class PlaywrightBasePage {
         return isOpen;
     }
 
-    /**
-     * Refresh the current page
-     * Uses Playwright's reload with wait conditions
-     */
+    // Refresh page using Playwright's reload with wait conditions
     public void refresh() {
         LOGGER.info("Refreshing page: {}", page.url());
         page.reload(new Page.ReloadOptions()
@@ -79,49 +70,31 @@ public abstract class PlaywrightBasePage {
                 .setTimeout(30000));
     }
 
-    /**
-     * Get the current page title
-     */
     public String getTitle() {
         return page.title();
     }
 
-    /**
-     * Get the current page URL
-     */
     public String getCurrentUrl() {
         return page.url();
     }
 
-    /**
-     * Wait for page to be ready
-     * Uses Playwright's native load state waiting
-     */
+    // Wait for page to be ready using Playwright's native load state waiting
     public void waitForPageReady() {
         page.waitForLoadState(com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED);
         page.waitForLoadState(com.microsoft.playwright.options.LoadState.NETWORKIDLE);
     }
 
-    /**
-     * Take screenshot of current page
-     */
     public byte[] takeScreenshot() {
         return page.screenshot(new Page.ScreenshotOptions()
                 .setFullPage(true)
                 .setType(com.microsoft.playwright.options.ScreenshotType.PNG));
     }
 
-    /**
-     * Get the Playwright Page object for advanced operations
-     */
     public Page getPage() {
         return page;
     }
 
-    /**
-     * Check if an element with given text is present on page
-     * Uses Playwright's text locator capabilities
-     */
+    // Check if element with given text is present using Playwright's text locator
     public boolean hasText(String text) {
         try {
             return page.getByText(text).isVisible();
@@ -130,16 +103,9 @@ public abstract class PlaywrightBasePage {
         }
     }
 
-    /**
-     * Wait for text to appear on page
-     */
     public void waitForText(String text) {
         waitForText(text, 10000); // 10 seconds default
     }
-
-    /**
-     * Wait for text to appear on page with timeout
-     */
     public void waitForText(String text, int timeoutMs) {
         page.getByText(text).waitFor(new com.microsoft.playwright.Locator.WaitForOptions()
                 .setState(com.microsoft.playwright.options.WaitForSelectorState.VISIBLE)

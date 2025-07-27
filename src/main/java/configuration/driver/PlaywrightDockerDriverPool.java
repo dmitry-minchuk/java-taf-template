@@ -11,14 +11,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
 
-/**
- * Enhanced Playwright driver pool with Docker container support
- * Phase 3: Provides isolated browser execution using Playwright Docker containers
- * 
- * Strategy: Each test gets its own Playwright container for complete isolation
- * Similar to how each test gets its own application container and Selenium container
- * This ensures parallel test execution with zero interference between test threads
- */
+// Enhanced Playwright driver pool with Docker container support for isolated browser execution
 public class PlaywrightDockerDriverPool {
     
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDockerDriverPool.class);
@@ -33,9 +26,7 @@ public class PlaywrightDockerDriverPool {
     private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
     private static final String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
     
-    /**
-     * Container for Playwright Docker components per thread
-     */
+    // Container for Playwright Docker components per thread
     private static class PlaywrightDockerContext {
         private final Network network;
         private final GenericContainer<?> playwrightContainer;
@@ -90,10 +81,7 @@ public class PlaywrightDockerDriverPool {
         }
     }
     
-    /**
-     * Initialize Playwright with Docker container and file system binding
-     * Phase 3: Creates containerized Playwright similar to Selenium Grid approach
-     */
+    // Initialize Playwright with Docker container and file system binding
     public static void setPlaywrightDocker(Network network) {
         if (threadLocalContext.get() == null) {
             try {
@@ -132,10 +120,7 @@ public class PlaywrightDockerDriverPool {
         }
     }
     
-    /**
-     * Create Playwright Docker container 
-     * Similar to DriverFactory.createContainerizedDriver() but for Playwright
-     */
+    // Create Playwright Docker container with file system binding
     private static GenericContainer<?> createPlaywrightContainer(Network network, String browserName) {
         String playwrightVersion = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER_VERSION);
         if (playwrightVersion == null || playwrightVersion.isEmpty() || "latest".equals(playwrightVersion)) {
@@ -188,11 +173,7 @@ public class PlaywrightDockerDriverPool {
         return container;
     }
     
-    /**
-     * Connect to Playwright running inside the Docker container
-     * NOTE: Currently creates local Playwright instance for simplicity
-     * Future enhancement: Use container exec commands for true containerized execution
-     */
+    // Connect to Playwright running inside the Docker container
     private static Playwright connectToPlaywrightContainer(GenericContainer<?> container) {
         try {
             // For now, create local Playwright instance that connects to containerized app
@@ -208,9 +189,7 @@ public class PlaywrightDockerDriverPool {
         }
     }
     
-    /**
-     * Launch browser within the containerized environment
-     */
+    // Launch browser within the containerized environment
     private static Browser launchContainerizedBrowser(Playwright playwright, String browserName) {
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(true) // Always headless in containers
@@ -254,9 +233,7 @@ public class PlaywrightDockerDriverPool {
         return browser;
     }
     
-    /**
-     * Create browser context with container-specific settings
-     */
+    // Create browser context with container-specific settings
     private static BrowserContext createContainerizedBrowserContext(Browser browser, Network network) {
         Browser.NewContextOptions contextOptions = new Browser.NewContextOptions()
                 .setViewportSize(1280, 720)
@@ -275,9 +252,7 @@ public class PlaywrightDockerDriverPool {
         return browser.newContext(contextOptions);
     }
     
-    /**
-     * Get the current Page instance for this thread
-     */
+    // Get current Page instance for this thread
     public static Page getPage() {
         PlaywrightDockerContext context = threadLocalContext.get();
         if (context == null) {
@@ -286,9 +261,7 @@ public class PlaywrightDockerDriverPool {
         return context.getPage();
     }
     
-    /**
-     * Get the current Browser instance for this thread
-     */
+    // Get current Browser instance for this thread
     public static Browser getBrowser() {
         PlaywrightDockerContext context = threadLocalContext.get();
         if (context == null) {
@@ -297,9 +270,7 @@ public class PlaywrightDockerDriverPool {
         return context.getBrowser();
     }
     
-    /**
-     * Get the current BrowserContext instance for this thread
-     */
+    // Get current BrowserContext instance for this thread
     public static BrowserContext getBrowserContext() {
         PlaywrightDockerContext context = threadLocalContext.get();
         if (context == null) {

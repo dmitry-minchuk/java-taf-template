@@ -14,10 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Playwright-based replacement for SmartPageFactory
- * Handles @FindBy annotations and component initialization for Playwright
- */
+// Playwright-based replacement for SmartPageFactory with @FindBy annotation support
 public class PlaywrightPageFactory {
     
     protected final static Logger LOGGER = LogManager.getLogger(PlaywrightPageFactory.class);

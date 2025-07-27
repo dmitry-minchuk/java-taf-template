@@ -53,14 +53,7 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         configureCommitInfoComponent = new PlaywrightConfigureCommitInfoComponent(commitInfoLocator);
     }
 
-    /**
-     * Main project creation method supporting different project types
-     * This is the key method that validates file upload functionality across LOCAL/DOCKER modes
-     * 
-     * @param projectType Type of project (EXCEL_FILES, ZIP_ARCHIVE, etc.)
-     * @param projectName Unique project name
-     * @param sourceName Source file name (e.g., "StudioIssues_TestAddProperty.xlsx")
-     */
+    // Main project creation method - validates file upload across LOCAL/DOCKER modes
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
         // Step 1: Click Create Project link to open modal
         createProjectLink.click();
@@ -86,27 +79,14 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         refreshBtn.click();
     }
 
-    /**
-     * Convenience method for Excel file project creation
-     * @param projectName Unique project name
-     * @param fileName Excel file name in test resources
-     */
     public void createProjectFromExcelFile(String projectName, String fileName) {
         createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName, fileName);
     }
 
-    /**
-     * Convenience method for ZIP archive project creation
-     * @param projectName Unique project name
-     * @param fileName ZIP file name in test resources
-     */
     public void createProjectFromZipArchive(String projectName, String fileName) {
         createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, projectName, fileName);
     }
 
-    /**
-     * Refresh repository content
-     */
     public void refresh() {
         refreshBtn.click();
     }
