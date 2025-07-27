@@ -1,0 +1,84 @@
+package domain.ui.webstudio.components.admincomponents;
+
+import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.PlaywrightWebElement;
+import configuration.driver.PlaywrightDriverPool;
+
+public class PlaywrightSecurityPageComponent extends PlaywrightBasePageComponent {
+
+    private PlaywrightWebElement singleUserModeRadio;
+    private PlaywrightWebElement multiUserModeRadio;
+    private PlaywrightWebElement activeDirectoryModeRadio;
+    private PlaywrightWebElement samlModeRadio;
+    private PlaywrightWebElement oauth2ModeRadio;
+    private PlaywrightWebElement saveBtn;
+    private PlaywrightWebElement cancelBtn;
+
+    public PlaywrightSecurityPageComponent() {
+        super(PlaywrightDriverPool.getPage());
+        initializeElements();
+    }
+
+    public PlaywrightSecurityPageComponent(PlaywrightWebElement rootLocator) {
+        super(rootLocator);
+        initializeElements();
+    }
+
+    private void initializeElements() {
+        singleUserModeRadio = new PlaywrightWebElement(page, ".//input[@type='radio' and @value='single']", "Single User Mode Radio");
+        multiUserModeRadio = new PlaywrightWebElement(page, ".//input[@type='radio' and @value='multi']", "Multi User Mode Radio");
+        activeDirectoryModeRadio = new PlaywrightWebElement(page, ".//input[@type='radio' and @value='ad']", "Active Directory Mode Radio");
+        samlModeRadio = new PlaywrightWebElement(page, ".//input[@type='radio' and @value='saml']", "SAML Mode Radio");
+        oauth2ModeRadio = new PlaywrightWebElement(page, ".//input[@type='radio' and @value='oauth2']", "OAuth2 Mode Radio");
+        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
+        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+    }
+
+    public void selectSingleUserMode() {
+        singleUserModeRadio.click();
+    }
+
+    public void selectMultiUserMode() {
+        multiUserModeRadio.click();
+    }
+
+    public void selectActiveDirectoryMode() {
+        activeDirectoryModeRadio.click();
+    }
+
+    public void selectSamlMode() {
+        samlModeRadio.click();
+    }
+
+    public void selectOAuth2Mode() {
+        oauth2ModeRadio.click();
+    }
+
+    public boolean isSingleUserModeSelected() {
+        return singleUserModeRadio.isChecked();
+    }
+
+    public boolean isMultiUserModeSelected() {
+        return multiUserModeRadio.isChecked();
+    }
+
+    public boolean isActiveDirectoryModeSelected() {
+        return activeDirectoryModeRadio.isChecked();
+    }
+
+    public boolean isSamlModeSelected() {
+        return samlModeRadio.isChecked();
+    }
+
+    public boolean isOAuth2ModeSelected() {
+        return oauth2ModeRadio.isChecked();
+    }
+
+    public void saveSecuritySettings() {
+        saveBtn.click();
+    }
+
+    public void cancelSecuritySettings() {
+        cancelBtn.click();
+    }
+}
