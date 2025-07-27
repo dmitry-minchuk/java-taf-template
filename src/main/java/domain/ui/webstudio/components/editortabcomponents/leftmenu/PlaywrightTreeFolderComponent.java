@@ -42,12 +42,13 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
 
     public void selectItem(String itemName) {
         String selector = String.format("xpath=.//a[span[text()='%s']]", itemName);
-        createScopedElement(selector, "item").click();
+        PlaywrightWebElement treeItem = createScopedElement(selector, "treeItem");
+        treeItem.click();
     }
 
     public PlaywrightWebElement getItem(String itemName) {
         String selector = String.format("xpath=.//a[span[text()='%s']]", itemName);
-        return createScopedElement(selector, "item");
+        return createScopedElement(selector, "namedTreeItem");
     }
 
 }

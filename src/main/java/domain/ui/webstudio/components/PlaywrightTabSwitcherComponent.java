@@ -34,7 +34,8 @@ public class PlaywrightTabSwitcherComponent extends PlaywrightBasePageComponent 
     @SuppressWarnings("unchecked")
     public <T extends PlaywrightBasePage> T selectTab(TabName tabName) {
         String selector = String.format("xpath=./li[./span[text()='%s']]", tabName.getValue());
-        createScopedElement(selector, "tabElement").click();
+        PlaywrightWebElement selectedTab = createScopedElement(selector, "selectedTab");
+        selectedTab.click();
 
         return switch (tabName) {
             case EDITOR -> (T) new PlaywrightEditorPage();

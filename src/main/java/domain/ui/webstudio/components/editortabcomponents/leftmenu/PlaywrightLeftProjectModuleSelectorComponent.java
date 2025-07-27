@@ -30,15 +30,16 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
 
     public void selectProject(String projectName) {
         String selector = String.format("xpath=.//li/a[@class='projectName' and text()='%s']", projectName);
-        createScopedElement(selector, "projectNameLink").click();
+        PlaywrightWebElement projectLink = createScopedElement(selector, "projectLink");
+        projectLink.click();
     }
 
     public void selectModule(String projectName, String projectModuleName) {
         selectProject(projectName);
         WaitUtil.sleep(200);
         String selector = String.format("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", projectName, projectModuleName);
-        PlaywrightWebElement formattedLink = createScopedElement(selector, "projectModuleLink");
-        formattedLink.waitForVisible();
-        formattedLink.click();
+        PlaywrightWebElement moduleLink = createScopedElement(selector, "moduleLink");
+        moduleLink.waitForVisible();
+        moduleLink.click();
     }
 }
