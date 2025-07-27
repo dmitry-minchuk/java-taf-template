@@ -5,10 +5,10 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import helpers.service.WorkflowService;
+import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -22,18 +22,18 @@ public class TestAddProperty extends BaseTest {
     @Description("Exception occurs on adding property to the table with two columns")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddProperty() {
-        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "StudioIssues_TestAddProperty.xlsx");
-        EditorPage editorPage = new EditorPage();
+        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "StudioIssues_TestAddProperty.xlsx");
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_CATEGORY)
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_CATEGORY)
                 .expandFolderInTree("Rules")
                 .selectItemInFolder("Rules", "SimpleCalc");
         editorPage.getRightTableDetailsComponent()
-                .addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
-                .setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
+                .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
+                .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
                 .getSaveBtn().click();
-        assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))
+        assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))
                 .isTrue();
     }
 }

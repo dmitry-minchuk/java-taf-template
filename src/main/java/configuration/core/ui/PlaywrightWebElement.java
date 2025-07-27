@@ -172,6 +172,15 @@ public class PlaywrightWebElement {
     public void sendKeys(CharSequence... keysToSend) {
         String text = String.join("", keysToSend);
         LOGGER.info("Sending keys '{}' to {}", text, elementName);
+        
+        // Check if this is a file input element - if so, use setInputFiles instead
+        String inputType = locator.getAttribute("type");
+        if ("file".equals(inputType)) {
+            LOGGER.info("Detected file input, using setInputFiles instead of sendKeys");
+            setInputFiles(text);
+            return;
+        }
+        
         clear();
         locator.type(text);
     }
@@ -182,6 +191,15 @@ public class PlaywrightWebElement {
         LOGGER.info("Sending keys '{}' to {} (deprecated timeout method)", text, elementName);
         clear();
         locator.type(text);
+    }
+    
+    // File upload method for input[type=file] elements  
+    public void setInputFiles(String... filePaths) {
+        LOGGER.info("Setting input files {} to {}", java.util.Arrays.toString(filePaths), elementName);
+        java.nio.file.Path[] paths = java.util.Arrays.stream(filePaths)
+            .map(java.nio.file.Paths::get)
+            .toArray(java.nio.file.Path[]::new);
+        locator.setInputFiles(paths);
     }
     
     // Explicit wait methods
@@ -205,20 +223,6 @@ public class PlaywrightWebElement {
             .setState(WaitForSelectorState.HIDDEN));
     }
     
-    // File upload methods
-    
-    public void setInputFiles(String filePath) {
-        LOGGER.info("Setting input files '{}' to {}", filePath, elementName);
-        locator.setInputFiles(java.nio.file.Paths.get(filePath));
-    }
-    
-    public void setInputFiles(String... filePaths) {
-        LOGGER.info("Setting input files {} to {}", java.util.Arrays.toString(filePaths), elementName);
-        java.nio.file.Path[] paths = java.util.Arrays.stream(filePaths)
-            .map(java.nio.file.Paths::get)
-            .toArray(java.nio.file.Path[]::new);
-        locator.setInputFiles(paths);
-    }
     
     // Getter methods
     
