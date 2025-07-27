@@ -1,6 +1,7 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.PlaywrightTableComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftProjectModuleSelectorComponent;
@@ -19,6 +20,7 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     private PlaywrightLeftRulesTreeComponent leftRulesTreeComponent;
     private PlaywrightRightTableDetailsComponent rightTableDetailsComponent;
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
+    private PlaywrightTableComponent centerTable;
 
     public PlaywrightEditorPage() {
         super("/");
@@ -41,5 +43,12 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         // Tab switcher component for EDITOR/REPOSITORY navigation
         PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[contains(@class,'nav-tabs')]", "tabSwitcherComponent");
         tabSwitcherComponent = new PlaywrightTabSwitcherComponent(tabLocator);
+        
+        // Center table component: "//table[@class='te_table']"
+        centerTable = new PlaywrightTableComponent(page, "xpath=//table[@class='te_table']");
+    }
+    
+    public PlaywrightTableComponent getCenterTable() {
+        return centerTable;
     }
 }
