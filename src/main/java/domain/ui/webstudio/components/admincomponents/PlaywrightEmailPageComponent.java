@@ -25,12 +25,13 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeEmailComponents() {
-        emailVerificationCheckbox = createScopedElement("input#isActive", "Email Verification Checkbox");
-        emailUrlField = createScopedElement("input#url", "Email URL Field");
-        emailUsernameField = createScopedElement("input#username", "Email Username Field");
-        emailPasswordField = createScopedElement("input#password", "Email Password Field");
-        applyBtn = createScopedElement("button:has(span:text('Apply'))", "Apply Button");
-        showPasswordBtn = createScopedElement("span[aria-label*='eye']", "Show Password Button");
+        // EXACT SAME locators as legacy EmailPageComponent
+        emailVerificationCheckbox = createScopedElement("xpath=.//input[@type='checkbox']", "Email Verification Checkbox");
+        emailUrlField = createScopedElement("xpath=.//div[./div/label[@title='URL']]//div/input", "Email URL Field");
+        emailUsernameField = createScopedElement("xpath=.//div[./div/label[@title='Username']]//div/input", "Email Username Field");
+        emailPasswordField = createScopedElement("xpath=.//input[@id='password']", "Email Password Field");
+        applyBtn = createScopedElement("xpath=.//button[./span[text()='Apply']]", "Apply Button");
+        showPasswordBtn = createScopedElement("xpath=.//span[contains(@aria-label,'eye')]", "Show Password Button");
     }
 
     public void enableEmailVerification() {
@@ -46,11 +47,7 @@ public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
     }
 
     public boolean isEmailVerificationEnabled() {
-        try {
-            return emailUrlField.isVisible();
-        } catch (Exception e) {
-            return false;
-        }
+        return emailUrlField.isVisible();
     }
 
     public void setEmailUrl(String url) {
