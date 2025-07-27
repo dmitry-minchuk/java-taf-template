@@ -6,18 +6,20 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import helpers.utils.WaitUtil;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.time.Duration;
 
 // Playwright-based element wrapper with native wait strategies
 public class PlaywrightWebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(PlaywrightWebElement.class);
     private final int timeoutInMilliseconds;
+    @Getter
     private final Page page;
+    @Getter
     private final String selector;
+    @Getter
     private final Locator locator;
     private String elementName;
     
@@ -61,13 +63,13 @@ public class PlaywrightWebElement {
     // Core Actions
     
     public void click() {
-        LOGGER.info("Clicking {}", elementName);
-        locator.click();
+        click(500);
     }
     
     @Deprecated
-    public void click(long timeoutInSeconds) {
-        LOGGER.info("Clicking {} (deprecated timeout method)", elementName);
+    public void click(int timeoutInMs) {
+        WaitUtil.sleep(timeoutInMs);
+        LOGGER.info("Clicking {} ", elementName);
         locator.click();
     }
     
@@ -223,20 +225,5 @@ public class PlaywrightWebElement {
         LOGGER.info("Waiting for {} to be hidden", elementName);
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.HIDDEN));
-    }
-    
-    
-    // Getter methods
-    
-    public String getSelector() {
-        return selector;
-    }
-    
-    public Locator getLocator() {
-        return locator;
-    }
-    
-    public Page getPage() {
-        return page;
     }
 }
