@@ -5,10 +5,7 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 
-/**
- * Playwright version of TreeFolderComponent for individual folder operations
- * Handles folder expansion and item selection within the rules tree
- */
+// Handles folder expansion and item selection within the rules tree
 public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement expanderClosed;
@@ -27,13 +24,8 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        // Expander when closed: ".//span[contains(@class,'rf-trn-hnd-colps')]"
         expanderClosed = createScopedElement("xpath=.//span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
-        
-        // Folder name: ".//span/span/span"
         folderName = createScopedElement("xpath=.//span/span/span", "folderName");
-        
-        // Item within folder: ".//a[span[text()='%s']]"
         item = createScopedElement("xpath=.//a[span[text()='%s']]", "item");
     }
 

@@ -22,6 +22,7 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     private PlaywrightLeftRulesTreeComponent leftRulesTreeComponent;
     private PlaywrightRightTableDetailsComponent rightTableDetailsComponent;
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
+    @Getter
     private PlaywrightTableComponent centerTable;
     private PlaywrightTableToolbarPanelComponent tableToolbarPanelComponent;
     private PlaywrightTestResultValidationComponent testResultValidationComponent;
@@ -59,8 +60,5 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         PlaywrightWebElement testResultLocator = new PlaywrightWebElement(page, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
         testResultValidationComponent = new PlaywrightTestResultValidationComponent(testResultLocator);
     }
-    
-    public PlaywrightTableComponent getCenterTable() {
-        return centerTable;
-    }
+
 }
