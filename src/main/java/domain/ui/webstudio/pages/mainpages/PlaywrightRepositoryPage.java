@@ -44,7 +44,7 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         createNewProjectComponent = new PlaywrightCreateNewProjectComponent(modalLocator);
             
         // Tab switcher component for EDITOR/REPOSITORY navigation
-        PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[contains(@class,'nav-tabs')]", "tabSwitcherComponent");
+        PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         tabSwitcherComponent = new PlaywrightTabSwitcherComponent(tabLocator);
         
         // Configure commit info modal component: "//div[@id='modalConfigureCommitInfo_container']"
