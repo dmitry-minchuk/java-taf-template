@@ -84,7 +84,14 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
      * @return true if property is set with the expected value
      */
     public boolean isPropertySet(String propertyName, String propertyValue) {
-        return propertyContent.format(propertyName, propertyValue).isVisible();
+        // Wait for the property to appear after saving - properties need time to refresh
+        try {
+            propertyContent.format(propertyName, propertyValue).waitForVisible();
+            return true;
+        } catch (Exception e) {
+            // If element doesn't become visible, return false (like legacy isDisplayed() behavior)
+            return false;
+        }
     }
 
     @Getter

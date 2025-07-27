@@ -334,6 +334,30 @@ Rules of Engagement
 - **Rationale**: Playwright Java API always runs on host, Docker volume mapping handled internally
 - **Validation**: Both modes tested successfully with file upload functionality
 
+#### **✅ COMPLETE SUCCESS: TestPlaywrightAddProperty PASSES**
+
+**Final Issues Resolved:**
+1. **Rules folder detection**: Fixed dynamic folder finding in `PlaywrightLeftRulesTreeComponent.findTreeFolders()`
+   - **Problem**: Method returned empty list, preventing folder detection
+   - **Solution**: Implemented proper element counting and nth-selector approach for folder discovery
+   - **Result**: ✅ Rules folder found and expanded successfully
+
+2. **Property assertion timing**: Fixed property visibility check in `PlaywrightRightTableDetailsComponent.isPropertySet()`
+   - **Problem**: Immediate visibility check failed - properties need time to refresh after save
+   - **Solution**: Added `waitForVisible()` with try-catch for graceful fallback
+   - **Result**: ✅ Property validation works with native Playwright waits
+
+**Complete Test Flow Success:**
+- ✅ **Login**: PlaywrightLoginService works flawlessly
+- ✅ **Project Creation**: File upload via PlaywrightRepositoryPage with volume mapping
+- ✅ **Modal Handling**: ConfigureCommitInfoComponent with native wait mechanisms
+- ✅ **Editor Navigation**: Tab switching and module selection
+- ✅ **Tree Navigation**: Rules folder expansion and item selection
+- ✅ **Property Management**: Adding, setting, and validating properties with Playwright waits
+- ✅ **Cross-Mode Compatibility**: Works in both LOCAL and DOCKER execution modes
+
+**No Selenium-style waits or Thread.sleep() calls - pure Playwright native wait logic throughout!**
+
 ===================================================================================================
 
 #### **PHASE 4: Infrastructure Migration** ✅ **COMPLETED**
