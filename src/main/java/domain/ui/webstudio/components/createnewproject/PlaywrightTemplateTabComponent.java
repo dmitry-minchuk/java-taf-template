@@ -29,7 +29,8 @@ public class PlaywrightTemplateTabComponent extends PlaywrightBasePageComponent 
     }
 
     public void selectProjectTemplate(String templateName) {
-        projectTemplate.format(templateName).click();
+        String selector = String.format(".//table[@id='projectTemplates']//tr[.//span[contains(text(), '%s')]]", templateName);
+        new PlaywrightWebElement(page, selector, "Project Template").click();
     }
 
     public void setProjectName(String projectName) {
@@ -51,7 +52,8 @@ public class PlaywrightTemplateTabComponent extends PlaywrightBasePageComponent 
     }
 
     public boolean isTemplateAvailable(String templateName) {
-        return projectTemplate.format(templateName).isVisible();
+        String selector = String.format(".//table[@id='projectTemplates']//tr[.//span[contains(text(), '%s')]]", templateName);
+        return new PlaywrightWebElement(page, selector, "Project Template").isVisible();
     }
 
     public boolean isCreateButtonEnabled() {

@@ -158,13 +158,7 @@ public class PlaywrightWebElement {
         locator.selectOption(text);
     }
     
-    // Format functionality
-    
-    public PlaywrightWebElement format(Object... args) {
-        String formattedSelector = String.format(this.selector, args);
-        LOGGER.info("Formatting selector for {}", elementName);
-        return new PlaywrightWebElement(this.page, formattedSelector);
-    }
+    // Format functionality removed - use String.format() directly with selectors
     
     // Utility methods
     

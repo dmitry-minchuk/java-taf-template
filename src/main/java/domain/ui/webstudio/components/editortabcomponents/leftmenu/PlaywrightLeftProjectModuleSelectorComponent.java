@@ -23,18 +23,21 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
     }
 
     private void initializeElements() {
+        // EXACT SAME locators as legacy LeftProjectModuleSelectorComponent
         projectNameLink = createScopedElement("xpath=.//li/a[@class='projectName' and text()='%s']", "projectNameLink");
-        projectModuleLink = createScopedElement("xpath=.//li/a[@class='projectName' and text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
+        projectModuleLink = createScopedElement("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
     }
 
     public void selectProject(String projectName) {
-        projectNameLink.format(projectName).click();
+        String selector = String.format("xpath=.//li/a[@class='projectName' and text()='%s']", projectName);
+        createScopedElement(selector, "projectNameLink").click();
     }
 
     public void selectModule(String projectName, String projectModuleName) {
         selectProject(projectName);
         WaitUtil.sleep(200);
-        PlaywrightWebElement formattedLink = projectModuleLink.format(projectName, projectModuleName);
+        String selector = String.format("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", projectName, projectModuleName);
+        PlaywrightWebElement formattedLink = createScopedElement(selector, "projectModuleLink");
         formattedLink.waitForVisible();
         formattedLink.click();
     }

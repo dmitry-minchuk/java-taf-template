@@ -28,9 +28,9 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        // Use createScopedElement to properly inherit component scoping context
+        // EXACT SAME locators as legacy TreeFolderComponent
         expanderClosed = createScopedElement("xpath=.//span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
-        folderName = createScopedElement("xpath=.//span[@class='rf-trn-lbl']/span", "folderName");
+        folderName = createScopedElement("xpath=.//span/span/span", "folderName");
         item = createScopedElement("xpath=.//a[span[text()='%s']]", "item");
     }
 
@@ -41,11 +41,13 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     }
 
     public void selectItem(String itemName) {
-        item.format(itemName).click();
+        String selector = String.format("xpath=.//a[span[text()='%s']]", itemName);
+        createScopedElement(selector, "item").click();
     }
 
     public PlaywrightWebElement getItem(String itemName) {
-        return item.format(itemName);
+        String selector = String.format("xpath=.//a[span[text()='%s']]", itemName);
+        return createScopedElement(selector, "item");
     }
 
 }

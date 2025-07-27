@@ -43,7 +43,8 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         viewFilterLink.click();
-        viewFilterOptionsLink.format(filterOption.getValue()).click();
+        String selector = String.format("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", filterOption.getValue());
+        createScopedElement(selector, "viewFilterOptionsLink").click();
         return this;
     }
 
@@ -87,6 +88,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<PlaywrightTreeFolderComponent> findTreeFolders() {
         List<PlaywrightTreeFolderComponent> folders = new java.util.ArrayList<>();
+        
         // Wait for the tree to be loaded
         page.waitForSelector("xpath=.//div[@id='rulesTree']", new Page.WaitForSelectorOptions().setTimeout(5000));
 
@@ -99,7 +101,6 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         for (String selector : selectors) {
             int folderCount = page.locator(String.format("xpath=%s", selector)).count();
             for (int i = 0; i < folderCount; i++) {
-                // Use createScopedComponent for proper scoping hierarchy
                 String indexedSelector = String.format("xpath=(%s)[%d]", selector, i + 1);
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
                 PlaywrightTreeFolderComponent folder = createScopedComponent(

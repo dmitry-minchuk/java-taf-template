@@ -27,13 +27,14 @@ public class PlaywrightTabSwitcherComponent extends PlaywrightBasePageComponent 
     }
 
     private void initializeElements() {
-        // Scoped to this component: "xpath=.//li[.//span[text()='%s']]"
-        tabElement = createScopedElement("xpath=.//li[.//span[text()='%s']]", "tabElement");
+        // EXACT SAME locator as legacy: "./li[./span[text()='%s']]"
+        tabElement = createScopedElement("xpath=./li[./span[text()='%s']]", "tabElement");
     }
 
     @SuppressWarnings("unchecked")
     public <T extends PlaywrightBasePage> T selectTab(TabName tabName) {
-        tabElement.format(tabName.getValue()).click();
+        String selector = String.format("xpath=./li[./span[text()='%s']]", tabName.getValue());
+        createScopedElement(selector, "tabElement").click();
 
         return switch (tabName) {
             case EDITOR -> (T) new PlaywrightEditorPage();

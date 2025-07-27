@@ -58,13 +58,15 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
     }
 
     public PlaywrightRightTableDetailsComponent setProperty(String propertyName, String propertyValue) {
-        propertyInputTextField.format(propertyName).fill(propertyValue);
+        String selector = String.format("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span/input", propertyName);
+        createScopedElement(selector, "propertyInputTextField").fill(propertyValue);
         return this;
     }
 
     public boolean isPropertySet(String propertyName, String propertyValue) {
         try {
-            propertyContent.format(propertyName, propertyValue).waitForVisible();
+            String selector = String.format("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span[1][contains(text(),'%s')]", propertyName, propertyValue);
+            createScopedElement(selector, "propertyContent").waitForVisible();
             return true;
         } catch (Exception e) {
             return false;

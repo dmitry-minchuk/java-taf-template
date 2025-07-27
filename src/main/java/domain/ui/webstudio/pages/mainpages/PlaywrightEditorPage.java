@@ -8,6 +8,7 @@ import domain.ui.webstudio.components.editortabcomponents.PlaywrightTableToolbar
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightTestResultValidationComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftProjectModuleSelectorComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 /**
@@ -22,7 +23,6 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     private PlaywrightLeftRulesTreeComponent leftRulesTreeComponent;
     private PlaywrightRightTableDetailsComponent rightTableDetailsComponent;
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
-    @Getter
     private PlaywrightTableComponent centerTable;
     private PlaywrightTableToolbarPanelComponent tableToolbarPanelComponent;
     private PlaywrightTestResultValidationComponent testResultValidationComponent;
@@ -46,7 +46,7 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         rightTableDetailsComponent = new PlaywrightRightTableDetailsComponent(rightLocator);
             
         // Tab switcher component for EDITOR/REPOSITORY navigation
-        PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[contains(@class,'nav-tabs')]", "tabSwitcherComponent");
+        PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         tabSwitcherComponent = new PlaywrightTabSwitcherComponent(tabLocator);
         
         // Center table component: "//table[@class='te_table']"
@@ -59,6 +59,12 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         // Test result validation: "//div[@id='content' and contains(@class,'ui-layout-center')]"
         PlaywrightWebElement testResultLocator = new PlaywrightWebElement(page, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
         testResultValidationComponent = new PlaywrightTestResultValidationComponent(testResultLocator);
+    }
+
+    public PlaywrightTableComponent getCenterTable() {
+        centerTable.isPresent();
+        WaitUtil.sleep(500);
+        return centerTable;
     }
 
 }
