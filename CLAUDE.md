@@ -140,3 +140,148 @@ mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKE
 - ✅ `BUILD SUCCESS`
 - ✅ Parallel thread logs showing concurrent execution
 - ✅ Container initialization logs (DOCKER mode)
+
+## **MIGRATION STATUS** 📋
+
+### **Tests to Migrate (21 total)**
+**Studio Issues (19 tests):**
+1. TestAddPropertyInSpreadSheetTable
+2. TestAddSingleNumberIntoEmptyCell  
+3. TestAllBusinessVersionsDisplayWithDifferentTime
+4. TestAddModuleWithPathExistingModule
+5. TestAddPropertyExtraStateAppears
+6. TestAddElementToCollectionSet
+7. TestAddProperty
+8. TestAddModuleWithPathStar
+9. TestAllStepsDisplayedInTrace
+10. TestTraceIntoFileJsonRequest
+11. TestAddDeleteRowWithoutSaving
+12. TestArrayDeclarationIsLink
+13. TestArrayOfAliasValuesInRunTrace
+14. TestButtonDeployAvailableDeployConfiguration
+15. TestCallRuleWithSpreadsheetResultConstructor
+16. TestClassCastException
+17. TestClickOnErrorFromTheBottom
+18. TestClickDatatypeNotFoundError
+19. TestClickOnOpenApiError
+
+**Studio Smoke (1 test):**
+20. TestAdminEmail
+
+**Already Migrated (2 tests):**
+- ✅ TestPlaywrightAdminEmail
+- ✅ TestPlaywrightAddProperty
+
+### **Pages to Migrate (6 total)**
+1. LoginPage → PlaywrightLoginPage ✅ (already migrated)
+2. ProxyMainPage → PlaywrightProxyMainPage ✅ (already migrated)  
+3. AdminPage → PlaywrightAdminPage ✅ (already migrated)
+4. EditorPage → PlaywrightEditorPage ✅ (already migrated)
+5. RepositoryPage → PlaywrightRepositoryPage ✅ (already migrated)
+6. **Wizard Pages (4 pages):**
+   - InstallWizardStartPage → PlaywrightInstallWizardStartPage
+   - InstallWizardStep1Page → PlaywrightInstallWizardStep1Page  
+   - InstallWizardStep2Page → PlaywrightInstallWizardStep2Page
+   - InstallWizardStep3Page → PlaywrightInstallWizardStep3Page
+
+### **Components to Migrate (27 total)**
+**Main Components (3 remaining):**
+1. CurrentUserComponent → PlaywrightCurrentUserComponent ✅ (already migrated)
+2. TabSwitcherComponent → PlaywrightTabSwitcherComponent ✅ (already migrated)
+3. CreateNewProjectComponent → PlaywrightCreateNewProjectComponent ✅ (already migrated)
+4. ConfigureCommitInfoComponent → PlaywrightConfigureCommitInfoComponent ✅ (already migrated)
+
+**Admin Components (8 remaining):**
+5. AdminNavigationComponent → PlaywrightAdminNavigationComponent ✅ (already migrated)
+6. EmailPageComponent → PlaywrightEmailPageComponent ✅ (already migrated)
+7. MyProfilePageComponent → PlaywrightMyProfilePageComponent
+8. MySettingsPageComponent → PlaywrightMySettingsPageComponent
+9. NotificationPageComponent → PlaywrightNotificationPageComponent
+10. RepositoriesPageComponent → PlaywrightRepositoriesPageComponent
+11. SecurityPageComponent → PlaywrightSecurityPageComponent
+12. SystemSettingsPageComponent → PlaywrightSystemSettingsPageComponent
+13. TagsPageComponent → PlaywrightTagsPageComponent
+14. UsersPageComponent → PlaywrightUsersPageComponent
+
+**Editor Components (7 remaining):**
+15. AddModuleComponent → PlaywrightAddModuleComponent
+16. EditTablePanelComponent → PlaywrightEditTablePanelComponent
+17. EditorMainContentProblemsPanelComponent → PlaywrightEditorMainContentProblemsPanelComponent
+18. ProblemsPanelComponent → PlaywrightProblemsPanelComponent
+19. ProjectDetailsComponent → PlaywrightProjectDetailsComponent
+20. ProjectModuleDetailsComponent → PlaywrightProjectModuleDetailsComponent
+21. RightTableDetailsComponent → PlaywrightRightTableDetailsComponent ✅ (already migrated)
+22. TableToolbarPanelComponent → PlaywrightTableToolbarPanelComponent
+23. TestResultValidationComponent → PlaywrightTestResultValidationComponent
+
+**Left Menu Components (3 remaining):**
+24. LeftProjectModuleSelectorComponent → PlaywrightLeftProjectModuleSelectorComponent ✅ (already migrated)
+25. LeftRulesTreeComponent → PlaywrightLeftRulesTreeComponent ✅ (already migrated) 
+26. TreeFolderComponent → PlaywrightTreeFolderComponent ✅ (already migrated)
+
+**Create New Project Components (3 remaining):**
+27. ExcelFilesComponent → PlaywrightExcelFilesComponent ✅ (already migrated)
+28. OpenApiComponent → PlaywrightOpenApiComponent
+29. TemplateTabComponent → PlaywrightTemplateTabComponent
+30. WorkspaceComponent → PlaywrightWorkspaceComponent
+31. ZipArchiveComponent → PlaywrightZipArchiveComponent ✅ (already migrated)
+
+**Repository Components (5 remaining):**
+32. DeployConfigurationTabsComponent → PlaywrightDeployConfigurationTabsComponent
+33. LeftRepositoryTreeComponent → PlaywrightLeftRepositoryTreeComponent
+34. RepositoryContentButtonsPanelComponent → PlaywrightRepositoryContentButtonsPanelComponent
+35. RepositoryContentTabPropertiesComponent → PlaywrightRepositoryContentTabPropertiesComponent
+36. RepositoryTreeFolderComponent → PlaywrightRepositoryTreeFolderComponent
+
+## **MIGRATION PROGRESS REPORT** ✅
+
+### **Completed Migrations:**
+
+**✅ Wizard Pages (4/4):**
+- PlaywrightInstallWizardStartPage
+- PlaywrightInstallWizardStep1Page  
+- PlaywrightInstallWizardStep2Page
+- PlaywrightInstallWizardStep3Page
+
+**✅ Admin Components (8/8):**
+- PlaywrightMyProfilePageComponent
+- PlaywrightMySettingsPageComponent
+- PlaywrightNotificationPageComponent
+- PlaywrightRepositoriesPageComponent
+- PlaywrightSecurityPageComponent
+- PlaywrightSystemSettingsPageComponent
+- PlaywrightTagsPageComponent
+- PlaywrightUsersPageComponent
+
+### **Remaining Work:**
+**🔄 Editor Components (7 pending):**
+- AddModuleComponent → PlaywrightAddModuleComponent
+- EditTablePanelComponent → PlaywrightEditTablePanelComponent
+- EditorMainContentProblemsPanelComponent → PlaywrightEditorMainContentProblemsPanelComponent
+- ProblemsPanelComponent → PlaywrightProblemsPanelComponent
+- ProjectDetailsComponent → PlaywrightProjectDetailsComponent
+- ProjectModuleDetailsComponent → PlaywrightProjectModuleDetailsComponent
+- TableToolbarPanelComponent → PlaywrightTableToolbarPanelComponent
+- TestResultValidationComponent → PlaywrightTestResultValidationComponent
+
+**🔄 Create New Project Components (3 pending):**
+- OpenApiComponent → PlaywrightOpenApiComponent
+- TemplateTabComponent → PlaywrightTemplateTabComponent
+- WorkspaceComponent → PlaywrightWorkspaceComponent
+
+**🔄 Repository Components (5 pending):**
+- DeployConfigurationTabsComponent → PlaywrightDeployConfigurationTabsComponent
+- LeftRepositoryTreeComponent → PlaywrightLeftRepositoryTreeComponent
+- RepositoryContentButtonsPanelComponent → PlaywrightRepositoryContentButtonsPanelComponent
+- RepositoryContentTabPropertiesComponent → PlaywrightRepositoryContentTabPropertiesComponent
+- RepositoryTreeFolderComponent → PlaywrightRepositoryTreeFolderComponent
+
+**🔄 Test Migrations (20 pending):**
+All tests need to be migrated to use Playwright components instead of Selenium ones.
+
+### **Current Status:** 
+- **Pages:** 5/5 main pages ✅ + 4/4 wizard pages ✅ = **9/9 complete**
+- **Components:** 13/36 migrated ✅ (Main: 4/4, Admin: 8/8, Others: 1/24 remaining)
+- **Tests:** 2/22 migrated ✅ (TestPlaywrightAdminEmail, TestPlaywrightAddProperty)
+
+**Ready for next phase:** The foundation is solid with core pages and admin components completed. Can proceed with component and test migrations.
