@@ -4,13 +4,11 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Objects;
 
 // Playwright version of LeftRulesTreeComponent for rules tree navigation and filtering
 public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponent {
@@ -19,8 +17,8 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     private List<PlaywrightTreeFolderComponent> treeFolderComponentList;
     private PlaywrightWebElement viewFilterLink;
-    private PlaywrightWebElement viewFilterOptionsLink;
     private PlaywrightWebElement selectedTreeItem;
+    private PlaywrightWebElement filterOptionTemplate;
 
     public PlaywrightLeftRulesTreeComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -34,8 +32,9 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     private void initializeElements() {
         viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
-        viewFilterOptionsLink = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "viewFilterOptionsLink");
         selectedTreeItem = createScopedElement("xpath=.//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a", "selectedTreeItem");
+        filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
+        
         initializeTreeFolderComponents();
     }
 
@@ -46,9 +45,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         do {
             viewFilterLink.click();
-            String selector = String.format("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", filterOption.getValue());
-            PlaywrightWebElement filterOptionLink = createScopedElement(selector, "filterOptionLink");
-            filterOptionLink.click();
+            filterOptionTemplate.format(filterOption.getValue()).click();
         } while(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase()));
         return this;
     }
@@ -104,14 +101,14 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         };
 
         for (String selector : selectors) {
-            int folderCount = page.locator(String.format("xpath=%s", selector)).count();
+            int folderCount = page.locator("xpath=" + selector).count();
             for (int i = 0; i < folderCount; i++) {
-                String indexedSelector = String.format("xpath=(%s)[%d]", selector, i + 1);
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
+                PlaywrightWebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
+                PlaywrightWebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
                 PlaywrightTreeFolderComponent folder = createScopedComponent(
                         PlaywrightTreeFolderComponent.class, 
-                        indexedSelector, 
-                        componentName);
+                        indexedElement);
                 folders.add(folder);
             }
         }

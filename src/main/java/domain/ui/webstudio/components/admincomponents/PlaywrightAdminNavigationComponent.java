@@ -6,7 +6,7 @@ import lombok.Getter;
 
 public class PlaywrightAdminNavigationComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement navigationItem;
+    private PlaywrightWebElement navigationItemTemplate;
 
     public PlaywrightAdminNavigationComponent() {
         super(configuration.driver.PlaywrightDriverPool.getPage());
@@ -19,14 +19,11 @@ public class PlaywrightAdminNavigationComponent extends PlaywrightBasePageCompon
     }
 
     private void initializeNavigationComponents() {
-        // EXACT SAME locator as legacy AdminNavigationComponent
-        navigationItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item') and ./span[text()='%s']]", "navigationItem");
+        navigationItemTemplate = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item') and ./span[text()='%s']]", "navigationItem");
     }
 
     public void clickNavigationItem(NavigationItem item) {
-        String selector = String.format("xpath=.//li[contains(@class,'ant-menu-item') and ./span[text()='%s']]", item.getValue());
-        PlaywrightWebElement navItem = createScopedElement(selector, "navigationItem");
-        navItem.click();
+        navigationItemTemplate.format(item.getValue()).click();
     }
 
     public void clickMyProfile() {

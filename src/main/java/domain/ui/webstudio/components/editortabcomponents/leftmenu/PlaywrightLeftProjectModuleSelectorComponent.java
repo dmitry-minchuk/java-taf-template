@@ -9,8 +9,8 @@ import helpers.utils.WaitUtil;
 // Handles clicking on project names and specific modules within projects
 public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement projectNameLink;
-    private PlaywrightWebElement projectModuleLink;
+    private PlaywrightWebElement projectNameTemplate;
+    private PlaywrightWebElement projectModuleTemplate;
 
     public PlaywrightLeftProjectModuleSelectorComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -23,22 +23,18 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
     }
 
     private void initializeElements() {
-        // EXACT SAME locators as legacy LeftProjectModuleSelectorComponent
-        projectNameLink = createScopedElement("xpath=.//li/a[@class='projectName' and text()='%s']", "projectNameLink");
-        projectModuleLink = createScopedElement("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
+        projectNameTemplate = createScopedElement("xpath=.//li/a[@class='projectName' and text()='%s']", "projectNameLink");
+        projectModuleTemplate = createScopedElement("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
     }
 
     public void selectProject(String projectName) {
-        String selector = String.format("xpath=.//li/a[@class='projectName' and text()='%s']", projectName);
-        PlaywrightWebElement projectLink = createScopedElement(selector, "projectLink");
-        projectLink.click();
+        projectNameTemplate.format(projectName).click();
     }
 
     public void selectModule(String projectName, String projectModuleName) {
         selectProject(projectName);
         WaitUtil.sleep(200);
-        String selector = String.format("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", projectName, projectModuleName);
-        PlaywrightWebElement moduleLink = createScopedElement(selector, "moduleLink");
+        PlaywrightWebElement moduleLink = projectModuleTemplate.format(projectName, projectModuleName);
         moduleLink.waitForVisible();
         moduleLink.click();
     }

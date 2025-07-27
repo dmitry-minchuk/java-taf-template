@@ -8,13 +8,9 @@ import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
 import lombok.Getter;
 
-/**
- * Playwright version of TabSwitcherComponent for navigating between EDITOR and REPOSITORY tabs
- * Uses native Playwright selectors and wait mechanisms
- */
 public class PlaywrightTabSwitcherComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement tabElement;
+    private PlaywrightWebElement tabTemplate;
 
     public PlaywrightTabSwitcherComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -27,15 +23,12 @@ public class PlaywrightTabSwitcherComponent extends PlaywrightBasePageComponent 
     }
 
     private void initializeElements() {
-        // EXACT SAME locator as legacy: "./li[./span[text()='%s']]"
-        tabElement = createScopedElement("xpath=./li[./span[text()='%s']]", "tabElement");
+        tabTemplate = createScopedElement("xpath=./li[./span[text()='%s']]", "selectedTab");
     }
 
     @SuppressWarnings("unchecked")
     public <T extends PlaywrightBasePage> T selectTab(TabName tabName) {
-        String selector = String.format("xpath=./li[./span[text()='%s']]", tabName.getValue());
-        PlaywrightWebElement selectedTab = createScopedElement(selector, "selectedTab");
-        selectedTab.click();
+        tabTemplate.format(tabName.getValue()).click();
 
         return switch (tabName) {
             case EDITOR -> (T) new PlaywrightEditorPage();
