@@ -1,21 +1,20 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
+import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 // Playwright version of LeftRulesTreeComponent for rules tree navigation and filtering
 public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRulesTreeComponent.class);
-    
+
     private List<PlaywrightTreeFolderComponent> treeFolderComponentList;
     private PlaywrightWebElement viewFilterLink;
     private PlaywrightWebElement viewFilterOptionsLink;
@@ -87,20 +86,32 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<PlaywrightTreeFolderComponent> findTreeFolders() {
-        String selector = ".//div[@id='rulesTree']//div[contains(@class, 'rf-tr-nd') and (.//span[contains(@class,'rf-trn-hnd')])]";
-        try {
-            WaitUtil.sleep(300);
+        List<PlaywrightTreeFolderComponent> folders = new java.util.ArrayList<>();
+        // Wait for the tree to be loaded
+        page.waitForSelector("xpath=.//div[@id='rulesTree']", new Page.WaitForSelectorOptions().setTimeout(5000));
+
+        String[] selectors = {
+                ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",
+                ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]",
+                ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')]"
+        };
+
+        for (String selector : selectors) {
             int folderCount = page.locator(String.format("xpath=%s", selector)).count();
-            return IntStream.range(0, folderCount)
-                    .mapToObj(i -> new PlaywrightTreeFolderComponent(
-                            new PlaywrightWebElement(page, 
-                                String.format("xpath=(%s)[%d]", selector, i + 1), 
-                                String.format("treeFolderElement_%d", i))))
-                    .toList();
-        } catch (Exception e) {
-            LOGGER.debug("No tree folders found: {}", e.getMessage());
-            return new java.util.ArrayList<>();
+            for (int i = 0; i < folderCount; i++) {
+                // Use createScopedComponent for proper scoping hierarchy
+                String indexedSelector = String.format("xpath=(%s)[%d]", selector, i + 1);
+                String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
+                PlaywrightTreeFolderComponent folder = createScopedComponent(
+                        PlaywrightTreeFolderComponent.class, 
+                        indexedSelector, 
+                        componentName);
+                folders.add(folder);
+            }
         }
+
+        LOGGER.debug("Found {} tree folders", folders.size());
+        return folders;
     }
 
     @Getter
