@@ -2,10 +2,11 @@ package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
+import lombok.Getter;
 
 public class PlaywrightAdminNavigationComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement mailMenuItem;
+    private PlaywrightWebElement navigationItem;
 
     public PlaywrightAdminNavigationComponent() {
         super(configuration.driver.PlaywrightDriverPool.getPage());
@@ -18,10 +19,68 @@ public class PlaywrightAdminNavigationComponent extends PlaywrightBasePageCompon
     }
 
     private void initializeNavigationComponents() {
-        mailMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Mail'))", "mailMenuItem");
+        // EXACT SAME locator as legacy AdminNavigationComponent
+        navigationItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item') and ./span[text()='%s']]", "navigationItem");
+    }
+
+    public void clickNavigationItem(NavigationItem item) {
+        String selector = String.format("xpath=.//li[contains(@class,'ant-menu-item') and ./span[text()='%s']]", item.getValue());
+        PlaywrightWebElement navItem = createScopedElement(selector, "navigationItem");
+        navItem.click();
+    }
+
+    public void clickMyProfile() {
+        clickNavigationItem(NavigationItem.MY_PROFILE);
+    }
+
+    public void clickMySettings() {
+        clickNavigationItem(NavigationItem.MY_SETTINGS);
+    }
+
+    public void clickRepositories() {
+        clickNavigationItem(NavigationItem.REPOSITORIES);
+    }
+
+    public void clickSystem() {
+        clickNavigationItem(NavigationItem.SYSTEM);
+    }
+
+    public void clickSecurity() {
+        clickNavigationItem(NavigationItem.SECURITY);
+    }
+
+    public void clickUsers() {
+        clickNavigationItem(NavigationItem.USERS);
     }
 
     public void clickMail() {
-        mailMenuItem.click();
+        clickNavigationItem(NavigationItem.MAIL);
+    }
+
+    public void clickNotification() {
+        clickNavigationItem(NavigationItem.NOTIFICATION);
+    }
+
+    public void clickTags() {
+        clickNavigationItem(NavigationItem.TAGS);
+    }
+
+    @Getter
+    public enum NavigationItem {
+        MY_PROFILE("My Profile"),
+        MY_SETTINGS("My Settings"),
+        REPOSITORIES("Repositories"),
+        SYSTEM("System"),
+        SECURITY("Security"),
+        USERS("Users"),
+        MAIL("Mail"),
+        NOTIFICATION("Notification"),
+        TAGS("Tags");
+
+        private final String value;
+
+        NavigationItem(String value) {
+            this.value = value;
+        }
     }
 }
