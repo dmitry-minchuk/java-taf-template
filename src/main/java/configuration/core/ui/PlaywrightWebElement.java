@@ -205,6 +205,21 @@ public class PlaywrightWebElement {
             .setState(WaitForSelectorState.HIDDEN));
     }
     
+    // File upload methods
+    
+    public void setInputFiles(String filePath) {
+        LOGGER.info("Setting input files '{}' to {}", filePath, elementName);
+        locator.setInputFiles(java.nio.file.Paths.get(filePath));
+    }
+    
+    public void setInputFiles(String... filePaths) {
+        LOGGER.info("Setting input files {} to {}", java.util.Arrays.toString(filePaths), elementName);
+        java.nio.file.Path[] paths = java.util.Arrays.stream(filePaths)
+            .map(java.nio.file.Paths::get)
+            .toArray(java.nio.file.Path[]::new);
+        locator.setInputFiles(paths);
+    }
+    
     // Getter methods
     
     public String getSelector() {
