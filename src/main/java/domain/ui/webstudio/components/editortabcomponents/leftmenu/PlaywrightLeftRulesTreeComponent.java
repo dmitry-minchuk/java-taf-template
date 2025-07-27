@@ -4,11 +4,13 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Objects;
 
 // Playwright version of LeftRulesTreeComponent for rules tree navigation and filtering
 public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponent {
@@ -42,10 +44,12 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     }
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
-        viewFilterLink.click();
-        String selector = String.format("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", filterOption.getValue());
-        PlaywrightWebElement filterOptionLink = createScopedElement(selector, "filterOptionLink");
-        filterOptionLink.click();
+        do {
+            viewFilterLink.click();
+            String selector = String.format("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", filterOption.getValue());
+            PlaywrightWebElement filterOptionLink = createScopedElement(selector, "filterOptionLink");
+            filterOptionLink.click();
+        } while(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase()));
         return this;
     }
 
