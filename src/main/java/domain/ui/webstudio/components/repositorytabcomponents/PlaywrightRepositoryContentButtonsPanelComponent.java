@@ -23,11 +23,11 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
     }
 
     private void initializeElements() {
-        buttonsPanel = new PlaywrightWebElement(page, ".//div[contains(@class,'repository-buttons-panel')]", "Buttons Panel");
-        deployBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Deploy']]", "Deploy Button");
-        undeployBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Undeploy']]", "Undeploy Button");
-        deleteBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Delete']]", "Delete Button");
-        refreshBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Refresh']]", "Refresh Button");
+        buttonsPanel = createScopedElement(".//div[contains(@class,'repository-buttons-panel')]", "buttonsPanel");
+        deployBtn = createScopedElement(".//button[./span[text()='Deploy']]", "deployBtn");
+        undeployBtn = createScopedElement(".//button[./span[text()='Undeploy']]", "undeployBtn");
+        deleteBtn = createScopedElement(".//button[./span[text()='Delete']]", "deleteBtn");
+        refreshBtn = createScopedElement(".//button[./span[text()='Refresh']]", "refreshBtn");
     }
 
     public void clickDeploy() {

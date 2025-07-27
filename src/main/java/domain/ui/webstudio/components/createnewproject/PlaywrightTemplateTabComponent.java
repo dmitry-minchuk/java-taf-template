@@ -22,15 +22,15 @@ public class PlaywrightTemplateTabComponent extends PlaywrightBasePageComponent 
     }
 
     private void initializeElements() {
-        projectTemplate = new PlaywrightWebElement(page, ".//table[@id='projectTemplates']//tr[.//span[contains(text(), '%s')]]", "Project Template");
-        projectNameField = new PlaywrightWebElement(page, ".//input[@id='createProjectFormTempl:projectName']", "Project Name Field");
-        createProjectBtn = new PlaywrightWebElement(page, "#createProjectFormTempl:sbtTemplatesBtn", "Create Project Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//input[@value='Cancel']", "Cancel Button");
+        projectTemplate = createScopedElement(".//table[@id='projectTemplates']//tr[.//span[contains(text(), '%s')]]", "projectTemplate");
+        projectNameField = createScopedElement(".//input[@id='createProjectFormTempl:projectName']", "projectNameField");
+        createProjectBtn = createScopedElement("#createProjectFormTempl:sbtTemplatesBtn", "createProjectBtn");
+        cancelBtn = createScopedElement(".//input[@value='Cancel']", "cancelBtn");
     }
 
     public void selectProjectTemplate(String templateName) {
         String selector = String.format(".//table[@id='projectTemplates']//tr[.//span[contains(text(), '%s')]]", templateName);
-        new PlaywrightWebElement(page, selector, "Project Template").click();
+        createScopedElement(selector, "selectedTemplate").click();
     }
 
     public void setProjectName(String projectName) {

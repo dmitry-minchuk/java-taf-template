@@ -28,16 +28,16 @@ public class PlaywrightUsersPageComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        userTableBody = new PlaywrightWebElement(page, ".//table//tbody[@class='ant-table-tbody']", "User Table Body");
-        userTableHeader = new PlaywrightWebElement(page, ".//table//thead[@class='ant-table-thead']", "User Table Header");
-        addUserBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Add User']]", "Add User Button");
-        usernameField = new PlaywrightWebElement(page, ".//input[@placeholder='Username' or @id='username']", "Username Field");
-        emailField = new PlaywrightWebElement(page, ".//input[@placeholder='Email' or @id='email']", "Email Field");
-        firstNameField = new PlaywrightWebElement(page, ".//input[@placeholder='First Name' or @id='firstName']", "First Name Field");
-        lastNameField = new PlaywrightWebElement(page, ".//input[@placeholder='Last Name' or @id='lastName']", "Last Name Field");
-        passwordField = new PlaywrightWebElement(page, ".//input[@placeholder='Password' or @id='password' or @type='password']", "Password Field");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+        userTableBody = createScopedElement(".//table//tbody[@class='ant-table-tbody']", "userTableBody");
+        userTableHeader = createScopedElement(".//table//thead[@class='ant-table-thead']", "userTableHeader");
+        addUserBtn = createScopedElement(".//button[./span[text()='Add User']]", "addUserBtn");
+        usernameField = createScopedElement(".//input[@placeholder='Username' or @id='username']", "usernameField");
+        emailField = createScopedElement(".//input[@placeholder='Email' or @id='email']", "emailField");
+        firstNameField = createScopedElement(".//input[@placeholder='First Name' or @id='firstName']", "firstNameField");
+        lastNameField = createScopedElement(".//input[@placeholder='Last Name' or @id='lastName']", "lastNameField");
+        passwordField = createScopedElement(".//input[@placeholder='Password' or @id='password' or @type='password']", "passwordField");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void clickAddUser() {

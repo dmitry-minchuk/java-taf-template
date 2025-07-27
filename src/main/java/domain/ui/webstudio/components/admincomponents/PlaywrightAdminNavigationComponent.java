@@ -12,8 +12,13 @@ public class PlaywrightAdminNavigationComponent extends PlaywrightBasePageCompon
         initializeNavigationComponents();
     }
 
+    public PlaywrightAdminNavigationComponent(PlaywrightWebElement rootLocator) {
+        super(rootLocator);
+        initializeNavigationComponents();
+    }
+
     private void initializeNavigationComponents() {
-        mailMenuItem = new PlaywrightWebElement(page, "li.ant-menu-item:has(span:text('Mail'))");
+        mailMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Mail'))", "mailMenuItem");
     }
 
     public void clickMail() {

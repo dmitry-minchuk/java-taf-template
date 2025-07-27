@@ -23,11 +23,11 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends Playwrigh
     }
 
     private void initializeElements() {
-        propertiesTab = new PlaywrightWebElement(page, ".//div[contains(@class,'properties-tab')]", "Properties Tab");
-        propertyName = new PlaywrightWebElement(page, ".//input[@placeholder='Property Name']", "Property Name");
-        propertyValue = new PlaywrightWebElement(page, ".//input[@placeholder='Property Value']", "Property Value");
-        addPropertyBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Add Property']]", "Add Property Button");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save']]", "Save Button");
+        propertiesTab = createScopedElement(".//div[contains(@class,'properties-tab')]", "propertiesTab");
+        propertyName = createScopedElement(".//input[@placeholder='Property Name']", "propertyName");
+        propertyValue = createScopedElement(".//input[@placeholder='Property Value']", "propertyValue");
+        addPropertyBtn = createScopedElement(".//button[./span[text()='Add Property']]", "addPropertyBtn");
+        saveBtn = createScopedElement(".//button[./span[text()='Save']]", "saveBtn");
     }
 
     public void setPropertyName(String name) {

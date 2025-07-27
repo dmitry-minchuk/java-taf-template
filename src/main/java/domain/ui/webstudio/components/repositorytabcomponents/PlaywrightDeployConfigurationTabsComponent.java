@@ -22,10 +22,10 @@ public class PlaywrightDeployConfigurationTabsComponent extends PlaywrightBasePa
     }
 
     private void initializeElements() {
-        configurationTabs = new PlaywrightWebElement(page, ".//div[contains(@class,'deploy-configuration-tabs')]", "Configuration Tabs");
-        activeTab = new PlaywrightWebElement(page, ".//div[contains(@class,'tab-active')]", "Active Tab");
-        addConfigBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Add Configuration']]", "Add Configuration Button");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save']]", "Save Button");
+        configurationTabs = createScopedElement(".//div[contains(@class,'deploy-configuration-tabs')]", "configurationTabs");
+        activeTab = createScopedElement(".//div[contains(@class,'tab-active')]", "activeTab");
+        addConfigBtn = createScopedElement(".//button[./span[text()='Add Configuration']]", "addConfigBtn");
+        saveBtn = createScopedElement(".//button[./span[text()='Save']]", "saveBtn");
     }
 
     public void clickAddConfiguration() {

@@ -22,10 +22,10 @@ public class PlaywrightRepositoryTreeFolderComponent extends PlaywrightBasePageC
     }
 
     private void initializeElements() {
-        folderIcon = new PlaywrightWebElement(page, ".//span[contains(@class,'folder-icon')]", "Folder Icon");
-        folderName = new PlaywrightWebElement(page, ".//span[contains(@class,'folder-name')]", "Folder Name");
-        expandIcon = new PlaywrightWebElement(page, ".//span[contains(@class,'expand-icon')]", "Expand Icon");
-        collapseIcon = new PlaywrightWebElement(page, ".//span[contains(@class,'collapse-icon')]", "Collapse Icon");
+        folderIcon = createScopedElement(".//span[contains(@class,'folder-icon')]", "folderIcon");
+        folderName = createScopedElement(".//span[contains(@class,'folder-name')]", "folderName");
+        expandIcon = createScopedElement(".//span[contains(@class,'expand-icon')]", "expandIcon");
+        collapseIcon = createScopedElement(".//span[contains(@class,'collapse-icon')]", "collapseIcon");
     }
 
     public void clickFolder() {

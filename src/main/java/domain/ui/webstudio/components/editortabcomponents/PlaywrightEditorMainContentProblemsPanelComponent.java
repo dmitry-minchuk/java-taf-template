@@ -22,10 +22,10 @@ public class PlaywrightEditorMainContentProblemsPanelComponent extends Playwrigh
     }
 
     private void initializeElements() {
-        problemsPanel = new PlaywrightWebElement(page, ".//div[@id='editor-main-content-problems-panel']", "Problems Panel");
-        errorsTab = new PlaywrightWebElement(page, ".//div[contains(@class,'tab') and contains(text(),'Errors')]", "Errors Tab");
-        warningsTab = new PlaywrightWebElement(page, ".//div[contains(@class,'tab') and contains(text(),'Warnings')]", "Warnings Tab");
-        closeBtn = new PlaywrightWebElement(page, ".//button[@title='Close'] | .//span[contains(@class,'close')]", "Close Button");
+        problemsPanel = createScopedElement(".//div[@id='editor-main-content-problems-panel']", "problemsPanel");
+        errorsTab = createScopedElement(".//div[contains(@class,'tab') and contains(text(),'Errors')]", "errorsTab");
+        warningsTab = createScopedElement(".//div[contains(@class,'tab') and contains(text(),'Warnings')]", "warningsTab");
+        closeBtn = createScopedElement(".//button[@title='Close'] | .//span[contains(@class,'close')]", "closeBtn");
     }
 
     public void clickErrorsTab() {

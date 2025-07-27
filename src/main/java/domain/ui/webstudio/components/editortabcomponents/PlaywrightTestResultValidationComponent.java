@@ -20,8 +20,8 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
     }
 
     private void initializeElements() {
-        resultTable = new PlaywrightWebElement(page, ".//table[@class='table']", "Result Table");
-        resultTableHeader = new PlaywrightWebElement(page, ".//table[@class='table']//tr[1]", "Result Table Header");
+        resultTable = createScopedElement(".//table[@class='table']", "resultTable");
+        resultTableHeader = createScopedElement(".//table[@class='table']//tr[1]", "resultTableHeader");
     }
 
     public boolean isTestTableFailed() {

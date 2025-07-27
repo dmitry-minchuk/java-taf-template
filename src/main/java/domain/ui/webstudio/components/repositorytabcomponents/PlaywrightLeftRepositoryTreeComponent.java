@@ -22,10 +22,10 @@ public class PlaywrightLeftRepositoryTreeComponent extends PlaywrightBasePageCom
     }
 
     private void initializeElements() {
-        repositoryTree = new PlaywrightWebElement(page, ".//div[contains(@class,'repository-tree')]", "Repository Tree");
-        treeNode = new PlaywrightWebElement(page, ".//div[contains(@class,'tree-node')]", "Tree Node");
-        expandBtn = new PlaywrightWebElement(page, ".//span[contains(@class,'expand')]", "Expand Button");
-        collapseBtn = new PlaywrightWebElement(page, ".//span[contains(@class,'collapse')]", "Collapse Button");
+        repositoryTree = createScopedElement(".//div[contains(@class,'repository-tree')]", "repositoryTree");
+        treeNode = createScopedElement(".//div[contains(@class,'tree-node')]", "treeNode");
+        expandBtn = createScopedElement(".//span[contains(@class,'expand')]", "expandBtn");
+        collapseBtn = createScopedElement(".//span[contains(@class,'collapse')]", "collapseBtn");
     }
 
     public void expandNode() {

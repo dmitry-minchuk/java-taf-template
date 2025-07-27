@@ -20,8 +20,8 @@ public class PlaywrightProjectDetailsComponent extends PlaywrightBasePageCompone
     }
 
     private void initializeElements() {
-        modulesHeaderElement = new PlaywrightWebElement(page, ".//h3/span[text()='Modules']", "Modules Header Element");
-        addModuleBtn = new PlaywrightWebElement(page, ".//h3/span[text()='Modules']/following-sibling::a[@title='Add Module']", "Add Module Button");
+        modulesHeaderElement = createScopedElement(".//h3/span[text()='Modules']", "modulesHeaderElement");
+        addModuleBtn = createScopedElement(".//h3/span[text()='Modules']/following-sibling::a[@title='Add Module']", "addModuleBtn");
     }
 
     public void openAddModulePopup() {
