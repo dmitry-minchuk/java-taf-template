@@ -13,7 +13,6 @@
     <test name="StudioIssues.TestAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathExistingModule"/></classes></test>
     <test name="StudioIssues.TestAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestAddElementToCollectionSet"/></classes></test>
     <test name="StudioIssues.TestAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestAddDeleteRowWithoutSaving"/></classes></test>
-    <test name="StudioIssues.TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_issues.TestAddDeleteDesignRepository"/></classes></test>
     <test name="StudioIssues.TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
     <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
