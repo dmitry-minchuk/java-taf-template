@@ -322,6 +322,18 @@ Rules of Engagement
 - **PHASE 4 Progress**: Major milestone towards infrastructure migration completion
 - **Volume Mapping Validation**: Real-world testing of Docker file system integration
 
+#### **OPTIMIZATION COMPLETE: TestDataUtil.getFilePathFromResources()**
+- ✅ **Code Duplication Eliminated**: Removed duplicate logic between PLAYWRIGHT_LOCAL and PLAYWRIGHT_DOCKER modes
+- ✅ **Simplified Implementation**: Single unified approach works for both execution modes  
+- ✅ **Maintained Functionality**: TestPlaywrightAddProperty continues to work in both LOCAL and DOCKER modes
+- ✅ **Architecture Validation**: Confirmed that Playwright Java API runs on host regardless of execution mode
+
+**Optimization Details:**
+- **Before**: Switch statement with identical logic in both case branches
+- **After**: Direct implementation returning `getFile(fileName).getAbsolutePath()`
+- **Rationale**: Playwright Java API always runs on host, Docker volume mapping handled internally
+- **Validation**: Both modes tested successfully with file upload functionality
+
 ===================================================================================================
 
 #### **PHASE 4: Infrastructure Migration** ✅ **COMPLETED**

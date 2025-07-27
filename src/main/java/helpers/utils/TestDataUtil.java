@@ -1,6 +1,5 @@
 package helpers.utils;
 
-import configuration.driver.PlaywrightDriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.commons.io.FileUtils;
@@ -18,20 +17,8 @@ public class TestDataUtil {
     private final static String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
 
     public static String getFilePathFromResources(String fileName) {
-        PlaywrightDriverPool.ExecutionMode mode = PlaywrightDriverPool.getCurrentExecutionMode();
-        return switch (mode) {
-            case PLAYWRIGHT_LOCAL -> {
-                File file = getFile(fileName);
-                yield file.getAbsolutePath();
-            }
-            case PLAYWRIGHT_DOCKER -> {
-                File resourcesDir = new File(HOST_RESOURCE_PATH);
-                String absoluteHostResourcesPath = resourcesDir.getAbsolutePath();
-                String relativePath = getRelativePath(getFile(fileName), absoluteHostResourcesPath);
-                yield CONTAINER_RESOURCE_PATH + "/" + relativePath.replace(File.separator, "/");
-            }
-            default -> throw new IllegalArgumentException("Unknown execution mode: " + mode);
-        };
+        File file = getFile(fileName);
+        return file.getAbsolutePath();
     }
 
     private static String getRelativePath(File matchingFile, String absoluteHostResourcesPath) {
