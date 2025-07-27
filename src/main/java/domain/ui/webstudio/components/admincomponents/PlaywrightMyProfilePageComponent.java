@@ -138,11 +138,11 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
     }
 
     public String getSuccessNotificationMessage() {
-        return successNotification.textContent();
+        return successNotification.getText();
     }
 
     public String getErrorNotificationMessage() {
-        return errorNotification.textContent();
+        return errorNotification.getText();
     }
 
     public void updateProfile(String email, String firstName, String lastName, String displayName) {

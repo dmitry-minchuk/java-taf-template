@@ -55,23 +55,23 @@ public class PlaywrightSecurityPageComponent extends PlaywrightBasePageComponent
     }
 
     public boolean isSingleUserModeSelected() {
-        return singleUserModeRadio.isChecked();
+        return singleUserModeRadio.isSelected();
     }
 
     public boolean isMultiUserModeSelected() {
-        return multiUserModeRadio.isChecked();
+        return multiUserModeRadio.isSelected();
     }
 
     public boolean isActiveDirectoryModeSelected() {
-        return activeDirectoryModeRadio.isChecked();
+        return activeDirectoryModeRadio.isSelected();
     }
 
     public boolean isSamlModeSelected() {
-        return samlModeRadio.isChecked();
+        return samlModeRadio.isSelected();
     }
 
     public boolean isOAuth2ModeSelected() {
-        return oauth2ModeRadio.isChecked();
+        return oauth2ModeRadio.isSelected();
     }
 
     public void saveSecuritySettings() {

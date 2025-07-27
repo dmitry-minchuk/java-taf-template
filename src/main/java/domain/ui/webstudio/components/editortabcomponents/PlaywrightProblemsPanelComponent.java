@@ -43,12 +43,12 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     }
 
     public int getErrorsCount() {
-        String errorText = errorsCounter.textContent();
+        String errorText = errorsCounter.getText();
         return errorText != null && !errorText.isEmpty() ? Integer.parseInt(errorText.trim()) : 0;
     }
 
     public int getWarningsCount() {
-        String warningText = warningsCounter.textContent();
+        String warningText = warningsCounter.getText();
         return warningText != null && !warningText.isEmpty() ? Integer.parseInt(warningText.trim()) : 0;
     }
 

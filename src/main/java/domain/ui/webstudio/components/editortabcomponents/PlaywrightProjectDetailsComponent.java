@@ -25,7 +25,7 @@ public class PlaywrightProjectDetailsComponent extends PlaywrightBasePageCompone
     }
 
     public void openAddModulePopup() {
-        modulesHeaderElement.hover();
+        // Move to element and click - Playwright handles hover automatically
         addModuleBtn.click();
     }
 

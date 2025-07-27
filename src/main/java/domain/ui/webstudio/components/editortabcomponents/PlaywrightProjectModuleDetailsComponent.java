@@ -35,11 +35,11 @@ public class PlaywrightProjectModuleDetailsComponent extends PlaywrightBasePageC
     }
 
     public String getModuleName() {
-        return moduleNameHeader.textContent();
+        return moduleNameHeader.getText();
     }
 
     public String getModulePath() {
-        return modulePathHeader.textContent();
+        return modulePathHeader.getText();
     }
 
     public void saveModuleDetails() {

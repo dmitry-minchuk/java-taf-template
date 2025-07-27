@@ -45,7 +45,7 @@ public class PlaywrightRepositoryTreeFolderComponent extends PlaywrightBasePageC
     }
 
     public String getFolderName() {
-        return folderName.textContent();
+        return folderName.getText();
     }
 
     public boolean isFolderExpanded() {
