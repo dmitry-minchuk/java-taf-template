@@ -58,23 +58,23 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
     }
 
     public void setShowHeader(boolean show) {
-        if (show != showHeaderCheckbox.isChecked()) {
+        if (show != showHeaderCheckbox.isSelected()) {
             showHeaderCheckbox.click();
         }
     }
 
     public boolean isShowHeaderEnabled() {
-        return showHeaderCheckbox.isChecked();
+        return showHeaderCheckbox.isSelected();
     }
 
     public void setShowFormulas(boolean show) {
-        if (show != showFormulasCheckbox.isChecked()) {
+        if (show != showFormulasCheckbox.isSelected()) {
             showFormulasCheckbox.click();
         }
     }
 
     public boolean isShowFormulasEnabled() {
-        return showFormulasCheckbox.isChecked();
+        return showFormulasCheckbox.isSelected();
     }
 
     public void setDefaultOrder(String orderOption) {
@@ -108,33 +108,33 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
     }
 
     public void setFailuresOnly(boolean failuresOnly) {
-        if (failuresOnly != failuresOnlyCheckbox.isChecked()) {
+        if (failuresOnly != failuresOnlyCheckbox.isSelected()) {
             failuresOnlyCheckbox.click();
         }
     }
 
     public boolean isFailuresOnlyEnabled() {
-        return failuresOnlyCheckbox.isChecked();
+        return failuresOnlyCheckbox.isSelected();
     }
 
     public void setCompoundResult(boolean compoundResult) {
-        if (compoundResult != compoundResultCheckbox.isChecked()) {
+        if (compoundResult != compoundResultCheckbox.isSelected()) {
             compoundResultCheckbox.click();
         }
     }
 
     public boolean isCompoundResultEnabled() {
-        return compoundResultCheckbox.isChecked();
+        return compoundResultCheckbox.isSelected();
     }
 
     public void setShowNumbersWithoutFormatting(boolean show) {
-        if (show != showNumbersWithoutFormattingCheckbox.isChecked()) {
+        if (show != showNumbersWithoutFormattingCheckbox.isSelected()) {
             showNumbersWithoutFormattingCheckbox.click();
         }
     }
 
     public boolean isShowNumbersWithoutFormattingEnabled() {
-        return showNumbersWithoutFormattingCheckbox.isChecked();
+        return showNumbersWithoutFormattingCheckbox.isSelected();
     }
 
     public void saveSettings() {
@@ -166,11 +166,11 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
     }
 
     public String getSuccessNotificationMessage() {
-        return successNotification.textContent();
+        return successNotification.getText();
     }
 
     public String getErrorNotificationMessage() {
-        return errorNotification.textContent();
+        return errorNotification.getText();
     }
 
     public void configureTableSettings(boolean showHeader, boolean showFormulas, String defaultOrder) {

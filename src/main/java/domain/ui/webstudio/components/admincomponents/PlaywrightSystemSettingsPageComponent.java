@@ -37,23 +37,23 @@ public class PlaywrightSystemSettingsPageComponent extends PlaywrightBasePageCom
     }
 
     public void setDispatchingValidation(boolean enable) {
-        if (enable != dispatchingValidationCheckbox.isChecked()) {
+        if (enable != dispatchingValidationCheckbox.isSelected()) {
             dispatchingValidationCheckbox.click();
         }
     }
 
     public boolean isDispatchingValidationEnabled() {
-        return dispatchingValidationCheckbox.isChecked();
+        return dispatchingValidationCheckbox.isSelected();
     }
 
     public void setVerifyOnEdit(boolean enable) {
-        if (enable != verifyOnEditCheckbox.isChecked()) {
+        if (enable != verifyOnEditCheckbox.isSelected()) {
             verifyOnEditCheckbox.click();
         }
     }
 
     public boolean isVerifyOnEditEnabled() {
-        return verifyOnEditCheckbox.isChecked();
+        return verifyOnEditCheckbox.isSelected();
     }
 
     public void setTestThreadCount(int count) {
@@ -79,13 +79,13 @@ public class PlaywrightSystemSettingsPageComponent extends PlaywrightBasePageCom
     }
 
     public void setUpdateSystemProperties(boolean enable) {
-        if (enable != updateSystemPropertiesCheckbox.isChecked()) {
+        if (enable != updateSystemPropertiesCheckbox.isSelected()) {
             updateSystemPropertiesCheckbox.click();
         }
     }
 
     public boolean isUpdateSystemPropertiesEnabled() {
-        return updateSystemPropertiesCheckbox.isChecked();
+        return updateSystemPropertiesCheckbox.isSelected();
     }
 
     public void saveSettings() {
