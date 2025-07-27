@@ -4,6 +4,8 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ import java.util.List;
  */
 public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponent {
 
+    private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRulesTreeComponent.class);
+    
     private List<PlaywrightTreeFolderComponent> treeFolderComponentList;
     private PlaywrightWebElement viewFilterLink;
     private PlaywrightWebElement viewFilterOptionsLink;
@@ -132,15 +136,38 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
      * @return List of PlaywrightTreeFolderComponent
      */
     private List<PlaywrightTreeFolderComponent> findTreeFolders() {
-        // Complex selector matching original - looking for all folders (collapsed and expanded)
-        String folderSelector = ".//div[@id='rulesTree']//div[" +
-                "(./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')) or " +
-                "(./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')) or " +
-                "(./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp'))" +
+        List<PlaywrightTreeFolderComponent> folders = new java.util.ArrayList<>();
+        
+        // Simplified approach: use a single selector that captures all folder types
+        // This matches the essence of the original @FindAll behavior
+        String combinedSelector = ".//div[@id='rulesTree']//div[" +
+                "contains(@class, 'rf-tr-nd') and " +
+                "(.//span[contains(@class,'rf-trn-hnd')])" +
                 "]";
         
-        // For now, return empty list - tree folders will be found dynamically when needed
-        return new java.util.ArrayList<>();
+        // Use Playwright's ability to find all matching elements
+        try {
+            // Find count of matching elements first
+            var folderLocator = page.locator("xpath=" + combinedSelector);
+            int folderCount = folderLocator.count();
+            
+            // Create PlaywrightTreeFolderComponent for each found element
+            for (int i = 0; i < folderCount; i++) {
+                // Create element wrapper for each folder using nth selector
+                String nthSelector = "xpath=(" + combinedSelector + ")[" + (i + 1) + "]";
+                PlaywrightWebElement folderElement = new PlaywrightWebElement(
+                    page, 
+                    nthSelector, 
+                    "treeFolderElement_" + i
+                );
+                folders.add(new PlaywrightTreeFolderComponent(folderElement));
+            }
+        } catch (Exception e) {
+            // If no folders found, return empty list (like original would with no matches)
+            LOGGER.debug("No tree folders found: {}", e.getMessage());
+        }
+        
+        return folders;
     }
 
     @Getter
