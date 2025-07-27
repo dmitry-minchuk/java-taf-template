@@ -15,7 +15,7 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     private PlaywrightWebElement expanderClosed;
     @Getter
     private PlaywrightWebElement folderName;
-    private PlaywrightWebElement item;
+    private PlaywrightWebElement itemTemplate;
 
     public PlaywrightTreeFolderComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -28,10 +28,9 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        // EXACT SAME locators as legacy TreeFolderComponent
         expanderClosed = createScopedElement("xpath=.//span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
         folderName = createScopedElement("xpath=.//span/span/span", "folderName");
-        item = createScopedElement("xpath=.//a[span[text()='%s']]", "item");
+        itemTemplate = createScopedElement("xpath=.//a[span[text()='%s']]", "treeItem");
     }
 
     public void expandFolder() {
@@ -41,14 +40,11 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     }
 
     public void selectItem(String itemName) {
-        String selector = String.format("xpath=.//a[span[text()='%s']]", itemName);
-        PlaywrightWebElement treeItem = createScopedElement(selector, "treeItem");
-        treeItem.click();
+        itemTemplate.format(itemName).click();
     }
 
     public PlaywrightWebElement getItem(String itemName) {
-        String selector = String.format("xpath=.//a[span[text()='%s']]", itemName);
-        return createScopedElement(selector, "namedTreeItem");
+        return itemTemplate.format(itemName);
     }
 
 }

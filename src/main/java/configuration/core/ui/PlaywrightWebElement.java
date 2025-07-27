@@ -21,13 +21,16 @@ public class PlaywrightWebElement {
     private final String selector;
     @Getter
     private final Locator locator;
-    private String elementName;
+    private final String elementName;
+    @Getter
+    private final PlaywrightWebElement parentElement;
     
     public PlaywrightWebElement(Page page, String selector) {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
         this.elementName = "Element";
+        this.parentElement = null; // Page-level element has no parent
         this.timeoutInMilliseconds = Integer.parseInt(
             ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
         ) * 1000;
@@ -38,6 +41,7 @@ public class PlaywrightWebElement {
         this.selector = selector;
         this.locator = page.locator(selector);
         this.elementName = elementName != null ? elementName : "Element";
+        this.parentElement = null; // Page-level element has no parent
         this.timeoutInMilliseconds = Integer.parseInt(
             ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
         ) * 1000;
@@ -48,6 +52,7 @@ public class PlaywrightWebElement {
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
         this.elementName = "Element";
+        this.parentElement = parent; // Store parent reference for scoping
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
     }
     
@@ -56,6 +61,7 @@ public class PlaywrightWebElement {
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
         this.elementName = elementName != null ? elementName : "Element";
+        this.parentElement = parent; // Store parent reference for scoping
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
     }
     
@@ -158,8 +164,15 @@ public class PlaywrightWebElement {
         locator.selectOption(text);
     }
     
-    // Format functionality removed - use String.format() directly with selectors
-    
+    // Dynamic locator formatting - Builder pattern implementation
+    public PlaywrightWebElement format(Object... args) {
+        String formattedSelector = String.format(this.selector, args);
+        if (this.parentElement != null) {
+            return new PlaywrightWebElement(this.parentElement, formattedSelector, this.elementName);
+        }
+        return new PlaywrightWebElement(this.page, formattedSelector, this.elementName);
+    }
+
     // Utility methods
     
     public void clear() {
