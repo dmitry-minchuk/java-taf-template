@@ -40,7 +40,8 @@ public class PlaywrightCreateNewProjectComponent extends PlaywrightBasePageCompo
     @SuppressWarnings("unchecked")
     public <T extends PlaywrightBasePageComponent> T selectTab(CreateNewProjectComponent.TabName tabName) {
         String selector = String.format("xpath=.//span[@class='rf-tab-lbl' and contains(text(), '%s')]", tabName.getValue());
-        createScopedElement(selector, "tabElement").click();
+        PlaywrightWebElement projectTabLabel = createScopedElement(selector, "projectTabLabel");
+        projectTabLabel.click();
 
         return switch (tabName) {
             case EXCEL_FILES -> (T) excelFilesComponent;

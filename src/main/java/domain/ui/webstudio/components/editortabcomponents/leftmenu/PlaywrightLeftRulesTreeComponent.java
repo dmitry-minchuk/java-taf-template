@@ -44,7 +44,8 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         viewFilterLink.click();
         String selector = String.format("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", filterOption.getValue());
-        createScopedElement(selector, "viewFilterOptionsLink").click();
+        PlaywrightWebElement filterOptionLink = createScopedElement(selector, "filterOptionLink");
+        filterOptionLink.click();
         return this;
     }
 
