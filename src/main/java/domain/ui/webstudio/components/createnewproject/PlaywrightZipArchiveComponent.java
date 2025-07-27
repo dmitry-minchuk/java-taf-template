@@ -24,23 +24,26 @@ public class PlaywrightZipArchiveComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        // ZIP file input field
         fileInputField = createScopedElement("xpath=.//input[@type='file']", "fileInputField");
-        
-        // Project name field
         projectNameField = createScopedElement("xpath=.//input[contains(@id,'projectName')]", "projectNameField");
-        
-        // Create project button
         createProjectBtn = createScopedElement("xpath=.//input[@value='Create']", "createProjectBtn");
-        
-        // Cancel button
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
     public void createProjectZipArchive(String fileName, String projectName) {
+        uploadZipFile(fileName);
+        setProjectName(projectName);
+        createProjectBtn.click();
+    }
+    
+    private void uploadZipFile(String fileName) {
         String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);
+    }
+    
+    private void setProjectName(String projectName) {
+        projectNameField.waitForVisible();
+        projectNameField.clear();
         projectNameField.fill(projectName);
-        createProjectBtn.click();
     }
 }

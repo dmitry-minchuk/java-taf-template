@@ -3,11 +3,10 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 
-/**
- * Playwright version of LeftProjectModuleSelectorComponent for project and module selection
- * Handles clicking on project names and specific modules within projects
- */
+
+// Handles clicking on project names and specific modules within projects
 public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement projectNameLink;
@@ -24,11 +23,8 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
     }
 
     private void initializeElements() {
-        // Project name link: ".//li/a[@class='projectName' and text()='%s']"
         projectNameLink = createScopedElement("xpath=.//li/a[@class='projectName' and text()='%s']", "projectNameLink");
-        
-        // Project module link: ".//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']"
-        projectModuleLink = createScopedElement("xpath=.//li/a[text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
+        projectModuleLink = createScopedElement("xpath=.//li/a[@class='projectName' and text()='%s']/following-sibling::ul/li/a[text()='%s']", "projectModuleLink");
     }
 
     public void selectProject(String projectName) {
@@ -36,6 +32,10 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
     }
 
     public void selectModule(String projectName, String projectModuleName) {
-        projectModuleLink.format(projectName, projectModuleName).click();
+        selectProject(projectName);
+        WaitUtil.sleep(200);
+        PlaywrightWebElement formattedLink = projectModuleLink.format(projectName, projectModuleName);
+        formattedLink.waitForVisible();
+        formattedLink.click();
     }
 }

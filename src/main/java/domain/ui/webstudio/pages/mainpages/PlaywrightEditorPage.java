@@ -4,6 +4,8 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.core.ui.PlaywrightTableComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
+import domain.ui.webstudio.components.editortabcomponents.PlaywrightTableToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.PlaywrightTestResultValidationComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftProjectModuleSelectorComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
 import lombok.Getter;
@@ -21,6 +23,8 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     private PlaywrightRightTableDetailsComponent rightTableDetailsComponent;
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
     private PlaywrightTableComponent centerTable;
+    private PlaywrightTableToolbarPanelComponent tableToolbarPanelComponent;
+    private PlaywrightTestResultValidationComponent testResultValidationComponent;
 
     public PlaywrightEditorPage() {
         super("/");
@@ -46,6 +50,14 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         
         // Center table component: "//table[@class='te_table']"
         centerTable = new PlaywrightTableComponent(page, "xpath=//table[@class='te_table']");
+        
+        // Table toolbar panel: "//div[@id='tableToolbarPanel']"
+        PlaywrightWebElement toolbarLocator = new PlaywrightWebElement(page, "xpath=//div[@id='tableToolbarPanel']", "tableToolbarPanelComponent");
+        tableToolbarPanelComponent = new PlaywrightTableToolbarPanelComponent(toolbarLocator);
+        
+        // Test result validation: "//div[@id='content' and contains(@class,'ui-layout-center')]"
+        PlaywrightWebElement testResultLocator = new PlaywrightWebElement(page, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
+        testResultValidationComponent = new PlaywrightTestResultValidationComponent(testResultLocator);
     }
     
     public PlaywrightTableComponent getCenterTable() {
