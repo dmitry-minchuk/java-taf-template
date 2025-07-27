@@ -24,12 +24,12 @@ public class PlaywrightTagsPageComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        addTagBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Add Tag'] or ./span[contains(text(),'Add')]]", "Add Tag Button");
-        tagNameField = new PlaywrightWebElement(page, ".//input[@placeholder='Tag Name' or @id='tagName']", "Tag Name Field");
-        tagDescriptionField = new PlaywrightWebElement(page, ".//input[@placeholder='Description' or @id='tagDescription'] | .//textarea[@placeholder='Description']", "Tag Description Field");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
-        tagsTable = new PlaywrightWebElement(page, ".//table//tbody[@class='ant-table-tbody']", "Tags Table");
+        addTagBtn = createScopedElement(".//button[./span[text()='Add Tag'] or ./span[contains(text(),'Add')]]", "addTagBtn");
+        tagNameField = createScopedElement(".//input[@placeholder='Tag Name' or @id='tagName']", "tagNameField");
+        tagDescriptionField = createScopedElement(".//input[@placeholder='Description' or @id='tagDescription'] | .//textarea[@placeholder='Description']", "tagDescriptionField");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
+        tagsTable = createScopedElement(".//table//tbody[@class='ant-table-tbody']", "tagsTable");
     }
 
     public void clickAddTag() {

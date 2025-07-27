@@ -23,11 +23,11 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     }
 
     private void initializeElements() {
-        showProblemsLink = new PlaywrightWebElement(page, ".//div[@class='ui-layout-toggler ui-layout-toggler-south ui-layout-toggler-closed ui-layout-toggler-south-closed' and @title='Open']", "Show Problems Link");
-        hideProblemPanelLink = new PlaywrightWebElement(page, ".//div[@id='bottom']//span[@id='south-closer']", "Hide Problem Panel Link");
-        errorsCounter = new PlaywrightWebElement(page, "#errors-count", "Errors Counter");
-        warningsCounter = new PlaywrightWebElement(page, "#warnings-count", "Warnings Counter");
-        compilationProgressBar = new PlaywrightWebElement(page, ".//div[@class='panel']//div[@id='progress-info-panel']", "Compilation Progress Bar");
+        showProblemsLink = createScopedElement(".//div[@class='ui-layout-toggler ui-layout-toggler-south ui-layout-toggler-closed ui-layout-toggler-south-closed' and @title='Open']", "showProblemsLink");
+        hideProblemPanelLink = createScopedElement(".//div[@id='bottom']//span[@id='south-closer']", "hideProblemPanelLink");
+        errorsCounter = createScopedElement("#errors-count", "errorsCounter");
+        warningsCounter = createScopedElement("#warnings-count", "warningsCounter");
+        compilationProgressBar = createScopedElement(".//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
     }
 
     public void showProblemsPanel() {

@@ -23,11 +23,11 @@ public class PlaywrightProjectModuleDetailsComponent extends PlaywrightBasePageC
     }
 
     private void initializeElements() {
-        moduleDetailsPanel = new PlaywrightWebElement(page, ".//div[contains(@class,'module-details')]", "Module Details Panel");
-        moduleNameHeader = new PlaywrightWebElement(page, ".//h3[contains(@class,'module-name')] | .//span[contains(@class,'module-name')]", "Module Name Header");
-        modulePathHeader = new PlaywrightWebElement(page, ".//span[contains(@class,'module-path')] | .//div[contains(@class,'module-path')]", "Module Path Header");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+        moduleDetailsPanel = createScopedElement(".//div[contains(@class,'module-details')]", "moduleDetailsPanel");
+        moduleNameHeader = createScopedElement(".//h3[contains(@class,'module-name')] | .//span[contains(@class,'module-name')]", "moduleNameHeader");
+        modulePathHeader = createScopedElement(".//span[contains(@class,'module-path')] | .//div[contains(@class,'module-path')]", "modulePathHeader");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public boolean isModuleDetailsPanelVisible() {

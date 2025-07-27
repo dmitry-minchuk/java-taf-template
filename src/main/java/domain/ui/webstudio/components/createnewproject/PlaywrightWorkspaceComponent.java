@@ -23,11 +23,11 @@ public class PlaywrightWorkspaceComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        workspacePanel = new PlaywrightWebElement(page, ".//div[contains(@class,'workspace-component')]", "Workspace Panel");
-        workspacePathField = new PlaywrightWebElement(page, ".//input[@placeholder='Workspace Path' or contains(@id,'workspacePath')]", "Workspace Path Field");
-        browseBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Browse'] or contains(@title,'Browse')]", "Browse Button");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+        workspacePanel = createScopedElement(".//div[contains(@class,'workspace-component')]", "workspacePanel");
+        workspacePathField = createScopedElement(".//input[@placeholder='Workspace Path' or contains(@id,'workspacePath')]", "workspacePathField");
+        browseBtn = createScopedElement(".//button[./span[text()='Browse'] or contains(@title,'Browse')]", "browseBtn");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void setWorkspacePath(String path) {

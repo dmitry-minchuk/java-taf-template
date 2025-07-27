@@ -27,15 +27,15 @@ public class PlaywrightRepositoriesPageComponent extends PlaywrightBasePageCompo
     }
 
     private void initializeElements() {
-        designRepositoriesTab = new PlaywrightWebElement(page, ".//div[contains(@class,'ant-tabs-tab') and contains(text(),'Design Repositories')]", "Design Repositories Tab");
-        deployConfigRepositoryTab = new PlaywrightWebElement(page, ".//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deploy Configuration Repository')]", "Deploy Configuration Repository Tab");
-        deploymentRepositoriesTab = new PlaywrightWebElement(page, ".//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deployment Repositories')]", "Deployment Repositories Tab");
-        addRepositoryBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Add Repository'] or ./span[contains(text(),'Add')]]", "Add Repository Button");
-        repositoryNameField = new PlaywrightWebElement(page, ".//input[@placeholder='Name' or @id='repositoryName']", "Repository Name Field");
-        repositoryTypeDropdown = new PlaywrightWebElement(page, ".//select[contains(@id,'repositoryType')] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Type')]]", "Repository Type Dropdown");
-        repositoryUrlField = new PlaywrightWebElement(page, ".//input[@placeholder='URL' or @id='repositoryUrl']", "Repository URL Field");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+        designRepositoriesTab = createScopedElement(".//div[contains(@class,'ant-tabs-tab') and contains(text(),'Design Repositories')]", "designRepositoriesTab");
+        deployConfigRepositoryTab = createScopedElement(".//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deploy Configuration Repository')]", "deployConfigRepositoryTab");
+        deploymentRepositoriesTab = createScopedElement(".//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deployment Repositories')]", "deploymentRepositoriesTab");
+        addRepositoryBtn = createScopedElement(".//button[./span[text()='Add Repository'] or ./span[contains(text(),'Add')]]", "addRepositoryBtn");
+        repositoryNameField = createScopedElement(".//input[@placeholder='Name' or @id='repositoryName']", "repositoryNameField");
+        repositoryTypeDropdown = createScopedElement(".//select[contains(@id,'repositoryType')] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Type')]]", "repositoryTypeDropdown");
+        repositoryUrlField = createScopedElement(".//input[@placeholder='URL' or @id='repositoryUrl']", "repositoryUrlField");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void clickDesignRepositoriesTab() {

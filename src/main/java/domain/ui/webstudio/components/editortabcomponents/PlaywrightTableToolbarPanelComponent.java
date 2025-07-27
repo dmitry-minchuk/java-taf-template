@@ -23,11 +23,11 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     private void initializeElements() {
-        toolbar = new PlaywrightWebElement(page, ".//div[contains(@class,'table-toolbar')]", "Table Toolbar");
-        runBtn = new PlaywrightWebElement(page, ".//button[contains(@title,'Run') or contains(text(),'Run')]", "Run Button");
-        traceBtn = new PlaywrightWebElement(page, ".//button[contains(@title,'Trace') or contains(text(),'Trace')]", "Trace Button");
-        benchmarkBtn = new PlaywrightWebElement(page, ".//button[contains(@title,'Benchmark') or contains(text(),'Benchmark')]", "Benchmark Button");
-        exportBtn = new PlaywrightWebElement(page, ".//button[contains(@title,'Export') or contains(text(),'Export')]", "Export Button");
+        toolbar = createScopedElement(".//div[contains(@class,'table-toolbar')]", "toolbar");
+        runBtn = createScopedElement(".//button[contains(@title,'Run') or contains(text(),'Run')]", "runBtn");
+        traceBtn = createScopedElement(".//button[contains(@title,'Trace') or contains(text(),'Trace')]", "traceBtn");
+        benchmarkBtn = createScopedElement(".//button[contains(@title,'Benchmark') or contains(text(),'Benchmark')]", "benchmarkBtn");
+        exportBtn = createScopedElement(".//button[contains(@title,'Export') or contains(text(),'Export')]", "exportBtn");
     }
 
     public void clickRun() {

@@ -27,15 +27,15 @@ public class PlaywrightNotificationPageComponent extends PlaywrightBasePageCompo
     }
 
     private void initializeElements() {
-        enableNotificationsCheckbox = new PlaywrightWebElement(page, ".//input[@type='checkbox' and (contains(@id,'enableNotifications') or ./following-sibling::*[contains(text(),'Enable Notifications')])]", "Enable Notifications Checkbox");
-        emailNotificationsCheckbox = new PlaywrightWebElement(page, ".//input[@type='checkbox' and (contains(@id,'emailNotifications') or ./following-sibling::*[contains(text(),'Email Notifications')])]", "Email Notifications Checkbox");
-        browserNotificationsCheckbox = new PlaywrightWebElement(page, ".//input[@type='checkbox' and (contains(@id,'browserNotifications') or ./following-sibling::*[contains(text(),'Browser Notifications')])]", "Browser Notifications Checkbox");
-        systemNotificationsCheckbox = new PlaywrightWebElement(page, ".//input[@type='checkbox' and (contains(@id,'systemNotifications') or ./following-sibling::*[contains(text(),'System Notifications')])]", "System Notifications Checkbox");
-        deploymentNotificationsCheckbox = new PlaywrightWebElement(page, ".//input[@type='checkbox' and (contains(@id,'deploymentNotifications') or ./following-sibling::*[contains(text(),'Deployment Notifications')])]", "Deployment Notifications Checkbox");
-        buildNotificationsCheckbox = new PlaywrightWebElement(page, ".//input[@type='checkbox' and (contains(@id,'buildNotifications') or ./following-sibling::*[contains(text(),'Build Notifications')])]", "Build Notifications Checkbox");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        resetBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "Reset Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+        enableNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'enableNotifications') or ./following-sibling::*[contains(text(),'Enable Notifications')])]", "enableNotificationsCheckbox");
+        emailNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'emailNotifications') or ./following-sibling::*[contains(text(),'Email Notifications')])]", "emailNotificationsCheckbox");
+        browserNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'browserNotifications') or ./following-sibling::*[contains(text(),'Browser Notifications')])]", "browserNotificationsCheckbox");
+        systemNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'systemNotifications') or ./following-sibling::*[contains(text(),'System Notifications')])]", "systemNotificationsCheckbox");
+        deploymentNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'deploymentNotifications') or ./following-sibling::*[contains(text(),'Deployment Notifications')])]", "deploymentNotificationsCheckbox");
+        buildNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'buildNotifications') or ./following-sibling::*[contains(text(),'Build Notifications')])]", "buildNotificationsCheckbox");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        resetBtn = createScopedElement(".//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "resetBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void setEnableNotifications(boolean enable) {

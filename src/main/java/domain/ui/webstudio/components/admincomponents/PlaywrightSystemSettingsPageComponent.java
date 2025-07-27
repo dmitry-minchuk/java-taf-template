@@ -26,14 +26,14 @@ public class PlaywrightSystemSettingsPageComponent extends PlaywrightBasePageCom
     }
 
     private void initializeElements() {
-        dispatchingValidationCheckbox = new PlaywrightWebElement(page, "#dispatchingValidationEnabled", "Dispatching Validation Checkbox");
-        verifyOnEditCheckbox = new PlaywrightWebElement(page, "#autoCompile", "Verify On Edit Checkbox");
-        testThreadCountField = new PlaywrightWebElement(page, "#testRunThreadCount", "Test Thread Count Field");
-        projectHistoryCountField = new PlaywrightWebElement(page, "#projectHistoryCount", "Project History Count Field");
-        clearAllHistoryBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Clear All History']]", "Clear All History Button");
-        updateSystemPropertiesCheckbox = new PlaywrightWebElement(page, "#updateSystemProperties", "Update System Properties Checkbox");
-        saveBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Save'] or @type='submit']", "Save Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//button[./span[text()='Cancel']]", "Cancel Button");
+        dispatchingValidationCheckbox = createScopedElement("#dispatchingValidationEnabled", "dispatchingValidationCheckbox");
+        verifyOnEditCheckbox = createScopedElement("#autoCompile", "verifyOnEditCheckbox");
+        testThreadCountField = createScopedElement("#testRunThreadCount", "testThreadCountField");
+        projectHistoryCountField = createScopedElement("#projectHistoryCount", "projectHistoryCountField");
+        clearAllHistoryBtn = createScopedElement(".//button[./span[text()='Clear All History']]", "clearAllHistoryBtn");
+        updateSystemPropertiesCheckbox = createScopedElement("#updateSystemProperties", "updateSystemPropertiesCheckbox");
+        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void setDispatchingValidation(boolean enable) {

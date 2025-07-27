@@ -25,11 +25,11 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
     }
 
     private void initializeElements() {
-        saveChangesBtn = new PlaywrightWebElement(page, "./img[@title='Save changes']", "Save Changes Button");
-        undoChangesBtn = new PlaywrightWebElement(page, "./img[@title='Undo changes']", "Undo Changes Button");
-        redoChangesBtn = new PlaywrightWebElement(page, "./img[@title='Redo changes']", "Redo Changes Button");
-        insertRowAfterBtn = new PlaywrightWebElement(page, "./img[@title='Insert row after']", "Insert Row After Button");
-        removeRowBtn = new PlaywrightWebElement(page, "./img[@title='Remove row']", "Remove Row Button");
+        saveChangesBtn = createScopedElement("./img[@title='Save changes']", "saveChangesBtn");
+        undoChangesBtn = createScopedElement("./img[@title='Undo changes']", "undoChangesBtn");
+        redoChangesBtn = createScopedElement("./img[@title='Redo changes']", "redoChangesBtn");
+        insertRowAfterBtn = createScopedElement("./img[@title='Insert row after']", "insertRowAfterBtn");
+        removeRowBtn = createScopedElement("./img[@title='Remove row']", "removeRowBtn");
     }
 
     public void saveChanges() {

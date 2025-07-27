@@ -22,10 +22,10 @@ public class PlaywrightOpenApiComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        openApiUrlField = new PlaywrightWebElement(page, ".//input[@placeholder='OpenAPI URL' or contains(@id,'openApiUrl')]", "OpenAPI URL Field");
-        projectNameField = new PlaywrightWebElement(page, ".//input[@id='openAPIProjectForm:projectName']", "Project Name Field");
-        createProjectBtn = new PlaywrightWebElement(page, "#openAPIProjectForm:sbtOpenAPIBtn", "Create Project Button");
-        cancelBtn = new PlaywrightWebElement(page, ".//input[@value='Cancel']", "Cancel Button");
+        openApiUrlField = createScopedElement(".//input[@placeholder='OpenAPI URL' or contains(@id,'openApiUrl')]", "openApiUrlField");
+        projectNameField = createScopedElement(".//input[@id='openAPIProjectForm:projectName']", "projectNameField");
+        createProjectBtn = createScopedElement("#openAPIProjectForm:sbtOpenAPIBtn", "createProjectBtn");
+        cancelBtn = createScopedElement(".//input[@value='Cancel']", "cancelBtn");
     }
 
     public void setOpenApiUrl(String url) {

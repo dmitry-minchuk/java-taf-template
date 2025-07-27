@@ -25,11 +25,11 @@ public class PlaywrightAddModuleComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        moduleNameField = new PlaywrightWebElement(page, ".//input[@id='moduleName']", "Module Name Field");
-        modulePathField = new PlaywrightWebElement(page, ".//input[@id='modulePath']", "Module Path Field");
-        moduleSaveBtn = new PlaywrightWebElement(page, ".//input[@value='Save']", "Module Save Button");
-        moduleCancelBtn = new PlaywrightWebElement(page, ".//input[@value='Cancel']", "Module Cancel Button");
-        commonProperty = new PlaywrightWebElement(page, ".//table[@class='properties properties-form wide']//tr[.//span[contains(text(), '%s')]]", "Common Property");
+        moduleNameField = createScopedElement(".//input[@id='moduleName']", "moduleNameField");
+        modulePathField = createScopedElement(".//input[@id='modulePath']", "modulePathField");
+        moduleSaveBtn = createScopedElement(".//input[@value='Save']", "moduleSaveBtn");
+        moduleCancelBtn = createScopedElement(".//input[@value='Cancel']", "moduleCancelBtn");
+        commonProperty = createScopedElement(".//table[@class='properties properties-form wide']//tr[.//span[contains(text(), '%s')]]", "commonProperty");
     }
 
     public void setModuleName(String moduleName) {
