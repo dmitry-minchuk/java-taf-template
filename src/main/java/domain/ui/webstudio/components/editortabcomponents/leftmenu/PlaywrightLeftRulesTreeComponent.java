@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,8 +97,8 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<PlaywrightTreeFolderComponent> findTreeFolders() {
         String selector = ".//div[@id='rulesTree']//div[contains(@class, 'rf-tr-nd') and (.//span[contains(@class,'rf-trn-hnd')])]";
-        
         try {
+            WaitUtil.sleep(300);
             int folderCount = page.locator(String.format("xpath=%s", selector)).count();
             return IntStream.range(0, folderCount)
                     .mapToObj(i -> new PlaywrightTreeFolderComponent(
