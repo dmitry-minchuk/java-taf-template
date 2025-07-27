@@ -5,11 +5,7 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 
-/**
- * Playwright version of RightTableDetailsComponent for property management
- * Supports adding properties, setting property values, and validating property content
- * Uses native Playwright selectors and wait mechanisms
- */
+// Playwright version of RightTableDetailsComponent for property management
 public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement addPropertyLink;
@@ -54,11 +50,6 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
         saveBtn = createScopedElement("xpath=.//input[@id='savePropsButton']", "saveBtn");
     }
 
-    /**
-     * Add a new property of the specified type
-     * @param propertyName Name/type of property to add (Description, Category, Tags)
-     * @return This component for method chaining
-     */
     public PlaywrightRightTableDetailsComponent addProperty(String propertyName) {
         addPropertyLink.click();
         propertyTypeSelector.selectByVisibleText(propertyName);
@@ -66,30 +57,16 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
         return this;
     }
 
-    /**
-     * Set the value for a specific property
-     * @param propertyName Name of the property to set
-     * @param propertyValue Value to set for the property
-     * @return This component for method chaining
-     */
     public PlaywrightRightTableDetailsComponent setProperty(String propertyName, String propertyValue) {
         propertyInputTextField.format(propertyName).fill(propertyValue);
         return this;
     }
 
-    /**
-     * Check if a property has been set with the expected value
-     * @param propertyName Name of the property to check
-     * @param propertyValue Expected value of the property
-     * @return true if property is set with the expected value
-     */
     public boolean isPropertySet(String propertyName, String propertyValue) {
-        // Wait for the property to appear after saving - properties need time to refresh
         try {
             propertyContent.format(propertyName, propertyValue).waitForVisible();
             return true;
         } catch (Exception e) {
-            // If element doesn't become visible, return false (like legacy isDisplayed() behavior)
             return false;
         }
     }

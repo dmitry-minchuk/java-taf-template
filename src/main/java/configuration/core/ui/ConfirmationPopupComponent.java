@@ -47,17 +47,13 @@ public class ConfirmationPopupComponent {
         // No longer extends BasePageComponent - no super() call needed
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION: Initialize with Playwright page
-     */
+    // Initialize with Playwright page
     public void initPlaywright(Page page, String rootSelector) {
         this.page = page;
         // Note: rootSelector ignored for global confirmation popup
         // Components will be initialized by PlaywrightPageFactory separately
     }
 
-    // Core Confirmation Methods
-    
     public void confirm() {
         if (confirmOkBtn.isDisplayed(2)) {
             confirmOkBtn.click();
@@ -68,7 +64,6 @@ public class ConfirmationPopupComponent {
         waitForDialogToDisappear();
     }
 
-    
     public void cancel() {
         if (confirmCancelBtn.isDisplayed(2)) {
             confirmCancelBtn.click();
@@ -79,44 +74,34 @@ public class ConfirmationPopupComponent {
         waitForDialogToDisappear();
     }
 
-    
     public void accept() {
         confirm();
     }
 
-    
     public void dismiss() {
         cancel();
     }
 
-    // Dialog State Methods
-    
     public boolean isDisplayed() {
         return confirmationDialog.isDisplayed(3);
     }
 
-    
     public boolean isDisplayed(int timeoutSeconds) {
         return confirmationDialog.isDisplayed(timeoutSeconds);
     }
 
-    
     public boolean waitForDialog(int timeoutSeconds) {
         return confirmationDialog.isDisplayed(timeoutSeconds);
     }
 
-    
     public boolean waitForDialogToDisappear(int timeoutSeconds) {
         return !confirmationDialog.isDisplayed(timeoutSeconds);
     }
 
-    
     public void waitForDialogToDisappear() {
         waitForDialogToDisappear(5);
     }
 
-    // Dialog Content Methods
-    
     public String getTitle() {
         if (confirmationTitle.isDisplayed(2)) {
             return confirmationTitle.getText();
@@ -124,7 +109,6 @@ public class ConfirmationPopupComponent {
         return "";
     }
 
-    
     public String getMessage() {
         if (confirmationMessage.isDisplayed(2)) {
             return confirmationMessage.getText();
@@ -132,7 +116,6 @@ public class ConfirmationPopupComponent {
         return "";
     }
 
-    
     public String getDialogContent() {
         String title = getTitle();
         String message = getMessage();
@@ -145,23 +128,18 @@ public class ConfirmationPopupComponent {
         }
     }
 
-    // Dialog Type Detection Methods
-    
     public boolean isWarningDialog() {
         return warningDialog.isDisplayed(2);
     }
 
-    
     public boolean isErrorDialog() {
         return errorDialog.isDisplayed(2);
     }
 
-    
     public boolean isInfoDialog() {
         return infoDialog.isDisplayed(2);
     }
 
-    
     public String getDialogType() {
         if (isWarningDialog()) return "warning";
         if (isErrorDialog()) return "error";
@@ -169,18 +147,14 @@ public class ConfirmationPopupComponent {
         return "confirm";
     }
 
-    // Button State Methods
-    
     public boolean isConfirmButtonAvailable() {
         return confirmOkBtn.isDisplayed(2) || confirmBtn.isDisplayed(2);
     }
 
-    
     public boolean isCancelButtonAvailable() {
         return confirmCancelBtn.isDisplayed(2) || cancelBtn.isDisplayed(2);
     }
 
-    
     public boolean isConfirmButtonEnabled() {
         if (confirmOkBtn.isDisplayed(2)) {
             return confirmOkBtn.isEnabled();
@@ -190,22 +164,18 @@ public class ConfirmationPopupComponent {
         return false;
     }
 
-    // Utility Methods
-    
     public void confirmIfDisplayed() {
         if (isDisplayed(2)) {
             confirm();
         }
     }
 
-    
     public void cancelIfDisplayed() {
         if (isDisplayed(2)) {
             cancel();
         }
     }
 
-    
     public boolean waitAndConfirm(int timeoutSeconds) {
         if (waitForDialog(timeoutSeconds)) {
             confirm();
@@ -214,7 +184,6 @@ public class ConfirmationPopupComponent {
         return false;
     }
 
-    
     public boolean waitAndCancel(int timeoutSeconds) {
         if (waitForDialog(timeoutSeconds)) {
             cancel();
@@ -223,19 +192,15 @@ public class ConfirmationPopupComponent {
         return false;
     }
 
-    // Validation Methods
-    
     public boolean validateDialogText(String expectedText) {
         String dialogContent = getDialogContent().toLowerCase();
         return dialogContent.contains(expectedText.toLowerCase());
     }
 
-    
     public boolean validateDialogType(String expectedType) {
         return expectedType.equalsIgnoreCase(getDialogType());
     }
 
-    
     public String getDialogInfo() {
         if (!isDisplayed()) {
             return "No confirmation dialog is displayed";

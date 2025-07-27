@@ -5,10 +5,7 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.TestDataUtil;
 
-/**
- * Playwright version of ZipArchiveComponent for ZIP file upload project creation
- * Supports file upload validation with LOCAL/DOCKER mode compatibility
- */
+// Playwright version of ZipArchiveComponent for ZIP file upload project creation
 public class PlaywrightZipArchiveComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement fileInputField;
@@ -40,11 +37,6 @@ public class PlaywrightZipArchiveComponent extends PlaywrightBasePageComponent {
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
-    /**
-     * Create project from ZIP archive file
-     * @param fileName Name of the ZIP file in test resources
-     * @param projectName Unique project name to use
-     */
     public void createProjectZipArchive(String fileName, String projectName) {
         String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);

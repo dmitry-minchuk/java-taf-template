@@ -37,28 +37,16 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
         item = createScopedElement("xpath=.//a[span[text()='%s']]", "item");
     }
 
-    /**
-     * Expand the folder if it's currently collapsed
-     */
     public void expandFolder() {
         if (expanderClosed.isVisible()) {
             expanderClosed.click();
         }
     }
 
-    /**
-     * Select a specific item within this folder
-     * @param itemName Name of the item to select
-     */
     public void selectItem(String itemName) {
         item.format(itemName).click();
     }
 
-    /**
-     * Get a specific item element within this folder
-     * @param itemName Name of the item to get
-     * @return PlaywrightWebElement for the item
-     */
     public PlaywrightWebElement getItem(String itemName) {
         return item.format(itemName);
     }

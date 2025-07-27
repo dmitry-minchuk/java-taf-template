@@ -109,9 +109,7 @@ public class TableComponent extends BasePageComponent {
         }
     }
     
-    /**
-     * PLAYWRIGHT MIGRATION: Convert Selenium By locator to CSS selector
-     */
+    // Convert Selenium By locator to CSS selector for Playwright compatibility
     private String convertByToSelector(By locator) {
         String locatorString = locator.toString();
         if (locatorString.startsWith("By.xpath:")) {
