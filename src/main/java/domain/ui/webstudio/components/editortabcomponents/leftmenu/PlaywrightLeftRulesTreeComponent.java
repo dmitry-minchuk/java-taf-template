@@ -32,22 +32,13 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     }
 
     private void initializeElements() {
-        // View filter link: ".//div[@class='filter-view']/span/a"
         viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
-        
-        // View filter options: ".//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']"
         viewFilterOptionsLink = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "viewFilterOptionsLink");
-        
-        // Selected tree item: ".//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a"
         selectedTreeItem = createScopedElement("xpath=.//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a", "selectedTreeItem");
-        
-        // Tree folder components list - complex selector matching original
         initializeTreeFolderComponents();
     }
 
     private void initializeTreeFolderComponents() {
-        // For now, we'll initialize this dynamically when needed
-        // The original uses @FindAll with multiple selectors for collapsed/expanded folders
         treeFolderComponentList = new java.util.ArrayList<>();
     }
 
