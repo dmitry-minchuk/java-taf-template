@@ -58,4 +58,16 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
         int failed = getFailedTestCount();
         return String.format("Total: %d, Passed: %d, Failed: %d", total, passed, failed);
     }
+    
+    // Additional methods for compatibility with legacy tests
+    public boolean isResultTablePresent() {
+        return isResultTableVisible();
+    }
+    
+    public String getResultTableHeader() {
+        if (resultTableHeader.isVisible()) {
+            return resultTableHeader.getText();
+        }
+        return "";
+    }
 }
