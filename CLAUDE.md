@@ -140,3 +140,177 @@ mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKE
 - ✅ `BUILD SUCCESS`
 - ✅ Parallel thread logs showing concurrent execution
 - ✅ Container initialization logs (DOCKER mode)
+
+## **MIGRATION VALIDATION PLAN** 🔍
+
+### **Phase 1: Complete Migration Inventory**
+
+**All Migrated Pages (9 total):**
+1. **Main Pages (5/5):**
+   - ✅ PlaywrightLoginPage
+   - ✅ PlaywrightProxyMainPage  
+   - ✅ PlaywrightAdminPage
+   - ✅ PlaywrightEditorPage
+   - ✅ PlaywrightRepositoryPage
+
+2. **Wizard Pages (4/4):**
+   - ✅ PlaywrightInstallWizardStartPage
+   - ✅ PlaywrightInstallWizardStep1Page
+   - ✅ PlaywrightInstallWizardStep2Page
+   - ✅ PlaywrightInstallWizardStep3Page
+
+**All Migrated Components (36 total):**
+
+3. **Core Infrastructure (4/4):**
+   - ✅ PlaywrightBasePageComponent
+   - ✅ PlaywrightBasePage
+   - ✅ PlaywrightWebElement
+   - ✅ PlaywrightTableComponent
+
+4. **Main Components (4/4):**
+   - ✅ PlaywrightCurrentUserComponent
+   - ✅ PlaywrightTabSwitcherComponent  
+   - ✅ PlaywrightCreateNewProjectComponent
+   - ✅ PlaywrightConfigureCommitInfoComponent
+
+5. **Admin Components (8/8):**
+   - ✅ PlaywrightEmailPageComponent
+   - ✅ PlaywrightAdminNavigationComponent
+   - ✅ PlaywrightMyProfilePageComponent
+   - ✅ PlaywrightMySettingsPageComponent
+   - ✅ PlaywrightNotificationPageComponent
+   - ✅ PlaywrightRepositoriesPageComponent
+   - ✅ PlaywrightSecurityPageComponent
+   - ✅ PlaywrightSystemSettingsPageComponent
+   - ✅ PlaywrightTagsPageComponent
+   - ✅ PlaywrightUsersPageComponent
+
+6. **Editor Components (8/8):**
+   - ✅ PlaywrightRightTableDetailsComponent
+   - ✅ PlaywrightLeftRulesTreeComponent
+   - ✅ PlaywrightLeftProjectModuleSelectorComponent
+   - ✅ PlaywrightTreeFolderComponent
+   - ✅ PlaywrightAddModuleComponent
+   - ✅ PlaywrightEditTablePanelComponent
+   - ✅ PlaywrightEditorMainContentProblemsPanelComponent
+   - ✅ PlaywrightProblemsPanelComponent
+   - ✅ PlaywrightProjectDetailsComponent
+   - ✅ PlaywrightProjectModuleDetailsComponent
+   - ✅ PlaywrightTableToolbarPanelComponent
+   - ✅ PlaywrightTestResultValidationComponent
+
+7. **Create New Project Components (5/5):**
+   - ✅ PlaywrightExcelFilesComponent
+   - ✅ PlaywrightZipArchiveComponent
+   - ✅ PlaywrightOpenApiComponent
+   - ✅ PlaywrightTemplateTabComponent
+   - ✅ PlaywrightWorkspaceComponent
+
+8. **Repository Components (5/5):**
+   - ✅ PlaywrightDeployConfigurationTabsComponent
+   - ✅ PlaywrightLeftRepositoryTreeComponent
+   - ✅ PlaywrightRepositoryContentButtonsPanelComponent
+   - ✅ PlaywrightRepositoryContentTabPropertiesComponent
+   - ✅ PlaywrightRepositoryTreeFolderComponent
+
+**Working Test Examples (3/22):**
+- ✅ TestPlaywrightAdminEmail - **Verified working in both LOCAL & DOCKER modes**
+- ✅ TestPlaywrightAddProperty - **Verified working in both LOCAL & DOCKER modes**
+- ✅ TestAddPropertyExtraStateAppears - **Migrated and fully functional**
+
+### **Phase 2: Component Instantiation Validation** 🏗️
+
+**TASK 1: Validate Instantiation Patterns**
+
+**Validation Rules:**
+- **a.** All elements and components instantiated directly on pages can use non-scoped constructors
+- **b.** All elements and components instantiated within other components MUST use appropriate scoping constructors
+
+**Pattern Examples:**
+```java
+// ✅ CORRECT: Page-level instantiation (non-scoped)
+public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
+    private PlaywrightLeftRulesTreeComponent leftRulesTreeComponent;
+    
+    private void initializeComponents() {
+        PlaywrightWebElement leftLocator = new PlaywrightWebElement(page, "xpath=//div[@id='left']", "leftRulesTreeComponent");
+        leftRulesTreeComponent = new PlaywrightLeftRulesTreeComponent(leftLocator);
+    }
+}
+
+// ✅ CORRECT: Component-level instantiation (scoped)
+public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponent {
+    private PlaywrightWebElement viewFilterLink;
+    
+    private void initializeElements() {
+        viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
+    }
+}
+
+// ❌ INCORRECT: Component using non-scoped constructor
+public class PlaywrightSomeComponent extends PlaywrightBasePageComponent {
+    private PlaywrightWebElement element = new PlaywrightWebElement(page, "xpath=//div", "element"); // WRONG!
+}
+```
+
+### **Phase 3: Locator Accuracy Validation** 🎯
+
+**TASK 2: Compare All Locators with Legacy Variants**
+
+**Validation Process:**
+1. **One-by-One Comparison**: Each migrated page/component vs its legacy counterpart
+2. **Exact Locator Matching**: Ensure 100% identical XPath/CSS selectors
+3. **Method Signature Verification**: Ensure same functionality patterns
+
+**Critical Areas:**
+- **Element Locators**: All `@FindBy` annotations vs `createScopedElement()` calls
+- **Component Locators**: Root locator consistency  
+- **Dynamic Locators**: String.format() patterns match legacy `.format()` usage
+
+**Example Validation:**
+```java
+// Legacy: LeftRulesTreeComponent.java
+@FindBy(xpath = ".//div[@class='filter-view']/span/a")
+private SmartWebElement viewFilterLink;
+
+// Playwright: PlaywrightLeftRulesTreeComponent.java  
+viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
+// ✅ MATCH: Identical locator
+```
+
+### **Phase 4: Agent Task Specifications** 🤖
+
+**Agent Task 1: Instantiation Pattern Validation**
+```
+TASK: Go through the complete list of migrated pages and components and validate instantiation patterns:
+
+VALIDATION CRITERIA:
+a. Pages (9 total) - All elements/components can use non-scoped constructors
+b. Components (36 total) - All internal elements/components MUST use scoped constructors
+
+DELIVERABLE: Report identifying any violations of scoping rules with specific file locations and corrections needed.
+```
+
+**Agent Task 2: Locator Accuracy Validation**  
+```
+TASK: Compare each migrated page/component with its legacy variant for locator accuracy:
+
+VALIDATION PROCESS:
+1. For each of 45 migrated files, find corresponding legacy file
+2. Compare every locator (xpath/css) for 100% exact match
+3. Verify dynamic locator patterns (String.format vs .format)
+4. Check method signatures and functionality patterns
+
+DELIVERABLE: Comprehensive report of any locator mismatches with exact corrections needed.
+```
+
+### **Phase 5: Success Criteria** ✅
+
+**Migration Complete When:**
+- ✅ All 9 pages use correct instantiation patterns
+- ✅ All 36 components use correct scoping patterns  
+- ✅ All locators 100% match legacy counterparts
+- ✅ All dynamic locator patterns verified
+- ✅ Test suite runs successfully with both modes
+
+**Current Status: Ready for Validation Phase** 🚀
