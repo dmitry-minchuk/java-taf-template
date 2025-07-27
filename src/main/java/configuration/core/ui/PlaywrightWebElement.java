@@ -63,7 +63,7 @@ public class PlaywrightWebElement {
     // Core Actions
     
     public void click() {
-        click(500);
+        click(750);
     }
     
     @Deprecated
@@ -85,6 +85,7 @@ public class PlaywrightWebElement {
     }
     
     public String getText() {
+        WaitUtil.sleep(500);
         String text = locator.textContent();
         LOGGER.info("Getting text from {}: '{}'", elementName, text);
         return text;
