@@ -3,6 +3,9 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import lombok.Getter;
+
+@Getter
 
 public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComponent {
 
@@ -11,6 +14,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     private PlaywrightWebElement traceBtn;
     private PlaywrightWebElement benchmarkBtn;
     private PlaywrightWebElement exportBtn;
+    private PlaywrightWebElement editBtn;
 
     public PlaywrightTableToolbarPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -28,6 +32,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         traceBtn = createScopedElement(".//button[contains(@title,'Trace') or contains(text(),'Trace')]", "traceBtn");
         benchmarkBtn = createScopedElement(".//button[contains(@title,'Benchmark') or contains(text(),'Benchmark')]", "benchmarkBtn");
         exportBtn = createScopedElement(".//button[contains(@title,'Export') or contains(text(),'Export')]", "exportBtn");
+        editBtn = createScopedElement(".//a[.//div[text()='Edit'] or .//tr/td/span[text()='Edit']]", "editBtn");
     }
 
     public void clickRun() {

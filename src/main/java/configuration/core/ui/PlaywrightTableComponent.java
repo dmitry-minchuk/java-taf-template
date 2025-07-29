@@ -30,4 +30,23 @@ public class PlaywrightTableComponent {
     public boolean isPresent() {
         return page.locator(selector).isVisible();
     }
+
+    public PlaywrightWebElement getCell(int rowIndex, int columnIndex) {
+        String cellSelector = selector + String.format("//tr[not(@class='hidden')][%d]//*[self::td or self::th][%d]",
+                rowIndex + 1, columnIndex + 1);
+        return new PlaywrightWebElement(page, cellSelector);
+    }
+
+    public void doubleClickAndPasteTextToCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
+        PlaywrightWebElement cell = getCell(rowIndex, columnIndex);
+        cell.getLocator().dblclick();
+
+        Locator inputLocator = page.locator("//*[@id='_t_te_editorWrapper']");
+        inputLocator.press("Control+A");
+        inputLocator.press("Delete");
+        inputLocator.fill(text);
+        if (pressEnter) {
+            inputLocator.press("Enter");
+        }
+    }
 }
