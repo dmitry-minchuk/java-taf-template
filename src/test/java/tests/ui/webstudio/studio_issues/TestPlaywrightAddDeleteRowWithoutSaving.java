@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
 
     @Test
-    @TestCaseId("EPBDS-7474-playwright")
+    @TestCaseId("EPBDS-7474")
     @Description("BUG: Added row is deleted incorrectly - the value of the next row is changed")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddDeleteRowWithoutSaving() {

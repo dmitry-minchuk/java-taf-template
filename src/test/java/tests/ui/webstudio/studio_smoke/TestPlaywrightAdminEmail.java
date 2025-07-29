@@ -30,7 +30,7 @@ public class TestPlaywrightAdminEmail extends BaseTest {
     private static final Logger LOGGER = LogManager.getLogger(TestPlaywrightAdminEmail.class);
 
     @Test
-    @TestCaseId("IPBQA-32798-PW")
+    @TestCaseId("IPBQA-32798")
     @Description("Playwright - Admin UI 'Email' page - Email verification configuration test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAdminEmail() {
