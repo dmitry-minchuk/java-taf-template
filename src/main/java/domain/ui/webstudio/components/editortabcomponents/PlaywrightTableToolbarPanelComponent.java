@@ -27,12 +27,12 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     private void initializeElements() {
-        toolbar = createScopedElement(".//div[contains(@class,'table-toolbar')]", "toolbar");
-        runBtn = createScopedElement(".//button[contains(@title,'Run') or contains(text(),'Run')]", "runBtn");
-        traceBtn = createScopedElement(".//button[contains(@title,'Trace') or contains(text(),'Trace')]", "traceBtn");
-        benchmarkBtn = createScopedElement(".//button[contains(@title,'Benchmark') or contains(text(),'Benchmark')]", "benchmarkBtn");
-        exportBtn = createScopedElement(".//button[contains(@title,'Export') or contains(text(),'Export')]", "exportBtn");
-        editBtn = createScopedElement(".//a[.//div[text()='Edit'] or .//tr/td/span[text()='Edit']]", "editBtn");
+        toolbar = createScopedElement("xpath=.//div[contains(@class,'table-toolbar')]", "toolbar");
+        runBtn = createScopedElement("xpath=.//button[contains(@title,'Run') or contains(text(),'Run')]", "runBtn");
+        traceBtn = createScopedElement("xpath=.//button[contains(@title,'Trace') or contains(text(),'Trace')]", "traceBtn");
+        benchmarkBtn = createScopedElement("xpath=.//button[contains(@title,'Benchmark') or contains(text(),'Benchmark')]", "benchmarkBtn");
+        exportBtn = createScopedElement("xpath=.//button[contains(@title,'Export') or contains(text(),'Export')]", "exportBtn");
+        editBtn = createScopedElement("xpath=.//a[.//div[text()='Edit'] or .//tr/td/span[text()='Edit']]", "editBtn");
     }
 
     public void clickRun() {

@@ -38,19 +38,19 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
     }
 
     private void initializeElements() {
-        showHeaderCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'showHeader') or ./following-sibling::*[contains(text(),'Show Header')])]", "showHeaderCheckbox");
-        showFormulasCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'showFormulas') or ./following-sibling::*[contains(text(),'Show Formulas')])]", "showFormulasCheckbox");
-        defaultOrderDropdown = createScopedElement(".//select[contains(@id,'defaultOrder') or ./preceding-sibling::*[contains(text(),'Default Order')]] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Default Order')]]", "defaultOrderDropdown");
-        byExcelSheetOption = createScopedElement(".//div[contains(@class,'ant-select-item') and contains(text(),'By Excel Sheet')]", "byExcelSheetOption");
-        testsPerPageField = createScopedElement(".//input[@type='number' and (contains(@id,'testsPerPage') or ./preceding-sibling::*[contains(text(),'Tests Per Page')])]", "testsPerPageField");
-        failuresOnlyCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'failuresOnly') or ./following-sibling::*[contains(text(),'Failures Only')])]", "failuresOnlyCheckbox");
-        compoundResultCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'compoundResult') or ./following-sibling::*[contains(text(),'Compound Result')])]", "compoundResultCheckbox");
-        showNumbersWithoutFormattingCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'showNumbers') or ./following-sibling::*[contains(text(),'Show Numbers Without Formatting')])]", "showNumbersWithoutFormattingCheckbox");
-        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        resetBtn = createScopedElement(".//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "resetBtn");
-        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
-        successNotification = createScopedElement(".//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
-        errorNotification = createScopedElement(".//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
+        showHeaderCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'showHeader') or ./following-sibling::*[contains(text(),'Show Header')])]", "showHeaderCheckbox");
+        showFormulasCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'showFormulas') or ./following-sibling::*[contains(text(),'Show Formulas')])]", "showFormulasCheckbox");
+        defaultOrderDropdown = createScopedElement("xpath=.//select[contains(@id,'defaultOrder') or ./preceding-sibling::*[contains(text(),'Default Order')]] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Default Order')]]", "defaultOrderDropdown");
+        byExcelSheetOption = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'By Excel Sheet')]", "byExcelSheetOption");
+        testsPerPageField = createScopedElement("xpath=.//input[@type='number' and (contains(@id,'testsPerPage') or ./preceding-sibling::*[contains(text(),'Tests Per Page')])]", "testsPerPageField");
+        failuresOnlyCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'failuresOnly') or ./following-sibling::*[contains(text(),'Failures Only')])]", "failuresOnlyCheckbox");
+        compoundResultCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'compoundResult') or ./following-sibling::*[contains(text(),'Compound Result')])]", "compoundResultCheckbox");
+        showNumbersWithoutFormattingCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'showNumbers') or ./following-sibling::*[contains(text(),'Show Numbers Without Formatting')])]", "showNumbersWithoutFormattingCheckbox");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        resetBtn = createScopedElement("xpath=.//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "resetBtn");
+        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
+        successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
+        errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
     }
 
     private void initializeOrderOptionMappings() {

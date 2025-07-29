@@ -27,15 +27,15 @@ public class PlaywrightNotificationPageComponent extends PlaywrightBasePageCompo
     }
 
     private void initializeElements() {
-        enableNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'enableNotifications') or ./following-sibling::*[contains(text(),'Enable Notifications')])]", "enableNotificationsCheckbox");
-        emailNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'emailNotifications') or ./following-sibling::*[contains(text(),'Email Notifications')])]", "emailNotificationsCheckbox");
-        browserNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'browserNotifications') or ./following-sibling::*[contains(text(),'Browser Notifications')])]", "browserNotificationsCheckbox");
-        systemNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'systemNotifications') or ./following-sibling::*[contains(text(),'System Notifications')])]", "systemNotificationsCheckbox");
-        deploymentNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'deploymentNotifications') or ./following-sibling::*[contains(text(),'Deployment Notifications')])]", "deploymentNotificationsCheckbox");
-        buildNotificationsCheckbox = createScopedElement(".//input[@type='checkbox' and (contains(@id,'buildNotifications') or ./following-sibling::*[contains(text(),'Build Notifications')])]", "buildNotificationsCheckbox");
-        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        resetBtn = createScopedElement(".//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "resetBtn");
-        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
+        enableNotificationsCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'enableNotifications') or ./following-sibling::*[contains(text(),'Enable Notifications')])]", "enableNotificationsCheckbox");
+        emailNotificationsCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'emailNotifications') or ./following-sibling::*[contains(text(),'Email Notifications')])]", "emailNotificationsCheckbox");
+        browserNotificationsCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'browserNotifications') or ./following-sibling::*[contains(text(),'Browser Notifications')])]", "browserNotificationsCheckbox");
+        systemNotificationsCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'systemNotifications') or ./following-sibling::*[contains(text(),'System Notifications')])]", "systemNotificationsCheckbox");
+        deploymentNotificationsCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'deploymentNotifications') or ./following-sibling::*[contains(text(),'Deployment Notifications')])]", "deploymentNotificationsCheckbox");
+        buildNotificationsCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'buildNotifications') or ./following-sibling::*[contains(text(),'Build Notifications')])]", "buildNotificationsCheckbox");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        resetBtn = createScopedElement("xpath=.//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "resetBtn");
+        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void setEnableNotifications(boolean enable) {
