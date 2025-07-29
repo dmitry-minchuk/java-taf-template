@@ -7,6 +7,7 @@ import domain.ui.webstudio.components.PlaywrightCreateNewProjectComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
+import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,6 +68,10 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
             case ZIP_ARCHIVE:
                 PlaywrightZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(projectType);
                 zipComponent.createProjectZipArchive(sourceName, projectName);
+                break;
+            case TEMPLATE:
+                PlaywrightTemplateTabComponent templateComponent = createNewProjectComponent.selectTab(projectType);
+                templateComponent.createProjectFromTemplate(projectName, sourceName);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported project type: " + projectType);
