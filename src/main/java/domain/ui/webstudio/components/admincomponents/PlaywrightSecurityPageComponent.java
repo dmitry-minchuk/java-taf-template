@@ -25,13 +25,13 @@ public class PlaywrightSecurityPageComponent extends PlaywrightBasePageComponent
     }
 
     private void initializeElements() {
-        singleUserModeRadio = createScopedElement(".//input[@type='radio' and @value='single']", "singleUserModeRadio");
-        multiUserModeRadio = createScopedElement(".//input[@type='radio' and @value='multi']", "multiUserModeRadio");
-        activeDirectoryModeRadio = createScopedElement(".//input[@type='radio' and @value='ad']", "activeDirectoryModeRadio");
-        samlModeRadio = createScopedElement(".//input[@type='radio' and @value='saml']", "samlModeRadio");
-        oauth2ModeRadio = createScopedElement(".//input[@type='radio' and @value='oauth2']", "oauth2ModeRadio");
-        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
+        singleUserModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='single']", "singleUserModeRadio");
+        multiUserModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='multi']", "multiUserModeRadio");
+        activeDirectoryModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='ad']", "activeDirectoryModeRadio");
+        samlModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='saml']", "samlModeRadio");
+        oauth2ModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='oauth2']", "oauth2ModeRadio");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void selectSingleUserMode() {

@@ -30,10 +30,10 @@ public class PlaywrightSystemSettingsPageComponent extends PlaywrightBasePageCom
         verifyOnEditCheckbox = createScopedElement("#autoCompile", "verifyOnEditCheckbox");
         testThreadCountField = createScopedElement("#testRunThreadCount", "testThreadCountField");
         projectHistoryCountField = createScopedElement("#projectHistoryCount", "projectHistoryCountField");
-        clearAllHistoryBtn = createScopedElement(".//button[./span[text()='Clear All History']]", "clearAllHistoryBtn");
+        clearAllHistoryBtn = createScopedElement("xpath=.//button[./span[text()='Clear All History']]", "clearAllHistoryBtn");
         updateSystemPropertiesCheckbox = createScopedElement("#updateSystemProperties", "updateSystemPropertiesCheckbox");
-        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void setDispatchingValidation(boolean enable) {

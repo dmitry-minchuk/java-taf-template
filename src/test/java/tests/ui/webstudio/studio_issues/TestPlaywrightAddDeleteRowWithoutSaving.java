@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import helpers.service.PlaywrightWorkflowService;
+import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -36,10 +37,10 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
         editorPage.getEditTablePanelComponent().getInsertRowAfterBtn().click();
         table.doubleClickAndPasteTextToCell(5, 0, "444", false);
         editorPage.getEditTablePanelComponent().getRemoveRowBtn().click();
-        assertThat(table.getCellText(5, 0)).isEqualTo(" ");
+        assertThat(StringUtils.normalizeSpace(table.getCellText(5, 0))).isEmpty();
         assertThat(table.getCellText(5, 1)).isEqualTo("0%");
         editorPage.getEditTablePanelComponent().getSaveChangesBtn().click();
-        assertThat(table.getCellText(5, 0)).isEqualTo(" ");
+        assertThat(StringUtils.normalizeSpace(table.getCellText(5, 0))).isEmpty();
         assertThat(table.getCellText(5, 1)).isEqualTo("0%");
     }
 }

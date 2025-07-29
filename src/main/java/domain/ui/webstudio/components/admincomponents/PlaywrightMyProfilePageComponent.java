@@ -31,19 +31,19 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
     }
 
     private void initializeElements() {
-        usernameField = createScopedElement(".//input[@placeholder='Username' or @id='username']", "usernameField");
-        emailField = createScopedElement(".//input[@placeholder='Email' or @id='email']", "emailField");
-        resendVerificationEmailBtn = createScopedElement(".//button[./span[text()='Resend Verification Email'] or ./span[contains(text(),'Resend')]]", "resendVerificationEmailBtn");
-        firstNameField = createScopedElement(".//input[@placeholder='First Name' or @id='firstName' or @id='givenName']", "firstNameField");
-        lastNameField = createScopedElement(".//input[@placeholder='Last Name' or @id='lastName' or @id='familyName']", "lastNameField");
-        displayNameField = createScopedElement(".//input[@placeholder='Display Name' or @id='displayName']", "displayNameField");
-        currentPasswordField = createScopedElement(".//input[@placeholder='Current Password' or @type='password'][1]", "currentPasswordField");
-        newPasswordField = createScopedElement(".//input[@placeholder='New Password' or @type='password'][2]", "newPasswordField");
-        confirmPasswordField = createScopedElement(".//input[@placeholder='Confirm Password' or @placeholder='Confirm New Password' or @type='password'][3]", "confirmPasswordField");
-        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
-        successNotification = createScopedElement(".//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
-        errorNotification = createScopedElement(".//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
+        usernameField = createScopedElement("xpath=.//input[@placeholder='Username' or @id='username']", "usernameField");
+        emailField = createScopedElement("xpath=.//input[@placeholder='Email' or @id='email']", "emailField");
+        resendVerificationEmailBtn = createScopedElement("xpath=.//button[./span[text()='Resend Verification Email'] or ./span[contains(text(),'Resend')]]", "resendVerificationEmailBtn");
+        firstNameField = createScopedElement("xpath=.//input[@placeholder='First Name' or @id='firstName' or @id='givenName']", "firstNameField");
+        lastNameField = createScopedElement("xpath=.//input[@placeholder='Last Name' or @id='lastName' or @id='familyName']", "lastNameField");
+        displayNameField = createScopedElement("xpath=.//input[@placeholder='Display Name' or @id='displayName']", "displayNameField");
+        currentPasswordField = createScopedElement("xpath=.//input[@placeholder='Current Password' or @type='password'][1]", "currentPasswordField");
+        newPasswordField = createScopedElement("xpath=.//input[@placeholder='New Password' or @type='password'][2]", "newPasswordField");
+        confirmPasswordField = createScopedElement("xpath=.//input[@placeholder='Confirm Password' or @placeholder='Confirm New Password' or @type='password'][3]", "confirmPasswordField");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
+        successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
+        errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
     }
 
     public String getUsername() {

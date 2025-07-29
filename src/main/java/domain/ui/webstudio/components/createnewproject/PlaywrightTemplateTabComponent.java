@@ -24,7 +24,7 @@ public class PlaywrightTemplateTabComponent extends PlaywrightBasePageComponent 
     private void initializeElements() {
         projectTemplate = createScopedElement("xpath=.//table[@id='projectTemplates']//tr[.//span[contains(text(), '%s')]]", "projectTemplate");
         projectNameField = createScopedElement("xpath=.//input[@id='createProjectFormTempl:projectName']", "projectNameField");
-        createProjectBtn = createScopedElement("#createProjectFormTempl:sbtTemplatesBtn", "createProjectBtn");
+        createProjectBtn = createScopedElement("xpath=.//input[@id='createProjectFormTempl:sbtTemplatesBtn']", "createProjectBtn");
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
