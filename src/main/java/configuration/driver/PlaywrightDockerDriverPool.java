@@ -9,23 +9,26 @@ import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
+
+import java.time.Duration;
 
 // Enhanced Playwright driver pool with Docker container support for isolated browser execution
 public class PlaywrightDockerDriverPool {
-    
+
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDockerDriverPool.class);
-    
+
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();
-    
-    // Playwright Docker image constants
-    private static final String PLAYWRIGHT_DOCKER_IMAGE = "mcr.microsoft.com/playwright/java";
-    private static final String DEFAULT_PLAYWRIGHT_VERSION = "v1.48.0-noble";
-    
+
+    // Playwright Docker image constants  
+    private static final String PLAYWRIGHT_DOCKER_IMAGE = "mcr.microsoft.com/playwright";
+    private static final String DEFAULT_PLAYWRIGHT_VERSION = "v1.52.0-jammy";
+
     // File system binding configuration - same as DriverFactory for consistency
     private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
     private static final String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
-    
+
     // Container for Playwright Docker components per thread
     private static class PlaywrightDockerContext {
         private final Network network;
@@ -34,10 +37,10 @@ public class PlaywrightDockerDriverPool {
         private final Browser browser;
         private final BrowserContext browserContext;
         private final Page page;
-        
-        public PlaywrightDockerContext(Network network, GenericContainer<?> playwrightContainer, 
-                                     Playwright playwright, Browser browser, 
-                                     BrowserContext browserContext, Page page) {
+
+        public PlaywrightDockerContext(Network network, GenericContainer<?> playwrightContainer,
+                                       Playwright playwright, Browser browser,
+                                       BrowserContext browserContext, Page page) {
             this.network = network;
             this.playwrightContainer = playwrightContainer;
             this.playwright = playwright;
@@ -45,14 +48,14 @@ public class PlaywrightDockerDriverPool {
             this.browserContext = browserContext;
             this.page = page;
         }
-        
+
         public Network getNetwork() { return network; }
         public GenericContainer<?> getPlaywrightContainer() { return playwrightContainer; }
         public Playwright getPlaywright() { return playwright; }
         public Browser getBrowser() { return browser; }
         public BrowserContext getBrowserContext() { return browserContext; }
         public Page getPage() { return page; }
-        
+
         public void close() {
             try {
                 if (page != null && !page.isClosed()) {
@@ -80,37 +83,37 @@ public class PlaywrightDockerDriverPool {
             }
         }
     }
-    
+
     // Initialize Playwright with Docker container and file system binding
     public static void setPlaywrightDocker(Network network) {
         if (threadLocalContext.get() == null) {
             try {
                 String browserName = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER);
                 LOGGER.info("Initializing Playwright Docker container with browser: {}", browserName);
-                
-                
+
+
                 // Create Playwright Docker container
                 GenericContainer<?> playwrightContainer = createPlaywrightContainer(network, browserName);
-                
+
                 // Connect to containerized Playwright
                 Playwright playwright = connectToPlaywrightContainer(playwrightContainer);
-                
-                // Launch browser within the container
-                Browser browser = launchContainerizedBrowser(playwright, browserName);
-                
+
+                // Connect to browser running in the container
+                Browser browser = launchContainerizedBrowser(playwright, browserName, playwrightContainer);
+
                 // Create browser context with file system binding
                 BrowserContext browserContext = createContainerizedBrowserContext(browser, network);
-                
+
                 // Create new page
                 Page page = browserContext.newPage();
-                
+
                 // Store in thread local
                 PlaywrightDockerContext context = new PlaywrightDockerContext(
-                    network, playwrightContainer, playwright, browser, browserContext, page);
+                        network, playwrightContainer, playwright, browser, browserContext, page);
                 threadLocalContext.set(context);
-                
+
                 LOGGER.info("Playwright Docker container initialized successfully for thread: {}", Thread.currentThread().getName());
-                
+
             } catch (Exception e) {
                 LOGGER.error("Failed to initialize Playwright Docker container: {}", e.getMessage(), e);
                 throw new RuntimeException("Playwright Docker container initialization failed", e);
@@ -119,24 +122,36 @@ public class PlaywrightDockerDriverPool {
             LOGGER.debug("Playwright Docker already initialized for thread: {}", Thread.currentThread().getName());
         }
     }
-    
-    // Create Playwright Docker container with file system binding
+
+    // Create Playwright Docker container with remote server setup
     private static GenericContainer<?> createPlaywrightContainer(Network network, String browserName) {
         String playwrightVersion = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER_VERSION);
         if (playwrightVersion == null || playwrightVersion.isEmpty() || "latest".equals(playwrightVersion)) {
             playwrightVersion = DEFAULT_PLAYWRIGHT_VERSION;
         }
-        
+
         DockerImageName dockerImageName = DockerImageName.parse(PLAYWRIGHT_DOCKER_IMAGE + ":" + playwrightVersion);
-        
+
         GenericContainer<?> container = new GenericContainer<>(dockerImageName)
                 .withNetwork(network)
+                //.withNetworkAliases("playwright-server")
+                .withExposedPorts(9222) // CDP port for remote browser connection
                 // Microsoft-recommended environment for Playwright containers
                 .withEnv("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1") // Browsers are pre-installed in container
-                .withEnv("PLAYWRIGHT_BROWSERS_PATH", "/ms-playwright")
-                .withEnv("NODE_ENV", "test")
-                // Keep container running with a simple command
-                .withCommand("tail", "-f", "/dev/null")
+                .withEnv("PLAYWRIGHT_BROWSERS_PATH", "/ms-playwright/chromium-1169/chrome-linux/chrome")
+                // Start Chrome with CDP endpoint for remote debugging
+                .withCommand(
+                        "/ms-playwright/chromium-1169/chrome-linux/chrome-wrapper",
+                        "--no-sandbox",
+                        "--remote-debugging-port=9222",
+                        "--remote-debugging-address=0.0.0.0",
+                        "--host=0.0.0.0",
+                        "--remote-allow-origins=*",
+                        "--headless=new",
+                        "--disable-dev-shm-usage"
+                )
+                // Wait for CDP port to be ready
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(20)))
                 // Critical container flags from Microsoft documentation
                 .withCreateContainerCmdModifier(cmd -> {
                     // Required --init flag for proper signal handling
@@ -150,89 +165,64 @@ public class PlaywrightDockerDriverPool {
                 .withSharedMemorySize(2147483648L) // 2GB shared memory for browsers
                 // FILE SYSTEM BINDING: Enable file upload/download support
                 .withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
-        
-        // Browser-specific optimizations
-        switch (browserName.toLowerCase()) {
-            case "chrome", "chromium" -> {
-                container.withEnv("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH", "/ms-playwright/chromium-*/chrome-linux/chrome");
-            }
-            case "firefox" -> {
-                container.withEnv("PLAYWRIGHT_FIREFOX_EXECUTABLE_PATH", "/ms-playwright/firefox-*/firefox");
-            }
-            case "webkit", "safari" -> {
-                container.withEnv("PLAYWRIGHT_WEBKIT_EXECUTABLE_PATH", "/ms-playwright/webkit-*/minibrowser-gtk/MiniBrowser");
-            }
-        }
-        
+
+
         LOGGER.info("Creating Playwright Docker container with image: {}", dockerImageName);
         LOGGER.info("Volume mapping configured: {} (host) -> {} (container)", HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH);
         container.start();
-        
+        LOGGER.info(container.getLogs());
+
         LOGGER.info("Playwright Docker container started successfully - Container ID: {}", container.getContainerId());
-        
+
         return container;
     }
-    
-    // Connect to Playwright running inside the Docker container
+
+    // Connect to Playwright server running inside the Docker container
     private static Playwright connectToPlaywrightContainer(GenericContainer<?> container) {
         try {
-            // For now, create local Playwright instance that connects to containerized app
-            // This is a hybrid approach - local Playwright connecting to containerized application
+            // Create local Playwright instance for API access
             Playwright playwright = Playwright.create();
-            
-            LOGGER.info("Created local Playwright instance for container communication");
+
+            LOGGER.info("Created Playwright instance for remote container connection");
             return playwright;
-            
+
         } catch (Exception e) {
             LOGGER.error("Failed to create Playwright instance: {}", e.getMessage());
             throw new RuntimeException("Playwright instance creation failed", e);
         }
     }
-    
-    // Launch browser within the containerized environment
-    private static Browser launchContainerizedBrowser(Playwright playwright, String browserName) {
-        BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
-                .setHeadless(true) // Always headless in containers
-                .setSlowMo(0)
-                .setDevtools(false);
-        
-        // Container-optimized browser arguments
-        launchOptions.setArgs(java.util.List.of(
-                "--no-sandbox",
-                "--disable-dev-shm-usage", 
-                "--disable-gpu",
-                "--disable-features=VizDisplayCompositor",
-                "--disable-background-timer-throttling",
-                "--disable-backgrounding-occluded-windows",
-                "--disable-renderer-backgrounding",
-                "--no-first-run",
-                "--disable-ipc-flooding-protection" // Additional container stability
-        ));
-        
-        BrowserType browserType = switch (browserName.toLowerCase()) {
-            case "chrome", "chromium" -> {
-                LOGGER.debug("Launching Chromium browser in container");
-                yield playwright.chromium();
-            }
-            case "firefox" -> {
-                LOGGER.debug("Launching Firefox browser in container");
-                yield playwright.firefox();
-            }
-            case "webkit", "safari" -> {
-                LOGGER.debug("Launching WebKit browser in container");
-                yield playwright.webkit();
-            }
-            default -> {
-                LOGGER.warn("Unknown browser '{}', defaulting to Chromium", browserName);
-                yield playwright.chromium();
-            }
-        };
-        
-        Browser browser = browserType.launch(launchOptions);
-        LOGGER.info("Launched {} browser in Playwright container", browserName);
-        return browser;
+
+    // Get CDP HTTP endpoint URL for container connection
+    private static String getContainerCdpEndpoint(GenericContainer<?> container) {
+        String playwrightHost = container.getHost();
+        int playwrightPort = container.getMappedPort(9222);
+        String httpEndpoint = "http://" + playwrightHost + ":" + playwrightPort;
+
+        LOGGER.info("Container CDP endpoint: {}", httpEndpoint);
+        return httpEndpoint;
     }
-    
+
+    // Connect to browser running in the containerized environment
+    private static Browser launchContainerizedBrowser(Playwright playwright, String browserName, GenericContainer<?> container) {
+        try {
+            // Get CDP endpoint from container
+            String httpEndpoint = getContainerCdpEndpoint(container);
+
+            // For CDP connection, we only support Chromium (since we're running Chrome in container)
+            BrowserType browserType = playwright.chromium();
+            LOGGER.debug("Connecting to Chrome browser in container via CDP");
+
+            // Connect to remote Chrome browser running in container via CDP
+            Browser browser = browserType.connectOverCDP(httpEndpoint);
+            LOGGER.info("Connected to Chrome browser in Playwright container via CDP endpoint: {}", httpEndpoint);
+            return browser;
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to connect to container browser: {}", e.getMessage(), e);
+            throw new RuntimeException("Container browser connection failed", e);
+        }
+    }
+
     // Create browser context with container-specific settings
     private static BrowserContext createContainerizedBrowserContext(Browser browser, Network network) {
         Browser.NewContextOptions contextOptions = new Browser.NewContextOptions()
@@ -241,17 +231,17 @@ public class PlaywrightDockerDriverPool {
                 .setTimezoneId("America/New_York")
                 .setAcceptDownloads(true)
                 .setIgnoreHTTPSErrors(true);
-        
+
         // Container-specific user agent
         contextOptions.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Playwright-Container");
-        
+
         if (network != null) {
             LOGGER.debug("Browser context configured for container network: {}", network.getId());
         }
-        
+
         return browser.newContext(contextOptions);
     }
-    
+
     // Get current Page instance for this thread
     public static Page getPage() {
         PlaywrightDockerContext context = threadLocalContext.get();
@@ -260,7 +250,7 @@ public class PlaywrightDockerDriverPool {
         }
         return context.getPage();
     }
-    
+
     // Get current Browser instance for this thread
     public static Browser getBrowser() {
         PlaywrightDockerContext context = threadLocalContext.get();
@@ -269,7 +259,7 @@ public class PlaywrightDockerDriverPool {
         }
         return context.getBrowser();
     }
-    
+
     // Get current BrowserContext instance for this thread
     public static BrowserContext getBrowserContext() {
         PlaywrightDockerContext context = threadLocalContext.get();
@@ -278,7 +268,7 @@ public class PlaywrightDockerDriverPool {
         }
         return context.getBrowserContext();
     }
-    
+
     /**
      * Get the current Network instance for this thread
      */
@@ -289,7 +279,7 @@ public class PlaywrightDockerDriverPool {
         }
         return context.getNetwork();
     }
-    
+
     /**
      * Close Playwright Docker and clean up resources for current thread
      */
@@ -303,14 +293,14 @@ public class PlaywrightDockerDriverPool {
             LOGGER.debug("No Playwright Docker context to close for thread: {}", Thread.currentThread().getName());
         }
     }
-    
+
     /**
      * Check if Playwright Docker is initialized for current thread
      */
     public static boolean isInitialized() {
         return threadLocalContext.get() != null;
     }
-    
+
     /**
      * Create a new page in the current browser context
      */
@@ -320,7 +310,7 @@ public class PlaywrightDockerDriverPool {
         LOGGER.debug("Created new page in Docker-aware browser context");
         return newPage;
     }
-    
+
     /**
      * Take screenshot with current page
      */
@@ -330,23 +320,23 @@ public class PlaywrightDockerDriverPool {
                 .setFullPage(true)
                 .setType(ScreenshotType.PNG));
     }
-    
+
     /**
      * Navigate to URL with container networking awareness
      * Uses Docker network for container-to-container communication
      */
     public static void navigateTo(String url) {
         Page page = getPage();
-        
+
         // Container network URL resolution for Playwright container
         String resolvedUrl = resolveContainerNetworkUrl(url);
-        
+
         LOGGER.info("Navigating to URL via Docker network: {} -> {}", url, resolvedUrl);
         page.navigate(resolvedUrl, new Page.NavigateOptions()
                 .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
                 .setTimeout(30000));
     }
-    
+
     /**
      * Resolve URLs for Docker network container-to-container communication
      * Playwright container connects directly to application container via Docker network
@@ -356,13 +346,13 @@ public class PlaywrightDockerDriverPool {
         if (context == null || context.getNetwork() == null) {
             return url; // No container network, return original URL
         }
-        
+
         // Convert localhost URLs to container network URLs for direct container communication
         String defaultAppPort = configuration.projectconfig.ProjectConfiguration.getProperty(
-            configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT);
+                configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT);
         String localhostPattern = "localhost:" + defaultAppPort;
         String loopbackPattern = "127.0.0.1:" + defaultAppPort;
-        
+
         if (url.contains(localhostPattern) || url.contains(loopbackPattern)) {
             try {
                 configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
@@ -376,10 +366,10 @@ public class PlaywrightDockerDriverPool {
                 LOGGER.debug("Could not resolve container network URL, using original: {}", e.getMessage());
             }
         }
-        
+
         return url;
     }
-    
+
     /**
      * Navigate to application container using Docker network
      * Direct container-to-container communication within the same Docker network
@@ -400,7 +390,7 @@ public class PlaywrightDockerDriverPool {
             throw new RuntimeException("Application container navigation failed", e);
         }
     }
-    
+
     /**
      * Get container network URL for direct container-to-container communication
      * Uses Docker network hostname resolution instead of localhost port mapping
@@ -409,24 +399,24 @@ public class PlaywrightDockerDriverPool {
         try {
             var appContainer = appData.getAppContainer();
             String containerName = appContainer.getContainerName(); // Docker network hostname
-            
+
             String defaultAppPort = configuration.projectconfig.ProjectConfiguration.getProperty(
-                configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT);
+                    configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT);
             String deployedAppPath = configuration.projectconfig.ProjectConfiguration.getProperty(
-                configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
-            
+                    configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
+
             // Direct container-to-container URL via Docker network
             String containerNetworkUrl = String.format("http://%s:%s%s", containerName, defaultAppPort, deployedAppPath);
             LOGGER.debug("Container network URL for {}: {}", containerName, containerNetworkUrl);
             return containerNetworkUrl;
-            
+
         } catch (Exception e) {
             LOGGER.warn("Could not get container network URL, falling back to container URL: {}", e.getMessage());
             return appData.getAppHostUrl();
         }
     }
-    
-    
+
+
     /**
      * Get network and container information for debugging
      * Shows complete Docker architecture: network, containers, and browser state
@@ -436,18 +426,18 @@ public class PlaywrightDockerDriverPool {
         if (context == null) {
             return "No Playwright Docker context available";
         }
-        
+
         StringBuilder info = new StringBuilder();
         info.append("Playwright Docker Architecture:\n");
-        info.append(String.format("  Network: %s\n", 
+        info.append(String.format("  Network: %s\n",
                 context.getNetwork() != null ? context.getNetwork().getId() : "none"));
-        info.append(String.format("  Playwright Container: %s\n", 
+        info.append(String.format("  Playwright Container: %s\n",
                 context.getPlaywrightContainer() != null ? context.getPlaywrightContainer().getContainerId() : "none"));
-        info.append(String.format("  Browser: %s\n", 
+        info.append(String.format("  Browser: %s\n",
                 context.getBrowser() != null ? context.getBrowser().browserType().name() : "none"));
-        info.append(String.format("  Current Page: %s\n", 
+        info.append(String.format("  Current Page: %s\n",
                 context.getPage() != null ? context.getPage().url() : "none"));
-        
+
         // Add application container info if available
         try {
             configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
@@ -458,10 +448,10 @@ public class PlaywrightDockerDriverPool {
         } catch (Exception e) {
             info.append("  App Container: unavailable");
         }
-        
+
         return info.toString();
     }
-    
+
     /**
      * Get the current Playwright container for file operations
      */
@@ -472,7 +462,7 @@ public class PlaywrightDockerDriverPool {
         }
         return context.getPlaywrightContainer();
     }
-    
+
     /**
      * Download file by triggering download action in Docker mode
      * Uses container extraction for file access
@@ -480,7 +470,7 @@ public class PlaywrightDockerDriverPool {
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) throws java.io.IOException {
         return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
     }
-    
+
     /**
      * Download file by triggering download action with custom timeout in Docker mode
      * Uses container extraction for file access
