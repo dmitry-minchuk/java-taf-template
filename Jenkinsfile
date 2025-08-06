@@ -7,7 +7,7 @@ def protocol_prefix = "https://"
 def image_hub_registry = "ghcr.io/"
 def studio = "openl-tablets/webstudio:x"
 def ws = "openl-tablets/ws:x-all"
-def demo = "openl-tablets/demo:x"
+// def demo = "openl-tablets/demo:x"
 
 class JenkinsNode {
     String nodeLabel
@@ -76,14 +76,14 @@ pipeline {
                                 docker.withRegistry(protocol_prefix + image_hub_registry) {
                                   def studio_image = docker.image(studio)
                                   def ws_image = docker.image(ws)
-                                  def demo_image = docker.image(demo)
+//                                   def demo_image = docker.image(demo)
                                   sh "docker system prune -f"
                                   sh "docker image rm -f ghcr.io/${studio_image.imageName()}"
                                   sh "docker image rm -f ghcr.io/${ws_image.imageName()}"
-                                  sh "docker image rm -f ghcr.io/${demo_image.imageName()}"
+//                                   sh "docker image rm -f ghcr.io/${demo_image.imageName()}"
                                   sh "docker pull ${studio_image.imageName()}"
                                   sh "docker pull ${ws_image.imageName()}"
-                                  sh "docker pull ${demo_image.imageName()}"
+//                                   sh "docker pull ${demo_image.imageName()}"
                                 }
                             }
                         }]
