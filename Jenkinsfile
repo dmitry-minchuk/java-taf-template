@@ -133,7 +133,7 @@ pipeline {
                                     sh("""bash -lc '
                                         mvn clean test \\
                                             -Drp.endpoint=http://10.23.172.185:8080 \\
-                                            -Dexecution.mode=PLAYWRIGHT_DOCKER
+                                            -Dexecution.mode=PLAYWRIGHT_DOCKER \\
                                             -Drp.project=OpenL_Tests \\
                                             -Drp.launch=${suite.suiteName} \\
                                             -Drp.uuid=${RP_UUID} \\
