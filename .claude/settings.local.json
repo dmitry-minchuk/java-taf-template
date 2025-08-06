@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(ls:*)",
+      "Bash(mvn compile:*)",
+      "Bash(mvn test-compile:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(mvn test:*)",
+      "Bash(mv:*)",
+      "Bash(timeout 300 mvn surefire:test -Dtest=TestAdminEmail -q)",
+      "mcp__ollama-rag__code_search",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "WebFetch(domain:github.com)",
+      "mcp__playwright__playwright_navigate",
+      "mcp__playwright__playwright_screenshot",
+      "mcp__playwright__playwright_fill",
+      "mcp__playwright__playwright_get_visible_html",
+      "mcp__playwright__playwright_click",
+      "mcp__playwright__playwright_evaluate",
+      "mcp__playwright__playwright_close",
+      "Bash(rm:*)",
+      "mcp__playwright__playwright_get_visible_text",
+      "mcp__playwright__playwright_select",
+      "Bash(python:*)"
+    ],
+    "deny": []
+  }
+}
