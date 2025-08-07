@@ -127,6 +127,13 @@ pipeline {
                                         extensions: [[$class: 'CloneOption', noTags: true, shallow: true, depth: 20, timeout: 30]],
                                         userRemoteConfigs: [[url: openlTestsGitIrl]]
                                 ])
+                                
+                                // Build CDP Browser Docker image for Playwright Docker mode
+                                echo "Building cdp-browser Docker image on node: ${suite.nodeToRunOn}"
+                                sh("docker build -t cdp-browser:latest -f cdp_browser_dockerfile .")
+                                sh("docker images | grep cdp-browser")
+                                echo "CDP Browser Docker image built successfully"
+                                
                                 env.BUILD_NUMBER = params.APPLICATION_GIT_COMMIT_HASH_VERSION
                                 withMaven() {
                                     sh("bash -lc 'git branch'")
