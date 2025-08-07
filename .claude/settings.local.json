@@ -25,7 +25,8 @@
       "Bash(rm:*)",
       "mcp__playwright__playwright_get_visible_text",
       "mcp__playwright__playwright_select",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(docker inspect:*)"
     ],
     "deny": []
   }
