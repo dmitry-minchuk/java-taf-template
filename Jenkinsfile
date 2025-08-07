@@ -114,13 +114,15 @@ pipeline {
                 }
             }
         }
-        stage('Run Test Suites') {
+        stage('Build CDP Browser Image') {
             steps {
                 script {
-                    parallel functionalJobList.collectEntries() { suite ->
-                        [(suite): {
-                            node(suite.nodeToRunOn) {
+                    parallel jenkinsLabelList.collectEntries() { nodeLabel ->
+                        [(nodeLabel): {
+                            node(nodeLabel) {
                                 deleteDir()
+                                
+                                // Checkout code for CDP browser build and subsequent test execution
                                 checkout([
                                         $class: 'GitSCM',
                                         branches: [[name: params.TESTS_BRANCH]],
@@ -129,10 +131,26 @@ pipeline {
                                 ])
                                 
                                 // Build CDP Browser Docker image for Playwright Docker mode
-                                echo "Building cdp-browser Docker image on node: ${suite.nodeToRunOn}"
+                                echo "Building cdp-browser Docker image on node: ${nodeLabel}"
                                 sh("docker build -t cdp-browser:latest -f cdp_browser_dockerfile .")
                                 sh("docker images | grep cdp-browser")
-                                echo "CDP Browser Docker image built successfully"
+                                echo "CDP Browser Docker image built successfully on ${nodeLabel}"
+                                
+                                // Keep workspace for subsequent test execution - no deleteDir()
+                            }
+                        }]
+                    }
+                }
+            }
+        }
+        stage('Run Test Suites') {
+            steps {
+                script {
+                    parallel functionalJobList.collectEntries() { suite ->
+                        [(suite): {
+                            node(suite.nodeToRunOn) {
+                                // Use workspace from previous 'Build CDP Browser Image' stage
+                                // CDP browser image is already built and code is already checked out
                                 
                                 env.BUILD_NUMBER = params.APPLICATION_GIT_COMMIT_HASH_VERSION
                                 withMaven() {
