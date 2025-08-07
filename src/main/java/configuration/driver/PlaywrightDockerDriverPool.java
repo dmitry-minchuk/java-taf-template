@@ -22,8 +22,8 @@ public class PlaywrightDockerDriverPool {
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();
 
     // Playwright Docker image constants  
-    private static final String PLAYWRIGHT_DOCKER_IMAGE = "mcr.microsoft.com/playwright";
-    private static final String DEFAULT_PLAYWRIGHT_VERSION = "v1.52.0-jammy";
+    private static final String PLAYWRIGHT_DOCKER_IMAGE = "selenium/standalone-chrome";
+    private static final String DEFAULT_PLAYWRIGHT_VERSION = "latest";
 
     // File system binding configuration - same as DriverFactory for consistency
     private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
