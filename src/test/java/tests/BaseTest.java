@@ -25,10 +25,6 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * Enhanced BaseTest to support multiple execution modes
- * Phase 3: Selenium, Playwright Local, and Playwright Docker execution
- */
 public abstract class BaseTest {
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
     
@@ -41,11 +37,7 @@ public abstract class BaseTest {
     
     // Phase 3: Support multiple execution modes
     private static final ExecutionMode EXECUTION_MODE = getExecutionMode();
-    
-    /**
-     * Determine execution mode from system properties
-     * Phase 3: Support environment-based mode selection
-     */
+
     private static ExecutionMode getExecutionMode() {
         String mode = System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL");
         
@@ -97,10 +89,7 @@ public abstract class BaseTest {
             }
         }
     }
-    
-    /**
-     * PLAYWRIGHT PHASE 1: Local Playwright test initialization (no Docker)
-     */
+
     private void initializePlaywrightLocalTest(ITestResult result) {
         LOGGER.info("Initializing test with Playwright: {}", 
                    result.getMethod().getMethodName());
@@ -111,10 +100,7 @@ public abstract class BaseTest {
         // Initialize Playwright through unified interface (no network needed for Phase 1)
         PlaywrightDriverPool.initializePlaywright(null);
     }
-    
-    /**
-     * PLAYWRIGHT PHASE 3: Docker-aware Playwright test initialization
-     */
+
     private void initializePlaywrightDockerTest(ITestResult result) {
         LOGGER.info("Initializing test with Playwright Docker: {}", 
                    result.getMethod().getMethodName());
@@ -129,11 +115,7 @@ public abstract class BaseTest {
         // Initialize Playwright through unified interface with network
         PlaywrightDriverPool.initializePlaywright(network);
     }
-    
-    /**
-     * Shared app container setup for Playwright modes
-     * Phase 3: Centralized container configuration logic
-     */
+
     private void setupAppContainer(ITestResult result, Network network) {
         String appContainerName = StringUtil.generateUniqueName("appcontainer");
         Method testMethod = result.getMethod().getConstructorOrMethod().getMethod();
@@ -149,10 +131,7 @@ public abstract class BaseTest {
             AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);
         }
     }
-    
-    /**
-     * PLAYWRIGHT PHASE 1: Local Playwright test cleanup (no Docker)
-     */
+
     private void cleanupPlaywrightLocalTest(ITestResult result) {
         String testName = result.getMethod().getMethodName();
         
@@ -172,10 +151,7 @@ public abstract class BaseTest {
         // Close app container
         AppContainerPool.closeAppContainer();
     }
-    
-    /**
-     * PLAYWRIGHT PHASE 3: Docker-aware Playwright test cleanup
-     */
+
     private void cleanupPlaywrightDockerTest(ITestResult result) {
         String testName = result.getMethod().getMethodName();
         
@@ -196,10 +172,7 @@ public abstract class BaseTest {
         AppContainerPool.closeAppContainer();
         NetworkPool.closeNetwork();
     }
-    
-    /**
-     * SELENIUM MIGRATION: Original Selenium-based test initialization (kept for rollback)
-     */
+
     private void initializeSeleniumTest(ITestResult result) {
         LOGGER.info("Initializing test with Selenium: {}", 
                    result.getMethod().getMethodName());
@@ -221,10 +194,7 @@ public abstract class BaseTest {
             AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);
         }
     }
-    
-    /**
-     * SELENIUM MIGRATION: Original Selenium-based test cleanup (kept for rollback)
-     */
+
     private void cleanupSeleniumTest(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE) {
             File screenShot = ScreenshotUtil.takeAndSaveScreenshot(DriverPool.getDriverContainer());
@@ -235,27 +205,5 @@ public abstract class BaseTest {
         DriverPool.closeDriver();
         AppContainerPool.closeAppContainer();
         NetworkPool.closeNetwork();
-    }
-    
-    
-    /**
-     * Check if test is running in Playwright mode (local or Docker)
-     */
-    protected boolean isPlaywrightMode() {
-        return EXECUTION_MODE == ExecutionMode.PLAYWRIGHT_LOCAL || EXECUTION_MODE == ExecutionMode.PLAYWRIGHT_DOCKER;
-    }
-    
-    /**
-     * Check if test is running in Selenium mode
-     */
-    protected boolean isSeleniumMode() {
-        return EXECUTION_MODE == ExecutionMode.SELENIUM;
-    }
-    
-    /**
-     * Check if test is running in Playwright Docker mode
-     */
-    protected boolean isPlaywrightDockerMode() {
-        return EXECUTION_MODE == ExecutionMode.PLAYWRIGHT_DOCKER;
     }
 }

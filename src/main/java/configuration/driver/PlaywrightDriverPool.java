@@ -235,10 +235,7 @@ public class PlaywrightDriverPool {
         }
         return context.getBrowserContext();
     }
-    
-    /**
-     * Get the current Playwright instance for this thread
-     */
+
     public static Playwright getPlaywright() {
         PlaywrightContext context = threadLocalContext.get();
         if (context == null) {
@@ -340,34 +337,19 @@ public class PlaywrightDriverPool {
                 "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         }
     }
-    
-    /**
-     * Download file by triggering download action
-     * Unified download method with automatic mode detection
-     */
+
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) throws java.io.IOException {
         return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
     }
-    
-    /**
-     * Download file by triggering download action with custom timeout
-     * Unified download method with automatic mode detection
-     */
+
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) throws java.io.IOException {
         return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger, timeoutMs);
     }
-    
-    /**
-     * Get current execution mode for debugging purposes
-     */
+
     public static ExecutionMode getCurrentExecutionMode() {
         return getExecutionMode();
     }
-    
-    /**
-     * Get comprehensive debugging information about current state
-     * Includes execution mode, browser state, and file system configuration
-     */
+
     public static String getDebugInfo() {
         ExecutionMode mode = getExecutionMode();
         StringBuilder info = new StringBuilder();
