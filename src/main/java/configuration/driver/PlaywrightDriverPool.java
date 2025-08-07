@@ -349,6 +349,49 @@ public class PlaywrightDriverPool {
     public static ExecutionMode getCurrentExecutionMode() {
         return getExecutionMode();
     }
+    
+    // Get application URL with automatic mode detection for login services
+    public static String getAppUrl() {
+        ExecutionMode mode = getExecutionMode();
+        try {
+            configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
+            if (appData == null) {
+                throw new RuntimeException("No application container found");
+            }
+            
+            switch (mode) {
+                case PLAYWRIGHT_LOCAL -> {
+                    // For local mode, use mapped port URL (Playwright runs on host)
+                    var container = appData.getAppContainer();
+                    Integer defaultAppPort = Integer.parseInt(
+                        configuration.projectconfig.ProjectConfiguration.getProperty(
+                            configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT));
+                    Integer mappedPort = container.getMappedPort(defaultAppPort);
+                    
+                    String deployedAppPath = configuration.projectconfig.ProjectConfiguration.getProperty(
+                        configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
+                    
+                    String hostUrl = String.format("http://localhost:%d%s", mappedPort, deployedAppPath);
+                    LOGGER.info("App URL for LOGIN service (LOCAL): {}", hostUrl);
+                    return hostUrl;
+                }
+                case PLAYWRIGHT_DOCKER -> {
+                    // For Docker mode, use container network URL (Playwright runs in container)
+                    String containerNetworkUrl = appData.getAppHostUrl(); // Already contains container network URL
+                    LOGGER.info("App URL for LOGIN service (DOCKER): {}", containerNetworkUrl);
+                    return containerNetworkUrl;
+                }
+                case SELENIUM -> {
+                    // For Selenium compatibility, use container network URL
+                    return appData.getAppHostUrl();
+                }
+                default -> throw new UnsupportedOperationException("Unknown execution mode: " + mode);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to get application URL for mode {}: {}", mode, e.getMessage());
+            throw new RuntimeException("Application URL resolution failed for mode: " + mode, e);
+        }
+    }
 
     public static String getDebugInfo() {
         ExecutionMode mode = getExecutionMode();
