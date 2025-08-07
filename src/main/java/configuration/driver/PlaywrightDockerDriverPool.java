@@ -134,7 +134,9 @@ public class PlaywrightDockerDriverPool {
         GenericContainer<?> container = new GenericContainer<>(dockerImageName)
                 .withNetwork(network)
                 .withExposedPorts(9222) // CDP port for remote browser connection
-                .waitingFor(Wait.forHttp("/json/version").forPort(9222).withStartupTimeout(Duration.ofSeconds(5)))
+                .waitingFor(Wait.forHttp("/json/version")
+                    .forPort(9222)
+                    .withStartupTimeout(Duration.ofSeconds(30))) // Увеличиваем timeout для Chrome + socat
                 .withPrivilegedMode(true) // Security best practice
                 .withSharedMemorySize(2147483648L) // 2GB shared memory for browsers
                 .withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
@@ -142,10 +144,18 @@ public class PlaywrightDockerDriverPool {
 
         LOGGER.info("Creating Browser Docker container with image: {}", dockerImageName);
         LOGGER.info("Volume mapping configured: {} (host) -> {} (container)", HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH);
+        
+        LOGGER.info("Starting container and waiting for CDP endpoint...");
         container.start();
-        LOGGER.info(container.getLogs());
-
-        LOGGER.info("Browser Docker container started successfully - Container ID: {}", container.getContainerId());
+        
+        // Log container startup information
+        LOGGER.info("Container started - ID: {}", container.getContainerId());
+        LOGGER.info("Mapped CDP port: {}:{} -> 9222", container.getHost(), container.getMappedPort(9222));
+        LOGGER.info("Container startup logs:\n{}", container.getLogs());
+        
+        // Test CDP endpoint availability
+        String cdpEndpoint = "http://" + container.getHost() + ":" + container.getMappedPort(9222) + "/json/version";
+        LOGGER.info("CDP endpoint ready: {}", cdpEndpoint);
 
         return container;
     }
