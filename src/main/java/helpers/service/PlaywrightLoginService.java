@@ -23,10 +23,8 @@ public class PlaywrightLoginService {
     public PlaywrightEditorPage login(UserData user) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
-        // Navigate to login page using localhost URL for LOCAL mode (Playwright runs on host)
-        configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
-        int mappedPort = appData.getAppContainer().getMappedPort(8080);
-        String loginUrl = "http://localhost:" + mappedPort + "/";
+        // Navigate to login page using proper URL resolution (LOCAL vs DOCKER mode aware)
+        String loginUrl = configuration.driver.PlaywrightDriverPool.getAppUrl();
         page.navigate(loginUrl);
         LOGGER.info("Navigated to login page: {}", loginUrl);
         
