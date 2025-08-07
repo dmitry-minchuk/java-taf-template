@@ -19,6 +19,46 @@ Rules of Engagement:
 6. Do not add Java-doc. 
 7. Do not use Selenium style for new logic. You must copy Page -> Component -> Element hierarchy and inner methods logic, but use Playwright specific functionality in its native way (check with Context7) - no selenium-like waiters, no timeouts
 
+## **RESOLVED ISSUES** ✅
+
+### **Issue: Playwright Docker Container CDP Not Available**
+**Problem**: Manual `docker run cdp-browser` works with CDP on port 9222, but TestContainers version doesn't expose the endpoint.
+
+**Root Cause**: The `cdp-browser` image uses Chrome on internal port 9223 + socat proxy to port 9222. TestContainers wait strategy was too short (5s) for Chrome+socat initialization.
+
+**Solution**: 
+- Increased `withStartupTimeout` from 5s to 30s in `PlaywrightDockerDriverPool.java:139`
+- Enhanced logging for CDP endpoint debugging in lines 149-159
+
+### **Issue: Container Networking - Playwright Docker Mode Login Failure**
+**Problem**: Playwright Docker containers couldn't reach app containers due to localhost URL usage in login service.
+
+**Root Cause**: `PlaywrightLoginService.login()` used hardcoded localhost URLs, but in DOCKER mode Playwright runs in container and must use container network URLs.
+
+**Solution**:
+- Added `PlaywrightDriverPool.getAppUrl()` method with execution mode detection:
+  - `PLAYWRIGHT_LOCAL`: Returns localhost:{mappedPort} URL
+  - `PLAYWRIGHT_DOCKER`: Returns container network URL (http://appcontainer-xxx:8080)
+- Updated `PlaywrightLoginService.java:27` to use `PlaywrightDriverPool.getAppUrl()` instead of localhost
+- Test now passes successfully: `Tests run: 1, Failures: 0, Errors: 0, Skipped: 0`
+
+**Files Modified**: 
+- `src/main/java/configuration/driver/PlaywrightDriverPool.java` - Added getAppUrl() method (lines 353-394)
+- `src/main/java/helpers/service/PlaywrightLoginService.java` - Use getAppUrl() for navigation (line 27)
+
+### **Issue: Jenkins CDP Browser Image Availability**
+**Problem**: Jenkins Pipeline uses `PLAYWRIGHT_DOCKER` mode but `cdp-browser` image wasn't built on Jenkins workers, causing test failures.
+
+**Root Cause**: Jenkinsfile pulled standard Docker images (studio, ws) but didn't build the custom `cdp-browser` image required for Playwright Docker mode.
+
+**Solution**:
+- Added CDP browser image build in Jenkinsfile after checkout (lines 131-135)
+- Image builds on each Jenkins worker node before test execution
+- Uses existing `cdp_browser_dockerfile` for consistent image creation
+
+**Files Modified**:
+- `Jenkinsfile` - Added Docker build commands for cdp-browser image (lines 131-135)
+
 ### **ARCHITECTURAL OVERVIEW** 🏗️
 ```
 Components → PlaywrightDriverPool (Unified Interface)

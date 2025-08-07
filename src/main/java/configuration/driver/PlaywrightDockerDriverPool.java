@@ -22,8 +22,8 @@ public class PlaywrightDockerDriverPool {
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();
 
     // Playwright Docker image constants  
-    private static final String PLAYWRIGHT_DOCKER_IMAGE = "cdp-browser";
-    private static final String DEFAULT_PLAYWRIGHT_VERSION = "latest";
+    private static final String CDP_BROWSER_DOCKER_IMAGE = "cdp-browser";
+    private static final String CDP_BROWSER_VERSION = "latest";
 
     // File system binding configuration - same as DriverFactory for consistency
     private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
@@ -126,10 +126,10 @@ public class PlaywrightDockerDriverPool {
     private static GenericContainer<?> createPlaywrightContainer(Network network, String browserName) {
         String playwrightVersion = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER_VERSION);
         if (playwrightVersion == null || playwrightVersion.isEmpty() || "latest".equals(playwrightVersion)) {
-            playwrightVersion = DEFAULT_PLAYWRIGHT_VERSION;
+            playwrightVersion = CDP_BROWSER_VERSION;
         }
 
-        DockerImageName dockerImageName = DockerImageName.parse(PLAYWRIGHT_DOCKER_IMAGE + ":" + playwrightVersion);
+        DockerImageName dockerImageName = DockerImageName.parse(CDP_BROWSER_DOCKER_IMAGE + ":" + playwrightVersion);
 
         GenericContainer<?> container = new GenericContainer<>(dockerImageName)
                 .withNetwork(network)
