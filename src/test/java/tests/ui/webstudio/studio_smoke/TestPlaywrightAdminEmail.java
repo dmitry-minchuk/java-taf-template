@@ -53,7 +53,7 @@ public class TestPlaywrightAdminEmail extends BaseTest {
 
         // Step 4: Load email credentials from test data properties file
         Properties emailProperties = TestDataUtil.makePropertiesFromFile("TestAdminEmailWebStudio.properties");
-        String emailUrl = emailProperties.getProperty("mail.urll");
+        String emailUrl = emailProperties.getProperty("mail.url");
         String emailUsername = emailProperties.getProperty("mail.username");
         String emailPassword = emailProperties.getProperty("mail.password");
         
