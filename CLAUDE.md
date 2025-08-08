@@ -52,12 +52,14 @@ Rules of Engagement:
 **Root Cause**: Jenkinsfile pulled standard Docker images (studio, ws) but didn't build the custom `cdp-browser` image required for Playwright Docker mode.
 
 **Solution**:
-- Added CDP browser image build in Jenkinsfile after checkout (lines 131-135)
-- Image builds on each Jenkins worker node before test execution
-- Uses existing `cdp_browser_dockerfile` for consistent image creation
+- Created separate Jenkins stage `Build CDP Browser Image` (lines 117-145)
+- Stage runs after settings cleanup and before test execution
+- Performs single checkout on each node and builds CDP browser image
+- Test suites reuse the same workspace without additional checkout
+- Eliminates duplicate Git operations and improves pipeline efficiency
 
 **Files Modified**:
-- `Jenkinsfile` - Added Docker build commands for cdp-browser image (lines 131-135)
+- `Jenkinsfile` - Added separate `Build CDP Browser Image` stage and optimized `Run Test Suites` stage
 
 ### **ARCHITECTURAL OVERVIEW** 🏗️
 ```
