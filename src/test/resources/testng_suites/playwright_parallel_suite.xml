@@ -6,11 +6,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="PlaywrightParallelTest">
-        <classes>
-            <class name="tests.ui.webstudio.studio_smoke.TestPlaywrightAdminEmail"/>
-            <class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddProperty"/>
-        </classes>
-    </test>
-
+    <test name="StudioSmoke.TestPlaywrightAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestPlaywrightAdminEmail"/></classes></test>
+    <test name="StudioSmoke.TestPlaywrightAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddProperty"/></classes></test>
 </suite>
