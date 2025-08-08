@@ -59,7 +59,31 @@ Rules of Engagement:
 - Eliminates duplicate Git operations and improves pipeline efficiency
 
 **Files Modified**:
-- `Jenkinsfile` - Added separate `Build CDP Browser Image` stage and optimized `Run Test Suites` stage
+- `Jenkinsfile` - Removed CDP Browser build stage (no longer needed with official Playwright image)
+
+### **Issue: Migration to Official Playwright Server**
+**Problem**: Custom CDP browser approach was complex and error-prone. Official Playwright documentation recommends using Playwright Server for remote connections.
+
+**Root Cause**: Framework used custom `cdp-browser` image with Chrome + socat proxy, but official Playwright offers better WebSocket-based server approach.
+
+**Solution**:
+- Migrated from custom CDP browser to official `mcr.microsoft.com/playwright:v1.52.0-noble` image
+- Changed from CDP connection to WebSocket-based Playwright Server connection
+- Replaced browser.connectOverCDP() with browser.connect() using WebSocket URL
+- Updated container command to run `npx playwright run-server` instead of Chrome + socat
+- Container now listens on port 3000 with Playwright Server instead of port 9222 with CDP
+
+**Architecture Change**:
+```
+OLD: Java Tests → CDP → Custom Chrome Container (cdp-browser)
+NEW: Java Tests → WebSocket → Official Playwright Server Container
+```
+
+**Test Results**: `Tests run: 1, Failures: 0, Errors: 0, Skipped: 0` - Migration successful!
+
+**Files Modified**:
+- `src/main/java/configuration/driver/PlaywrightDockerDriverPool.java` - Migrated to Playwright Server approach
+- `Jenkinsfile` - Removed CDP Browser build stage (no longer needed with official image)
 
 ### **ARCHITECTURAL OVERVIEW** 🏗️
 ```

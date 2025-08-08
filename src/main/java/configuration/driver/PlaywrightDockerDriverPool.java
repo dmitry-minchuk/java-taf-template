@@ -21,9 +21,9 @@ public class PlaywrightDockerDriverPool {
 
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();
 
-    // Playwright Docker image constants  
-    private static final String CDP_BROWSER_DOCKER_IMAGE = "cdp-browser";
-    private static final String CDP_BROWSER_VERSION = "latest";
+    // Playwright Docker image constants (to run java tests on the server's localhost but use Playwright Server in official browser container)
+    private static final String PLAYWRIGHT_DOCKER_IMAGE = "mcr.microsoft.com/playwright";
+    private static final String PLAYWRIGHT_VERSION = "v1.52.0-noble";
 
     // File system binding configuration - same as DriverFactory for consistency
     private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
@@ -126,36 +126,35 @@ public class PlaywrightDockerDriverPool {
     private static GenericContainer<?> createPlaywrightContainer(Network network, String browserName) {
         String playwrightVersion = ProjectConfiguration.getProperty(PropertyNameSpace.BROWSER_VERSION);
         if (playwrightVersion == null || playwrightVersion.isEmpty() || "latest".equals(playwrightVersion)) {
-            playwrightVersion = CDP_BROWSER_VERSION;
+            playwrightVersion = PLAYWRIGHT_VERSION;
         }
 
-        DockerImageName dockerImageName = DockerImageName.parse(CDP_BROWSER_DOCKER_IMAGE + ":" + playwrightVersion);
+        DockerImageName dockerImageName = DockerImageName.parse(PLAYWRIGHT_DOCKER_IMAGE + ":" + playwrightVersion);
 
         GenericContainer<?> container = new GenericContainer<>(dockerImageName)
                 .withNetwork(network)
-                .withExposedPorts(9222) // CDP port for remote browser connection
-                .waitingFor(Wait.forHttp("/json/version")
-                    .forPort(9222)
-                    .withStartupTimeout(Duration.ofSeconds(30))) // Увеличиваем timeout для Chrome + socat
-                .withPrivilegedMode(true) // Security best practice
+                .withExposedPorts(3000) // Playwright Server port
+                .withCommand("/bin/sh", "-c", "npx -y playwright@1.52.0 run-server --port 3000 --host 0.0.0.0")
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30))) // Wait for port 3000 to be listening
+                .withWorkingDirectory("/home/pwuser")
                 .withSharedMemorySize(2147483648L) // 2GB shared memory for browsers
                 .withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
 
 
-        LOGGER.info("Creating Browser Docker container with image: {}", dockerImageName);
+        LOGGER.info("Creating Playwright Server Docker container with image: {}", dockerImageName);
         LOGGER.info("Volume mapping configured: {} (host) -> {} (container)", HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH);
         
-        LOGGER.info("Starting container and waiting for CDP endpoint...");
+        LOGGER.info("Starting container and waiting for Playwright Server...");
         container.start();
         
         // Log container startup information
         LOGGER.info("Container started - ID: {}", container.getContainerId());
-        LOGGER.info("Mapped CDP port: {}:{} -> 9222", container.getHost(), container.getMappedPort(9222));
+        LOGGER.info("Mapped Playwright Server port: {}:{} -> 3000", container.getHost(), container.getMappedPort(3000));
         LOGGER.info("Container startup logs:\n{}", container.getLogs());
         
-        // Test CDP endpoint availability
-        String cdpEndpoint = "http://" + container.getHost() + ":" + container.getMappedPort(9222) + "/json/version";
-        LOGGER.info("CDP endpoint ready: {}", cdpEndpoint);
+        // Test Playwright Server availability
+        String serverEndpoint = "http://" + container.getHost() + ":" + container.getMappedPort(3000);
+        LOGGER.info("Playwright Server ready: {}", serverEndpoint);
 
         return container;
     }
@@ -163,46 +162,36 @@ public class PlaywrightDockerDriverPool {
     // Connect to Playwright server running inside the Docker container
     private static Playwright connectToPlaywrightContainer(GenericContainer<?> container) {
         try {
-            // Create local Playwright instance for API access
+            // Create local Playwright instance for server connection
             Playwright playwright = Playwright.create();
 
-            LOGGER.info("Created Browser instance for remote container connection");
+            LOGGER.info("Created Playwright instance for server connection");
             return playwright;
 
         } catch (Exception e) {
             LOGGER.error("Failed to create Playwright instance: {}", e.getMessage());
-            throw new RuntimeException("Browser instance creation failed", e);
+            throw new RuntimeException("Playwright instance creation failed", e);
         }
     }
 
-    // Get CDP HTTP endpoint URL for container connection
-    private static String getContainerCdpEndpoint(GenericContainer<?> container) {
-        String playwrightHost = container.getHost();
-        int playwrightPort = container.getMappedPort(9222);
-        String httpEndpoint = "http://" + playwrightHost + ":" + playwrightPort;
-
-        LOGGER.info("Container CDP endpoint: {}", httpEndpoint);
-        return httpEndpoint;
-    }
 
     // Connect to browser running in the containerized environment
     private static Browser launchContainerizedBrowser(Playwright playwright, String browserName, GenericContainer<?> container) {
         try {
-            // Get CDP endpoint from container
-            String httpEndpoint = getContainerCdpEndpoint(container);
+            // Get WebSocket endpoint from Playwright Server container
+            String playwrightHost = container.getHost();
+            int playwrightPort = container.getMappedPort(3000);
+            String wsEndpoint = String.format("ws://%s:%d/", playwrightHost, playwrightPort);
 
-            // For CDP connection, we only support Chromium (since we're running Chrome in container)
-            BrowserType browserType = playwright.chromium();
-            LOGGER.debug("Connecting to Chrome browser in container via CDP");
-
-            // Connect to remote Chrome browser running in container via CDP
-            Browser browser = browserType.connectOverCDP(httpEndpoint);
-            LOGGER.info("Connected to Chrome browser in Playwright container via CDP endpoint: {}", httpEndpoint);
+            // Connect to browser via WebSocket to Playwright Server
+            BrowserType browserType = playwright.chromium(); // Support for other browsers can be added
+            Browser browser = browserType.connect(wsEndpoint);
+            LOGGER.info("Connected to browser in Playwright Server via WebSocket: {}", wsEndpoint);
             return browser;
 
         } catch (Exception e) {
-            LOGGER.error("Failed to connect to container browser: {}", e.getMessage(), e);
-            throw new RuntimeException("Container browser connection failed", e);
+            LOGGER.error("Failed to connect to Playwright Server browser: {}", e.getMessage(), e);
+            throw new RuntimeException("Playwright Server browser connection failed", e);
         }
     }
 
@@ -216,7 +205,7 @@ public class PlaywrightDockerDriverPool {
                 .setIgnoreHTTPSErrors(true);
 
         // Container-specific user agent
-        contextOptions.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Playwright-Container");
+        contextOptions.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Playwright-Server");
 
         if (network != null) {
             LOGGER.debug("Browser context configured for container network: {}", network.getId());
