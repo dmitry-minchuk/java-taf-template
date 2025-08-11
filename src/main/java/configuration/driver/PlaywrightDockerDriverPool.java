@@ -95,7 +95,7 @@ public class PlaywrightDockerDriverPool {
                 GenericContainer<?> playwrightContainer = createPlaywrightContainer(network, browserName);
 
                 // Connect to containerized Playwright
-                Playwright playwright = connectToPlaywrightContainer(playwrightContainer);
+                Playwright playwright = connectToPlaywrightContainer();
 
                 // Connect to browser running in the container
                 Browser browser = launchContainerizedBrowser(playwright, browserName, playwrightContainer);
@@ -160,7 +160,7 @@ public class PlaywrightDockerDriverPool {
     }
 
     // Connect to Playwright server running inside the Docker container
-    private static Playwright connectToPlaywrightContainer(GenericContainer<?> container) {
+    private static Playwright connectToPlaywrightContainer() {
         try {
             // Create local Playwright instance for server connection
             Playwright playwright = Playwright.create();
@@ -173,7 +173,6 @@ public class PlaywrightDockerDriverPool {
             throw new RuntimeException("Playwright instance creation failed", e);
         }
     }
-
 
     // Connect to browser running in the containerized environment
     private static Browser launchContainerizedBrowser(Playwright playwright, String browserName, GenericContainer<?> container) {
@@ -241,9 +240,6 @@ public class PlaywrightDockerDriverPool {
         return context.getBrowserContext();
     }
 
-    /**
-     * Get the current Network instance for this thread
-     */
     public static Network getNetwork() {
         PlaywrightDockerContext context = threadLocalContext.get();
         if (context == null) {
@@ -252,9 +248,6 @@ public class PlaywrightDockerDriverPool {
         return context.getNetwork();
     }
 
-    /**
-     * Close Playwright Docker and clean up resources for current thread
-     */
     public static void closePlaywrightDocker() {
         PlaywrightDockerContext context = threadLocalContext.get();
         if (context != null) {
@@ -286,7 +279,6 @@ public class PlaywrightDockerDriverPool {
 
     public static void navigateTo(String url) {
         Page page = getPage();
-
         // Container network URL resolution for Playwright container
         String resolvedUrl = resolveContainerNetworkUrl(url);
 
@@ -347,10 +339,8 @@ public class PlaywrightDockerDriverPool {
             var appContainer = appData.getAppContainer();
             String containerName = appContainer.getContainerName(); // Docker network hostname
 
-            String defaultAppPort = configuration.projectconfig.ProjectConfiguration.getProperty(
-                    configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT);
-            String deployedAppPath = configuration.projectconfig.ProjectConfiguration.getProperty(
-                    configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
+            String defaultAppPort = ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT);
+            String deployedAppPath = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
 
             // Direct container-to-container URL via Docker network
             String containerNetworkUrl = String.format("http://%s:%s%s", containerName, defaultAppPort, deployedAppPath);
@@ -402,11 +392,11 @@ public class PlaywrightDockerDriverPool {
         return context.getPlaywrightContainer();
     }
 
-    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) throws java.io.IOException {
+    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) {
         return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
     }
 
-    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) throws java.io.IOException {
+    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) {
         return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger, timeoutMs);
     }
 }
