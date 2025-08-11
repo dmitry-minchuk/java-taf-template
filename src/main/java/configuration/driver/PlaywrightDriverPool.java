@@ -313,13 +313,10 @@ public class PlaywrightDriverPool {
                     configuration.appcontainer.AppContainerData appData = configuration.appcontainer.AppContainerPool.get();
                     if (appData != null) {
                         var container = appData.getAppContainer();
-                        Integer defaultAppPort = Integer.parseInt(
-                            configuration.projectconfig.ProjectConfiguration.getProperty(
-                                configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT));
+                        Integer defaultAppPort = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
                         Integer mappedPort = container.getMappedPort(defaultAppPort);
                         
-                        String deployedAppPath = configuration.projectconfig.ProjectConfiguration.getProperty(
-                            configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
+                        String deployedAppPath = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
                         
                         String hostUrl = String.format("http://localhost:%d%s", mappedPort, deployedAppPath);
                         LOGGER.info("Navigating to application via host URL (LOCAL): {}", hostUrl);
@@ -363,13 +360,10 @@ public class PlaywrightDriverPool {
                 case PLAYWRIGHT_LOCAL -> {
                     // For local mode, use mapped port URL (Playwright runs on host)
                     var container = appData.getAppContainer();
-                    Integer defaultAppPort = Integer.parseInt(
-                        configuration.projectconfig.ProjectConfiguration.getProperty(
-                            configuration.projectconfig.PropertyNameSpace.DEFAULT_APP_PORT));
+                    Integer defaultAppPort = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
                     Integer mappedPort = container.getMappedPort(defaultAppPort);
                     
-                    String deployedAppPath = configuration.projectconfig.ProjectConfiguration.getProperty(
-                        configuration.projectconfig.PropertyNameSpace.DEPLOYED_APP_PATH);
+                    String deployedAppPath = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
                     
                     String hostUrl = String.format("http://localhost:%d%s", mappedPort, deployedAppPath);
                     LOGGER.info("App URL for LOGIN service (LOCAL): {}", hostUrl);

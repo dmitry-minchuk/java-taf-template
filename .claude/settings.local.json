@@ -27,7 +27,8 @@
       "mcp__playwright__playwright_select",
       "Bash(python:*)",
       "Bash(docker inspect:*)",
-      "WebFetch(domain:playwright.dev)"
+      "WebFetch(domain:playwright.dev)",
+      "Bash(git show:*)"
     ],
     "deny": []
   }
