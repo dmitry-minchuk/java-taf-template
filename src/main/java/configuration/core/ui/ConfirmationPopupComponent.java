@@ -46,13 +46,6 @@ public class ConfirmationPopupComponent {
     public ConfirmationPopupComponent() {
         // No longer extends BasePageComponent - no super() call needed
     }
-    
-    // Initialize with Playwright page
-    public void initPlaywright(Page page, String rootSelector) {
-        this.page = page;
-        // Note: rootSelector ignored for global confirmation popup
-        // Components will be initialized by PlaywrightPageFactory separately
-    }
 
     public void confirm() {
         if (confirmOkBtn.isDisplayed(2)) {

@@ -60,9 +60,6 @@ public abstract class BasePageComponent {
         this.rootSelector = rootSelector;
         LOGGER.debug("Initializing component with Playwright: {} (selector: {})", 
                     this.getClass().getSimpleName(), rootSelector);
-        
-        confirmationPopup = new ConfirmationPopupComponent();
-        confirmationPopup.initPlaywright(page, ""); // Global popup selector
     }
 
     // Presence check supporting both Selenium and Playwright modes
