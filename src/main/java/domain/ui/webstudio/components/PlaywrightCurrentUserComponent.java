@@ -2,6 +2,7 @@ package domain.ui.webstudio.components;
 
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
+import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
 
 public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent {
@@ -13,7 +14,7 @@ public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent 
     private PlaywrightWebElement signOutMenuItem;
 
     public PlaywrightCurrentUserComponent() {
-        super(configuration.driver.PlaywrightDriverPool.getPage());
+        super(PlaywrightDriverPool.getPage());
         initializeComponents();
     }
     
