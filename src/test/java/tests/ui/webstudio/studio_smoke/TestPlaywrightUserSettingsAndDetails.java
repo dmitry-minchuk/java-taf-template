@@ -49,12 +49,8 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
-        myProfileComponent.setFirstName("");
-        myProfileComponent.setLastName("");
-        myProfileComponent.setEmail("");
-        myProfileComponent.saveProfile();
-        myProfileComponent.setDisplayName("");
-        myProfileComponent.saveProfile();
+        myProfileComponent.setFirstName("").setLastName("").setEmail("").saveProfile();
+        myProfileComponent.setDisplayName("").saveProfile();
 
         // Scenario 2: Verify empty profile fields (lines 45-57 from original)
         myProfileComponent = editorPage.getCurrentUserComponent()
@@ -74,10 +70,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         // Note: Password fields typically don't show values for security
 
         // Scenario 3: Update profile and check users table (lines 58-76 from original)
-        myProfileComponent.setFirstName("Abc");
-        myProfileComponent.setLastName("Bcd");
-        myProfileComponent.setEmail("admin@admin.com");
-        myProfileComponent.saveProfile();
+        myProfileComponent.setFirstName("Abc").setLastName("Bcd").setEmail("admin@admin.com").saveProfile();
 
         myProfileComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
@@ -100,10 +93,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
-        myProfileComponent.setCurrentPassword("admin");
-        myProfileComponent.setNewPassword("12345");
-        myProfileComponent.setConfirmPassword("12345");
-        myProfileComponent.saveProfile();
+        myProfileComponent.setCurrentPassword("admin").setNewPassword("12345").setConfirmPassword("12345").saveProfile();
 
         // Logout and test old password (should fail)
         editorPage.getCurrentUserComponent().signOut();
@@ -149,8 +139,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         // Note: Password fields typically don't show values for security reasons
         
         // Change display name
-        myProfileComponent.setDisplayName("Bbb Aaa");
-        myProfileComponent.saveProfile();
+        myProfileComponent.setDisplayName("Bbb Aaa").saveProfile();
         
         // Verify display name change
         myProfileComponent = editorPage.getCurrentUserComponent()
@@ -199,9 +188,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
-        mySettingsComponent.setShowFormulas(true);
-        mySettingsComponent.setShowHeader(false);
-        mySettingsComponent.saveSettings();
+        mySettingsComponent.setShowFormulas(true).setShowHeader(false).saveSettings();
 
         // Return to table and verify
         editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
@@ -236,10 +223,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
-        mySettingsComponent.setTestsPerPage(20);
-        mySettingsComponent.setFailuresOnly(true);
-        mySettingsComponent.setCompoundResult(true);
-        mySettingsComponent.saveSettings();
+        mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
         String nameExample1Project = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, EXAMPLE_1.getValue());
@@ -289,8 +273,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
-        mySettingsComponent.setShowNumbersWithoutFormatting(true);
-        mySettingsComponent.saveSettings();
+        mySettingsComponent.setShowNumbersWithoutFormatting(true).saveSettings();
 
         editorPage.getTableToolbarPanelComponent().clickTrace();
         traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
@@ -314,8 +297,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
-        mySettingsComponent.setShowNumbersWithoutFormatting(false);
-        mySettingsComponent.saveSettings();
+        mySettingsComponent.setShowNumbersWithoutFormatting(false).saveSettings();
 
         // Scenario 17: Final E-notation verification
         editorPage.getTableToolbarPanelComponent().clickTrace();
