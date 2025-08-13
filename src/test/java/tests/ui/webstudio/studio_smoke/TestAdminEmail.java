@@ -31,8 +31,7 @@ public class TestAdminEmail extends BaseTest {
         EmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
 
         // Verify "Email" tab contains non active checkbox "Enable email address verification"
-        Assert.assertFalse(emailPageComponent.isEmailVerificationEnabled(),
-            "Email verification checkbox should be initially disabled");
+        Assert.assertFalse(emailPageComponent.isEmailVerificationEnabled(), "Email verification checkbox should be initially disabled");
 
         Properties emailProperties = TestDataUtil.makePropertiesFromFile("TestAdminEmailWebStudio.properties");
         String emailUrl = emailProperties.getProperty("mail.url");
@@ -45,20 +44,14 @@ public class TestAdminEmail extends BaseTest {
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
         adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
         emailPageComponent = adminPage.navigateToEmailPage();
-        Assert.assertTrue(emailPageComponent.isEmailVerificationEnabled(),
-            "Email verification should remain enabled after restart");
-        Assert.assertEquals(emailPageComponent.getEmailUrl(), emailUrl,
-            "Email URL should be persisted after restart");
-        Assert.assertEquals(emailPageComponent.getEmailUsername(), emailUsername,
-            "Email username should be persisted after restart");
-        Assert.assertNotEquals(emailPageComponent.getEmailPassword(), emailPassword,
-                "Password should not be displayed in plain text");
+        Assert.assertTrue(emailPageComponent.isEmailVerificationEnabled(), "Email verification should remain enabled after restart");
+        Assert.assertEquals(emailPageComponent.getEmailUrl(), emailUrl, "Email URL should be persisted after restart");
+        Assert.assertEquals(emailPageComponent.getEmailUsername(), emailUsername, "Email username should be persisted after restart");
+        Assert.assertNotEquals(emailPageComponent.getEmailPassword(), emailPassword, "Password should not be displayed in plain text");
 
         // Step 5: Press eye on password field for email - Email password is not shown
         emailPageComponent.togglePasswordVisibility();
-        // Note: Password field behavior verification depends on the actual implementation
-        // The password should not be visible in plain text even after toggle
-        Assert.assertNotEquals(emailPageComponent.getEmailPassword(), emailPassword,
-            "Password should not be displayed in plain text");
+        // Note: Password field behavior verification depends on the actual implementation. The password should not be visible in plain text even after toggle
+        Assert.assertNotEquals(emailPageComponent.getEmailPassword(), emailPassword, "Password should not be displayed in plain text");
     }
 }

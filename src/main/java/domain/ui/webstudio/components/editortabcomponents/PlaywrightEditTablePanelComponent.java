@@ -13,6 +13,9 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
     private PlaywrightWebElement redoChangesBtn;
     private PlaywrightWebElement insertRowAfterBtn;
     private PlaywrightWebElement removeRowBtn;
+    private PlaywrightWebElement tableElement;
+    private PlaywrightWebElement cellTemplate;
+    private PlaywrightWebElement rowTemplate;
 
     public PlaywrightEditTablePanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -30,6 +33,9 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
         redoChangesBtn = createScopedElement("xpath=./img[@title='Redo changes']", "redoChangesBtn");
         insertRowAfterBtn = createScopedElement("xpath=./img[@title='Insert row after']", "insertRowAfterBtn");
         removeRowBtn = createScopedElement("xpath=./img[@title='Remove row']", "removeRowBtn");
+        tableElement = createScopedElement("xpath=.//table[contains(@class,'dataTable')] | .//table", "tableElement");
+        cellTemplate = createScopedElement("xpath=.//table[contains(@class,'dataTable')]//tr[%d]//td[%d] | .//table//tr[%d]//td[%d]", "cellContent");
+        rowTemplate = createScopedElement("xpath=.//table[contains(@class,'dataTable')]//tr | .//table//tr", "rowElement");
     }
 
     public void saveChanges() {
@@ -62,5 +68,34 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
 
     public boolean isRedoChangesEnabled() {
         return redoChangesBtn.isEnabled();
+    }
+
+    // Table manipulation methods for test compatibility
+    public String getCellContent(int row, int column) {
+        PlaywrightWebElement cell = cellTemplate.format(row, column, row, column);
+        if (cell.isVisible()) {
+            return cell.getText();
+        }
+        return "";
+    }
+
+    public int getRowsCount() {
+        if (tableElement.isVisible()) {
+            return page.locator("xpath=.//table//tr").count();
+        }
+        return 0;
+    }
+
+    public void setCellContent(int row, int column, String value) {
+        PlaywrightWebElement cell = cellTemplate.format(row, column, row, column);
+        if (cell.isVisible()) {
+            cell.click();
+            cell.clear();
+            cell.fill(value);
+        }
+    }
+
+    public boolean isTableVisible() {
+        return tableElement.isVisible();
     }
 }
