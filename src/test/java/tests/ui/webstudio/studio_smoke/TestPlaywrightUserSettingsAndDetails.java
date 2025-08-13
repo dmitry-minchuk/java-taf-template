@@ -4,17 +4,18 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.TableComponent;
+import configuration.core.ui.PlaywrightTableComponent;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
-import domain.ui.webstudio.components.TabSwitcherComponent;
-import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
-import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
-import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.LoginService;
+import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
+import domain.ui.webstudio.components.admincomponents.PlaywrightMyProfilePageComponent;
+import domain.ui.webstudio.components.admincomponents.PlaywrightMySettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.PlaywrightUsersPageComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
+import helpers.service.PlaywrightLoginService;
 import helpers.service.UserService;
 import helpers.service.WorkflowService;
 import org.apache.logging.log4j.LogManager;
@@ -39,19 +40,19 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightUserSettingsAndDetails() {
 
-        LoginService loginService = new LoginService();
+        PlaywrightLoginService loginService = new PlaywrightLoginService(configuration.driver.PlaywrightDriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
-        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
-        MyProfilePageComponent myProfileComponent = editorPage
+        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        PlaywrightMyProfilePageComponent myProfileComponent = editorPage
                 .getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
-        myProfileComponent.setFirstName("")
-                .setLastName("")
-                .setEmail("")
-                .saveProfile();
+        myProfileComponent.setFirstName("");
+        myProfileComponent.setLastName("");
+        myProfileComponent.setEmail("");
+        myProfileComponent.saveProfile();
         myProfileComponent.setDisplayName("");
         myProfileComponent.saveProfile();
 
@@ -89,10 +90,10 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         myProfileComponent.cancelProfile();
 
         // Verify in Users page - using existing methods
-        UsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
+        PlaywrightUsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToUsersPage();
-        // Note: User verification depends on available methods in UsersPageComponent
+        // Note: User verification depends on available methods in PlaywrightUsersPageComponent
 
         // Scenario 4: Change password and test authentication (lines 77-95 from original)
         myProfileComponent = editorPage.getCurrentUserComponent()
@@ -127,7 +128,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .navigateToUsersPage();
 
         // Create new user1 with full details
-        usersComponent.createUser("user1", "Aaa Bbb", "user1@example.com", "user1");
+        usersComponent.addNewUser("user1", "user1@example.com", "Aaa", "Bbb", "user1");
         
         // Logout admin and login as user1
         editorPage.getCurrentUserComponent().signOut();
@@ -162,14 +163,14 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         usersComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToUsersPage();
-        Assert.assertEquals(usersComponent.getUserFullName("user1"), "Bbb Aaa", "Display name should be updated in users table");
+        Assert.assertEquals(usersComponent.getSpecificUserElement("user1", "users-displayname"), "Bbb Aaa", "Display name should be updated in users table");
 
         // Scenario 6: Check default settings (lines 133-143 from original)
         editorPage.getCurrentUserComponent().signOut();
         UserData adminNewPassword = new UserData("admin", "12345");
         editorPage = loginService.login(adminNewPassword);
 
-        MySettingsPageComponent mySettingsComponent = editorPage.getCurrentUserComponent()
+        PlaywrightMySettingsPageComponent mySettingsComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
@@ -183,15 +184,15 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
         String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, testFileName + ".xlsx");
-        editorPage = new EditorPage();
+        editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
 
-        TableComponent tableComponent = editorPage.getCenterTable();
+        PlaywrightTableComponent tableComponent = editorPage.getCenterTable();
         Assert.assertEquals(tableComponent.getCellText(3, 2), "2500", "Cell content should be '2500'");
 
         // Change settings to show formulas and headers
@@ -203,7 +204,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.saveSettings();
 
         // Return to table and verify
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
         Assert.assertEquals(tableComponent.getRowCount(), 7, "Table should have 7 rows");
         Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
 
@@ -212,13 +213,13 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         editorPage = loginService.login(user1Data);
         
         // Navigate to the same project as user1
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
         // Open the project using repository methods
-        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
 
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
         
@@ -242,7 +243,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
         String nameExample1Project = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, EXAMPLE_1.getValue());
-        editorPage = new EditorPage();
+        editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
 
         // Test execution dropdown verification would be done through TableToolbarPanelComponent
@@ -274,14 +275,13 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
         // Scenario 13: Trace without formatting
-        var traceWindow = editorPage.getTableToolbarPanelComponent()
-                .clickTrace()
-                .clickTraceInsideMenu();
+        editorPage.getTableToolbarPanelComponent().clickTrace();
+        var traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
         var traceItems = traceWindow.getVisibleItemsFromTree();
         assertThat(traceItems.get(0)).contains("SpreadSheet Double TotalAssets4() = 268.59");
 
@@ -292,9 +292,8 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.setShowNumbersWithoutFormatting(true);
         mySettingsComponent.saveSettings();
 
-        traceWindow = editorPage.getTableToolbarPanelComponent()
-                .clickTrace()
-                .clickTraceInsideMenu();
+        editorPage.getTableToolbarPanelComponent().clickTrace();
+        traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
         traceItems = traceWindow.getVisibleItemsFromTree();
         assertThat(traceItems.get(0)).contains("268.59000000000003"); // Unformatted number
 
@@ -303,10 +302,9 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .expandFolderInTree("TBasic")
                 .selectItemInFolder("TBasic", "SetNonZeroValues");
 
-        traceWindow = editorPage.getTableToolbarPanelComponent()
-                .clickTrace()
-                .setFactorTextField("0")
-                .clickTraceInsideMenu();
+        editorPage.getTableToolbarPanelComponent().clickTrace();
+        editorPage.getTableToolbarPanelComponent().setFactorTextField("0");
+        traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
 
         traceWindow.expandItemInTree(1);
         traceItems = traceWindow.getVisibleItemsFromTree();
@@ -320,10 +318,9 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.saveSettings();
 
         // Scenario 17: Final E-notation verification
-        traceWindow = editorPage.getTableToolbarPanelComponent()
-                .clickTrace()
-                .setFactorTextField("0")
-                .clickTraceInsideMenu();
+        editorPage.getTableToolbarPanelComponent().clickTrace();
+        editorPage.getTableToolbarPanelComponent().setFactorTextField("0");
+        traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
         traceWindow.expandItemInTree(1);
         traceItems = traceWindow.getVisibleItemsFromTree();
         assertThat(traceItems.get(1)).contains("0.0001").doesNotContain("E-");
