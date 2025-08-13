@@ -105,7 +105,7 @@ public abstract class PlaywrightBasePageComponent {
     }
     
     /**
-     * Creates a scoped child component using reflection with automatic element creation.
+     * Creates a scoped child component using reflection with automatic element creation. - WE NEED TO USE THIS METHOD MOSTLY
      * 
      * <p>This method dynamically creates child components by first creating a scoped element with the
      * provided selector, then instantiating the component class using its PlaywrightWebElement constructor.

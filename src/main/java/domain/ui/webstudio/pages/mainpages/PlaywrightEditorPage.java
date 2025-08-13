@@ -16,11 +16,6 @@ import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLef
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
-/**
- * Playwright version of EditorPage - Main editor interface page
- * Contains all editor components: left project selector, rules tree, right table details
- * Matches original EditorPage architecture with Playwright-native components
- */
 @Getter
 public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
 

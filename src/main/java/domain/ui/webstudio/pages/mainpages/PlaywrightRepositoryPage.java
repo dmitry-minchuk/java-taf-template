@@ -14,11 +14,6 @@ import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Playwright version of RepositoryPage - Main repository interface for project creation
- * URL: /faces/pages/modules/repository/index.xhtml
- * Contains TabSwitcherComponent and CreateNewProjectComponent for complete workflow
- */
 @Getter
 public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
 
