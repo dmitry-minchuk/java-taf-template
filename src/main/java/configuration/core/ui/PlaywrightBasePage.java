@@ -2,10 +2,14 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
 import configuration.appcontainer.AppContainerPool;
+import configuration.core.ui.factory.PlaywrightComponentFactory;
+import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
+import configuration.core.ui.factory.PlaywrightListFactory;
 import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.util.List;
 
 public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePage.class);
@@ -54,5 +58,27 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
     @Override
     public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
+    }
+    
+    //Creates list of components from selector.
+    @Override
+    public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName) {
+        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, baseName, page, null);
+    }
+    
+    //Creates list of components from selector.
+    @Override
+    public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector) {
+        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, page, null);
+    }
+    
+    //Finds list of elements on page.
+    public List<PlaywrightWebElement> findElements(String selector, String baseName) {
+        return PlaywrightListFactory.createElementsList(page, null, selector, baseName);
+    }
+    
+    //Finds list of elements on page.
+    public List<PlaywrightWebElement> findElements(String selector) {
+        return PlaywrightListFactory.createElementsList(page, null, selector);
     }
 }
