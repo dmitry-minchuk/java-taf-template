@@ -5,7 +5,6 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.TestDataUtil;
 
-// Playwright version of ExcelFilesComponent for file upload functionality validation
 public class PlaywrightExcelFilesComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement fileInputField;
@@ -24,20 +23,12 @@ public class PlaywrightExcelFilesComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        // File input field: "xpath=.//div[@id='createProjectFormFiles:file']//input[@accept='xls, xlsx, xlsm']"
         fileInputField = createScopedElement("xpath=.//div[@id='createProjectFormFiles:file']//input[@accept='xls, xlsx, xlsm']", "fileInputField");
-        
-        // Project name field: "xpath=.//input[@id='createProjectFormFiles:projectName']"
         projectNameField = createScopedElement("xpath=.//input[@id='createProjectFormFiles:projectName']", "projectNameField");
-        
-        // Create project button: "#createProjectFormFiles\:sbtFilesBtn"
         createProjectBtn = createScopedElement("#createProjectFormFiles\\:sbtFilesBtn", "createProjectBtn");
-        
-        // Cancel button: "xpath=.//input[@value='Cancel']"
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
-    // CRITICAL METHOD for file upload validation across LOCAL/DOCKER modes
     public void createProjectFromExcelFile(String fileName, String projectName) {
         String filePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.setInputFiles(filePath);
