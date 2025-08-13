@@ -52,8 +52,9 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         return usernameField.getAttribute("value");
     }
 
-    public void setEmail(String email) {
+    public PlaywrightMyProfilePageComponent setEmail(String email) {
         emailField.fill(email);
+        return this;
     }
 
     public String getEmail() {
@@ -68,24 +69,27 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         return resendVerificationEmailBtn.isVisible();
     }
 
-    public void setFirstName(String firstName) {
+    public PlaywrightMyProfilePageComponent setFirstName(String firstName) {
         firstNameField.fill(firstName);
+        return this;
     }
 
     public String getFirstName() {
         return firstNameField.getAttribute("value");
     }
 
-    public void setLastName(String lastName) {
+    public PlaywrightMyProfilePageComponent setLastName(String lastName) {
         lastNameField.fill(lastName);
+        return this;
     }
 
     public String getLastName() {
         return lastNameField.getAttribute("value");
     }
 
-    public void setDisplayName(String displayName) {
+    public PlaywrightMyProfilePageComponent setDisplayName(String displayName) {
         displayNameField.fill(displayName);
+        return this;
     }
 
     public String getDisplayName() {
@@ -97,16 +101,19 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         setLastName(lastName);
     }
 
-    public void setCurrentPassword(String currentPassword) {
+    public PlaywrightMyProfilePageComponent setCurrentPassword(String currentPassword) {
         currentPasswordField.fill(currentPassword);
+        return this;
     }
 
-    public void setNewPassword(String newPassword) {
+    public PlaywrightMyProfilePageComponent setNewPassword(String newPassword) {
         newPasswordField.fill(newPassword);
+        return this;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
+    public PlaywrightMyProfilePageComponent setConfirmPassword(String confirmPassword) {
         confirmPasswordField.fill(confirmPassword);
+        return this;
     }
 
     public void changePassword(String currentPassword, String newPassword, String confirmPassword) {
@@ -119,8 +126,9 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         changePassword(currentPassword, newPassword, newPassword);
     }
 
-    public void saveProfile() {
+    public PlaywrightMyProfilePageComponent saveProfile() {
         saveBtn.click();
+        return this;
     }
 
     public void cancelProfile() {

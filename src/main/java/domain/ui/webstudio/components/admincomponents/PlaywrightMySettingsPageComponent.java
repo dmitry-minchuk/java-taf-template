@@ -57,20 +57,22 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
         orderOptionMappings.put("by excel sheet", byExcelSheetOption);
     }
 
-    public void setShowHeader(boolean show) {
+    public PlaywrightMySettingsPageComponent setShowHeader(boolean show) {
         if (show != showHeaderCheckbox.isSelected()) {
             showHeaderCheckbox.click();
         }
+        return this;
     }
 
     public boolean isShowHeaderEnabled() {
         return showHeaderCheckbox.isSelected();
     }
 
-    public void setShowFormulas(boolean show) {
+    public PlaywrightMySettingsPageComponent setShowFormulas(boolean show) {
         if (show != showFormulasCheckbox.isSelected()) {
             showFormulasCheckbox.click();
         }
+        return this;
     }
 
     public boolean isShowFormulasEnabled() {
@@ -98,8 +100,9 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
         return defaultOrderDropdown.getAttribute("title");
     }
 
-    public void setTestsPerPage(int testsPerPage) {
+    public PlaywrightMySettingsPageComponent setTestsPerPage(int testsPerPage) {
         testsPerPageField.fill(String.valueOf(testsPerPage));
+        return this;
     }
 
     public int getTestsPerPage() {
@@ -107,38 +110,42 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
         return value != null && !value.isEmpty() ? Integer.parseInt(value) : 5;
     }
 
-    public void setFailuresOnly(boolean failuresOnly) {
+    public PlaywrightMySettingsPageComponent setFailuresOnly(boolean failuresOnly) {
         if (failuresOnly != failuresOnlyCheckbox.isSelected()) {
             failuresOnlyCheckbox.click();
         }
+        return this;
     }
 
     public boolean isFailuresOnlyEnabled() {
         return failuresOnlyCheckbox.isSelected();
     }
 
-    public void setCompoundResult(boolean compoundResult) {
+    public PlaywrightMySettingsPageComponent setCompoundResult(boolean compoundResult) {
         if (compoundResult != compoundResultCheckbox.isSelected()) {
             compoundResultCheckbox.click();
         }
+        return this;
     }
 
     public boolean isCompoundResultEnabled() {
         return compoundResultCheckbox.isSelected();
     }
 
-    public void setShowNumbersWithoutFormatting(boolean show) {
+    public PlaywrightMySettingsPageComponent setShowNumbersWithoutFormatting(boolean show) {
         if (show != showNumbersWithoutFormattingCheckbox.isSelected()) {
             showNumbersWithoutFormattingCheckbox.click();
         }
+        return this;
     }
 
     public boolean isShowNumbersWithoutFormattingEnabled() {
         return showNumbersWithoutFormattingCheckbox.isSelected();
     }
 
-    public void saveSettings() {
+    public PlaywrightMySettingsPageComponent saveSettings() {
         saveBtn.click();
+        return this;
     }
 
     public void resetSettings() {
