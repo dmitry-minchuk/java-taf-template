@@ -58,8 +58,9 @@ public class MyProfilePageComponent extends BasePageComponent {
     }
 
     
-    public void setEmail(String email) {
+    public MyProfilePageComponent setEmail(String email) {
         emailField.sendKeys(email);
+        return this;
     }
 
     
@@ -79,8 +80,9 @@ public class MyProfilePageComponent extends BasePageComponent {
 
     // Name Section Methods
     
-    public void setFirstName(String firstName) {
+    public MyProfilePageComponent setFirstName(String firstName) {
         firstNameField.sendKeys(firstName);
+        return this;
     }
 
     
@@ -89,8 +91,9 @@ public class MyProfilePageComponent extends BasePageComponent {
     }
 
     
-    public void setLastName(String lastName) {
+    public MyProfilePageComponent setLastName(String lastName) {
         lastNameField.sendKeys(lastName);
+        return this;
     }
 
     
@@ -99,8 +102,9 @@ public class MyProfilePageComponent extends BasePageComponent {
     }
 
     
-    public void setDisplayName(String displayName) {
+    public MyProfilePageComponent setDisplayName(String displayName) {
         displayNameField.sendKeys(displayName);
+        return this;
     }
 
     
@@ -116,18 +120,21 @@ public class MyProfilePageComponent extends BasePageComponent {
 
     // Change Password Section Methods
     
-    public void setCurrentPassword(String currentPassword) {
+    public MyProfilePageComponent setCurrentPassword(String currentPassword) {
         currentPasswordField.sendKeys(currentPassword);
+        return this;
     }
 
     
-    public void setNewPassword(String newPassword) {
+    public MyProfilePageComponent setNewPassword(String newPassword) {
         newPasswordField.sendKeys(newPassword);
+        return this;
     }
 
     
-    public void setConfirmPassword(String confirmPassword) {
+    public MyProfilePageComponent setConfirmPassword(String confirmPassword) {
         confirmPasswordField.sendKeys(confirmPassword);
+        return this;
     }
 
     
