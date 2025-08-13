@@ -33,40 +33,17 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
     }
 
     private void initializeComponents() {
-        // Create Project link: "//div[@id='top']//a[contains(text(), 'Create Project')]"
         createProjectLink = new PlaywrightWebElement(page, "xpath=//div[@id='top']//a[contains(text(), 'Create Project')]", "createProjectLink");
-        
-        // Refresh button: "//a[@id='designRepoRefresh']"
         refreshBtn = new PlaywrightWebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
-        
-        // Create New Project modal component: "//div[@id='modalNewProject_container']"
-        PlaywrightWebElement modalLocator = new PlaywrightWebElement(page, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
-        createNewProjectComponent = new PlaywrightCreateNewProjectComponent(modalLocator);
-            
-        // Tab switcher component for EDITOR/REPOSITORY navigation
-        PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
-        tabSwitcherComponent = new PlaywrightTabSwitcherComponent(tabLocator);
-        
-        // Configure commit info modal component: "//div[@id='modalConfigureCommitInfo_container']"
-        // Use exact same selector as original @FindBy(xpath = "//div[@id='modalConfigureCommitInfo_container']")
-        PlaywrightWebElement commitInfoLocator = new PlaywrightWebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
-        configureCommitInfoComponent = new PlaywrightConfigureCommitInfoComponent(commitInfoLocator);
-        
-        // Left repository tree component
-        PlaywrightWebElement treeLocator = new PlaywrightWebElement(page, "xpath=//div[@id='repositoryTree']", "leftRepositoryTreeComponent");
-        leftRepositoryTreeComponent = new PlaywrightLeftRepositoryTreeComponent(treeLocator);
-        
-        // Repository content buttons panel
-        PlaywrightWebElement buttonsLocator = new PlaywrightWebElement(page, "xpath=//div[@class='repository-buttons']", "repositoryContentButtonsPanelComponent");
-        repositoryContentButtonsPanelComponent = new PlaywrightRepositoryContentButtonsPanelComponent(buttonsLocator);
+        createNewProjectComponent = createScopedComponent(PlaywrightCreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
+        tabSwitcherComponent = createScopedComponent(PlaywrightTabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
+        configureCommitInfoComponent = createScopedComponent(PlaywrightConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
+        leftRepositoryTreeComponent = createScopedComponent(PlaywrightLeftRepositoryTreeComponent.class, "xpath=//div[@id='repositoryTree']", "leftRepositoryTreeComponent");
+        repositoryContentButtonsPanelComponent = createScopedComponent(PlaywrightRepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='repository-buttons']", "repositoryContentButtonsPanelComponent");
     }
 
-    // Main project creation method - validates file upload across LOCAL/DOCKER modes
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
-        // Step 1: Click Create Project link to open modal
         createProjectLink.click();
-        
-        // Step 2: Handle different project types
         switch (projectType) {
             case EXCEL_FILES:
                 PlaywrightExcelFilesComponent excelComponent = createNewProjectComponent.selectTab(projectType);
@@ -83,31 +60,14 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
             default:
                 throw new IllegalArgumentException("Unsupported project type: " + projectType);
         }
-        
-        // Step 3: Handle commit configuration modal if present (like original RepositoryPage)
+
         PlaywrightWebElement modalShade = new PlaywrightWebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
         modalShade.waitForVisible();
         configureCommitInfoComponent.fillCommitInfoWithRandomData();
         refreshBtn.click();
     }
 
-    public void createProjectFromExcelFile(String projectName, String fileName) {
-        createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName, fileName);
-    }
-
-    public void createProjectFromZipArchive(String projectName, String fileName) {
-        createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, projectName, fileName);
-    }
-
     public void refresh() {
         refreshBtn.click();
-    }
-
-    public PlaywrightLeftRepositoryTreeComponent getLeftRepositoryTreeComponent() {
-        return leftRepositoryTreeComponent;
-    }
-
-    public PlaywrightRepositoryContentButtonsPanelComponent getRepositoryContentButtonsPanelComponent() {
-        return repositoryContentButtonsPanelComponent;
     }
 }
