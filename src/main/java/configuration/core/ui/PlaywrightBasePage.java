@@ -13,6 +13,7 @@ public abstract class PlaywrightBasePage {
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePage.class);
     protected String absoluteUrl = null;
     protected String urlAppender = "";
+    @Getter
     protected Page page;
 
     @Getter
@@ -51,25 +52,6 @@ public abstract class PlaywrightBasePage {
         page.setViewportSize(1920, 1080);
     }
 
-    public boolean isPageOpened() {
-        String urlExpected = Objects.requireNonNullElseGet(absoluteUrl, 
-            () -> AppContainerPool.get().getAppHostUrl() + urlAppender);
-        String currentUrl = page.url();
-        boolean isOpen = Objects.requireNonNull(currentUrl).equalsIgnoreCase(urlExpected);
-        
-        LOGGER.debug("Page opened check - Expected: {}, Current: {}, Match: {}", 
-                    urlExpected, currentUrl, isOpen);
-        return isOpen;
-    }
-
-    // Refresh page using Playwright's reload with wait conditions
-    public void refresh() {
-        LOGGER.info("Refreshing page: {}", page.url());
-        page.reload(new Page.ReloadOptions()
-                .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(30000));
-    }
-
     public String getTitle() {
         return page.title();
     }
@@ -90,22 +72,10 @@ public abstract class PlaywrightBasePage {
                 .setType(com.microsoft.playwright.options.ScreenshotType.PNG));
     }
 
-    public Page getPage() {
-        return page;
-    }
-
-    // Check if element with given text is present using Playwright's text locator
-    public boolean hasText(String text) {
-        try {
-            return page.getByText(text).isVisible();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public void waitForText(String text) {
         waitForText(text, 10000); // 10 seconds default
     }
+
     public void waitForText(String text, int timeoutMs) {
         page.getByText(text).waitFor(new com.microsoft.playwright.Locator.WaitForOptions()
                 .setState(com.microsoft.playwright.options.WaitForSelectorState.VISIBLE)
