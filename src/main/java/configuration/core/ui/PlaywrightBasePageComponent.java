@@ -1,6 +1,11 @@
 package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
+import configuration.core.ui.factory.PlaywrightComponentFactory;
+import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
+import configuration.core.ui.factory.PlaywrightListFactory;
+
+import java.util.List;
 
 public abstract class PlaywrightBasePageComponent implements PlaywrightComponentFactory {
     
@@ -122,6 +127,18 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
     public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
+    
+    //Creates list of components from selector (implementation for interface).
+    @Override
+    public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName) {
+        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, baseName, page, null);
+    }
+    
+    //Creates list of components from selector (implementation for interface).
+    @Override
+    public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector) {
+        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, page, null);
+    }
 
     //Finds a child element within this component's boundary.
     protected PlaywrightWebElement findChildElement(String selector) {
@@ -132,5 +149,25 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
     //Finds a named child element within this component's boundary.
     protected PlaywrightWebElement findChildElement(String selector, String elementName) {
         return createScopedElement(selector, elementName);
+    }
+    
+    //Finds scoped elements within component.
+    protected List<PlaywrightWebElement> findScopedElements(String selector, String baseName) {
+        return PlaywrightListFactory.createElementsList(page, rootLocator, selector, baseName);
+    }
+    
+    //Finds scoped elements within component.
+    protected List<PlaywrightWebElement> findScopedElements(String selector) {
+        return PlaywrightListFactory.createElementsList(page, rootLocator, selector);
+    }
+    
+    //Finds scoped components within component.
+    protected <T extends PlaywrightBasePageComponent> List<T> findScopedComponents(Class<T> componentClass, String selector, String baseName) {
+        return PlaywrightListFactory.createComponentsList(componentClass, page, rootLocator, selector, baseName);
+    }
+    
+    //Finds scoped components within component.
+    protected <T extends PlaywrightBasePageComponent> List<T> findScopedComponents(Class<T> componentClass, String selector) {
+        return PlaywrightListFactory.createComponentsList(componentClass, page, rootLocator, selector);
     }
 }

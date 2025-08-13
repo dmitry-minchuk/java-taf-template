@@ -1,6 +1,10 @@
-package configuration.core.ui;
+package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
+import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.PlaywrightWebElement;
+
+import java.util.List;
 
 //Utility implementation of the PlaywrightComponentFactory interface.
 public final class PlaywrightComponentFactoryImpl {
@@ -58,5 +62,28 @@ public final class PlaywrightComponentFactoryImpl {
             throw new RuntimeException(String.format("Failed to create scoped component %s with provided locator. Ensure the component has a public constructor accepting PlaywrightWebElement parameter.",
                     componentClass.getSimpleName()), e);
         }
+    }
+    
+    /**
+     * Creates list of components from selector.
+     */
+    public static <T extends PlaywrightBasePageComponent> List<T> createComponentsList(
+            Class<T> componentClass,
+            String selector,
+            String baseName,
+            Page page,
+            PlaywrightWebElement parentElement) {
+        return PlaywrightListFactory.createComponentsList(componentClass, page, parentElement, selector, baseName);
+    }
+    
+    /**
+     * Creates list of components from selector.
+     */
+    public static <T extends PlaywrightBasePageComponent> List<T> createComponentsList(
+            Class<T> componentClass,
+            String selector,
+            Page page,
+            PlaywrightWebElement parentElement) {
+        return PlaywrightListFactory.createComponentsList(componentClass, page, parentElement, selector);
     }
 }

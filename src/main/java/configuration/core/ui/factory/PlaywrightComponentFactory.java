@@ -1,4 +1,9 @@
-package configuration.core.ui;
+package configuration.core.ui.factory;
+
+import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.PlaywrightWebElement;
+
+import java.util.List;
 
 //Factory interface for creating Playwright components with proper scoping.
 public interface PlaywrightComponentFactory {
@@ -21,16 +26,16 @@ public interface PlaywrightComponentFactory {
     
     /**
      * Creates a scoped child component from an existing PlaywrightWebElement.
-     * 
-     * <p>This method instantiates a component class using an already-created element as the root locator.
-     * Useful when you have pre-existing elements or want to reuse elements across multiple components.</p>
-     * 
-     * <h3>When to use:</h3>
-     * <ul>
-     *   <li>Reusing elements across multiple component instances</li>
-     *   <li>Component creation from dynamically located elements</li>
-     *   <li>Advanced component composition patterns</li>
-     * </ul>
      */
     <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator);
+    
+    /**
+     * Creates list of components from selector.
+     */
+    <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName);
+    
+    /**
+     * Creates list of components from selector.
+     */
+    <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector);
 }

@@ -7,7 +7,6 @@ import configuration.driver.PlaywrightDriverPool;
 public class PlaywrightMessageComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement message;
-    private PlaywrightWebElement messageWithText;
     private PlaywrightWebElement closeBtn;
 
     public PlaywrightMessageComponent() {
@@ -21,13 +20,8 @@ public class PlaywrightMessageComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeComponents() {
-        message = createScopedElement("xpath=//div[contains(@class,'ant-message-notice-content')]", "Message Content");
-        messageWithText = createScopedElement("xpath=//div[contains(@class,'ant-message-notice-content') and contains(.,'%s')]", "Message With Text");
-        closeBtn = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='My Settings']", "Close Message Button");
-    }
-
-    public boolean isMessageDisplayed(String messageText) {
-        return messageWithText.format(messageText).isVisible();
+        message = createScopedElement("xpath=.//div[contains(@class,'ant-message-notice-content')]", "Message Content");
+        closeBtn = createScopedElement("xpath=.//a[@aria-label='Close']", "Close Message Button");
     }
 
     public String getMessageText() {
