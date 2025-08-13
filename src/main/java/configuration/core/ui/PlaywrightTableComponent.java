@@ -49,4 +49,9 @@ public class PlaywrightTableComponent {
             inputLocator.press("Enter");
         }
     }
+
+    public int getRowCount() {
+        String rowSelector = selector + "//tr[not(@class='hidden')]";
+        return page.locator(rowSelector).count();
+    }
 }
