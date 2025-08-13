@@ -24,17 +24,12 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     private PlaywrightRightTableDetailsComponent rightTableDetailsComponent;
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
     private PlaywrightTableComponent centerTable;
-    @Getter
     private PlaywrightProblemsPanelComponent problemsPanelComponent;
-    @Getter
     private PlaywrightProjectDetailsComponent projectDetailsComponent;
-    @Getter
     private PlaywrightAddModuleComponent addModulePopupComponent;
     private PlaywrightTableToolbarPanelComponent tableToolbarPanelComponent;
-    @Getter
     private PlaywrightEditTablePanelComponent editTablePanelComponent;
     private PlaywrightTestResultValidationComponent testResultValidationComponent;
-    @Getter
     private PlaywrightEditorMainContentProblemsPanelComponent editorMainContentProblemsPanelComponent;
 
     public PlaywrightEditorPage() {
@@ -43,54 +38,18 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     }
 
     private void initializeComponents() {
-        // Left project module selector: "//div[@id='projects']"
-        PlaywrightWebElement projectsLocator = new PlaywrightWebElement(page, "xpath=//div[@id='projects']", "leftProjectModuleSelectorComponent");
-        leftProjectModuleSelectorComponent = new PlaywrightLeftProjectModuleSelectorComponent(projectsLocator);
-        
-        // Left rules tree: "//div[@id='left']"
-        PlaywrightWebElement leftLocator = new PlaywrightWebElement(page, "xpath=//div[@id='left']", "leftRulesTreeComponent");
-        leftRulesTreeComponent = new PlaywrightLeftRulesTreeComponent(leftLocator);
-        
-        // Right table details: "//div[@id='right']"
-        PlaywrightWebElement rightLocator = new PlaywrightWebElement(page, "xpath=//div[@id='right']", "rightTableDetailsComponent");
-        rightTableDetailsComponent = new PlaywrightRightTableDetailsComponent(rightLocator);
-            
-        // Tab switcher component for EDITOR/REPOSITORY navigation
-        PlaywrightWebElement tabLocator = new PlaywrightWebElement(page, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
-        tabSwitcherComponent = new PlaywrightTabSwitcherComponent(tabLocator);
-        
-        // Center table component: "//table[@class='te_table']"
+        leftProjectModuleSelectorComponent = createScopedComponent(PlaywrightLeftProjectModuleSelectorComponent.class, "xpath=//div[@id='projects']", "leftProjectModuleSelectorComponent");
+        leftRulesTreeComponent = createScopedComponent(PlaywrightLeftRulesTreeComponent.class, "xpath=//div[@id='left']", "leftRulesTreeComponent");
+        rightTableDetailsComponent = createScopedComponent(PlaywrightRightTableDetailsComponent.class, "xpath=//div[@id='right']", "rightTableDetailsComponent");
+        tabSwitcherComponent = createScopedComponent(PlaywrightTabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         centerTable = new PlaywrightTableComponent(page, "xpath=//table[@class='te_table']");
-        
-        // Table toolbar panel: "//div[@id='tableToolbarPanel']"
-        PlaywrightWebElement toolbarLocator = new PlaywrightWebElement(page, "xpath=//div[@id='tableToolbarPanel']", "tableToolbarPanelComponent");
-        tableToolbarPanelComponent = new PlaywrightTableToolbarPanelComponent(toolbarLocator);
-        
-        // Test result validation: "//div[@id='content' and contains(@class,'ui-layout-center')]"
-        PlaywrightWebElement testResultLocator = new PlaywrightWebElement(page, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
-        testResultValidationComponent = new PlaywrightTestResultValidationComponent(testResultLocator);
-        
-        // MISSING COMPONENTS - EXACT SAME locators as legacy EditorPage:
-        
-        // Problems panel: "//div[@id='bottom']"
-        PlaywrightWebElement problemsLocator = new PlaywrightWebElement(page, "xpath=//div[@id='bottom']", "problemsPanelComponent");
-        problemsPanelComponent = new PlaywrightProblemsPanelComponent(problemsLocator);
-        
-        // Project details: "//div[@class='page']"
-        PlaywrightWebElement projectDetailsLocator = new PlaywrightWebElement(page, "xpath=//div[@class='page']", "projectDetailsComponent");
-        projectDetailsComponent = new PlaywrightProjectDetailsComponent(projectDetailsLocator);
-        
-        // Add module popup: "//div[@id='editModulePopup_container']"
-        PlaywrightWebElement addModuleLocator = new PlaywrightWebElement(page, "xpath=//div[@id='editModulePopup_container']", "addModulePopupComponent");
-        addModulePopupComponent = new PlaywrightAddModuleComponent(addModuleLocator);
-        
-        // Edit table panel: "//div[@class='te_toolbar']"
-        PlaywrightWebElement editTableLocator = new PlaywrightWebElement(page, "xpath=//div[@class='te_toolbar']", "editTablePanelComponent");
-        editTablePanelComponent = new PlaywrightEditTablePanelComponent(editTableLocator);
-        
-        // Editor main content problems panel: "//div[@id='content']"
-        PlaywrightWebElement editorMainContentLocator = new PlaywrightWebElement(page, "xpath=//div[@id='content']", "editorMainContentProblemsPanelComponent");
-        editorMainContentProblemsPanelComponent = new PlaywrightEditorMainContentProblemsPanelComponent(editorMainContentLocator);
+        tableToolbarPanelComponent = createScopedComponent(PlaywrightTableToolbarPanelComponent.class, "xpath=//div[@id='tableToolbarPanel']", "tableToolbarPanelComponent");
+        testResultValidationComponent = createScopedComponent(PlaywrightTestResultValidationComponent.class, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
+        problemsPanelComponent = createScopedComponent(PlaywrightProblemsPanelComponent.class, "xpath=//div[@id='bottom']", "problemsPanelComponent");
+        projectDetailsComponent = createScopedComponent(PlaywrightProjectDetailsComponent.class, "xpath=//div[@class='page']", "projectDetailsComponent");
+        addModulePopupComponent = createScopedComponent(PlaywrightAddModuleComponent.class, "xpath=//div[@id='editModulePopup_container']", "addModulePopupComponent");
+        editTablePanelComponent = createScopedComponent(PlaywrightEditTablePanelComponent.class, "xpath=//div[@class='te_toolbar']", "editTablePanelComponent");
+        editorMainContentProblemsPanelComponent = createScopedComponent(PlaywrightEditorMainContentProblemsPanelComponent.class, "xpath=//div[@id='content']", "editorMainContentProblemsPanelComponent");
     }
 
     public PlaywrightTableComponent getCenterTable() {
@@ -98,6 +57,4 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         WaitUtil.sleep(500);
         return centerTable;
     }
-
-
 }

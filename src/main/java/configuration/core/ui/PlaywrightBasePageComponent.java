@@ -2,7 +2,7 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
 
-public abstract class PlaywrightBasePageComponent {
+public abstract class PlaywrightBasePageComponent implements PlaywrightComponentFactory {
     
     protected final Page page;
     protected final PlaywrightWebElement rootLocator;
@@ -71,7 +71,6 @@ public abstract class PlaywrightBasePageComponent {
      * <ul>
      *   <li><b>Scoped selectors:</b> Use ".//" prefix for relative XPath (e.g., ".//button[@class='save']")</li>
      *   <li><b>Avoid absolute paths:</b> Don't use "//" in scoped components as it searches from document root</li>
-     *   <li><b>CSS selectors:</b> Use standard CSS syntax (e.g., "button.save", "#username")</li>
      * </ul>
      *
      */
@@ -93,7 +92,6 @@ public abstract class PlaywrightBasePageComponent {
      * <ul>
      *   <li><b>Enhanced Logging:</b> "Clicking saveButton" instead of "Clicking Element"</li>
      *   <li><b>Debugging Support:</b> Clear identification in test failures</li>
-     *   <li><b>Maintenance:</b> Self-documenting element purpose</li>
      * </ul>
      */
     protected PlaywrightWebElement createScopedElement(String selector, String elementName) {
@@ -104,70 +102,34 @@ public abstract class PlaywrightBasePageComponent {
         }
     }
     
+    // Implementation of PlaywrightComponentFactory interface
+    
     /**
-     * Creates a scoped child component using reflection with automatic element creation. - WE NEED TO USE THIS METHOD MOSTLY
+     * Creates a scoped child component using reflection with automatic element creation.
      * 
-     * <p>This method dynamically creates child components by first creating a scoped element with the
-     * provided selector, then instantiating the component class using its PlaywrightWebElement constructor.
-     * This is the preferred method for dynamic component composition.</p>
-     * 
-     * <h3>Requirements for Component Class:</h3>
-     * <ul>
-     *   <li>Must extend PlaywrightBasePageComponent</li>
-     *   <li>Must have a constructor accepting PlaywrightWebElement parameter</li>
-     *   <li>Constructor must be public and accessible</li>
-     * </ul>
+     * <p>For components, this method creates child components within the component's boundary.
+     * The child component will be scoped to an element found within this component's root locator.</p>
      */
-    protected <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
-        try {
-            PlaywrightWebElement childLocator = createScopedElement(selector, componentName);
-            return componentClass.getConstructor(PlaywrightWebElement.class).newInstance(childLocator);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create scoped component " + componentClass.getSimpleName() + 
-                    " with selector: " + selector, e);
-        }
+    @Override
+    public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
+        return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, rootLocator);
     }
     
     /**
      * Creates a scoped child component from an existing PlaywrightWebElement.
-     * 
-     * <p>This method instantiates a component class using an already-created element as the root locator.
-     * Useful when you have pre-existing elements or want to reuse elements across multiple components.</p>
-     * 
-     * <h3>When to use:</h3>
-     * <ul>
-     *   <li>Reusing elements across multiple component instances</li>
-     *   <li>Component creation from dynamically located elements</li>
-     *   <li>Advanced component composition patterns</li>
-     * </ul>
-     *
      */
-    protected <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
-        try {
-            return componentClass.getConstructor(PlaywrightWebElement.class).newInstance(childLocator);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create scoped component " + componentClass.getSimpleName() + 
-                    " with provided locator", e);
-        }
+    @Override
+    public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+        return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
-    
-    /**
-     * Finds a child element within this component's boundary.
-     * 
-     * <p>This is a convenience method that delegates to {@code createScopedElement(selector)}.
-     * Use this when the method name better expresses intent (finding vs creating).</p>
-     */
+
+    //Finds a child element within this component's boundary.
     protected PlaywrightWebElement findChildElement(String selector) {
         return createScopedElement(selector);
     }
     
-    /**
-     * Finds a named child element within this component's boundary.
-     * 
-     * <p>This is a convenience method that delegates to {@code createScopedElement(selector, elementName)}.
-     * Use this when the method name better expresses intent and you want enhanced logging.</p>
-     *
-     */
+
+    //Finds a named child element within this component's boundary.
     protected PlaywrightWebElement findChildElement(String selector, String elementName) {
         return createScopedElement(selector, elementName);
     }
