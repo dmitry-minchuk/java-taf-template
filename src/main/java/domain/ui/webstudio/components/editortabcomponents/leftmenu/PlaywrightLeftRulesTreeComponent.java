@@ -107,9 +107,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
                 PlaywrightWebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
                 PlaywrightWebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
-                PlaywrightTreeFolderComponent folder = createScopedComponent(
-                        PlaywrightTreeFolderComponent.class, 
-                        indexedElement);
+                PlaywrightTreeFolderComponent folder = createScopedComponent(PlaywrightTreeFolderComponent.class, indexedElement);
                 folders.add(folder);
             }
         }
