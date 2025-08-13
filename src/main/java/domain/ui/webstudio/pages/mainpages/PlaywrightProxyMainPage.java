@@ -16,9 +16,9 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
     }
 
     private void initializeComponents() {
-        userLogo = new PlaywrightWebElement(page, "div.user-logo span", "User Logo");
-        message = new PlaywrightWebElement(page, "div.message.closable", "Studio Message");
-        userMenuDrawer = new PlaywrightWebElement(page, "div.ant-drawer-content-wrapper", "User Menu Drawer");
+        userLogo = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'user-logo')][not(ancestor::div[contains(@class, 'ant-drawer-right')])]//span", "User Logo");
+        message = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'message') and contains(@class,'closable')]", "Studio Message");
+        userMenuDrawer = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
     }
 
     public String getStudioMessage() {

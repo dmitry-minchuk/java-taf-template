@@ -70,7 +70,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         // Note: Password fields typically don't show values for security
 
         // Scenario 3: Update profile and check users table (lines 58-76 from original)
-        myProfileComponent.setFirstName("Abc").setLastName("Bcd").setEmail("admin@admin.com").saveProfile();
+        myProfileComponent.setFirstName("Abc").setLastName("Bcd").setEmail("admin@admin.com").setDisplayNamePattern("First Last").saveProfile();
 
         myProfileComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
@@ -80,7 +80,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         Assert.assertEquals(myProfileComponent.getLastName(), "Bcd", "Last name should be 'Bcd'");
         Assert.assertEquals(myProfileComponent.getEmail(), "admin@admin.com", "Email should be 'admin@admin.com'");
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Abc Bcd", "Display name should be 'Abc Bcd'");
-        myProfileComponent.cancelProfile();
 
         // Verify in Users page - using existing methods
         PlaywrightUsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
@@ -110,7 +109,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .navigateToMyProfilePage();
 
         // Password fields should be empty after navigation (security feature)
-        myProfileComponent.cancelProfile();
 
         // Scenario 5: Create new user (lines 96-131 from original)
         usersComponent = editorPage.getCurrentUserComponent()
@@ -146,8 +144,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Bbb Aaa", "Display name should be updated");
-        myProfileComponent.cancelProfile();
-        
+
         // Verify user in Users table
         usersComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()

@@ -16,7 +16,6 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
     private PlaywrightWebElement newPasswordField;
     private PlaywrightWebElement confirmPasswordField;
     private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
     private PlaywrightWebElement successNotification;
     private PlaywrightWebElement errorNotification;
     private PlaywrightWebElement displayNamePatternDropdown;
@@ -42,10 +41,9 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         newPasswordField = createScopedElement("xpath=.//input[@placeholder='New Password' or @type='password'][2]", "newPasswordField");
         confirmPasswordField = createScopedElement("xpath=.//input[@placeholder='Confirm Password' or @placeholder='Confirm New Password' or @type='password'][3]", "confirmPasswordField");
         saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
         successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
         errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
-        displayNamePatternDropdown = createScopedElement("xpath=.//select[contains(@id,'displayNamePattern')] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Display Name Pattern')]]", "displayNamePatternDropdown");
+        displayNamePatternDropdown = createScopedElement("xpath=.//div[//label[@title='Display Name']]/following-sibling::div//span[@class='ant-select-selection-item']", "displayNamePatternDropdown");
     }
 
     public String getUsername() {
@@ -131,10 +129,6 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         return this;
     }
 
-    public void cancelProfile() {
-        cancelBtn.click();
-    }
-
     public boolean isSaveButtonEnabled() {
         return saveBtn.isEnabled();
     }
@@ -205,10 +199,11 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         return emailMatches && firstNameMatches && lastNameMatches && displayNameMatches;
     }
 
-    public void setDisplayNamePattern(String pattern) {
+    public PlaywrightMyProfilePageComponent setDisplayNamePattern(String pattern) {
         displayNamePatternDropdown.click();
-        PlaywrightWebElement option = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'" + pattern + "')]", "displayNamePatternOption");
+        PlaywrightWebElement option = new PlaywrightWebElement(page, String.format("xpath=.//div[@class='rc-virtual-list']//div[contains(@class,'ant-select-item-option') and @title='%s']", pattern), "displayNamePatternOption");
         option.click();
+        return this;
     }
 
     public String getDisplayNamePattern() {
