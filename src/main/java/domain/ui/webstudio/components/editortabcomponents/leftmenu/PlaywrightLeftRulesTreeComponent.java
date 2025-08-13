@@ -15,7 +15,6 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRulesTreeComponent.class);
 
-    private List<PlaywrightTreeFolderComponent> treeFolderComponentList;
     private PlaywrightWebElement viewFilterLink;
     private PlaywrightWebElement selectedTreeItem;
     private PlaywrightWebElement filterOptionTemplate;
@@ -34,12 +33,6 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
         selectedTreeItem = createScopedElement("xpath=.//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a", "selectedTreeItem");
         filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
-        
-        initializeTreeFolderComponents();
-    }
-
-    private void initializeTreeFolderComponents() {
-        treeFolderComponentList = new java.util.ArrayList<>();
     }
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {

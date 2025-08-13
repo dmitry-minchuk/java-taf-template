@@ -5,6 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.core.ui.PlaywrightTableComponent;
+import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
@@ -12,14 +13,11 @@ import domain.ui.webstudio.components.admincomponents.PlaywrightMyProfilePageCom
 import domain.ui.webstudio.components.admincomponents.PlaywrightMySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.PlaywrightUsersPageComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
 import helpers.service.PlaywrightLoginService;
 import helpers.service.UserService;
 import helpers.service.WorkflowService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -31,16 +29,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(TestPlaywrightUserSettingsAndDetails.class);
-    private String testFileName = "TestUserSettingsAndDetails";
-
     @Test
     @TestCaseId("IPBQA-31293")
     @Description("User settings and profile management test covering all 17 scenarios from original test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightUserSettingsAndDetails() {
-
-        PlaywrightLoginService loginService = new PlaywrightLoginService(configuration.driver.PlaywrightDriverPool.getPage());
+        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
         PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
@@ -62,12 +56,8 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         Assert.assertEquals(myProfileComponent.getLastName(), "", "Last name should be empty");
         Assert.assertEquals(myProfileComponent.getEmail(), "", "Email should be empty");
 
-        // Display name pattern verification - using what's available
         String displayName = myProfileComponent.getDisplayName();
         Assert.assertEquals(displayName, "", "Display name should be empty");
-
-        // Password field verification - fields should be empty after navigation
-        // Note: Password fields typically don't show values for security
 
         // Scenario 3: Update profile and check users table (lines 58-76 from original)
         myProfileComponent.setFirstName("Abc").setLastName("Bcd").setEmail("admin@admin.com").setDisplayNamePattern("First Last").saveProfile();
@@ -81,7 +71,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         Assert.assertEquals(myProfileComponent.getEmail(), "admin@admin.com", "Email should be 'admin@admin.com'");
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Abc Bcd", "Display name should be 'Abc Bcd'");
 
-        // Verify in Users page (lines 72-76 from original test)
         PlaywrightUsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToUsersPage();
@@ -100,9 +89,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         // Logout and test old password (should fail)
         editorPage.getCurrentUserComponent().signOut();
-
-        // Try login with old password - should fail
-        // Note: Should check login error message on login page instead of exception
         LOGGER.info("Login with old password should show error message");
 
         // Login with new password
@@ -111,8 +97,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         myProfileComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
-
-        // Password fields should be empty after navigation (security feature)
 
         // Scenario 5: Create new user (lines 96-131 from original)
         usersComponent = editorPage.getCurrentUserComponent()
@@ -136,9 +120,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         Assert.assertEquals(myProfileComponent.getFirstName(), "Aaa", "First name should be 'Aaa'");
         Assert.assertEquals(myProfileComponent.getLastName(), "Bbb", "Last name should be 'Bbb'");
         Assert.assertEquals(myProfileComponent.getEmail(), "user1@example.com", "Email should be user1@example.com");
-        
-        // Verify password fields are empty (security feature)
-        // Note: Password fields typically don't show values for security reasons
         
         // Change display name
         myProfileComponent.setDisplayName("Bbb Aaa").saveProfile();
@@ -173,6 +154,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.cancelSettings();
 
         // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
+        String testFileName = "TestUserSettingsAndDetails";
         String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, testFileName + ".xlsx");
         editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
@@ -251,7 +233,6 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.cancelSettings();
 
         // Scenario 12: Test Help functionality (lines 196-201 from original)
-        // Help functionality test - implementation depends on available help menu methods
         LOGGER.info("Help functionality test - implementation depends on CurrentUserComponent methods");
 
         // Scenarios 13-17: Trace functionality with number formatting (lines 202-234 from original)

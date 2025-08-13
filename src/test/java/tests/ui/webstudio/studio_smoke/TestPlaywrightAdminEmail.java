@@ -30,13 +30,7 @@ public class TestPlaywrightAdminEmail extends BaseTest {
     @Description("Playwright - Admin UI 'Email' page - Email verification configuration test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAdminEmail() {
-        
-        // Initialize Playwright page for test execution
-        Page page = PlaywrightDriverPool.getPage();
-        
-        // Step 1: Login with admin user using Playwright login service (same as Selenium)
-        // The BaseTest container setup automatically provides the correct URL
-        PlaywrightLoginService loginService = new PlaywrightLoginService(page);
+        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
         PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())
