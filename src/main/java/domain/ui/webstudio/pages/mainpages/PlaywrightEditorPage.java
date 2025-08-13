@@ -104,4 +104,10 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         return centerTable;
     }
 
+    // Test dropdown functionality for test execution settings
+    public void clickTestDropdown() {
+        PlaywrightWebElement testDropdown = new PlaywrightWebElement(page, "xpath=//button[contains(@class,'test-dropdown')] | //button[contains(text(),'Test')]", "testDropdown");
+        testDropdown.click();
+    }
+
 }

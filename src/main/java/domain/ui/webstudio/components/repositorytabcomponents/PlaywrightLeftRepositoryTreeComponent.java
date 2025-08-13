@@ -43,4 +43,9 @@ public class PlaywrightLeftRepositoryTreeComponent extends PlaywrightBasePageCom
     public boolean isRepositoryTreeVisible() {
         return repositoryTree.isVisible();
     }
+
+    // Compatibility method for test migration
+    public void selectProjectInTree(String projectName) {
+        selectNode(projectName);
+    }
 }

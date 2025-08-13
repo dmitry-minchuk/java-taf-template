@@ -21,10 +21,6 @@ import tests.BaseTest;
 
 import java.util.Properties;
 
-/**
- * Playwright version of TestAdminEmail - Admin UI Email verification configuration test
- * Migrated from Selenium to use native Playwright wait strategies and element interactions
- */
 public class TestPlaywrightAdminEmail extends BaseTest {
 
     private static final Logger LOGGER = LogManager.getLogger(TestPlaywrightAdminEmail.class);

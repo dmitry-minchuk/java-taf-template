@@ -11,6 +11,7 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
     private PlaywrightWebElement undeployBtn;
     private PlaywrightWebElement deleteBtn;
     private PlaywrightWebElement refreshBtn;
+    private PlaywrightWebElement openBtn;
 
     public PlaywrightRepositoryContentButtonsPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -28,6 +29,7 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
         undeployBtn = createScopedElement(".//button[./span[text()='Undeploy']]", "undeployBtn");
         deleteBtn = createScopedElement(".//button[./span[text()='Delete']]", "deleteBtn");
         refreshBtn = createScopedElement(".//button[./span[text()='Refresh']]", "refreshBtn");
+        openBtn = createScopedElement(".//button[./span[text()='Open']] | .//input[@value='Open']", "openBtn");
     }
 
     public void clickDeploy() {
@@ -52,5 +54,13 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
 
     public boolean isDeployButtonEnabled() {
         return deployBtn.isEnabled();
+    }
+
+    public void openProject() {
+        openBtn.click();
+    }
+
+    public boolean isOpenButtonEnabled() {
+        return openBtn.isEnabled();
     }
 }

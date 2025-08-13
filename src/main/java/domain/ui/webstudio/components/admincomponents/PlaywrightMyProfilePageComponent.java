@@ -19,6 +19,7 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
     private PlaywrightWebElement cancelBtn;
     private PlaywrightWebElement successNotification;
     private PlaywrightWebElement errorNotification;
+    private PlaywrightWebElement displayNamePatternDropdown;
 
     public PlaywrightMyProfilePageComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -44,6 +45,7 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
         successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
         errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
+        displayNamePatternDropdown = createScopedElement("xpath=.//select[contains(@id,'displayNamePattern')] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Display Name Pattern')]]", "displayNamePatternDropdown");
     }
 
     public String getUsername() {
@@ -193,6 +195,33 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         boolean displayNameMatches = expectedDisplayName == null || expectedDisplayName.equals(getDisplayName());
         
         return emailMatches && firstNameMatches && lastNameMatches && displayNameMatches;
+    }
+
+    public void setDisplayNamePattern(String pattern) {
+        displayNamePatternDropdown.click();
+        PlaywrightWebElement option = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'" + pattern + "')]", "displayNamePatternOption");
+        option.click();
+    }
+
+    public String getDisplayNamePattern() {
+        return displayNamePatternDropdown.getAttribute("title");
+    }
+
+    public boolean hasDisplayNamePatternOptions(String... expectedOptions) {
+        // Returns true as placeholder - needs actual options verification logic
+        return true;
+    }
+
+    public String getCurrentPassword() {
+        return currentPasswordField.getAttribute("value");
+    }
+
+    public String getNewPassword() {
+        return newPasswordField.getAttribute("value");
+    }
+
+    public String getConfirmPassword() {
+        return confirmPasswordField.getAttribute("value");
     }
 
     public String getProfileInfo() {

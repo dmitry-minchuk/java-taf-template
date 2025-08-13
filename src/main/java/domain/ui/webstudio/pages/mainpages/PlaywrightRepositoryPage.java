@@ -8,6 +8,8 @@ import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightLeftRepositoryTreeComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentButtonsPanelComponent;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +29,8 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
     private PlaywrightCreateNewProjectComponent createNewProjectComponent;
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
     private PlaywrightConfigureCommitInfoComponent configureCommitInfoComponent;
+    private PlaywrightLeftRepositoryTreeComponent leftRepositoryTreeComponent;
+    private PlaywrightRepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
 
     public PlaywrightRepositoryPage() {
         super("/faces/pages/modules/repository/index.xhtml");
@@ -52,6 +56,14 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         // Use exact same selector as original @FindBy(xpath = "//div[@id='modalConfigureCommitInfo_container']")
         PlaywrightWebElement commitInfoLocator = new PlaywrightWebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
         configureCommitInfoComponent = new PlaywrightConfigureCommitInfoComponent(commitInfoLocator);
+        
+        // Left repository tree component
+        PlaywrightWebElement treeLocator = new PlaywrightWebElement(page, "xpath=//div[@id='repositoryTree']", "leftRepositoryTreeComponent");
+        leftRepositoryTreeComponent = new PlaywrightLeftRepositoryTreeComponent(treeLocator);
+        
+        // Repository content buttons panel
+        PlaywrightWebElement buttonsLocator = new PlaywrightWebElement(page, "xpath=//div[@class='repository-buttons']", "repositoryContentButtonsPanelComponent");
+        repositoryContentButtonsPanelComponent = new PlaywrightRepositoryContentButtonsPanelComponent(buttonsLocator);
     }
 
     // Main project creation method - validates file upload across LOCAL/DOCKER modes
@@ -94,5 +106,13 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
 
     public void refresh() {
         refreshBtn.click();
+    }
+
+    public PlaywrightLeftRepositoryTreeComponent getLeftRepositoryTreeComponent() {
+        return leftRepositoryTreeComponent;
+    }
+
+    public PlaywrightRepositoryContentButtonsPanelComponent getRepositoryContentButtonsPanelComponent() {
+        return repositoryContentButtonsPanelComponent;
     }
 }

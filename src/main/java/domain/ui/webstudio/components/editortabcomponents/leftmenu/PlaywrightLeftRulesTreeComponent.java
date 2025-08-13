@@ -79,6 +79,23 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         return "";
     }
 
+    // Compatibility methods for legacy test migration
+    public PlaywrightLeftRulesTreeComponent selectProjectInTree(String projectName, String moduleName) {
+        // First expand the project folder
+        expandFolderInTree(projectName);
+        // Then select the specific module/item within that project
+        selectItemInFolder(projectName, moduleName);
+        return this;
+    }
+
+    public PlaywrightLeftRulesTreeComponent expandAndSelectItemInTree(String folderName, String itemName) {
+        // First expand the folder
+        expandFolderInTree(folderName);
+        // Then select the item in that folder
+        selectItemInFolder(folderName, itemName);
+        return this;
+    }
+
     // Find specific folder in the tree by name
     private PlaywrightTreeFolderComponent findFolderInTree(String folderName) {
         return findTreeFolders().stream()

@@ -8,5 +8,6 @@
     </listeners>
 
     <test name="StudioSmoke.TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
+    <test name="StudioSmoke.TestPlaywrightUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestPlaywrightUserSettingsAndDetails"/></classes></test>
 
 </suite>
