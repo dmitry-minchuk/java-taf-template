@@ -136,8 +136,14 @@ public class PlaywrightUsersPageComponent extends PlaywrightBasePageComponent {
         }
     }
 
-    public void addNewUser(String username, String email, String firstName, String lastName, 
-                          String password, String displayNamePattern, String displayName, boolean isAdmin) {
+    public void addNewUser(String username,
+                           String email,
+                           String firstName,
+                           String lastName,
+                           String password,
+                           String displayNamePattern,
+                           String displayName,
+                           boolean isAdmin) {
         clickAddUser();
         setUsername(username);
         setEmail(email);
@@ -156,13 +162,35 @@ public class PlaywrightUsersPageComponent extends PlaywrightBasePageComponent {
 
     // User table verification methods
     public String getSpecificUserElement(String username, String elementType) {
-        // Returns empty string as per migration rules - locators need to be found in openl-tests
-        return "";
+        switch (elementType) {
+            case "users-firstname":
+                // Extract first name from Full Name column (column 2)
+                String fullName = getFullNameForUser(username);
+                return fullName.split(" ")[0]; // First word as first name
+                
+            case "users-lastname":
+                // Extract last name from Full Name column (column 2)
+                String fullNameLast = getFullNameForUser(username);
+                String[] nameParts = fullNameLast.split(" ");
+                return nameParts.length > 1 ? nameParts[nameParts.length - 1] : ""; // Last word as last name
+                
+            case "users-displayname":
+                // Full Name is the display name in new UI
+                return getFullNameForUser(username);
+                
+            default:
+                return "";
+        }
     }
 
     public String getSpecificUserEmail(String username) {
-        // Returns empty string as per migration rules - locators need to be found in openl-tests
-        return "";
+        PlaywrightWebElement emailElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[3]", username), "userEmail");
+        return emailElement.getText();
+    }
+    
+    private String getFullNameForUser(String username) {
+        PlaywrightWebElement fullNameElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[2]", username), "userFullName");
+        return fullNameElement.getText();
     }
 
     public boolean isUserPresent(String username) {

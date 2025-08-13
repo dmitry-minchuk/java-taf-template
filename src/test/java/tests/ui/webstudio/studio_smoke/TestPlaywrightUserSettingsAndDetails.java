@@ -81,11 +81,15 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         Assert.assertEquals(myProfileComponent.getEmail(), "admin@admin.com", "Email should be 'admin@admin.com'");
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Abc Bcd", "Display name should be 'Abc Bcd'");
 
-        // Verify in Users page - using existing methods
+        // Verify in Users page (lines 72-76 from original test)
         PlaywrightUsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToUsersPage();
-        // Note: User verification depends on available methods in PlaywrightUsersPageComponent
+        
+        Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-firstname"), "Abc", "Admin first name in Users table should be 'Abc'");
+        Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-lastname"), "Bcd", "Admin last name in Users table should be 'Bcd'"); 
+        Assert.assertEquals(usersComponent.getSpecificUserEmail("admin"), "admin@admin.com", "Admin email in Users table should be 'admin@admin.com'");
+        Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-displayname"), "Abc Bcd", "Admin display name in Users table should be 'Abc Bcd'");
 
         // Scenario 4: Change password and test authentication (lines 77-95 from original)
         myProfileComponent = editorPage.getCurrentUserComponent()
