@@ -23,11 +23,11 @@ public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent 
     }
 
     private void initializeComponents() {
-        myProfileMenuItem = createScopedElement("li.ant-menu-item:has(span:text('My Profile'))", "My Profile Menu Item");
-        mySettingsMenuItem = createScopedElement("li.ant-menu-item:has(span:text('My Settings'))", "My Settings Menu Item");
-        administrationMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Administration'))", "Administration Menu Item");
-        helpMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Help'))", "Help Menu Item");
-        signOutMenuItem = createScopedElement("li.ant-menu-item:has(span:text('Sign Out'))", "Sign Out Menu Item");
+        myProfileMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='My Profile']", "My Profile Menu Item");
+        mySettingsMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='My Settings']", "My Settings Menu Item");
+        administrationMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='Administration']", "Administration Menu Item");
+        helpMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='Help']", "Help Menu Item");
+        signOutMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='Sign Out']", "Sign Out Menu Item");
     }
 
     public void navigateToMyProfile() {
