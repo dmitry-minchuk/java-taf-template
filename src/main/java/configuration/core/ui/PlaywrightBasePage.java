@@ -27,7 +27,6 @@ public abstract class PlaywrightBasePage {
         LOGGER.info("{} was opened with URL appender: {}", this.getClass().getName(), urlAppender);
     }
 
-    // Navigate to page URL with Playwright's native wait conditions
     public void open() {
         String url = AppContainerPool.get().getAppHostUrl() + urlAppender;
         LOGGER.info("Opening page: {}", url);
