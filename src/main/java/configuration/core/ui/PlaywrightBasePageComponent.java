@@ -4,6 +4,8 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.factory.PlaywrightComponentFactory;
 import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
 import configuration.core.ui.factory.PlaywrightListFactory;
+import configuration.core.ui.factory.LazyPlaywrightComponentsList;
+import configuration.core.ui.factory.LazyPlaywrightElementsList;
 
 import java.util.List;
 
@@ -128,21 +130,31 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
-    //Creates list of components from selector (implementation for interface).
+    //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
     public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName) {
-        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, baseName, page, null);
+        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector, baseName);
     }
     
-    //Creates list of components from selector (implementation for interface).
+    //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
     public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector) {
-        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, page, null);
+        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector);
     }
 
     //Finds a child element within this component's boundary.
     protected PlaywrightWebElement findChildElement(String selector) {
         return createScopedElement(selector);
+    }
+    
+    //Finds list of child elements within this component's boundary using lazy initialization.
+    protected List<PlaywrightWebElement> findChildElements(String selector, String baseName) {
+        return new LazyPlaywrightElementsList(page, rootLocator, selector, baseName);
+    }
+    
+    //Finds list of child elements within this component's boundary using lazy initialization.
+    protected List<PlaywrightWebElement> findChildElements(String selector) {
+        return new LazyPlaywrightElementsList(page, rootLocator, selector);
     }
     
 

@@ -20,11 +20,12 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
 
     private void initializeComponents() {
         userLogo = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'user-logo')][not(ancestor::div[contains(@class, 'ant-drawer-right')])]//span", "User Logo");
-        messages = findComponents(PlaywrightMessageComponent.class, "xpath=//div[@class='ant-notification-notice-wrapper']", "Studio Messages");
+        messages = findComponents(PlaywrightMessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
         userMenuDrawer = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
     }
 
     public void closeAllMessages() {
+        LOGGER.info("messages.size() = {}", messages.size());
         for(PlaywrightMessageComponent msg : messages) {
             msg.closeMessage();
         }

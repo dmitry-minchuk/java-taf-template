@@ -2,13 +2,15 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
 import configuration.appcontainer.AppContainerPool;
+import configuration.core.ui.factory.LazyPlaywrightComponentsList;
+import configuration.core.ui.factory.LazyPlaywrightElementsList;
 import configuration.core.ui.factory.PlaywrightComponentFactory;
 import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
-import configuration.core.ui.factory.PlaywrightListFactory;
 import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 
 public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
@@ -60,25 +62,25 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
-    //Creates list of components from selector.
+    //Creates list of components from selector using lazy initialization.
     @Override
     public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName) {
-        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, baseName, page, null);
+        return new LazyPlaywrightComponentsList<>(componentClass, page, null, selector, baseName);
     }
     
-    //Creates list of components from selector.
+    //Creates list of components from selector using lazy initialization.
     @Override
     public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector) {
-        return PlaywrightComponentFactoryImpl.createComponentsList(componentClass, selector, page, null);
+        return new LazyPlaywrightComponentsList<>(componentClass, page, null, selector);
     }
     
-    //Finds list of elements on page.
+    //Finds list of elements on page using lazy initialization.
     public List<PlaywrightWebElement> findElements(String selector, String baseName) {
-        return PlaywrightListFactory.createElementsList(page, null, selector, baseName);
+        return new LazyPlaywrightElementsList(page, null, selector, baseName);
     }
     
-    //Finds list of elements on page.
+    //Finds list of elements on page using lazy initialization.
     public List<PlaywrightWebElement> findElements(String selector) {
-        return PlaywrightListFactory.createElementsList(page, null, selector);
+        return new LazyPlaywrightElementsList(page, null, selector);
     }
 }

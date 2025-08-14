@@ -20,7 +20,7 @@ public class PlaywrightMessageComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeComponents() {
-        message = createScopedElement("xpath=.//div[contains(@class,'ant-message-notice-content')]", "Message Content");
+        message = createScopedElement("xpath=.//div[contains(@class,'ant-notification-notice-message')]", "Message Content");
         closeBtn = createScopedElement("xpath=.//a[@aria-label='Close']", "Close Message Button");
     }
 

@@ -18,6 +18,20 @@ public final class PlaywrightListFactory {
     }
     
     /**
+     * Creates indexed selector that works correctly for both XPath and CSS selectors.
+     */
+    private static String createIndexedSelector(String selector, int index) {
+        if (selector.startsWith("xpath=")) {
+            // For XPath: add position predicate
+            String xpathPart = selector.substring(6); // Remove "xpath=" prefix
+            return "xpath=(" + xpathPart + ")[" + (index + 1) + "]";
+        } else {
+            // For CSS: use :nth-match()
+            return selector + ":nth-match(" + (index + 1) + ")";
+        }
+    }
+    
+    /**
      * Creates list of PlaywrightWebElements from selector.
      */
     public static List<PlaywrightWebElement> createElementsList(
@@ -25,13 +39,6 @@ public final class PlaywrightListFactory {
             PlaywrightWebElement parentElement,
             String selector, 
             String baseName) {
-        
-        if (page == null) {
-            throw new IllegalArgumentException("Page cannot be null");
-        }
-        if (selector == null || selector.trim().isEmpty()) {
-            throw new IllegalArgumentException("Selector cannot be null or empty");
-        }
         
         // Create base locator (scoped or page-level)
         Locator baseLocator = (parentElement != null) ? 
@@ -44,8 +51,8 @@ public final class PlaywrightListFactory {
         for (int i = 0; i < count; i++) {
             String elementName = (baseName != null) ? baseName + "_" + i : "Element_" + i;
             
-            // Create indexed selector for each element
-            String indexedSelector = selector + ":nth-match(" + (i + 1) + ")";
+            // Create indexed selector for each element (supports both XPath and CSS)
+            String indexedSelector = createIndexedSelector(selector, i);
             
             PlaywrightWebElement element = (parentElement != null) ?
                 new PlaywrightWebElement(parentElement, indexedSelector, elementName) :
@@ -77,16 +84,6 @@ public final class PlaywrightListFactory {
             String selector, 
             String baseName) {
         
-        if (componentClass == null) {
-            throw new IllegalArgumentException("Component class cannot be null");
-        }
-        if (page == null) {
-            throw new IllegalArgumentException("Page cannot be null");
-        }
-        if (selector == null || selector.trim().isEmpty()) {
-            throw new IllegalArgumentException("Selector cannot be null or empty");
-        }
-        
         // Create base locator (scoped or page-level)
         Locator baseLocator = (parentElement != null) ? 
             parentElement.getLocator().locator(selector) : 
@@ -98,8 +95,8 @@ public final class PlaywrightListFactory {
         for (int i = 0; i < count; i++) {
             String componentName = (baseName != null) ? baseName + "_" + i : componentClass.getSimpleName() + "_" + i;
             
-            // Create indexed selector for each component
-            String indexedSelector = selector + ":nth-match(" + (i + 1) + ")";
+            // Create indexed selector for each component (supports both XPath and CSS)
+            String indexedSelector = createIndexedSelector(selector, i);
             
             PlaywrightWebElement rootElement = (parentElement != null) ?
                 new PlaywrightWebElement(parentElement, indexedSelector, componentName) :
