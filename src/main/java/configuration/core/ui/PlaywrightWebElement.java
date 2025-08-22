@@ -14,6 +14,9 @@ import org.apache.logging.log4j.Logger;
 public class PlaywrightWebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(PlaywrightWebElement.class);
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(
+        ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT)
+    );
     private final int timeoutInMilliseconds;
     @Getter
     private final Page page;
@@ -31,9 +34,7 @@ public class PlaywrightWebElement {
         this.locator = page.locator(selector);
         this.elementName = "Element";
         this.parentElement = null; // Page-level element has no parent
-        this.timeoutInMilliseconds = Integer.parseInt(
-            ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
-        ) * 1000;
+        this.timeoutInMilliseconds = DEFAULT_TIMEOUT_MS;
     }
     
     public PlaywrightWebElement(Page page, String selector, String elementName) {
@@ -42,9 +43,7 @@ public class PlaywrightWebElement {
         this.locator = page.locator(selector);
         this.elementName = elementName != null ? elementName : "Element";
         this.parentElement = null; // Page-level element has no parent
-        this.timeoutInMilliseconds = Integer.parseInt(
-            ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
-        ) * 1000;
+        this.timeoutInMilliseconds = DEFAULT_TIMEOUT_MS;
     }
     
     public PlaywrightWebElement(PlaywrightWebElement parent, String selector) {

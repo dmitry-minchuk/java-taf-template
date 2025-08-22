@@ -4,7 +4,7 @@ public enum PropertyNameSpace {
     BROWSER("browser"),
     BROWSER_VERSION("browser_version"),
     RETRY_COUNT("test_retry_count"),
-    WEB_ELEMENT_EXPLICIT_WAIT("web_element_explicit_wait"),
+    PLAYWRIGHT_DEFAULT_TIMEOUT("playwright_default_timeout"),
     DEFAULT_APP_PORT("default_app_port"),
     DOCKER_IMAGE_NAME("docker_image_name"),
     DEPLOYED_APP_PATH("deployed_app_path"),

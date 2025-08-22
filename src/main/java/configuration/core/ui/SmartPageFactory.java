@@ -21,7 +21,8 @@ import helpers.utils.WaitUtil;
 
 public class SmartPageFactory {
 
-    private final static int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
+    private final static int timeoutInSeconds = DEFAULT_TIMEOUT_MS / 1000;
 
     public static void initElements(WebDriver driver, Object page) {
         Class<?> currentClass = page.getClass();

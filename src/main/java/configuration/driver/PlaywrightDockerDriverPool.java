@@ -18,6 +18,7 @@ import java.time.Duration;
 public class PlaywrightDockerDriverPool {
 
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDockerDriverPool.class);
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
 
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();
 
@@ -105,6 +106,9 @@ public class PlaywrightDockerDriverPool {
 
                 // Create new page
                 Page page = browserContext.newPage();
+                
+                // Set default timeout from configuration instead of hardcoded value
+                page.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
 
                 // Store in thread local
                 PlaywrightDockerContext context = new PlaywrightDockerContext(
@@ -266,6 +270,10 @@ public class PlaywrightDockerDriverPool {
     public static Page createNewPage() {
         BrowserContext context = getBrowserContext();
         Page newPage = context.newPage();
+        
+        // Set default timeout from configuration for new page
+        newPage.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
+        
         LOGGER.debug("Created new page in Docker-aware browser context");
         return newPage;
     }
@@ -285,7 +293,7 @@ public class PlaywrightDockerDriverPool {
         LOGGER.info("Navigating to URL via Docker network: {} -> {}", url, resolvedUrl);
         page.navigate(resolvedUrl, new Page.NavigateOptions()
                 .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(5000));
+                .setTimeout(DEFAULT_TIMEOUT_MS));
     }
 
     private static String resolveContainerNetworkUrl(String url) {

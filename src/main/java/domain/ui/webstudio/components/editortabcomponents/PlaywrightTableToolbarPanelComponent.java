@@ -49,32 +49,33 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     private void initializeElements() {
-        runBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//img[contains(@src, 'run')]", "runBtn");
-        traceBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//img[contains(@src, 'trace')]", "traceBtn");
-        benchmarkBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
-        exportBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
-        editBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//a[@class='toolbarButton' and @title='Edit the table']", "editBtn");
-        factorTextField = createScopedElement("xpath=.//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
-        traceDropdownBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
+        // Toolbar elements - scoped to toolbar container
+        runBtn = createScopedElement("xpath=.//img[contains(@src, 'run')]", "runBtn");
+        traceBtn = createScopedElement("xpath=.//img[contains(@src, 'trace')]", "traceBtn");
+        benchmarkBtn = createScopedElement("xpath=.//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
+        exportBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+        editBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Edit the table']", "editBtn");
+        traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
         
-        // Run Menu elements - from RunDropDown.java
-        createItemBtn = createScopedElement("xpath=.//a[@title='Create']", "createItemBtn");
-        expandTypesBtn = createScopedElement("xpath=.//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
-        addElementToCollectionBtnTemplate = createScopedElement("xpath=.//span[contains(text(), '%s')]//a[@title='Add new element to collection']", "addElementToCollectionBtnTemplate");
-        runDropdownBtn = createScopedElement("xpath=.//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
-        addedElementsExpanderTemplate = createScopedElement("xpath=.//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
-        selectTypeDropdown = createScopedElement("xpath=.//div[contains(@id, 'input')]//select", "selectTypeDropdown");
+        // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
+        createItemBtn = new PlaywrightWebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
+        expandTypesBtn = new PlaywrightWebElement(page, "xpath=//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
+        addElementToCollectionBtnTemplate = new PlaywrightWebElement(page, "xpath=//span[contains(text(), '%s')]//a[@title='Add new element to collection']", "addElementToCollectionBtnTemplate");
+        runDropdownBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
+        addedElementsExpanderTemplate = new PlaywrightWebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
+        selectTypeDropdown = new PlaywrightWebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
         
-        // Trace Menu elements - from RunDropDown.java and legacy code
-        traceInsideMenuBtn = createScopedElement("xpath=.//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
-        traceIntoFileBtn = createScopedElement("xpath=.//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
-        factorTextFieldForTrace = createScopedElement("xpath=.//span[text()='factor = ']/input", "factorTextFieldForTrace");
-        jsonRadioBtn = createScopedElement("xpath=.//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
-        jsonTextField = createScopedElement("xpath=.//textarea[contains(@id, 'jsonInput')]", "jsonTextField");
+        // Trace Menu elements - page-level (form elements)
+        traceInsideMenuBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
+        traceIntoFileBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
+        factorTextField = new PlaywrightWebElement(page, "xpath=//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
+        factorTextFieldForTrace = new PlaywrightWebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
+        jsonRadioBtn = new PlaywrightWebElement(page, "xpath=//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
+        jsonTextField = new PlaywrightWebElement(page, "xpath=//textarea[contains(@id, 'jsonInput')]", "jsonTextField");
         
-        // Input parameter elements - templates from RunDropDown.java  
-        inputTextFieldTemplate = createScopedElement("xpath=(.//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
-        inputSelectFieldTemplate = createScopedElement("xpath=(.//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
+        // Input parameter templates - page-level (form inputs)  
+        inputTextFieldTemplate = new PlaywrightWebElement(page, "xpath=(//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
+        inputSelectFieldTemplate = new PlaywrightWebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
     }
 
     public IPlaywrightRunMenu clickRun() {

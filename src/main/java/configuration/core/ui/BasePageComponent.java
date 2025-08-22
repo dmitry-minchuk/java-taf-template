@@ -19,7 +19,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public abstract class BasePageComponent {
 
     protected static final Logger LOGGER = LogManager.getLogger(BasePageComponent.class);
-    protected final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
+    protected final int timeoutInSeconds = DEFAULT_TIMEOUT_MS / 1000;
     
     // Selenium-related fields (for backward compatibility)
     @Getter
