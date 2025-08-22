@@ -18,7 +18,8 @@ import java.util.function.Function;
 public class SmartWebElement {
 
     protected final static Logger LOGGER = LogManager.getLogger(SmartWebElement.class);
-    private final int timeoutInSeconds = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT));
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
+    private final int timeoutInSeconds = DEFAULT_TIMEOUT_MS / 1000;
     private final int retryTimeoutBetweenActionAttempts = 500;
     private final WebDriver driver;
     private final By locator;

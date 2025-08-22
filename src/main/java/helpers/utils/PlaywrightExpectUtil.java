@@ -17,8 +17,8 @@ public class PlaywrightExpectUtil {
     
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightExpectUtil.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(
-        ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT)
-    ) * 1000; // Convert to milliseconds
+        ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT)
+    ); // Already in milliseconds
     
     // Replace WaitUtil.waitUntil() with expect().toBeVisible()
     public static boolean expectVisible(Page page, String selector) {

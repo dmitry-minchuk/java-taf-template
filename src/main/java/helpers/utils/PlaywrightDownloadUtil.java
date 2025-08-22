@@ -23,6 +23,9 @@ public class PlaywrightDownloadUtil {
     
     private static final String CONTAINER_DOWNLOAD_PATH = "/tmp/downloads";
     private static final String DEFAULT_TIMEOUT = "3000";
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(
+        ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT)
+    );
     
     public static File downloadFile(Locator trigger) {
         return downloadFile(trigger, getDefaultTimeout());
@@ -135,16 +138,7 @@ public class PlaywrightDownloadUtil {
     }
     
     private static int getDefaultTimeout() {
-        String timeoutStr = ProjectConfiguration.getProperty(PropertyNameSpace.WEB_ELEMENT_EXPLICIT_WAIT);
-        if (timeoutStr == null || timeoutStr.isEmpty()) {
-            timeoutStr = DEFAULT_TIMEOUT;
-        }
-        try {
-            return Integer.parseInt(timeoutStr) * 1000; // Convert seconds to milliseconds
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid timeout value: {}, using default", timeoutStr);
-            return Integer.parseInt(DEFAULT_TIMEOUT);
-        }
+        return DEFAULT_TIMEOUT_MS;
     }
     
     public static boolean cleanupDownloadFile(File downloadedFile) {

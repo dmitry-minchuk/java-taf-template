@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 public class PlaywrightDriverPool {
     
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDriverPool.class);
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     
     // Execution modes for Playwright framework (moved from BaseTest for independence)
     public enum ExecutionMode {
@@ -99,6 +100,9 @@ public class PlaywrightDriverPool {
                 
                 // Create new page
                 Page page = browserContext.newPage();
+                
+                // Set default timeout from configuration instead of hardcoded value
+                page.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
                 
                 // Store in thread local
                 PlaywrightContext context = new PlaywrightContext(playwright, browser, browserContext, page);
@@ -282,6 +286,10 @@ public class PlaywrightDriverPool {
     public static Page createNewPage() {
         BrowserContext context = getBrowserContext();
         Page newPage = context.newPage();
+        
+        // Set default timeout from configuration for new page
+        newPage.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
+        
         LOGGER.debug("Created new page in browser context");
         return newPage;
     }
@@ -300,7 +308,7 @@ public class PlaywrightDriverPool {
         LOGGER.info("Navigating to URL: {}", url);
         page.navigate(url, new Page.NavigateOptions()
                 .setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(5000)); // 30 seconds timeout
+                .setTimeout(DEFAULT_TIMEOUT_MS));
     }
     
     // Navigate to application container URL with automatic mode detection

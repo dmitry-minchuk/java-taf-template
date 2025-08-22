@@ -28,8 +28,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
     public void testPlaywrightMethodTable() {
         String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestMethodTable.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
-        
-        // Navigate to the Method table in the rules tree
+
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "TestMethodTable");
         editorPage.getLeftRulesTreeComponent()
@@ -37,7 +36,6 @@ public class TestPlaywrightMethodTable extends BaseTest {
                 .expandFolderInTree("Method")
                 .selectItemInFolder("Method", "getGreetings");
 
-        // Verify Problems panel shows no problems
         editorPage.getProblemsPanelComponent().checkNoProblems();
 
         // Get the center table and verify initial content
@@ -53,7 +51,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         assertThat(row2Content).anyMatch(cell -> cell.contains("return \"Hi,\"+name"));
 
         // Run the method with test parameter
-        runMethodTest(editorPage, table, "Tom", Arrays.asList("1", "Tom", "Hi,Tom"));
+        runMethodTest(editorPage, "Tom", Arrays.asList("1", "Tom", "Hi,Tom"));
 
         // Test table editing operations
         testTableEditingOperations(editorPage, table);
@@ -62,40 +60,24 @@ public class TestPlaywrightMethodTable extends BaseTest {
         testTableCopyAndManagement(editorPage);
     }
 
-    private void runMethodTest(PlaywrightEditorPage editorPage, PlaywrightTableComponent table, String inputParam, List<String> expectedResult) {
-        // Use Run menu similar to TestArrayOfAliasValuesInRunTrace pattern
+    private void runMethodTest(PlaywrightEditorPage editorPage, String inputParam, List<String> expectedResult) {
         var runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
-        runMenu.clickCreateItem()
-              .clickAddElementToCollectionBtn("my =")
-              .clickExpandCollection()
-              // Set input parameter using the new functionality from PlaywrightTableToolbarPanelComponent
-              // This matches legacy: RunDropDown.getInputTextField("1").setValue("Tom")
-              .setInputTextField("1", inputParam);
-        
-        // Execute the run
-        runMenu.clickRunInsideMenu();
-        
-        // Wait for test results and verify
-        waitForTestResults();
-        
-        // Verify test results  
+        runMenu.setInputTextField("1", inputParam)
+                .clickRunInsideMenu();
         List<String> actualResult = getTestResult(1);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     private void testTableEditingOperations(PlaywrightEditorPage editorPage, PlaywrightTableComponent table) {
-        // Navigate back to the Method table for editing
         editorPage.getLeftRulesTreeComponent()
                 .selectItemInFolder("Method", "getGreetings");
-        
-        // Enter edit mode and perform table operations
+
         table.doubleClickCell(2, 1);
-        
-        // Insert new row
-        editorPage.getEditTablePanelComponent().getInsertRowAfterBtn().click();
-        
-        // Edit the new row content
-        editorPage.getEditTablePanelComponent().editCell(3, 1, "return \"Happy Birthday, \"+name;");
+        editorPage.getEditTablePanelComponent()
+                .getInsertRowAfterBtn()
+                .click();
+        editorPage.getEditTablePanelComponent()
+                .editCell(3, 1, "return \"Happy Birthday, \"+name;");
         
         // Verify table now has 3 rows
         assertThat(table.getRowsCount()).isEqualTo(3);
@@ -106,11 +88,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         // Remove the added row
         table.doubleClickCell(3, 1);
         editorPage.getEditTablePanelComponent().getRemoveRowBtn().click();
-        
-        // Save changes
         editorPage.getEditTablePanelComponent().getSaveChangesBtn().click();
-        
-        // Verify problems panel shows no issues
         editorPage.getProblemsPanelComponent().checkNoProblems();
         
         // Verify table is back to original state
@@ -120,7 +98,6 @@ public class TestPlaywrightMethodTable extends BaseTest {
     }
 
     private void testTableCopyAndManagement(PlaywrightEditorPage editorPage) {
-        // Copy table as new table  
         copyTableAsNew("getGreetings2", "");
         
         // Verify both tables exist in rules tree
@@ -128,23 +105,13 @@ public class TestPlaywrightMethodTable extends BaseTest {
         editorPage.getLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings2");
 
         // Select and remove the copied table
-        editorPage.getLeftRulesTreeComponent()
-                .selectItemInFolder("Method", "getGreetings2");
-        
+        editorPage.getLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings2");
         removeCurrentTable();
         
         // Verify tree state after removal
-        editorPage.getLeftRulesTreeComponent()
-                .expandFolderInTree("Method");
+        editorPage.getLeftRulesTreeComponent().expandFolderInTree("Method");
         editorPage.getLeftRulesTreeComponent().checkRulesTableAbsent("Method", "getGreetings2");
         editorPage.getLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
-    }
-
-
-    private void waitForTestResults() {
-        // TODO: Implement result table waiting from legacy:
-        // WaitUtil.waitForElementPresence(BrowserController.get().driver(), TestResultPage.resultTable.getLocator());
-        // Need to create PlaywrightTestResultPage component
     }
 
     private List<String> getTestResult(int rowIndex) {
