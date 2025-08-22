@@ -29,4 +29,14 @@ public class PlaywrightWorkflowService {
         repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
         return projectName;
     }
+
+    public static String loginCreateProjectFromExcelFile(User user, String excelFileName) {
+        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
+        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(user));
+        PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
+        String projectName = StringUtil.generateUniqueName("project");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName, excelFileName);
+        repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
+        return projectName;
+    }
 }

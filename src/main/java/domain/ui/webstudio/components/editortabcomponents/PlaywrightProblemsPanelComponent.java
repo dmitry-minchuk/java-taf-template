@@ -79,4 +79,10 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     public String getProblemsInfo() {
         return String.format("Errors: %d, Warnings: %d", getErrorsCount(), getWarningsCount());
     }
+
+    public void checkNoProblems() {
+        if (hasErrors() || hasWarnings()) {
+            throw new AssertionError("Expected no problems but found: " + getProblemsInfo());
+        }
+    }
 }

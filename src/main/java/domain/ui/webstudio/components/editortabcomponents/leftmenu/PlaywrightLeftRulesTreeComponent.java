@@ -72,6 +72,27 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         return "";
     }
 
+    public void checkRulesTablePresent(String folderName, String tableName) {
+        if (!isItemExistsInFolder(folderName, tableName)) {
+            throw new AssertionError(String.format("Table '%s' not found in folder '%s'", tableName, folderName));
+        }
+    }
+
+    public void checkRulesTableAbsent(String folderName, String tableName) {
+        if (isItemExistsInFolder(folderName, tableName)) {
+            throw new AssertionError(String.format("Table '%s' should not exist in folder '%s'", tableName, folderName));
+        }
+    }
+
+    public boolean isItemExistsInFolder(String folderName, String itemName) {
+        try {
+            PlaywrightTreeFolderComponent folder = findFolderInTree(folderName);
+            return folder.getItem(itemName).isVisible();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
 
     // Find specific folder in the tree by name
     private PlaywrightTreeFolderComponent findFolderInTree(String folderName) {
