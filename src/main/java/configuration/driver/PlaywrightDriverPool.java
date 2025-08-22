@@ -300,7 +300,7 @@ public class PlaywrightDriverPool {
         LOGGER.info("Navigating to URL: {}", url);
         page.navigate(url, new Page.NavigateOptions()
                 .setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(30000)); // 30 seconds timeout
+                .setTimeout(5000)); // 30 seconds timeout
     }
     
     // Navigate to application container URL with automatic mode detection

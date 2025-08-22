@@ -285,7 +285,7 @@ public class PlaywrightDockerDriverPool {
         LOGGER.info("Navigating to URL via Docker network: {} -> {}", url, resolvedUrl);
         page.navigate(resolvedUrl, new Page.NavigateOptions()
                 .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(30000));
+                .setTimeout(5000));
     }
 
     private static String resolveContainerNetworkUrl(String url) {

@@ -31,8 +31,14 @@ public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent 
         signOutMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='Sign Out']", "Sign Out Menu Item");
     }
 
-    public void navigateToMyProfile() {
+    public PlaywrightAdminPage navigateToMyProfile() {
         select(MenuElements.MY_PROFILE);
+        return new PlaywrightAdminPage();
+    }
+
+    public PlaywrightAdminPage navigateToMySettings() {
+        select(MenuElements.MY_SETTINGS);
+        return new PlaywrightAdminPage();
     }
 
     public PlaywrightAdminPage navigateToAdministration() {

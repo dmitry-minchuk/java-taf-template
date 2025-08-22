@@ -34,16 +34,18 @@ public class PlaywrightUsersPageComponent extends PlaywrightBasePageComponent {
         userTableBody = createScopedElement("xpath=.//table//tbody[@class='ant-table-tbody']", "userTableBody");
         userTableHeader = createScopedElement("xpath=.//table//thead[@class='ant-table-thead']", "userTableHeader");
         addUserBtn = createScopedElement("xpath=.//button[./span[text()='Add User']]", "addUserBtn");
-        usernameField = createScopedElement("xpath=.//input[@placeholder='Username' or @id='username']", "usernameField");
-        emailField = createScopedElement("xpath=.//input[@placeholder='Email' or @id='email']", "emailField");
-        firstNameField = createScopedElement("xpath=.//input[@placeholder='First Name' or @id='firstName']", "firstNameField");
-        lastNameField = createScopedElement("xpath=.//input[@placeholder='Last Name' or @id='lastName']", "lastNameField");
-        passwordField = createScopedElement("xpath=.//input[@placeholder='Password' or @id='password' or @type='password']", "passwordField");
-        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
         displayNamePatternField = createScopedElement("xpath=.//select[@id='displayNamePattern'] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Display Name Pattern')]]", "displayNamePatternField");
         displayNameField = createScopedElement("xpath=.//input[@placeholder='Display Name' or @id='displayName']", "displayNameField");
         administratorsGroupCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'admin') or ./following-sibling::*[contains(text(),'Administrator')])]", "administratorsGroupCheckbox");
+
+        // Right panel not belonging to users page html hierarchy
+        usernameField = new PlaywrightWebElement(page, "xpath=//input[@id='username']", "usernameField");
+        emailField = new PlaywrightWebElement(page, "xpath=//input[@id='email']", "emailField");
+        firstNameField = new PlaywrightWebElement(page, "xpath=//input[@id='firstName']", "firstNameField");
+        lastNameField = new PlaywrightWebElement(page, "xpath=//input[@id='lastName']", "lastNameField");
+        passwordField = new PlaywrightWebElement(page, "xpath=//input[@id='password' or @type='password']", "passwordField");
+        saveBtn = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void clickAddUser() {
