@@ -36,10 +36,11 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     }
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
-        do {
-            viewFilterLink.click();
+        if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
+            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible())
+                viewFilterLink.click();
             filterOptionTemplate.format(filterOption.getValue()).click();
-        } while(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase()));
+        }
         return this;
     }
 
