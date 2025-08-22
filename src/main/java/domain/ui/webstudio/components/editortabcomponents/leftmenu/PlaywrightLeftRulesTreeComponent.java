@@ -4,6 +4,7 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +38,11 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
-            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible())
+            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible()) {
+                WaitUtil.sleep(250);
                 viewFilterLink.click();
+                WaitUtil.sleep(250);
+            }
             filterOptionTemplate.format(filterOption.getValue()).click();
         }
         return this;

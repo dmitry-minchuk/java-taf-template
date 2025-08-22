@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement toolbar;
     private PlaywrightWebElement runBtn;
     private PlaywrightWebElement traceBtn;
     private PlaywrightWebElement benchmarkBtn;
@@ -50,7 +49,6 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     private void initializeElements() {
-        toolbar = createScopedElement("xpath=.//div[@id='tableToolbarPanel']", "toolbar");
         runBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//img[contains(@src, 'run')]", "runBtn");
         traceBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//img[contains(@src, 'trace')]", "traceBtn");
         benchmarkBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
@@ -95,10 +93,6 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
 
     public void clickExport() {
         exportBtn.click();
-    }
-
-    public boolean isToolbarVisible() {
-        return toolbar.isVisible();
     }
 
     public boolean isRunButtonEnabled() {
