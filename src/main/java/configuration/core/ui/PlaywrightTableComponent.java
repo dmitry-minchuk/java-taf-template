@@ -87,8 +87,7 @@ public class PlaywrightTableComponent {
 
     public void doubleClickCell(int rowIndex, int columnIndex) {
         if (selector.startsWith("xpath=")) {
-            String cellSelector = selector.substring(6) + String.format("//tr[not(@class='hidden')][%d]//*[self::td or self::th][%d]", 
-                                                           rowIndex + 1, columnIndex + 1);
+            String cellSelector = selector.substring(6) + String.format("//tr[not(@class='hidden')][%d]//*[self::td or self::th][%d]", rowIndex + 1, columnIndex + 1);
             page.locator("xpath=" + cellSelector).dblclick();
         } else {
             page.locator(selector)

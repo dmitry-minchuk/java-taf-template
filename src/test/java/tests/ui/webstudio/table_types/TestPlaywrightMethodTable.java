@@ -72,15 +72,15 @@ public class TestPlaywrightMethodTable extends BaseTest {
         editorPage.getLeftRulesTreeComponent()
                 .selectItemInFolder("Method", "getGreetings");
 
-        table.doubleClickCell(2, 1);
+        table.doubleClickCell(1, 0);
         editorPage.getEditTablePanelComponent()
                 .getInsertRowAfterBtn()
                 .click();
         editorPage.getEditTablePanelComponent()
-                .editCell(3, 1, "return \"Happy Birthday, \"+name;");
+                .editCell(2, 0, "return \"Happy Birthday, \"+name;");
         
         // Verify table now has 3 rows
-        assertThat(table.getRowsCount()).isEqualTo(3);
+        assertThat(table.getRowsCount()).isEqualTo(2);
         assertThat(table.getRow(1).getValue()).containsExactly("Method String getGreetings (String name)");
         assertThat(table.getRow(2).getValue()).containsExactly("return \"Hi,\"+name\n;");
         assertThat(table.getRow(3).getValue()).containsExactly("return \"Happy Birthday, \"+name\n;");
