@@ -49,7 +49,7 @@ public enum AppContainerStartParameters {
             case DEFAULT_STUDIO_PARAMS:
             default:
                 config.putAll(EMPTY.getParameterMap());
-                config.put("webstudio.configured", "true");
+//                config.put("webstudio.configured", "true");
                 config.put("user.mode", "multi");
                 config.put("security.administrators", "admin");
                 config.put("repository.production1.$ref", "repo-jdbc");

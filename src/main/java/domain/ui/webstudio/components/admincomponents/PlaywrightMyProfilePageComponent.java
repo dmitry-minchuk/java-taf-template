@@ -37,9 +37,9 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         firstNameField = createScopedElement("xpath=.//input[@placeholder='First Name' or @id='firstName' or @id='givenName']", "firstNameField");
         lastNameField = createScopedElement("xpath=.//input[@placeholder='Last Name' or @id='lastName' or @id='familyName']", "lastNameField");
         displayNameField = createScopedElement("xpath=.//input[@placeholder='Display Name' or @id='displayName']", "displayNameField");
-        currentPasswordField = createScopedElement("xpath=.//input[@placeholder='Current Password' or @type='password'][1]", "currentPasswordField");
-        newPasswordField = createScopedElement("xpath=.//input[@placeholder='New Password' or @type='password'][2]", "newPasswordField");
-        confirmPasswordField = createScopedElement("xpath=.//input[@placeholder='Confirm Password' or @placeholder='Confirm New Password' or @type='password'][3]", "confirmPasswordField");
+        currentPasswordField = createScopedElement("xpath=.//input[@id='changePassword_currentPassword']", "currentPasswordField");
+        newPasswordField = createScopedElement("xpath=.//input[@id='changePassword_newPassword']", "newPasswordField");
+        confirmPasswordField = createScopedElement("xpath=.//input[@id='changePassword_confirmPassword']", "confirmPasswordField");
         saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
         successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
         errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");

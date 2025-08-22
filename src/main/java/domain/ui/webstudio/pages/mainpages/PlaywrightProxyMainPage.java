@@ -25,7 +25,7 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
     }
 
     public void closeAllMessages() {
-        LOGGER.info("messages.size() = {}", messages.size());
+        LOGGER.debug("messages.size() = {}", messages.size());
         for(PlaywrightMessageComponent msg : messages) {
             msg.closeMessage();
         }

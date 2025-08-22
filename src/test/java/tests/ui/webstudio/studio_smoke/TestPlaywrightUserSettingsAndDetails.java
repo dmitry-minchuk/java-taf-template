@@ -113,7 +113,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         
         // Verify user1 profile details
         myProfileComponent = editorPage.getCurrentUserComponent()
-                .navigateToAdministration()
+                .navigateToMyProfile()
                 .navigateToMyProfilePage();
                 
         Assert.assertEquals(myProfileComponent.getUsername(), "user1", "Username should be 'user1'");
@@ -126,7 +126,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         
         // Verify display name change
         myProfileComponent = editorPage.getCurrentUserComponent()
-                .navigateToAdministration()
+                .navigateToMySettings()
                 .navigateToMyProfilePage();
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Bbb Aaa", "Display name should be updated");
 
