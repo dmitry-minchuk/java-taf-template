@@ -19,6 +19,25 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     private PlaywrightWebElement editBtn;
     private PlaywrightWebElement factorTextField;
     private PlaywrightWebElement traceDropdownBtn;
+    
+    // Run Menu elements
+    private PlaywrightWebElement createItemBtn;
+    private PlaywrightWebElement expandTypesBtn;
+    private PlaywrightWebElement addElementToCollectionBtnTemplate;
+    private PlaywrightWebElement runDropdownBtn;
+    private PlaywrightWebElement addedElementsExpanderTemplate;
+    private PlaywrightWebElement selectTypeDropdown;
+    
+    // Trace Menu elements  
+    private PlaywrightWebElement traceInsideMenuBtn;
+    private PlaywrightWebElement traceIntoFileBtn;
+    private PlaywrightWebElement factorTextFieldForTrace;
+    private PlaywrightWebElement jsonRadioBtn;
+    private PlaywrightWebElement jsonTextField;
+    
+    // Input parameter elements - from RunDropDown.java
+    private PlaywrightWebElement inputTextFieldTemplate;
+    private PlaywrightWebElement inputSelectFieldTemplate;
 
     public PlaywrightTableToolbarPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -31,22 +50,43 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     private void initializeElements() {
-        toolbar = createScopedElement("xpath=.//div[contains(@class,'table-toolbar')]", "toolbar");
-        runBtn = createScopedElement("xpath=.//button[contains(@title,'Run') or contains(text(),'Run')]", "runBtn");
-        traceBtn = createScopedElement("xpath=.//button[contains(@title,'Trace') or contains(text(),'Trace')]", "traceBtn");
-        benchmarkBtn = createScopedElement("xpath=.//button[contains(@title,'Benchmark') or contains(text(),'Benchmark')]", "benchmarkBtn");
-        exportBtn = createScopedElement("xpath=.//button[contains(@title,'Export') or contains(text(),'Export')]", "exportBtn");
-        editBtn = createScopedElement("xpath=.//a[.//div[text()='Edit'] or .//tr/td/span[text()='Edit']]", "editBtn");
-        factorTextField = createScopedElement("xpath=.//input[@type='text' and contains(@placeholder,'Factor') or @id='factorInput']", "factorTextField");
-        traceDropdownBtn = createScopedElement("xpath=.//button[contains(@title,'Trace') or .//div[text()='Trace']]", "traceDropdownBtn");
+        toolbar = createScopedElement("xpath=.//div[@id='tableToolbarPanel']", "toolbar");
+        runBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//img[contains(@src, 'run')]", "runBtn");
+        traceBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//img[contains(@src, 'trace')]", "traceBtn");
+        benchmarkBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
+        exportBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+        editBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//a[@class='toolbarButton' and @title='Edit the table']", "editBtn");
+        factorTextField = createScopedElement("xpath=.//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
+        traceDropdownBtn = createScopedElement("xpath=.//div[@id='tableToolbarPanel']//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
+        
+        // Run Menu elements - from RunDropDown.java
+        createItemBtn = createScopedElement("xpath=.//a[@title='Create']", "createItemBtn");
+        expandTypesBtn = createScopedElement("xpath=.//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
+        addElementToCollectionBtnTemplate = createScopedElement("xpath=.//span[contains(text(), '%s')]//a[@title='Add new element to collection']", "addElementToCollectionBtnTemplate");
+        runDropdownBtn = createScopedElement("xpath=.//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
+        addedElementsExpanderTemplate = createScopedElement("xpath=.//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
+        selectTypeDropdown = createScopedElement("xpath=.//div[contains(@id, 'input')]//select", "selectTypeDropdown");
+        
+        // Trace Menu elements - from RunDropDown.java and legacy code
+        traceInsideMenuBtn = createScopedElement("xpath=.//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
+        traceIntoFileBtn = createScopedElement("xpath=.//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
+        factorTextFieldForTrace = createScopedElement("xpath=.//span[text()='factor = ']/input", "factorTextFieldForTrace");
+        jsonRadioBtn = createScopedElement("xpath=.//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
+        jsonTextField = createScopedElement("xpath=.//textarea[contains(@id, 'jsonInput')]", "jsonTextField");
+        
+        // Input parameter elements - templates from RunDropDown.java  
+        inputTextFieldTemplate = createScopedElement("xpath=(.//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
+        inputSelectFieldTemplate = createScopedElement("xpath=(.//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
     }
 
-    public void clickRun() {
+    public IPlaywrightRunMenu clickRun() {
         runBtn.click();
+        return new PlaywrightRunMenu();
     }
 
-    public void clickTrace() {
+    public IPlaywrightTraceMenu clickTrace() {
         traceBtn.click();
+        return new PlaywrightTraceMenu();
     }
 
     public void clickBenchmark() {
@@ -79,7 +119,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
 
     public PlaywrightTraceMenu setFactorTextField(String text) {
         factorTextField.fill(text);
-        return new PlaywrightTraceMenu(this);
+        return new PlaywrightTraceMenu();
     }
 
     public PlaywrightTraceWindow clickTraceInsideMenu() {
@@ -90,46 +130,177 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         return new PlaywrightTraceWindow();
     }
 
-    // Inner TraceMenu class for Playwright
-    public static class PlaywrightTraceMenu {
-        private PlaywrightTableToolbarPanelComponent parent;
 
-        public PlaywrightTraceMenu(PlaywrightTableToolbarPanelComponent parent) {
-            this.parent = parent;
+    // Interface for Playwright Run Menu
+    public interface IPlaywrightRunMenu {
+        IPlaywrightRunMenu clickCreateItem();
+        IPlaywrightRunMenu clickAddElementToCollectionBtn(String containsText);
+        IPlaywrightRunMenu clickExpandCollection();
+        IPlaywrightRunMenu clickRunInsideMenu();
+        IPlaywrightRunMenu clickAddedElementsExpander(String containsText);
+        java.util.List<String> getAliasDropdownValues();
+        // Input parameter methods from RunDropDown.java
+        IPlaywrightRunMenu setInputTextField(String index, String value);
+        IPlaywrightRunMenu setInputSelectField(String index, String value);
+    }
+
+    // Implementation for Playwright Run Menu
+    public class PlaywrightRunMenu implements IPlaywrightRunMenu {
+        
+        @Override
+        public IPlaywrightRunMenu clickCreateItem() {
+            createItemBtn.click();
+            return this;
         }
 
-        public PlaywrightTraceMenu setFactorTextField(String text) {
-            return parent.setFactorTextField(text);
+        @Override
+        public IPlaywrightRunMenu clickAddElementToCollectionBtn(String containsText) {
+            addElementToCollectionBtnTemplate.format(containsText).click();
+            return this;
         }
 
-        public PlaywrightTraceWindow clickTraceInsideMenu() {
-            return parent.clickTraceInsideMenu();
+        @Override
+        public IPlaywrightRunMenu clickExpandCollection() {
+            expandTypesBtn.click();
+            return this;
+        }
+
+        @Override
+        public IPlaywrightRunMenu clickRunInsideMenu() {
+            runDropdownBtn.click();
+            return this;
+        }
+
+        @Override
+        public IPlaywrightRunMenu clickAddedElementsExpander(String containsText) {
+            addedElementsExpanderTemplate.format(containsText).click();
+            return this;
+        }
+
+        @Override
+        public java.util.List<String> getAliasDropdownValues() {
+            java.util.List<String> values = new java.util.ArrayList<>();
+            String baseSelector = selectTypeDropdown.getSelector();
+            // Remove xpath= prefix if present and add //option
+            String optionsSelector = baseSelector.startsWith("xpath=") ? 
+                baseSelector.substring(6) + "//option" : 
+                "xpath=" + baseSelector + "//option";
+            var options = page.locator(optionsSelector);
+            int count = options.count();
+            for (int i = 0; i < count; i++) {
+                String value = options.nth(i).getAttribute("value");
+                values.add(value != null ? value : "");
+            }
+            return values;
+        }
+
+        @Override
+        public IPlaywrightRunMenu setInputTextField(String index, String value) {
+            inputTextFieldTemplate.format(index).fill(value);
+            return this;
+        }
+
+        @Override
+        public IPlaywrightRunMenu setInputSelectField(String index, String value) {
+            inputSelectFieldTemplate.format(index).selectByVisibleText(value);
+            return this;
         }
     }
 
-    // Inner TraceWindow class for Playwright
-    public static class PlaywrightTraceWindow {
+    // Interface for Playwright Trace Menu  
+    public interface IPlaywrightTraceMenu {
+        IPlaywrightTraceMenu setFactorTextField(String text);
+        IPlaywrightTraceMenu selectJSONTrace(String json);
+        IPlaywrightTraceMenu clickTraceIntoFile();
+        IPlaywrightTraceWindow clickTraceInsideMenu();
+        java.util.List<String> getAliasDropdownValues();
+    }
+
+    // Implementation for Playwright Trace Menu
+    public class PlaywrightTraceMenu implements IPlaywrightTraceMenu {
+        
+        @Override
+        public IPlaywrightTraceMenu setFactorTextField(String text) {
+            if (factorTextFieldForTrace.isVisible()) {
+                factorTextFieldForTrace.fill(text);
+            }
+            return this;
+        }
+
+        @Override
+        public IPlaywrightTraceMenu selectJSONTrace(String json) {
+            jsonRadioBtn.click();
+            jsonTextField.fill(json);
+            return this;
+        }
+
+        @Override
+        public IPlaywrightTraceMenu clickTraceIntoFile() {
+            traceIntoFileBtn.click();
+            return this;
+        }
+
+        @Override
+        public IPlaywrightTraceWindow clickTraceInsideMenu() {
+            traceInsideMenuBtn.click();
+            // Wait for trace window to open - in Playwright we don't need window switching like Selenium
+            page.waitForSelector("xpath=.//div[contains(@class,'trace-window') or contains(@title,'Trace')]", 
+                                new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(5000));
+            return new PlaywrightTraceWindow();
+        }
+
+        @Override
+        public java.util.List<String> getAliasDropdownValues() {
+            java.util.List<String> values = new java.util.ArrayList<>();
+            String baseSelector = selectTypeDropdown.getSelector();
+            // Remove xpath= prefix if present and add //option
+            String optionsSelector = baseSelector.startsWith("xpath=") ? 
+                baseSelector.substring(6) + "//option" : 
+                "xpath=" + baseSelector + "//option";
+            var options = page.locator(optionsSelector);
+            int count = options.count();
+            for (int i = 0; i < count; i++) {
+                String value = options.nth(i).getAttribute("value");
+                values.add(value != null ? value : "");
+            }
+            return values;
+        }
+    }
+
+    // Interface for Playwright Trace Window
+    public interface IPlaywrightTraceWindow {
+        IPlaywrightTraceWindow expandItemInTree(int position);
+        java.util.List<String> getVisibleItemsFromTree();
+    }
+
+    // Implementation for Playwright Trace Window
+    public class PlaywrightTraceWindow implements IPlaywrightTraceWindow {
         private PlaywrightWebElement traceTree;
+        private PlaywrightWebElement traceExpanderTemplate;
+        private PlaywrightWebElement traceItemsTemplate;
 
         public PlaywrightTraceWindow() {
             // Initialize trace window elements
             traceTree = new PlaywrightWebElement(PlaywrightDriverPool.getPage(), 
                 "xpath=.//div[contains(@class,'trace-tree') or contains(@id,'traceTree')]", "traceTree");
+            traceExpanderTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
+                "xpath=(.//span[contains(@class, 'fancytree-exp-c')]/span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
+            traceItemsTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
+                "xpath=.//li//span[@class='fancytree-title']", "traceItemsTemplate");
         }
 
-        public PlaywrightTraceWindow expandItemInTree(int position) {
-            PlaywrightWebElement item = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
-                String.format("xpath=(.//div[contains(@class,'trace-item')][%d]//span[contains(@class,'expand')])[1]", position + 1), 
-                "expandItem" + position);
+        @Override
+        public IPlaywrightTraceWindow expandItemInTree(int position) {
+            PlaywrightWebElement item = traceExpanderTemplate.format(position + 1);
             item.click();
             return this;
         }
 
-        public List<String> getVisibleItemsFromTree() {
-            List<String> items = new ArrayList<>();
-            // Get all visible trace items
+        @Override
+        public java.util.List<String> getVisibleItemsFromTree() {
+            java.util.List<String> items = new java.util.ArrayList<>();
             var page = PlaywrightDriverPool.getPage();
-            var locators = page.locator("xpath=.//div[contains(@class,'trace-item') or contains(@class,'trace-node')]//span[contains(@class,'trace-text')]");
+            var locators = page.locator("xpath=.//li//span[@class='fancytree-title']");
             int count = locators.count();
             for (int i = 0; i < count; i++) {
                 String text = locators.nth(i).textContent();
