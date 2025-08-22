@@ -25,7 +25,8 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
     public void testAddDeleteRowWithoutSaving() {
         String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, "Tutorial 6 - Introduction to Spreadsheet Tables");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Tutorial6 - Intro to Spreadsheet Tables");
+        editorPage.getLeftProjectModuleSelectorComponent()
+                .selectModule(projectName, "Tutorial6 - Intro to Spreadsheet Tables");
         editorPage.getLeftRulesTreeComponent()
                 .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")

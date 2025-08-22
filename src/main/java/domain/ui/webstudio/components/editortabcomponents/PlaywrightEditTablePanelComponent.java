@@ -98,4 +98,8 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
     public boolean isTableVisible() {
         return tableElement.isVisible();
     }
+
+    public void editCell(int row, int column, String value) {
+        setCellContent(row, column, value);
+    }
 }
