@@ -2,6 +2,7 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class PlaywrightTableComponent {
     }
 
     public void editCell(int rowIndex, int columnIndex, String text) {
-        // Double click on the cell to open editor
+        // Double-click on the cell to open editor
         doubleClickCell(rowIndex, columnIndex);
         
         // Find and interact with the table editor
@@ -85,6 +86,7 @@ public class PlaywrightTableComponent {
         inputLocator.press("Delete");
         inputLocator.fill(text);
         inputLocator.press("Enter");
+        WaitUtil.sleep(250);
     }
 
     // Inner class for table row operations
