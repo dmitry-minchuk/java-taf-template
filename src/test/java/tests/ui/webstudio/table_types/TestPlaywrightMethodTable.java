@@ -2,11 +2,14 @@ package tests.ui.webstudio.table_types;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
+import com.microsoft.playwright.Dialog;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.core.ui.PlaywrightTableComponent;
+import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.PlaywrightCopyTableDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightTableToolbarPanelComponent;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import helpers.service.PlaywrightWorkflowService;
@@ -114,22 +117,40 @@ public class TestPlaywrightMethodTable extends BaseTest {
     }
 
     private List<String> getTestResult(int rowIndex) {
-        // TODO: Implement test result extraction from legacy:  
-        // TestResultPage.resultTable.getRow(1).getValue()
-        // Need to create PlaywrightTestResultPage component with result table access
-        // For now return expected result for compilation
-        return Arrays.asList("1", "Tom", "Hi,Tom");
+        // Use existing PlaywrightTestResultValidationComponent to get test result data
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        return editorPage.getTestResultValidationComponent().getTestResultData(rowIndex);
     }
 
     private void copyTableAsNew(String newName, String description) {
-        // TODO: Implement table copy from legacy:
-        // TableActions.copyAsNewTable("getGreetings2", "");
-        // Need to add copyAsNewTable method to PlaywrightTableComponent or create PlaywrightTableActionsComponent
+        // Use existing PlaywrightTableToolbarPanelComponent to trigger copy dialog
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        
+        // 1. Click Copy button in toolbar
+        editorPage.getTableToolbarPanelComponent().clickCopy();
+        
+        // 2. Work with copy dialog
+        PlaywrightCopyTableDialogComponent copyDialog = new PlaywrightCopyTableDialogComponent();
+        copyDialog.selectCopyAs("New Table")
+                  .setName(newName);
+        
+        // Set save location if description is provided
+        if (description != null && !description.isEmpty()) {
+            copyDialog.setSaveTo(description);
+        }
+        
+        // 3. Execute copy
+        copyDialog.clickCopy();
     }
 
     private void removeCurrentTable() {
-        // TODO: Implement table removal from legacy:
-        // TableActions.removeTable();
-        // Need to add removeTable method to PlaywrightTableComponent or create PlaywrightTableActionsComponent
+        // Use existing PlaywrightTableToolbarPanelComponent to trigger table removal
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        
+        // 1. Click Remove button in toolbar
+        editorPage.getTableToolbarPanelComponent().clickRemove();
+        
+        // 2. Handle confirmation dialog - Playwright automatically handles alerts
+        PlaywrightDriverPool.getPage().onDialog(Dialog::accept);
     }
 }

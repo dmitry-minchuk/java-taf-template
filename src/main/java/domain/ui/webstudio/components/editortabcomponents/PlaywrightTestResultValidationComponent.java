@@ -1,8 +1,11 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.PlaywrightTableComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+
+import java.util.List;
 
 public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageComponent {
 
@@ -69,5 +72,31 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
             return resultTableHeader.getText();
         }
         return "";
+    }
+    
+    /**
+     * Get test result table as PlaywrightTableComponent for row operations
+     * @return PlaywrightTableComponent for the result table
+     */
+    public PlaywrightTableComponent getResultTable() {
+        return new PlaywrightTableComponent(page, "xpath=//table[@class='table']");
+    }
+    
+    /**
+     * Get test result data for specific row
+     * @param rowIndex 1-based row index
+     * @return List of cell values for the specified row
+     */
+    public List<String> getTestResultData(int rowIndex) {
+        return getResultTable().getRow(rowIndex).getValue();
+    }
+    
+    /**
+     * Get test result row as PlaywrightTableComponent.PlaywrightTableRow for direct access
+     * @param rowIndex 1-based row index
+     * @return PlaywrightTableRow for the specified row
+     */
+    public PlaywrightTableComponent.PlaywrightTableRow getTestResultRow(int rowIndex) {
+        return getResultTable().getRow(rowIndex);
     }
 }
