@@ -6,6 +6,7 @@ import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
 import java.util.List;
 import java.util.ArrayList;
+import com.microsoft.playwright.Dialog;
 
 @Getter
 
@@ -317,5 +318,23 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
             }
             return items;
         }
+    }
+
+    public void copyTableAsNew(String newName, String description) {
+        clickCopy();
+
+        PlaywrightCopyTableDialogComponent copyDialog = new PlaywrightCopyTableDialogComponent();
+        copyDialog.selectCopyAs("New Table")
+                  .setName(newName);
+        if (description != null && !description.isEmpty()) {
+            copyDialog.setSaveTo(description);
+        }
+
+        copyDialog.clickCopy();
+    }
+
+    public void removeCurrentTable() {
+        clickRemove();
+        PlaywrightDriverPool.getPage().onDialog(Dialog::accept);
     }
 }

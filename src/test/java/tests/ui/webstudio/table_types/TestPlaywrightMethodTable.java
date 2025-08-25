@@ -2,18 +2,13 @@ package tests.ui.webstudio.table_types;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
-import com.microsoft.playwright.Dialog;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.core.ui.PlaywrightTableComponent;
-import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightCopyTableDialogComponent;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightTableToolbarPanelComponent;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import helpers.service.PlaywrightWorkflowService;
-import helpers.utils.StringUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -67,7 +62,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         var runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
         runMenu.setInputTextField("1", inputParam)
                 .clickRunInsideMenu();
-        List<String> actualResult = getTestResult(1);
+        List<String> actualResult = editorPage.getTestResultValidationComponent().getTestResult(1);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
@@ -100,7 +95,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
     }
 
     private void testTableCopyAndManagement(PlaywrightEditorPage editorPage) {
-        copyTableAsNew("getGreetings2", "");
+        editorPage.getTableToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
         
         // Verify both tables exist in rules tree
         editorPage.getLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
@@ -108,49 +103,11 @@ public class TestPlaywrightMethodTable extends BaseTest {
 
         // Select and remove the copied table
         editorPage.getLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings2");
-        removeCurrentTable();
+        editorPage.getTableToolbarPanelComponent().removeCurrentTable();
         
         // Verify tree state after removal
         editorPage.getLeftRulesTreeComponent().expandFolderInTree("Method");
         editorPage.getLeftRulesTreeComponent().checkRulesTableAbsent("Method", "getGreetings2");
         editorPage.getLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
-    }
-
-    private List<String> getTestResult(int rowIndex) {
-        // Use existing PlaywrightTestResultValidationComponent to get test result data
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
-        return editorPage.getTestResultValidationComponent().getTestResultData(rowIndex);
-    }
-
-    private void copyTableAsNew(String newName, String description) {
-        // Use existing PlaywrightTableToolbarPanelComponent to trigger copy dialog
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
-        
-        // 1. Click Copy button in toolbar
-        editorPage.getTableToolbarPanelComponent().clickCopy();
-        
-        // 2. Work with copy dialog
-        PlaywrightCopyTableDialogComponent copyDialog = new PlaywrightCopyTableDialogComponent();
-        copyDialog.selectCopyAs("New Table")
-                  .setName(newName);
-        
-        // Set save location if description is provided
-        if (description != null && !description.isEmpty()) {
-            copyDialog.setSaveTo(description);
-        }
-        
-        // 3. Execute copy
-        copyDialog.clickCopy();
-    }
-
-    private void removeCurrentTable() {
-        // Use existing PlaywrightTableToolbarPanelComponent to trigger table removal
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
-        
-        // 1. Click Remove button in toolbar
-        editorPage.getTableToolbarPanelComponent().clickRemove();
-        
-        // 2. Handle confirmation dialog - Playwright automatically handles alerts
-        PlaywrightDriverPool.getPage().onDialog(Dialog::accept);
     }
 }
