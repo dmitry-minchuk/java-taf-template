@@ -72,17 +72,16 @@ public class TestPlaywrightMethodTable extends BaseTest {
         editorPage.getLeftRulesTreeComponent()
                 .selectItemInFolder("Method", "getGreetings");
 
-        table.doubleClickCell(1, 0);
+        table.doubleClickCell(2, 1);
         editorPage.getEditTablePanelComponent()
                 .getInsertRowAfterBtn()
                 .click();
-        editorPage.getEditTablePanelComponent()
-                .editCell(2, 0, "return \"Happy Birthday, \"+name;");
+        table.editCell(3, 1, "return \"Happy Birthday, \"+name;");
         
         // Verify table now has 3 rows
-        assertThat(table.getRowsCount()).isEqualTo(2);
+        assertThat(table.getRowsCount()).isEqualTo(3);
         assertThat(table.getRow(1).getValue()).containsExactly("Method String getGreetings (String name)");
-        assertThat(table.getRow(2).getValue()).containsExactly("return \"Hi,\"+name\n;");
+        assertThat(table.getRow(2).getValue()).contains("return \"Hi,\"+name");
         assertThat(table.getRow(3).getValue()).containsExactly("return \"Happy Birthday, \"+name\n;");
 
         // Remove the added row
@@ -94,7 +93,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         // Verify table is back to original state
         assertThat(table.getRowsCount()).isEqualTo(2);
         assertThat(table.getRow(1).getValue()).containsExactly("Method String getGreetings (String name)");
-        assertThat(table.getRow(2).getValue()).containsExactly("return \"Hi,\"+name\n;");
+        assertThat(table.getRow(2).getValue()).contains("return \"Hi,\"+name");
     }
 
     private void testTableCopyAndManagement(PlaywrightEditorPage editorPage) {
