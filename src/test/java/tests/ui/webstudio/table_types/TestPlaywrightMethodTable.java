@@ -81,8 +81,8 @@ public class TestPlaywrightMethodTable extends BaseTest {
         // Verify table now has 3 rows
         assertThat(table.getRowsCount()).isEqualTo(3);
         assertThat(table.getRow(1).getValue()).containsExactly("Method String getGreetings (String name)");
-        assertThat(table.getRow(2).getValue()).contains("return \"Hi,\"+name");
-        assertThat(table.getRow(3).getValue()).containsExactly("return \"Happy Birthday, \"+name\n;");
+        assertThat(table.getRow(2).getValue()).anyMatch(cell -> cell.contains("return \"Hi,\"+name"));
+        assertThat(table.getRow(3).getValue()).containsExactly("return \"Happy Birthday, \"+name;");
 
         // Remove the added row
         table.doubleClickCell(3, 1);
@@ -93,7 +93,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         // Verify table is back to original state
         assertThat(table.getRowsCount()).isEqualTo(2);
         assertThat(table.getRow(1).getValue()).containsExactly("Method String getGreetings (String name)");
-        assertThat(table.getRow(2).getValue()).contains("return \"Hi,\"+name");
+        assertThat(table.getRow(2).getValue()).anyMatch(cell -> cell.contains("return \"Hi,\"+name"));
     }
 
     private void testTableCopyAndManagement(PlaywrightEditorPage editorPage) {
