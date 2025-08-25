@@ -1,4 +1,4 @@
-package tests.ui.webstudio.table_types;
+package tests.ui.webstudio.rules_editor;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;

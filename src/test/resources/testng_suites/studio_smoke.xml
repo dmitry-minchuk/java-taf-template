@@ -3,11 +3,11 @@
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
-        <listener class-name="configuration.listeners.RetryAnalyzer"/>
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
     <test name="StudioSmoke.TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
+    <test name="StudioSmoke.TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestPlaywrightAdminEmail"/></classes></test>
     <test name="StudioSmoke.TestPlaywrightUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestPlaywrightUserSettingsAndDetails"/></classes></test>
 
 </suite>
