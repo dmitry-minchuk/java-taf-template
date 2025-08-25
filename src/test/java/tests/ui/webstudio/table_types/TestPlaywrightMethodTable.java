@@ -106,7 +106,9 @@ public class TestPlaywrightMethodTable extends BaseTest {
         editorPage.getTableToolbarPanelComponent().removeCurrentTable();
         
         // Verify tree state after removal
-        editorPage.getLeftRulesTreeComponent().expandFolderInTree("Method");
+        editorPage.getLeftRulesTreeComponent()
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Method");
         editorPage.getLeftRulesTreeComponent().checkRulesTableAbsent("Method", "getGreetings2");
         editorPage.getLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
     }

@@ -102,11 +102,20 @@ public class PlaywrightTableComponent {
         public List<String> getValue() {
             List<String> values = new ArrayList<>();
             
-            // Use OpenL-specific row selector to find all cells in this row
-            // OpenL tables use cell IDs in format: t_te_c-row:col
+            // Try OpenL-specific selector first (for OpenL tables with t_te_c-row:col IDs)
             String rowXPath = String.format("//td[starts-with(@id, 't_te_c-%d:')]", rowIndex);
             Locator cellsLocator = table.page.locator("xpath=" + rowXPath);
             int cellCount = cellsLocator.count();
+            
+            // Fallback to regular HTML table selector if no OpenL cells found
+            if (cellCount == 0) {
+                // For regular HTML tables like TestResultPage (table[@class='table'])
+                String tableSelector = table.selector.startsWith("xpath=") ? 
+                    table.selector.substring(6) : table.selector;
+                String regularRowXPath = String.format("%s//tr[%d]/td", tableSelector, rowIndex);
+                cellsLocator = table.page.locator("xpath=" + regularRowXPath);
+                cellCount = cellsLocator.count();
+            }
             
             for (int i = 0; i < cellCount; i++) {
                 String cellText = cellsLocator.nth(i).textContent();

@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 @Getter
@@ -47,6 +48,7 @@ public class PlaywrightCopyTableDialogComponent extends PlaywrightBasePageCompon
 
     public PlaywrightCopyTableDialogComponent selectCopyAs(String value) {
         typeComboBox.selectByVisibleText(value);
+        WaitUtil.sleep(250);
         return this;
     }
 
@@ -75,12 +77,6 @@ public class PlaywrightCopyTableDialogComponent extends PlaywrightBasePageCompon
 
     public void clickCopy() {
         copyButton.click();
-        
-        // Wait for the copy operation to complete (dialog should disappear)
-        page.waitForSelector("xpath=//form[@id='copyTableForm']", 
-                           new com.microsoft.playwright.Page.WaitForSelectorOptions()
-                               .setState(com.microsoft.playwright.options.WaitForSelectorState.DETACHED)
-                               .setTimeout(10000));
     }
 
     public String getName() {
