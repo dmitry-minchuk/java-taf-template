@@ -1,15 +1,13 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
+import com.microsoft.playwright.Dialog;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
-import java.util.List;
-import java.util.ArrayList;
-import com.microsoft.playwright.Dialog;
 
 @Getter
-
 public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement runBtn;
@@ -26,7 +24,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     private PlaywrightWebElement createItemBtn;
     private PlaywrightWebElement expandTypesBtn;
     private PlaywrightWebElement addElementToCollectionBtnTemplate;
-    private PlaywrightWebElement runDropdownBtn;
+    private PlaywrightWebElement runInsideDropdownBtn;
     private PlaywrightWebElement addedElementsExpanderTemplate;
     private PlaywrightWebElement selectTypeDropdown;
     
@@ -52,21 +50,23 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     private void initializeElements() {
+        // Top line toolbar
+        exportBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+
         // Toolbar elements - scoped to toolbar container
         runBtn = createScopedElement("xpath=.//img[contains(@src, 'run')]", "runBtn");
         traceBtn = createScopedElement("xpath=.//img[contains(@src, 'trace')]", "traceBtn");
         benchmarkBtn = createScopedElement("xpath=.//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
-        exportBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
-        editBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Edit the table']", "editBtn");
-        copyBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Copy the table']", "copyBtn");
-        removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Remove the table']", "removeBtn");
+        editBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'editTable')]]", "editBtn");
+        copyBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
+        removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
         
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
         createItemBtn = new PlaywrightWebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
         expandTypesBtn = new PlaywrightWebElement(page, "xpath=//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
         addElementToCollectionBtnTemplate = new PlaywrightWebElement(page, "xpath=//span[contains(text(), '%s')]//a[@title='Add new element to collection']", "addElementToCollectionBtnTemplate");
-        runDropdownBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
+        runInsideDropdownBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
         addedElementsExpanderTemplate = new PlaywrightWebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
         selectTypeDropdown = new PlaywrightWebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
         
@@ -101,8 +101,9 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         exportBtn.click();
     }
     
-    public void clickCopy() {
+    public PlaywrightCopyTableDialogComponent clickCopy() {
         copyBtn.click();
+        return new PlaywrightCopyTableDialogComponent();
     }
     
     public void clickRemove() {
@@ -175,7 +176,8 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
 
         @Override
         public IPlaywrightRunMenu clickRunInsideMenu() {
-            runDropdownBtn.click();
+            runInsideDropdownBtn.click();
+            WaitUtil.sleep(250);
             return this;
         }
 
@@ -321,20 +323,16 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     public void copyTableAsNew(String newName, String description) {
-        clickCopy();
-
-        PlaywrightCopyTableDialogComponent copyDialog = new PlaywrightCopyTableDialogComponent();
-        copyDialog.selectCopyAs("New Table")
-                  .setName(newName);
+        PlaywrightCopyTableDialogComponent copyDialog = clickCopy();
+        copyDialog.selectCopyAs("New Table").setName(newName);
         if (description != null && !description.isEmpty()) {
             copyDialog.setSaveTo(description);
         }
-
         copyDialog.clickCopy();
     }
 
     public void removeCurrentTable() {
-        clickRemove();
         PlaywrightDriverPool.getPage().onDialog(Dialog::accept);
+        clickRemove();
     }
 }
