@@ -16,6 +16,8 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     private PlaywrightWebElement benchmarkBtn;
     private PlaywrightWebElement exportBtn;
     private PlaywrightWebElement editBtn;
+    private PlaywrightWebElement copyBtn;
+    private PlaywrightWebElement removeBtn;
     private PlaywrightWebElement factorTextField;
     private PlaywrightWebElement traceDropdownBtn;
     
@@ -55,6 +57,8 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         benchmarkBtn = createScopedElement("xpath=.//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
         exportBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
         editBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Edit the table']", "editBtn");
+        copyBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Copy the table']", "copyBtn");
+        removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Remove the table']", "removeBtn");
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
         
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
@@ -94,6 +98,14 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
 
     public void clickExport() {
         exportBtn.click();
+    }
+    
+    public void clickCopy() {
+        copyBtn.click();
+    }
+    
+    public void clickRemove() {
+        removeBtn.click();
     }
 
     public boolean isRunButtonEnabled() {
