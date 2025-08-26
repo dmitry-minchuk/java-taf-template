@@ -73,7 +73,7 @@ public class PlaywrightAddModuleComponent extends PlaywrightBasePageComponent {
     }
     
     public boolean isSpecificPropertyShown(String text) {
-        commonProperty.format(text).waitForVisible(1);
+        commonProperty.format(text).waitForVisible(250);
         return commonProperty.format(text).isVisible();
     }
 }

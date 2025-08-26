@@ -13,7 +13,6 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightTreeFolderComponent.class);
     
     private PlaywrightWebElement expanderClosed;
-    @Getter
     private PlaywrightWebElement folderName;
     private PlaywrightWebElement itemTemplate;
 
@@ -28,8 +27,8 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        expanderClosed = createScopedElement("xpath=.//span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
-        folderName = createScopedElement("xpath=.//span/span/span", "folderName");
+        expanderClosed = createScopedElement("xpath=./div/span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
+        folderName = createScopedElement("xpath=./div/span/span/span[text()][1]", "folderName");
         itemTemplate = createScopedElement("xpath=.//a[span[text()='%s']]", "treeItem");
     }
 
@@ -37,6 +36,13 @@ public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
         if (expanderClosed.isVisible()) {
             expanderClosed.click();
         }
+    }
+
+    public String getFolderName() {
+        if(folderName.isVisible())
+            return folderName.getText();
+        else
+            return null;
     }
 
     public void selectItem(String itemName) {

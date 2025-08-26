@@ -29,6 +29,14 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
         return page;
     }
 
+    public boolean isVisible() {
+        return rootLocator.isVisible();
+    }
+
+    public boolean isVisible(int timeoutInMillis) {
+        return rootLocator.isVisible(timeoutInMillis);
+    }
+
     protected PlaywrightWebElement getRootLocator() {
         return rootLocator;
     }
