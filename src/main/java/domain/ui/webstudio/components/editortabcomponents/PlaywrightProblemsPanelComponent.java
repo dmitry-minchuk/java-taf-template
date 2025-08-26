@@ -3,13 +3,12 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static configuration.core.ui.factory.PlaywrightListFactory.createElementsList;
 
 public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponent {
 
@@ -95,8 +94,9 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
 
     public List<String> getAllErrors() {
         showProblemsPanel();
-        return errorElements.stream()
+        List<String> errors = errorElements.stream()
                 .map(PlaywrightWebElement::getText)
-                .collect(Collectors.toList());
+                .toList();
+        return errors;
     }
 }
