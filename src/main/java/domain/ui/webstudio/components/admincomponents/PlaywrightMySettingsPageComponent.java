@@ -156,30 +156,6 @@ public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageCompone
         cancelBtn.click();
     }
 
-    public boolean isSaveButtonEnabled() {
-        return saveBtn.isEnabled();
-    }
-
-    public boolean isResetButtonAvailable() {
-        return resetBtn.isVisible();
-    }
-
-    public boolean isSuccessNotificationDisplayed() {
-        return successNotification.isVisible();
-    }
-
-    public boolean isErrorNotificationDisplayed() {
-        return errorNotification.isVisible();
-    }
-
-    public String getSuccessNotificationMessage() {
-        return successNotification.getText();
-    }
-
-    public String getErrorNotificationMessage() {
-        return errorNotification.getText();
-    }
-
     public void configureTableSettings(boolean showHeader, boolean showFormulas, String defaultOrder) {
         setShowHeader(showHeader);
         setShowFormulas(showFormulas);

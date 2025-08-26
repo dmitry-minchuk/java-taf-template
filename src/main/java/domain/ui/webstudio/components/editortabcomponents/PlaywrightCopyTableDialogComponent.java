@@ -87,10 +87,6 @@ public class PlaywrightCopyTableDialogComponent extends PlaywrightBasePageCompon
         return versionTextBox.getAttribute("value");
     }
 
-    public boolean isCopyButtonEnabled() {
-        return copyButton.isEnabled();
-    }
-
     public boolean isDialogVisible() {
         return copyButton.isVisible();
     }

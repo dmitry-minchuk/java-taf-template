@@ -49,12 +49,4 @@ public class PlaywrightWorkspaceComponent extends PlaywrightBasePageComponent {
     public void cancel() {
         cancelBtn.click();
     }
-
-    public boolean isWorkspacePanelVisible() {
-        return workspacePanel.isVisible();
-    }
-
-    public boolean isSaveButtonEnabled() {
-        return saveBtn.isEnabled();
-    }
 }

@@ -51,16 +51,4 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
     public void removeRow() {
         removeRowBtn.click();
     }
-
-    public boolean isSaveChangesEnabled() {
-        return saveChangesBtn.isEnabled();
-    }
-
-    public boolean isUndoChangesEnabled() {
-        return undoChangesBtn.isEnabled();
-    }
-
-    public boolean isRedoChangesEnabled() {
-        return redoChangesBtn.isEnabled();
-    }
 }

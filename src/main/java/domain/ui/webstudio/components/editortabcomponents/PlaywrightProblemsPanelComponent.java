@@ -4,13 +4,18 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.core.ui.factory.PlaywrightListFactory;
 import configuration.driver.PlaywrightDriverPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static configuration.core.ui.factory.PlaywrightListFactory.createElementsList;
 
 public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponent {
+
+    private static final Logger logger = LoggerFactory.getLogger(PlaywrightProblemsPanelComponent.class);
 
     private PlaywrightWebElement showProblemsLink;
     private PlaywrightWebElement hideProblemPanelLink;
@@ -31,13 +36,21 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     }
 
     private void initializeElements() {
+        logger.info("[DEBUG] initializeElements() called, rootLocator: {}", (rootLocator != null ? "present" : "null"));
+        
         showProblemsLink = createScopedElement(".//div[@class='ui-layout-toggler ui-layout-toggler-south ui-layout-toggler-closed ui-layout-toggler-south-closed' and @title='Open']", "showProblemsLink");
         hideProblemPanelLink = createScopedElement(".//div[@id='bottom']//span[@id='south-closer']", "hideProblemPanelLink");
         errorsCounter = createScopedElement("#errors-count", "errorsCounter");
         warningsCounter = createScopedElement("#warnings-count", "warningsCounter");
         compilationProgressBar = createScopedElement(".//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
+        
+        logger.info("[DEBUG] About to create errorElements with selector: xpath=.//div[@id='errors-panel']//a");
         errorElements = createElementsList(page, rootLocator, "xpath=.//div[@id='errors-panel']//a");
+        logger.info("[DEBUG] errorElements created, size: {}", errorElements != null ? errorElements.size() : "null");
+        
+        logger.info("[DEBUG] About to create warningElements with selector: xpath=.//div[@id='warnings-panel']//a");
         warningElements = createElementsList(page, rootLocator, "xpath=.//div[@id='warnings-panel']//a");
+        logger.info("[DEBUG] warningElements created, size: {}", warningElements != null ? warningElements.size() : "null");
     }
 
     public void showProblemsPanel() {
@@ -89,9 +102,27 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     }
     
     public List<String> getAllErrors() {
+        logger.info("[DEBUG] getAllErrors() called");
+        
+        logger.info("[DEBUG] Calling showProblemsPanel()");
         showProblemsPanel();
-        return errorElements.stream()
-            .map(PlaywrightWebElement::getText)
-            .collect(Collectors.toList());
+        
+        logger.info("[DEBUG] errorElements size: {}", errorElements != null ? errorElements.size() : "null");
+        
+        if (errorElements != null && !errorElements.isEmpty()) {
+            logger.info("[DEBUG] Processing {} error elements", errorElements.size());
+            List<String> results = errorElements.stream()
+                .map(element -> {
+                    String text = element.getText();
+                    logger.info("[DEBUG] Element text: '{}'", text);
+                    return text;
+                })
+                .collect(Collectors.toList());
+            logger.info("[DEBUG] getAllErrors() returning {} results", results.size());
+            return results;
+        } else {
+            logger.info("[DEBUG] errorElements is null or empty, returning empty list");
+            return new ArrayList<>();
+        }
     }
 }

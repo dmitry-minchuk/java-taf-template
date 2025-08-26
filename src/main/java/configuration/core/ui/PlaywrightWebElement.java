@@ -14,9 +14,7 @@ import org.apache.logging.log4j.Logger;
 public class PlaywrightWebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(PlaywrightWebElement.class);
-    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(
-        ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT)
-    );
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     private final int timeoutInMilliseconds;
     @Getter
     private final Page page;
@@ -66,30 +64,21 @@ public class PlaywrightWebElement {
     
     
     // Core Actions
-    
+
     public void click() {
-        click(750);
-    }
-    
-    @Deprecated
-    public void click(int timeoutInMs) {
-        WaitUtil.sleep(timeoutInMs);
+        isVisible();
         LOGGER.info("Clicking {} ", elementName);
         locator.click();
     }
     
     public void fill(String text) {
+        isVisible();
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
         locator.fill(text);
     }
     
-    @Deprecated
-    public void fill(String text, long timeoutInSeconds) {
-        LOGGER.info("Filling {} with text: '{}' (deprecated timeout method)", elementName, text);
-        locator.fill(text);
-    }
-    
     public String getText() {
+        isVisible();
         WaitUtil.sleep(500);
         String text = locator.textContent();
         LOGGER.info("Getting text from {}: '{}'", elementName, text);
@@ -97,6 +86,7 @@ public class PlaywrightWebElement {
     }
     
     public String getAttribute(String name) {
+        isVisible();
         String value = locator.getAttribute(name);
         LOGGER.info("Getting attribute '{}' from {}: '{}'", name, elementName, value);
         return value;
@@ -105,19 +95,13 @@ public class PlaywrightWebElement {
     // Visibility and State Checks
     
     public boolean isVisible() {
-        try {
-            boolean visible = locator.isVisible();
-            LOGGER.info("Checking visibility of {}: {}", elementName, visible);
-            return visible;
-        } catch (Exception e) {
-            LOGGER.info("Checking visibility of {}: false (exception)", elementName);
-            return false;
-        }
+        waitForVisible();
+        return true;
     }
-    
-    @Deprecated
+
     public boolean isVisible(int timeoutInSeconds) {
-        return isVisible();
+        waitForVisible(timeoutInSeconds);
+        return true;
     }
     
     public boolean isDisplayed() {
@@ -128,26 +112,9 @@ public class PlaywrightWebElement {
         return isVisible(timeoutInSeconds);
     }
     
-    public boolean isEnabled() {
-        try {
-            boolean enabled = locator.isEnabled();
-            LOGGER.info("Checking if {} is enabled: {}", elementName, enabled);
-            return enabled;
-        } catch (Exception e) {
-            LOGGER.info("Checking if {} is enabled: false (exception)", elementName);
-            return false;
-        }
-    }
-    
     public boolean isSelected() {
-        try {
-            boolean selected = locator.isChecked();
-            LOGGER.info("Checking if {} is selected: {}", elementName, selected);
-            return selected;
-        } catch (Exception e) {
-            LOGGER.info("Checking if {} is selected: false (exception)", elementName);
-            return false;
-        }
+        isVisible();
+        return locator.isChecked();
     }
     
     // Selection methods for dropdowns
@@ -193,15 +160,7 @@ public class PlaywrightWebElement {
         }
         
         clear();
-        locator.type(text);
-    }
-    
-    @Deprecated
-    public void sendKeys(long timeoutInSeconds, CharSequence... keysToSend) {
-        String text = String.join("", keysToSend);
-        LOGGER.info("Sending keys '{}' to {} (deprecated timeout method)", text, elementName);
-        clear();
-        locator.type(text);
+        locator.fill(text);
     }
     
     // File upload method for input[type=file] elements  

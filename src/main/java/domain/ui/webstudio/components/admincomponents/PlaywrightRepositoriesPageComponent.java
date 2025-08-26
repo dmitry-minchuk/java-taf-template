@@ -94,8 +94,4 @@ public class PlaywrightRepositoriesPageComponent extends PlaywrightBasePageCompo
     public boolean isAddRepositoryButtonVisible() {
         return addRepositoryBtn.isVisible();
     }
-
-    public boolean isSaveButtonEnabled() {
-        return saveBtn.isEnabled();
-    }
 }

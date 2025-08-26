@@ -62,10 +62,6 @@ public class PlaywrightAddModuleComponent extends PlaywrightBasePageComponent {
         saveModule();
     }
 
-    public boolean isSaveButtonEnabled() {
-        return moduleSaveBtn.isEnabled();
-    }
-
     public boolean isCancelButtonVisible() {
         return moduleCancelBtn.isVisible();
     }
@@ -77,7 +73,7 @@ public class PlaywrightAddModuleComponent extends PlaywrightBasePageComponent {
     }
     
     public boolean isSpecificPropertyShown(String text) {
-        commonProperty.format(text).waitForVisible(2000);
+        commonProperty.format(text).waitForVisible(1);
         return commonProperty.format(text).isVisible();
     }
 }

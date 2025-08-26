@@ -4,6 +4,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
  * Utility class for creating lists of Playwright elements and components.
  */
 public final class PlaywrightListFactory {
+    
+    private static final Logger logger = LoggerFactory.getLogger(PlaywrightListFactory.class);
     
     private PlaywrightListFactory() {
         throw new UnsupportedOperationException("PlaywrightListFactory is a utility class and should not be instantiated");
@@ -40,12 +44,21 @@ public final class PlaywrightListFactory {
             String selector, 
             String baseName) {
         
+        logger.info("[DEBUG] createElementsList called with selector='{}', parentElement={}, baseName='{}'", 
+                   selector, (parentElement != null ? "present" : "null"), baseName);
+        
         // Create base locator (scoped or page-level)
         Locator baseLocator = (parentElement != null) ? 
             parentElement.getLocator().locator(selector) : 
             page.locator(selector);
             
         int count = baseLocator.count();
+        logger.info("[DEBUG] baseLocator.count() returned: {}", count);
+        
+        // Additional debug: try direct page locator for comparison
+        int directCount = page.locator(selector).count();
+        logger.info("[DEBUG] direct page.locator(selector).count() returned: {}", directCount);
+        
         List<PlaywrightWebElement> elements = new ArrayList<>();
         
         for (int i = 0; i < count; i++) {
@@ -53,6 +66,7 @@ public final class PlaywrightListFactory {
             
             // Create indexed selector for each element (supports both XPath and CSS)
             String indexedSelector = createIndexedSelector(selector, i);
+            logger.info("[DEBUG] Creating element {}: indexedSelector='{}', elementName='{}'", i, indexedSelector, elementName);
             
             PlaywrightWebElement element = (parentElement != null) ?
                 new PlaywrightWebElement(parentElement, indexedSelector, elementName) :
@@ -61,6 +75,7 @@ public final class PlaywrightListFactory {
             elements.add(element);
         }
         
+        logger.info("[DEBUG] createElementsList finished: created {} elements", elements.size());
         return elements;
     }
     

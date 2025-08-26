@@ -50,10 +50,6 @@ public class PlaywrightProjectModuleDetailsComponent extends PlaywrightBasePageC
         cancelBtn.click();
     }
 
-    public boolean isSaveButtonEnabled() {
-        return saveBtn.isEnabled();
-    }
-
     public boolean isCancelButtonVisible() {
         return cancelBtn.isVisible();
     }
