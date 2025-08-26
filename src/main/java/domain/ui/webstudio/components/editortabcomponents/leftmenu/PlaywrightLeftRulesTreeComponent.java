@@ -112,7 +112,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         List<PlaywrightTreeFolderComponent> folders = new java.util.ArrayList<>();
         
         // Wait for the tree to be loaded
-        page.waitForSelector("xpath=.//div[@id='rulesTree']", new Page.WaitForSelectorOptions().setTimeout(5000));
+        WaitUtil.sleep(500);
 
         String[] selectors = {
                 ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",

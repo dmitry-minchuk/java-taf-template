@@ -120,7 +120,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         traceDropdownBtn.click();
         // Wait for trace window to open - in Playwright we don't need window switching like Selenium
         page.waitForSelector("xpath=.//div[contains(@class,'trace-window') or contains(@title,'Trace')]", 
-                            new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(5000));
+                            new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(500));
         return new PlaywrightTraceWindow();
     }
 
@@ -240,7 +240,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
             traceInsideMenuBtn.click();
             // Wait for trace window to open - in Playwright we don't need window switching like Selenium
             page.waitForSelector("xpath=.//div[contains(@class,'trace-window') or contains(@title,'Trace')]", 
-                                new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(5000));
+                                new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(500));
             return new PlaywrightTraceWindow();
         }
 
