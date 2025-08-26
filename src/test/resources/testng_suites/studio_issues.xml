@@ -10,7 +10,7 @@
     <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
     <test name="StudioIssues.TestAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyExtraStateAppears"/></classes></test>
     <test name="StudioIssues.TestAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathStar"/></classes></test>
-    <test name="StudioIssues.TestAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathExistingModule"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathExistingModule"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddElementToCollectionSet"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddDeleteRowWithoutSaving"/></classes></test>
     <test name="StudioIssues.TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
