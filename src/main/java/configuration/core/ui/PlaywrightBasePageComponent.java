@@ -1,11 +1,10 @@
 package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
-import configuration.core.ui.factory.PlaywrightComponentFactory;
-import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
-import configuration.core.ui.factory.PlaywrightListFactory;
 import configuration.core.ui.factory.LazyPlaywrightComponentsList;
 import configuration.core.ui.factory.LazyPlaywrightElementsList;
+import configuration.core.ui.factory.PlaywrightComponentFactory;
+import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
 
 import java.util.List;
 
@@ -84,21 +83,21 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
     
     //Finds scoped elements within component.
     protected List<PlaywrightWebElement> createScopedElementList(String selector, String baseName) {
-        return PlaywrightListFactory.createElementsList(page, rootLocator, selector, baseName);
+        return new LazyPlaywrightElementsList(page, rootLocator, selector, baseName);
     }
     
     //Finds scoped elements within component.
     protected List<PlaywrightWebElement> createScopedElementList(String selector) {
-        return PlaywrightListFactory.createElementsList(page, rootLocator, selector);
+        return new LazyPlaywrightElementsList(page, rootLocator, selector);
     }
     
     //Finds scoped components within component.
     protected <T extends PlaywrightBasePageComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector, String baseName) {
-        return PlaywrightListFactory.createComponentsList(componentClass, page, rootLocator, selector, baseName);
+        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector, baseName);
     }
     
     //Finds scoped components within component.
     protected <T extends PlaywrightBasePageComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector) {
-        return PlaywrightListFactory.createComponentsList(componentClass, page, rootLocator, selector);
+        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector);
     }
 }
