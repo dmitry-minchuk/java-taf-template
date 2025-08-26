@@ -53,8 +53,4 @@ public class PlaywrightTemplateTabComponent extends PlaywrightBasePageComponent 
     public boolean isTemplateAvailable(String templateName) {
         return projectTemplate.format(templateName).isVisible();
     }
-
-    public boolean isCreateButtonEnabled() {
-        return createProjectBtn.isEnabled();
-    }
 }

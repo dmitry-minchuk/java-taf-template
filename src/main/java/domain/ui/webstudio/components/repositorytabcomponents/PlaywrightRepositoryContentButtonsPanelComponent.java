@@ -52,15 +52,7 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
         return buttonsPanel.isVisible();
     }
 
-    public boolean isDeployButtonEnabled() {
-        return deployBtn.isEnabled();
-    }
-
     public void openProject() {
         openBtn.click();
-    }
-
-    public boolean isOpenButtonEnabled() {
-        return openBtn.isEnabled();
     }
 }

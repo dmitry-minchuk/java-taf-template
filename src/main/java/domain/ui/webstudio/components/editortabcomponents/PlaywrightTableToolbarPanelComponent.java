@@ -111,22 +111,6 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         removeBtn.click();
     }
 
-    public boolean isRunButtonEnabled() {
-        return runBtn.isEnabled();
-    }
-
-    public boolean isTraceButtonEnabled() {
-        return traceBtn.isEnabled();
-    }
-
-    public boolean isBenchmarkButtonEnabled() {
-        return benchmarkBtn.isEnabled();
-    }
-
-    public boolean isExportButtonEnabled() {
-        return exportBtn.isEnabled();
-    }
-
     public PlaywrightTraceMenu setFactorTextField(String text) {
         factorTextField.fill(text);
         return new PlaywrightTraceMenu();

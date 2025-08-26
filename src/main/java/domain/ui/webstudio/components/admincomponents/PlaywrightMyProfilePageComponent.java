@@ -129,10 +129,6 @@ public class PlaywrightMyProfilePageComponent extends PlaywrightBasePageComponen
         return this;
     }
 
-    public boolean isSaveButtonEnabled() {
-        return saveBtn.isEnabled();
-    }
-
     public boolean isSuccessNotificationDisplayed() {
         return successNotification.isVisible();
     }
