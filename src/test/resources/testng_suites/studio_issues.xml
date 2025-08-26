@@ -6,13 +6,14 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="StudioIssues.TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddProperty"/></classes></test>
     <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyExtraStateAppears"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathStar"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathExistingModule"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddElementToCollectionSet"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddDeleteRowWithoutSaving"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightAddPropertyInSpreadSheetTable"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyInSpreadSheetTable"/></classes></test>
     <test name="StudioIssues.TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
     <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
