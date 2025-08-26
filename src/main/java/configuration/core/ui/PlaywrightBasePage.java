@@ -7,6 +7,8 @@ import configuration.core.ui.factory.LazyPlaywrightElementsList;
 import configuration.core.ui.factory.PlaywrightComponentFactory;
 import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
 import configuration.driver.PlaywrightDriverPool;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePage.class);
+    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     protected String absoluteUrl = null;
     protected String urlAppender = "";
     @Getter
@@ -38,7 +41,7 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
         // Navigate with Playwright's built-in wait conditions
         page.navigate(url, new Page.NavigateOptions()
                 .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(5000)); // 5 seconds timeout
+                .setTimeout(DEFAULT_TIMEOUT_MS)); // 5 seconds timeout
 
         // Set viewport to maximize equivalent
         page.setViewportSize(1920, 1080);

@@ -15,6 +15,7 @@
     <test name="StudioIssues.TestPlaywrightAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddDeleteRowWithoutSaving"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddPropertyInSpreadSheetTable"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyInSpreadSheetTable"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddSingleNumberIntoEmptyCell"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
     <test name="StudioIssues.TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
     <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
