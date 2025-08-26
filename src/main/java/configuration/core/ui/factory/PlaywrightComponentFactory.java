@@ -32,10 +32,10 @@ public interface PlaywrightComponentFactory {
     /**
      * Creates list of components from selector.
      */
-    <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName);
+    <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName);
     
     /**
      * Creates list of components from selector.
      */
-    <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector);
+    <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector);
 }

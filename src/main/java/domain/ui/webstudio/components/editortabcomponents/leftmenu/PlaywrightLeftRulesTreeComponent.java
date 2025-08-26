@@ -38,7 +38,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
-            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible()) {
+            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(1)) {
                 WaitUtil.sleep(250);
                 viewFilterLink.click();
                 WaitUtil.sleep(250);
