@@ -22,7 +22,7 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
     @TestCaseId("EPBDS-7474")
     @Description("BUG: Added row is deleted incorrectly - the value of the next row is changed")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testAddDeleteRowWithoutSaving() {
+    public void testPlaywrightAddDeleteRowWithoutSaving() {
         String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, "Tutorial 6 - Introduction to Spreadsheet Tables");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
@@ -34,14 +34,14 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
 
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
         PlaywrightTableComponent table = editorPage.getCenterTable();
-        table.clickCell(4,1);
+        table.clickCell(5, 2);
         editorPage.getEditTablePanelComponent().getInsertRowAfterBtn().click();
-        table.doubleClickAndPasteTextToCell(5, 0, "444", false);
+        table.doubleClickAndPasteTextToCell(6, 1, "444", false);
         editorPage.getEditTablePanelComponent().getRemoveRowBtn().click();
-        assertThat(StringUtils.normalizeSpace(table.getCellText(5, 0))).isEmpty();
-        assertThat(table.getCellText(5, 1)).isEqualTo("0%");
+        assertThat(StringUtils.normalizeSpace(table.getCellText(6, 1))).isEmpty();
+        assertThat(table.getCellText(6, 2)).isEqualTo("0%");
         editorPage.getEditTablePanelComponent().getSaveChangesBtn().click();
-        assertThat(StringUtils.normalizeSpace(table.getCellText(5, 0))).isEmpty();
-        assertThat(table.getCellText(5, 1)).isEqualTo("0%");
+        assertThat(StringUtils.normalizeSpace(table.getCellText(6, 1))).isEmpty();
+        assertThat(table.getCellText(6, 2)).isEqualTo("0%");
     }
 }
