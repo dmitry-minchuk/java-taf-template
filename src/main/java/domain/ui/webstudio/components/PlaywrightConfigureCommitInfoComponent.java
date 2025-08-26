@@ -63,18 +63,4 @@ public class PlaywrightConfigureCommitInfoComponent extends PlaywrightBasePageCo
         lastNameField.sendKeys(faker.name().lastName());
         saveBtn.click();
     }
-    
-    /**
-     * Legacy-compatible isPresent method
-     */
-    public boolean isPresent() {
-        if (rootLocator != null) {
-            try {
-                return rootLocator.isDisplayed();
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return false;
-    }
 }

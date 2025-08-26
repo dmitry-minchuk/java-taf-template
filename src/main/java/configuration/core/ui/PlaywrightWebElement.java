@@ -95,21 +95,21 @@ public class PlaywrightWebElement {
     // Visibility and State Checks
     
     public boolean isVisible() {
-        waitForVisible();
+        try {
+            waitForVisible();
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 
     public boolean isVisible(int timeoutInSeconds) {
-        waitForVisible(timeoutInSeconds);
+        try {
+            waitForVisible(timeoutInSeconds);
+        } catch (Exception e) {
+            return false;
+        }
         return true;
-    }
-    
-    public boolean isDisplayed() {
-        return isVisible();
-    }
-    
-    public boolean isDisplayed(int timeoutInSeconds) {
-        return isVisible(timeoutInSeconds);
     }
     
     public boolean isSelected() {
