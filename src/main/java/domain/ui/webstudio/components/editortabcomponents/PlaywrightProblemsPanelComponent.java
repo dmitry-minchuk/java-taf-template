@@ -2,12 +2,10 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.core.ui.factory.PlaywrightListFactory;
 import configuration.driver.PlaywrightDriverPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,14 +41,8 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
         errorsCounter = createScopedElement("#errors-count", "errorsCounter");
         warningsCounter = createScopedElement("#warnings-count", "warningsCounter");
         compilationProgressBar = createScopedElement(".//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
-        
-        logger.info("[DEBUG] About to create errorElements with selector: xpath=.//div[@id='errors-panel']//a");
-        errorElements = createElementsList(page, rootLocator, "xpath=.//div[@id='errors-panel']//a");
-        logger.info("[DEBUG] errorElements created, size: {}", errorElements != null ? errorElements.size() : "null");
-        
-        logger.info("[DEBUG] About to create warningElements with selector: xpath=.//div[@id='warnings-panel']//a");
-        warningElements = createElementsList(page, rootLocator, "xpath=.//div[@id='warnings-panel']//a");
-        logger.info("[DEBUG] warningElements created, size: {}", warningElements != null ? warningElements.size() : "null");
+        errorElements = createScopedElementList("xpath=.//div[@id='errors-panel']//a", "errorElements");
+        warningElements = createScopedElementList("xpath=.//div[@id='warnings-panel']//a", "warningElements");
     }
 
     public void showProblemsPanel() {
@@ -100,29 +92,11 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
             throw new AssertionError("Expected no problems but found: " + getProblemsInfo());
         }
     }
-    
+
     public List<String> getAllErrors() {
-        logger.info("[DEBUG] getAllErrors() called");
-        
-        logger.info("[DEBUG] Calling showProblemsPanel()");
         showProblemsPanel();
-        
-        logger.info("[DEBUG] errorElements size: {}", errorElements != null ? errorElements.size() : "null");
-        
-        if (errorElements != null && !errorElements.isEmpty()) {
-            logger.info("[DEBUG] Processing {} error elements", errorElements.size());
-            List<String> results = errorElements.stream()
-                .map(element -> {
-                    String text = element.getText();
-                    logger.info("[DEBUG] Element text: '{}'", text);
-                    return text;
-                })
+        return errorElements.stream()
+                .map(PlaywrightWebElement::getText)
                 .collect(Collectors.toList());
-            logger.info("[DEBUG] getAllErrors() returning {} results", results.size());
-            return results;
-        } else {
-            logger.info("[DEBUG] errorElements is null or empty, returning empty list");
-            return new ArrayList<>();
-        }
     }
 }

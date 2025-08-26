@@ -64,23 +64,23 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
     
     //Creates list of components from selector using lazy initialization.
     @Override
-    public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector, String baseName) {
+    public <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, null, selector, baseName);
     }
     
     //Creates list of components from selector using lazy initialization.
     @Override
-    public <T extends PlaywrightBasePageComponent> List<T> findComponents(Class<T> componentClass, String selector) {
+    public <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, null, selector);
     }
     
     //Finds list of elements on page using lazy initialization.
-    public List<PlaywrightWebElement> findElements(String selector, String baseName) {
+    public List<PlaywrightWebElement> createElementList(String selector, String baseName) {
         return new LazyPlaywrightElementsList(page, null, selector, baseName);
     }
     
     //Finds list of elements on page using lazy initialization.
-    public List<PlaywrightWebElement> findElements(String selector) {
+    public List<PlaywrightWebElement> createElementList(String selector) {
         return new LazyPlaywrightElementsList(page, null, selector);
     }
 }
