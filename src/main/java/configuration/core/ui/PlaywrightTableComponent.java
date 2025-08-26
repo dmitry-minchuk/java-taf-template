@@ -22,6 +22,11 @@ public class PlaywrightTableComponent {
         String cellIdSelector = String.format("//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
         return page.locator("xpath=" + cellIdSelector).textContent().trim();
     }
+    
+    public String getCellContent(int rowIndex, int columnIndex) {
+        // Alias for getCellText to match original API
+        return getCellText(rowIndex, columnIndex);
+    }
 
     public void clickCell(int rowIndex, int columnIndex) {
         // Use OpenL-specific cell ID selector
