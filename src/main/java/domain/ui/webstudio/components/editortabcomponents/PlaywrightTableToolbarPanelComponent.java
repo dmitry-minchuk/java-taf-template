@@ -14,6 +14,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     private PlaywrightWebElement traceBtn;
     private PlaywrightWebElement benchmarkBtn;
     private PlaywrightWebElement exportBtn;
+    @Getter
     private PlaywrightWebElement editBtn;
     private PlaywrightWebElement copyBtn;
     private PlaywrightWebElement removeBtn;
