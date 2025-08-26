@@ -8,7 +8,7 @@
 
     <test name="StudioIssues.TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
     <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
-    <test name="StudioIssues.TestAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyExtraStateAppears"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyExtraStateAppears"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathStar"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathExistingModule"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddElementToCollectionSet"/></classes></test>
