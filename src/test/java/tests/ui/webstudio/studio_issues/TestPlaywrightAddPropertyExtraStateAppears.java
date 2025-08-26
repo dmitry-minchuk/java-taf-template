@@ -15,7 +15,7 @@ import tests.BaseTest;
 import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.ZIP_ARCHIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestAddPropertyExtraStateAppears extends BaseTest {
+public class TestPlaywrightAddPropertyExtraStateAppears extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-11107")
@@ -33,8 +33,8 @@ public class TestAddPropertyExtraStateAppears extends BaseTest {
                 .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
                 .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
                 .getSaveBtn().click();
-        assertThat(editorPage.getCenterTable().getCellText(1, 1)).isEqualTo("description");
-        assertThat(editorPage.getCenterTable().getCellText(2, 1)).contains("Result");
-        assertThat(editorPage.getCenterTable().getCellText(3, 1)).contains("= new MyDatatype");
+        assertThat(editorPage.getCenterTable().getCellText(2, 2)).isEqualTo("description");
+        assertThat(editorPage.getCenterTable().getCellText(3, 2)).contains("Result");
+        assertThat(editorPage.getCenterTable().getCellText(4, 2)).contains("= new MyDatatype");
     }
 }
