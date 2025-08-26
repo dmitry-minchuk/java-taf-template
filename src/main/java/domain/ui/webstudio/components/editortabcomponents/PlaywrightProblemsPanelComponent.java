@@ -2,7 +2,13 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.factory.PlaywrightListFactory;
 import configuration.driver.PlaywrightDriverPool;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static configuration.core.ui.factory.PlaywrightListFactory.createElementsList;
 
 public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponent {
 
@@ -11,6 +17,8 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     private PlaywrightWebElement errorsCounter;
     private PlaywrightWebElement warningsCounter;
     private PlaywrightWebElement compilationProgressBar;
+    private List<PlaywrightWebElement> errorElements;
+    private List<PlaywrightWebElement> warningElements;
 
     public PlaywrightProblemsPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -28,6 +36,8 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
         errorsCounter = createScopedElement("#errors-count", "errorsCounter");
         warningsCounter = createScopedElement("#warnings-count", "warningsCounter");
         compilationProgressBar = createScopedElement(".//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
+        errorElements = createElementsList(page, rootLocator, "xpath=.//div[@id='errors-panel']//a");
+        warningElements = createElementsList(page, rootLocator, "xpath=.//div[@id='warnings-panel']//a");
     }
 
     public void showProblemsPanel() {
@@ -50,14 +60,6 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     public int getWarningsCount() {
         String warningText = warningsCounter.getText();
         return warningText != null && !warningText.isEmpty() ? Integer.parseInt(warningText.trim()) : 0;
-    }
-
-    public int getAllErrorsCount() {
-        return page.locator(".//div[@id='errors-panel']//a").count();
-    }
-
-    public int getAllWarningsCount() {
-        return page.locator(".//div[@id='warnings-panel']//a").count();
     }
 
     public boolean isCompilationInProgress() {
@@ -84,5 +86,12 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
         if (hasErrors() || hasWarnings()) {
             throw new AssertionError("Expected no problems but found: " + getProblemsInfo());
         }
+    }
+    
+    public List<String> getAllErrors() {
+        showProblemsPanel();
+        return errorElements.stream()
+            .map(PlaywrightWebElement::getText)
+            .collect(Collectors.toList());
     }
 }
