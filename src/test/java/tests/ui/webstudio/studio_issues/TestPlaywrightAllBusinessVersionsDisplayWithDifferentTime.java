@@ -25,8 +25,7 @@ public class TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime extends B
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAllBusinessVersionsDisplayWithDifferentTime");
         PlaywrightLeftRulesTreeComponent leftRulesTreeComponent = editorPage.getLeftRulesTreeComponent();
-        leftRulesTreeComponent
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        leftRulesTreeComponent.setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .expandFolderInTree("mySpreadsheet");
         assertThat(leftRulesTreeComponent.isItemExistsInTree("mySpreadsheet [startRequestDate=08/08/2018 11:00:00 AM]")).isTrue();

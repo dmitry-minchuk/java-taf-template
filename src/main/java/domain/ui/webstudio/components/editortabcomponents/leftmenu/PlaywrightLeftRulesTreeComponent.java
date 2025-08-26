@@ -38,7 +38,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
-            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(1)) {
+            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(200)) {
                 WaitUtil.sleep(250);
                 viewFilterLink.click();
                 WaitUtil.sleep(250);
@@ -67,7 +67,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
 
     public boolean isFolderExistsInTree(String folderName) {
         return findTreeFolders().stream()
-                .anyMatch(folder -> folder.getFolderName().getText().equals(folderName));
+                .anyMatch(folder -> folder.getFolderName().equals(folderName));
     }
 
     public String getSelectedItemText() {
@@ -102,7 +102,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     // Find specific folder in the tree by name
     private PlaywrightTreeFolderComponent findFolderInTree(String folderName) {
         return findTreeFolders().stream()
-                .filter(folder -> folder.getFolderName().getText().equals(folderName))
+                .filter(folder -> folder.getFolderName().equals(folderName))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
     }
@@ -112,7 +112,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         List<PlaywrightTreeFolderComponent> folders = new java.util.ArrayList<>();
         
         // Wait for the tree to be loaded
-        WaitUtil.sleep(500);
+        WaitUtil.sleep(250);
 
         String[] selectors = {
                 ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",
@@ -127,11 +127,14 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
                 PlaywrightWebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
                 PlaywrightWebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
                 PlaywrightTreeFolderComponent folder = createScopedComponent(PlaywrightTreeFolderComponent.class, indexedElement);
-                folders.add(folder);
+                if(folder.isVisible())
+                    folders.add(folder);
             }
         }
 
         LOGGER.debug("Found {} tree folders", folders.size());
+        List<String> folderNames = folders.stream().map(PlaywrightTreeFolderComponent::getFolderName).toList();
+        folderNames.forEach(LOGGER::debug);
         return folders;
     }
 

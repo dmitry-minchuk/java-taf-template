@@ -96,16 +96,16 @@ public class PlaywrightWebElement {
     
     public boolean isVisible() {
         try {
-            waitForVisible();
+            waitForVisible(100);
         } catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    public boolean isVisible(int timeoutInSeconds) {
+    public boolean isVisible(int timeoutInMillis) {
         try {
-            waitForVisible(timeoutInSeconds);
+            waitForVisible(timeoutInMillis);
         } catch (Exception e) {
             return false;
         }
@@ -180,11 +180,11 @@ public class PlaywrightWebElement {
             .setState(WaitForSelectorState.VISIBLE));
     }
     
-    public void waitForVisible(long timeoutInSeconds) {
-        LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInSeconds);
+    public void waitForVisible(long timeoutInMillis) {
+        LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInMillis);
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.VISIBLE)
-            .setTimeout((int)(timeoutInSeconds * 1000)));
+            .setTimeout((int)(timeoutInMillis)));
     }
     
     public void waitForHidden() {
