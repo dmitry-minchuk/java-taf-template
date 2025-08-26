@@ -20,12 +20,12 @@ public class PlaywrightProjectDetailsComponent extends PlaywrightBasePageCompone
     }
 
     private void initializeElements() {
-        modulesHeaderElement = createScopedElement(".//h3/span[text()='Modules']", "modulesHeaderElement");
-        addModuleBtn = createScopedElement(".//h3/span[text()='Modules']/following-sibling::a[@title='Add Module']", "addModuleBtn");
+        modulesHeaderElement = createScopedElement("xpath=.//h3/span[text()='Modules']", "modulesHeaderElement");
+        addModuleBtn = createScopedElement("xpath=.//h3/span[text()='Modules']/following-sibling::a[@title='Add Module']", "addModuleBtn");
     }
 
     public void openAddModulePopup() {
-        // Move to element and click - Playwright handles hover automatically
+        modulesHeaderElement.hover();
         addModuleBtn.click();
     }
 

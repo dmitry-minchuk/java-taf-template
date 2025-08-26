@@ -233,4 +233,11 @@ public class PlaywrightWebElement {
         locator.waitFor(new Locator.WaitForOptions()
             .setState(WaitForSelectorState.HIDDEN));
     }
+    
+    // Interaction methods
+    
+    public void hover() {
+        LOGGER.info("Hovering over {}", elementName);
+        locator.hover();
+    }
 }

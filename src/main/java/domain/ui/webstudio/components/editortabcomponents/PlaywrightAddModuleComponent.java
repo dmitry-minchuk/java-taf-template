@@ -25,11 +25,11 @@ public class PlaywrightAddModuleComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        moduleNameField = createScopedElement(".//input[@id='moduleName']", "moduleNameField");
-        modulePathField = createScopedElement(".//input[@id='modulePath']", "modulePathField");
-        moduleSaveBtn = createScopedElement(".//input[@value='Save']", "moduleSaveBtn");
-        moduleCancelBtn = createScopedElement(".//input[@value='Cancel']", "moduleCancelBtn");
-        commonProperty = createScopedElement(".//table[@class='properties properties-form wide']//tr[.//span[contains(text(), '%s')]]", "commonProperty");
+        moduleNameField = createScopedElement("xpath=.//input[@id='moduleName']", "moduleNameField");
+        modulePathField = createScopedElement("xpath=.//input[@id='modulePath']", "modulePathField");
+        moduleSaveBtn = createScopedElement("xpath=.//input[@value='Save']", "moduleSaveBtn");
+        moduleCancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "moduleCancelBtn");
+        commonProperty = createScopedElement("xpath=.//span[@class='error'][contains(text(), '%s')]", "commonProperty");
     }
 
     public void setModuleName(String moduleName) {
@@ -68,5 +68,16 @@ public class PlaywrightAddModuleComponent extends PlaywrightBasePageComponent {
 
     public boolean isCancelButtonVisible() {
         return moduleCancelBtn.isVisible();
+    }
+    
+    public void fillForm(String moduleName, String modulePath) {
+        moduleNameField.fill(moduleName);
+        modulePathField.fill(modulePath);
+        moduleSaveBtn.click();
+    }
+    
+    public boolean isSpecificPropertyShown(String text) {
+        commonProperty.format(text).waitForVisible(2000);
+        return commonProperty.format(text).isVisible();
     }
 }
