@@ -15,6 +15,7 @@
     <test name="StudioIssues.TestPlaywrightAddPropertyInSpreadSheetTable"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyInSpreadSheetTable"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightAllStepsDisplayedInTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllStepsDisplayedInTrace"/></classes></test>
     <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
     <test name="StudioIssues.TestArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayOfAliasValuesInRunTrace"/></classes></test>
     <test name="StudioIssues.TestButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestButtonDeployAvailableDeployConfiguration"/></classes></test>
