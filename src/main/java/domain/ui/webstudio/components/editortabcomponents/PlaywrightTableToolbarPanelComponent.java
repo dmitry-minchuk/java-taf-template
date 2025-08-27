@@ -238,11 +238,15 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
 
         @Override
         public IPlaywrightTraceWindow clickTraceInsideMenu() {
-            traceInsideMenuBtn.click();
-            // Wait for trace window to open - in Playwright we don't need window switching like Selenium
-            page.waitForSelector("xpath=//head/title[text()='Trace']",
-                                new Page.WaitForSelectorOptions().setTimeout(500));
-            return new PlaywrightTraceWindow();
+            // Wait for popup to open after click
+            Page popup = page.waitForPopup(() -> {
+                traceInsideMenuBtn.click();
+            });
+
+            // Wait for popup to load and trace tree to be ready
+            popup.waitForLoadState();
+            popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
+            return new PlaywrightTraceWindow(popup);
         }
 
         @Override
@@ -274,16 +278,32 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         private PlaywrightWebElement traceTree;
         private PlaywrightWebElement traceExpanderTemplate;
         private PlaywrightWebElement traceItemsTemplate;
+        private Page tracePage;
 
         public PlaywrightTraceWindow() {
-            // Initialize trace window elements
-            traceTree = new PlaywrightWebElement(PlaywrightDriverPool.getPage(), 
-                "xpath=.//div[contains(@class,'trace-tree') or contains(@id,'traceTree')]", "traceTree");
-            traceExpanderTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
-                "xpath=(.//span[contains(@class, 'fancytree-exp-c')]/span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
-            traceItemsTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
-                "xpath=.//li//span[@class='fancytree-title']", "traceItemsTemplate");
+            this(PlaywrightDriverPool.getPage());
         }
+
+        public PlaywrightTraceWindow(Page tracePage) {
+            this.tracePage = tracePage;
+            // Initialize trace window elements based on actual HTML structure
+            traceTree = new PlaywrightWebElement(tracePage, 
+                "xpath=//div[@id='tree']", "traceTree");
+            traceExpanderTemplate = new PlaywrightWebElement(tracePage,
+                "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
+            traceItemsTemplate = new PlaywrightWebElement(tracePage,
+                "xpath=//span[@class='fancytree-title']", "traceItemsTemplate");
+        }
+//
+//        public PlaywrightTraceWindow() {
+//            // Initialize trace window elements
+//            traceTree = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
+//                    "xpath=.//div[contains(@class,'trace-tree') or contains(@id,'traceTree')]", "traceTree");
+//            traceExpanderTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
+//                    "xpath=(.//span[contains(@class, 'fancytree-exp-c')]/span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
+//            traceItemsTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
+//                    "xpath=.//li//span[@class='fancytree-title']", "traceItemsTemplate");
+//        }
 
         @Override
         public IPlaywrightTraceWindow expandItemInTree(int position) {
@@ -295,8 +315,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         @Override
         public java.util.List<String> getVisibleItemsFromTree() {
             java.util.List<String> items = new java.util.ArrayList<>();
-            var page = PlaywrightDriverPool.getPage();
-            var locators = page.locator("xpath=.//li//span[@class='fancytree-title']");
+            var locators = tracePage.locator("xpath=//span[@class='fancytree-title']");
             int count = locators.count();
             for (int i = 0; i < count; i++) {
                 String text = locators.nth(i).textContent();

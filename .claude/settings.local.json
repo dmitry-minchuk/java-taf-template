@@ -41,7 +41,9 @@
       "mcp__n8n-mcp__n8n_validate_workflow",
       "mcp__n8n-mcp__n8n_trigger_webhook_workflow",
       "mcp__n8n-mcp__n8n_list_executions",
-      "mcp__n8n-mcp__n8n_get_execution"
+      "mcp__n8n-mcp__n8n_get_execution",
+      "Bash(timeout 300 mvn test:*)",
+      "Read(/tmp/**)"
     ],
     "deny": []
   }
