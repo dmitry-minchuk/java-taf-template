@@ -12,7 +12,7 @@ import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.ZIP_ARCHIVE;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddPropertyExtraStateAppears extends BaseTest {
@@ -22,7 +22,7 @@ public class TestPlaywrightAddPropertyExtraStateAppears extends BaseTest {
     @Description("'State' property is added to table instead of inherited")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddPropertyExtraStateAppears() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, ZIP_ARCHIVE, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Test Project-CW-20200101-20200101");
         editorPage.getLeftRulesTreeComponent()

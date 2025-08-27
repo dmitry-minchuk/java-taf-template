@@ -1,13 +1,12 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.PlaywrightWebElement;
-import domain.ui.webstudio.components.CreateNewProjectComponent;
 import domain.ui.webstudio.components.PlaywrightConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.PlaywrightCreateNewProjectComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
-import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
+import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightLeftRepositoryTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentButtonsPanelComponent;
 import lombok.Getter;
@@ -42,7 +41,7 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         repositoryContentButtonsPanelComponent = createScopedComponent(PlaywrightRepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='repository-buttons']", "repositoryContentButtonsPanelComponent");
     }
 
-    public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
+    public void createProject(PlaywrightCreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
         createProjectLink.click();
         switch (projectType) {
             case EXCEL_FILES:

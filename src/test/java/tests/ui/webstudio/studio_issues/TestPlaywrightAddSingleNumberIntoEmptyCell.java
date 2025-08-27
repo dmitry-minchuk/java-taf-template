@@ -13,7 +13,7 @@ import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.TEMPLATE;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddSingleNumberIntoEmptyCell extends BaseTest {
@@ -23,7 +23,7 @@ public class TestPlaywrightAddSingleNumberIntoEmptyCell extends BaseTest {
     @Description("BUG: Impossible to add single number into empty cell")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddSingleNumberIntoEmptyCell() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, "Example 1 - Bank Rating");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getLeftRulesTreeComponent()

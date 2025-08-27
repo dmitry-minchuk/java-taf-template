@@ -21,7 +21,7 @@ public class TestTraceIntoFileJsonRequest extends BaseTest {
     @Description("BUG: Internal Server error appears if user entered JSON request in 'Trace into File'")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testTraceIntoFileJsonRequest() {
-        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, ZIP_ARCHIVE, "testTraceIntoFileJsonRequest.zip");
+        String projectName = WorkflowService.loginCreateProject(User.ADMIN, ZIP_ARCHIVE, "testTraceIntoFileJsonRequest.zip");
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "the_nulls_input_parameters");
         editorPage.getLeftRulesTreeComponent()

@@ -155,7 +155,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
         String testFileName = "TestUserSettingsAndDetails";
-        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, testFileName + ".xlsx");
+        String projectName = WorkflowService.loginCreateProject(User.ADMIN, EXCEL_FILES, testFileName + ".xlsx");
         editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
@@ -209,7 +209,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
-        String nameExample1Project = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, EXAMPLE_1.getValue());
+                String nameExample1Project = WorkflowService.loginCreateProject(User.ADMIN, TEMPLATE, EXAMPLE_1.getValue());
         editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
 

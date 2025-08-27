@@ -2,7 +2,7 @@ package helpers.service;
 
 import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.CreateNewProjectComponent;
+import domain.ui.webstudio.components.PlaywrightCreateNewProjectComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
@@ -10,7 +10,7 @@ import helpers.utils.StringUtil;
 
 // Playwright version of WorkflowService for complete login → project creation → editor workflow
 public class PlaywrightWorkflowService {
-    public static String loginCreateProjectOpenEditor(User user, CreateNewProjectComponent.TabName projectType, String sourceName) {
+    private static String loginCreateProject(User user, PlaywrightCreateNewProjectComponent.TabName projectType, String sourceName) {
         PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
         PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(user));
         PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
@@ -20,23 +20,15 @@ public class PlaywrightWorkflowService {
         return projectName;
     }
 
-    public static String loginCreateProjectFromZipOpenEditor(User user, String zipFileName) {
-        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
-        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(user));
-        PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
-        String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, projectName, zipFileName);
-        repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
-        return projectName;
+    public static String loginCreateProjectFromZip(User user, String zipFileName) {
+        return loginCreateProject(user, PlaywrightCreateNewProjectComponent.TabName.ZIP_ARCHIVE, zipFileName);
     }
 
     public static String loginCreateProjectFromExcelFile(User user, String excelFileName) {
-        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
-        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(user));
-        PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
-        String projectName = StringUtil.generateUniqueName("project");
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName, excelFileName);
-        repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
-        return projectName;
+        return loginCreateProject(user, PlaywrightCreateNewProjectComponent.TabName.EXCEL_FILES, excelFileName);
+    }
+
+    public static String loginCreateProjectFromTemplate(User user, String templateName) {
+        return loginCreateProject(user, PlaywrightCreateNewProjectComponent.TabName.TEMPLATE, templateName);
     }
 }
