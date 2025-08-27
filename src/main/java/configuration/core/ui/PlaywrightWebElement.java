@@ -199,4 +199,11 @@ public class PlaywrightWebElement {
         LOGGER.info("Hovering over {}", elementName);
         locator.hover();
     }
+    
+    // CSS properties
+    
+    public String getCssValue(String propertyName) {
+        LOGGER.info("Getting CSS property '{}' from {}", propertyName, elementName);
+        return locator.evaluate("el => window.getComputedStyle(el)." + propertyName).toString();
+    }
 }
