@@ -287,23 +287,10 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         public PlaywrightTraceWindow(Page tracePage) {
             this.tracePage = tracePage;
             // Initialize trace window elements based on actual HTML structure
-            traceTree = new PlaywrightWebElement(tracePage, 
-                "xpath=//div[@id='tree']", "traceTree");
-            traceExpanderTemplate = new PlaywrightWebElement(tracePage,
-                "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
-            traceItemsTemplate = new PlaywrightWebElement(tracePage,
-                "xpath=//span[@class='fancytree-title']", "traceItemsTemplate");
+            traceTree = new PlaywrightWebElement(tracePage, "xpath=//div[@id='tree']", "traceTree");
+            traceExpanderTemplate = new PlaywrightWebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
+            traceItemsTemplate = new PlaywrightWebElement(tracePage, "xpath=//span[@class='fancytree-title']", "traceItemsTemplate");
         }
-//
-//        public PlaywrightTraceWindow() {
-//            // Initialize trace window elements
-//            traceTree = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
-//                    "xpath=.//div[contains(@class,'trace-tree') or contains(@id,'traceTree')]", "traceTree");
-//            traceExpanderTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
-//                    "xpath=(.//span[contains(@class, 'fancytree-exp-c')]/span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
-//            traceItemsTemplate = new PlaywrightWebElement(PlaywrightDriverPool.getPage(),
-//                    "xpath=.//li//span[@class='fancytree-title']", "traceItemsTemplate");
-//        }
 
         @Override
         public IPlaywrightTraceWindow expandItemInTree(int position) {
@@ -327,9 +314,6 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         }
     }
 
-    public IPlaywrightTraceWindow getTraceWindow() {
-        return new PlaywrightTraceWindow();
-    }
 
     public void copyTableAsNew(String newName, String description) {
         PlaywrightCopyTableDialogComponent copyDialog = clickCopy();

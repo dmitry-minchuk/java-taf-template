@@ -1,0 +1,169 @@
+# GEMINI.md
+This file provides guidance to Gemini cli when working with code in this repository.
+Always read README.md on start up.
+
+ - Turn on Plan Mode on start up.
+use-mcp ollama-rag
+ - Use ollama-rag to understand codebase in depth using Vector and Graph embeddings
+use-mcp playwright
+ - Use it for more UI understanding - open the application on localhost:8090 (credentials admin/admin)
+use-mcp context7
+ - Use context7 for searching documentation
+
+Rules of Engagement:
+1. Wait for my commands - do not proceed with migration bny yourself
+2. One Step at a Time: We will proceed strictly according to the plan. Do not move to the next step until we have completed and confirmed the current one.
+3. Ask Questions: If you lack information, ask clarifying questions.
+4. Explain Your Code: For every code snippet, provide a brief explanation of what it does and why you chose that specific solution.
+5. Maintain a Log: After each successful step, we will update CLAUDE.md, adding the decisions made and the final code. Start every response with an update to this file.
+6. Do not add Java-doc. 
+7. Do not use Selenium style for new logic. You must copy Page -> Component -> Element hierarchy and inner methods logic, but use Playwright specific functionality in its native way (check with Context7) - no selenium-like waiters, no timeouts
+
+## **RESOLVED ISSUES** ✅
+
+### **Issue: Playwright Docker Container CDP Not Available**
+**Problem**: Manual `docker run cdp-browser` works with CDP on port 9222, but TestContainers version doesn't expose the endpoint.
+
+**Root Cause**: The `cdp-browser` image uses Chrome on internal port 9223 + socat proxy to port 9222. TestContainers wait strategy was too short (5s) for Chrome+socat initialization.
+
+**Solution**: 
+- Increased `withStartupTimeout` from 5s to 30s in `PlaywrightDockerDriverPool.java:139`
+- Enhanced logging for CDP endpoint debugging in lines 149-159
+
+### **Issue: Container Networking - Playwright Docker Mode Login Failure**
+**Problem**: Playwright Docker containers couldn't reach app containers due to localhost URL usage in login service.
+
+**Root Cause**: `PlaywrightLoginService.login()` used hardcoded localhost URLs, but in DOCKER mode Playwright runs in container and must use container network URLs.
+
+**Solution**:
+- Added `PlaywrightDriverPool.getAppUrl()` method with execution mode detection:
+  - `PLAYWRIGHT_LOCAL`: Returns localhost:{mappedPort} URL
+  - `PLAYWRIGHT_DOCKER`: Returns container network URL (http://appcontainer-xxx:8080)
+- Updated `PlaywrightLoginService.java:27` to use `PlaywrightDriverPool.getAppUrl()` instead of localhost
+- Test now passes successfully: `Tests run: 1, Failures: 0, Errors: 0, Skipped: 0`
+
+**Files Modified**: 
+- `src/main/java/configuration/driver/PlaywrightDriverPool.java` - Added getAppUrl() method (lines 353-394)
+- `src/main/java/helpers/service/PlaywrightLoginService.java` - Use getAppUrl() for navigation (line 27)
+
+### **Issue: Jenkins CDP Browser Image Availability**
+**Problem**: Jenkins Pipeline uses `PLAYWRIGHT_DOCKER` mode but `cdp-browser` image wasn't built on Jenkins workers, causing test failures.
+
+**Root Cause**: Jenkinsfile pulled standard Docker images (studio, ws) but didn't build the custom `cdp-browser` image required for Playwright Docker mode.
+
+**Solution**:
+- Created separate Jenkins stage `Build CDP Browser Image` (lines 117-145)
+- Stage runs after settings cleanup and before test execution
+- Performs single checkout on each node and builds CDP browser image
+- Test suites reuse the same workspace without additional checkout
+- Eliminates duplicate Git operations and improves pipeline efficiency
+
+**Files Modified**:
+- `Jenkinsfile` - Removed CDP Browser build stage (no longer needed with official Playwright image)
+
+### **Issue: Migration to Official Playwright Server**
+**Problem**: Custom CDP browser approach was complex and error-prone. Official Playwright documentation recommends using Playwright Server for remote connections.
+
+**Root Cause**: Framework used custom `cdp-browser` image with Chrome + socat proxy, but official Playwright offers better WebSocket-based server approach.
+
+**Solution**:
+- Migrated from custom CDP browser to official `mcr.microsoft.com/playwright:v1.52.0-noble` image
+- Changed from CDP connection to WebSocket-based Playwright Server connection
+- Replaced browser.connectOverCDP() with browser.connect() using WebSocket URL
+- Updated container command to run `npx playwright run-server` instead of Chrome + socat
+- Container now listens on port 3000 with Playwright Server instead of port 9222 with CDP
+
+**Architecture Change**:
+```
+OLD: Java Tests → CDP → Custom Chrome Container (cdp-browser)
+NEW: Java Tests → WebSocket → Official Playwright Server Container
+```
+
+**Test Results**: `Tests run: 1, Failures: 0, Errors: 0, Skipped: 0` - Migration successful!
+
+**Files Modified**:
+- `src/main/java/configuration/driver/PlaywrightDockerDriverPool.java` - Migrated to Playwright Server approach
+- `Jenkinsfile` - Removed CDP Browser build stage (no longer needed with official image)
+
+### **ARCHITECTURAL OVERVIEW** 🏗️
+```
+Components → PlaywrightDriverPool (Unified Interface)
+                    ↓
+            [Automatic Mode Detection]
+                    ↓
+    LOCAL Mode → Direct Playwright → Container App
+    DOCKER Mode → Container Playwright → Container App
+                    ↓
+            [File Operations Support]
+                    ↓
+    Upload: Volume Mapping + TestDataUtil
+    Download: PlaywrightDownloadUtil (mode-aware)
+```
+
+## **TEST EXECUTION GUIDE** 🚀
+
+### **Execution Modes**
+The framework supports multiple execution modes controlled by the `execution.mode` system property:
+
+- **PLAYWRIGHT_LOCAL** (default): Playwright runs directly on the host machine
+- **PLAYWRIGHT_DOCKER**: Playwright runs inside Docker containers for isolation
+- **SELENIUM**: Legacy Selenium mode (for compatibility during migration)
+
+### **Running Test Suites**
+
+#### **Available Test Suites**
+Located in `src/test/resources/testng_suites/`:
+- `playwright_parallel_suite.xml` - Playwright tests with parallel execution (2 threads)
+- `studio_smoke.xml` - Smoke tests
+- `studio_issues.xml` - Issue regression tests
+- `studio_rules_editor.xml` - Rules editor tests
+
+#### **Basic Suite Execution**
+```bash
+# Run default suite (LOCAL mode)
+mvn clean test -Dsuite=playwright_parallel_suite
+
+# Run specific suite with mode
+mvn clean test -Dsuite=playwright_parallel_suite -Dexecution.mode=PLAYWRIGHT_LOCAL
+mvn clean test -Dsuite=playwright_parallel_suite -Dexecution.mode=PLAYWRIGHT_DOCKER
+
+# Run other suites
+mvn clean test -Dsuite=studio_smoke -Dexecution.mode=PLAYWRIGHT_LOCAL
+mvn clean test -Dsuite=studio_issues -Dexecution.mode=PLAYWRIGHT_DOCKER
+```
+
+#### **Parallel Execution Verification**
+The `playwright_parallel_suite.xml` runs with `parallel="methods"` and `thread-count="2"`:
+- **LOCAL Mode**: ~25.8s execution time with 2 parallel threads
+- **DOCKER Mode**: ~23.9s execution time with 2 parallel Docker containers
+
+Look for log entries like:
+```
+[TestNG-test-PlaywrightParallelTest-1] [INFO] Initializing test with Playwright: testPlaywrightAdminEmail
+[TestNG-test-PlaywrightParallelTest-2] [INFO] Initializing test with Playwright: testPlaywrightAddProperty
+```
+
+### **Running Individual Tests**
+
+#### **Single Test Class**
+```bash
+# Run single test class in LOCAL mode
+mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL
+
+# Run single test class in DOCKER mode
+mvn clean test -Dtest=TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_DOCKER
+```
+
+#### **Single Test Method**
+```bash
+# Run specific test method
+mvn clean test -Dtest=TestPlaywrightAdminEmail#testPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL
+mvn clean test -Dtest=TestPlaywrightAddProperty#testPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_DOCKER
+```
+
+#### **Multiple Test Classes**
+```bash
+# Run multiple test classes
+mvn clean test -Dtest=TestPlaywrightAdminEmail,TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_LOCAL
+```
+
