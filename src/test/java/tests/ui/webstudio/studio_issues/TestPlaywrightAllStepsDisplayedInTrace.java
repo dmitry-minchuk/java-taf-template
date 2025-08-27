@@ -40,12 +40,10 @@ public class TestPlaywrightAllStepsDisplayedInTrace extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "DetermineCoverageFeeOrTax2");
 
-        editorPage.getTableToolbarPanelComponent()
+        List<String> visibleItemsFromTree = editorPage.getTableToolbarPanelComponent()
                 .clickTrace()
                 .setFactorTextField("123")
-                .clickTraceInsideMenu();
-        List<String> visibleItemsFromTree = editorPage.getTableToolbarPanelComponent()
-                .getTraceWindow()
+                .clickTraceInsideMenu()
                 .expandItemInTree(0)
                 .getVisibleItemsFromTree();
         assertThat(visibleItemsFromTree.subList(1, 13)).containsAll(EXPECTED_TRACE_TREE_ITEMS);
