@@ -10,7 +10,7 @@ import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.TEMPLATE;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddModuleWithPathExistingModule extends BaseTest {
@@ -20,7 +20,7 @@ public class TestPlaywrightAddModuleWithPathExistingModule extends BaseTest {
     @Description("BUG: Two modules with the same path can be created")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddModuleWithPathExistingModule() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, "Sample Project");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectProject(projectName);
         editorPage.getProjectDetailsComponent().openAddModulePopup();

@@ -28,7 +28,7 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
     @Description("BUG: Dropdown with alias values is empty in Run/Trace for array types")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testArrayOfAliasValuesInRunTrace() {
-        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestArrayOfAliasValuesInRunTrace.xlsx");
+        String projectName = WorkflowService.loginCreateProject(User.ADMIN, EXCEL_FILES, "TestArrayOfAliasValuesInRunTrace.xlsx");
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestArrayOfAliasValuesInRunTrace");
 

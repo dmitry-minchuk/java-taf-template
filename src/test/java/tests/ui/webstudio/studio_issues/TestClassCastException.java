@@ -14,7 +14,7 @@ import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestClassCastException extends BaseTest {
@@ -24,7 +24,7 @@ public class TestClassCastException extends BaseTest {
     @Description("Test that ClassCastException doesn't occur when running a spreadsheet and validate result table appears")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testClassCastException() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, 
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, 
                 "TestClassCastException.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()

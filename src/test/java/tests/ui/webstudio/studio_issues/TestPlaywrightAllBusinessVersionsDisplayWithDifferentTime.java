@@ -11,7 +11,7 @@ import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime extends BaseTest {
@@ -21,7 +21,7 @@ public class TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime extends B
     @Description("BUG: Only 1 version of table is displayed in WebStudio, if table have 2 versions with Business dimension property that have different time, but not date")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAllBusinessVersionsDisplayWithDifferentTime() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestAllBusinessVersionsDisplayWithDifferentTime.xlsx");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAllBusinessVersionsDisplayWithDifferentTime.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAllBusinessVersionsDisplayWithDifferentTime");
         PlaywrightLeftRulesTreeComponent leftRulesTreeComponent = editorPage.getLeftRulesTreeComponent();

@@ -1,6 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Dialog;
+import com.microsoft.playwright.Page;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
@@ -239,8 +240,8 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         public IPlaywrightTraceWindow clickTraceInsideMenu() {
             traceInsideMenuBtn.click();
             // Wait for trace window to open - in Playwright we don't need window switching like Selenium
-            page.waitForSelector("xpath=.//div[contains(@class,'trace-window') or contains(@title,'Trace')]", 
-                                new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(500));
+            page.waitForSelector("xpath=//head/title[text()='Trace']",
+                                new Page.WaitForSelectorOptions().setTimeout(500));
             return new PlaywrightTraceWindow();
         }
 
@@ -305,6 +306,10 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
             }
             return items;
         }
+    }
+
+    public IPlaywrightTraceWindow getTraceWindow() {
+        return new PlaywrightTraceWindow();
     }
 
     public void copyTableAsNew(String newName, String description) {

@@ -20,8 +20,7 @@ public class TestPlaywrightAddModuleWithPathStar extends BaseTest {
     @Description("Test module with asterisk path handling")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddModuleWithPathStar() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZipOpenEditor(User.ADMIN, "RulesEditor.TestRulesXMLContainsAsterisk.zip");
-        
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, "RulesEditor.TestRulesXMLContainsAsterisk.zip");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getLeftRulesTreeComponent()

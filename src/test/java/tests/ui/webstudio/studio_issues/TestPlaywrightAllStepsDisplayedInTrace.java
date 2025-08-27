@@ -5,19 +5,18 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import helpers.service.WorkflowService;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.ZIP_ARCHIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestAllStepsDisplayedInTrace extends BaseTest {
+public class TestPlaywrightAllStepsDisplayedInTrace extends BaseTest {
 
     private final List<String> EXPECTED_TRACE_TREE_ITEMS = Arrays.asList(
             "$Formula$Coverage_ID = null", "$Formula$UnitArea = null", "$Formula$Coverage_Name = null",
@@ -32,12 +31,12 @@ public class TestAllStepsDisplayedInTrace extends BaseTest {
     @TestCaseId("EPBDS-8215")
     @Description("BUG: Some Steps are not displayed in Trace")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testAllStepsDisplayedInTrace() {
-        String projectName = WorkflowService.loginCreateProject(User.ADMIN, ZIP_ARCHIVE, "TestAllStepsDisplayedInTrace.zip");
-        EditorPage editorPage = new EditorPage();
+    public void testPlaywrightAllStepsDisplayedInTrace() {
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, "TestAllStepsDisplayedInTrace.zip");
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "CO-rules");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "DetermineCoverageFeeOrTax2");
 

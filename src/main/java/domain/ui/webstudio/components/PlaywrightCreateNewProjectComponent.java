@@ -6,6 +6,7 @@ import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
+import lombok.Getter;
 
 public class PlaywrightCreateNewProjectComponent extends PlaywrightBasePageComponent {
 
@@ -33,7 +34,7 @@ public class PlaywrightCreateNewProjectComponent extends PlaywrightBasePageCompo
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends PlaywrightBasePageComponent> T selectTab(CreateNewProjectComponent.TabName tabName) {
+    public <T extends PlaywrightBasePageComponent> T selectTab(TabName tabName) {
         tabTemplate.format(tabName.getValue()).click();
 
         return switch (tabName) {
@@ -42,5 +43,20 @@ public class PlaywrightCreateNewProjectComponent extends PlaywrightBasePageCompo
             case ZIP_ARCHIVE -> (T) zipArchiveComponent;
             default -> throw new IllegalArgumentException("Unsupported tab type: " + tabName);
         };
+    }
+
+    @Getter
+    public enum TabName {
+        TEMPLATE("Template"),
+        EXCEL_FILES("Excel Files"),
+        ZIP_ARCHIVE("Zip Archive"),
+        OPEN_API("OpenAPI"),
+        WORKSPACE("Workspace");
+
+        private final String value;
+
+        TabName(String value) {
+            this.value = value;
+        }
     }
 }

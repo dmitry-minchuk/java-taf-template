@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.TEMPLATE;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
@@ -23,7 +23,7 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
     @Description("BUG: Added row is deleted incorrectly - the value of the next row is changed")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddDeleteRowWithoutSaving() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, TEMPLATE, "Tutorial 6 - Introduction to Spreadsheet Tables");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Tutorial 6 - Introduction to Spreadsheet Tables");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Tutorial6 - Intro to Spreadsheet Tables");

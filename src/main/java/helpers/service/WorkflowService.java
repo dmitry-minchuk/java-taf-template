@@ -9,7 +9,7 @@ import helpers.utils.StringUtil;
 
 public class WorkflowService {
 
-    public static String loginCreateProjectOpenEditor(User user, CreateNewProjectComponent.TabName projectType, String sourceName) {
+    public static String loginCreateProject(User user, CreateNewProjectComponent.TabName projectType, String sourceName) {
         EditorPage editorPage = new LoginService().login(UserService.getUser(user));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         String projectName = StringUtil.generateUniqueName("project");

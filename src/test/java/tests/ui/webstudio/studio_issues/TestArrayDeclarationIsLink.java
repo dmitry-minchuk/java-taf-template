@@ -28,7 +28,7 @@ public class TestArrayDeclarationIsLink extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testArrayDeclarationIsLink() {
         // Login, create project and open editor
-        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestArrayDeclarationIsLink.xlsx");
+        String projectName = WorkflowService.loginCreateProject(User.ADMIN, EXCEL_FILES, "TestArrayDeclarationIsLink.xlsx");
         
         // Navigate to editor page and select the specific rule
         EditorPage editorPage = new EditorPage();

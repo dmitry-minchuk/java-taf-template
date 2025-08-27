@@ -12,7 +12,7 @@ import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddProperty extends BaseTest {
@@ -22,7 +22,7 @@ public class TestPlaywrightAddProperty extends BaseTest {
     @Description("Exception occurs on adding property to the table with two columns - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddProperty() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "StudioIssues_TestAddProperty.xlsx");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "StudioIssues_TestAddProperty.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");

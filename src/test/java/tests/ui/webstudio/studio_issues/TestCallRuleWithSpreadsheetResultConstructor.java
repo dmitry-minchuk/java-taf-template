@@ -23,7 +23,7 @@ public class TestCallRuleWithSpreadsheetResultConstructor extends BaseTest {
     @Description("Test call rule with spreadsheet result constructor")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCallRuleWithSpreadsheetResultConstructor() {
-        String projectName = WorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES,
+        String projectName = WorkflowService.loginCreateProject(User.ADMIN, EXCEL_FILES,
                 "TestCallRuleWithSpreadsheetResultConstructor.xlsx");
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestCallRuleWithSpreadsheetResultConstructor");

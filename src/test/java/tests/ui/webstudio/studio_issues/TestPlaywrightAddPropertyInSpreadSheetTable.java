@@ -14,7 +14,7 @@ import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddPropertyInSpreadSheetTable extends BaseTest {
@@ -24,7 +24,7 @@ public class TestPlaywrightAddPropertyInSpreadSheetTable extends BaseTest {
     @Description("BUG: Exception appears in log file on adding properties for Spreadsheet")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddPropertyInSpreadSheetTable() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestAddPropertyInSpreadSheetTable.xlsx");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddPropertyInSpreadSheetTable.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddPropertyInSpreadSheetTable");
         editorPage.getLeftRulesTreeComponent()

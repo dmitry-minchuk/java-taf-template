@@ -11,7 +11,7 @@ import helpers.service.PlaywrightWorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightAddElementToCollectionSet extends BaseTest {
@@ -21,7 +21,7 @@ public class TestPlaywrightAddElementToCollectionSet extends BaseTest {
     @Description("BUG: Error on clicking '+' for input types Collection, Set")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddElementToCollectionSet() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectOpenEditor(User.ADMIN, EXCEL_FILES, "TestAddElementToCollectionSet.xlsx");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddElementToCollectionSet.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddElementToCollectionSet");
         editorPage.getLeftRulesTreeComponent()
