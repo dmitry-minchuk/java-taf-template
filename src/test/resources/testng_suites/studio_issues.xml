@@ -16,7 +16,9 @@
     <test name="StudioIssues.TestPlaywrightAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAllStepsDisplayedInTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllStepsDisplayedInTrace"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightTraceIntoFileJsonRequest"/></classes></test>
     <test name="StudioIssues.TestPlaywrightArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightArrayDeclarationIsLink"/></classes></test>
+
     <test name="StudioIssues.TestArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayOfAliasValuesInRunTrace"/></classes></test>
     <test name="StudioIssues.TestButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestButtonDeployAvailableDeployConfiguration"/></classes></test>
     <test name="StudioIssues.TestCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestCallRuleWithSpreadsheetResultConstructor"/></classes></test>
@@ -24,5 +26,4 @@
     <test name="StudioIssues.TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
     <test name="StudioIssues.TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
     <test name="StudioIssues.TestClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickDatatypeNotFoundError"/></classes></test>
-    <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
 </suite>
