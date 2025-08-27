@@ -1,5 +1,6 @@
 package configuration.core.ui;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.appcontainer.AppContainerPool;
 import configuration.core.ui.factory.LazyPlaywrightComponentsList;
@@ -49,6 +50,10 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
 
     public String getTitle() {
         return page.title();
+    }
+
+    public Locator locator(String selector) {
+        return page.locator(selector);
     }
 
     // Implementation of PlaywrightComponentFactory interface
