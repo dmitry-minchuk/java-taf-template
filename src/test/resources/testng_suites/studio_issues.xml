@@ -7,7 +7,6 @@
     </listeners>
 
     <test name="StudioIssues.TestPlaywrightAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddProperty"/></classes></test>
-    <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyExtraStateAppears"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathStar"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathExistingModule"/></classes></test>
@@ -16,8 +15,6 @@
     <test name="StudioIssues.TestPlaywrightAddPropertyInSpreadSheetTable"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyInSpreadSheetTable"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddSingleNumberIntoEmptyCell"/></classes></test>
     <test name="StudioIssues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
-    <test name="StudioIssues.TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
-    <test name="StudioIssues.TestAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
     <test name="StudioIssues.TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
     <test name="StudioIssues.TestArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayOfAliasValuesInRunTrace"/></classes></test>
     <test name="StudioIssues.TestButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestButtonDeployAvailableDeployConfiguration"/></classes></test>
@@ -26,4 +23,5 @@
     <test name="StudioIssues.TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
     <test name="StudioIssues.TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
     <test name="StudioIssues.TestClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickDatatypeNotFoundError"/></classes></test>
+    <test name="StudioIssues.TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
 </suite>
