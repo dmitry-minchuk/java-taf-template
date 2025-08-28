@@ -206,4 +206,14 @@ public class PlaywrightWebElement {
         LOGGER.info("Getting CSS property '{}' from {}", propertyName, elementName);
         return locator.evaluate("el => window.getComputedStyle(el)." + propertyName).toString();
     }
+
+    public boolean isEnabled() {
+        LOGGER.info("Checking if {} is enabled", elementName);
+        return locator.isEnabled();
+    }
+
+    public void selectOption(String value) {
+        LOGGER.info("Selecting option '{}' in {}", value, elementName);
+        locator.selectOption(value);
+    }
 }

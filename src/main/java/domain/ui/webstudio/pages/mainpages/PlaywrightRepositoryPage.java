@@ -9,6 +9,8 @@ import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComp
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightLeftRepositoryTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentButtonsPanelComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentTabPropertiesComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightDeployConfigurationTabsComponent;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,14 +19,22 @@ import org.apache.logging.log4j.Logger;
 public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryPage.class);
-    
-    private PlaywrightWebElement createProjectLink;
-    private PlaywrightWebElement refreshBtn;
-    private PlaywrightCreateNewProjectComponent createNewProjectComponent;
+
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
+    // top menu elements:
+    private PlaywrightWebElement refreshBtn;
+    private PlaywrightWebElement createProjectLink;
+    private PlaywrightWebElement createDeployConfigBtn;
+    // createDeployConfigBtn-related elements (I did not create a component for that):
+    private PlaywrightWebElement configNameField;
+    private PlaywrightWebElement createBtn;
+    // other components:
+    private PlaywrightCreateNewProjectComponent createNewProjectComponent;
     private PlaywrightConfigureCommitInfoComponent configureCommitInfoComponent;
     private PlaywrightLeftRepositoryTreeComponent leftRepositoryTreeComponent;
     private PlaywrightRepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
+    private PlaywrightRepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
+    private PlaywrightDeployConfigurationTabsComponent deployConfigurationTabsComponent;
 
     public PlaywrightRepositoryPage() {
         super("/faces/pages/modules/repository/index.xhtml");
@@ -37,8 +47,13 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         createNewProjectComponent = createScopedComponent(PlaywrightCreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
         tabSwitcherComponent = createScopedComponent(PlaywrightTabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         configureCommitInfoComponent = createScopedComponent(PlaywrightConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
-        leftRepositoryTreeComponent = createScopedComponent(PlaywrightLeftRepositoryTreeComponent.class, "xpath=//div[@id='repositoryTree']", "leftRepositoryTreeComponent");
+        leftRepositoryTreeComponent = createScopedComponent(PlaywrightLeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
         repositoryContentButtonsPanelComponent = createScopedComponent(PlaywrightRepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='repository-buttons']", "repositoryContentButtonsPanelComponent");
+        createDeployConfigBtn = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Create Deploy Configuration']] | //a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
+        configNameField = new PlaywrightWebElement(page, "xpath=//input[@placeholder='Configuration Name'] | //input[@name='configName']", "configNameFieldLocator");
+        createBtn = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Create']] | //input[@value='Create']", "createBtnLocator");
+        repositoryContentTabPropertiesComponent = createScopedComponent(PlaywrightRepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
+        deployConfigurationTabsComponent = createScopedComponent(PlaywrightDeployConfigurationTabsComponent.class, "xpath=//div[@id='rulesDeployConfiguration']", "deployConfigurationTabsComponent");
     }
 
     public void createProject(PlaywrightCreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -67,6 +82,17 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
     }
 
     public void refresh() {
+        refreshBtn.click();
+    }
+
+    public void createProjectFromTemplate(String projectName, String templateName) {
+        createProject(PlaywrightCreateNewProjectComponent.TabName.TEMPLATE, projectName, templateName);
+    }
+
+    public void createDeployConfiguration(String configName) {
+        createDeployConfigBtn.click();
+        configNameField.fill(configName);
+        createBtn.click();
         refreshBtn.click();
     }
 }
