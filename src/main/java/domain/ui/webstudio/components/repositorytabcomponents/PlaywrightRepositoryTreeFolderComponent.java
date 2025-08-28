@@ -6,10 +6,9 @@ import configuration.driver.PlaywrightDriverPool;
 
 public class PlaywrightRepositoryTreeFolderComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement folderIcon;
+    private PlaywrightWebElement expanderClosed;
     private PlaywrightWebElement folderName;
-    private PlaywrightWebElement expandIcon;
-    private PlaywrightWebElement collapseIcon;
+    private PlaywrightWebElement itemTemplate;
 
     public PlaywrightRepositoryTreeFolderComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -22,37 +21,26 @@ public class PlaywrightRepositoryTreeFolderComponent extends PlaywrightBasePageC
     }
 
     private void initializeElements() {
-        folderIcon = createScopedElement(".//span[contains(@class,'folder-icon')]", "folderIcon");
-        folderName = createScopedElement(".//span[contains(@class,'folder-name')]", "folderName");
-        expandIcon = createScopedElement(".//span[contains(@class,'expand-icon')]", "expandIcon");
-        collapseIcon = createScopedElement(".//span[contains(@class,'collapse-icon')]", "collapseIcon");
+        expanderClosed = createScopedElement("xpath=.//span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
+        folderName = createScopedElement("xpath=./div/span/span[text() or ./span[text()]]", "folderName");
+        itemTemplate = createScopedElement("xpath=.//span[text()='%s']", "itemTemplate");
     }
 
-    public void clickFolder() {
-        folderName.click();
+    public PlaywrightWebElement getItem(String itemName) {
+        return itemTemplate.format(itemName);
     }
 
     public void expandFolder() {
-        if (expandIcon.isVisible()) {
-            expandIcon.click();
+        if (expanderClosed.isVisible(200)) {
+            expanderClosed.click();
         }
     }
 
-    public void collapseFolder() {
-        if (collapseIcon.isVisible()) {
-            collapseIcon.click();
-        }
+    public void selectItem(String itemName) {
+        getItem(itemName).click();
     }
 
     public String getFolderName() {
         return folderName.getText();
-    }
-
-    public boolean isFolderExpanded() {
-        return collapseIcon.isVisible();
-    }
-
-    public boolean isFolderCollapsed() {
-        return expandIcon.isVisible();
     }
 }
