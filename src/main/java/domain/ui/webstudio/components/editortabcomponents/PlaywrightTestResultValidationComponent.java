@@ -4,13 +4,16 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightTableComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import lombok.Getter;
 
 import java.util.List;
 
 public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement resultTable;
+    private PlaywrightWebElement resultTableElement;
     private PlaywrightWebElement resultTableHeader;
+    @Getter
+    private PlaywrightTableComponent resultTable;
 
     public PlaywrightTestResultValidationComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -23,8 +26,9 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
     }
 
     private void initializeElements() {
-        resultTable = createScopedElement(".//table[@class='table']", "resultTable");
-        resultTableHeader = createScopedElement(".//table[@class='table']//tr[1]", "resultTableHeader");
+        resultTableElement = createScopedElement("xpath=.//table[@class='table']", "resultTableElement");
+        resultTableHeader = createScopedElement("xpath=.//table[@class='table']//tr[1]", "resultTableHeader");
+        resultTable = createScopedComponent(PlaywrightTableComponent.class, "xpath=.//table[@class='table']", "resultTable");
     }
 
     public boolean isTestTableFailed() {
@@ -48,7 +52,7 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
     }
 
     public boolean isResultTableVisible() {
-        return resultTable.isVisible();
+        return resultTableElement.isVisible();
     }
 
     public boolean isResultTableHeaderVisible() {
@@ -72,10 +76,6 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
             return resultTableHeader.getText();
         }
         return "";
-    }
-
-    public PlaywrightTableComponent getResultTable() {
-        return new PlaywrightTableComponent(page, "xpath=//table[@class='table']");
     }
 
     public List<String> getTestResult(int rowIndex) {

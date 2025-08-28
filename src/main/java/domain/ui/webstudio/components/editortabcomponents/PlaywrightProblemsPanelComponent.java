@@ -33,8 +33,6 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     }
 
     private void initializeElements() {
-        logger.info("[DEBUG] initializeElements() called, rootLocator: {}", (rootLocator != null ? "present" : "null"));
-        
         showProblemsLink = createScopedElement(".//div[@class='ui-layout-toggler ui-layout-toggler-south ui-layout-toggler-closed ui-layout-toggler-south-closed' and @title='Open']", "showProblemsLink");
         hideProblemPanelLink = createScopedElement(".//div[@id='bottom']//span[@id='south-closer']", "hideProblemPanelLink");
         errorsCounter = createScopedElement("#errors-count", "errorsCounter");
