@@ -4,13 +4,19 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.core.ui.PlaywrightTableComponent;
 import configuration.driver.PlaywrightDriverPool;
+import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PlaywrightRepositoryContentTabPropertiesComponent extends PlaywrightBasePageComponent {
+
+    private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryContentTabPropertiesComponent.class);
 
     private PlaywrightTableComponent propertiesTable;
     private PlaywrightWebElement authorElementTemplate;
@@ -141,12 +147,14 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends Playwrigh
         return tagsSection.isVisible(100);
     }
 
-    // Helper method to find row index by text content
+    // Helper method to find row index by text content (returns 1-based index)
     private int findRowByText(String text) {
+        WaitUtil.sleep(500);
         int rowCount = propertiesTable.getRowCount();
-        for (int i = 0; i < rowCount; i++) {
-            String cellText = propertiesTable.getCell(i, 0).getText();
+        for (int i = 1; i <= rowCount; i++) {
+            String cellText = propertiesTable.getCell(i, 1).getText().trim().replaceAll("\n", "");
             if (cellText.equals(text)) {
+                LOGGER.info("Found row N{} with text: {}", i, cellText);
                 return i;
             }
         }

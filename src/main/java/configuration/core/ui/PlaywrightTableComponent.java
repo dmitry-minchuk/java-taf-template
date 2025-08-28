@@ -1,26 +1,32 @@
 package configuration.core.ui;
 
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
+import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaywrightTableComponent {
-    private final Page page;
-    private final String selector;
+public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
 
-    public PlaywrightTableComponent(Page page, String selector) {
-        this.page = page;
-        this.selector = selector;
+    public PlaywrightTableComponent() {
+        super(PlaywrightDriverPool.getPage());
+    }
+    
+    public PlaywrightTableComponent(PlaywrightWebElement rootLocator) {
+        super(rootLocator);
     }
 
     public String getCellText(int rowIndex, int columnIndex) {
-        // Use OpenL-specific cell ID selector
-        // OpenL tables use cell IDs in format: t_te_c-row:col
-        String cellIdSelector = String.format("//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
-        return page.locator("xpath=" + cellIdSelector).textContent().trim();
+        // Try OpenL-specific selector first (1-based indexing)
+        String openLSelector = String.format("xpath=//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
+        if (page.locator(openLSelector).count() > 0) {
+            return page.locator(openLSelector).textContent().trim();
+        }
+        
+        // Fallback to standard HTML table logic (1-based CSS selectors)
+        String standardSelector = String.format("xpath=.//tr[%d]/td[%d]", rowIndex, columnIndex);
+        return rootLocator.getLocator().locator(standardSelector).textContent().trim();
     }
     
     public String getCellContent(int rowIndex, int columnIndex) {
@@ -29,19 +35,23 @@ public class PlaywrightTableComponent {
     }
 
     public void clickCell(int rowIndex, int columnIndex) {
-        // Use OpenL-specific cell ID selector
-        String cellIdSelector = String.format("//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
-        page.locator("xpath=" + cellIdSelector).click();
+        getCell(rowIndex, columnIndex).click();
     }
 
     public boolean isPresent() {
-        return page.locator(selector).isVisible();
+        return rootLocator.isVisible();
     }
 
     public PlaywrightWebElement getCell(int rowIndex, int columnIndex) {
-        // Use OpenL-specific cell ID selector
-        String cellIdSelector = String.format("//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
-        return new PlaywrightWebElement(page, "xpath=" + cellIdSelector);
+        // Try OpenL-specific selector first (1-based indexing)
+        String openLSelector = String.format("xpath=//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
+        if (page.locator(openLSelector).count() > 0) {
+            return new PlaywrightWebElement(page, openLSelector);
+        }
+        
+        // Fallback to standard HTML table logic (1-based CSS selectors)
+        String standardSelector = String.format("xpath=.//tr[%d]/td[%d]", rowIndex, columnIndex);
+        return new PlaywrightWebElement(rootLocator, standardSelector);
     }
 
     public void doubleClickAndPasteTextToCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
@@ -58,13 +68,7 @@ public class PlaywrightTableComponent {
     }
 
     public int getRowCount() {
-        // Use proper XPath locator for counting rows
-        if (selector.startsWith("xpath=")) {
-            String rowSelector = selector.substring(6) + "//tr[not(@class='hidden')]";
-            return page.locator("xpath=" + rowSelector).count();
-        } else {
-            return page.locator(selector).locator("tr:not([class*='hidden'])").count();
-        }
+        return rootLocator.getLocator().locator("xpath=.//tr[not(@class='hidden')]").count();
     }
 
     public int getRowsCount() {
@@ -72,9 +76,7 @@ public class PlaywrightTableComponent {
     }
 
     public void doubleClickCell(int rowIndex, int columnIndex) {
-        // Use OpenL-specific cell ID selector
-        String cellIdSelector = String.format("//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
-        page.locator("xpath=" + cellIdSelector).dblclick();
+        getCell(rowIndex, columnIndex).getLocator().dblclick();
     }
 
     public PlaywrightTableRow getRow(int rowIndex) {
@@ -107,24 +109,26 @@ public class PlaywrightTableComponent {
         public List<String> getValue() {
             List<String> values = new ArrayList<>();
             
-            // Try OpenL-specific selector first (for OpenL tables with t_te_c-row:col IDs)
-            String rowXPath = String.format("//td[starts-with(@id, 't_te_c-%d:')]", rowIndex);
-            Locator cellsLocator = table.page.locator("xpath=" + rowXPath);
-            int cellCount = cellsLocator.count();
+            // Try OpenL-specific selector first (1-based indexing)
+            String openLRowSelector = String.format("//td[starts-with(@id, 't_te_c-%d:')]", rowIndex);
+            Locator cellsLocator = table.page.locator("xpath=" + openLRowSelector);
             
-            // Fallback to regular HTML table selector if no OpenL cells found
-            if (cellCount == 0) {
-                // For regular HTML tables like TestResultPage (table[@class='table'])
-                String tableSelector = table.selector.startsWith("xpath=") ? 
-                    table.selector.substring(6) : table.selector;
-                String regularRowXPath = String.format("%s//tr[%d]/td", tableSelector, rowIndex);
-                cellsLocator = table.page.locator("xpath=" + regularRowXPath);
-                cellCount = cellsLocator.count();
-            }
-            
-            for (int i = 0; i < cellCount; i++) {
-                String cellText = cellsLocator.nth(i).textContent();
-                values.add(cellText != null ? cellText.trim() : "");
+            if (cellsLocator.count() > 0) {
+                // OpenL table logic
+                int cellCount = cellsLocator.count();
+                for (int i = 0; i < cellCount; i++) {
+                    String cellText = cellsLocator.nth(i).textContent();
+                    values.add(cellText != null ? cellText.trim() : "");
+                }
+            } else {
+                // Standard HTML table logic (1-based CSS selectors)
+                String standardRowSelector = String.format("xpath=.//tr[%d]/td", rowIndex);
+                cellsLocator = table.rootLocator.getLocator().locator(standardRowSelector);
+                int cellCount = cellsLocator.count();
+                for (int i = 0; i < cellCount; i++) {
+                    String cellText = cellsLocator.nth(i).textContent();
+                    values.add(cellText != null ? cellText.trim() : "");
+                }
             }
             
             return values;

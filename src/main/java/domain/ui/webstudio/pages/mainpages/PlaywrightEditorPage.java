@@ -42,7 +42,7 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
         leftRulesTreeComponent = createScopedComponent(PlaywrightLeftRulesTreeComponent.class, "xpath=//div[@id='left']", "leftRulesTreeComponent");
         rightTableDetailsComponent = createScopedComponent(PlaywrightRightTableDetailsComponent.class, "xpath=//div[@id='right']", "rightTableDetailsComponent");
         tabSwitcherComponent = createScopedComponent(PlaywrightTabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
-        centerTable = new PlaywrightTableComponent(page, "xpath=//table[@class='te_table']");
+        centerTable = createScopedComponent(PlaywrightTableComponent.class, "xpath=//table[@class='te_table']", "centerTable");
         tableToolbarPanelComponent = createScopedComponent(PlaywrightTableToolbarPanelComponent.class, "xpath=//div[@id='tableToolbarPanel']", "tableToolbarPanelComponent");
         testResultValidationComponent = createScopedComponent(PlaywrightTestResultValidationComponent.class, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
         problemsPanelComponent = createScopedComponent(PlaywrightProblemsPanelComponent.class, "xpath=//div[@id='bottom']", "problemsPanelComponent");

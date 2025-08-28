@@ -76,8 +76,8 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
         }
 
         PlaywrightWebElement modalShade = new PlaywrightWebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
-        modalShade.waitForVisible();
-        configureCommitInfoComponent.fillCommitInfoWithRandomData();
+        if(modalShade.isVisible(500))
+            configureCommitInfoComponent.fillCommitInfoWithRandomData();
         refreshBtn.click();
     }
 
