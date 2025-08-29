@@ -135,6 +135,7 @@ public class WaitUtil {
     public static void sleep(int timeoutMillis) {
         try {
             Thread.sleep(timeoutMillis);
+            LOGGER.info("Thread.sleep({}) here...", timeoutMillis);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

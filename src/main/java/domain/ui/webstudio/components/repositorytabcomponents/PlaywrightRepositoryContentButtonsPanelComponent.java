@@ -6,13 +6,17 @@ import configuration.driver.PlaywrightDriverPool;
 
 public class PlaywrightRepositoryContentButtonsPanelComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement buttonsPanel;
-    private PlaywrightWebElement deployBtn;
-    private PlaywrightWebElement undeployBtn;
-    private PlaywrightWebElement deleteBtn;
-    private PlaywrightWebElement refreshBtn;
-    private PlaywrightWebElement openBtn;
+    private PlaywrightWebElement closeBtn;
     private PlaywrightWebElement saveBtn;
+    private PlaywrightWebElement copyBtn;
+    private PlaywrightWebElement deleteBtn;
+    private PlaywrightWebElement deployBtn;
+    private PlaywrightWebElement openBtn;
+    private PlaywrightWebElement openRevisionBtn;
+    private PlaywrightWebElement compareBtn;
+    private PlaywrightWebElement addFolderBtn;
+    private PlaywrightWebElement uploadFileBtn;
+    private PlaywrightWebElement exportBtn;
 
     public PlaywrightRepositoryContentButtonsPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -25,41 +29,70 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
     }
 
     private void initializeElements() {
-        buttonsPanel = createScopedElement("xpath=.//div[contains(@class,'repository-buttons-panel')]", "buttonsPanel");
-        deployBtn = createScopedElement("xpath=.//button[./span[text()='Deploy']]", "deployBtn");
-        undeployBtn = createScopedElement("xpath=.//button[./span[text()='Undeploy']]", "undeployBtn");
-        deleteBtn = createScopedElement("xpath=.//button[./span[text()='Delete']]", "deleteBtn");
-        refreshBtn = createScopedElement("xpath=.//button[./span[text()='Refresh']]", "refreshBtn");
+        closeBtn = createScopedElement("xpath=.//input[@value='Close']", "closeBtn");
+        saveBtn = createScopedElement("xpath=.//input[@value='Save']", "saveBtn");
+        copyBtn = createScopedElement("xpath=.//input[@value='Copy']", "copyBtn");
+        deleteBtn = createScopedElement("xpath=.//input[@value='Delete']", "deleteBtn");
+        deployBtn = createScopedElement("xpath=.//input[@value='Deploy']", "deployBtn");
         openBtn = createScopedElement("xpath=.//input[@value='Open']", "openBtn");
-        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save']] | //input[@value='Save']", "saveBtn");
+        openRevisionBtn = createScopedElement("xpath=.//input[@value='Open Revision']", "openRevisionBtn");
+        compareBtn = createScopedElement("xpath=.//input[@value='Compare']", "compareBtn");
+        addFolderBtn = createScopedElement("xpath=.//input[@value='Add Folder']", "addFolderBtn");
+        uploadFileBtn = createScopedElement("xpath=.//input[@value='Upload File']", "uploadFileBtn");
+        exportBtn = createScopedElement("xpath=.//input[@value='Export']", "exportBtn");
     }
 
-    public void clickDeploy() {
-        deployBtn.click();
+    public void clickClose() {
+        closeBtn.click();
     }
 
-    public void clickUndeploy() {
-        undeployBtn.click();
+    public void clickSave() {
+        saveBtn.click();
+    }
+
+    public void clickCopy() {
+        copyBtn.click();
     }
 
     public void clickDelete() {
         deleteBtn.click();
     }
 
-    public void clickRefresh() {
-        refreshBtn.click();
+    public void clickDeploy() {
+        deployBtn.click();
     }
 
-    public boolean isButtonsPanelVisible() {
-        return buttonsPanel.isVisible();
-    }
-
-    public void openProject() {
+    public void clickOpen() {
         openBtn.click();
     }
 
+    public void clickOpenRevision() {
+        openRevisionBtn.click();
+    }
+
+    public void clickCompare() {
+        compareBtn.click();
+    }
+
+    public void clickAddFolder() {
+        addFolderBtn.click();
+    }
+
+    public void clickUploadFile() {
+        uploadFileBtn.click();
+    }
+
+    public void clickExport() {
+        exportBtn.click();
+    }
+
+    // Legacy methods for compatibility
+    public void openProject() {
+        clickOpen();
+    }
+
     public void saveDeploy() {
-        saveBtn.click();
+        clickSave();
     }
 
     public boolean isDeployButtonEnabled() {
