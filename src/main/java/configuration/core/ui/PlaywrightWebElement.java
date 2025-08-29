@@ -76,6 +76,12 @@ public class PlaywrightWebElement {
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
         locator.fill(text);
     }
+
+    public void fillSequentially(String text) {
+        isVisible();
+        LOGGER.info("Filling Sequentially {} with text: '{}'", elementName, text);
+        locator.pressSequentially(text);
+    }
     
     public String getText() {
         isVisible();

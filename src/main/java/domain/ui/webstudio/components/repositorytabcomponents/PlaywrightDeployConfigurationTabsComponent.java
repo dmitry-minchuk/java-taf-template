@@ -3,6 +3,8 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 public class PlaywrightDeployConfigurationTabsComponent extends PlaywrightBasePageComponent {
 
@@ -26,12 +28,12 @@ public class PlaywrightDeployConfigurationTabsComponent extends PlaywrightBasePa
     }
 
     private void initializeElements() {
-        configurationTabs = createScopedElement(".//div[contains(@class,'deploy-configuration-tabs')]", "configurationTabs");
-        activeTab = createScopedElement(".//div[contains(@class,'tab-active')]", "activeTab");
-        addConfigBtn = createScopedElement(".//button[./span[text()='Add Configuration']]", "addConfigBtn");
-        saveBtn = createScopedElement(".//button[./span[text()='Save']]", "saveBtn");
-        projectsToDeployTab = createScopedElement(".//span[text()='Projects to Deploy']", "projectsToDeployTab");
-        addProjectButton = createScopedElement(".//input[@id='addProjectsId']", "addProjectButton");
+        configurationTabs = createScopedElement("xpath=.//div[contains(@class,'deploy-configuration-tabs')]", "configurationTabs");
+        activeTab = createScopedElement("xpath=.//div[contains(@class,'tab-active')]", "activeTab");
+        addConfigBtn = createScopedElement("xpath=.//button[./span[text()='Add Configuration']]", "addConfigBtn");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save']]", "saveBtn");
+        projectsToDeployTab = createScopedElement("xpath=.//span[text()='Projects to Deploy']", "projectsToDeployTab");
+        addProjectButton = createScopedElement("xpath=.//input[@id='addProjectsId']", "addProjectButton");
         projectsList = new PlaywrightWebElement(page, "xpath=//select[@id='addDeployEntryForm:projectName']", "projectsList");
         revisionAddButtonTemplate = new PlaywrightWebElement(page, "xpath=//table[@id='addDeployEntryForm:projectVersion']//tr//td//span[text()='%s']//parent::td//..//td/input", "revisionAddButtonTemplate");
     }
@@ -56,8 +58,7 @@ public class PlaywrightDeployConfigurationTabsComponent extends PlaywrightBasePa
     public PlaywrightDeployConfigurationTabsComponent addProject(String projectName, String revision) {
         addProjectButton.click();
         projectsList.selectOption(projectName);
-        PlaywrightWebElement revisionAddButton = revisionAddButtonTemplate.format(revision);
-        revisionAddButton.click();
+        revisionAddButtonTemplate.format(revision.substring(0, 6)).click();
         return this;
     }
 }
