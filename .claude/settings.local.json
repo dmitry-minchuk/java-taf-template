@@ -43,7 +43,8 @@
       "mcp__n8n-mcp__n8n_list_executions",
       "mcp__n8n-mcp__n8n_get_execution",
       "Bash(timeout 300 mvn test:*)",
-      "Read(/tmp/**)"
+      "Read(/tmp/**)",
+      "Bash(git log:*)"
     ],
     "deny": []
   }

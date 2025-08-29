@@ -35,6 +35,7 @@ public class PlaywrightLeftRepositoryTreeComponent extends PlaywrightBasePageCom
     }
 
     public PlaywrightLeftRepositoryTreeComponent expandFolderInTree(String folderName) {
+        isVisible(500);
         PlaywrightRepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;

@@ -12,7 +12,7 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
     private PlaywrightWebElement deleteBtn;
     private PlaywrightWebElement refreshBtn;
     private PlaywrightWebElement openBtn;
-    private PlaywrightWebElement saveBtnLocator;
+    private PlaywrightWebElement saveBtn;
 
     public PlaywrightRepositoryContentButtonsPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -25,13 +25,13 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
     }
 
     private void initializeElements() {
-        buttonsPanel = createScopedElement(".//div[contains(@class,'repository-buttons-panel')]", "buttonsPanel");
-        deployBtn = createScopedElement(".//button[./span[text()='Deploy']]", "deployBtn");
-        undeployBtn = createScopedElement(".//button[./span[text()='Undeploy']]", "undeployBtn");
-        deleteBtn = createScopedElement(".//button[./span[text()='Delete']]", "deleteBtn");
-        refreshBtn = createScopedElement(".//button[./span[text()='Refresh']]", "refreshBtn");
-        openBtn = createScopedElement(".//button[./span[text()='Open']] | .//input[@value='Open']", "openBtn");
-        saveBtnLocator = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Save']] | //input[@value='Save']", "saveBtnLocator");
+        buttonsPanel = createScopedElement("xpath=.//div[contains(@class,'repository-buttons-panel')]", "buttonsPanel");
+        deployBtn = createScopedElement("xpath=.//button[./span[text()='Deploy']]", "deployBtn");
+        undeployBtn = createScopedElement("xpath=.//button[./span[text()='Undeploy']]", "undeployBtn");
+        deleteBtn = createScopedElement("xpath=.//button[./span[text()='Delete']]", "deleteBtn");
+        refreshBtn = createScopedElement("xpath=.//button[./span[text()='Refresh']]", "refreshBtn");
+        openBtn = createScopedElement("xpath=.//input[@value='Open']", "openBtn");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save']] | //input[@value='Save']", "saveBtn");
     }
 
     public void clickDeploy() {
@@ -59,7 +59,7 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends Playwright
     }
 
     public void saveDeploy() {
-        saveBtnLocator.click();
+        saveBtn.click();
     }
 
     public boolean isDeployButtonEnabled() {

@@ -87,11 +87,11 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends Playwrigh
 
     public String getProperty(Property name) {
         propertiesTable.isPresent();
-        return propertiesTable.getCell(findRowByText(name.text), 1).getText();
+        return propertiesTable.getCell(findRowByText(name.text), 2).getText().trim().replaceAll("\n", "");
     }
 
     public String getAuthorEmail(String author) {
-        return authorElementTemplate.format(author).getAttribute("title");
+        return authorElementTemplate.format(author).getAttribute("title").trim().replaceAll("\n", "");
     }
 
     public void expandRevisionID() {

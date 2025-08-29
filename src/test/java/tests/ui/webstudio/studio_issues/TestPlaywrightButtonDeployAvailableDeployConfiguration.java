@@ -31,13 +31,16 @@ public class TestPlaywrightButtonDeployAvailableDeployConfiguration extends Base
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", "1");
         String revision1 = repositoryPage.getRepositoryContentTabPropertiesComponent().getRevision();
+        LOGGER.info("revision1: {}", revision1);
 
         repositoryPage.createProjectFromTemplate("2", "Example 2 - Corporate Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", "2");
         String revision2 = repositoryPage.getRepositoryContentTabPropertiesComponent().getRevision();
+        LOGGER.info("revision2: {}", revision2);
 
+        repositoryPage.refresh();
         String deployConfigName = "deployConfiguration";
         repositoryPage.createDeployConfiguration(deployConfigName);
         repositoryPage.getLeftRepositoryTreeComponent()
