@@ -35,7 +35,6 @@ public class PlaywrightLeftRepositoryTreeComponent extends PlaywrightBasePageCom
     }
 
     public PlaywrightLeftRepositoryTreeComponent expandFolderInTree(String folderName) {
-        isVisible(500);
         PlaywrightRepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;
@@ -67,7 +66,7 @@ public class PlaywrightLeftRepositoryTreeComponent extends PlaywrightBasePageCom
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<PlaywrightRepositoryTreeFolderComponent> findTreeFolders() {
         List<PlaywrightRepositoryTreeFolderComponent> folders = new java.util.ArrayList<>();
-        WaitUtil.sleep(250);
+        WaitUtil.sleep(1000); //needed here for deploy freezing operations
 
         String[] selectors = {
                 ".//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",

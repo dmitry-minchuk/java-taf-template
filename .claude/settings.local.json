@@ -44,7 +44,9 @@
       "mcp__n8n-mcp__n8n_get_execution",
       "Bash(timeout 300 mvn test:*)",
       "Read(/tmp/**)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Read(/Users/dmitryminchuk/Desktop/**)",
+      "Read(/Users/dmitryminchuk/Desktop/**)"
     ],
     "deny": []
   }

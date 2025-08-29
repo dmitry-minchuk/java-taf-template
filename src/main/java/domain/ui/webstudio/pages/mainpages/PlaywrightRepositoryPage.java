@@ -45,14 +45,15 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
     private void initializeComponents() {
         createProjectLink = new PlaywrightWebElement(page, "xpath=//div[@id='top']//a[contains(text(), 'Create Project')]", "createProjectLink");
         refreshBtn = new PlaywrightWebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
+        createDeployConfigBtn = new PlaywrightWebElement(page, "xpath=//a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
+        configNameField = new PlaywrightWebElement(page, "xpath=//input[@id='newDProjectForm:projectName']", "configNameFieldLocator");
+        createBtn = new PlaywrightWebElement(page, "xpath=//input[@id='newDProjectForm:createBtn']", "createBtnLocator");
+
         createNewProjectComponent = createScopedComponent(PlaywrightCreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
         tabSwitcherComponent = createScopedComponent(PlaywrightTabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         configureCommitInfoComponent = createScopedComponent(PlaywrightConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
         leftRepositoryTreeComponent = createScopedComponent(PlaywrightLeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
-        repositoryContentButtonsPanelComponent = createScopedComponent(PlaywrightRepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='repository-buttons']", "repositoryContentButtonsPanelComponent");
-        createDeployConfigBtn = new PlaywrightWebElement(page, "xpath=//a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
-        configNameField = new PlaywrightWebElement(page, "xpath=//input[@id='newDProjectForm:projectName']", "configNameFieldLocator");
-        createBtn = new PlaywrightWebElement(page, "xpath=//input[@id='newDProjectForm:createBtn']", "createBtnLocator");
+        repositoryContentButtonsPanelComponent = createScopedComponent(PlaywrightRepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
         repositoryContentTabPropertiesComponent = createScopedComponent(PlaywrightRepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
         deployConfigurationTabsComponent = createScopedComponent(PlaywrightDeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
     }
