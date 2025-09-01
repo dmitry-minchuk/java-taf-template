@@ -32,7 +32,7 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
 
     private void initializeElements() {
         resultTableElement = createScopedElement("xpath=.//table[@class='table']", "resultTableElement");
-        resultTableHeader = createScopedElement("xpath=.//table[@class='table']//tr[1]", "resultTableHeader");
+        resultTableHeader = createScopedElement("xpath=.//table[@class='table']/thead//tr", "resultTableHeader");
         resultTable = createScopedComponent(PlaywrightTableComponent.class, "xpath=.//table[@class='table']", "resultTable");
         
         // Test result status element lists
@@ -78,11 +78,6 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
         int passed = getPassedTestCount();
         int failed = getFailedTestCount();
         return String.format("Total: %d, Passed: %d, Failed: %d", total, passed, failed);
-    }
-    
-    // Additional methods for compatibility with legacy tests
-    public boolean isResultTablePresent() {
-        return isResultTableVisible();
     }
     
     public String getResultTableHeader() {
