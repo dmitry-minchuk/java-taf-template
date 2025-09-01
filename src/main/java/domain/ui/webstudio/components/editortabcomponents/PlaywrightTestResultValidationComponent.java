@@ -14,6 +14,11 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
     private PlaywrightWebElement resultTableHeader;
     @Getter
     private PlaywrightTableComponent resultTable;
+    
+    // Test result status element lists
+    private List<PlaywrightWebElement> caseErrorElementsList;
+    private List<PlaywrightWebElement> caseSuccessElementsList;
+    private List<PlaywrightWebElement> testResultRowElementsList;
 
     public PlaywrightTestResultValidationComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -29,26 +34,35 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
         resultTableElement = createScopedElement("xpath=.//table[@class='table']", "resultTableElement");
         resultTableHeader = createScopedElement("xpath=.//table[@class='table']//tr[1]", "resultTableHeader");
         resultTable = createScopedComponent(PlaywrightTableComponent.class, "xpath=.//table[@class='table']", "resultTable");
+        
+        // Test result status element lists
+        caseErrorElementsList = createScopedElementList("xpath=.//tr//span[@class='case-error']", "caseErrorElements");
+        caseSuccessElementsList = createScopedElementList("xpath=.//tr//span[@class='case-success']", "caseSuccessElements");
+        testResultRowElementsList = createScopedElementList("xpath=.//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]", "testResultRowElements");
     }
 
     public boolean isTestTableFailed() {
-        return page.locator(".//tr//span[@class='case-error']").count() > 0;
+        isResultTableVisible();
+        return !caseErrorElementsList.isEmpty();
     }
 
     public boolean isTestTablePassed() {
-        return page.locator(".//tr//span[@class='case-success']").count() > 0;
+        isResultTableVisible();
+        return !caseSuccessElementsList.isEmpty();
     }
 
     public int getFailedTestCount() {
-        return page.locator(".//tr//span[@class='case-error']").count();
+        isResultTableVisible();
+        return caseErrorElementsList.size();
     }
 
     public int getPassedTestCount() {
-        return page.locator(".//tr//span[@class='case-success']").count();
+        isResultTableVisible();
+        return caseSuccessElementsList.size();
     }
 
     public int getTotalTestCount() {
-        return page.locator(".//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]").count();
+        return testResultRowElementsList.size();
     }
 
     public boolean isResultTableVisible() {
