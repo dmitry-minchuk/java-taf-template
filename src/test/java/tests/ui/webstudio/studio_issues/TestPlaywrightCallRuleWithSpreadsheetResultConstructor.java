@@ -6,29 +6,28 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import helpers.service.WorkflowService;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import helpers.service.PlaywrightWorkflowService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
+import static domain.ui.webstudio.components.PlaywrightCreateNewProjectComponent.TabName.EXCEL_FILES;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestCallRuleWithSpreadsheetResultConstructor extends BaseTest {
+public class TestPlaywrightCallRuleWithSpreadsheetResultConstructor extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-12238")
     @Description("Test call rule with spreadsheet result constructor")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testCallRuleWithSpreadsheetResultConstructor() {
-        String projectName = WorkflowService.loginCreateProject(User.ADMIN, EXCEL_FILES,
-                "TestCallRuleWithSpreadsheetResultConstructor.xlsx");
-        EditorPage editorPage = new EditorPage();
+    public void testPlaywrightCallRuleWithSpreadsheetResultConstructor() {
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestCallRuleWithSpreadsheetResultConstructor.xlsx");
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestCallRuleWithSpreadsheetResultConstructor");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "test");
         
@@ -41,7 +40,9 @@ public class TestCallRuleWithSpreadsheetResultConstructor extends BaseTest {
                 .isFalse();
         
         // Validate that the test table failed as expected
-        editorPage.getTestResultValidationComponent().checkTestTableFailed("test");
+        assertThat(editorPage.getTestResultValidationComponent().isTestTableFailed())
+                .as("Test table '%s' should have failed status", "test")
+                .isTrue();
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }
 }

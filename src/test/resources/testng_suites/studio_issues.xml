@@ -20,8 +20,8 @@
     <test name="StudioIssues.TestPlaywrightArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightArrayDeclarationIsLink"/></classes></test>
     <test name="StudioIssues.TestPlaywrightArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightArrayOfAliasValuesInRunTrace"/></classes></test>
     <test name="StudioIssues.TestPlaywrightButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightButtonDeployAvailableDeployConfiguration"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightCallRuleWithSpreadsheetResultConstructor"/></classes></test>
 
-    <test name="StudioIssues.TestCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestCallRuleWithSpreadsheetResultConstructor"/></classes></test>
     <test name="StudioIssues.TestClassCastException"><classes><class name="tests.ui.webstudio.studio_issues.TestClassCastException"/></classes></test>
     <test name="StudioIssues.TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
     <test name="StudioIssues.TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
