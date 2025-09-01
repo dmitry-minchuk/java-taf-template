@@ -14,16 +14,15 @@ import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestClassCastException extends BaseTest {
+public class TestPlaywrightClassCastException extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-7018")
     @Description("Test that ClassCastException doesn't occur when running a spreadsheet and validate result table appears")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testClassCastException() {
+    public void testPlaywrightClassCastException() {
         String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, 
                 "TestClassCastException.xlsx");
         PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
@@ -43,7 +42,7 @@ public class TestClassCastException extends BaseTest {
         
         // Validate result table presence and header
         PlaywrightTestResultValidationComponent resultComponent = editorPage.getTestResultValidationComponent();
-        assertThat(resultComponent.isResultTablePresent())
+        assertThat(resultComponent.getResultTable().isVisible(500))
                 .as("Result table should be present after running spreadsheet")
                 .isTrue();
         
