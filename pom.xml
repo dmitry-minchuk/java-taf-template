@@ -5,15 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>selenium-based-project-template</artifactId>
+    <artifactId>playwright-based-project-template</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
-        <!-- PLAYWRIGHT MIGRATION: Add Playwright version -->
+        <!-- Playwright version -->
         <playwright.version>1.52.0</playwright.version>
-        <!-- SELENIUM MIGRATION: Keep Selenium temporarily for rollback -->
-        <selenium.version>4.30.0</selenium.version>
         <testng.version>7.11.0</testng.version>
         <log4j.version>2.24.3</log4j.version>
         <rest.assured.version>5.5.1</rest.assured.version>
@@ -36,17 +34,11 @@
     </properties>
 
     <dependencies>
-        <!-- PLAYWRIGHT MIGRATION: Add Playwright Java dependency -->
+        <!-- Playwright Java dependency -->
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
             <version>${playwright.version}</version>
-        </dependency>
-        <!-- SELENIUM MIGRATION: Keep for backward compatibility during Phase 1 -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -114,12 +106,6 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- SELENIUM MIGRATION: Keep for backward compatibility during Phase 1 -->
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>selenium</artifactId>
-            <version>${testcontainers.version}</version>
         </dependency>
         <dependency>
             <groupId>net.datafaker</groupId>
