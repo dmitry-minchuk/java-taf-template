@@ -5,11 +5,14 @@ import configuration.core.ui.factory.LazyPlaywrightComponentsList;
 import configuration.core.ui.factory.LazyPlaywrightElementsList;
 import configuration.core.ui.factory.PlaywrightComponentFactory;
 import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public abstract class PlaywrightBasePageComponent implements PlaywrightComponentFactory {
-    
+
+    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePageComponent.class);
     protected final Page page;
     protected final PlaywrightWebElement rootLocator;
 

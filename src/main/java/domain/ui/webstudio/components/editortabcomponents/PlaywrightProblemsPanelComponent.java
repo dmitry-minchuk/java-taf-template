@@ -4,15 +4,11 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponent {
-
-    private static final Logger logger = LoggerFactory.getLogger(PlaywrightProblemsPanelComponent.class);
 
     private PlaywrightWebElement showProblemsLink;
     private PlaywrightWebElement hideProblemPanelLink;
@@ -37,7 +33,7 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
         hideProblemPanelLink = createScopedElement(".//div[@id='bottom']//span[@id='south-closer']", "hideProblemPanelLink");
         errorsCounter = createScopedElement("#errors-count", "errorsCounter");
         warningsCounter = createScopedElement("#warnings-count", "warningsCounter");
-        compilationProgressBar = createScopedElement(".//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
+        compilationProgressBar = createScopedElement("xpath=.//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
         errorElements = createScopedElementList("xpath=.//div[@id='errors-panel']//a", "errorElements");
         warningElements = createScopedElementList("xpath=.//div[@id='warnings-panel']//a", "warningElements");
     }
@@ -55,17 +51,23 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
     }
 
     public int getErrorsCount() {
+        showProblemsPanel();
+        waitForCompilationToComplete();
         String errorText = errorsCounter.getText();
         return errorText != null && !errorText.isEmpty() ? Integer.parseInt(errorText.trim()) : 0;
     }
 
     public int getWarningsCount() {
+        showProblemsPanel();
+        waitForCompilationToComplete();
         String warningText = warningsCounter.getText();
         return warningText != null && !warningText.isEmpty() ? Integer.parseInt(warningText.trim()) : 0;
     }
 
     public boolean isCompilationInProgress() {
-        return compilationProgressBar.isVisible();
+        String compilationStatus = compilationProgressBar.getText();
+        String compilationComplete = "Loaded 100%";
+        return !compilationStatus.contains(compilationComplete);
     }
 
     public boolean hasErrors() {
@@ -92,9 +94,37 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
 
     public List<String> getAllErrors() {
         showProblemsPanel();
+        waitForCompilationToComplete();
         List<String> errors = errorElements.stream()
                 .map(PlaywrightWebElement::getText)
                 .toList();
         return errors;
+    }
+
+    private void waitForCompilationToComplete() {
+        waitForCompilationToComplete(30000, 250);
+    }
+    
+    private void waitForCompilationToComplete(long timeoutMillis, long pollIntervalMillis) {
+        long maxAttempts = timeoutMillis / pollIntervalMillis;
+        for (int attempt = 1; attempt <= maxAttempts && isCompilationInProgress(); attempt++) {
+            LOGGER.info("Compilation in progress, waiting... ({}/{})", attempt, maxAttempts);
+            WaitUtil.sleep((int) pollIntervalMillis);
+        }
+        LOGGER.info(isCompilationInProgress() ? "Compilation timeout reached" : "Compilation completed");
+    }
+
+    public void selectProblemByText(String text) {
+        showProblemsPanel();
+        waitForCompilationToComplete();
+        
+        List<PlaywrightWebElement> allProblems = new ArrayList<>();
+        allProblems.addAll(errorElements);
+        allProblems.addAll(warningElements);
+        
+        allProblems.stream()
+                .filter(element -> element.getText().contains(text))
+                .findFirst()
+                .ifPresent(PlaywrightWebElement::click);
     }
 }

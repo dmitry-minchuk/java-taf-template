@@ -71,7 +71,7 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
     }
 
     public String getSelectedItemText() {
-        if (selectedTreeItem.isVisible()) {
+        if (selectedTreeItem.isVisible(1500)) {
             return selectedTreeItem.getText();
         }
         return "";
