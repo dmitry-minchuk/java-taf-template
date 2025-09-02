@@ -28,7 +28,7 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends PlaywrightBase
     }
 
     public void selectProject(String projectName) {
-        projectNameTemplate.format(projectName).click();
+        projectNameTemplate.format(projectName).waitForVisible().click();
     }
 
     public void selectModule(String projectName, String projectModuleName) {

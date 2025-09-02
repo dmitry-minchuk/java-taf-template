@@ -4,6 +4,7 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.TestDataUtil;
+import helpers.utils.WaitUtil;
 
 // Playwright version of ZipArchiveComponent for ZIP file upload project creation
 public class PlaywrightZipArchiveComponent extends PlaywrightBasePageComponent {
@@ -39,11 +40,12 @@ public class PlaywrightZipArchiveComponent extends PlaywrightBasePageComponent {
     private void uploadZipFile(String fileName) {
         String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);
+        WaitUtil.sleep(1000);
     }
     
     private void setProjectName(String projectName) {
         projectNameField.waitForVisible();
         projectNameField.clear();
-        projectNameField.fill(projectName);
+        projectNameField.fillSequentially(projectName);
     }
 }

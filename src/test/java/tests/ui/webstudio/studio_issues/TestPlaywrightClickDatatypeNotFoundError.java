@@ -6,24 +6,24 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import helpers.service.WorkflowService;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import helpers.service.PlaywrightWorkflowService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestClickDatatypeNotFoundError extends BaseTest {
+public class TestPlaywrightClickDatatypeNotFoundError extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-11609")
     @Description("Test clicking on datatype not found error and validating tree selection")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testClickDatatypeNotFoundError() {
-        String projectName = WorkflowService.loginCreateProjectFromZipOpenEditor(User.ADMIN, 
+    public void testPlaywrightClickDatatypeNotFoundError() {
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickDatatypeNotFoundError.zip");
-        EditorPage editorPage = new EditorPage();
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "module_NJ");
         

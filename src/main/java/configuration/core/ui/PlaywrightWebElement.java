@@ -180,30 +180,34 @@ public class PlaywrightWebElement {
     
     // Explicit wait methods
     
-    public void waitForVisible() {
+    public PlaywrightWebElement waitForVisible() {
         LOGGER.info("Waiting for {} to be visible", elementName);
         locator.waitFor(new Locator.WaitForOptions()
-            .setState(WaitForSelectorState.VISIBLE));
+                .setState(WaitForSelectorState.VISIBLE));
+        return this;
     }
     
-    public void waitForVisible(long timeoutInMillis) {
+    public PlaywrightWebElement waitForVisible(long timeoutInMillis) {
         LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInMillis);
         locator.waitFor(new Locator.WaitForOptions()
-            .setState(WaitForSelectorState.VISIBLE)
-            .setTimeout((int)(timeoutInMillis)));
+                .setState(WaitForSelectorState.VISIBLE)
+                .setTimeout((int)(timeoutInMillis)));
+        return this;
     }
     
-    public void waitForHidden() {
+    public PlaywrightWebElement waitForHidden() {
         LOGGER.info("Waiting for {} to be hidden", elementName);
         locator.waitFor(new Locator.WaitForOptions()
-            .setState(WaitForSelectorState.HIDDEN));
+                .setState(WaitForSelectorState.HIDDEN));
+        return this;
     }
     
     // Interaction methods
     
-    public void hover() {
+    public PlaywrightWebElement hover() {
         LOGGER.info("Hovering over {}", elementName);
         locator.hover();
+        return this;
     }
     
     // CSS properties

@@ -22,8 +22,8 @@
     <test name="StudioIssues.TestPlaywrightButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightButtonDeployAvailableDeployConfiguration"/></classes></test>
     <test name="StudioIssues.TestPlaywrightCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightCallRuleWithSpreadsheetResultConstructor"/></classes></test>
     <test name="StudioIssues.TestPlaywrightClassCastException"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClassCastException"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickDatatypeNotFoundError"/></classes></test>
 
     <test name="StudioIssues.TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
     <test name="StudioIssues.TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
-    <test name="StudioIssues.TestClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickDatatypeNotFoundError"/></classes></test>
 </suite>
