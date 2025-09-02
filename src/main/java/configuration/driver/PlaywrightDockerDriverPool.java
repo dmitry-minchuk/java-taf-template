@@ -12,9 +12,10 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 
-// Enhanced Playwright driver pool with Docker container support for isolated browser execution
 public class PlaywrightDockerDriverPool {
 
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDockerDriverPool.class);
@@ -22,15 +23,12 @@ public class PlaywrightDockerDriverPool {
 
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();
 
-    // Playwright Docker image constants (to run java tests on the server's localhost but use Playwright Server in official browser container)
     private static final String PLAYWRIGHT_DOCKER_IMAGE = "mcr.microsoft.com/playwright";
     private static final String PLAYWRIGHT_VERSION = "v1.52.0-noble";
 
-    // File system binding configuration - same as DriverFactory for consistency
     private static final String HOST_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_RESOURCE_PATH);
     private static final String CONTAINER_RESOURCE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.CONTAINER_RESOURCE_PATH);
 
-    // Container for Playwright Docker components per thread
     private static class PlaywrightDockerContext {
         private final Network network;
         private final GenericContainer<?> playwrightContainer;
@@ -198,7 +196,7 @@ public class PlaywrightDockerDriverPool {
         }
     }
 
-    // Create browser context with container-specific settings
+    // Create browser context with container-specific settings including video recording
     private static BrowserContext createContainerizedBrowserContext(Browser browser, Network network) {
         Browser.NewContextOptions contextOptions = new Browser.NewContextOptions()
                 .setViewportSize(1280, 720)
@@ -209,6 +207,16 @@ public class PlaywrightDockerDriverPool {
 
         // Container-specific user agent
         contextOptions.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Playwright-Server");
+
+        // Configure video recording if enabled - using temp dir for recording (not for file extraction)
+        boolean videoRecordingEnabled = Boolean.parseBoolean(ProjectConfiguration.getProperty(PropertyNameSpace.ENABLE_VIDEO_RECORDING));
+        
+        if (videoRecordingEnabled) {
+            // Use temporary directory for video recording - videos will be accessed via Page.video() API
+            Path tempVideoDir = Paths.get("/tmp/playwright-videos");
+            contextOptions.setRecordVideoDir(tempVideoDir).setRecordVideoSize(1280, 720);
+            LOGGER.info("Video recording enabled for Docker container with temp directory: {}", tempVideoDir);
+        }
 
         if (network != null) {
             LOGGER.debug("Browser context configured for container network: {}", network.getId());

@@ -4,8 +4,8 @@ import com.epam.reportportal.service.ReportPortal;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.PlaywrightDriverPool;
 import configuration.driver.PlaywrightDockerDriverPool;
+import configuration.driver.PlaywrightDriverPool;
 import configuration.network.NetworkPool;
 import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
@@ -18,7 +18,6 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
@@ -149,6 +148,9 @@ public abstract class BaseTest {
             PlaywrightReportPortalUtil.attachScreenshotOnFailure(testName);
             PlaywrightReportPortalUtil.attachPageContent("Page Content at Failure");
             PlaywrightReportPortalUtil.attachExecutionInfo();
+            
+            // Attach video for failed tests in DOCKER mode (uses byte[] - no files on Jenkins filesystem)
+            PlaywrightReportPortalUtil.attachVideoOnFailure(testName);
 
             // Log application logs (same as Selenium mode)
             ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
