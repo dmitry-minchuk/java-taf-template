@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 
 
 // Handles clicking on project names and specific modules within projects

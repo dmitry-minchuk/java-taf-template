@@ -4,6 +4,7 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightTreeFolderComponent;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

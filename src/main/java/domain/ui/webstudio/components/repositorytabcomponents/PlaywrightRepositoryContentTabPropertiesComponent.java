@@ -5,6 +5,7 @@ import configuration.core.ui.PlaywrightWebElement;
 import configuration.core.ui.PlaywrightTableComponent;
 import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
