@@ -17,14 +17,11 @@ import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
 import helpers.service.PlaywrightLoginService;
 import helpers.service.UserService;
-import helpers.service.WorkflowService;
+import helpers.service.PlaywrightWorkflowService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.EXCEL_FILES;
-import static domain.ui.webstudio.components.CreateNewProjectComponent.TabName.TEMPLATE;
-import static domain.ui.webstudio.components.createnewproject.TemplateTabComponent.TemplateNames.EXAMPLE_1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
@@ -155,7 +152,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
         String testFileName = "TestUserSettingsAndDetails";
-        String projectName = WorkflowService.loginCreateProject(User.ADMIN, EXCEL_FILES, testFileName + ".xlsx");
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, testFileName + ".xlsx");
         editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
@@ -209,7 +206,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
-                String nameExample1Project = WorkflowService.loginCreateProject(User.ADMIN, TEMPLATE, EXAMPLE_1.getValue());
+                String nameExample1Project = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
 
