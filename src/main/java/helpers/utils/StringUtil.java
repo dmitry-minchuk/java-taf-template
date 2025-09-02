@@ -2,7 +2,6 @@ package helpers.utils;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
-import org.openqa.selenium.By;
 
 import java.io.File;
 import java.util.List;
@@ -35,10 +34,6 @@ public class StringUtil {
         return path.replaceAll(File.separator + fileName, "");
     }
 
-    public static String getLocator(By by) {
-        String prefix = by.toString().split(" ")[0] + " ";
-        return by.toString().replaceAll(prefix, "");
-    }
 
     public static String buildPath(boolean startWithFs, String... values) {
         StringBuilder sb = new StringBuilder();

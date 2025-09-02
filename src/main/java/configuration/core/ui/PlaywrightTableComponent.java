@@ -2,7 +2,6 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Locator;
 import configuration.driver.PlaywrightDriverPool;
-import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;

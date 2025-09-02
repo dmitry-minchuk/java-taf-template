@@ -4,7 +4,6 @@ import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.TestDataUtil;
-import helpers.utils.WaitUtil;
 
 // Playwright version of ZipArchiveComponent for ZIP file upload project creation
 public class PlaywrightZipArchiveComponent extends PlaywrightBasePageComponent {
