@@ -127,4 +127,13 @@ public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponen
                 .findFirst()
                 .ifPresent(PlaywrightWebElement::click);
     }
+
+    public void selectProblemByIndex(int index) {
+        showProblemsPanel();
+        waitForCompilationToComplete();
+        
+        if (index > 0 && index <= errorElements.size()) {
+            errorElements.get(index - 1).click();
+        }
+    }
 }

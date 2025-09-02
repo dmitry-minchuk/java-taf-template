@@ -6,24 +6,24 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import helpers.service.WorkflowService;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import helpers.service.PlaywrightWorkflowService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestClickOnErrorFromTheBottom extends BaseTest {
+public class TestPlaywrightClickOnErrorFromTheBottom extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-9309")
-    @Description("Test clicking on error from the bottom problems panel by index")
+    @Description("Test clicking on error from the bottom problems panel by index - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testClickOnErrorFromTheBottom() {
-        String projectName = WorkflowService.loginCreateProjectFromZipOpenEditor(User.ADMIN, 
+    public void testPlaywrightClickOnErrorFromTheBottom() {
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, 
                 "TestClickOnErrorFromTheBottom.zip");
-        EditorPage editorPage = new EditorPage();
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "ContextDatatypes");
         
@@ -34,7 +34,8 @@ public class TestClickOnErrorFromTheBottom extends BaseTest {
         assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong."))
                 .as("'Something went wrong' message should not be displayed")
                 .isFalse();
-        
+
+        System.out.println(editorPage.getEditorMainContentProblemsPanelComponent().isErrorMessagePresent());
         // Validate that error message is present in the top problems panel
         assertThat(editorPage.getEditorMainContentProblemsPanelComponent().isErrorMessagePresent())
                 .as("Error message should be present in top problems panel")
