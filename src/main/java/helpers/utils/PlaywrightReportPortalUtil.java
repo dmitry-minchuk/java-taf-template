@@ -88,50 +88,79 @@ public class PlaywrightReportPortalUtil {
         }
     }
     
-    public static void startVideoRecording() {
+    // Get video as byte array using Playwright Page.video() API - works in memory without files
+    public static byte[] getVideoBytes(String testName) {
         try {
-            BrowserContext context = PlaywrightDriverPool.getBrowserContext();
-            
-            // Configure video recording
-            String videoPath = generateVideoPath();
-            Path videoDir = Paths.get(videoPath).getParent();
-            Files.createDirectories(videoDir);
-            
-            LOGGER.info("Video recording started: {}", videoPath);
-            
-        } catch (Exception e) {
-            LOGGER.error("Failed to start video recording: {}", e.getMessage());
-        }
-    }
-    
-    public static File stopVideoRecording(String testName) {
-        try {
-            Page page = PlaywrightDriverPool.getPage();
-            page.close();
-            
-            // Video files are automatically saved when page is closed
-            String videoPath = generateVideoPath(testName);
-            File videoFile = new File(videoPath);
-            
-            if (videoFile.exists()) {
-                LOGGER.info("Video recording saved: {}", videoFile.getName());
-                return videoFile;
-            } else {
-                LOGGER.warn("Video file not found: {}", videoPath);
+            if (!isVideoRecordingEnabled()) {
+                LOGGER.debug("Video recording is not enabled");
                 return null;
             }
             
+            Page page = PlaywrightDriverPool.getPage();
+            
+            // Check if video is available (only works if BrowserContext was configured with recordVideoDir)
+            if (page.video() == null) {
+                LOGGER.warn("No video recording found for page - ensure BrowserContext was configured with recordVideoDir");
+                return null;
+            }
+            
+            LOGGER.info("Retrieving video bytes for test: {}", testName);
+            
+            // Create temporary file for video extraction, then read as bytes
+            File tempVideoFile = null;
+            try {
+                tempVideoFile = File.createTempFile("playwright_video_" + testName, ".webm");
+                tempVideoFile.deleteOnExit();
+                
+                // Save video to temporary file
+                page.video().saveAs(Paths.get(tempVideoFile.getAbsolutePath()));
+                
+                // Read file as bytes
+                byte[] videoBytes = Files.readAllBytes(tempVideoFile.toPath());
+                LOGGER.info("Successfully retrieved {} bytes of video data for test: {}", videoBytes.length, testName);
+                return videoBytes;
+                
+            } finally {
+                // Clean up temporary file
+                if (tempVideoFile != null && tempVideoFile.exists()) {
+                    tempVideoFile.delete();
+                }
+            }
+            
         } catch (Exception e) {
-            LOGGER.error("Failed to stop video recording: {}", e.getMessage());
+            LOGGER.error("Failed to get video bytes for test {}: {}", testName, e.getMessage(), e);
             return null;
         }
     }
     
+    // Attach video to ReportPortal using byte array (no temporary files on Jenkins)
     public static void attachVideoOnFailure(String testName) {
-        File videoFile = stopVideoRecording(testName);
-        if (videoFile != null) {
-            ReportPortal.emitLog("Test Failure Video", "ERROR", new Date(), videoFile);
-            LOGGER.info("Video attached to ReportPortal: {}", videoFile.getName());
+        try {
+            if (!isVideoRecordingEnabled()) {
+                LOGGER.debug("Video recording is not enabled, skipping video attachment");
+                return;
+            }
+            
+            byte[] videoBytes = getVideoBytes(testName);
+            if (videoBytes != null && videoBytes.length > 0) {
+                // Create temporary file for ReportPortal attachment
+                File tempFile = File.createTempFile("test_failure_video_" + testName, ".webm");
+                tempFile.deleteOnExit();
+                
+                try {
+                    Files.write(tempFile.toPath(), videoBytes);
+                    ReportPortal.emitLog("Test Failure Video", "ERROR", new Date(), tempFile);
+                    LOGGER.info("Video attached to ReportPortal for test: {} (size: {} bytes)", testName, videoBytes.length);
+                } finally {
+                    // Clean up temp file after ReportPortal processes it
+                    tempFile.delete();
+                }
+            } else {
+                LOGGER.warn("No video data available to attach for test: {}", testName);
+            }
+            
+        } catch (Exception e) {
+            LOGGER.error("Failed to attach video to ReportPortal for test {}: {}", testName, e.getMessage(), e);
         }
     }
     
