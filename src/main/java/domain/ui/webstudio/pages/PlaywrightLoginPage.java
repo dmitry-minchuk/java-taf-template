@@ -3,7 +3,7 @@ package domain.ui.webstudio.pages;
 import configuration.core.ui.PlaywrightBasePage;
 import configuration.core.ui.PlaywrightWebElement;
 import domain.serviceclasses.models.UserData;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
 import helpers.utils.PlaywrightExpectUtil;
 import com.microsoft.playwright.Page;
 import org.apache.logging.log4j.LogManager;
@@ -43,7 +43,7 @@ public class PlaywrightLoginPage extends PlaywrightBasePage {
      * Login method using Playwright expect patterns
      * Demonstrates Phase 2.3: expect() patterns for state verification
      */
-    public EditorPage login(UserData user) {
+    public PlaywrightEditorPage login(UserData user) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
         // PLAYWRIGHT MIGRATION: Use expect patterns to verify page state
@@ -78,7 +78,7 @@ public class PlaywrightLoginPage extends PlaywrightBasePage {
         PlaywrightExpectUtil.expectPageReady(page);
         
         LOGGER.info("Login completed successfully");
-        return new EditorPage();
+        return new PlaywrightEditorPage();
     }
     
     /**

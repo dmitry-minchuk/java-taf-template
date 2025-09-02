@@ -17,9 +17,8 @@ public class PlaywrightDriverPool {
     protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDriverPool.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     
-    // Execution modes for Playwright framework (moved from BaseTest for independence)
+    // Execution modes for Playwright framework
     public enum ExecutionMode {
-        SELENIUM,           // Original Selenium with Docker containers  
         PLAYWRIGHT_LOCAL,   // Local Playwright execution
         PLAYWRIGHT_DOCKER   // Docker-aware Playwright execution
     }
@@ -174,8 +173,6 @@ public class PlaywrightDriverPool {
         switch (mode) {
             case PLAYWRIGHT_LOCAL -> setPlaywright();
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.setPlaywrightDocker(network);
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         }
         LOGGER.info("Playwright initialized in {} mode", mode);
     }
@@ -186,8 +183,6 @@ public class PlaywrightDriverPool {
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> getLocalPage();
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getPage();
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         };
     }
     
@@ -206,8 +201,6 @@ public class PlaywrightDriverPool {
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> getLocalBrowser();
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getBrowser();
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         };
     }
     
@@ -217,8 +210,6 @@ public class PlaywrightDriverPool {
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> getLocalBrowserContext();
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getBrowserContext();
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         };
     }
     
@@ -254,8 +245,6 @@ public class PlaywrightDriverPool {
         switch (mode) {
             case PLAYWRIGHT_LOCAL -> closeLocalPlaywright();
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.closePlaywrightDocker();
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         }
     }
     
@@ -277,8 +266,6 @@ public class PlaywrightDriverPool {
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> threadLocalContext.get() != null;
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.isInitialized();
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         };
     }
     
@@ -338,8 +325,6 @@ public class PlaywrightDriverPool {
                 }
             }
             case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.navigateToApp();
-            case SELENIUM -> throw new UnsupportedOperationException(
-                "Use DriverPool for Selenium mode, not PlaywrightDriverPool");
         }
     }
 
@@ -383,10 +368,6 @@ public class PlaywrightDriverPool {
                     LOGGER.info("App URL for LOGIN service (DOCKER): {}", containerNetworkUrl);
                     return containerNetworkUrl;
                 }
-                case SELENIUM -> {
-                    // For Selenium compatibility, use container network URL
-                    return appData.getAppHostUrl();
-                }
                 default -> throw new UnsupportedOperationException("Unknown execution mode: " + mode);
             }
         } catch (Exception e) {
@@ -412,9 +393,6 @@ public class PlaywrightDriverPool {
             }
             case PLAYWRIGHT_DOCKER -> {
                 info.append(PlaywrightDockerDriverPool.getDockerInfo());
-            }
-            case SELENIUM -> {
-                info.append("Selenium mode - use DriverPool for debugging\n");
             }
         }
         

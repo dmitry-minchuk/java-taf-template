@@ -18,7 +18,6 @@ This framework provides a robust foundation for UI and API test automation with:
 - **Java 21** with Maven build system
 - **TestContainers** for Docker-based test environments
 - **Playwright** for modern UI automation with native waiting
-- **Selenium WebDriver** for legacy test support (dual-mode capability)
 - **REST Assured** for API testing
 - **TestNG** for test framework and parallel execution
 - **Docker** for application and browser containerization
@@ -46,11 +45,6 @@ This framework provides a robust foundation for UI and API test automation with:
 - Native Playwright auto-wait eliminates custom wait logic
 - Readable element names for enhanced debugging experience
 
-#### **Legacy Selenium Support:**
-- **Selenium Pages**: `BasePage` descendants for legacy tests
-- **Selenium Components**: `BasePageComponent` with `@FindBy` annotation support  
-- **Selenium Elements**: `SmartWebElement` with Selenium WebDriver integration
-- Full backward compatibility maintained during migration period
 
 ### 🎯 Element Access Patterns
 
@@ -152,7 +146,6 @@ mvn clean test -Dtest=<TestClassName>
 # Playwright execution modes
 mvn clean test -Dexecution.mode=PLAYWRIGHT_LOCAL   # Default: Host Playwright
 mvn clean test -Dexecution.mode=PLAYWRIGHT_DOCKER  # Container Playwright
-mvn clean test -Dexecution.mode=SELENIUM           # Legacy Selenium mode
 
 # Example: Run admin email test in Docker mode
 mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKER
@@ -171,7 +164,7 @@ mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKE
 - `deployed_app_path`: Application context path
 - `host_resource_path`: Test data directory (src/test/resources)
 - `container_resource_path`: Container volume mount path (/test_resources)
-- `execution.mode`: Execution mode (PLAYWRIGHT_LOCAL/PLAYWRIGHT_DOCKER/SELENIUM)
+- `execution.mode`: Execution mode (PLAYWRIGHT_LOCAL/PLAYWRIGHT_DOCKER)
 
 ### Playwright-Specific Properties
 - `enable_screenshot_on_failure`: Automatic screenshot capture (true)
@@ -184,7 +177,7 @@ mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_DOCKE
 ### Test Lifecycle
 1. **Mode Detection**: Automatic execution mode detection based on configuration
 2. **Container Setup**: Docker container orchestration for app and browser (if needed)
-3. **Driver Initialization**: Playwright or Selenium driver setup with unified interface
+3. **Driver Initialization**: Playwright driver setup with unified interface
 4. **Test Execution**: Native Playwright waits with component-scoped element interactions
 5. **File Operations**: Seamless file upload/download support across execution modes
 6. **Result Collection**: Enhanced screenshot capture, log collection, and ReportPortal integration  

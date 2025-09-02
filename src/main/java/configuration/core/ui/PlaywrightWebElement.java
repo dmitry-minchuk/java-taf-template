@@ -5,7 +5,6 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
-import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,7 +84,6 @@ public class PlaywrightWebElement {
     
     public String getText() {
         isVisible();
-        WaitUtil.sleep(500);
         String text = locator.textContent();
         LOGGER.info("Getting text from {}: '{}'", elementName, text);
         return text;
@@ -150,7 +148,6 @@ public class PlaywrightWebElement {
     public void clear() {
         LOGGER.info("Clearing {}", elementName);
         locator.clear();
-        WaitUtil.sleep(500);
     }
     
     public void sendKeys(CharSequence... keysToSend) {

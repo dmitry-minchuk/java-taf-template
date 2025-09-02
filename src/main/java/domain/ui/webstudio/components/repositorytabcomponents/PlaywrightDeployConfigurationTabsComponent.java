@@ -3,7 +3,6 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import helpers.utils.WaitUtil;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class PlaywrightDeployConfigurationTabsComponent extends PlaywrightBasePageComponent {

@@ -11,7 +11,6 @@ import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightLeftRepo
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightDeployConfigurationTabsComponent;
-import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
