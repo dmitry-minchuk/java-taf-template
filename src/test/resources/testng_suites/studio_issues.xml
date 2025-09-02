@@ -24,6 +24,5 @@
     <test name="StudioIssues.TestPlaywrightClassCastException"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClassCastException"/></classes></test>
     <test name="StudioIssues.TestPlaywrightClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickDatatypeNotFoundError"/></classes></test>
     <test name="StudioIssues.TestPlaywrightClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickOnErrorFromTheBottom"/></classes></test>
-
-    <test name="StudioIssues.TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
+    <test name="StudioIssues.TestPlaywrightClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickOnOpenApiError"/></classes></test>
 </suite>
