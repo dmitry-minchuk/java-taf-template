@@ -6,24 +6,24 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.pages.mainpages.EditorPage;
-import helpers.service.WorkflowService;
+import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import helpers.service.PlaywrightWorkflowService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestClickOnOpenApiError extends BaseTest {
+public class TestPlaywrightClickOnOpenApiError extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-10252")
-    @Description("Test clicking on OpenAPI error from the bottom problems panel by text content")
+    @Description("Test clicking on OpenAPI error from the bottom problems panel by text content - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testClickOnOpenApiError() {
-        String projectName = WorkflowService.loginCreateProjectFromZipOpenEditor(User.ADMIN, 
+    public void testPlaywrightClickOnOpenApiError() {
+        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, 
                 "TestClickOnOpenApiError.zip");
-        EditorPage editorPage = new EditorPage();
+        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Algorithm");
         
