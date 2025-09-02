@@ -2,7 +2,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 Always read README.md on start up.
 
-You are experienced Test Automation Engineer with 10+ years of experience with Java, TestNG, log4j, Playwright, Selenium, Jenkins, CICD, Docker, testcontainers.
+You are experienced Test Automation Engineer with 10+ years of experience with Java, TestNG, log4j, Playwright, Jenkins, CICD, Docker, testcontainers.
 When you analyzing the issue or going to implement any code you MUST take a look at ALL the related codebase (and documentation if needed) and check all the connections and imports.
 
  - Turn on Plan Mode on start up.
@@ -108,30 +108,3 @@ mvn clean test -Dtest=TestPlaywrightAddProperty#testPlaywrightAddProperty -Dexec
 # Run multiple test classes
 mvn clean test -Dtest=TestPlaywrightAdminEmail,TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_LOCAL
 ```
-
-## **✅ SELENIUM CLEANUP ЗАВЕРШЕН**
-
-### **📊 РЕЗУЛЬТАТЫ ПОЛНОЙ ОЧИСТКИ**
-
-**Статус**: ✅ **ЗАВЕРШЕН** - Фреймворк полностью очищен от Selenium кода
-
-**Удалено**: 
-- **83 файла** Legacy Selenium кода
-- **10** Core Selenium Infrastructure классов
-- **9** Legacy Selenium Pages  
-- **41** Legacy Selenium Components
-- **6** Legacy Selenium Utilities
-- **17** Admin/Editor/Repository/General компонентов
-
-**Рефакторировано**:
-- **PlaywrightDriverPool** - удален SELENIUM ExecutionMode
-- **StringUtil** - удален Selenium-специфичный код
-- **README.md & CLAUDE.md** - обновлена документация
-
-**Архитектура**: 100% Pure Playwright
-- Поддерживаются только **PLAYWRIGHT_LOCAL** и **PLAYWRIGHT_DOCKER** режимы
-- Все тесты используют современную Playwright архитектуру  
-- Размер кода сокращен на ~50%
-
-
-
