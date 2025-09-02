@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class WaitUtil {
     protected final static Logger LOGGER = LogManager.getLogger(WaitUtil.class);
@@ -132,6 +132,8 @@ public class WaitUtil {
         wait.until(jQueryInactive);
     }
 
+    // ======================== Generic Methods ================================== //
+
     public static void sleep(int timeoutMillis) {
         try {
             Thread.sleep(timeoutMillis);
@@ -139,5 +141,29 @@ public class WaitUtil {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T> void waitForListNotEmpty(Supplier<List<T>> listSupplier, 
+                                              long timeoutMs, 
+                                              long pollingIntervalMs) {
+        if (!isListNotEmpty(listSupplier, timeoutMs, pollingIntervalMs)) {
+            throw new RuntimeException("List remained empty after " + timeoutMs + "ms timeout");
+        }
+    }
+
+    public static <T> boolean isListNotEmpty(Supplier<List<T>> listSupplier, 
+                                            long timeoutMs, 
+                                            long pollingIntervalMs) {
+        long endTime = System.currentTimeMillis() + timeoutMs;
+        
+        while (System.currentTimeMillis() < endTime) {
+            List<T> currentList = listSupplier.get();
+            if (currentList != null && !currentList.isEmpty()) {
+                return true;
+            }
+            LOGGER.info("Waiting for collection not to be empty...");
+            sleep((int) pollingIntervalMs);
+        }
+        return false;
     }
 }

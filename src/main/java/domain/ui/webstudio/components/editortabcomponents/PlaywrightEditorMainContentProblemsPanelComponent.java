@@ -3,6 +3,9 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
+
+import java.util.List;
 
 public class PlaywrightEditorMainContentProblemsPanelComponent extends PlaywrightBasePageComponent {
 
@@ -10,6 +13,7 @@ public class PlaywrightEditorMainContentProblemsPanelComponent extends Playwrigh
     private PlaywrightWebElement errorsTab;
     private PlaywrightWebElement warningsTab;
     private PlaywrightWebElement closeBtn;
+    private List<PlaywrightWebElement> errorMessages;
 
     public PlaywrightEditorMainContentProblemsPanelComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -22,10 +26,11 @@ public class PlaywrightEditorMainContentProblemsPanelComponent extends Playwrigh
     }
 
     private void initializeElements() {
-        problemsPanel = createScopedElement(".//div[@id='editor-main-content-problems-panel']", "problemsPanel");
-        errorsTab = createScopedElement(".//div[contains(@class,'tab') and contains(text(),'Errors')]", "errorsTab");
-        warningsTab = createScopedElement(".//div[contains(@class,'tab') and contains(text(),'Warnings')]", "warningsTab");
-        closeBtn = createScopedElement(".//button[@title='Close'] | .//span[contains(@class,'close')]", "closeBtn");
+        problemsPanel = createScopedElement("xpath=.//div[@id='editor-main-content-problems-panel']", "problemsPanel");
+        errorsTab = createScopedElement("xpath=.//div[contains(@class,'tab') and contains(text(),'Errors')]", "errorsTab");
+        warningsTab = createScopedElement("xpath=.//div[contains(@class,'tab') and contains(text(),'Warnings')]", "warningsTab");
+        closeBtn = createScopedElement("xpath=.//button[@title='Close'] | .//span[contains(@class,'close')]", "closeBtn");
+        errorMessages = createScopedElementList("xpath=.//div[@class='problem-error']", "errorMessages");
     }
 
     public void clickErrorsTab() {
@@ -50,5 +55,9 @@ public class PlaywrightEditorMainContentProblemsPanelComponent extends Playwrigh
 
     public boolean isWarningsTabActive() {
         return warningsTab.getAttribute("class").contains("active");
+    }
+
+    public boolean isErrorMessagePresent() {
+        return WaitUtil.isListNotEmpty(() -> errorMessages, 5000, 250);
     }
 }
