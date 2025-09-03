@@ -34,7 +34,7 @@ public class TestPlaywrightAddSingleNumberIntoEmptyCell extends BaseTest {
         PlaywrightEditTablePanelComponent editTablePanel = editorPage.getEditTablePanelComponent();
         PlaywrightTableComponent tableComponent = editorPage.getCenterTable();
         tableComponent.clickCell(10, 1);
-        editTablePanel.getInsertRowAfterBtn().click();
+        editTablePanel.clickInsertRowAfter();
         tableComponent.editCell(11, 1, "13", true);
         assertThat(editorPage.getCenterTable().getCellText(11, 1)).isEqualTo("13");
     }

@@ -35,12 +35,12 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
         PlaywrightTableComponent table = editorPage.getCenterTable();
         table.clickCell(5, 2);
-        editorPage.getEditTablePanelComponent().getInsertRowAfterBtn().click();
+        editorPage.getEditTablePanelComponent().clickInsertRowAfter();
         table.editCell(6, 1, "444", false);
-        editorPage.getEditTablePanelComponent().getRemoveRowBtn().click();
+        editorPage.getEditTablePanelComponent().clickRemoveRow();
         assertThat(StringUtils.normalizeSpace(table.getCellText(6, 1))).isEmpty();
         assertThat(table.getCellText(6, 2)).isEqualTo("0%");
-        editorPage.getEditTablePanelComponent().getSaveChangesBtn().click();
+        editorPage.getEditTablePanelComponent().clickSaveChanges();
         assertThat(StringUtils.normalizeSpace(table.getCellText(6, 1))).isEmpty();
         assertThat(table.getCellText(6, 2)).isEqualTo("0%");
     }
