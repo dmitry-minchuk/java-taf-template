@@ -172,7 +172,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         // Return to table and verify
         editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
-        Assert.assertEquals(tableComponent.getRowCount(), 7, "Table should have 7 rows");
+        Assert.assertEquals(tableComponent.getRowsCount(), 7, "Table should have 7 rows");
         Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
 
         // Scenario 8: Check settings isolation for different users (lines 154-164 from original)
@@ -191,7 +191,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
         
         // User1 should see different table format (8 rows instead of 7) due to different settings
-        Assert.assertEquals(tableComponent.getRowCount(), 8, "Table should have 8 rows for user1 (different settings)");
+        Assert.assertEquals(tableComponent.getRowsCount(), 8, "Table should have 8 rows for user1 (different settings)");
         // User1 should see different header row content
         Assert.assertEquals(tableComponent.getCellText(1, 1), "SimpleRules Double CapitalAdequacyScore (Double capitalAdequacy)", 
                            "User1 should see different header format");

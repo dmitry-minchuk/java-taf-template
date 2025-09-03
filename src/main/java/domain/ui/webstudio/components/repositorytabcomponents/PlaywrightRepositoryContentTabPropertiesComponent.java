@@ -150,7 +150,7 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends Playwrigh
     // Helper method to find row index by text content (returns 1-based index)
     private int findRowByText(String text) {
         WaitUtil.sleep(500);
-        int rowCount = propertiesTable.getRowCount();
+        int rowCount = propertiesTable.getRowsCount();
         for (int i = 1; i <= rowCount; i++) {
             String cellText = propertiesTable.getCell(i, 1).getText().trim().replaceAll("\n", "");
             if (cellText.equals(text)) {
