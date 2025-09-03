@@ -63,7 +63,6 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     }
 
     public void editCell(int rowIndex, int columnIndex, String text) {
-        doubleClickCell(rowIndex, columnIndex);
         editCell(rowIndex, columnIndex, text, true);
     }
 
