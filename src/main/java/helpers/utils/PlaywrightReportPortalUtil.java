@@ -106,14 +106,21 @@ public class PlaywrightReportPortalUtil {
             
             LOGGER.info("Retrieving video bytes for test: {}", testName);
             
+            // Store video reference BEFORE closing page - REQUIRED by Playwright
+            com.microsoft.playwright.Video video = page.video();
+            
+            // Close page to finalize video recording - REQUIRED by Playwright before saveAs
+            page.close();
+            LOGGER.debug("Page closed to finalize video recording for test: {}", testName);
+            
             // Create temporary file for video extraction, then read as bytes
             File tempVideoFile = null;
             try {
                 tempVideoFile = File.createTempFile("playwright_video_" + testName, ".webm");
                 tempVideoFile.deleteOnExit();
                 
-                // Save video to temporary file
-                page.video().saveAs(Paths.get(tempVideoFile.getAbsolutePath()));
+                // Save video to temporary file - now page is closed so this should work
+                video.saveAs(Paths.get(tempVideoFile.getAbsolutePath()));
                 
                 // Read file as bytes
                 byte[] videoBytes = Files.readAllBytes(tempVideoFile.toPath());
