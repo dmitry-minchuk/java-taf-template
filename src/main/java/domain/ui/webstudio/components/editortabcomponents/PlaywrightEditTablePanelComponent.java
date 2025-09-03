@@ -3,9 +3,9 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
-@Getter
 public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement saveChangesBtn;
@@ -32,23 +32,32 @@ public class PlaywrightEditTablePanelComponent extends PlaywrightBasePageCompone
         removeRowBtn = createScopedElement("xpath=.//img[@title='Remove row']", "removeRowBtn");
     }
 
-    public void saveChanges() {
+    private void waitWhileTablePanelActionExecuted() {
+        WaitUtil.sleep(250);
+    }
+
+    public void clickSaveChanges() {
         saveChangesBtn.click();
+        waitWhileTablePanelActionExecuted();
     }
 
-    public void undoChanges() {
+    public void undoClickChanges() {
         undoChangesBtn.click();
+        waitWhileTablePanelActionExecuted();
     }
 
-    public void redoChanges() {
+    public void redoClickChanges() {
         redoChangesBtn.click();
+        waitWhileTablePanelActionExecuted();
     }
 
-    public void insertRowAfter() {
+    public void clickInsertRowAfter() {
         insertRowAfterBtn.click();
+        waitWhileTablePanelActionExecuted();
     }
 
-    public void removeRow() {
+    public void clickRemoveRow() {
         removeRowBtn.click();
+        waitWhileTablePanelActionExecuted();
     }
 }

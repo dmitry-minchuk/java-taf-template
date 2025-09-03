@@ -72,8 +72,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
 
         table.doubleClickCell(2, 1);
         editorPage.getEditTablePanelComponent()
-                .getInsertRowAfterBtn()
-                .click();
+                .clickInsertRowAfter();
         table.editCell(3, 1, "return \"Happy Birthday, \"+name;");
         
         // Verify table now has 3 rows
@@ -84,8 +83,8 @@ public class TestPlaywrightMethodTable extends BaseTest {
 
         // Remove the added row
         table.doubleClickCell(3, 1);
-        editorPage.getEditTablePanelComponent().getRemoveRowBtn().click();
-        editorPage.getEditTablePanelComponent().getSaveChangesBtn().click();
+        editorPage.getEditTablePanelComponent().clickRemoveRow();
+        editorPage.getEditTablePanelComponent().clickSaveChanges();
         editorPage.getProblemsPanelComponent().checkNoProblems();
         
         // Verify table is back to original state

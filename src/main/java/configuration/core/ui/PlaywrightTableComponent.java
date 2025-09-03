@@ -7,8 +7,6 @@ import java.util.List;
 
 public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
 
-    private PlaywrightWebElement openLSelectorTemplate;
-    private PlaywrightWebElement standardSelectorTemplate;
     private PlaywrightWebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
 
@@ -23,10 +21,7 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     }
 
     private void initializeElements() {
-        openLSelectorTemplate = createScopedElement("xpath=.//td[@id='t_te_c-%d:%d']", "openLSelector");
-        standardSelectorTemplate = createScopedElement("xpath=.//tr[%d]/td[%d]", "standardSelector");
         inputLocator = new PlaywrightWebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
-
         rows = createScopedComponentList(PlaywrightTableRowComponent.class, "xpath=.//tbody/tr", "rowSelectorTemplate");
     }
 
@@ -35,11 +30,10 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     }
 
     public PlaywrightWebElement getCell(int rowIndex, int columnIndex) {
-        PlaywrightWebElement openLSelector = openLSelectorTemplate.format(rowIndex, columnIndex);
-        if (openLSelector.isVisible())
-            return openLSelector;
-        else
-            return standardSelectorTemplate.format(rowIndex, columnIndex);
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 100);
+        PlaywrightTableRowComponent row = rows.get(rowIndex - 1);
+        List<PlaywrightWebElement> cells = row.getCells();
+        return cells.get(columnIndex - 1);
     }
 
     public String getCellText(int rowIndex, int columnIndex) {
