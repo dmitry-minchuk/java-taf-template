@@ -281,14 +281,13 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         public IPlaywrightTraceWindow expandItemInTree(int position) {
             PlaywrightWebElement item = traceExpanderTemplate.format(position + 1);
             item.click();
-            WaitUtil.sleep(100);
+            WaitUtil.sleep(100); // Waiting for expander to get expanded
             return this;
         }
 
         @Override
         public List<String> getVisibleItemsFromTree() {
-            List<String> visibleItemsFromTreeNames = visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
-            return visibleItemsFromTreeNames;
+            return visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
         }
     }
 
