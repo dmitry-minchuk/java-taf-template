@@ -11,6 +11,7 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
 
     private PlaywrightWebElement openLSelectorTemplate;
     private PlaywrightWebElement standardSelectorTemplate;
+    private PlaywrightWebElement inputLocator;
 
     public PlaywrightTableComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -25,6 +26,7 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     private void initializeElements() {
         openLSelectorTemplate = createScopedElement("xpath=.//td[@id='t_te_c-%d:%d']", "openLSelector");
         standardSelectorTemplate = createScopedElement("xpath=.//tr[%d]/td[%d]", "standardSelector");
+        inputLocator = new PlaywrightWebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
     }
 
     public String getCellText(int rowIndex, int columnIndex) {
@@ -52,17 +54,26 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
         return standardSelectorTemplate.format(rowIndex, columnIndex);
     }
 
-    public void doubleClickAndPasteTextToCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
+    public void doubleClickCell(int rowIndex, int columnIndex) {
         PlaywrightWebElement cell = getCell(rowIndex, columnIndex);
-        cell.getLocator().dblclick();
+        cell.doubleClick();
+    }
 
-        Locator inputLocator = page.locator("xpath=//*[@id='_t_te_editorWrapper']");
+    public void editCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
+        doubleClickCell(rowIndex, columnIndex);
+
         inputLocator.press("Control+A");
         inputLocator.press("Delete");
         inputLocator.fill(text);
         if (pressEnter) {
             inputLocator.press("Enter");
         }
+        WaitUtil.sleep(250);
+    }
+
+    public void editCell(int rowIndex, int columnIndex, String text) {
+        doubleClickCell(rowIndex, columnIndex);
+        editCell(rowIndex, columnIndex, text, true);
     }
 
     public int getRowCount() {
@@ -73,25 +84,8 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
         return getRowCount();
     }
 
-    public void doubleClickCell(int rowIndex, int columnIndex) {
-        getCell(rowIndex, columnIndex).getLocator().dblclick();
-    }
-
     public PlaywrightTableRow getRow(int rowIndex) {
         return new PlaywrightTableRow(this, rowIndex);
-    }
-
-    public void editCell(int rowIndex, int columnIndex, String text) {
-        // Double-click on the cell to open editor
-        doubleClickCell(rowIndex, columnIndex);
-        
-        // Find and interact with the table editor
-        Locator inputLocator = page.locator("xpath=//*[@id='_t_te_editorWrapper']");
-        inputLocator.press("Control+A");
-        inputLocator.press("Delete");
-        inputLocator.fill(text);
-        inputLocator.press("Enter");
-        WaitUtil.sleep(250);
     }
 
     // Inner class for table row operations
