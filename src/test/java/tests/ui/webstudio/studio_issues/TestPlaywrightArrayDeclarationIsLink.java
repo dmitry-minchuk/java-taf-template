@@ -33,7 +33,7 @@ public class TestPlaywrightArrayDeclarationIsLink extends BaseTest {
                 .selectItemInFolder("Decision", "DetermineStatusByCodeRule");
 
         // Find procedure links with title-datatype class
-        editorPage.getCenterTable().isPresent();
+        editorPage.getCenterTable().isVisible();
         List<PlaywrightWebElement> links = editorPage.createElementList("xpath=//td//span[contains(@class,'title-datatype')]/a[text()='Procedure']");
         assertThat(links.size()).as("Should find exactly 12 procedure links").isEqualTo(12);
 

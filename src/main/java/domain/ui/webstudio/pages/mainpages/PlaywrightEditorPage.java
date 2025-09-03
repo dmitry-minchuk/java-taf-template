@@ -53,7 +53,7 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     }
 
     public PlaywrightTableComponent getCenterTable() {
-        centerTable.isPresent();
+        centerTable.isVisible();
         WaitUtil.sleep(500);
         return centerTable;
     }

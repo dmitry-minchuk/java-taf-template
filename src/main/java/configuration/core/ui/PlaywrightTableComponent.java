@@ -9,49 +9,47 @@ import java.util.List;
 
 public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
 
+    private PlaywrightWebElement openLSelectorTemplate;
+    private PlaywrightWebElement standardSelectorTemplate;
+
     public PlaywrightTableComponent() {
         super(PlaywrightDriverPool.getPage());
+        initializeElements();
     }
-    
+
     public PlaywrightTableComponent(PlaywrightWebElement rootLocator) {
         super(rootLocator);
+        initializeElements();
+    }
+
+    private void initializeElements() {
+        openLSelectorTemplate = createScopedElement("xpath=.//td[@id='t_te_c-%d:%d']", "openLSelector");
+        standardSelectorTemplate = createScopedElement("xpath=.//tr[%d]/td[%d]", "standardSelector");
     }
 
     public String getCellText(int rowIndex, int columnIndex) {
         // Try OpenL-specific selector first (1-based indexing)
-        String openLSelector = String.format("xpath=//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
-        if (page.locator(openLSelector).count() > 0) {
-            return page.locator(openLSelector).textContent().trim();
-        }
+        PlaywrightWebElement openLSelector = openLSelectorTemplate.format(rowIndex, columnIndex);
+        if (openLSelector.isVisible())
+            return openLSelector.getText().trim();
         
         // Fallback to standard HTML table logic (1-based CSS selectors)
-        String standardSelector = String.format("xpath=.//tr[%d]/td[%d]", rowIndex, columnIndex);
-        return rootLocator.getLocator().locator(standardSelector).textContent().trim();
-    }
-    
-    public String getCellContent(int rowIndex, int columnIndex) {
-        // Alias for getCellText to match original API
-        return getCellText(rowIndex, columnIndex);
+        PlaywrightWebElement standardSelector = standardSelectorTemplate.format(rowIndex, columnIndex);
+        return standardSelector.getText().trim();
     }
 
     public void clickCell(int rowIndex, int columnIndex) {
         getCell(rowIndex, columnIndex).click();
     }
 
-    public boolean isPresent() {
-        return rootLocator.isVisible();
-    }
-
     public PlaywrightWebElement getCell(int rowIndex, int columnIndex) {
         // Try OpenL-specific selector first (1-based indexing)
-        String openLSelector = String.format("xpath=//td[@id='t_te_c-%d:%d']", rowIndex, columnIndex);
-        if (page.locator(openLSelector).count() > 0) {
-            return new PlaywrightWebElement(page, openLSelector);
-        }
+        PlaywrightWebElement openLSelector = openLSelectorTemplate.format(rowIndex, columnIndex);
+        if (openLSelector.isVisible())
+            return openLSelector;
         
         // Fallback to standard HTML table logic (1-based CSS selectors)
-        String standardSelector = String.format("xpath=.//tr[%d]/td[%d]", rowIndex, columnIndex);
-        return new PlaywrightWebElement(rootLocator, standardSelector);
+        return standardSelectorTemplate.format(rowIndex, columnIndex);
     }
 
     public void doubleClickAndPasteTextToCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {

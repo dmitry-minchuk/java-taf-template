@@ -86,7 +86,7 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends Playwrigh
     };
 
     public String getProperty(Property name) {
-        propertiesTable.isPresent();
+        propertiesTable.isVisible();
         return propertiesTable.getCell(findRowByText(name.text), 2).getText().trim().replaceAll("\n", "");
     }
 
