@@ -70,6 +70,18 @@ public class PlaywrightWebElement {
         LOGGER.info("Clicking {} ", elementName);
         locator.click();
     }
+
+    public void doubleClick() {
+        isVisible();
+        LOGGER.info("Double clicking {} ", elementName);
+        locator.dblclick();
+    }
+
+    public void press(String key) {
+        isVisible();
+        LOGGER.info("Pressing {} on {}", key, elementName);
+        locator.press(key);
+    }
     
     public void fill(String text) {
         isVisible();
