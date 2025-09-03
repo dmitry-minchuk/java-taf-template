@@ -149,14 +149,14 @@ public abstract class BaseTest {
             PlaywrightReportPortalUtil.attachPageContent("Page Content at Failure");
             PlaywrightReportPortalUtil.attachExecutionInfo();
             
-            // Attach video for failed tests in DOCKER mode (uses byte[] - no files on Jenkins filesystem)
+            // Attach video for failed tests BEFORE closing Playwright (this will close page internally)
             PlaywrightReportPortalUtil.attachVideoOnFailure(testName);
 
             // Log application logs (same as Selenium mode)
             ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
         }
 
-        // Close Playwright Docker
+        // Close Playwright Docker (page already closed by video attachment if failure occurred)
         PlaywrightDockerDriverPool.closePlaywrightDocker();
 
         // Close app container and network
