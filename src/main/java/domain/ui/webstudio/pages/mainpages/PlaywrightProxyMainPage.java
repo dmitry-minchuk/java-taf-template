@@ -13,8 +13,8 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
     private List<PlaywrightMessageComponent> messages;
     private PlaywrightWebElement userMenuDrawer;
 
-    public PlaywrightProxyMainPage(String urlAppender) {
-        super(urlAppender);
+    public PlaywrightProxyMainPage() {
+        super();
         initializeComponents();
     }
 

@@ -31,7 +31,7 @@ public class PlaywrightAdminPage extends PlaywrightProxyMainPage {
     private PlaywrightWebElement contentContainer;
 
     public PlaywrightAdminPage() {
-        super("/");
+        super();
         initializeAdminComponents();
     }
 
