@@ -67,12 +67,8 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
         editCell(rowIndex, columnIndex, text, true);
     }
 
-    public int getRowCount() {
-        return rootLocator.getLocator().locator("xpath=.//tr[not(@class='hidden')]").count();
-    }
-
     public int getRowsCount() {
-        return getRowCount();
+        return rootLocator.getLocator().locator("xpath=.//tr[not(@class='hidden')]").count();
     }
 
     public PlaywrightTableRow getRow(int rowIndex) {
