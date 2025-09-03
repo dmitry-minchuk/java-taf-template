@@ -22,7 +22,7 @@ public class PlaywrightLoginPage extends PlaywrightBasePage {
     private PlaywrightWebElement signInBtn;
     
     public PlaywrightLoginPage() {
-        super("/");
+        super();
         initializeElements();
     }
     

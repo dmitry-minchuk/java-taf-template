@@ -33,7 +33,7 @@ public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
     private PlaywrightEditorMainContentProblemsPanelComponent editorMainContentProblemsPanelComponent;
 
     public PlaywrightEditorPage() {
-        super("/");
+        super();
         initializeComponents();
     }
 

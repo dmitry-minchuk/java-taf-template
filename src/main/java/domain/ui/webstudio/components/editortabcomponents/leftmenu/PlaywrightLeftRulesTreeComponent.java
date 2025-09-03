@@ -40,7 +40,9 @@ public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponen
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
             while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(200)) {
                 WaitUtil.sleep(250);
-                viewFilterLink.click();
+                try {
+                    viewFilterLink.click();
+                } catch (Exception ignored) {}
                 WaitUtil.sleep(250);
             }
             filterOptionTemplate.format(filterOption.getValue()).click();

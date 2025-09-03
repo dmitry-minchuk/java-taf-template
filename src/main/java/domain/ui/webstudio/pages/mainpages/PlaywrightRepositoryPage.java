@@ -37,7 +37,7 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
     private PlaywrightDeployConfigurationTabsComponent deployConfigurationTabsComponent;
 
     public PlaywrightRepositoryPage() {
-        super("/faces/pages/modules/repository/index.xhtml");
+        super();
         initializeComponents();
     }
 

@@ -9,7 +9,6 @@ import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -268,42 +267,28 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
 
     // Implementation for Playwright Trace Window
     public class PlaywrightTraceWindow extends PlaywrightBasePage implements IPlaywrightTraceWindow {
-        private PlaywrightWebElement traceTree;
         private PlaywrightWebElement traceExpanderTemplate;
-        private PlaywrightWebElement traceItemsTemplate;
-        private Page tracePage;
-
-        public PlaywrightTraceWindow() {
-            this(PlaywrightDriverPool.getPage());
-        }
+        private List<PlaywrightWebElement> visibleItemsFromTree;
 
         public PlaywrightTraceWindow(Page tracePage) {
-            this.tracePage = tracePage;
+            super(tracePage);
             // Initialize trace window elements based on actual HTML structure
-            traceTree = new PlaywrightWebElement(tracePage, "xpath=//div[@id='tree']", "traceTree");
             traceExpanderTemplate = new PlaywrightWebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
-            traceItemsTemplate = new PlaywrightWebElement(tracePage, "xpath=//span[@class='fancytree-title']", "traceItemsTemplate");
+            visibleItemsFromTree = createElementList("xpath=//span[@class='fancytree-title']", "visibleItemsFromTree");
         }
 
         @Override
         public IPlaywrightTraceWindow expandItemInTree(int position) {
             PlaywrightWebElement item = traceExpanderTemplate.format(position + 1);
             item.click();
+            WaitUtil.sleep(100);
             return this;
         }
 
         @Override
         public List<String> getVisibleItemsFromTree() {
-            List<String> items = new ArrayList<>();
-            var locators = tracePage.locator("xpath=//span[@class='fancytree-title']");
-            int count = locators.count();
-            for (int i = 0; i < count; i++) {
-                String text = locators.nth(i).textContent();
-                if (text != null && !text.trim().isEmpty()) {
-                    items.add(text.trim());
-                }
-            }
-            return items;
+            List<String> visibleItemsFromTreeNames = visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
+            return visibleItemsFromTreeNames;
         }
     }
 

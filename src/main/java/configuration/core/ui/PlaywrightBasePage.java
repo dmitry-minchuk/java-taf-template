@@ -29,10 +29,9 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
         LOGGER.info("{} was opened.", this.getClass().getName());
     }
 
-    public PlaywrightBasePage(String urlAppender) {
-        this.urlAppender = urlAppender;
-        this.page = PlaywrightDriverPool.getPage();
-        LOGGER.info("{} was opened with URL appender: {}", this.getClass().getName(), urlAppender);
+    public PlaywrightBasePage(Page page) {
+        this.page = page;
+        LOGGER.info("{} was opened.", this.getClass().getName());
     }
 
     public void open() {

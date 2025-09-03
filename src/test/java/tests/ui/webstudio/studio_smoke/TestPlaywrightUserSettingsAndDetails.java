@@ -26,7 +26,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
+public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This test is incomplete and failing expectedly
 
     @Test
     @TestCaseId("IPBQA-31293")

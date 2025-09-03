@@ -10,7 +10,6 @@ import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// Playwright-based element wrapper with native wait strategies
 public class PlaywrightWebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(PlaywrightWebElement.class);
@@ -97,10 +96,14 @@ public class PlaywrightWebElement {
     
     public String getText() {
         isVisible();
-        WaitUtil.sleep(500);
         String text = locator.textContent();
         LOGGER.info("Getting text from {}: '{}'", elementName, text);
         return text;
+    }
+
+    public String getText(int timeoutInMillis) {
+        WaitUtil.sleep(timeoutInMillis);
+        return getText();
     }
     
     public String getAttribute(String name) {
