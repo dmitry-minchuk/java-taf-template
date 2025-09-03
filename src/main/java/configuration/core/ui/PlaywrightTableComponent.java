@@ -1,10 +1,8 @@
 package configuration.core.ui;
 
-import com.microsoft.playwright.Locator;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
@@ -12,6 +10,7 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     private PlaywrightWebElement openLSelectorTemplate;
     private PlaywrightWebElement standardSelectorTemplate;
     private PlaywrightWebElement inputLocator;
+    private List<PlaywrightTableRowComponent> rows;
 
     public PlaywrightTableComponent() {
         super(PlaywrightDriverPool.getPage());
@@ -27,6 +26,8 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
         openLSelectorTemplate = createScopedElement("xpath=.//td[@id='t_te_c-%d:%d']", "openLSelector");
         standardSelectorTemplate = createScopedElement("xpath=.//tr[%d]/td[%d]", "standardSelector");
         inputLocator = new PlaywrightWebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
+
+        rows = createScopedComponentList(PlaywrightTableRowComponent.class, "xpath=.//tbody/tr", "rowSelectorTemplate");
     }
 
     public void clickCell(int rowIndex, int columnIndex) {
@@ -67,49 +68,40 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     }
 
     public int getRowsCount() {
-        return rootLocator.getLocator().locator("xpath=.//tr[not(@class='hidden')]").count();
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250);
+        return rows.size();
     }
 
-    public PlaywrightTableRow getRow(int rowIndex) {
-        return new PlaywrightTableRow(this, rowIndex);
+    public PlaywrightTableRowComponent getRow(int rowIndex) {
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250);
+        return rows.get(rowIndex - 1);
     }
 
     // Inner class for table row operations
-    public static class PlaywrightTableRow {
-        private final PlaywrightTableComponent table;
-        private final int rowIndex;
+    public static class PlaywrightTableRowComponent extends PlaywrightBasePageComponent {
+        List<PlaywrightWebElement> cells;
 
-        public PlaywrightTableRow(PlaywrightTableComponent table, int rowIndex) {
-            this.table = table;
-            this.rowIndex = rowIndex;
+        public PlaywrightTableRowComponent() {
+            super(PlaywrightDriverPool.getPage());
+            initializeElements();
+        }
+
+        public PlaywrightTableRowComponent(PlaywrightWebElement rootLocator) {
+            super(rootLocator);
+            initializeElements();
+        }
+
+        private void initializeElements() {
+            cells = createScopedElementList("xpath=./td", "cells");
+        }
+
+        public  List<PlaywrightWebElement> getCells() {
+            WaitUtil.waitForListNotEmpty(() -> cells, 250, 50);
+            return cells;
         }
 
         public List<String> getValue() {
-            List<String> values = new ArrayList<>();
-            
-            // Try OpenL-specific selector first (1-based indexing)
-            String openLRowSelector = String.format("//td[starts-with(@id, 't_te_c-%d:')]", rowIndex);
-            Locator cellsLocator = table.page.locator("xpath=" + openLRowSelector);
-            
-            if (cellsLocator.count() > 0) {
-                // OpenL table logic
-                int cellCount = cellsLocator.count();
-                for (int i = 0; i < cellCount; i++) {
-                    String cellText = cellsLocator.nth(i).textContent();
-                    values.add(cellText != null ? cellText.trim() : "");
-                }
-            } else {
-                // Standard HTML table logic (1-based CSS selectors)
-                String standardRowSelector = String.format("xpath=.//tr[%d]/td", rowIndex);
-                cellsLocator = table.rootLocator.getLocator().locator(standardRowSelector);
-                int cellCount = cellsLocator.count();
-                for (int i = 0; i < cellCount; i++) {
-                    String cellText = cellsLocator.nth(i).textContent();
-                    values.add(cellText != null ? cellText.trim() : "");
-                }
-            }
-            
-            return values;
+            return cells.stream().map(e -> e.getText().trim()).toList();
         }
     }
 }

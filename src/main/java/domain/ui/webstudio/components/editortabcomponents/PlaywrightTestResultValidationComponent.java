@@ -90,8 +90,4 @@ public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageC
     public List<String> getTestResult(int rowIndex) {
         return getResultTable().getRow(rowIndex).getValue();
     }
-
-    public PlaywrightTableComponent.PlaywrightTableRow getTestResultRow(int rowIndex) {
-        return getResultTable().getRow(rowIndex);
-    }
 }
