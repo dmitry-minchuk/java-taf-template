@@ -29,29 +29,20 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
         inputLocator = new PlaywrightWebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
     }
 
-    public String getCellText(int rowIndex, int columnIndex) {
-        // Try OpenL-specific selector first (1-based indexing)
-        PlaywrightWebElement openLSelector = openLSelectorTemplate.format(rowIndex, columnIndex);
-        if (openLSelector.isVisible())
-            return openLSelector.getText().trim();
-        
-        // Fallback to standard HTML table logic (1-based CSS selectors)
-        PlaywrightWebElement standardSelector = standardSelectorTemplate.format(rowIndex, columnIndex);
-        return standardSelector.getText().trim();
-    }
-
     public void clickCell(int rowIndex, int columnIndex) {
         getCell(rowIndex, columnIndex).click();
     }
 
     public PlaywrightWebElement getCell(int rowIndex, int columnIndex) {
-        // Try OpenL-specific selector first (1-based indexing)
         PlaywrightWebElement openLSelector = openLSelectorTemplate.format(rowIndex, columnIndex);
         if (openLSelector.isVisible())
             return openLSelector;
-        
-        // Fallback to standard HTML table logic (1-based CSS selectors)
-        return standardSelectorTemplate.format(rowIndex, columnIndex);
+        else
+            return standardSelectorTemplate.format(rowIndex, columnIndex);
+    }
+
+    public String getCellText(int rowIndex, int columnIndex) {
+        return getCell(rowIndex, columnIndex).getText().trim();
     }
 
     public void doubleClickCell(int rowIndex, int columnIndex) {
