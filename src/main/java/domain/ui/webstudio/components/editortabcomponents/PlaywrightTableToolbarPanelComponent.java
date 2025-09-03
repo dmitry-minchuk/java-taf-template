@@ -167,14 +167,13 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
             return this;
         }
 
+        // TODO: refactor this!
         @Override
         public java.util.List<String> getAliasDropdownValues() {
             java.util.List<String> values = new java.util.ArrayList<>();
             String baseSelector = selectTypeDropdown.getSelector();
             // Remove xpath= prefix if present and add //option
-            String optionsSelector = baseSelector.startsWith("xpath=") ? 
-                baseSelector.substring(6) + "//option" : 
-                "xpath=" + baseSelector + "//option";
+            String optionsSelector = baseSelector.startsWith("xpath=") ? baseSelector.substring(6) + "//option" : "xpath=" + baseSelector + "//option";
             var options = page.locator(optionsSelector);
             int count = options.count();
             for (int i = 0; i < count; i++) {
@@ -243,6 +242,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
             return new PlaywrightTraceWindow(popup);
         }
 
+        // TODO: refactor this!
         @Override
         public List<String> getAliasDropdownValues() {
             List<String> values = new java.util.ArrayList<>();
