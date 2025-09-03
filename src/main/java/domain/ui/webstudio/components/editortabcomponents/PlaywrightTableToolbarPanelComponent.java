@@ -2,11 +2,15 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
+import configuration.core.ui.PlaywrightBasePage;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComponent {
@@ -116,15 +120,6 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         factorTextField.fill(text);
         return new PlaywrightTraceMenu();
     }
-
-    public PlaywrightTraceWindow clickTraceInsideMenu() {
-        traceDropdownBtn.click();
-        // Wait for trace window to open - in Playwright we don't need window switching like Selenium
-        page.waitForSelector("xpath=.//div[contains(@class,'trace-window') or contains(@title,'Trace')]", 
-                            new com.microsoft.playwright.Page.WaitForSelectorOptions().setTimeout(500));
-        return new PlaywrightTraceWindow();
-    }
-
 
     // Interface for Playwright Run Menu
     public interface IPlaywrightRunMenu {
@@ -250,13 +245,11 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         }
 
         @Override
-        public java.util.List<String> getAliasDropdownValues() {
-            java.util.List<String> values = new java.util.ArrayList<>();
+        public List<String> getAliasDropdownValues() {
+            List<String> values = new java.util.ArrayList<>();
             String baseSelector = selectTypeDropdown.getSelector();
             // Remove xpath= prefix if present and add //option
-            String optionsSelector = baseSelector.startsWith("xpath=") ? 
-                baseSelector.substring(6) + "//option" : 
-                "xpath=" + baseSelector + "//option";
+            String optionsSelector = baseSelector.startsWith("xpath=") ? baseSelector.substring(6) + "//option" : "xpath=" + baseSelector + "//option";
             var options = page.locator(optionsSelector);
             int count = options.count();
             for (int i = 0; i < count; i++) {
@@ -270,11 +263,11 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     // Interface for Playwright Trace Window
     public interface IPlaywrightTraceWindow {
         IPlaywrightTraceWindow expandItemInTree(int position);
-        java.util.List<String> getVisibleItemsFromTree();
+        List<String> getVisibleItemsFromTree();
     }
 
     // Implementation for Playwright Trace Window
-    public class PlaywrightTraceWindow implements IPlaywrightTraceWindow {
+    public class PlaywrightTraceWindow extends PlaywrightBasePage implements IPlaywrightTraceWindow {
         private PlaywrightWebElement traceTree;
         private PlaywrightWebElement traceExpanderTemplate;
         private PlaywrightWebElement traceItemsTemplate;
@@ -300,8 +293,8 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
         }
 
         @Override
-        public java.util.List<String> getVisibleItemsFromTree() {
-            java.util.List<String> items = new java.util.ArrayList<>();
+        public List<String> getVisibleItemsFromTree() {
+            List<String> items = new ArrayList<>();
             var locators = tracePage.locator("xpath=//span[@class='fancytree-title']");
             int count = locators.count();
             for (int i = 0; i < count; i++) {

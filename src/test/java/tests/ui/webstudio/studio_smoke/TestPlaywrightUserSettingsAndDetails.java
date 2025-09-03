@@ -22,6 +22,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
@@ -243,10 +245,11 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
         // Scenario 13: Trace without formatting
-        editorPage.getTableToolbarPanelComponent().clickTrace();
-        var traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
-        var traceItems = traceWindow.getVisibleItemsFromTree();
-        assertThat(traceItems.get(0)).contains("SpreadSheet Double TotalAssets4() = 268.59");
+        List<String> traceItems = editorPage.getTableToolbarPanelComponent()
+                .clickTrace()
+                .clickTraceInsideMenu()
+                .getVisibleItemsFromTree();
+        assertThat(traceItems.getFirst()).contains("SpreadSheet Double TotalAssets4() = 268.59");
 
         // Scenario 14: Enable showNumbersWithoutFormatting and test trace
         mySettingsComponent = editorPage.getCurrentUserComponent()
@@ -255,9 +258,11 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         mySettingsComponent.setShowNumbersWithoutFormatting(true).saveSettings();
 
         editorPage.getTableToolbarPanelComponent().clickTrace();
-        traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
-        traceItems = traceWindow.getVisibleItemsFromTree();
-        assertThat(traceItems.get(0)).contains("268.59000000000003"); // Unformatted number
+        traceItems = editorPage.getTableToolbarPanelComponent()
+                .clickTrace()
+                .clickTraceInsideMenu()
+                .getVisibleItemsFromTree();
+        assertThat(traceItems.getFirst()).contains("268.59000000000003"); // Unformatted number
 
         // Scenario 15: Verify E-notation is not shown
         editorPage.getLeftRulesTreeComponent()
@@ -266,10 +271,11 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
 
         editorPage.getTableToolbarPanelComponent().clickTrace();
         editorPage.getTableToolbarPanelComponent().setFactorTextField("0");
-        traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
-
-        traceWindow.expandItemInTree(1);
-        traceItems = traceWindow.getVisibleItemsFromTree();
+        traceItems = editorPage.getTableToolbarPanelComponent()
+                .clickTrace()
+                .clickTraceInsideMenu()
+                .expandItemInTree(1)
+                .getVisibleItemsFromTree();
         assertThat(traceItems.get(1)).contains("0.0001").doesNotContain("E-"); // No E-notation
 
         // Scenario 16: Disable showNumbersWithoutFormatting and test again
@@ -281,9 +287,11 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest {
         // Scenario 17: Final E-notation verification
         editorPage.getTableToolbarPanelComponent().clickTrace();
         editorPage.getTableToolbarPanelComponent().setFactorTextField("0");
-        traceWindow = editorPage.getTableToolbarPanelComponent().clickTraceInsideMenu();
-        traceWindow.expandItemInTree(1);
-        traceItems = traceWindow.getVisibleItemsFromTree();
+        traceItems = editorPage.getTableToolbarPanelComponent()
+                .clickTrace()
+                .clickTraceInsideMenu()
+                .expandItemInTree(1)
+                .getVisibleItemsFromTree();
         assertThat(traceItems.get(1)).contains("0.0001").doesNotContain("E-");
     }
 }
