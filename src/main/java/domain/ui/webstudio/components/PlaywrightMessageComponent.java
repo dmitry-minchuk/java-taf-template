@@ -2,7 +2,7 @@ package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightMessageComponent extends CoreComponent {
 
@@ -10,7 +10,7 @@ public class PlaywrightMessageComponent extends CoreComponent {
     private PlaywrightWebElement closeBtn;
 
     public PlaywrightMessageComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeComponents();
     }
 

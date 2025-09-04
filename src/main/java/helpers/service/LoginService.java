@@ -1,6 +1,7 @@
 package helpers.service;
 
 import com.microsoft.playwright.Page;
+import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -24,7 +25,7 @@ public class LoginService {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
         // Navigate to login page using proper URL resolution (LOCAL vs DOCKER mode aware)
-        String loginUrl = configuration.driver.PlaywrightDriverPool.getAppUrl();
+        String loginUrl = LocalDriverPool.getAppUrl();
         page.navigate(loginUrl);
         LOGGER.info("Navigated to login page: {}", loginUrl);
         

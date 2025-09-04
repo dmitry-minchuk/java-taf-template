@@ -15,26 +15,30 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightAddPropertyExtraStateAppears extends BaseTest {
+public class TestAddProperty extends BaseTest {
 
     @Test
-    @TestCaseId("EPBDS-11107")
-    @Description("'State' property is added to table instead of inherited")
+    @TestCaseId("EPBDS-6964")
+    @Description("Exception occurs on adding property to the table with two columns - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testAddPropertyExtraStateAppears() {
-        String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
+    public void testPlaywrightAddProperty() {
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "StudioIssues_TestAddProperty.xlsx");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Test Project-CW-20200101-20200101");
+        
+        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
+        
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "MyDatatype");
+                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_CATEGORY)
+                .expandFolderInTree("Rules")
+                .selectItemInFolder("Rules", "SimpleCalc");
+                
         editorPage.getRightTableDetailsComponent()
                 .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
                 .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
                 .clickSaveBtn();
-        assertThat(editorPage.getCenterTable().getCellText(2, 2)).isEqualTo("description");
-        assertThat(editorPage.getCenterTable().getCellText(3, 2)).contains("Result");
-        assertThat(editorPage.getCenterTable().getCellText(4, 2)).contains("= new MyDatatype");
+                
+        assertThat(editorPage.getRightTableDetailsComponent()
+                .isPropertySet(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))
+                .isTrue();
     }
 }

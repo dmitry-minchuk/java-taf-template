@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.TestDataUtil;
 
 public class PlaywrightExcelFilesComponent extends CoreComponent {
@@ -13,7 +13,7 @@ public class PlaywrightExcelFilesComponent extends CoreComponent {
     private PlaywrightWebElement cancelBtn;
 
     public PlaywrightExcelFilesComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

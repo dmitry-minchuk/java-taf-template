@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightAllStepsDisplayedInTrace extends BaseTest {
+public class TestAllStepsDisplayedInTrace extends BaseTest {
 
     private final List<String> EXPECTED_TRACE_TREE_ITEMS = Arrays.asList(
             "$Formula$Coverage_ID = null",

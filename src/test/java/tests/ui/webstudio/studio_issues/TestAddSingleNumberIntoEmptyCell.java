@@ -16,7 +16,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightAddSingleNumberIntoEmptyCell extends BaseTest {
+public class TestAddSingleNumberIntoEmptyCell extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-7232")

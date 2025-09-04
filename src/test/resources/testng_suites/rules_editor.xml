@@ -6,6 +6,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="rules_editor.TestPlaywrightMethodTable"><classes><class name="tests.ui.webstudio.rules_editor.TestPlaywrightMethodTable"/></classes></test>
+    <test name="TestMethodTable"><classes><class name="tests.ui.webstudio.rules_editor.TestMethodTable"/></classes></test>
 
 </suite>

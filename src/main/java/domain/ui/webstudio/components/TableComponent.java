@@ -2,7 +2,7 @@ package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class TableComponent extends CoreComponent {
     private List<PlaywrightTableRowComponent> rows;
 
     public TableComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 
@@ -78,7 +78,7 @@ public class TableComponent extends CoreComponent {
         List<PlaywrightWebElement> cells;
 
         public PlaywrightTableRowComponent() {
-            super(PlaywrightDriverPool.getPage());
+            super(LocalDriverPool.getPage());
             initializeElements();
         }
 

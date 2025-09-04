@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
     private final Map<String, PlaywrightWebElement> orderOptionMappings = new HashMap<>();
 
     public PlaywrightMySettingsPageComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
         initializeOrderOptionMappings();
     }

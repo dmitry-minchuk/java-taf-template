@@ -3,7 +3,7 @@ package helpers.utils;
 import com.epam.reportportal.service.ReportPortal;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.ScreenshotType;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +46,7 @@ public class ReportPortalUtil {
     
     public static void attachScreenshotOnFailure(String testName, String description) {
         try {
-            byte[] screenshotBytes = PlaywrightDriverPool.takeScreenshot();
+            byte[] screenshotBytes = LocalDriverPool.takeScreenshot();
             if (screenshotBytes != null) {
                 File screenshotFile = saveScreenshotToFile(screenshotBytes, testName);
                 if (screenshotFile != null) {
@@ -65,7 +65,7 @@ public class ReportPortalUtil {
     
     public static File captureScreenshot(String testName, boolean fullPage) {
         try {
-            Page page = PlaywrightDriverPool.getPage();
+            Page page = LocalDriverPool.getPage();
             
             Page.ScreenshotOptions options = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
@@ -96,7 +96,7 @@ public class ReportPortalUtil {
                 return null;
             }
             
-            Page page = PlaywrightDriverPool.getPage();
+            Page page = LocalDriverPool.getPage();
             
             // Check if video is available (only works if BrowserContext was configured with recordVideoDir)
             if (page.video() == null) {
@@ -173,7 +173,7 @@ public class ReportPortalUtil {
     
     public static void attachPageContent(String description) {
         try {
-            Page page = PlaywrightDriverPool.getPage();
+            Page page = LocalDriverPool.getPage();
             String content = page.content();
             
             File tempFile = createTempFile("page-content-", ".html", content);
@@ -233,8 +233,8 @@ public class ReportPortalUtil {
     
     public static void attachExecutionInfo() {
         try {
-            PlaywrightDriverPool.ExecutionMode mode = PlaywrightDriverPool.getCurrentExecutionMode();
-            String debugInfo = PlaywrightDriverPool.getDebugInfo();
+            LocalDriverPool.ExecutionMode mode = LocalDriverPool.getCurrentExecutionMode();
+            String debugInfo = LocalDriverPool.getDebugInfo();
             
             String executionInfo = String.format(
                 "Execution Mode: %s%n%n%s", 

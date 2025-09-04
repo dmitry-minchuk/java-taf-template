@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +16,7 @@ public class PlaywrightTreeFolderComponent extends CoreComponent {
     private PlaywrightWebElement itemTemplate;
 
     public PlaywrightTreeFolderComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

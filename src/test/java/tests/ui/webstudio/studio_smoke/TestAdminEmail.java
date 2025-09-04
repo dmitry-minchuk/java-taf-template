@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.PlaywrightEmailPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
@@ -20,16 +20,16 @@ import tests.BaseTest;
 
 import java.util.Properties;
 
-public class TestPlaywrightAdminEmail extends BaseTest {
+public class TestAdminEmail extends BaseTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(TestPlaywrightAdminEmail.class);
+    private static final Logger LOGGER = LogManager.getLogger(TestAdminEmail.class);
 
     @Test
     @TestCaseId("IPBQA-32798")
     @Description("Playwright - Admin UI 'Email' page - Email verification configuration test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAdminEmail() {
-        LoginService loginService = new LoginService(PlaywrightDriverPool.getPage());
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())

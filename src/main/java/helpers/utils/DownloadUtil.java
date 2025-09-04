@@ -3,8 +3,8 @@ package helpers.utils;
 import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import configuration.driver.PlaywrightDockerDriverPool;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.DockerDriverPool;
+import configuration.driver.LocalDriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +42,7 @@ public class DownloadUtil {
     }
     
     private static File downloadFileLocal(Locator trigger, int timeoutMs) {
-        Page page = PlaywrightDriverPool.getPage();
+        Page page = LocalDriverPool.getPage();
         
         Download download = page.waitForDownload(trigger::click);
         
@@ -75,7 +75,7 @@ public class DownloadUtil {
     }
     
     private static File downloadFileFromContainer(Locator trigger, int timeoutMs) {
-        Page page = PlaywrightDockerDriverPool.getPage();
+        Page page = DockerDriverPool.getPage();
         GenericContainer<?> container = getPlaywrightContainer();
         
         String uniqueFileName = "download_" + UUID.randomUUID().toString();
@@ -120,14 +120,14 @@ public class DownloadUtil {
     
     private static boolean isDockerMode() {
         try {
-            return PlaywrightDockerDriverPool.isInitialized();
+            return DockerDriverPool.isInitialized();
         } catch (Exception e) {
             return false;
         }
     }
     
     private static GenericContainer<?> getPlaywrightContainer() {
-        return PlaywrightDockerDriverPool.getPlaywrightContainer();
+        return DockerDriverPool.getPlaywrightContainer();
     }
     
     private static String sanitizeFileName(String fileName) {

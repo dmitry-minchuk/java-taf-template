@@ -6,23 +6,23 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="StudioIssues.TestPlaywrightAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddProperty"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyExtraStateAppears"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathStar"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddModuleWithPathExistingModule"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddElementToCollectionSet"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddDeleteRowWithoutSaving"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddPropertyInSpreadSheetTable"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddPropertyInSpreadSheetTable"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAddSingleNumberIntoEmptyCell"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightAllStepsDisplayedInTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightAllStepsDisplayedInTrace"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightTraceIntoFileJsonRequest"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightArrayDeclarationIsLink"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightArrayOfAliasValuesInRunTrace"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightButtonDeployAvailableDeployConfiguration"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightCallRuleWithSpreadsheetResultConstructor"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightClassCastException"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClassCastException"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickDatatypeNotFoundError"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickOnErrorFromTheBottom"/></classes></test>
-    <test name="StudioIssues.TestPlaywrightClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestPlaywrightClickOnOpenApiError"/></classes></test>
+    <test name="TestAddProperty"><classes><class name="tests.ui.webstudio.studio_issues.TestAddProperty"/></classes></test>
+    <test name="TestAddPropertyExtraStateAppears"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyExtraStateAppears"/></classes></test>
+    <test name="TestAddModuleWithPathStar"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathStar"/></classes></test>
+    <test name="TestAddModuleWithPathExistingModule"><classes><class name="tests.ui.webstudio.studio_issues.TestAddModuleWithPathExistingModule"/></classes></test>
+    <test name="TestAddElementToCollectionSet"><classes><class name="tests.ui.webstudio.studio_issues.TestAddElementToCollectionSet"/></classes></test>
+    <test name="TestAddDeleteRowWithoutSaving"><classes><class name="tests.ui.webstudio.studio_issues.TestAddDeleteRowWithoutSaving"/></classes></test>
+    <test name="TestAddPropertyInSpreadSheetTable"><classes><class name="tests.ui.webstudio.studio_issues.TestAddPropertyInSpreadSheetTable"/></classes></test>
+    <test name="TestAddSingleNumberIntoEmptyCell"><classes><class name="tests.ui.webstudio.studio_issues.TestAddSingleNumberIntoEmptyCell"/></classes></test>
+    <test name="TestAllBusinessVersionsDisplayWithDifferentTime"><classes><class name="tests.ui.webstudio.studio_issues.TestAllBusinessVersionsDisplayWithDifferentTime"/></classes></test>
+    <test name="TestAllStepsDisplayedInTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestAllStepsDisplayedInTrace"/></classes></test>
+    <test name="TestTraceIntoFileJsonRequest"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceIntoFileJsonRequest"/></classes></test>
+    <test name="TestArrayDeclarationIsLink"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayDeclarationIsLink"/></classes></test>
+    <test name="TestArrayOfAliasValuesInRunTrace"><classes><class name="tests.ui.webstudio.studio_issues.TestArrayOfAliasValuesInRunTrace"/></classes></test>
+    <test name="TestButtonDeployAvailableDeployConfiguration"><classes><class name="tests.ui.webstudio.studio_issues.TestButtonDeployAvailableDeployConfiguration"/></classes></test>
+    <test name="TestCallRuleWithSpreadsheetResultConstructor"><classes><class name="tests.ui.webstudio.studio_issues.TestCallRuleWithSpreadsheetResultConstructor"/></classes></test>
+    <test name="TestClassCastException"><classes><class name="tests.ui.webstudio.studio_issues.TestClassCastException"/></classes></test>
+    <test name="TestClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickDatatypeNotFoundError"/></classes></test>
+    <test name="TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
+    <test name="TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
 </suite>

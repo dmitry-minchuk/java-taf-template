@@ -13,7 +13,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightAddModuleWithPathExistingModule extends BaseTest {
+public class TestAddModuleWithPathExistingModule extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-11048")

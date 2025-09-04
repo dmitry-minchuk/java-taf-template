@@ -2,7 +2,7 @@ package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
@@ -17,7 +17,7 @@ public class PlaywrightCreateNewProjectComponent extends CoreComponent {
     private PlaywrightWebElement tabTemplate;
 
     public PlaywrightCreateNewProjectComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

@@ -14,7 +14,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightAllBusinessVersionsDisplayWithDifferentTime extends BaseTest {
+public class TestAllBusinessVersionsDisplayWithDifferentTime extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-7708")

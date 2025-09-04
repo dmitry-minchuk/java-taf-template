@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightTagsPageComponent extends CoreComponent {
 
@@ -14,7 +14,7 @@ public class PlaywrightTagsPageComponent extends CoreComponent {
     private PlaywrightWebElement tagsTable;
 
     public PlaywrightTagsPageComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

@@ -16,7 +16,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightClassCastException extends BaseTest {
+public class TestClassCastException extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-7018")

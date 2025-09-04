@@ -2,7 +2,7 @@ package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import net.datafaker.Faker;
 
 /**
@@ -21,7 +21,7 @@ public class PlaywrightConfigureCommitInfoComponent extends CoreComponent {
     private PlaywrightWebElement cancelBtn;
 
     public PlaywrightConfigureCommitInfoComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

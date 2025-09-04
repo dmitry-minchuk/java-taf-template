@@ -10,9 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // Unified Playwright driver pool with automatic mode detection for local and Docker execution
-public class PlaywrightDriverPool {
+public class LocalDriverPool {
     
-    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDriverPool.class);
+    protected static final Logger LOGGER = LogManager.getLogger(LocalDriverPool.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     
     // Execution modes for Playwright framework
@@ -170,7 +170,7 @@ public class PlaywrightDriverPool {
         ExecutionMode mode = getExecutionMode();
         switch (mode) {
             case PLAYWRIGHT_LOCAL -> setPlaywright();
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.setPlaywrightDocker(network);
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.setPlaywrightDocker(network);
         }
         LOGGER.info("Playwright initialized in {} mode", mode);
     }
@@ -180,7 +180,7 @@ public class PlaywrightDriverPool {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> getLocalPage();
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getPage();
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.getPage();
         };
     }
     
@@ -198,7 +198,7 @@ public class PlaywrightDriverPool {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> getLocalBrowser();
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getBrowser();
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.getBrowser();
         };
     }
     
@@ -207,7 +207,7 @@ public class PlaywrightDriverPool {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> getLocalBrowserContext();
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.getBrowserContext();
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.getBrowserContext();
         };
     }
     
@@ -242,7 +242,7 @@ public class PlaywrightDriverPool {
         ExecutionMode mode = getExecutionMode();
         switch (mode) {
             case PLAYWRIGHT_LOCAL -> closeLocalPlaywright();
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.closePlaywrightDocker();
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.closePlaywrightDocker();
         }
     }
     
@@ -263,7 +263,7 @@ public class PlaywrightDriverPool {
         ExecutionMode mode = getExecutionMode();
         return switch (mode) {
             case PLAYWRIGHT_LOCAL -> threadLocalContext.get() != null;
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.isInitialized();
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.isInitialized();
         };
     }
     
@@ -322,7 +322,7 @@ public class PlaywrightDriverPool {
                     throw new RuntimeException("Application container navigation failed", e);
                 }
             }
-            case PLAYWRIGHT_DOCKER -> PlaywrightDockerDriverPool.navigateToApp();
+            case PLAYWRIGHT_DOCKER -> DockerDriverPool.navigateToApp();
         }
     }
 
@@ -390,7 +390,7 @@ public class PlaywrightDriverPool {
                 }
             }
             case PLAYWRIGHT_DOCKER -> {
-                info.append(PlaywrightDockerDriverPool.getDockerInfo());
+                info.append(DockerDriverPool.getDockerInfo());
             }
         }
         

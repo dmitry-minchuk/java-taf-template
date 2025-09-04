@@ -16,14 +16,14 @@ import java.util.stream.Stream;
  * This class implements full List<PlaywrightWebElement> interface but recalculates elements on every access,
  * ensuring that the list always reflects the current DOM state.
  */
-public class LazyPlaywrightElementsList implements List<PlaywrightWebElement> {
+public class LazyElementsList implements List<PlaywrightWebElement> {
     
     private final Page page;
     private final PlaywrightWebElement parentElement;
     private final String selector;
     private final String baseName;
     
-    public LazyPlaywrightElementsList(
+    public LazyElementsList(
             Page page,
             PlaywrightWebElement parentElement,
             String selector,
@@ -34,7 +34,7 @@ public class LazyPlaywrightElementsList implements List<PlaywrightWebElement> {
         this.baseName = baseName;
     }
     
-    public LazyPlaywrightElementsList(
+    public LazyElementsList(
             Page page,
             PlaywrightWebElement parentElement,
             String selector) {
@@ -46,7 +46,7 @@ public class LazyPlaywrightElementsList implements List<PlaywrightWebElement> {
      * This ensures the list is always current with DOM state.
      */
     private List<PlaywrightWebElement> getCurrentElements() {
-        return PlaywrightListFactory.createElementsList(page, parentElement, selector, baseName);
+        return ListFactory.createElementsList(page, parentElement, selector, baseName);
     }
     
     // Core List methods that use getCurrentElements()
@@ -215,7 +215,7 @@ public class LazyPlaywrightElementsList implements List<PlaywrightWebElement> {
     // Override toString for better debugging
     @Override
     public String toString() {
-        return String.format("LazyPlaywrightElementsList[selector='%s', size=%d]", 
+        return String.format("LazyElementsList[selector='%s', size=%d]",
             selector, size());
     }
     

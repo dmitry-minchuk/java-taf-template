@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightTemplateTabComponent extends CoreComponent {
 
@@ -12,7 +12,7 @@ public class PlaywrightTemplateTabComponent extends CoreComponent {
     private PlaywrightWebElement cancelBtn;
 
     public PlaywrightTemplateTabComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

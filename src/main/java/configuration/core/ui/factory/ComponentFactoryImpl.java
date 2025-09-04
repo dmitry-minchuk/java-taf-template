@@ -6,12 +6,12 @@ import configuration.core.ui.PlaywrightWebElement;
 
 import java.util.List;
 
-//Utility implementation of the PlaywrightComponentFactory interface.
-public final class PlaywrightComponentFactoryImpl {
+//Utility implementation of the ComponentFactory interface.
+public final class ComponentFactoryImpl {
     
     // Private constructor to prevent instantiation - this is a utility class
-    private PlaywrightComponentFactoryImpl() {
-        throw new UnsupportedOperationException("PlaywrightComponentFactoryImpl is a utility class and should not be instantiated");
+    private ComponentFactoryImpl() {
+        throw new UnsupportedOperationException("ComponentFactoryImpl is a utility class and should not be instantiated");
     }
     
     /**
@@ -73,7 +73,7 @@ public final class PlaywrightComponentFactoryImpl {
             String baseName,
             Page page,
             PlaywrightWebElement parentElement) {
-        return PlaywrightListFactory.createComponentsList(componentClass, page, parentElement, selector, baseName);
+        return ListFactory.createComponentsList(componentClass, page, parentElement, selector, baseName);
     }
     
     /**
@@ -84,6 +84,6 @@ public final class PlaywrightComponentFactoryImpl {
             String selector,
             Page page,
             PlaywrightWebElement parentElement) {
-        return PlaywrightListFactory.createComponentsList(componentClass, page, parentElement, selector);
+        return ListFactory.createComponentsList(componentClass, page, parentElement, selector);
     }
 }

@@ -2,6 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
+import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
 public class PlaywrightAdminNavigationComponent extends CoreComponent {
@@ -9,7 +10,7 @@ public class PlaywrightAdminNavigationComponent extends CoreComponent {
     private PlaywrightWebElement navigationItemTemplate;
 
     public PlaywrightAdminNavigationComponent() {
-        super(configuration.driver.PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeNavigationComponents();
     }
 

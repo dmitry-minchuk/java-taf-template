@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightRepositoryContentButtonsPanelComponent extends CoreComponent {
 
@@ -19,7 +19,7 @@ public class PlaywrightRepositoryContentButtonsPanelComponent extends CoreCompon
     private PlaywrightWebElement exportBtn;
 
     public PlaywrightRepositoryContentButtonsPanelComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 
