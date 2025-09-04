@@ -33,7 +33,7 @@ public class TemplateTabComponent extends BaseComponent {
     }
 
     public void setProjectName(String projectName) {
-        projectNameField.fill("");
+        projectNameField.clear();
         projectNameField.fillSequentially(projectName);
     }
 
