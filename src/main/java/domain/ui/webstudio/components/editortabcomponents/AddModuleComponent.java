@@ -73,7 +73,6 @@ public class AddModuleComponent extends BaseComponent {
     }
     
     public boolean isSpecificPropertyShown(String text) {
-        commonProperty.format(text).waitForVisible(250);
-        return commonProperty.format(text).isVisible();
+        return commonProperty.format(text).isVisible(DEFAULT_TIMEOUT_MS);
     }
 }
