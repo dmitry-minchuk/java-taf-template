@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EditorLeftRulesTreeComponent extends BaseComponent {
 
@@ -17,6 +18,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     private WebElement viewFilterLink;
     private WebElement selectedTreeItem;
     private WebElement filterOptionTemplate;
+    private List<EditorTreeFolderComponent> folders;
 
     public EditorLeftRulesTreeComponent() {
         super(LocalDriverPool.getPage());
@@ -32,6 +34,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
         selectedTreeItem = createScopedElement("xpath=.//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a", "selectedTreeItem");
         filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
+        folders = createScopedComponentList(EditorTreeFolderComponent.class, "xpath=(.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]) | (.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]) | (.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')])", "treeFolders");
     }
 
     public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
@@ -84,57 +87,47 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     }
 
     public void checkRulesTableAbsent(String folderName, String tableName) {
-        if (isItemExistsInFolder(folderName, tableName)) {
+        if (!isItemNotExistsInFolder(folderName, tableName)) {
             throw new AssertionError(String.format("Table '%s' should not exist in folder '%s'", tableName, folderName));
         }
     }
 
     public boolean isItemExistsInFolder(String folderName, String itemName) {
-        try {
-            EditorTreeFolderComponent folder = findFolderInTree(folderName);
-            return folder.getItem(itemName).isVisible();
-        } catch (RuntimeException e) {
-            return false;
-        }
+        return WaitUtil.waitForCondition(() -> {
+            try {
+                EditorTreeFolderComponent folder = findFolderInTree(folderName);
+                return folder.getItem(itemName).isVisible();
+            } catch (RuntimeException e) {
+                return false;
+            }
+        }, DEFAULT_TIMEOUT_MS, 100);
     }
 
+    public boolean isItemNotExistsInFolder(String folderName, String itemName) {
+        return WaitUtil.waitForCondition(() -> {
+            try {
+                EditorTreeFolderComponent folder = findFolderInTree(folderName);
+                return !folder.getItem(itemName).isVisible();
+            } catch (RuntimeException e) {
+                return true;
+            }
+        }, DEFAULT_TIMEOUT_MS, 100);
+    }
 
     // Find specific folder in the tree by name
     private EditorTreeFolderComponent findFolderInTree(String folderName) {
-        return findTreeFolders().stream()
-                .filter(folder -> folder.getFolderName().equals(folderName))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
+        Optional<EditorTreeFolderComponent> result = WaitUtil.waitForResult(() -> findTreeFolders().stream()
+                        .filter(f -> f.getFolderName().equals(folderName))
+                        .findFirst(), DEFAULT_TIMEOUT_MS, 100
+        );
+
+        return result.orElseThrow(() ->
+                new RuntimeException(String.format("Folder with name %s not found", folderName)));
     }
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<EditorTreeFolderComponent> findTreeFolders() {
-        List<EditorTreeFolderComponent> folders = new java.util.ArrayList<>();
-        
-        // Wait for the tree to be loaded
-        WaitUtil.sleep(250);
-
-        String[] selectors = {
-                ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",
-                ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]",
-                ".//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')]"
-        };
-
-        for (String selector : selectors) {
-            int folderCount = page.locator("xpath=" + selector).count();
-            for (int i = 0; i < folderCount; i++) {
-                String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
-                WebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
-                WebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
-                EditorTreeFolderComponent folder = createScopedComponent(EditorTreeFolderComponent.class, indexedElement);
-                if(folder.isVisible())
-                    folders.add(folder);
-            }
-        }
-
-        LOGGER.debug("Found {} tree folders", folders.size());
-        List<String> folderNames = folders.stream().map(EditorTreeFolderComponent::getFolderName).toList();
-        folderNames.forEach(LOGGER::debug);
+        WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100);
         return folders;
     }
 

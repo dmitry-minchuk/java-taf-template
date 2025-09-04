@@ -12,6 +12,7 @@ import java.util.List;
 public class LeftRepositoryTreeComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(LeftRepositoryTreeComponent.class);
+    private List<RepositoryTreeFolderComponent> folders;
 
     public LeftRepositoryTreeComponent() {
         super(LocalDriverPool.getPage());
@@ -24,6 +25,7 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
     }
 
     private void initializeElements() {
+        folders = createScopedComponentList(RepositoryTreeFolderComponent.class, "xpath=(.//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]) | (.//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]) | (.//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')])", "treeFolders");
     }
 
     public LeftRepositoryTreeComponent selectItemInFolder(String folderName, String itemName) {
@@ -63,30 +65,7 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<RepositoryTreeFolderComponent> findTreeFolders() {
-        List<RepositoryTreeFolderComponent> folders = new java.util.ArrayList<>();
-        waitUntilSpinnerLoaded();
-
-        String[] selectors = {
-                ".//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",
-                ".//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]",
-                ".//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')]"
-        };
-
-        for (String selector : selectors) {
-            int folderCount = page.locator("xpath=" + selector).count();
-            for (int i = 0; i < folderCount; i++) {
-                String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
-                WebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
-                WebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
-                RepositoryTreeFolderComponent folder = createScopedComponent(RepositoryTreeFolderComponent.class, indexedElement);
-                if(folder.isVisible())
-                    folders.add(folder);
-            }
-        }
-
-        LOGGER.debug("Found {} tree folders", folders.size());
-        List<String> folderNames = folders.stream().map(RepositoryTreeFolderComponent::getFolderName).toList();
-        folderNames.forEach(LOGGER::debug);
+        WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100);
         return folders;
     }
 }

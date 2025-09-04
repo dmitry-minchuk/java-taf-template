@@ -5,6 +5,8 @@ import configuration.core.ui.factory.ComponentFactory;
 import configuration.core.ui.factory.ComponentFactoryImpl;
 import configuration.core.ui.factory.LazyComponentsList;
 import configuration.core.ui.factory.LazyElementsList;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.webstudio.components.BaseComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,7 @@ import java.util.List;
 public abstract class CoreComponent implements ComponentFactory {
 
     protected static final Logger LOGGER = LogManager.getLogger(CoreComponent.class);
+    protected static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     protected final Page page;
     protected final WebElement rootLocator;
 

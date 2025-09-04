@@ -113,6 +113,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
     
     public void clickRemove() {
         removeBtn.click();
+        WaitUtil.sleep(100);
     }
 
     public PlaywrightTraceMenu setFactorTextField(String text) {
