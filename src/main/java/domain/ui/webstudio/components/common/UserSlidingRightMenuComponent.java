@@ -5,7 +5,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 
-public class CurrentUserComponent extends BaseComponent {
+public class UserSlidingRightMenuComponent extends BaseComponent {
 
     private WebElement myProfileMenuItem;
     private WebElement mySettingsMenuItem;
@@ -13,12 +13,12 @@ public class CurrentUserComponent extends BaseComponent {
     private WebElement helpMenuItem;
     private WebElement signOutMenuItem;
 
-    public CurrentUserComponent() {
+    public UserSlidingRightMenuComponent() {
         super(LocalDriverPool.getPage());
         initializeComponents();
     }
     
-    public CurrentUserComponent(WebElement rootLocator) {
+    public UserSlidingRightMenuComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeComponents();
     }
@@ -32,17 +32,19 @@ public class CurrentUserComponent extends BaseComponent {
     }
 
     public AdminPage navigateToMyProfile() {
+        closeAllMessages();
         select(MenuElements.MY_PROFILE);
         return new AdminPage();
     }
 
     public AdminPage navigateToMySettings() {
+        closeAllMessages();
         select(MenuElements.MY_SETTINGS);
         return new AdminPage();
     }
 
     public AdminPage navigateToAdministration() {
-
+        closeAllMessages();
         select(MenuElements.ADMINISTRATION);
         return new AdminPage();
     }

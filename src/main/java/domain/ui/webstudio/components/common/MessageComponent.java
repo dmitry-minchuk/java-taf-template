@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.common;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 
 public class MessageComponent extends BaseComponent {
 
@@ -30,5 +31,6 @@ public class MessageComponent extends BaseComponent {
 
     public void closeMessage() {
         closeBtn.click();
+        WaitUtil.sleep(1000);
     }
 }

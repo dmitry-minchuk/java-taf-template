@@ -33,7 +33,7 @@ public class TestAdminEmail extends BaseTest {
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())
-        AdminPage adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
+        AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         EmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
 
         // Step 3: Verify "Email" tab contains inactive checkbox "Enable email address verification"

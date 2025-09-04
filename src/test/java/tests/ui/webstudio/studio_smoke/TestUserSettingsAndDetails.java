@@ -38,7 +38,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         // Scenario 1: Clear profile information (lines 34-44 from original)
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
         MyProfilePageComponent myProfileComponent = editorPage
-                .getCurrentUserComponent()
+                .openUserMenu()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
@@ -46,7 +46,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         myProfileComponent.setDisplayName("").saveProfile();
 
         // Scenario 2: Verify empty profile fields (lines 45-57 from original)
-        myProfileComponent = editorPage.getCurrentUserComponent()
+        myProfileComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
@@ -66,7 +66,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
                 .setDisplayNamePattern("First Last")
                 .saveProfile();
 
-        myProfileComponent = editorPage.getCurrentUserComponent()
+        myProfileComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
@@ -75,7 +75,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(myProfileComponent.getEmail(), "admin@admin.com", "Email should be 'admin@admin.com'");
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Abc Bcd", "Display name should be 'Abc Bcd'");
 
-        UsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
+        UsersPageComponent usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
         
@@ -85,25 +85,25 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-displayname"), "Abc Bcd", "Admin display name in Users table should be 'Abc Bcd'");
 
         // Scenario 4: Change password and test authentication (lines 77-95 from original)
-        myProfileComponent = editorPage.getCurrentUserComponent()
+        myProfileComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
         myProfileComponent.setCurrentPassword("admin").setNewPassword("12345").setConfirmPassword("12345").saveProfile();
 
         // Logout and test old password (should fail)
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         LOGGER.info("Login with old password should show error message");
 
         // Login with new password
         UserData newUserData = new UserData("admin", "12345");
         editorPage = loginService.login(newUserData);
-        myProfileComponent = editorPage.getCurrentUserComponent()
+        myProfileComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
         // Scenario 5: Create new user (lines 96-131 from original)
-        usersComponent = editorPage.getCurrentUserComponent()
+        usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
 
@@ -111,12 +111,12 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         usersComponent.addNewUser("user1", "user1@example.com", "Aaa", "Bbb", "user1");
         
         // Logout admin and login as user1
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         UserData user1Data = new UserData("user1", "user1");
         editorPage = loginService.login(user1Data);
         
         // Verify user1 profile details
-        myProfileComponent = editorPage.getCurrentUserComponent()
+        myProfileComponent = editorPage.openUserMenu()
                 .navigateToMyProfile()
                 .navigateToMyProfilePage();
                 
@@ -129,23 +129,23 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         myProfileComponent.setDisplayName("Bbb Aaa").saveProfile();
         
         // Verify display name change
-        myProfileComponent = editorPage.getCurrentUserComponent()
+        myProfileComponent = editorPage.openUserMenu()
                 .navigateToMySettings()
                 .navigateToMyProfilePage();
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Bbb Aaa", "Display name should be updated");
 
         // Verify user in Users table
-        usersComponent = editorPage.getCurrentUserComponent()
+        usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
         Assert.assertEquals(usersComponent.getSpecificUserElement("user1", "users-displayname"), "Bbb Aaa", "Display name should be updated in users table");
 
         // Scenario 6: Check default settings (lines 133-143 from original)
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         UserData adminNewPassword = new UserData("admin", "12345");
         editorPage = loginService.login(adminNewPassword);
 
-        MySettingsPageComponent mySettingsComponent = editorPage.getCurrentUserComponent()
+        MySettingsPageComponent mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
@@ -172,7 +172,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(tableComponent.getCellText(3, 2), "2500", "Cell content should be '2500'");
 
         // Change settings to show formulas and headers
-        mySettingsComponent = editorPage.getCurrentUserComponent()
+        mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
         mySettingsComponent.setShowFormulas(true).setShowHeader(false).saveSettings();
@@ -183,7 +183,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
 
         // Scenario 8: Check settings isolation for different users (lines 154-164 from original)
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         editorPage = loginService.login(user1Data);
         
         // Navigate to the same project as user1
@@ -204,9 +204,9 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
                            "User1 should see different header format");
 
         // Scenario 9: Change test settings (lines 165-176 from original)
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         editorPage = loginService.login(adminNewPassword);
-        mySettingsComponent = editorPage.getCurrentUserComponent()
+        mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
@@ -222,9 +222,9 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         LOGGER.info("Test execution settings verification - depends on dropdown component availability");
 
         // Scenario 11: Verify user settings isolation (lines 185-195 from original)
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         editorPage = loginService.login(user1Data);
-        mySettingsComponent = editorPage.getCurrentUserComponent()
+        mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
@@ -237,10 +237,10 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         mySettingsComponent.cancelSettings();
 
         // Scenario 12: Test Help functionality (lines 196-201 from original)
-        LOGGER.info("Help functionality test - implementation depends on CurrentUserComponent methods");
+        LOGGER.info("Help functionality test - implementation depends on UserSlidingRightMenuComponent methods");
 
         // Scenarios 13-17: Trace functionality with number formatting (lines 202-234 from original)
-        editorPage.getCurrentUserComponent().signOut();
+        editorPage.openUserMenu().signOut();
         editorPage = loginService.login(adminNewPassword);
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
@@ -257,7 +257,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         assertThat(traceItems.getFirst()).contains("SpreadSheet Double TotalAssets4() = 268.59");
 
         // Scenario 14: Enable showNumbersWithoutFormatting and test trace
-        mySettingsComponent = editorPage.getCurrentUserComponent()
+        mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
         mySettingsComponent.setShowNumbersWithoutFormatting(true).saveSettings();
@@ -284,7 +284,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         assertThat(traceItems.get(1)).contains("0.0001").doesNotContain("E-"); // No E-notation
 
         // Scenario 16: Disable showNumbersWithoutFormatting and test again
-        mySettingsComponent = editorPage.getCurrentUserComponent()
+        mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
         mySettingsComponent.setShowNumbersWithoutFormatting(false).saveSettings();
