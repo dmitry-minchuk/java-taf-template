@@ -28,7 +28,7 @@ public class TestAdminEmail extends BaseTest {
     @TestCaseId("IPBQA-32798")
     @Description("Playwright - Admin UI 'Email' page - Email verification configuration test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAdminEmail() {
+    public void testAdminEmail() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 

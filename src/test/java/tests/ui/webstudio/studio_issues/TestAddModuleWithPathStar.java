@@ -19,7 +19,7 @@ public class TestAddModuleWithPathStar extends BaseTest {
     @TestCaseId("EPBDS-7790")
     @Description("Test module with asterisk path handling")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddModuleWithPathStar() {
+    public void testAddModuleWithPathStar() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "RulesEditor.TestRulesXMLContainsAsterisk.zip");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");

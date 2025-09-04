@@ -21,7 +21,7 @@ public class TestAddProperty extends BaseTest {
     @TestCaseId("EPBDS-6964")
     @Description("Exception occurs on adding property to the table with two columns - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddProperty() {
+    public void testAddProperty() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "StudioIssues_TestAddProperty.xlsx");
         EditorPage editorPage = new EditorPage();
         

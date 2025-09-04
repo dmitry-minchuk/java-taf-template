@@ -22,7 +22,7 @@ public class TestArrayDeclarationIsLink extends BaseTest {
     @TestCaseId("EPBDS-11230")
     @Description("Verify that array declarations are displayed as links with proper styling")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightArrayDeclarationIsLink() {
+    public void testArrayDeclarationIsLink() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestArrayDeclarationIsLink.xlsx");
 
         EditorPage editorPage = new EditorPage();

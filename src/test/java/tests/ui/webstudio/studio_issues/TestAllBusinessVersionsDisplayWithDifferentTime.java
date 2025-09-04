@@ -20,7 +20,7 @@ public class TestAllBusinessVersionsDisplayWithDifferentTime extends BaseTest {
     @TestCaseId("EPBDS-7708")
     @Description("BUG: Only 1 version of table is displayed in WebStudio, if table have 2 versions with Business dimension property that have different time, but not date")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAllBusinessVersionsDisplayWithDifferentTime() {
+    public void testAllBusinessVersionsDisplayWithDifferentTime() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAllBusinessVersionsDisplayWithDifferentTime.xlsx");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAllBusinessVersionsDisplayWithDifferentTime");

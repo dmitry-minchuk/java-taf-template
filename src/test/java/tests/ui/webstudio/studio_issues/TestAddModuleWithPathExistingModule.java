@@ -19,7 +19,7 @@ public class TestAddModuleWithPathExistingModule extends BaseTest {
     @TestCaseId("EPBDS-11048")
     @Description("BUG: Two modules with the same path can be created")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddModuleWithPathExistingModule() {
+    public void testAddModuleWithPathExistingModule() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
