@@ -32,19 +32,16 @@ public class UserSlidingRightMenuComponent extends BaseComponent {
     }
 
     public AdminPage navigateToMyProfile() {
-        closeAllMessages();
         select(MenuElements.MY_PROFILE);
         return new AdminPage();
     }
 
     public AdminPage navigateToMySettings() {
-        closeAllMessages();
         select(MenuElements.MY_SETTINGS);
         return new AdminPage();
     }
 
     public AdminPage navigateToAdministration() {
-        closeAllMessages();
         select(MenuElements.ADMINISTRATION);
         return new AdminPage();
     }
