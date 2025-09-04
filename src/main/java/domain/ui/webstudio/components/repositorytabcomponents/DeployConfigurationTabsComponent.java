@@ -55,7 +55,7 @@ public class DeployConfigurationTabsComponent extends BaseComponent {
 
     public DeployConfigurationTabsComponent addProject(String projectName, String revision) {
         addProjectButton.click();
-        projectsList.selectOption(projectName);
+        projectsList.selectByVisibleText(projectName);
         revisionAddButtonTemplate.format(revision.substring(0, 6)).click();
         return this;
     }

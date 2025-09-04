@@ -6,7 +6,6 @@ import configuration.driver.LocalDriverPool;
 import helpers.utils.TestDataUtil;
 import helpers.utils.WaitUtil;
 
-// Playwright version of ZipArchiveComponent for ZIP file upload project creation
 public class ZipArchiveComponent extends BaseComponent {
 
     private WebElement fileInputField;
@@ -44,12 +43,7 @@ public class ZipArchiveComponent extends BaseComponent {
     }
     
     private void setProjectName(String projectName) {
-        projectNameField.waitForVisible();
-        projectNameField.click();
-        projectNameField.press("Control+a");
-        projectNameField.press("Backspace");
-        projectNameField.press("Enter");
-        projectNameField.click();
+        projectNameField.clearByKeyCombination();
         projectNameField.fillSequentially(projectName);
     }
 }
