@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,9 +33,13 @@ public class EditorTreeFolderComponent extends BaseComponent {
     }
 
     public void expandFolder() {
-        if (expanderClosed.isVisible()) {
-            expanderClosed.click();
-        }
+        WaitUtil.waitForCondition(() ->{
+            if (expanderClosed.isVisible()) {
+                expanderClosed.click();
+                return true;
+            } else
+                return false;
+        }, 1000, 100);
     }
 
     public String getFolderName() {
