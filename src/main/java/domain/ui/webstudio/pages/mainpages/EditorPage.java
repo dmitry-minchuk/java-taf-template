@@ -1,7 +1,7 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import domain.ui.webstudio.components.TableComponent;
-import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.common.TableComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.AddModuleComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditTablePanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorMainContentProblemsPanelComponent;

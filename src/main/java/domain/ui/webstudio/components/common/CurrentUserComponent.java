@@ -1,4 +1,4 @@
-package domain.ui.webstudio.components;
+package domain.ui.webstudio.components.common;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
