@@ -35,7 +35,7 @@ public class TestPlaywrightAddProperty extends BaseTest {
         editorPage.getRightTableDetailsComponent()
                 .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
                 .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
-                .getSaveBtn().click();
+                .clickSaveBtn();
                 
         assertThat(editorPage.getRightTableDetailsComponent()
                 .isPropertySet(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))

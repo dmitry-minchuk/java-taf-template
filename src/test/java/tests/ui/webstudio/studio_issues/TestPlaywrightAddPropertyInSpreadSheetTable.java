@@ -34,7 +34,7 @@ public class TestPlaywrightAddPropertyInSpreadSheetTable extends BaseTest {
         editorPage.getRightTableDetailsComponent()
                 .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.CATEGORY.getValue())
                 .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")
-                .getSaveBtn().click();
+                .clickSaveBtn();
         assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(PlaywrightRightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")).isTrue();
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }
