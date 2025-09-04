@@ -33,7 +33,8 @@ public class OpenApiComponent extends BaseComponent {
     }
 
     public void setProjectName(String projectName) {
-        projectNameField.fill(projectName);
+        projectNameField.fill("");
+        projectNameField.fillSequentially(projectName);
     }
 
     public void createProject() {
