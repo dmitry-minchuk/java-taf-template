@@ -172,10 +172,6 @@ public class WebElement {
         LOGGER.info("Clearing {}", elementName);
         locator.isVisible();
         locator.clear();
-        if(!locator.textContent().isEmpty()) {
-            locator.press("Control+a");
-            locator.press("Backspace");
-        }
     }
     
     public void sendKeys(CharSequence... keysToSend) {
