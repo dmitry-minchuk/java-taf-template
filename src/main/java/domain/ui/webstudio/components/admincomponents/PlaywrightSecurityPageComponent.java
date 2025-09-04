@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightSecurityPageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightSecurityPageComponent extends CoreComponent {
 
     private PlaywrightWebElement singleUserModeRadio;
     private PlaywrightWebElement multiUserModeRadio;

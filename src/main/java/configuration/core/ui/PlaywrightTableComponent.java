@@ -5,7 +5,7 @@ import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
+public class PlaywrightTableComponent extends CoreComponent {
 
     private PlaywrightWebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
@@ -72,7 +72,7 @@ public class PlaywrightTableComponent extends PlaywrightBasePageComponent {
     }
 
     // Inner class for table row operations
-    public static class PlaywrightTableRowComponent extends PlaywrightBasePageComponent {
+    public static class PlaywrightTableRowComponent extends CoreComponent {
         List<PlaywrightWebElement> cells;
 
         public PlaywrightTableRowComponent() {

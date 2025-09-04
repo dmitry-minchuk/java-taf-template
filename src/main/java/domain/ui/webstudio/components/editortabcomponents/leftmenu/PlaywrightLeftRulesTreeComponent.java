@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class PlaywrightLeftRulesTreeComponent extends PlaywrightBasePageComponent {
+public class PlaywrightLeftRulesTreeComponent extends CoreComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRulesTreeComponent.class);
 

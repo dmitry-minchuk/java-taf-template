@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightTagsPageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightTagsPageComponent extends CoreComponent {
 
     private PlaywrightWebElement addTagBtn;
     private PlaywrightWebElement tagNameField;

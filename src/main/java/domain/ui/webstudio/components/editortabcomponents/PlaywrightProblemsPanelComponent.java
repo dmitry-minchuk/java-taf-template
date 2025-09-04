@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
@@ -8,7 +8,7 @@ import helpers.utils.WaitUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaywrightProblemsPanelComponent extends PlaywrightBasePageComponent {
+public class PlaywrightProblemsPanelComponent extends CoreComponent {
 
     private PlaywrightWebElement showProblemsLink;
     private PlaywrightWebElement hideProblemPanelLink;

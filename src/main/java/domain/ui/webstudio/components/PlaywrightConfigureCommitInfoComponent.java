@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import net.datafaker.Faker;
@@ -10,7 +10,7 @@ import net.datafaker.Faker;
  * This modal appears after project creation and needs to be filled or dismissed
  * Matches original ConfigureCommitInfoComponent functionality exactly
  */
-public class PlaywrightConfigureCommitInfoComponent extends PlaywrightBasePageComponent {
+public class PlaywrightConfigureCommitInfoComponent extends CoreComponent {
 
     private PlaywrightWebElement emailField;
     private PlaywrightWebElement firstNameField;

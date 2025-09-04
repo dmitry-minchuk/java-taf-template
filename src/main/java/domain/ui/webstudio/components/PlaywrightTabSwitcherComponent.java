@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
@@ -8,7 +8,7 @@ import domain.ui.webstudio.pages.mainpages.PlaywrightProxyBasePage;
 import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
 import lombok.Getter;
 
-public class PlaywrightTabSwitcherComponent extends PlaywrightBasePageComponent {
+public class PlaywrightTabSwitcherComponent extends CoreComponent {
 
     private PlaywrightWebElement tabTemplate;
 

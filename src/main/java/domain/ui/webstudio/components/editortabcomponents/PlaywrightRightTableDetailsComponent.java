@@ -1,13 +1,13 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 // Playwright version of RightTableDetailsComponent for property management
-public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComponent {
+public class PlaywrightRightTableDetailsComponent extends CoreComponent {
 
     private PlaywrightWebElement addPropertyLink;
     private PlaywrightWebElement propertyTypeSelector;

@@ -1,14 +1,13 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // Handles folder expansion and item selection within the rules tree
-public class PlaywrightTreeFolderComponent extends PlaywrightBasePageComponent {
+public class PlaywrightTreeFolderComponent extends CoreComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightTreeFolderComponent.class);
     

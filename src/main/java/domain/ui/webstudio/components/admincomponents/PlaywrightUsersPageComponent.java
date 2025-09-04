@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightUsersPageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightUsersPageComponent extends CoreComponent {
 
     private PlaywrightWebElement userTableBody;
     private PlaywrightWebElement userTableHeader;

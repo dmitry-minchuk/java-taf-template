@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightMessageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightMessageComponent extends CoreComponent {
 
     private PlaywrightWebElement message;
     private PlaywrightWebElement closeBtn;

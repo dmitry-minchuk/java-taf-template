@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightTableComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
@@ -8,7 +8,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class PlaywrightTestResultValidationComponent extends PlaywrightBasePageComponent {
+public class PlaywrightTestResultValidationComponent extends CoreComponent {
 
     private PlaywrightWebElement resultTableElement;
     private PlaywrightWebElement resultTableHeader;

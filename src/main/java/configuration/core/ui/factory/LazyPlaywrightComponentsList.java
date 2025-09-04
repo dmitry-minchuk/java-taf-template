@@ -1,12 +1,11 @@
 package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
@@ -18,7 +17,7 @@ import java.util.stream.Stream;
  * This class implements full List<T> interface but recalculates elements on every access,
  * ensuring that the list always reflects the current DOM state.
  */
-public class LazyPlaywrightComponentsList<T extends PlaywrightBasePageComponent> implements List<T> {
+public class LazyPlaywrightComponentsList<T extends CoreComponent> implements List<T> {
     
     private final Class<T> componentClass;
     private final Page page;

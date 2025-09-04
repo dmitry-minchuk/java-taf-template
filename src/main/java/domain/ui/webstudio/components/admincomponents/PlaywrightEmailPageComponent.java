@@ -1,11 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import com.microsoft.playwright.Page;
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightEmailPageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightEmailPageComponent extends CoreComponent {
     
     private PlaywrightWebElement emailVerificationCheckbox;
     private PlaywrightWebElement emailUrlField;
