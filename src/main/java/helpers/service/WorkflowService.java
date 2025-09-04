@@ -2,8 +2,8 @@ package helpers.service;
 
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.CreateNewProjectComponent;
-import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.common.CreateNewProjectComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.utils.StringUtil;

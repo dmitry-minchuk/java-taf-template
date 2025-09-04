@@ -7,7 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import org.testng.annotations.Test;

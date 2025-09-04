@@ -1,9 +1,9 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
-import domain.ui.webstudio.components.CreateNewProjectComponent;
-import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
+import domain.ui.webstudio.components.common.CreateNewProjectComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;

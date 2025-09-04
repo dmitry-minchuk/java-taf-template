@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.TableComponent;
+import domain.ui.webstudio.components.common.TableComponent;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
