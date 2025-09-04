@@ -44,9 +44,11 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                     WaitUtil.sleep(250);
                     viewFilterLink.click();
                     WaitUtil.sleep(250);
-                    filterOptionTemplate.format(filterOption.getValue()).click();
                 } catch (Exception ignored) {}
             }
+            try {
+                filterOptionTemplate.format(filterOption.getValue()).click();
+            } catch (Exception ignored) {}
         }
         return this;
     }
