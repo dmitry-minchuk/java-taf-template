@@ -1,27 +1,27 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
 import lombok.Getter;
 
-public class PlaywrightCreateNewProjectComponent extends CoreComponent {
+public class CreateNewProjectComponent extends CoreComponent {
 
     private PlaywrightExcelFilesComponent excelFilesComponent;
     private PlaywrightZipArchiveComponent zipArchiveComponent;
     private PlaywrightTemplateTabComponent templateTabComponent;
 
-    private PlaywrightWebElement tabTemplate;
+    private WebElement tabTemplate;
 
-    public PlaywrightCreateNewProjectComponent() {
+    public CreateNewProjectComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightCreateNewProjectComponent(PlaywrightWebElement rootLocator) {
+    public CreateNewProjectComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

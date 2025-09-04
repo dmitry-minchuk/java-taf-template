@@ -10,9 +10,9 @@ import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class PlaywrightWebElement {
+public class WebElement {
     
-    protected final static Logger LOGGER = LogManager.getLogger(PlaywrightWebElement.class);
+    protected final static Logger LOGGER = LogManager.getLogger(WebElement.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     private final int timeoutInMilliseconds;
     @Getter
@@ -23,9 +23,9 @@ public class PlaywrightWebElement {
     private final Locator locator;
     private final String elementName;
     @Getter
-    private final PlaywrightWebElement parentElement;
+    private final WebElement parentElement;
     
-    public PlaywrightWebElement(Page page, String selector) {
+    public WebElement(Page page, String selector) {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
@@ -34,7 +34,7 @@ public class PlaywrightWebElement {
         this.timeoutInMilliseconds = DEFAULT_TIMEOUT_MS;
     }
     
-    public PlaywrightWebElement(Page page, String selector, String elementName) {
+    public WebElement(Page page, String selector, String elementName) {
         this.page = page;
         this.selector = selector;
         this.locator = page.locator(selector);
@@ -43,7 +43,7 @@ public class PlaywrightWebElement {
         this.timeoutInMilliseconds = DEFAULT_TIMEOUT_MS;
     }
     
-    public PlaywrightWebElement(PlaywrightWebElement parent, String selector) {
+    public WebElement(WebElement parent, String selector) {
         this.page = parent.page;
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
@@ -52,7 +52,7 @@ public class PlaywrightWebElement {
         this.timeoutInMilliseconds = parent.timeoutInMilliseconds;
     }
     
-    public PlaywrightWebElement(PlaywrightWebElement parent, String selector, String elementName) {
+    public WebElement(WebElement parent, String selector, String elementName) {
         this.page = parent.page;
         this.selector = selector;
         this.locator = parent.locator.locator(selector);
@@ -152,12 +152,12 @@ public class PlaywrightWebElement {
     }
     
     // Dynamic locator formatting - Builder pattern implementation
-    public PlaywrightWebElement format(Object... args) {
+    public WebElement format(Object... args) {
         String formattedSelector = String.format(this.selector, args);
         if (this.parentElement != null) {
-            return new PlaywrightWebElement(this.parentElement, formattedSelector, this.elementName);
+            return new WebElement(this.parentElement, formattedSelector, this.elementName);
         }
-        return new PlaywrightWebElement(this.page, formattedSelector, this.elementName);
+        return new WebElement(this.page, formattedSelector, this.elementName);
     }
 
     // Utility methods
@@ -195,14 +195,14 @@ public class PlaywrightWebElement {
     
     // Explicit wait methods
     
-    public PlaywrightWebElement waitForVisible() {
+    public WebElement waitForVisible() {
         LOGGER.info("Waiting for {} to be visible", elementName);
         locator.waitFor(new Locator.WaitForOptions()
                 .setState(WaitForSelectorState.VISIBLE));
         return this;
     }
     
-    public PlaywrightWebElement waitForVisible(long timeoutInMillis) {
+    public WebElement waitForVisible(long timeoutInMillis) {
         LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInMillis);
         locator.waitFor(new Locator.WaitForOptions()
                 .setState(WaitForSelectorState.VISIBLE)
@@ -210,7 +210,7 @@ public class PlaywrightWebElement {
         return this;
     }
     
-    public PlaywrightWebElement waitForHidden() {
+    public WebElement waitForHidden() {
         LOGGER.info("Waiting for {} to be hidden", elementName);
         locator.waitFor(new Locator.WaitForOptions()
                 .setState(WaitForSelectorState.HIDDEN));
@@ -219,7 +219,7 @@ public class PlaywrightWebElement {
     
     // Interaction methods
     
-    public PlaywrightWebElement hover() {
+    public WebElement hover() {
         LOGGER.info("Hovering over {}", elementName);
         locator.hover();
         return this;

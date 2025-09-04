@@ -1,37 +1,37 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaywrightMySettingsPageComponent extends CoreComponent {
+public class MySettingsPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement showHeaderCheckbox;
-    private PlaywrightWebElement showFormulasCheckbox;
-    private PlaywrightWebElement defaultOrderDropdown;
-    private PlaywrightWebElement byExcelSheetOption;
-    private PlaywrightWebElement testsPerPageField;
-    private PlaywrightWebElement failuresOnlyCheckbox;
-    private PlaywrightWebElement compoundResultCheckbox;
-    private PlaywrightWebElement showNumbersWithoutFormattingCheckbox;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement resetBtn;
-    private PlaywrightWebElement cancelBtn;
-    private PlaywrightWebElement successNotification;
-    private PlaywrightWebElement errorNotification;
+    private WebElement showHeaderCheckbox;
+    private WebElement showFormulasCheckbox;
+    private WebElement defaultOrderDropdown;
+    private WebElement byExcelSheetOption;
+    private WebElement testsPerPageField;
+    private WebElement failuresOnlyCheckbox;
+    private WebElement compoundResultCheckbox;
+    private WebElement showNumbersWithoutFormattingCheckbox;
+    private WebElement saveBtn;
+    private WebElement resetBtn;
+    private WebElement cancelBtn;
+    private WebElement successNotification;
+    private WebElement errorNotification;
 
-    private final Map<String, PlaywrightWebElement> orderOptionMappings = new HashMap<>();
+    private final Map<String, WebElement> orderOptionMappings = new HashMap<>();
 
-    public PlaywrightMySettingsPageComponent() {
+    public MySettingsPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
         initializeOrderOptionMappings();
     }
 
-    public PlaywrightMySettingsPageComponent(PlaywrightWebElement rootLocator) {
+    public MySettingsPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
         initializeOrderOptionMappings();
@@ -57,7 +57,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         orderOptionMappings.put("by excel sheet", byExcelSheetOption);
     }
 
-    public PlaywrightMySettingsPageComponent setShowHeader(boolean show) {
+    public MySettingsPageComponent setShowHeader(boolean show) {
         if (show != showHeaderCheckbox.isSelected()) {
             showHeaderCheckbox.click();
         }
@@ -68,7 +68,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         return showHeaderCheckbox.isSelected();
     }
 
-    public PlaywrightMySettingsPageComponent setShowFormulas(boolean show) {
+    public MySettingsPageComponent setShowFormulas(boolean show) {
         if (show != showFormulasCheckbox.isSelected()) {
             showFormulasCheckbox.click();
         }
@@ -82,13 +82,13 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
     public void setDefaultOrder(String orderOption) {
         defaultOrderDropdown.click();
         
-        PlaywrightWebElement optionElement = getOrderOptionElement(orderOption);
+        WebElement optionElement = getOrderOptionElement(orderOption);
         if (optionElement != null) {
             optionElement.click();
         }
     }
 
-    private PlaywrightWebElement getOrderOptionElement(String orderOption) {
+    private WebElement getOrderOptionElement(String orderOption) {
         return orderOptionMappings.get(orderOption.toLowerCase());
     }
 
@@ -100,7 +100,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         return defaultOrderDropdown.getAttribute("title");
     }
 
-    public PlaywrightMySettingsPageComponent setTestsPerPage(int testsPerPage) {
+    public MySettingsPageComponent setTestsPerPage(int testsPerPage) {
         testsPerPageField.fill(String.valueOf(testsPerPage));
         return this;
     }
@@ -110,7 +110,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         return value != null && !value.isEmpty() ? Integer.parseInt(value) : 5;
     }
 
-    public PlaywrightMySettingsPageComponent setFailuresOnly(boolean failuresOnly) {
+    public MySettingsPageComponent setFailuresOnly(boolean failuresOnly) {
         if (failuresOnly != failuresOnlyCheckbox.isSelected()) {
             failuresOnlyCheckbox.click();
         }
@@ -121,7 +121,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         return failuresOnlyCheckbox.isSelected();
     }
 
-    public PlaywrightMySettingsPageComponent setCompoundResult(boolean compoundResult) {
+    public MySettingsPageComponent setCompoundResult(boolean compoundResult) {
         if (compoundResult != compoundResultCheckbox.isSelected()) {
             compoundResultCheckbox.click();
         }
@@ -132,7 +132,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         return compoundResultCheckbox.isSelected();
     }
 
-    public PlaywrightMySettingsPageComponent setShowNumbersWithoutFormatting(boolean show) {
+    public MySettingsPageComponent setShowNumbersWithoutFormatting(boolean show) {
         if (show != showNumbersWithoutFormattingCheckbox.isSelected()) {
             showNumbersWithoutFormattingCheckbox.click();
         }
@@ -143,7 +143,7 @@ public class PlaywrightMySettingsPageComponent extends CoreComponent {
         return showNumbersWithoutFormattingCheckbox.isSelected();
     }
 
-    public PlaywrightMySettingsPageComponent saveSettings() {
+    public MySettingsPageComponent saveSettings() {
         saveBtn.click();
         return this;
     }

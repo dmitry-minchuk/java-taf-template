@@ -1,22 +1,22 @@
 package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
 public class PlaywrightTemplateTabComponent extends CoreComponent {
 
-    private PlaywrightWebElement projectTemplate;
-    private PlaywrightWebElement projectNameField;
-    private PlaywrightWebElement createProjectBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement projectTemplate;
+    private WebElement projectNameField;
+    private WebElement createProjectBtn;
+    private WebElement cancelBtn;
 
     public PlaywrightTemplateTabComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTemplateTabComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightTemplateTabComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

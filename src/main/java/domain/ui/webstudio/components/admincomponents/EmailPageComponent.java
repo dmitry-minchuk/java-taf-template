@@ -1,24 +1,24 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightEmailPageComponent extends CoreComponent {
+public class EmailPageComponent extends CoreComponent {
     
-    private PlaywrightWebElement emailVerificationCheckbox;
-    private PlaywrightWebElement emailUrlField;
-    private PlaywrightWebElement emailUsernameField;
-    private PlaywrightWebElement emailPasswordField;
-    private PlaywrightWebElement applyBtn;
-    private PlaywrightWebElement showPasswordBtn;
+    private WebElement emailVerificationCheckbox;
+    private WebElement emailUrlField;
+    private WebElement emailUsernameField;
+    private WebElement emailPasswordField;
+    private WebElement applyBtn;
+    private WebElement showPasswordBtn;
 
-    public PlaywrightEmailPageComponent() {
+    public EmailPageComponent() {
         super(LocalDriverPool.getPage());
         initializeEmailComponents();
     }
     
-    public PlaywrightEmailPageComponent(PlaywrightWebElement rootLocator) {
+    public EmailPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeEmailComponents();
     }

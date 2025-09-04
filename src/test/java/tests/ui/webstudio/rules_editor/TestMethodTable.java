@@ -6,7 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.ui.webstudio.components.TableComponent;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -30,7 +30,7 @@ public class TestMethodTable extends BaseTest {
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "TestMethodTable");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Method")
                 .selectItemInFolder("Method", "getGreetings");
 
@@ -106,7 +106,7 @@ public class TestMethodTable extends BaseTest {
         
         // Verify tree state after removal
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Method");
         editorPage.getLeftRulesTreeComponent().checkRulesTableAbsent("Method", "getGreetings2");
         editorPage.getLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");

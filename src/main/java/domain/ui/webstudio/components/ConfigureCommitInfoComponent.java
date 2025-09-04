@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import net.datafaker.Faker;
 
@@ -10,22 +10,22 @@ import net.datafaker.Faker;
  * This modal appears after project creation and needs to be filled or dismissed
  * Matches original ConfigureCommitInfoComponent functionality exactly
  */
-public class PlaywrightConfigureCommitInfoComponent extends CoreComponent {
+public class ConfigureCommitInfoComponent extends CoreComponent {
 
-    private PlaywrightWebElement emailField;
-    private PlaywrightWebElement firstNameField;
-    private PlaywrightWebElement lastNameField;
-    private PlaywrightWebElement displayNameDropdown;
-    private PlaywrightWebElement otherDisplayNameField;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement emailField;
+    private WebElement firstNameField;
+    private WebElement lastNameField;
+    private WebElement displayNameDropdown;
+    private WebElement otherDisplayNameField;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
-    public PlaywrightConfigureCommitInfoComponent() {
+    public ConfigureCommitInfoComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightConfigureCommitInfoComponent(PlaywrightWebElement rootLocator) {
+    public ConfigureCommitInfoComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

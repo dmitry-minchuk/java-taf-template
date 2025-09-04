@@ -1,31 +1,31 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightUsersPageComponent extends CoreComponent {
+public class UsersPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement userTableBody;
-    private PlaywrightWebElement userTableHeader;
-    private PlaywrightWebElement addUserBtn;
-    private PlaywrightWebElement usernameField;
-    private PlaywrightWebElement emailField;
-    private PlaywrightWebElement firstNameField;
-    private PlaywrightWebElement lastNameField;
-    private PlaywrightWebElement passwordField;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
-    private PlaywrightWebElement displayNamePatternField;
-    private PlaywrightWebElement displayNameField;
-    private PlaywrightWebElement administratorsGroupCheckbox;
+    private WebElement userTableBody;
+    private WebElement userTableHeader;
+    private WebElement addUserBtn;
+    private WebElement usernameField;
+    private WebElement emailField;
+    private WebElement firstNameField;
+    private WebElement lastNameField;
+    private WebElement passwordField;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
+    private WebElement displayNamePatternField;
+    private WebElement displayNameField;
+    private WebElement administratorsGroupCheckbox;
 
-    public PlaywrightUsersPageComponent() {
+    public UsersPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightUsersPageComponent(PlaywrightWebElement rootLocator) {
+    public UsersPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -39,13 +39,13 @@ public class PlaywrightUsersPageComponent extends CoreComponent {
         administratorsGroupCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'admin') or ./following-sibling::*[contains(text(),'Administrator')])]", "administratorsGroupCheckbox");
 
         // Right panel not belonging to users page html hierarchy
-        usernameField = new PlaywrightWebElement(page, "xpath=//input[@id='username']", "usernameField");
-        emailField = new PlaywrightWebElement(page, "xpath=//input[@id='email']", "emailField");
-        firstNameField = new PlaywrightWebElement(page, "xpath=//input[@id='firstName']", "firstNameField");
-        lastNameField = new PlaywrightWebElement(page, "xpath=//input[@id='lastName']", "lastNameField");
-        passwordField = new PlaywrightWebElement(page, "xpath=//input[@id='password' or @type='password']", "passwordField");
-        saveBtn = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = new PlaywrightWebElement(page, "xpath=//button[./span[text()='Cancel']]", "cancelBtn");
+        usernameField = new WebElement(page, "xpath=//input[@id='username']", "usernameField");
+        emailField = new WebElement(page, "xpath=//input[@id='email']", "emailField");
+        firstNameField = new WebElement(page, "xpath=//input[@id='firstName']", "firstNameField");
+        lastNameField = new WebElement(page, "xpath=//input[@id='lastName']", "lastNameField");
+        passwordField = new WebElement(page, "xpath=//input[@id='password' or @type='password']", "passwordField");
+        saveBtn = new WebElement(page, "xpath=//button[./span[text()='Save'] or @type='submit']", "saveBtn");
+        cancelBtn = new WebElement(page, "xpath=//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void clickAddUser() {
@@ -120,7 +120,7 @@ public class PlaywrightUsersPageComponent extends CoreComponent {
 
     public void setDisplayNamePattern(String pattern) {
         displayNamePatternField.click();
-        PlaywrightWebElement option = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'" + pattern + "')]", "displayNamePatternOption");
+        WebElement option = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'" + pattern + "')]", "displayNamePatternOption");
         option.click();
     }
 
@@ -186,30 +186,30 @@ public class PlaywrightUsersPageComponent extends CoreComponent {
     }
 
     public String getSpecificUserEmail(String username) {
-        PlaywrightWebElement emailElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[3]", username), "userEmail");
+        WebElement emailElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[3]", username), "userEmail");
         return emailElement.getText();
     }
     
     private String getFullNameForUser(String username) {
-        PlaywrightWebElement fullNameElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[2]", username), "userFullName");
+        WebElement fullNameElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[2]", username), "userFullName");
         return fullNameElement.getText();
     }
 
     public boolean isUserPresent(String username) {
         // Using generic table row locator - may need refinement with actual UI locators
-        PlaywrightWebElement userRow = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]", "userRow");
+        WebElement userRow = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]", "userRow");
         return userRow.isVisible();
     }
 
     public void editUser(String username) {
         // Returns empty implementation - locators need to be found in openl-tests
-        PlaywrightWebElement editButton = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]//button[contains(@class,'edit')]", "editUserButton");
+        WebElement editButton = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]//button[contains(@class,'edit')]", "editUserButton");
         editButton.click();
     }
 
     public void deleteUser(String username) {
         // Returns empty implementation - locators need to be found in openl-tests  
-        PlaywrightWebElement deleteButton = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]//button[contains(@class,'delete')]", "deleteUserButton");
+        WebElement deleteButton = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]//button[contains(@class,'delete')]", "deleteUserButton");
         deleteButton.click();
     }
 

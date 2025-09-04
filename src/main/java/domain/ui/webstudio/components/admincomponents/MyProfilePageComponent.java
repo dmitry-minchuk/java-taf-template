@@ -1,31 +1,31 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightMyProfilePageComponent extends CoreComponent {
+public class MyProfilePageComponent extends CoreComponent {
 
-    private PlaywrightWebElement usernameField;
-    private PlaywrightWebElement emailField;
-    private PlaywrightWebElement resendVerificationEmailBtn;
-    private PlaywrightWebElement firstNameField;
-    private PlaywrightWebElement lastNameField;
-    private PlaywrightWebElement displayNameField;
-    private PlaywrightWebElement currentPasswordField;
-    private PlaywrightWebElement newPasswordField;
-    private PlaywrightWebElement confirmPasswordField;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement successNotification;
-    private PlaywrightWebElement errorNotification;
-    private PlaywrightWebElement displayNamePatternDropdown;
+    private WebElement usernameField;
+    private WebElement emailField;
+    private WebElement resendVerificationEmailBtn;
+    private WebElement firstNameField;
+    private WebElement lastNameField;
+    private WebElement displayNameField;
+    private WebElement currentPasswordField;
+    private WebElement newPasswordField;
+    private WebElement confirmPasswordField;
+    private WebElement saveBtn;
+    private WebElement successNotification;
+    private WebElement errorNotification;
+    private WebElement displayNamePatternDropdown;
 
-    public PlaywrightMyProfilePageComponent() {
+    public MyProfilePageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightMyProfilePageComponent(PlaywrightWebElement rootLocator) {
+    public MyProfilePageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -50,7 +50,7 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         return usernameField.getAttribute("value");
     }
 
-    public PlaywrightMyProfilePageComponent setEmail(String email) {
+    public MyProfilePageComponent setEmail(String email) {
         emailField.fill(email);
         return this;
     }
@@ -67,7 +67,7 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         return resendVerificationEmailBtn.isVisible();
     }
 
-    public PlaywrightMyProfilePageComponent setFirstName(String firstName) {
+    public MyProfilePageComponent setFirstName(String firstName) {
         firstNameField.fill(firstName);
         return this;
     }
@@ -76,7 +76,7 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         return firstNameField.getAttribute("value");
     }
 
-    public PlaywrightMyProfilePageComponent setLastName(String lastName) {
+    public MyProfilePageComponent setLastName(String lastName) {
         lastNameField.fill(lastName);
         return this;
     }
@@ -85,7 +85,7 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         return lastNameField.getAttribute("value");
     }
 
-    public PlaywrightMyProfilePageComponent setDisplayName(String displayName) {
+    public MyProfilePageComponent setDisplayName(String displayName) {
         displayNameField.fill(displayName);
         return this;
     }
@@ -99,17 +99,17 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         setLastName(lastName);
     }
 
-    public PlaywrightMyProfilePageComponent setCurrentPassword(String currentPassword) {
+    public MyProfilePageComponent setCurrentPassword(String currentPassword) {
         currentPasswordField.fill(currentPassword);
         return this;
     }
 
-    public PlaywrightMyProfilePageComponent setNewPassword(String newPassword) {
+    public MyProfilePageComponent setNewPassword(String newPassword) {
         newPasswordField.fill(newPassword);
         return this;
     }
 
-    public PlaywrightMyProfilePageComponent setConfirmPassword(String confirmPassword) {
+    public MyProfilePageComponent setConfirmPassword(String confirmPassword) {
         confirmPasswordField.fill(confirmPassword);
         return this;
     }
@@ -124,7 +124,7 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         changePassword(currentPassword, newPassword, newPassword);
     }
 
-    public PlaywrightMyProfilePageComponent saveProfile() {
+    public MyProfilePageComponent saveProfile() {
         saveBtn.click();
         return this;
     }
@@ -195,9 +195,9 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
         return emailMatches && firstNameMatches && lastNameMatches && displayNameMatches;
     }
 
-    public PlaywrightMyProfilePageComponent setDisplayNamePattern(String pattern) {
+    public MyProfilePageComponent setDisplayNamePattern(String pattern) {
         displayNamePatternDropdown.click();
-        PlaywrightWebElement option = new PlaywrightWebElement(page, String.format("xpath=.//div[@class='rc-virtual-list']//div[contains(@class,'ant-select-item-option') and @title='%s']", pattern), "displayNamePatternOption");
+        WebElement option = new WebElement(page, String.format("xpath=.//div[@class='rc-virtual-list']//div[contains(@class,'ant-select-item-option') and @title='%s']", pattern), "displayNamePatternOption");
         option.click();
         return this;
     }

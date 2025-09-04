@@ -2,7 +2,7 @@ package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -21,14 +21,14 @@ public class LazyComponentsList<T extends CoreComponent> implements List<T> {
     
     private final Class<T> componentClass;
     private final Page page;
-    private final PlaywrightWebElement parentElement;
+    private final WebElement parentElement;
     private final String selector;
     private final String baseName;
     
     public LazyComponentsList(
             Class<T> componentClass,
             Page page,
-            PlaywrightWebElement parentElement,
+            WebElement parentElement,
             String selector,
             String baseName) {
         this.componentClass = componentClass;
@@ -41,7 +41,7 @@ public class LazyComponentsList<T extends CoreComponent> implements List<T> {
     public LazyComponentsList(
             Class<T> componentClass,
             Page page,
-            PlaywrightWebElement parentElement,
+            WebElement parentElement,
             String selector) {
         this(componentClass, page, parentElement, selector, null);
     }

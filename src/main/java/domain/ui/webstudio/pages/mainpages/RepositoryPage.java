@@ -1,16 +1,16 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import configuration.core.ui.PlaywrightWebElement;
-import domain.ui.webstudio.components.PlaywrightConfigureCommitInfoComponent;
-import domain.ui.webstudio.components.PlaywrightCreateNewProjectComponent;
-import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
+import configuration.core.ui.WebElement;
+import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
+import domain.ui.webstudio.components.CreateNewProjectComponent;
+import domain.ui.webstudio.components.TabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightLeftRepositoryTreeComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentButtonsPanelComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightRepositoryContentTabPropertiesComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.PlaywrightDeployConfigurationTabsComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.LeftRepositoryTreeComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.DeployConfigurationTabsComponent;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,21 +20,21 @@ public class RepositoryPage extends BasePage {
 
     private static final Logger LOGGER = LogManager.getLogger(RepositoryPage.class);
 
-    private PlaywrightTabSwitcherComponent tabSwitcherComponent;
+    private TabSwitcherComponent tabSwitcherComponent;
     // top menu elements:
-    private PlaywrightWebElement refreshBtn;
-    private PlaywrightWebElement createProjectLink;
-    private PlaywrightWebElement createDeployConfigBtn;
+    private WebElement refreshBtn;
+    private WebElement createProjectLink;
+    private WebElement createDeployConfigBtn;
     // createDeployConfigBtn-related elements (I did not create a component for that):
-    private PlaywrightWebElement configNameField;
-    private PlaywrightWebElement createBtn;
+    private WebElement configNameField;
+    private WebElement createBtn;
     // other components:
-    private PlaywrightCreateNewProjectComponent createNewProjectComponent;
-    private PlaywrightConfigureCommitInfoComponent configureCommitInfoComponent;
-    private PlaywrightLeftRepositoryTreeComponent leftRepositoryTreeComponent;
-    private PlaywrightRepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
-    private PlaywrightRepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
-    private PlaywrightDeployConfigurationTabsComponent deployConfigurationTabsComponent;
+    private CreateNewProjectComponent createNewProjectComponent;
+    private ConfigureCommitInfoComponent configureCommitInfoComponent;
+    private LeftRepositoryTreeComponent leftRepositoryTreeComponent;
+    private RepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
+    private RepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
+    private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
 
     public RepositoryPage() {
         super();
@@ -42,22 +42,22 @@ public class RepositoryPage extends BasePage {
     }
 
     private void initializeComponents() {
-        createProjectLink = new PlaywrightWebElement(page, "xpath=//div[@id='top']//a[contains(text(), 'Create Project')]", "createProjectLink");
-        refreshBtn = new PlaywrightWebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
-        createDeployConfigBtn = new PlaywrightWebElement(page, "xpath=//a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
-        configNameField = new PlaywrightWebElement(page, "xpath=//input[@id='newDProjectForm:projectName']", "configNameFieldLocator");
-        createBtn = new PlaywrightWebElement(page, "xpath=//input[@id='newDProjectForm:createBtn']", "createBtnLocator");
+        createProjectLink = new WebElement(page, "xpath=//div[@id='top']//a[contains(text(), 'Create Project')]", "createProjectLink");
+        refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
+        createDeployConfigBtn = new WebElement(page, "xpath=//a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
+        configNameField = new WebElement(page, "xpath=//input[@id='newDProjectForm:projectName']", "configNameFieldLocator");
+        createBtn = new WebElement(page, "xpath=//input[@id='newDProjectForm:createBtn']", "createBtnLocator");
 
-        createNewProjectComponent = createScopedComponent(PlaywrightCreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
-        tabSwitcherComponent = createScopedComponent(PlaywrightTabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
-        configureCommitInfoComponent = createScopedComponent(PlaywrightConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
-        leftRepositoryTreeComponent = createScopedComponent(PlaywrightLeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
-        repositoryContentButtonsPanelComponent = createScopedComponent(PlaywrightRepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
-        repositoryContentTabPropertiesComponent = createScopedComponent(PlaywrightRepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
-        deployConfigurationTabsComponent = createScopedComponent(PlaywrightDeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
+        createNewProjectComponent = createScopedComponent(CreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
+        tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
+        configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
+        leftRepositoryTreeComponent = createScopedComponent(LeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
+        repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
+        repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
+        deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
     }
 
-    public void createProject(PlaywrightCreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
+    public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
         createProjectLink.click();
         switch (projectType) {
             case EXCEL_FILES:
@@ -76,7 +76,7 @@ public class RepositoryPage extends BasePage {
                 throw new IllegalArgumentException("Unsupported project type: " + projectType);
         }
 
-        PlaywrightWebElement modalShade = new PlaywrightWebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
+        WebElement modalShade = new WebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
         if(modalShade.isVisible(3000))
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
         refreshBtn.click();
@@ -87,7 +87,7 @@ public class RepositoryPage extends BasePage {
     }
 
     public void createProjectFromTemplate(String projectName, String templateName) {
-        createProject(PlaywrightCreateNewProjectComponent.TabName.TEMPLATE, projectName, templateName);
+        createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, templateName);
     }
 
     public void createDeployConfiguration(String configName) {

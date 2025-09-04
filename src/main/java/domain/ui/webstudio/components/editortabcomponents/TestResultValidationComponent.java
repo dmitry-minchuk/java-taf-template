@@ -1,31 +1,31 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
+import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.TableComponent;
-import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
 import java.util.List;
 
-public class PlaywrightTestResultValidationComponent extends CoreComponent {
+public class TestResultValidationComponent extends CoreComponent {
 
-    private PlaywrightWebElement resultTableElement;
-    private PlaywrightWebElement resultTableHeader;
+    private WebElement resultTableElement;
+    private WebElement resultTableHeader;
     @Getter
     private TableComponent resultTable;
     
     // Test result status element lists
-    private List<PlaywrightWebElement> caseErrorElementsList;
-    private List<PlaywrightWebElement> caseSuccessElementsList;
-    private List<PlaywrightWebElement> testResultRowElementsList;
+    private List<WebElement> caseErrorElementsList;
+    private List<WebElement> caseSuccessElementsList;
+    private List<WebElement> testResultRowElementsList;
 
-    public PlaywrightTestResultValidationComponent() {
+    public TestResultValidationComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTestResultValidationComponent(PlaywrightWebElement rootLocator) {
+    public TestResultValidationComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

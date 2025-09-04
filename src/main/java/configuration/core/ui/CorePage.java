@@ -65,7 +65,7 @@ public abstract class CorePage implements ComponentFactory {
 
     //Creates a scoped child component from an existing element.
     @Override
-    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
         return ComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
@@ -82,12 +82,12 @@ public abstract class CorePage implements ComponentFactory {
     }
     
     //Finds list of elements on page using lazy initialization.
-    public List<PlaywrightWebElement> createElementList(String selector, String baseName) {
+    public List<WebElement> createElementList(String selector, String baseName) {
         return new LazyElementsList(page, null, selector, baseName);
     }
     
     //Finds list of elements on page using lazy initialization.
-    public List<PlaywrightWebElement> createElementList(String selector) {
+    public List<WebElement> createElementList(String selector) {
         return new LazyElementsList(page, null, selector);
     }
 }

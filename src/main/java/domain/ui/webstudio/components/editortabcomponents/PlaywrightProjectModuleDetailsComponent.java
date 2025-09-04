@@ -1,23 +1,23 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
 public class PlaywrightProjectModuleDetailsComponent extends CoreComponent {
 
-    private PlaywrightWebElement moduleDetailsPanel;
-    private PlaywrightWebElement moduleNameHeader;
-    private PlaywrightWebElement modulePathHeader;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement moduleDetailsPanel;
+    private WebElement moduleNameHeader;
+    private WebElement modulePathHeader;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
     public PlaywrightProjectModuleDetailsComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightProjectModuleDetailsComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightProjectModuleDetailsComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

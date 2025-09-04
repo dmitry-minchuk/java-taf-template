@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -10,20 +10,20 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class PlaywrightLeftRulesTreeComponent extends CoreComponent {
+public class LeftRulesTreeComponent extends CoreComponent {
 
-    private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRulesTreeComponent.class);
+    private static final Logger LOGGER = LogManager.getLogger(LeftRulesTreeComponent.class);
 
-    private PlaywrightWebElement viewFilterLink;
-    private PlaywrightWebElement selectedTreeItem;
-    private PlaywrightWebElement filterOptionTemplate;
+    private WebElement viewFilterLink;
+    private WebElement selectedTreeItem;
+    private WebElement filterOptionTemplate;
 
-    public PlaywrightLeftRulesTreeComponent() {
+    public LeftRulesTreeComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightLeftRulesTreeComponent(PlaywrightWebElement rootLocator) {
+    public LeftRulesTreeComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -34,7 +34,7 @@ public class PlaywrightLeftRulesTreeComponent extends CoreComponent {
         filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
     }
 
-    public PlaywrightLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
+    public LeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
             while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(200)) {
                 WaitUtil.sleep(250);
@@ -48,13 +48,13 @@ public class PlaywrightLeftRulesTreeComponent extends CoreComponent {
         return this;
     }
 
-    public PlaywrightLeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
+    public LeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
         PlaywrightTreeFolderComponent folder = findFolderInTree(folderName);
         folder.selectItem(itemName);
         return this;
     }
 
-    public PlaywrightLeftRulesTreeComponent expandFolderInTree(String folderName) {
+    public LeftRulesTreeComponent expandFolderInTree(String folderName) {
         PlaywrightTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;
@@ -124,8 +124,8 @@ public class PlaywrightLeftRulesTreeComponent extends CoreComponent {
             int folderCount = page.locator("xpath=" + selector).count();
             for (int i = 0; i < folderCount; i++) {
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
-                PlaywrightWebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
-                PlaywrightWebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
+                WebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
+                WebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
                 PlaywrightTreeFolderComponent folder = createScopedComponent(PlaywrightTreeFolderComponent.class, indexedElement);
                 if(folder.isVisible())
                     folders.add(folder);

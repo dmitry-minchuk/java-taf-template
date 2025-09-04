@@ -1,23 +1,23 @@
 package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.TestDataUtil;
 
 public class PlaywrightExcelFilesComponent extends CoreComponent {
 
-    private PlaywrightWebElement fileInputField;
-    private PlaywrightWebElement projectNameField;
-    private PlaywrightWebElement createProjectBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement fileInputField;
+    private WebElement projectNameField;
+    private WebElement createProjectBtn;
+    private WebElement cancelBtn;
 
     public PlaywrightExcelFilesComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightExcelFilesComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightExcelFilesComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

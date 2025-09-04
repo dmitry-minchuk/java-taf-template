@@ -1,23 +1,23 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.BasePage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import lombok.Getter;
 
-public class PlaywrightTabSwitcherComponent extends CoreComponent {
+public class TabSwitcherComponent extends CoreComponent {
 
-    private PlaywrightWebElement tabTemplate;
+    private WebElement tabTemplate;
 
-    public PlaywrightTabSwitcherComponent() {
+    public TabSwitcherComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTabSwitcherComponent(PlaywrightWebElement rootLocator) {
+    public TabSwitcherComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

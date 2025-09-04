@@ -1,25 +1,25 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
 @Getter
-public class PlaywrightAddModuleComponent extends CoreComponent {
+public class AddModuleComponent extends CoreComponent {
 
-    private PlaywrightWebElement moduleNameField;
-    private PlaywrightWebElement modulePathField;
-    private PlaywrightWebElement moduleSaveBtn;
-    private PlaywrightWebElement moduleCancelBtn;
-    private PlaywrightWebElement commonProperty;
+    private WebElement moduleNameField;
+    private WebElement modulePathField;
+    private WebElement moduleSaveBtn;
+    private WebElement moduleCancelBtn;
+    private WebElement commonProperty;
 
-    public PlaywrightAddModuleComponent() {
+    public AddModuleComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightAddModuleComponent(PlaywrightWebElement rootLocator) {
+    public AddModuleComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

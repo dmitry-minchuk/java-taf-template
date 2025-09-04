@@ -1,27 +1,27 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightNotificationPageComponent extends CoreComponent {
+public class NotificationPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement enableNotificationsCheckbox;
-    private PlaywrightWebElement emailNotificationsCheckbox;
-    private PlaywrightWebElement browserNotificationsCheckbox;
-    private PlaywrightWebElement systemNotificationsCheckbox;
-    private PlaywrightWebElement deploymentNotificationsCheckbox;
-    private PlaywrightWebElement buildNotificationsCheckbox;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement resetBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement enableNotificationsCheckbox;
+    private WebElement emailNotificationsCheckbox;
+    private WebElement browserNotificationsCheckbox;
+    private WebElement systemNotificationsCheckbox;
+    private WebElement deploymentNotificationsCheckbox;
+    private WebElement buildNotificationsCheckbox;
+    private WebElement saveBtn;
+    private WebElement resetBtn;
+    private WebElement cancelBtn;
 
-    public PlaywrightNotificationPageComponent() {
+    public NotificationPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightNotificationPageComponent(PlaywrightWebElement rootLocator) {
+    public NotificationPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

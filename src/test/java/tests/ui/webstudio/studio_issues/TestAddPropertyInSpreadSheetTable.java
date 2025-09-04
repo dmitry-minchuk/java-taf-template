@@ -6,8 +6,8 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
@@ -28,14 +28,14 @@ public class TestAddPropertyInSpreadSheetTable extends BaseTest {
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddPropertyInSpreadSheetTable");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "SpreadsheetTable");
         editorPage.getRightTableDetailsComponent()
-                .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.CATEGORY.getValue())
-                .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")
+                .addProperty(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue())
+                .setProperty(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")
                 .clickSaveBtn();
-        assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(PlaywrightRightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")).isTrue();
+        assertThat(editorPage.getRightTableDetailsComponent().isPropertySet(RightTableDetailsComponent.DropdownOptions.CATEGORY.getValue(), "newCategory")).isTrue();
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }
 }

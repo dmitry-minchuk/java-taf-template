@@ -3,7 +3,7 @@ package configuration.core.ui.factory;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +38,9 @@ public final class ListFactory {
     /**
      * Creates list of PlaywrightWebElements from selector.
      */
-    public static List<PlaywrightWebElement> createElementsList(
+    public static List<WebElement> createElementsList(
             Page page, 
-            PlaywrightWebElement parentElement,
+            WebElement parentElement,
             String selector, 
             String baseName) {
         
@@ -59,7 +59,7 @@ public final class ListFactory {
         int directCount = page.locator(selector).count();
         logger.info("[DEBUG] direct page.locator(selector).count() returned: {}", directCount);
         
-        List<PlaywrightWebElement> elements = new ArrayList<>();
+        List<WebElement> elements = new ArrayList<>();
         
         for (int i = 0; i < count; i++) {
             String elementName = (baseName != null) ? baseName + "_" + i : "Element_" + i;
@@ -68,9 +68,9 @@ public final class ListFactory {
             String indexedSelector = createIndexedSelector(selector, i);
             logger.info("[DEBUG] Creating element {}: indexedSelector='{}', elementName='{}'", i, indexedSelector, elementName);
             
-            PlaywrightWebElement element = (parentElement != null) ?
-                new PlaywrightWebElement(parentElement, indexedSelector, elementName) :
-                new PlaywrightWebElement(page, indexedSelector, elementName);
+            WebElement element = (parentElement != null) ?
+                new WebElement(parentElement, indexedSelector, elementName) :
+                new WebElement(page, indexedSelector, elementName);
                 
             elements.add(element);
         }
@@ -82,9 +82,9 @@ public final class ListFactory {
     /**
      * Creates list of PlaywrightWebElements from selector.
      */
-    public static List<PlaywrightWebElement> createElementsList(
+    public static List<WebElement> createElementsList(
             Page page, 
-            PlaywrightWebElement parentElement,
+            WebElement parentElement,
             String selector) {
         return createElementsList(page, parentElement, selector, null);
     }
@@ -95,7 +95,7 @@ public final class ListFactory {
     public static <T extends CoreComponent> List<T> createComponentsList(
             Class<T> componentClass,
             Page page, 
-            PlaywrightWebElement parentElement,
+            WebElement parentElement,
             String selector, 
             String baseName) {
         
@@ -113,12 +113,12 @@ public final class ListFactory {
             // Create indexed selector for each component (supports both XPath and CSS)
             String indexedSelector = createIndexedSelector(selector, i);
             
-            PlaywrightWebElement rootElement = (parentElement != null) ?
-                new PlaywrightWebElement(parentElement, indexedSelector, componentName) :
-                new PlaywrightWebElement(page, indexedSelector, componentName);
+            WebElement rootElement = (parentElement != null) ?
+                new WebElement(parentElement, indexedSelector, componentName) :
+                new WebElement(page, indexedSelector, componentName);
                 
             try {
-                T component = componentClass.getConstructor(PlaywrightWebElement.class).newInstance(rootElement);
+                T component = componentClass.getConstructor(WebElement.class).newInstance(rootElement);
                 components.add(component);
             } catch (Exception e) {
                 throw new RuntimeException(
@@ -136,7 +136,7 @@ public final class ListFactory {
     public static <T extends CoreComponent> List<T> createComponentsList(
             Class<T> componentClass,
             Page page, 
-            PlaywrightWebElement parentElement,
+            WebElement parentElement,
             String selector) {
         return createComponentsList(componentClass, page, parentElement, selector, null);
     }

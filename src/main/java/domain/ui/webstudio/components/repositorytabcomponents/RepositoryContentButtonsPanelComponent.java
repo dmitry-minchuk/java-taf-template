@@ -1,29 +1,29 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightRepositoryContentButtonsPanelComponent extends CoreComponent {
+public class RepositoryContentButtonsPanelComponent extends CoreComponent {
 
-    private PlaywrightWebElement closeBtn;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement copyBtn;
-    private PlaywrightWebElement deleteBtn;
-    private PlaywrightWebElement deployBtn;
-    private PlaywrightWebElement openBtn;
-    private PlaywrightWebElement openRevisionBtn;
-    private PlaywrightWebElement compareBtn;
-    private PlaywrightWebElement addFolderBtn;
-    private PlaywrightWebElement uploadFileBtn;
-    private PlaywrightWebElement exportBtn;
+    private WebElement closeBtn;
+    private WebElement saveBtn;
+    private WebElement copyBtn;
+    private WebElement deleteBtn;
+    private WebElement deployBtn;
+    private WebElement openBtn;
+    private WebElement openRevisionBtn;
+    private WebElement compareBtn;
+    private WebElement addFolderBtn;
+    private WebElement uploadFileBtn;
+    private WebElement exportBtn;
 
-    public PlaywrightRepositoryContentButtonsPanelComponent() {
+    public RepositoryContentButtonsPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightRepositoryContentButtonsPanelComponent(PlaywrightWebElement rootLocator) {
+    public RepositoryContentButtonsPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

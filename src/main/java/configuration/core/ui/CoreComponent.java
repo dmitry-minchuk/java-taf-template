@@ -14,7 +14,7 @@ public abstract class CoreComponent implements ComponentFactory {
 
     protected static final Logger LOGGER = LogManager.getLogger(CoreComponent.class);
     protected final Page page;
-    protected final PlaywrightWebElement rootLocator;
+    protected final WebElement rootLocator;
 
     // Creates a page-level component without scoping boundaries.
     public CoreComponent(Page page) {
@@ -23,7 +23,7 @@ public abstract class CoreComponent implements ComponentFactory {
     }
 
     // Creates a root-scoped component with automatic page extraction.
-    public CoreComponent(PlaywrightWebElement rootLocator) {
+    public CoreComponent(WebElement rootLocator) {
         this.page = rootLocator.getPage();
         this.rootLocator = rootLocator;
     }
@@ -40,7 +40,7 @@ public abstract class CoreComponent implements ComponentFactory {
         return rootLocator.isVisible(timeoutInMillis);
     }
 
-    protected PlaywrightWebElement getRootLocator() {
+    protected WebElement getRootLocator() {
         return rootLocator;
     }
 
@@ -49,20 +49,20 @@ public abstract class CoreComponent implements ComponentFactory {
     }
     
     // Creates a scoped element with automatic boundary detection.
-    protected PlaywrightWebElement createScopedElement(String selector) {
+    protected WebElement createScopedElement(String selector) {
         if (hasRootLocator()) {
-            return new PlaywrightWebElement(rootLocator, selector);
+            return new WebElement(rootLocator, selector);
         } else {
-            return new PlaywrightWebElement(page, selector);
+            return new WebElement(page, selector);
         }
     }
 
     //Creates a named scoped element with automatic boundary detection.
-    protected PlaywrightWebElement createScopedElement(String selector, String elementName) {
+    protected WebElement createScopedElement(String selector, String elementName) {
         if (hasRootLocator()) {
-            return new PlaywrightWebElement(rootLocator, selector, elementName);
+            return new WebElement(rootLocator, selector, elementName);
         } else {
-            return new PlaywrightWebElement(page, selector, elementName);
+            return new WebElement(page, selector, elementName);
         }
     }
     
@@ -74,9 +74,9 @@ public abstract class CoreComponent implements ComponentFactory {
         return ComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, rootLocator);
     }
 
-    // Creates a scoped child component from an existing PlaywrightWebElement.
+    // Creates a scoped child component from an existing WebElement.
     @Override
-    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
         return ComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
@@ -93,12 +93,12 @@ public abstract class CoreComponent implements ComponentFactory {
     }
     
     //Finds scoped elements within component.
-    protected List<PlaywrightWebElement> createScopedElementList(String selector, String baseName) {
+    protected List<WebElement> createScopedElementList(String selector, String baseName) {
         return new LazyElementsList(page, rootLocator, selector, baseName);
     }
     
     //Finds scoped elements within component.
-    protected List<PlaywrightWebElement> createScopedElementList(String selector) {
+    protected List<WebElement> createScopedElementList(String selector) {
         return new LazyElementsList(page, rootLocator, selector);
     }
     

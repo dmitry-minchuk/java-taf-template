@@ -8,11 +8,11 @@ import domain.ui.webstudio.components.TableComponent;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
-import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightMyProfilePageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightMySettingsPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightUsersPageComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.TabSwitcherComponent;
+import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
+import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -37,7 +37,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
-        PlaywrightMyProfilePageComponent myProfileComponent = editorPage
+        MyProfilePageComponent myProfileComponent = editorPage
                 .getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
@@ -70,7 +70,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(myProfileComponent.getEmail(), "admin@admin.com", "Email should be 'admin@admin.com'");
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Abc Bcd", "Display name should be 'Abc Bcd'");
 
-        PlaywrightUsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
+        UsersPageComponent usersComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToUsersPage();
         
@@ -140,7 +140,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         UserData adminNewPassword = new UserData("admin", "12345");
         editorPage = loginService.login(adminNewPassword);
 
-        PlaywrightMySettingsPageComponent mySettingsComponent = editorPage.getCurrentUserComponent()
+        MySettingsPageComponent mySettingsComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
@@ -159,7 +159,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
 
@@ -173,7 +173,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         mySettingsComponent.setShowFormulas(true).setShowHeader(false).saveSettings();
 
         // Return to table and verify
-        editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         Assert.assertEquals(tableComponent.getRowsCount(), 7, "Table should have 7 rows");
         Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
 
@@ -182,13 +182,13 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         editorPage = loginService.login(user1Data);
         
         // Navigate to the same project as user1
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         // Open the project using repository methods
-        repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
         
@@ -240,7 +240,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 

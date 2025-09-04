@@ -2,7 +2,7 @@ package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public final class ComponentFactoryImpl {
     /**
      * Creates a scoped child component using reflection with automatic element creation.
      * 
-     * <p>This method creates a PlaywrightWebElement from the provided selector and page context,
+     * <p>This method creates a WebElement from the provided selector and page context,
      * then uses reflection to instantiate the component class with the created element as root locator.</p>
      */
     public static <T extends CoreComponent> T createScopedComponent(
@@ -25,17 +25,17 @@ public final class ComponentFactoryImpl {
             String selector, 
             String componentName,
             Page page,
-            PlaywrightWebElement parentElement) {
+            WebElement parentElement) {
         
         try {
             // Create the scoped element based on whether we have a parent element
-            PlaywrightWebElement childLocator;
+            WebElement childLocator;
             if (parentElement != null) {
                 // Component-scoped: create element within parent boundary
-                childLocator = new PlaywrightWebElement(parentElement, selector, componentName);
+                childLocator = new WebElement(parentElement, selector, componentName);
             } else {
                 // Page-scoped: create element at page level
-                childLocator = new PlaywrightWebElement(page, selector, componentName);
+                childLocator = new WebElement(page, selector, componentName);
             }
             
             // Use the other overload to create the component from the element
@@ -49,17 +49,17 @@ public final class ComponentFactoryImpl {
     }
     
     /**
-     * Creates a scoped child component from an existing PlaywrightWebElement.
+     * Creates a scoped child component from an existing WebElement.
      * 
      * <p>This method uses reflection to instantiate the component class using the provided
      * element as the root locator. The component class must have a constructor that accepts
-     * a PlaywrightWebElement parameter.</p>
+     * a WebElement parameter.</p>
      */
-    public static <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+    public static <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
         try {
-            return componentClass.getConstructor(PlaywrightWebElement.class).newInstance(childLocator);
+            return componentClass.getConstructor(WebElement.class).newInstance(childLocator);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Failed to create scoped component %s with provided locator. Ensure the component has a public constructor accepting PlaywrightWebElement parameter.",
+            throw new RuntimeException(String.format("Failed to create scoped component %s with provided locator. Ensure the component has a public constructor accepting WebElement parameter.",
                     componentClass.getSimpleName()), e);
         }
     }
@@ -72,7 +72,7 @@ public final class ComponentFactoryImpl {
             String selector,
             String baseName,
             Page page,
-            PlaywrightWebElement parentElement) {
+            WebElement parentElement) {
         return ListFactory.createComponentsList(componentClass, page, parentElement, selector, baseName);
     }
     
@@ -83,7 +83,7 @@ public final class ComponentFactoryImpl {
             Class<T> componentClass,
             String selector,
             Page page,
-            PlaywrightWebElement parentElement) {
+            WebElement parentElement) {
         return ListFactory.createComponentsList(componentClass, page, parentElement, selector);
     }
 }

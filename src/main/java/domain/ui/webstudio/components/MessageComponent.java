@@ -1,20 +1,20 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightMessageComponent extends CoreComponent {
+public class MessageComponent extends CoreComponent {
 
-    private PlaywrightWebElement message;
-    private PlaywrightWebElement closeBtn;
+    private WebElement message;
+    private WebElement closeBtn;
 
-    public PlaywrightMessageComponent() {
+    public MessageComponent() {
         super(LocalDriverPool.getPage());
         initializeComponents();
     }
 
-    public PlaywrightMessageComponent(PlaywrightWebElement rootLocator) {
+    public MessageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeComponents();
     }

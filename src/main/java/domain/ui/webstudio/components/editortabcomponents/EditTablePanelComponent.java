@@ -1,24 +1,24 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
-public class PlaywrightEditTablePanelComponent extends CoreComponent {
+public class EditTablePanelComponent extends CoreComponent {
 
-    private PlaywrightWebElement saveChangesBtn;
-    private PlaywrightWebElement undoChangesBtn;
-    private PlaywrightWebElement redoChangesBtn;
-    private PlaywrightWebElement insertRowAfterBtn;
-    private PlaywrightWebElement removeRowBtn;
+    private WebElement saveChangesBtn;
+    private WebElement undoChangesBtn;
+    private WebElement redoChangesBtn;
+    private WebElement insertRowAfterBtn;
+    private WebElement removeRowBtn;
 
-    public PlaywrightEditTablePanelComponent() {
+    public EditTablePanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightEditTablePanelComponent(PlaywrightWebElement rootLocator) {
+    public EditTablePanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

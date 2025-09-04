@@ -1,24 +1,24 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightTagsPageComponent extends CoreComponent {
+public class TagsPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement addTagBtn;
-    private PlaywrightWebElement tagNameField;
-    private PlaywrightWebElement tagDescriptionField;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
-    private PlaywrightWebElement tagsTable;
+    private WebElement addTagBtn;
+    private WebElement tagNameField;
+    private WebElement tagDescriptionField;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
+    private WebElement tagsTable;
 
-    public PlaywrightTagsPageComponent() {
+    public TagsPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTagsPageComponent(PlaywrightWebElement rootLocator) {
+    public TagsPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

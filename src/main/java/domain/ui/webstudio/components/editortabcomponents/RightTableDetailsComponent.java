@@ -1,28 +1,28 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 // Playwright version of RightTableDetailsComponent for property management
-public class PlaywrightRightTableDetailsComponent extends CoreComponent {
+public class RightTableDetailsComponent extends CoreComponent {
 
-    private PlaywrightWebElement addPropertyLink;
-    private PlaywrightWebElement propertyTypeSelector;
-    private PlaywrightWebElement addBtn;
-    private PlaywrightWebElement cancelBtn;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement propertyInputTemplate;
-    private PlaywrightWebElement propertyValueTemplate;
+    private WebElement addPropertyLink;
+    private WebElement propertyTypeSelector;
+    private WebElement addBtn;
+    private WebElement cancelBtn;
+    private WebElement saveBtn;
+    private WebElement propertyInputTemplate;
+    private WebElement propertyValueTemplate;
 
-    public PlaywrightRightTableDetailsComponent() {
+    public RightTableDetailsComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightRightTableDetailsComponent(PlaywrightWebElement rootLocator) {
+    public RightTableDetailsComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -42,21 +42,21 @@ public class PlaywrightRightTableDetailsComponent extends CoreComponent {
         saveBtn.click();
     }
 
-    public PlaywrightRightTableDetailsComponent addProperty(String propertyName) {
+    public RightTableDetailsComponent addProperty(String propertyName) {
         addPropertyLink.click();
         propertyTypeSelector.selectByVisibleText(propertyName);
         addBtn.click();
         return this;
     }
 
-    public PlaywrightRightTableDetailsComponent setProperty(String propertyName, String propertyValue) {
+    public RightTableDetailsComponent setProperty(String propertyName, String propertyValue) {
         propertyInputTemplate.format(propertyName).fillSequentially(propertyValue);
         return this;
     }
 
     public boolean isPropertySet(String propertyName, String propertyValue) {
         try {
-            PlaywrightWebElement propertyValueCell = propertyValueTemplate.format(propertyName, propertyValue);
+            WebElement propertyValueCell = propertyValueTemplate.format(propertyName, propertyValue);
             propertyValueCell.waitForVisible();
             return true;
         } catch (Exception e) {

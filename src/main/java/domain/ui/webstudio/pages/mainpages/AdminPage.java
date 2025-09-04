@@ -1,34 +1,34 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import configuration.core.ui.PlaywrightWebElement;
-import domain.ui.webstudio.components.admincomponents.PlaywrightAdminNavigationComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightEmailPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightMyProfilePageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightMySettingsPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightNotificationPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightRepositoriesPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightSecurityPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightSystemSettingsPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightTagsPageComponent;
-import domain.ui.webstudio.components.admincomponents.PlaywrightUsersPageComponent;
+import configuration.core.ui.WebElement;
+import domain.ui.webstudio.components.admincomponents.AdminNavigationComponent;
+import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
+import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
+import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.NotificationPageComponent;
+import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
+import domain.ui.webstudio.components.admincomponents.SecurityPageComponent;
+import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
+import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import lombok.Getter;
 
 public class AdminPage extends BasePage {
 
     @Getter
-    private PlaywrightAdminNavigationComponent adminNavigationComponent;
-    private PlaywrightEmailPageComponent emailPageComponent;
-    private PlaywrightSystemSettingsPageComponent systemSettingsPageComponent;
-    private PlaywrightUsersPageComponent usersPageComponent;
-    private PlaywrightSecurityPageComponent securityPageComponent;
-    private PlaywrightMyProfilePageComponent myProfilePageComponent;
-    private PlaywrightMySettingsPageComponent mySettingsPageComponent;
-    private PlaywrightRepositoriesPageComponent repositoriesPageComponent;
-    private PlaywrightNotificationPageComponent notificationPageComponent;
-    private PlaywrightTagsPageComponent tagsPageComponent;
+    private AdminNavigationComponent adminNavigationComponent;
+    private EmailPageComponent emailPageComponent;
+    private SystemSettingsPageComponent systemSettingsPageComponent;
+    private UsersPageComponent usersPageComponent;
+    private SecurityPageComponent securityPageComponent;
+    private MyProfilePageComponent myProfilePageComponent;
+    private MySettingsPageComponent mySettingsPageComponent;
+    private RepositoriesPageComponent repositoriesPageComponent;
+    private NotificationPageComponent notificationPageComponent;
+    private TagsPageComponent tagsPageComponent;
     
-    private PlaywrightWebElement adminNavigation;
-    private PlaywrightWebElement contentContainer;
+    private WebElement adminNavigation;
+    private WebElement contentContainer;
 
     public AdminPage() {
         super();
@@ -37,63 +37,63 @@ public class AdminPage extends BasePage {
 
     private void initializeAdminComponents() {
         // Define root locators for component scoping - EXACT SAME as legacy AdminPage
-        adminNavigation = new PlaywrightWebElement(page, "xpath=//div[@id='main-menu']", "Admin Navigation Container");
-        contentContainer = new PlaywrightWebElement(page, "xpath=//div[@id='content']", "Content Container");
+        adminNavigation = new WebElement(page, "xpath=//div[@id='main-menu']", "Admin Navigation Container");
+        contentContainer = new WebElement(page, "xpath=//div[@id='content']", "Content Container");
         
         // Initialize components with proper root locators
-        adminNavigationComponent = new PlaywrightAdminNavigationComponent(adminNavigation);
-        emailPageComponent = new PlaywrightEmailPageComponent(contentContainer);
-        systemSettingsPageComponent = new PlaywrightSystemSettingsPageComponent(contentContainer);
-        usersPageComponent = new PlaywrightUsersPageComponent(contentContainer);
-        securityPageComponent = new PlaywrightSecurityPageComponent(contentContainer);
-        myProfilePageComponent = new PlaywrightMyProfilePageComponent(contentContainer);
-        mySettingsPageComponent = new PlaywrightMySettingsPageComponent(contentContainer);
-        repositoriesPageComponent = new PlaywrightRepositoriesPageComponent(contentContainer);
-        notificationPageComponent = new PlaywrightNotificationPageComponent(contentContainer);
-        tagsPageComponent = new PlaywrightTagsPageComponent(contentContainer);
+        adminNavigationComponent = new AdminNavigationComponent(adminNavigation);
+        emailPageComponent = new EmailPageComponent(contentContainer);
+        systemSettingsPageComponent = new SystemSettingsPageComponent(contentContainer);
+        usersPageComponent = new UsersPageComponent(contentContainer);
+        securityPageComponent = new SecurityPageComponent(contentContainer);
+        myProfilePageComponent = new MyProfilePageComponent(contentContainer);
+        mySettingsPageComponent = new MySettingsPageComponent(contentContainer);
+        repositoriesPageComponent = new RepositoriesPageComponent(contentContainer);
+        notificationPageComponent = new NotificationPageComponent(contentContainer);
+        tagsPageComponent = new TagsPageComponent(contentContainer);
     }
 
-    public PlaywrightEmailPageComponent navigateToEmailPage() {
+    public EmailPageComponent navigateToEmailPage() {
         adminNavigationComponent.clickMail();
         return emailPageComponent;
     }
 
-    public PlaywrightSystemSettingsPageComponent navigateToSystemSettingsPage() {
+    public SystemSettingsPageComponent navigateToSystemSettingsPage() {
         adminNavigationComponent.clickSystem();
         return systemSettingsPageComponent;
     }
 
-    public PlaywrightUsersPageComponent navigateToUsersPage() {
+    public UsersPageComponent navigateToUsersPage() {
         adminNavigationComponent.clickUsers();
         return usersPageComponent;
     }
 
-    public PlaywrightSecurityPageComponent navigateToSecurityPage() {
+    public SecurityPageComponent navigateToSecurityPage() {
         adminNavigationComponent.clickSecurity();
         return securityPageComponent;
     }
 
-    public PlaywrightMyProfilePageComponent navigateToMyProfilePage() {
+    public MyProfilePageComponent navigateToMyProfilePage() {
         adminNavigationComponent.clickMyProfile();
         return myProfilePageComponent;
     }
 
-    public PlaywrightMySettingsPageComponent navigateToMySettingsPage() {
+    public MySettingsPageComponent navigateToMySettingsPage() {
         adminNavigationComponent.clickMySettings();
         return mySettingsPageComponent;
     }
 
-    public PlaywrightRepositoriesPageComponent navigateToRepositoriesPage() {
+    public RepositoriesPageComponent navigateToRepositoriesPage() {
         adminNavigationComponent.clickRepositories();
         return repositoriesPageComponent;
     }
 
-    public PlaywrightNotificationPageComponent navigateToNotificationPage() {
+    public NotificationPageComponent navigateToNotificationPage() {
         adminNavigationComponent.clickNotification();
         return notificationPageComponent;
     }
 
-    public PlaywrightTagsPageComponent navigateToTagsPage() {
+    public TagsPageComponent navigateToTagsPage() {
         adminNavigationComponent.clickTags();
         return tagsPageComponent;
     }

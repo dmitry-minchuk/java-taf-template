@@ -1,22 +1,22 @@
 package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
 public class PlaywrightOpenApiComponent extends CoreComponent {
 
-    private PlaywrightWebElement openApiUrlField;
-    private PlaywrightWebElement projectNameField;
-    private PlaywrightWebElement createProjectBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement openApiUrlField;
+    private WebElement projectNameField;
+    private WebElement createProjectBtn;
+    private WebElement cancelBtn;
 
     public PlaywrightOpenApiComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightOpenApiComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightOpenApiComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
