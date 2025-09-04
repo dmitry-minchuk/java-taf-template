@@ -10,6 +10,10 @@ import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+
 public class WebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(WebElement.class);
@@ -151,12 +155,6 @@ public class WebElement {
         locator.selectOption(text);
     }
     
-    @Deprecated
-    public void selectByVisibleText(String text, long timeoutInSeconds) {
-        LOGGER.info("Selecting option '{}' in {} (deprecated timeout method)", text, elementName);
-        locator.selectOption(text);
-    }
-    
     // Dynamic locator formatting - Builder pattern implementation
     public WebElement format(Object... args) {
         String formattedSelector = String.format(this.selector, args);
@@ -172,6 +170,16 @@ public class WebElement {
         LOGGER.info("Clearing {}", elementName);
         locator.isVisible();
         locator.clear();
+    }
+
+    public void clearByKeyCombination() {
+        LOGGER.info("'Control+a' + 'Backspace' + 'Enter' {}", elementName);
+        locator.isVisible();
+        locator.click();
+        locator.press("Control+a");
+        locator.press("Backspace");
+        locator.press("Enter");
+        locator.click();
     }
     
     public void sendKeys(CharSequence... keysToSend) {
@@ -192,10 +200,10 @@ public class WebElement {
     
     // File upload method for input[type=file] elements  
     public void setInputFiles(String... filePaths) {
-        LOGGER.info("Setting input files {} to {}", java.util.Arrays.toString(filePaths), elementName);
-        java.nio.file.Path[] paths = java.util.Arrays.stream(filePaths)
-            .map(java.nio.file.Paths::get)
-            .toArray(java.nio.file.Path[]::new);
+        LOGGER.info("Setting input files {} to {}", Arrays.toString(filePaths), elementName);
+        Path[] paths = Arrays.stream(filePaths)
+            .map(Paths::get)
+            .toArray(Path[]::new);
         locator.setInputFiles(paths);
     }
     
@@ -242,10 +250,5 @@ public class WebElement {
     public boolean isEnabled() {
         LOGGER.info("Checking if {} is enabled", elementName);
         return locator.isEnabled();
-    }
-
-    public void selectOption(String value) {
-        LOGGER.info("Selecting option '{}' in {}", value, elementName);
-        locator.selectOption(value);
     }
 }
