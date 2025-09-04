@@ -2,15 +2,14 @@ package tests.ui.webstudio.studio_smoke;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
-import com.microsoft.playwright.Page;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.PlaywrightEmailPageComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightLoginService;
+import domain.ui.webstudio.pages.mainpages.AdminPage;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.TestDataUtil;
 import org.apache.logging.log4j.LogManager;
@@ -30,11 +29,11 @@ public class TestPlaywrightAdminEmail extends BaseTest {
     @Description("Playwright - Admin UI 'Email' page - Email verification configuration test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAdminEmail() {
-        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
-        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        LoginService loginService = new LoginService(PlaywrightDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())
-        PlaywrightAdminPage adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
+        AdminPage adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
         PlaywrightEmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
 
         // Step 3: Verify "Email" tab contains inactive checkbox "Enable email address verification"

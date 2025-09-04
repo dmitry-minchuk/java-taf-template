@@ -6,8 +6,8 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -20,8 +20,8 @@ public class TestPlaywrightTraceIntoFileJsonRequest extends BaseTest {
     @Description("BUG: Internal Server error appears if user entered JSON request in 'Trace into File'")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightTraceIntoFileJsonRequest() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, "testTraceIntoFileJsonRequest.zip");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "testTraceIntoFileJsonRequest.zip");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "the_nulls_input_parameters");
         editorPage.getLeftRulesTreeComponent()
                 .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_EXCEL_SHEET)

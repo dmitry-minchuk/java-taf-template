@@ -17,9 +17,9 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-public class PlaywrightDownloadUtil {
+public class DownloadUtil {
     
-    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDownloadUtil.class);
+    protected static final Logger LOGGER = LogManager.getLogger(DownloadUtil.class);
     
     private static final String CONTAINER_DOWNLOAD_PATH = "/tmp/downloads";
     private static final String DEFAULT_TIMEOUT = "3000";

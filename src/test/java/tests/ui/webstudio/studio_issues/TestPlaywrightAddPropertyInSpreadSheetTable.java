@@ -8,8 +8,8 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -24,8 +24,8 @@ public class TestPlaywrightAddPropertyInSpreadSheetTable extends BaseTest {
     @Description("BUG: Exception appears in log file on adding properties for Spreadsheet")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddPropertyInSpreadSheetTable() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddPropertyInSpreadSheetTable.xlsx");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddPropertyInSpreadSheetTable.xlsx");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddPropertyInSpreadSheetTable");
         editorPage.getLeftRulesTreeComponent()
                 .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)

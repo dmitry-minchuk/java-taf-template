@@ -4,11 +4,11 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.PlaywrightTableComponent;
+import domain.ui.webstudio.components.TableComponent;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -23,8 +23,8 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
     @Description("BUG: Added row is deleted incorrectly - the value of the next row is changed")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddDeleteRowWithoutSaving() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Tutorial 6 - Introduction to Spreadsheet Tables");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Tutorial 6 - Introduction to Spreadsheet Tables");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Tutorial6 - Intro to Spreadsheet Tables");
         editorPage.getLeftRulesTreeComponent()
@@ -33,7 +33,7 @@ public class TestPlaywrightAddDeleteRowWithoutSaving extends BaseTest {
                 .selectItemInFolder("Decision", "LossFreeDiscount");
 
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
-        PlaywrightTableComponent table = editorPage.getCenterTable();
+        TableComponent table = editorPage.getCenterTable();
         table.clickCell(5, 2);
         editorPage.getEditTablePanelComponent().clickInsertRowAfter();
         table.editCell(6, 1, "444", false);

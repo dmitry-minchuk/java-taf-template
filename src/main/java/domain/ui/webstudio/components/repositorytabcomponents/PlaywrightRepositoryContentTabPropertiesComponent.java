@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.core.ui.PlaywrightTableComponent;
+import domain.ui.webstudio.components.TableComponent;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends CoreCompo
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryContentTabPropertiesComponent.class);
 
-    private PlaywrightTableComponent propertiesTable;
+    private TableComponent propertiesTable;
     private PlaywrightWebElement authorElementTemplate;
     private PlaywrightWebElement expandableRevision;
     private PlaywrightWebElement tagSelectOpenTemplate;
@@ -35,7 +35,7 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends CoreCompo
     }
 
     private void initializeElements() {
-        propertiesTable = createScopedComponent(PlaywrightTableComponent.class, "xpath=.//table[@class='formfields']", "propertiesTable");
+        propertiesTable = createScopedComponent(TableComponent.class, "xpath=.//table[@class='formfields']", "propertiesTable");
         authorElementTemplate = createScopedElement("xpath=.//span[text()='%s']", "authorElementTemplate");
         expandableRevision = createScopedElement("xpath=.//div[@class='rf-tab']//table[@class='formfields']//span[@class='expandable']", "expandableRevision");
         tagSelectOpenTemplate = createScopedElement("xpath=.//h3[contains(text(), 'Tags')]/..//td[contains(text(), '%s')]/..//span", "tagSelectOpenTemplate");

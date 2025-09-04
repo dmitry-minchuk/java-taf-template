@@ -7,8 +7,8 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -22,8 +22,8 @@ public class TestPlaywrightAddProperty extends BaseTest {
     @Description("Exception occurs on adding property to the table with two columns - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddProperty() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "StudioIssues_TestAddProperty.xlsx");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "StudioIssues_TestAddProperty.xlsx");
+        EditorPage editorPage = new EditorPage();
         
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
         

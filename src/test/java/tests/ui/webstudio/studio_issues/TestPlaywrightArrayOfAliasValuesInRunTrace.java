@@ -7,8 +7,8 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightTableToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -27,8 +27,8 @@ public class TestPlaywrightArrayOfAliasValuesInRunTrace extends BaseTest {
     @Description("BUG: Dropdown with alias values is empty in Run/Trace for array types")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightArrayOfAliasValuesInRunTrace() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestArrayOfAliasValuesInRunTrace.xlsx");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestArrayOfAliasValuesInRunTrace.xlsx");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestArrayOfAliasValuesInRunTrace");
 
         // Set the filter and expand the folder once before iterating through tables

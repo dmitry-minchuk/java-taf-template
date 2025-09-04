@@ -8,8 +8,8 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightTestResultValidationComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -23,9 +23,9 @@ public class TestPlaywrightClassCastException extends BaseTest {
     @Description("Test that ClassCastException doesn't occur when running a spreadsheet and validate result table appears")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightClassCastException() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, 
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN,
                 "TestClassCastException.xlsx");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "TestClassCastException");
         editorPage.getLeftRulesTreeComponent()

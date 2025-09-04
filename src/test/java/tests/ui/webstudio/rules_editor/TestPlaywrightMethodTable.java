@@ -4,11 +4,11 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.PlaywrightTableComponent;
+import domain.ui.webstudio.components.TableComponent;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -24,8 +24,8 @@ public class TestPlaywrightMethodTable extends BaseTest {
     @Description("Test Method table operations: creation, editing, run, table management")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightMethodTable() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestMethodTable.xlsx");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestMethodTable.xlsx");
+        EditorPage editorPage = new EditorPage();
 
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "TestMethodTable");
@@ -37,7 +37,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         editorPage.getProblemsPanelComponent().checkNoProblems();
 
         // Get the center table and verify initial content
-        PlaywrightTableComponent table = editorPage.getCenterTable();
+        TableComponent table = editorPage.getCenterTable();
         assertThat(table.getRowsCount()).isEqualTo(2);
         
         // Verify row 1 content: Method signature
@@ -58,7 +58,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         testTableCopyAndManagement(editorPage);
     }
 
-    private void runMethodTest(PlaywrightEditorPage editorPage, String inputParam, List<String> expectedResult) {
+    private void runMethodTest(EditorPage editorPage, String inputParam, List<String> expectedResult) {
         var runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
         runMenu.setInputTextField("1", inputParam)
                 .clickRunInsideMenu();
@@ -66,7 +66,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
-    private void testTableEditingOperations(PlaywrightEditorPage editorPage, PlaywrightTableComponent table) {
+    private void testTableEditingOperations(EditorPage editorPage, TableComponent table) {
         editorPage.getLeftRulesTreeComponent()
                 .selectItemInFolder("Method", "getGreetings");
 
@@ -93,7 +93,7 @@ public class TestPlaywrightMethodTable extends BaseTest {
         assertThat(table.getRow(2).getValue()).anyMatch(cell -> cell.contains("return \"Hi,\"+name"));
     }
 
-    private void testTableCopyAndManagement(PlaywrightEditorPage editorPage) {
+    private void testTableCopyAndManagement(EditorPage editorPage) {
         editorPage.getTableToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
         
         // Verify both tables exist in rules tree

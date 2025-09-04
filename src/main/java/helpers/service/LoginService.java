@@ -2,8 +2,8 @@ package helpers.service;
 
 import com.microsoft.playwright.Page;
 import domain.serviceclasses.models.UserData;
-import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
+import domain.ui.webstudio.pages.mainpages.AdminPage;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,16 +11,16 @@ import org.apache.logging.log4j.Logger;
  * Playwright version of LoginService for user authentication
  * Provides login functionality using Playwright page automation
  */
-public class PlaywrightLoginService {
+public class LoginService {
     
-    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightLoginService.class);
+    protected static final Logger LOGGER = LogManager.getLogger(LoginService.class);
     private final Page page;
     
-    public PlaywrightLoginService(Page page) {
+    public LoginService(Page page) {
         this.page = page;
     }
     
-    public PlaywrightEditorPage login(UserData user) {
+    public EditorPage login(UserData user) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
         // Navigate to login page using proper URL resolution (LOCAL vs DOCKER mode aware)
@@ -44,11 +44,11 @@ public class PlaywrightLoginService {
         page.waitForURL("**/", new Page.WaitForURLOptions().setTimeout(10000));
         
         LOGGER.info("Successfully logged in as: {}", user.getLogin());
-        return new PlaywrightEditorPage();
+        return new EditorPage();
     }
     
     // Navigate to Administration via User Menu: user-logo span → ant-drawer → Administration → Admin Page
-    public PlaywrightAdminPage navigateToAdministration() {
+    public AdminPage navigateToAdministration() {
         LOGGER.info("Navigating to Administration via User Menu");
         
         // Step 1: Click the user logo span to open the user menu
@@ -70,6 +70,6 @@ public class PlaywrightLoginService {
         
         page.locator("div#main-menu, [data-menu-id]").first().waitFor();
         
-        return new PlaywrightAdminPage();
+        return new AdminPage();
     }
 }

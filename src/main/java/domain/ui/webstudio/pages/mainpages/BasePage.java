@@ -10,19 +10,19 @@ import helpers.utils.WaitUtil;
 import java.util.List;
 
 // This class is separated from BasePage and created for specific element storage
-public abstract class PlaywrightProxyBasePage extends CorePage {
+public abstract class BasePage extends CorePage {
 
     private PlaywrightWebElement userLogo;
     private List<PlaywrightMessageComponent> messages;
     private PlaywrightWebElement userMenuDrawer;
     private PlaywrightWebElement contentLoadingSpinner;
 
-    public PlaywrightProxyBasePage() {
+    public BasePage() {
         super();
         initializeComponents();
     }
 
-    public PlaywrightProxyBasePage(Page page) {
+    public BasePage(Page page) {
         super(page);
         initializeComponents();
     }

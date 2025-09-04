@@ -3,7 +3,7 @@ package domain.ui.webstudio.components;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
+import domain.ui.webstudio.pages.mainpages.AdminPage;
 
 public class PlaywrightCurrentUserComponent extends CoreComponent {
 
@@ -31,19 +31,19 @@ public class PlaywrightCurrentUserComponent extends CoreComponent {
         signOutMenuItem = createScopedElement("xpath=.//li[contains(@class,'ant-menu-item')]//span[text()='Sign Out']", "Sign Out Menu Item");
     }
 
-    public PlaywrightAdminPage navigateToMyProfile() {
+    public AdminPage navigateToMyProfile() {
         select(MenuElements.MY_PROFILE);
-        return new PlaywrightAdminPage();
+        return new AdminPage();
     }
 
-    public PlaywrightAdminPage navigateToMySettings() {
+    public AdminPage navigateToMySettings() {
         select(MenuElements.MY_SETTINGS);
-        return new PlaywrightAdminPage();
+        return new AdminPage();
     }
 
-    public PlaywrightAdminPage navigateToAdministration() {
+    public AdminPage navigateToAdministration() {
         select(MenuElements.ADMINISTRATION);
-        return new PlaywrightAdminPage();
+        return new AdminPage();
     }
 
     public void openHelp() {

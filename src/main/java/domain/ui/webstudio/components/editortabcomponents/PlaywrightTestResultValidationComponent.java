@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightTableComponent;
+import domain.ui.webstudio.components.TableComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import lombok.Getter;
@@ -13,7 +13,7 @@ public class PlaywrightTestResultValidationComponent extends CoreComponent {
     private PlaywrightWebElement resultTableElement;
     private PlaywrightWebElement resultTableHeader;
     @Getter
-    private PlaywrightTableComponent resultTable;
+    private TableComponent resultTable;
     
     // Test result status element lists
     private List<PlaywrightWebElement> caseErrorElementsList;
@@ -33,7 +33,7 @@ public class PlaywrightTestResultValidationComponent extends CoreComponent {
     private void initializeElements() {
         resultTableElement = createScopedElement("xpath=.//table[@class='table']", "resultTableElement");
         resultTableHeader = createScopedElement("xpath=.//table[@class='table']/thead//tr", "resultTableHeader");
-        resultTable = createScopedComponent(PlaywrightTableComponent.class, "xpath=.//table[@class='table']", "resultTable");
+        resultTable = createScopedComponent(TableComponent.class, "xpath=.//table[@class='table']", "resultTable");
         
         // Test result status element lists
         caseErrorElementsList = createScopedElementList("xpath=.//tr//span[@class='case-error']", "caseErrorElements");
