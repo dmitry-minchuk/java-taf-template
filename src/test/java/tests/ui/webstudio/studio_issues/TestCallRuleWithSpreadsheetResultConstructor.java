@@ -6,7 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
@@ -26,7 +26,7 @@ public class TestCallRuleWithSpreadsheetResultConstructor extends BaseTest {
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestCallRuleWithSpreadsheetResultConstructor");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "test");
         

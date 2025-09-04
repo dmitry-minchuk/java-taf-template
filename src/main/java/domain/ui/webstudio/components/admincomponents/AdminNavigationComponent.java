@@ -1,20 +1,20 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
-public class PlaywrightAdminNavigationComponent extends CoreComponent {
+public class AdminNavigationComponent extends CoreComponent {
 
-    private PlaywrightWebElement navigationItemTemplate;
+    private WebElement navigationItemTemplate;
 
-    public PlaywrightAdminNavigationComponent() {
+    public AdminNavigationComponent() {
         super(LocalDriverPool.getPage());
         initializeNavigationComponents();
     }
 
-    public PlaywrightAdminNavigationComponent(PlaywrightWebElement rootLocator) {
+    public AdminNavigationComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeNavigationComponents();
     }

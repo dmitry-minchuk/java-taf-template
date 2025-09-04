@@ -2,9 +2,9 @@ package domain.ui.webstudio.pages.mainpages;
 
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CorePage;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.PlaywrightCurrentUserComponent;
-import domain.ui.webstudio.components.PlaywrightMessageComponent;
+import domain.ui.webstudio.components.MessageComponent;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.List;
 // This class is separated from BasePage and created for specific element storage
 public abstract class BasePage extends CorePage {
 
-    private PlaywrightWebElement userLogo;
-    private List<PlaywrightMessageComponent> messages;
-    private PlaywrightWebElement userMenuDrawer;
-    private PlaywrightWebElement contentLoadingSpinner;
+    private WebElement userLogo;
+    private List<MessageComponent> messages;
+    private WebElement userMenuDrawer;
+    private WebElement contentLoadingSpinner;
 
     public BasePage() {
         super();
@@ -28,15 +28,15 @@ public abstract class BasePage extends CorePage {
     }
 
     private void initializeComponents() {
-        userLogo = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'user-logo')][not(ancestor::div[contains(@class, 'ant-drawer-right')])]//span", "User Logo");
-        messages = createComponentList(PlaywrightMessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
-        userMenuDrawer = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
-        contentLoadingSpinner = new PlaywrightWebElement(page, "//div[@id='loadingPanel']", "contentLoadingSpinner");
+        userLogo = new WebElement(page, "xpath=//div[contains(@class,'user-logo')][not(ancestor::div[contains(@class, 'ant-drawer-right')])]//span", "User Logo");
+        messages = createComponentList(MessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
+        userMenuDrawer = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
+        contentLoadingSpinner = new WebElement(page, "//div[@id='loadingPanel']", "contentLoadingSpinner");
     }
 
     public void closeAllMessages() {
         LOGGER.debug("messages.size() = {}", messages.size());
-        for(PlaywrightMessageComponent msg : messages) {
+        for(MessageComponent msg : messages) {
             msg.closeMessage();
         }
     }

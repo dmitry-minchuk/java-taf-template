@@ -6,8 +6,8 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightTestResultValidationComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.TestResultValidationComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
@@ -29,7 +29,7 @@ public class TestClassCastException extends BaseTest {
         editorPage.getLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "TestClassCastException");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "calc");
 
@@ -41,7 +41,7 @@ public class TestClassCastException extends BaseTest {
                 .isFalse();
         
         // Validate result table presence and header
-        PlaywrightTestResultValidationComponent resultComponent = editorPage.getTestResultValidationComponent();
+        TestResultValidationComponent resultComponent = editorPage.getTestResultValidationComponent();
         assertThat(resultComponent.getResultTable().isVisible(500))
                 .as("Result table should be present after running spreadsheet")
                 .isTrue();

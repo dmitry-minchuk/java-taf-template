@@ -1,21 +1,21 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
 public class PlaywrightRepositoryTreeFolderComponent extends CoreComponent {
 
-    private PlaywrightWebElement expanderClosed;
-    private PlaywrightWebElement folderName;
-    private PlaywrightWebElement itemTemplate;
+    private WebElement expanderClosed;
+    private WebElement folderName;
+    private WebElement itemTemplate;
 
     public PlaywrightRepositoryTreeFolderComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightRepositoryTreeFolderComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightRepositoryTreeFolderComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -26,7 +26,7 @@ public class PlaywrightRepositoryTreeFolderComponent extends CoreComponent {
         itemTemplate = createScopedElement("xpath=.//span[text()='%s']", "itemTemplate");
     }
 
-    public PlaywrightWebElement getItem(String itemName) {
+    public WebElement getItem(String itemName) {
         return itemTemplate.format(itemName);
     }
 

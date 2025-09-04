@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,16 +11,16 @@ public class PlaywrightTreeFolderComponent extends CoreComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightTreeFolderComponent.class);
     
-    private PlaywrightWebElement expanderClosed;
-    private PlaywrightWebElement folderName;
-    private PlaywrightWebElement itemTemplate;
+    private WebElement expanderClosed;
+    private WebElement folderName;
+    private WebElement itemTemplate;
 
     public PlaywrightTreeFolderComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTreeFolderComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightTreeFolderComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -48,7 +48,7 @@ public class PlaywrightTreeFolderComponent extends CoreComponent {
         itemTemplate.format(itemName).click();
     }
 
-    public PlaywrightWebElement getItem(String itemName) {
+    public WebElement getItem(String itemName) {
         return itemTemplate.format(itemName);
     }
 

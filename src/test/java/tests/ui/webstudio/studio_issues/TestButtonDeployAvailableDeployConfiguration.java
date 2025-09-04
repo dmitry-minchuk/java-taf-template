@@ -7,7 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
+import domain.ui.webstudio.components.TabSwitcherComponent;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import org.testng.annotations.Test;
@@ -25,7 +25,7 @@ public class TestButtonDeployAvailableDeployConfiguration extends BaseTest {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         loginService.login(UserService.getUser(User.ADMIN));
 
-        RepositoryPage repositoryPage = new RepositoryPage().getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = new RepositoryPage().getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProjectFromTemplate("1", "Example 1 - Bank Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")

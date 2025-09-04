@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.BasePage;
 import helpers.utils.WaitUtil;
@@ -12,44 +12,44 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class PlaywrightTableToolbarPanelComponent extends CoreComponent {
+public class TableToolbarPanelComponent extends CoreComponent {
 
-    private PlaywrightWebElement runBtn;
-    private PlaywrightWebElement traceBtn;
-    private PlaywrightWebElement benchmarkBtn;
-    private PlaywrightWebElement exportBtn;
+    private WebElement runBtn;
+    private WebElement traceBtn;
+    private WebElement benchmarkBtn;
+    private WebElement exportBtn;
     @Getter
-    private PlaywrightWebElement editBtn;
-    private PlaywrightWebElement copyBtn;
-    private PlaywrightWebElement removeBtn;
-    private PlaywrightWebElement factorTextField;
-    private PlaywrightWebElement traceDropdownBtn;
+    private WebElement editBtn;
+    private WebElement copyBtn;
+    private WebElement removeBtn;
+    private WebElement factorTextField;
+    private WebElement traceDropdownBtn;
     
     // Run Menu elements
-    private PlaywrightWebElement createItemBtn;
-    private PlaywrightWebElement expandTypesBtn;
-    private PlaywrightWebElement addElementToCollectionBtnTemplate;
-    private PlaywrightWebElement runInsideDropdownBtn;
-    private PlaywrightWebElement addedElementsExpanderTemplate;
-    private PlaywrightWebElement selectTypeDropdown;
+    private WebElement createItemBtn;
+    private WebElement expandTypesBtn;
+    private WebElement addElementToCollectionBtnTemplate;
+    private WebElement runInsideDropdownBtn;
+    private WebElement addedElementsExpanderTemplate;
+    private WebElement selectTypeDropdown;
     
     // Trace Menu elements  
-    private PlaywrightWebElement traceInsideMenuBtn;
-    private PlaywrightWebElement traceIntoFileBtn;
-    private PlaywrightWebElement factorTextFieldForTrace;
-    private PlaywrightWebElement jsonRadioBtn;
-    private PlaywrightWebElement jsonTextField;
+    private WebElement traceInsideMenuBtn;
+    private WebElement traceIntoFileBtn;
+    private WebElement factorTextFieldForTrace;
+    private WebElement jsonRadioBtn;
+    private WebElement jsonTextField;
     
     // Input parameter elements - from RunDropDown.java
-    private PlaywrightWebElement inputTextFieldTemplate;
-    private PlaywrightWebElement inputSelectFieldTemplate;
+    private WebElement inputTextFieldTemplate;
+    private WebElement inputSelectFieldTemplate;
 
-    public PlaywrightTableToolbarPanelComponent() {
+    public TableToolbarPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTableToolbarPanelComponent(PlaywrightWebElement rootLocator) {
+    public TableToolbarPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -68,24 +68,24 @@ public class PlaywrightTableToolbarPanelComponent extends CoreComponent {
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
         
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
-        createItemBtn = new PlaywrightWebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
-        expandTypesBtn = new PlaywrightWebElement(page, "xpath=//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
-        addElementToCollectionBtnTemplate = new PlaywrightWebElement(page, "xpath=//span[contains(text(), '%s')]//a[@title='Add new element to collection']", "addElementToCollectionBtnTemplate");
-        runInsideDropdownBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
-        addedElementsExpanderTemplate = new PlaywrightWebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
-        selectTypeDropdown = new PlaywrightWebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
+        createItemBtn = new WebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
+        expandTypesBtn = new WebElement(page, "xpath=//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
+        addElementToCollectionBtnTemplate = new WebElement(page, "xpath=//span[contains(text(), '%s')]//a[@title='Add new element to collection']", "addElementToCollectionBtnTemplate");
+        runInsideDropdownBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
+        addedElementsExpanderTemplate = new WebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
+        selectTypeDropdown = new WebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
         
         // Trace Menu elements - page-level (form elements)
-        traceInsideMenuBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
-        traceIntoFileBtn = new PlaywrightWebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
-        factorTextField = new PlaywrightWebElement(page, "xpath=//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
-        factorTextFieldForTrace = new PlaywrightWebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
-        jsonRadioBtn = new PlaywrightWebElement(page, "xpath=//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
-        jsonTextField = new PlaywrightWebElement(page, "xpath=//textarea[contains(@id, 'jsonInput')]", "jsonTextField");
+        traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
+        traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
+        factorTextField = new WebElement(page, "xpath=//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
+        factorTextFieldForTrace = new WebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
+        jsonRadioBtn = new WebElement(page, "xpath=//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
+        jsonTextField = new WebElement(page, "xpath=//textarea[contains(@id, 'jsonInput')]", "jsonTextField");
         
         // Input parameter templates - page-level (form inputs)  
-        inputTextFieldTemplate = new PlaywrightWebElement(page, "xpath=(//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
-        inputSelectFieldTemplate = new PlaywrightWebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
+        inputTextFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
+        inputSelectFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
     }
 
     public IPlaywrightRunMenu clickRun() {
@@ -267,19 +267,19 @@ public class PlaywrightTableToolbarPanelComponent extends CoreComponent {
 
     // Implementation for Playwright Trace Window
     public class PlaywrightTraceWindow extends BasePage implements IPlaywrightTraceWindow {
-        private PlaywrightWebElement traceExpanderTemplate;
-        private List<PlaywrightWebElement> visibleItemsFromTree;
+        private WebElement traceExpanderTemplate;
+        private List<WebElement> visibleItemsFromTree;
 
         public PlaywrightTraceWindow(Page tracePage) {
             super(tracePage);
             // Initialize trace window elements based on actual HTML structure
-            traceExpanderTemplate = new PlaywrightWebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
+            traceExpanderTemplate = new WebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
             visibleItemsFromTree = createElementList("xpath=//span[@class='fancytree-title']", "visibleItemsFromTree");
         }
 
         @Override
         public IPlaywrightTraceWindow expandItemInTree(int position) {
-            PlaywrightWebElement item = traceExpanderTemplate.format(position + 1);
+            WebElement item = traceExpanderTemplate.format(position + 1);
             item.click();
             WaitUtil.sleep(100); // Waiting for expander to get expanded
             return this;

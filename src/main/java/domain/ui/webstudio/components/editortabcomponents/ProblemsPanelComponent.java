@@ -1,29 +1,29 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaywrightProblemsPanelComponent extends CoreComponent {
+public class ProblemsPanelComponent extends CoreComponent {
 
-    private PlaywrightWebElement showProblemsLink;
-    private PlaywrightWebElement hideProblemPanelLink;
-    private PlaywrightWebElement errorsCounter;
-    private PlaywrightWebElement warningsCounter;
-    private PlaywrightWebElement compilationProgressBar;
-    private List<PlaywrightWebElement> errorElements;
-    private List<PlaywrightWebElement> warningElements;
+    private WebElement showProblemsLink;
+    private WebElement hideProblemPanelLink;
+    private WebElement errorsCounter;
+    private WebElement warningsCounter;
+    private WebElement compilationProgressBar;
+    private List<WebElement> errorElements;
+    private List<WebElement> warningElements;
 
-    public PlaywrightProblemsPanelComponent() {
+    public ProblemsPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightProblemsPanelComponent(PlaywrightWebElement rootLocator) {
+    public ProblemsPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -96,7 +96,7 @@ public class PlaywrightProblemsPanelComponent extends CoreComponent {
         showProblemsPanel();
         waitForCompilationToComplete();
         List<String> errors = errorElements.stream()
-                .map(PlaywrightWebElement::getText)
+                .map(WebElement::getText)
                 .toList();
         return errors;
     }
@@ -118,14 +118,14 @@ public class PlaywrightProblemsPanelComponent extends CoreComponent {
         showProblemsPanel();
         waitForCompilationToComplete();
         
-        List<PlaywrightWebElement> allProblems = new ArrayList<>();
+        List<WebElement> allProblems = new ArrayList<>();
         allProblems.addAll(errorElements);
         allProblems.addAll(warningElements);
         
         allProblems.stream()
                 .filter(element -> element.getText().contains(text))
                 .findFirst()
-                .ifPresent(PlaywrightWebElement::click);
+                .ifPresent(WebElement::click);
     }
 
     public void selectProblemByIndex(int index) {

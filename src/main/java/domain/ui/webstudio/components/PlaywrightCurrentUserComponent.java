@@ -1,24 +1,24 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 
 public class PlaywrightCurrentUserComponent extends CoreComponent {
 
-    private PlaywrightWebElement myProfileMenuItem;
-    private PlaywrightWebElement mySettingsMenuItem;
-    private PlaywrightWebElement administrationMenuItem;
-    private PlaywrightWebElement helpMenuItem;
-    private PlaywrightWebElement signOutMenuItem;
+    private WebElement myProfileMenuItem;
+    private WebElement mySettingsMenuItem;
+    private WebElement administrationMenuItem;
+    private WebElement helpMenuItem;
+    private WebElement signOutMenuItem;
 
     public PlaywrightCurrentUserComponent() {
         super(LocalDriverPool.getPage());
         initializeComponents();
     }
     
-    public PlaywrightCurrentUserComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightCurrentUserComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeComponents();
     }

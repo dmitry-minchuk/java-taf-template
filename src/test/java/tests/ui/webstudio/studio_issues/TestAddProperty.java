@@ -5,8 +5,8 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -28,17 +28,17 @@ public class TestAddProperty extends BaseTest {
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "StudioIssues_TestAddProperty");
         
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_CATEGORY)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_CATEGORY)
                 .expandFolderInTree("Rules")
                 .selectItemInFolder("Rules", "SimpleCalc");
                 
         editorPage.getRightTableDetailsComponent()
-                .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
-                .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
+                .addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
+                .setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
                 .clickSaveBtn();
                 
         assertThat(editorPage.getRightTableDetailsComponent()
-                .isPropertySet(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))
+                .isPropertySet(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details"))
                 .isTrue();
     }
 }

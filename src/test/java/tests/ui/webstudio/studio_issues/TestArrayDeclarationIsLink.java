@@ -4,9 +4,9 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -28,13 +28,13 @@ public class TestArrayDeclarationIsLink extends BaseTest {
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestArrayDeclarationIsLink");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "DetermineStatusByCodeRule");
 
         // Find procedure links with title-datatype class
         editorPage.getCenterTable().isVisible();
-        List<PlaywrightWebElement> links = editorPage.createElementList("xpath=//td//span[contains(@class,'title-datatype')]/a[text()='Procedure']");
+        List<WebElement> links = editorPage.createElementList("xpath=//td//span[contains(@class,'title-datatype')]/a[text()='Procedure']");
         assertThat(links.size()).as("Should find exactly 12 procedure links").isEqualTo(12);
 
         // Verify that all procedure links have proper styling

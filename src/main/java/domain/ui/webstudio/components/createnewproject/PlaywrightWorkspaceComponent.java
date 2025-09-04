@@ -1,23 +1,23 @@
 package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
 public class PlaywrightWorkspaceComponent extends CoreComponent {
 
-    private PlaywrightWebElement workspacePanel;
-    private PlaywrightWebElement workspacePathField;
-    private PlaywrightWebElement browseBtn;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement workspacePanel;
+    private WebElement workspacePathField;
+    private WebElement browseBtn;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
     public PlaywrightWorkspaceComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightWorkspaceComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightWorkspaceComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

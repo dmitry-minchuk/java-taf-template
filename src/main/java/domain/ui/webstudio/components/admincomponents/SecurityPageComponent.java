@@ -1,25 +1,25 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightSecurityPageComponent extends CoreComponent {
+public class SecurityPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement singleUserModeRadio;
-    private PlaywrightWebElement multiUserModeRadio;
-    private PlaywrightWebElement activeDirectoryModeRadio;
-    private PlaywrightWebElement samlModeRadio;
-    private PlaywrightWebElement oauth2ModeRadio;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement singleUserModeRadio;
+    private WebElement multiUserModeRadio;
+    private WebElement activeDirectoryModeRadio;
+    private WebElement samlModeRadio;
+    private WebElement oauth2ModeRadio;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
-    public PlaywrightSecurityPageComponent() {
+    public SecurityPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightSecurityPageComponent(PlaywrightWebElement rootLocator) {
+    public SecurityPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

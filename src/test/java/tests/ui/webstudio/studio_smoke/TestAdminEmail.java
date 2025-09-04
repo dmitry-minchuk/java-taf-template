@@ -6,7 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.admincomponents.PlaywrightEmailPageComponent;
+import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.LoginService;
@@ -34,7 +34,7 @@ public class TestAdminEmail extends BaseTest {
 
         // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())
         AdminPage adminPage = editorPage.getCurrentUserComponent().navigateToAdministration();
-        PlaywrightEmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
+        EmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
 
         // Step 3: Verify "Email" tab contains inactive checkbox "Enable email address verification"
         Assert.assertFalse(emailPageComponent.isEmailVerificationEnabled(),

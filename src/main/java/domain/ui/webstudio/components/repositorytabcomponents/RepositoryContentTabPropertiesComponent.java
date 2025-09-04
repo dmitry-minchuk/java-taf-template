@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.TableComponent;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
@@ -13,23 +13,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PlaywrightRepositoryContentTabPropertiesComponent extends CoreComponent {
+public class RepositoryContentTabPropertiesComponent extends CoreComponent {
 
-    private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryContentTabPropertiesComponent.class);
+    private static final Logger LOGGER = LogManager.getLogger(RepositoryContentTabPropertiesComponent.class);
 
     private TableComponent propertiesTable;
-    private PlaywrightWebElement authorElementTemplate;
-    private PlaywrightWebElement expandableRevision;
-    private PlaywrightWebElement tagSelectOpenTemplate;
-    private PlaywrightWebElement tagError;
-    private PlaywrightWebElement tagsSection;
+    private WebElement authorElementTemplate;
+    private WebElement expandableRevision;
+    private WebElement tagSelectOpenTemplate;
+    private WebElement tagError;
+    private WebElement tagsSection;
 
-    public PlaywrightRepositoryContentTabPropertiesComponent() {
+    public RepositoryContentTabPropertiesComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightRepositoryContentTabPropertiesComponent(PlaywrightWebElement rootLocator) {
+    public RepositoryContentTabPropertiesComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -95,8 +95,8 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends CoreCompo
 
     public void expandRevisionID() {
         int revisionRow = findRowByText(Property.REVISION.text);
-        PlaywrightWebElement revisionCell = propertiesTable.getCell(revisionRow, 1);
-        PlaywrightWebElement expandableSpan = new PlaywrightWebElement(page,
+        WebElement revisionCell = propertiesTable.getCell(revisionRow, 1);
+        WebElement expandableSpan = new WebElement(page,
             "xpath=.//span[@class='expandable']", "expandableSpan");
         expandableSpan.click();
     }

@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
@@ -9,16 +9,16 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class PlaywrightLeftRepositoryTreeComponent extends CoreComponent {
+public class LeftRepositoryTreeComponent extends CoreComponent {
 
-    private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRepositoryTreeComponent.class);
+    private static final Logger LOGGER = LogManager.getLogger(LeftRepositoryTreeComponent.class);
 
-    public PlaywrightLeftRepositoryTreeComponent() {
+    public LeftRepositoryTreeComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightLeftRepositoryTreeComponent(PlaywrightWebElement rootLocator) {
+    public LeftRepositoryTreeComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -26,13 +26,13 @@ public class PlaywrightLeftRepositoryTreeComponent extends CoreComponent {
     private void initializeElements() {
     }
 
-    public PlaywrightLeftRepositoryTreeComponent selectItemInFolder(String folderName, String itemName) {
+    public LeftRepositoryTreeComponent selectItemInFolder(String folderName, String itemName) {
         PlaywrightRepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.selectItem(itemName);
         return this;
     }
 
-    public PlaywrightLeftRepositoryTreeComponent expandFolderInTree(String folderName) {
+    public LeftRepositoryTreeComponent expandFolderInTree(String folderName) {
         PlaywrightRepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;
@@ -76,8 +76,8 @@ public class PlaywrightLeftRepositoryTreeComponent extends CoreComponent {
             int folderCount = page.locator("xpath=" + selector).count();
             for (int i = 0; i < folderCount; i++) {
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
-                PlaywrightWebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
-                PlaywrightWebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
+                WebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
+                WebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
                 PlaywrightRepositoryTreeFolderComponent folder = createScopedComponent(PlaywrightRepositoryTreeFolderComponent.class, indexedElement);
                 if(folder.isVisible())
                     folders.add(folder);

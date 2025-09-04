@@ -1,23 +1,23 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 
 // Handles clicking on project names and specific modules within projects
-public class PlaywrightLeftProjectModuleSelectorComponent extends CoreComponent {
+public class LeftProjectModuleSelectorComponent extends CoreComponent {
 
-    private PlaywrightWebElement projectNameTemplate;
-    private PlaywrightWebElement projectModuleTemplate;
+    private WebElement projectNameTemplate;
+    private WebElement projectModuleTemplate;
 
-    public PlaywrightLeftProjectModuleSelectorComponent() {
+    public LeftProjectModuleSelectorComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightLeftProjectModuleSelectorComponent(PlaywrightWebElement rootLocator) {
+    public LeftProjectModuleSelectorComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -34,7 +34,7 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends CoreComponent 
     public void selectModule(String projectName, String projectModuleName) {
         selectProject(projectName);
         WaitUtil.sleep(200);
-        PlaywrightWebElement moduleLink = projectModuleTemplate.format(projectName, projectModuleName);
+        WebElement moduleLink = projectModuleTemplate.format(projectName, projectModuleName);
         moduleLink.waitForVisible();
         moduleLink.click();
     }

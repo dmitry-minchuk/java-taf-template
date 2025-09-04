@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.TestDataUtil;
 import helpers.utils.WaitUtil;
@@ -9,17 +9,17 @@ import helpers.utils.WaitUtil;
 // Playwright version of ZipArchiveComponent for ZIP file upload project creation
 public class PlaywrightZipArchiveComponent extends CoreComponent {
 
-    private PlaywrightWebElement fileInputField;
-    private PlaywrightWebElement projectNameField;
-    private PlaywrightWebElement createProjectBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement fileInputField;
+    private WebElement projectNameField;
+    private WebElement createProjectBtn;
+    private WebElement cancelBtn;
 
     public PlaywrightZipArchiveComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightZipArchiveComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightZipArchiveComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

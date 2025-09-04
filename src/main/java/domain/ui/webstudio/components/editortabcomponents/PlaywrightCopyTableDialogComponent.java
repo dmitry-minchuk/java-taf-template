@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -9,23 +9,23 @@ import lombok.Getter;
 @Getter
 public class PlaywrightCopyTableDialogComponent extends CoreComponent {
 
-    private PlaywrightWebElement typeComboBox;
-    private PlaywrightWebElement nameTextBox;
-    private PlaywrightWebElement versionTextBox;
-    private PlaywrightWebElement copyButton;
-    private PlaywrightWebElement saveToLink;
-    private PlaywrightWebElement moduleComboBox;
-    private PlaywrightWebElement categoryComboBox;
-    private PlaywrightWebElement categoryTextBox;
-    private PlaywrightWebElement existingRadioBtn;
-    private PlaywrightWebElement newRadioBtn;
+    private WebElement typeComboBox;
+    private WebElement nameTextBox;
+    private WebElement versionTextBox;
+    private WebElement copyButton;
+    private WebElement saveToLink;
+    private WebElement moduleComboBox;
+    private WebElement categoryComboBox;
+    private WebElement categoryTextBox;
+    private WebElement existingRadioBtn;
+    private WebElement newRadioBtn;
 
     public PlaywrightCopyTableDialogComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightCopyTableDialogComponent(PlaywrightWebElement rootLocator) {
+    public PlaywrightCopyTableDialogComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

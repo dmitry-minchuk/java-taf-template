@@ -1,20 +1,20 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightProjectDetailsComponent extends CoreComponent {
+public class ProjectDetailsComponent extends CoreComponent {
 
-    private PlaywrightWebElement modulesHeaderElement;
-    private PlaywrightWebElement addModuleBtn;
+    private WebElement modulesHeaderElement;
+    private WebElement addModuleBtn;
 
-    public PlaywrightProjectDetailsComponent() {
+    public ProjectDetailsComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightProjectDetailsComponent(PlaywrightWebElement rootLocator) {
+    public ProjectDetailsComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

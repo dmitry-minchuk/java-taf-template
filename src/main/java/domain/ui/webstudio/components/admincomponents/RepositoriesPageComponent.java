@@ -1,27 +1,27 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightRepositoriesPageComponent extends CoreComponent {
+public class RepositoriesPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement designRepositoriesTab;
-    private PlaywrightWebElement deployConfigRepositoryTab;
-    private PlaywrightWebElement deploymentRepositoriesTab;
-    private PlaywrightWebElement addRepositoryBtn;
-    private PlaywrightWebElement repositoryNameField;
-    private PlaywrightWebElement repositoryTypeDropdown;
-    private PlaywrightWebElement repositoryUrlField;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement designRepositoriesTab;
+    private WebElement deployConfigRepositoryTab;
+    private WebElement deploymentRepositoriesTab;
+    private WebElement addRepositoryBtn;
+    private WebElement repositoryNameField;
+    private WebElement repositoryTypeDropdown;
+    private WebElement repositoryUrlField;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
-    public PlaywrightRepositoriesPageComponent() {
+    public RepositoriesPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightRepositoriesPageComponent(PlaywrightWebElement rootLocator) {
+    public RepositoriesPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

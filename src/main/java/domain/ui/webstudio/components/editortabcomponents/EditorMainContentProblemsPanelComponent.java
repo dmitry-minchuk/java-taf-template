@@ -1,26 +1,26 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public class PlaywrightEditorMainContentProblemsPanelComponent extends CoreComponent {
+public class EditorMainContentProblemsPanelComponent extends CoreComponent {
 
-    private PlaywrightWebElement problemsPanel;
-    private PlaywrightWebElement errorsTab;
-    private PlaywrightWebElement warningsTab;
-    private PlaywrightWebElement closeBtn;
-    private List<PlaywrightWebElement> errorMessages;
+    private WebElement problemsPanel;
+    private WebElement errorsTab;
+    private WebElement warningsTab;
+    private WebElement closeBtn;
+    private List<WebElement> errorMessages;
 
-    public PlaywrightEditorMainContentProblemsPanelComponent() {
+    public EditorMainContentProblemsPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightEditorMainContentProblemsPanelComponent(PlaywrightWebElement rootLocator) {
+    public EditorMainContentProblemsPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

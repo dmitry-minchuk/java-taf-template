@@ -1,26 +1,26 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightSystemSettingsPageComponent extends CoreComponent {
+public class SystemSettingsPageComponent extends CoreComponent {
 
-    private PlaywrightWebElement dispatchingValidationCheckbox;
-    private PlaywrightWebElement verifyOnEditCheckbox;
-    private PlaywrightWebElement testThreadCountField;
-    private PlaywrightWebElement projectHistoryCountField;
-    private PlaywrightWebElement clearAllHistoryBtn;
-    private PlaywrightWebElement updateSystemPropertiesCheckbox;
-    private PlaywrightWebElement saveBtn;
-    private PlaywrightWebElement cancelBtn;
+    private WebElement dispatchingValidationCheckbox;
+    private WebElement verifyOnEditCheckbox;
+    private WebElement testThreadCountField;
+    private WebElement projectHistoryCountField;
+    private WebElement clearAllHistoryBtn;
+    private WebElement updateSystemPropertiesCheckbox;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
-    public PlaywrightSystemSettingsPageComponent() {
+    public SystemSettingsPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightSystemSettingsPageComponent(PlaywrightWebElement rootLocator) {
+    public SystemSettingsPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

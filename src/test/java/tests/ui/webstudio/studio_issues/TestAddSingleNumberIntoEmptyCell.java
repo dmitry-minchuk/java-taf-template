@@ -6,8 +6,8 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.ui.webstudio.components.TableComponent;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightEditTablePanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.EditTablePanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -27,11 +27,11 @@ public class TestAddSingleNumberIntoEmptyCell extends BaseTest {
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "BankLimitIndex");
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
-        PlaywrightEditTablePanelComponent editTablePanel = editorPage.getEditTablePanelComponent();
+        EditTablePanelComponent editTablePanel = editorPage.getEditTablePanelComponent();
         TableComponent tableComponent = editorPage.getCenterTable();
         tableComponent.clickCell(10, 1);
         editTablePanel.clickInsertRowAfter();

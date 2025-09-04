@@ -5,8 +5,8 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.PlaywrightTableToolbarPanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -33,14 +33,14 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
 
         // Set the filter and expand the folder once before iterating through tables
         editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision");
 
         tables.forEach(tableName -> {
             // Select the item from the already expanded folder
             editorPage.getLeftRulesTreeComponent().selectItemInFolder("Decision", tableName);
 
-            PlaywrightTableToolbarPanelComponent.IPlaywrightRunMenu runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
+            TableToolbarPanelComponent.IPlaywrightRunMenu runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
             runMenu.clickCreateItem()
                     .clickAddElementToCollectionBtn("my =")
                     .clickExpandCollection();
@@ -51,7 +51,7 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
                     .containsExactly("", "bla1", "bla2", "bla3");
 
             // Switch to Trace and verify again
-            PlaywrightTableToolbarPanelComponent.IPlaywrightTraceMenu traceMenu = editorPage.getTableToolbarPanelComponent().clickTrace();
+            TableToolbarPanelComponent.IPlaywrightTraceMenu traceMenu = editorPage.getTableToolbarPanelComponent().clickTrace();
             assertThat(traceMenu.getAliasDropdownValues())
                     .as("Dropdown for alias values should contain expected values in Trace menu for table: " + tableName)
                     .containsExactly("", "bla1", "bla2", "bla3");

@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -24,8 +24,8 @@ public class TestAllBusinessVersionsDisplayWithDifferentTime extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAllBusinessVersionsDisplayWithDifferentTime.xlsx");
         EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAllBusinessVersionsDisplayWithDifferentTime");
-        PlaywrightLeftRulesTreeComponent leftRulesTreeComponent = editorPage.getLeftRulesTreeComponent();
-        leftRulesTreeComponent.setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        LeftRulesTreeComponent leftRulesTreeComponent = editorPage.getLeftRulesTreeComponent();
+        leftRulesTreeComponent.setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .expandFolderInTree("mySpreadsheet");
         assertThat(leftRulesTreeComponent.isItemExistsInTree("mySpreadsheet [startRequestDate=08/08/2018 11:00:00 AM]")).isTrue();

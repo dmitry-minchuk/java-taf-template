@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components;
 
 import configuration.core.ui.CoreComponent;
-import configuration.core.ui.PlaywrightWebElement;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TableComponent extends CoreComponent {
 
-    private PlaywrightWebElement inputLocator;
+    private WebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
 
     public TableComponent() {
@@ -17,13 +17,13 @@ public class TableComponent extends CoreComponent {
         initializeElements();
     }
 
-    public TableComponent(PlaywrightWebElement rootLocator) {
+    public TableComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
 
     private void initializeElements() {
-        inputLocator = new PlaywrightWebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
+        inputLocator = new WebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
         rows = createScopedComponentList(PlaywrightTableRowComponent.class, "xpath=.//tbody/tr", "rowSelectorTemplate");
     }
 
@@ -31,10 +31,10 @@ public class TableComponent extends CoreComponent {
         getCell(rowIndex, columnIndex).click();
     }
 
-    public PlaywrightWebElement getCell(int rowIndex, int columnIndex) {
+    public WebElement getCell(int rowIndex, int columnIndex) {
         WaitUtil.waitForListNotEmpty(() -> rows, 3000, 100);
         PlaywrightTableRowComponent row = rows.get(rowIndex - 1);
-        List<PlaywrightWebElement> cells = row.getCells();
+        List<WebElement> cells = row.getCells();
         return cells.get(columnIndex - 1);
     }
 
@@ -43,7 +43,7 @@ public class TableComponent extends CoreComponent {
     }
 
     public void doubleClickCell(int rowIndex, int columnIndex) {
-        PlaywrightWebElement cell = getCell(rowIndex, columnIndex);
+        WebElement cell = getCell(rowIndex, columnIndex);
         cell.doubleClick();
     }
 
@@ -75,14 +75,14 @@ public class TableComponent extends CoreComponent {
 
     // Inner class for table row operations
     public static class PlaywrightTableRowComponent extends CoreComponent {
-        List<PlaywrightWebElement> cells;
+        List<WebElement> cells;
 
         public PlaywrightTableRowComponent() {
             super(LocalDriverPool.getPage());
             initializeElements();
         }
 
-        public PlaywrightTableRowComponent(PlaywrightWebElement rootLocator) {
+        public PlaywrightTableRowComponent(WebElement rootLocator) {
             super(rootLocator);
             initializeElements();
         }
@@ -91,7 +91,7 @@ public class TableComponent extends CoreComponent {
             cells = createScopedElementList("xpath=./td", "cells");
         }
 
-        public  List<PlaywrightWebElement> getCells() {
+        public  List<WebElement> getCells() {
             WaitUtil.waitForListNotEmpty(() -> cells, 250, 50);
             return cells;
         }
