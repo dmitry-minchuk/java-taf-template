@@ -33,8 +33,7 @@ public class ZipArchiveComponent extends BaseComponent {
 
     public void createProjectZipArchive(String fileName, String projectName) {
         uploadZipFile(fileName);
-        setProjectName(projectName);
-        createProjectBtn.click();
+        setProjectNameAndPressEnter(projectName);
     }
     
     private void uploadZipFile(String fileName) {
@@ -43,7 +42,7 @@ public class ZipArchiveComponent extends BaseComponent {
         WaitUtil.sleep(1000); // For progress bar to finish
     }
     
-    private void setProjectName(String projectName) {
+    private void setProjectNameAndPressEnter(String projectName) {
         projectNameField.waitForVisible();
         projectNameField.click();
         projectNameField.press("Control+a");
@@ -51,6 +50,6 @@ public class ZipArchiveComponent extends BaseComponent {
         projectNameField.press("Enter");
         projectNameField.click();
         projectNameField.fillSequentially(projectName);
-        projectNameField.press("Enter");
+        projectNameField.press("Enter"); // Instead of pressing createProjectBtn because of JSF
     }
 }
