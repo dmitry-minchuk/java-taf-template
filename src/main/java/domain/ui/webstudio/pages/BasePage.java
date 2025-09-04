@@ -5,6 +5,7 @@ import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.UserSlidingRightMenuComponent;
 import domain.ui.webstudio.components.common.MessageComponent;
+import helpers.utils.WaitUtil;
 
 import java.util.List;
 
@@ -35,7 +36,10 @@ public abstract class BasePage extends CorePage {
 
     public void closeAllMessages() {
         LOGGER.debug("messages.size() = {}", messages.size());
-        messages.forEach(MessageComponent::closeMessage);
+        for(int i = 0; i < 3; i++) {
+            messages.forEach(MessageComponent::closeMessage);
+            WaitUtil.sleep(100);
+        }
     }
 
     public boolean isStudioMessageDisplayed(String text) {

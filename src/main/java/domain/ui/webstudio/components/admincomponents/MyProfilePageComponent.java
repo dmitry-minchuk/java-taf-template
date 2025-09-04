@@ -126,6 +126,7 @@ public class MyProfilePageComponent extends BaseComponent {
 
     public MyProfilePageComponent saveProfile() {
         saveBtn.click();
+        closeAllMessages();
         return this;
     }
 

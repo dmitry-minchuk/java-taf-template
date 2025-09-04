@@ -30,7 +30,8 @@ public class MessageComponent extends BaseComponent {
     }
 
     public void closeMessage() {
-        closeBtn.click();
-        WaitUtil.sleep(1000);
+        try {
+            closeBtn.click();
+        } catch (Exception ignored) {}
     }
 }

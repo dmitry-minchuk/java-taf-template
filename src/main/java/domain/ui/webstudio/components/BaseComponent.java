@@ -4,6 +4,7 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.MessageComponent;
+import helpers.utils.WaitUtil;
 
 import java.util.List;
 
@@ -33,7 +34,10 @@ public abstract class BaseComponent extends CoreComponent {
     }
 
     public void closeAllMessages() {
-        LOGGER.debug("messages.size() = {}", messages.size());
-        messages.forEach(MessageComponent::closeMessage);
+        LOGGER.info("messages.size() = {}", messages.size());
+        for(int i = 0; i < 3; i++) {
+            messages.forEach(MessageComponent::closeMessage);
+            WaitUtil.sleep(100);
+        }
     }
 }
