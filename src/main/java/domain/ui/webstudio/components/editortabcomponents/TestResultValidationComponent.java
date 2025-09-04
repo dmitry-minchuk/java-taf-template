@@ -1,9 +1,10 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.common.TableComponent;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.BaseComponent;
+import domain.ui.webstudio.components.common.TableComponent;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 import java.util.List;
@@ -42,35 +43,25 @@ public class TestResultValidationComponent extends BaseComponent {
     }
 
     public boolean isTestTableFailed() {
-        isResultTableVisible();
-        return !caseErrorElementsList.isEmpty();
+        return WaitUtil.isListNotEmpty(() -> caseErrorElementsList, DEFAULT_TIMEOUT_MS, 100);
     }
 
     public boolean isTestTablePassed() {
-        isResultTableVisible();
-        return !caseSuccessElementsList.isEmpty();
+        return WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, DEFAULT_TIMEOUT_MS, 100);
     }
 
     public int getFailedTestCount() {
-        isResultTableVisible();
+        WaitUtil.waitForListNotEmpty(() -> caseErrorElementsList, DEFAULT_TIMEOUT_MS, 100);
         return caseErrorElementsList.size();
     }
 
     public int getPassedTestCount() {
-        isResultTableVisible();
+        WaitUtil.waitForListNotEmpty(() -> caseSuccessElementsList, DEFAULT_TIMEOUT_MS, 100);
         return caseSuccessElementsList.size();
     }
 
     public int getTotalTestCount() {
         return testResultRowElementsList.size();
-    }
-
-    public boolean isResultTableVisible() {
-        return resultTableElement.isVisible();
-    }
-
-    public boolean isResultTableHeaderVisible() {
-        return resultTableHeader.isVisible();
     }
 
     public String getTestResultSummary() {
