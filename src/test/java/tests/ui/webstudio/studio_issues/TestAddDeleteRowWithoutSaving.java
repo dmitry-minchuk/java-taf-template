@@ -6,7 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.ui.webstudio.components.TableComponent;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.apache.commons.lang3.StringUtils;
@@ -25,10 +25,10 @@ public class TestAddDeleteRowWithoutSaving extends BaseTest {
     public void testPlaywrightAddDeleteRowWithoutSaving() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Tutorial 6 - Introduction to Spreadsheet Tables");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent()
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Tutorial6 - Intro to Spreadsheet Tables");
-        editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "LossFreeDiscount");
 

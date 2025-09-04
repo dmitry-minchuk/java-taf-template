@@ -27,13 +27,13 @@ public class LeftRepositoryTreeComponent extends CoreComponent {
     }
 
     public LeftRepositoryTreeComponent selectItemInFolder(String folderName, String itemName) {
-        PlaywrightRepositoryTreeFolderComponent folder = findFolderInTree(folderName);
+        RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.selectItem(itemName);
         return this;
     }
 
     public LeftRepositoryTreeComponent expandFolderInTree(String folderName) {
-        PlaywrightRepositoryTreeFolderComponent folder = findFolderInTree(folderName);
+        RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;
     }
@@ -54,7 +54,7 @@ public class LeftRepositoryTreeComponent extends CoreComponent {
     }
 
     // Find specific folder in the tree by name
-    private PlaywrightRepositoryTreeFolderComponent findFolderInTree(String folderName) {
+    private RepositoryTreeFolderComponent findFolderInTree(String folderName) {
         return findTreeFolders().stream()
                 .filter(folder -> folder.getFolderName().equals(folderName))
                 .findFirst()
@@ -62,8 +62,8 @@ public class LeftRepositoryTreeComponent extends CoreComponent {
     }
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
-    private List<PlaywrightRepositoryTreeFolderComponent> findTreeFolders() {
-        List<PlaywrightRepositoryTreeFolderComponent> folders = new java.util.ArrayList<>();
+    private List<RepositoryTreeFolderComponent> findTreeFolders() {
+        List<RepositoryTreeFolderComponent> folders = new java.util.ArrayList<>();
         WaitUtil.sleep(1000); //needed here for deploy freezing operations
 
         String[] selectors = {
@@ -78,14 +78,14 @@ public class LeftRepositoryTreeComponent extends CoreComponent {
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
                 WebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
                 WebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
-                PlaywrightRepositoryTreeFolderComponent folder = createScopedComponent(PlaywrightRepositoryTreeFolderComponent.class, indexedElement);
+                RepositoryTreeFolderComponent folder = createScopedComponent(RepositoryTreeFolderComponent.class, indexedElement);
                 if(folder.isVisible())
                     folders.add(folder);
             }
         }
 
         LOGGER.debug("Found {} tree folders", folders.size());
-        List<String> folderNames = folders.stream().map(PlaywrightRepositoryTreeFolderComponent::getFolderName).toList();
+        List<String> folderNames = folders.stream().map(RepositoryTreeFolderComponent::getFolderName).toList();
         folderNames.forEach(LOGGER::debug);
         return folders;
     }

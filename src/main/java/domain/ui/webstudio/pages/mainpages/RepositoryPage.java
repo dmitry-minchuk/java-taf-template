@@ -4,13 +4,14 @@ import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.CreateNewProjectComponent;
 import domain.ui.webstudio.components.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
-import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
-import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
+import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
+import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
+import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.LeftRepositoryTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployConfigurationTabsComponent;
+import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,15 +62,15 @@ public class RepositoryPage extends BasePage {
         createProjectLink.click();
         switch (projectType) {
             case EXCEL_FILES:
-                PlaywrightExcelFilesComponent excelComponent = createNewProjectComponent.selectTab(projectType);
+                ExcelFilesComponent excelComponent = createNewProjectComponent.selectTab(projectType);
                 excelComponent.createProjectFromExcelFile(sourceName, projectName);
                 break;
             case ZIP_ARCHIVE:
-                PlaywrightZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(projectType);
+                ZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(projectType);
                 zipComponent.createProjectZipArchive(sourceName, projectName);
                 break;
             case TEMPLATE:
-                PlaywrightTemplateTabComponent templateComponent = createNewProjectComponent.selectTab(projectType);
+                TemplateTabComponent templateComponent = createNewProjectComponent.selectTab(projectType);
                 templateComponent.createProjectFromTemplate(projectName, sourceName);
                 break;
             default:

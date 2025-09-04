@@ -7,7 +7,7 @@ import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 @Getter
-public class PlaywrightCopyTableDialogComponent extends CoreComponent {
+public class CopyTableDialogComponent extends CoreComponent {
 
     private WebElement typeComboBox;
     private WebElement nameTextBox;
@@ -20,12 +20,12 @@ public class PlaywrightCopyTableDialogComponent extends CoreComponent {
     private WebElement existingRadioBtn;
     private WebElement newRadioBtn;
 
-    public PlaywrightCopyTableDialogComponent() {
+    public CopyTableDialogComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightCopyTableDialogComponent(WebElement rootLocator) {
+    public CopyTableDialogComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -46,25 +46,25 @@ public class PlaywrightCopyTableDialogComponent extends CoreComponent {
         newRadioBtn = createScopedElement("xpath=//table[@id='newSheet']//label[contains(text(), 'New')]//..//input", "newRadioBtn");
     }
 
-    public PlaywrightCopyTableDialogComponent selectCopyAs(String value) {
+    public CopyTableDialogComponent selectCopyAs(String value) {
         typeComboBox.selectByVisibleText(value);
         WaitUtil.sleep(250);
         return this;
     }
 
-    public PlaywrightCopyTableDialogComponent setName(String name) {
+    public CopyTableDialogComponent setName(String name) {
         nameTextBox.fill(name);
         return this;
     }
 
-    public PlaywrightCopyTableDialogComponent setVersion(String version) {
+    public CopyTableDialogComponent setVersion(String version) {
         if (versionTextBox.isVisible()) {
             versionTextBox.fill(version);
         }
         return this;
     }
 
-    public PlaywrightCopyTableDialogComponent setSaveTo(String categoryName) {
+    public CopyTableDialogComponent setSaveTo(String categoryName) {
         if (categoryName != null && !categoryName.isEmpty()) {
             saveToLink.click();
             

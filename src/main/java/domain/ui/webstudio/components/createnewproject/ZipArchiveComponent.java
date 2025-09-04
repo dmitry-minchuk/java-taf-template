@@ -7,19 +7,19 @@ import helpers.utils.TestDataUtil;
 import helpers.utils.WaitUtil;
 
 // Playwright version of ZipArchiveComponent for ZIP file upload project creation
-public class PlaywrightZipArchiveComponent extends CoreComponent {
+public class ZipArchiveComponent extends CoreComponent {
 
     private WebElement fileInputField;
     private WebElement projectNameField;
     private WebElement createProjectBtn;
     private WebElement cancelBtn;
 
-    public PlaywrightZipArchiveComponent() {
+    public ZipArchiveComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightZipArchiveComponent(WebElement rootLocator) {
+    public ZipArchiveComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

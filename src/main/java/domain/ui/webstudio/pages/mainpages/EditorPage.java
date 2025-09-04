@@ -10,16 +10,17 @@ import domain.ui.webstudio.components.editortabcomponents.ProjectDetailsComponen
 import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.TestResultValidationComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftProjectModuleSelectorComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftProjectModuleSelectorComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
+import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 @Getter
 public class EditorPage extends BasePage {
 
-    private LeftProjectModuleSelectorComponent leftProjectModuleSelectorComponent;
-    private LeftRulesTreeComponent leftRulesTreeComponent;
+    private EditorLeftProjectModuleSelectorComponent editorLeftProjectModuleSelectorComponent;
+    private EditorLeftRulesTreeComponent editorLeftRulesTreeComponent;
     private RightTableDetailsComponent rightTableDetailsComponent;
     private TabSwitcherComponent tabSwitcherComponent;
     private TableComponent centerTable;
@@ -37,8 +38,8 @@ public class EditorPage extends BasePage {
     }
 
     private void initializeComponents() {
-        leftProjectModuleSelectorComponent = createScopedComponent(LeftProjectModuleSelectorComponent.class, "xpath=//div[@id='projects']", "leftProjectModuleSelectorComponent");
-        leftRulesTreeComponent = createScopedComponent(LeftRulesTreeComponent.class, "xpath=//div[@id='left']", "leftRulesTreeComponent");
+        editorLeftProjectModuleSelectorComponent = createScopedComponent(EditorLeftProjectModuleSelectorComponent.class, "xpath=//div[@id='projects']", "editorLeftProjectModuleSelectorComponent");
+        editorLeftRulesTreeComponent = createScopedComponent(EditorLeftRulesTreeComponent.class, "xpath=//div[@id='left']", "editorLeftRulesTreeComponent");
         rightTableDetailsComponent = createScopedComponent(RightTableDetailsComponent.class, "xpath=//div[@id='right']", "rightTableDetailsComponent");
         tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         centerTable = createScopedComponent(TableComponent.class, "xpath=//table[@class='te_table']", "centerTable");

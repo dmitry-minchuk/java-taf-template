@@ -11,6 +11,7 @@ import domain.ui.webstudio.components.admincomponents.SecurityPageComponent;
 import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
+import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 
 public class AdminPage extends BasePage {

@@ -7,17 +7,17 @@ import helpers.utils.WaitUtil;
 
 
 // Handles clicking on project names and specific modules within projects
-public class LeftProjectModuleSelectorComponent extends CoreComponent {
+public class EditorLeftProjectModuleSelectorComponent extends CoreComponent {
 
     private WebElement projectNameTemplate;
     private WebElement projectModuleTemplate;
 
-    public LeftProjectModuleSelectorComponent() {
+    public EditorLeftProjectModuleSelectorComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public LeftProjectModuleSelectorComponent(WebElement rootLocator) {
+    public EditorLeftProjectModuleSelectorComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

@@ -10,20 +10,20 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class LeftRulesTreeComponent extends CoreComponent {
+public class EditorLeftRulesTreeComponent extends CoreComponent {
 
-    private static final Logger LOGGER = LogManager.getLogger(LeftRulesTreeComponent.class);
+    private static final Logger LOGGER = LogManager.getLogger(EditorLeftRulesTreeComponent.class);
 
     private WebElement viewFilterLink;
     private WebElement selectedTreeItem;
     private WebElement filterOptionTemplate;
 
-    public LeftRulesTreeComponent() {
+    public EditorLeftRulesTreeComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public LeftRulesTreeComponent(WebElement rootLocator) {
+    public EditorLeftRulesTreeComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -34,7 +34,7 @@ public class LeftRulesTreeComponent extends CoreComponent {
         filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
     }
 
-    public LeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
+    public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
             while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(200)) {
                 WaitUtil.sleep(250);
@@ -48,14 +48,14 @@ public class LeftRulesTreeComponent extends CoreComponent {
         return this;
     }
 
-    public LeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
-        PlaywrightTreeFolderComponent folder = findFolderInTree(folderName);
+    public EditorLeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
+        EditorTreeFolderComponent folder = findFolderInTree(folderName);
         folder.selectItem(itemName);
         return this;
     }
 
-    public LeftRulesTreeComponent expandFolderInTree(String folderName) {
-        PlaywrightTreeFolderComponent folder = findFolderInTree(folderName);
+    public EditorLeftRulesTreeComponent expandFolderInTree(String folderName) {
+        EditorTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;
     }
@@ -91,7 +91,7 @@ public class LeftRulesTreeComponent extends CoreComponent {
 
     public boolean isItemExistsInFolder(String folderName, String itemName) {
         try {
-            PlaywrightTreeFolderComponent folder = findFolderInTree(folderName);
+            EditorTreeFolderComponent folder = findFolderInTree(folderName);
             return folder.getItem(itemName).isVisible();
         } catch (RuntimeException e) {
             return false;
@@ -100,7 +100,7 @@ public class LeftRulesTreeComponent extends CoreComponent {
 
 
     // Find specific folder in the tree by name
-    private PlaywrightTreeFolderComponent findFolderInTree(String folderName) {
+    private EditorTreeFolderComponent findFolderInTree(String folderName) {
         return findTreeFolders().stream()
                 .filter(folder -> folder.getFolderName().equals(folderName))
                 .findFirst()
@@ -108,8 +108,8 @@ public class LeftRulesTreeComponent extends CoreComponent {
     }
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
-    private List<PlaywrightTreeFolderComponent> findTreeFolders() {
-        List<PlaywrightTreeFolderComponent> folders = new java.util.ArrayList<>();
+    private List<EditorTreeFolderComponent> findTreeFolders() {
+        List<EditorTreeFolderComponent> folders = new java.util.ArrayList<>();
         
         // Wait for the tree to be loaded
         WaitUtil.sleep(250);
@@ -126,14 +126,14 @@ public class LeftRulesTreeComponent extends CoreComponent {
                 String componentName = String.format("treeFolderElement_%d_%d", folders.size(), i);
                 WebElement indexedSelectorTemplate = createScopedElement("xpath=(%s)[%d]", componentName);
                 WebElement indexedElement = indexedSelectorTemplate.format(selector, i + 1);
-                PlaywrightTreeFolderComponent folder = createScopedComponent(PlaywrightTreeFolderComponent.class, indexedElement);
+                EditorTreeFolderComponent folder = createScopedComponent(EditorTreeFolderComponent.class, indexedElement);
                 if(folder.isVisible())
                     folders.add(folder);
             }
         }
 
         LOGGER.debug("Found {} tree folders", folders.size());
-        List<String> folderNames = folders.stream().map(PlaywrightTreeFolderComponent::getFolderName).toList();
+        List<String> folderNames = folders.stream().map(EditorTreeFolderComponent::getFolderName).toList();
         folderNames.forEach(LOGGER::debug);
         return folders;
     }

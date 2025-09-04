@@ -7,20 +7,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // Handles folder expansion and item selection within the rules tree
-public class PlaywrightTreeFolderComponent extends CoreComponent {
+public class EditorTreeFolderComponent extends CoreComponent {
 
-    private static final Logger LOGGER = LogManager.getLogger(PlaywrightTreeFolderComponent.class);
+    private static final Logger LOGGER = LogManager.getLogger(EditorTreeFolderComponent.class);
     
     private WebElement expanderClosed;
     private WebElement folderName;
     private WebElement itemTemplate;
 
-    public PlaywrightTreeFolderComponent() {
+    public EditorTreeFolderComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTreeFolderComponent(WebElement rootLocator) {
+    public EditorTreeFolderComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

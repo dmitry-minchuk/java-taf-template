@@ -5,19 +5,19 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.TestDataUtil;
 
-public class PlaywrightExcelFilesComponent extends CoreComponent {
+public class ExcelFilesComponent extends CoreComponent {
 
     private WebElement fileInputField;
     private WebElement projectNameField;
     private WebElement createProjectBtn;
     private WebElement cancelBtn;
 
-    public PlaywrightExcelFilesComponent() {
+    public ExcelFilesComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightExcelFilesComponent(WebElement rootLocator) {
+    public ExcelFilesComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

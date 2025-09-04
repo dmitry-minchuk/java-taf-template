@@ -6,7 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.core.ui.WebElement;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -26,9 +26,9 @@ public class TestArrayDeclarationIsLink extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestArrayDeclarationIsLink.xlsx");
 
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestArrayDeclarationIsLink");
-        editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "TestArrayDeclarationIsLink");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "DetermineStatusByCodeRule");
 

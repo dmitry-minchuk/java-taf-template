@@ -24,14 +24,14 @@ public class TestClickDatatypeNotFoundError extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickDatatypeNotFoundError.zip");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent()
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "module_NJ");
         
         // Click on the datatype not found error in the problems panel
         editorPage.getProblemsPanelComponent().selectProblemByText("is not found.");
         
         // Validate that the correct item is selected in the tree
-        assertThat(editorPage.getLeftRulesTreeComponent().getSelectedItemText())
+        assertThat(editorPage.getEditorLeftRulesTreeComponent().getSelectedItemText())
                 .as("Selected tree item should be 'SmartRule2'")
                 .isEqualTo("SmartRule2");
 

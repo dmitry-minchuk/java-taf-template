@@ -24,7 +24,7 @@ public class TestClickOnErrorFromTheBottom extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickOnErrorFromTheBottom.zip");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent()
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "ContextDatatypes");
         
         // Click on the first problem in the problems panel

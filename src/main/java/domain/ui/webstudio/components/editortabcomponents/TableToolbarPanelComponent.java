@@ -5,7 +5,7 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
-import domain.ui.webstudio.pages.mainpages.BasePage;
+import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
@@ -106,9 +106,9 @@ public class TableToolbarPanelComponent extends CoreComponent {
         exportBtn.click();
     }
     
-    public PlaywrightCopyTableDialogComponent clickCopy() {
+    public CopyTableDialogComponent clickCopy() {
         copyBtn.click();
-        return new PlaywrightCopyTableDialogComponent();
+        return new CopyTableDialogComponent();
     }
     
     public void clickRemove() {
@@ -293,7 +293,7 @@ public class TableToolbarPanelComponent extends CoreComponent {
 
 
     public void copyTableAsNew(String newName, String description) {
-        PlaywrightCopyTableDialogComponent copyDialog = clickCopy();
+        CopyTableDialogComponent copyDialog = clickCopy();
         copyDialog.selectCopyAs("New Table").setName(newName);
         if (description != null && !description.isEmpty()) {
             copyDialog.setSaveTo(description);

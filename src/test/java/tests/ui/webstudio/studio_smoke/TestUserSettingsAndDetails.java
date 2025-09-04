@@ -12,7 +12,7 @@ import domain.ui.webstudio.components.TabSwitcherComponent;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -156,10 +156,10 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         String testFileName = "TestUserSettingsAndDetails";
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, testFileName + ".xlsx");
         editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
-        editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
 
@@ -186,9 +186,9 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         // Open the project using repository methods
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
-        editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
         
@@ -210,7 +210,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
                 String nameExample1Project = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
 
         // Test execution dropdown verification would be done through TableToolbarPanelComponent
         // Implementation depends on available dropdown methods
@@ -238,9 +238,9 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         editorPage.getCurrentUserComponent().signOut();
         editorPage = loginService.login(adminNewPassword);
 
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
-        editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
@@ -265,7 +265,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         assertThat(traceItems.getFirst()).contains("268.59000000000003"); // Unformatted number
 
         // Scenario 15: Verify E-notation is not shown
-        editorPage.getLeftRulesTreeComponent()
+        editorPage.getEditorLeftRulesTreeComponent()
                 .expandFolderInTree("TBasic")
                 .selectItemInFolder("TBasic", "SetNonZeroValues");
 

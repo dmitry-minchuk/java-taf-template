@@ -4,19 +4,19 @@ import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightOpenApiComponent extends CoreComponent {
+public class OpenApiComponent extends CoreComponent {
 
     private WebElement openApiUrlField;
     private WebElement projectNameField;
     private WebElement createProjectBtn;
     private WebElement cancelBtn;
 
-    public PlaywrightOpenApiComponent() {
+    public OpenApiComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightOpenApiComponent(WebElement rootLocator) {
+    public OpenApiComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

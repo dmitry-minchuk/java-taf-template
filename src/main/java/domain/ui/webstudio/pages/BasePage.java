@@ -1,9 +1,9 @@
-package domain.ui.webstudio.pages.mainpages;
+package domain.ui.webstudio.pages;
 
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.PlaywrightCurrentUserComponent;
+import domain.ui.webstudio.components.CurrentUserComponent;
 import domain.ui.webstudio.components.MessageComponent;
 import helpers.utils.WaitUtil;
 
@@ -45,11 +45,11 @@ public abstract class BasePage extends CorePage {
         return messages.stream().anyMatch(m -> m.getMessageText().contains(text));
     }
 
-    public PlaywrightCurrentUserComponent getCurrentUserComponent() {
+    public CurrentUserComponent getCurrentUserComponent() {
         closeAllMessages();
         userLogo.click();
         userMenuDrawer.waitForVisible();
-        return new PlaywrightCurrentUserComponent(userMenuDrawer);
+        return new CurrentUserComponent(userMenuDrawer);
     }
 
     public void waitUntilPageContentLoaded() {

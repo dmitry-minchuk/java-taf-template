@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.LeftRulesTreeComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -23,9 +23,9 @@ public class TestAddElementToCollectionSet extends BaseTest {
     public void testPlaywrightAddElementToCollectionSet() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddElementToCollectionSet.xlsx");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddElementToCollectionSet");
-        editorPage.getLeftRulesTreeComponent()
-                .setViewFilter(LeftRulesTreeComponent.FilterOptions.BY_TYPE)
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddElementToCollectionSet");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "mySpr");
 
