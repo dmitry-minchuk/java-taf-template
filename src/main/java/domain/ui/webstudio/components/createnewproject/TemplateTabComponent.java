@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.createnewproject;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class TemplateTabComponent extends CoreComponent {
+public class TemplateTabComponent extends BaseComponent {
 
     private WebElement projectTemplate;
     private WebElement projectNameField;

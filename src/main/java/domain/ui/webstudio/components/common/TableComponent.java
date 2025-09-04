@@ -1,13 +1,13 @@
 package domain.ui.webstudio.components.common;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public class TableComponent extends CoreComponent {
+public class TableComponent extends BaseComponent {
 
     private WebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
@@ -74,7 +74,7 @@ public class TableComponent extends CoreComponent {
     }
 
     // Inner class for table row operations
-    public static class PlaywrightTableRowComponent extends CoreComponent {
+    public static class PlaywrightTableRowComponent extends BaseComponent {
         List<WebElement> cells;
 
         public PlaywrightTableRowComponent() {

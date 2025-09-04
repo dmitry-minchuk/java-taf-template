@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class EditorLeftRulesTreeComponent extends CoreComponent {
+public class EditorLeftRulesTreeComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(EditorLeftRulesTreeComponent.class);
 

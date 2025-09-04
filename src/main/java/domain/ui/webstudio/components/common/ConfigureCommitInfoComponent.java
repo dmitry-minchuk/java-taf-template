@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.common;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import net.datafaker.Faker;
@@ -10,7 +10,7 @@ import net.datafaker.Faker;
  * This modal appears after project creation and needs to be filled or dismissed
  * Matches original ConfigureCommitInfoComponent functionality exactly
  */
-public class ConfigureCommitInfoComponent extends CoreComponent {
+public class ConfigureCommitInfoComponent extends BaseComponent {
 
     private WebElement emailField;
     private WebElement firstNameField;

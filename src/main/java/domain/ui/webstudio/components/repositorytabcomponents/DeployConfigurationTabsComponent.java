@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class DeployConfigurationTabsComponent extends CoreComponent {
+public class DeployConfigurationTabsComponent extends BaseComponent {
 
     private WebElement configurationTabs;
     private WebElement activeTab;

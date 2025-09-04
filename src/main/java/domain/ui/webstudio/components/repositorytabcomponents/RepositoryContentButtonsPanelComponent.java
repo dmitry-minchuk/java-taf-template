@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class RepositoryContentButtonsPanelComponent extends CoreComponent {
+public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     private WebElement closeBtn;
     private WebElement saveBtn;
@@ -42,57 +42,13 @@ public class RepositoryContentButtonsPanelComponent extends CoreComponent {
         exportBtn = createScopedElement("xpath=.//input[@value='Export']", "exportBtn");
     }
 
-    public void clickClose() {
-        closeBtn.click();
-    }
-
-    public void clickSave() {
-        saveBtn.click();
-    }
-
-    public void clickCopy() {
-        copyBtn.click();
-    }
-
-    public void clickDelete() {
-        deleteBtn.click();
-    }
-
-    public void clickDeploy() {
-        deployBtn.click();
-    }
-
-    public void clickOpen() {
+    // Legacy methods for compatibility
+    public void openProject() {
         openBtn.click();
     }
 
-    public void clickOpenRevision() {
-        openRevisionBtn.click();
-    }
-
-    public void clickCompare() {
-        compareBtn.click();
-    }
-
-    public void clickAddFolder() {
-        addFolderBtn.click();
-    }
-
-    public void clickUploadFile() {
-        uploadFileBtn.click();
-    }
-
-    public void clickExport() {
-        exportBtn.click();
-    }
-
-    // Legacy methods for compatibility
-    public void openProject() {
-        clickOpen();
-    }
-
     public void saveDeploy() {
-        clickSave();
+        saveBtn.click();
     }
 
     public boolean isDeployButtonEnabled() {

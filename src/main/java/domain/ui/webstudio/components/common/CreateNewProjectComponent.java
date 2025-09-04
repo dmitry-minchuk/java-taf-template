@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.common;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
@@ -8,7 +8,7 @@ import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import lombok.Getter;
 
-public class CreateNewProjectComponent extends CoreComponent {
+public class CreateNewProjectComponent extends BaseComponent {
 
     private ExcelFilesComponent excelFilesComponent;
     private ZipArchiveComponent zipArchiveComponent;
@@ -34,7 +34,7 @@ public class CreateNewProjectComponent extends CoreComponent {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends CoreComponent> T selectTab(TabName tabName) {
+    public <T extends BaseComponent> T selectTab(TabName tabName) {
         tabTemplate.format(tabName.getValue()).click();
 
         return switch (tabName) {

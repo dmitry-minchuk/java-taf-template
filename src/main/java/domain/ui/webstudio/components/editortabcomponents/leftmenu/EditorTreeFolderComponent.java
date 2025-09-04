@@ -1,13 +1,13 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // Handles folder expansion and item selection within the rules tree
-public class EditorTreeFolderComponent extends CoreComponent {
+public class EditorTreeFolderComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(EditorTreeFolderComponent.class);
     

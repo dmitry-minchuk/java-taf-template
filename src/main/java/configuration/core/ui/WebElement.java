@@ -210,10 +210,11 @@ public class WebElement {
         return this;
     }
     
-    public WebElement waitForHidden() {
+    public WebElement waitForHidden(long timeoutInMillis) {
         LOGGER.info("Waiting for {} to be hidden", elementName);
         locator.waitFor(new Locator.WaitForOptions()
-                .setState(WaitForSelectorState.HIDDEN));
+                .setState(WaitForSelectorState.HIDDEN)
+                .setTimeout((int)(timeoutInMillis)));
         return this;
     }
     

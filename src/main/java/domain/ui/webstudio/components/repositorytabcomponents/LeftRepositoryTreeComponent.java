@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class LeftRepositoryTreeComponent extends CoreComponent {
+public class LeftRepositoryTreeComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(LeftRepositoryTreeComponent.class);
 
@@ -64,7 +64,7 @@ public class LeftRepositoryTreeComponent extends CoreComponent {
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<RepositoryTreeFolderComponent> findTreeFolders() {
         List<RepositoryTreeFolderComponent> folders = new java.util.ArrayList<>();
-        WaitUtil.sleep(1000); //needed here for deploy freezing operations
+        waitUntilSpinnerLoaded();
 
         String[] selectors = {
                 ".//div[@id='projectTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]",

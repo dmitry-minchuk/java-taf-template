@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.TableComponent;
 import configuration.driver.LocalDriverPool;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RepositoryContentTabPropertiesComponent extends CoreComponent {
+public class RepositoryContentTabPropertiesComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(RepositoryContentTabPropertiesComponent.class);
 

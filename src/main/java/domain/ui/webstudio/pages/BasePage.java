@@ -9,7 +9,7 @@ import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-// This class is separated from BasePage and created for specific element storage
+// This class is separated from CorePage and created for specific element storage
 public abstract class BasePage extends CorePage {
 
     private WebElement userLogo;
@@ -52,10 +52,7 @@ public abstract class BasePage extends CorePage {
         return new CurrentUserComponent(userMenuDrawer);
     }
 
-    public void waitUntilPageContentLoaded() {
-        while(contentLoadingSpinner.isVisible()) {
-            LOGGER.info("Waiting until loading spinner to disappear...");
-            WaitUtil.sleep(100);
-        }
+    public void waitUntilSpinnerLoaded() {
+        contentLoadingSpinner.waitForHidden(30000);
     }
 }
