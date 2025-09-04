@@ -2,10 +2,10 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
-import configuration.core.ui.PlaywrightBasePage;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import domain.ui.webstudio.pages.mainpages.PlaywrightProxyBasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
@@ -266,7 +266,7 @@ public class PlaywrightTableToolbarPanelComponent extends PlaywrightBasePageComp
     }
 
     // Implementation for Playwright Trace Window
-    public class PlaywrightTraceWindow extends PlaywrightBasePage implements IPlaywrightTraceWindow {
+    public class PlaywrightTraceWindow extends PlaywrightProxyBasePage implements IPlaywrightTraceWindow {
         private PlaywrightWebElement traceExpanderTemplate;
         private List<PlaywrightWebElement> visibleItemsFromTree;
 
