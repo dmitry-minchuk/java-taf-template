@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.TableComponent;
 import configuration.driver.LocalDriverPool;
@@ -8,7 +8,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class TestResultValidationComponent extends CoreComponent {
+public class TestResultValidationComponent extends BaseComponent {
 
     private WebElement resultTableElement;
     private WebElement resultTableHeader;

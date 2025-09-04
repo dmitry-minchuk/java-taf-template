@@ -1,13 +1,13 @@
 package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 
 // Handles clicking on project names and specific modules within projects
-public class EditorLeftProjectModuleSelectorComponent extends CoreComponent {
+public class EditorLeftProjectModuleSelectorComponent extends BaseComponent {
 
     private WebElement projectNameTemplate;
     private WebElement projectModuleTemplate;

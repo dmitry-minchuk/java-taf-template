@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class SystemSettingsPageComponent extends CoreComponent {
+public class SystemSettingsPageComponent extends BaseComponent {
 
     private WebElement dispatchingValidationCheckbox;
     private WebElement verifyOnEditCheckbox;

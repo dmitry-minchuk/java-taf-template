@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.BasePage;
@@ -12,7 +12,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class TableToolbarPanelComponent extends CoreComponent {
+public class TableToolbarPanelComponent extends BaseComponent {
 
     private WebElement runBtn;
     private WebElement traceBtn;

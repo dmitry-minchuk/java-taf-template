@@ -10,6 +10,7 @@ import configuration.core.ui.factory.ComponentFactory;
 import configuration.driver.LocalDriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import domain.ui.webstudio.components.BaseComponent;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,25 +60,25 @@ public abstract class CorePage implements ComponentFactory {
 
     //Creates a scoped child component at page level using selector.
     @Override
-    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
+    public <T extends BaseComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
         return ComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, null);
     }
 
     //Creates a scoped child component from an existing element.
     @Override
-    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
+    public <T extends BaseComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
         return ComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
     //Creates list of components from selector using lazy initialization.
     @Override
-    public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
+    public <T extends BaseComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
         return new LazyComponentsList<>(componentClass, page, null, selector, baseName);
     }
     
     //Creates list of components from selector using lazy initialization.
     @Override
-    public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
+    public <T extends BaseComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
         return new LazyComponentsList<>(componentClass, page, null, selector);
     }
     

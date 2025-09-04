@@ -1,7 +1,7 @@
 package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * This class implements full List<T> interface but recalculates elements on every access,
  * ensuring that the list always reflects the current DOM state.
  */
-public class LazyComponentsList<T extends CoreComponent> implements List<T> {
+public class LazyComponentsList<T extends BaseComponent> implements List<T> {
     
     private final Class<T> componentClass;
     private final Page page;

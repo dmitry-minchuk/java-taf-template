@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.common;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class MessageComponent extends CoreComponent {
+public class MessageComponent extends BaseComponent {
 
     private WebElement message;
     private WebElement closeBtn;

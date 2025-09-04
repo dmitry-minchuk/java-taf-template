@@ -1,12 +1,12 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
 @Getter
-public class AddModuleComponent extends CoreComponent {
+public class AddModuleComponent extends BaseComponent {
 
     private WebElement moduleNameField;
     private WebElement modulePathField;

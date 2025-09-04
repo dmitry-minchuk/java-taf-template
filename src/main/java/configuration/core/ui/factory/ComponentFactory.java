@@ -1,6 +1,6 @@
 package configuration.core.ui.factory;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 
 import java.util.List;
@@ -17,25 +17,25 @@ public interface ComponentFactory {
      * 
      * <h3>Requirements for Component Class:</h3>
      * <ul>
-     *   <li>Must extend CoreComponent</li>
+     *   <li>Must extend BaseComponent</li>
      *   <li>Must have a constructor accepting WebElement parameter</li>
      *   <li>Constructor must be public and accessible</li>
      * </ul>
      */
-    <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName);
+    <T extends BaseComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName);
     
     /**
      * Creates a scoped child component from an existing WebElement.
      */
-    <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator);
+    <T extends BaseComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator);
     
     /**
      * Creates list of components from selector.
      */
-    <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName);
+    <T extends BaseComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName);
     
     /**
      * Creates list of components from selector.
      */
-    <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector);
+    <T extends BaseComponent> List<T> createComponentList(Class<T> componentClass, String selector);
 }

@@ -1,7 +1,7 @@
 package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public final class ComponentFactoryImpl {
      * <p>This method creates a WebElement from the provided selector and page context,
      * then uses reflection to instantiate the component class with the created element as root locator.</p>
      */
-    public static <T extends CoreComponent> T createScopedComponent(
+    public static <T extends BaseComponent> T createScopedComponent(
             Class<T> componentClass, 
             String selector, 
             String componentName,
@@ -55,7 +55,7 @@ public final class ComponentFactoryImpl {
      * element as the root locator. The component class must have a constructor that accepts
      * a WebElement parameter.</p>
      */
-    public static <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
+    public static <T extends BaseComponent> T createScopedComponent(Class<T> componentClass, WebElement childLocator) {
         try {
             return componentClass.getConstructor(WebElement.class).newInstance(childLocator);
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public final class ComponentFactoryImpl {
     /**
      * Creates list of components from selector.
      */
-    public static <T extends CoreComponent> List<T> createComponentsList(
+    public static <T extends BaseComponent> List<T> createComponentsList(
             Class<T> componentClass,
             String selector,
             String baseName,
@@ -79,7 +79,7 @@ public final class ComponentFactoryImpl {
     /**
      * Creates list of components from selector.
      */
-    public static <T extends CoreComponent> List<T> createComponentsList(
+    public static <T extends BaseComponent> List<T> createComponentsList(
             Class<T> componentClass,
             String selector,
             Page page,

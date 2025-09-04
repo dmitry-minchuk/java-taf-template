@@ -2,7 +2,7 @@ package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +92,7 @@ public final class ListFactory {
     /**
      * Creates list of PlaywrightBasePageComponents from selector.
      */
-    public static <T extends CoreComponent> List<T> createComponentsList(
+    public static <T extends BaseComponent> List<T> createComponentsList(
             Class<T> componentClass,
             Page page, 
             WebElement parentElement,
@@ -133,7 +133,7 @@ public final class ListFactory {
     /**
      * Creates list of PlaywrightBasePageComponents from selector.
      */
-    public static <T extends CoreComponent> List<T> createComponentsList(
+    public static <T extends BaseComponent> List<T> createComponentsList(
             Class<T> componentClass,
             Page page, 
             WebElement parentElement,

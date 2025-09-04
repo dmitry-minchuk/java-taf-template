@@ -1,13 +1,13 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public class EditorMainContentProblemsPanelComponent extends CoreComponent {
+public class EditorMainContentProblemsPanelComponent extends BaseComponent {
 
     private WebElement problemsPanel;
     private WebElement errorsTab;

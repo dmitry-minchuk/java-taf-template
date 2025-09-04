@@ -1,11 +1,11 @@
 package domain.ui.webstudio.components.common;
 
-import configuration.core.ui.CoreComponent;
+import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 
-public class CurrentUserComponent extends CoreComponent {
+public class CurrentUserComponent extends BaseComponent {
 
     private WebElement myProfileMenuItem;
     private WebElement mySettingsMenuItem;

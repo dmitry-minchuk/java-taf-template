@@ -91,21 +91,21 @@ Look for log entries like:
 #### **Single Test Class**
 ```bash
 # Run single test class in LOCAL mode
-mvn clean test -Dtest=TestPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL
+mvn clean test -Dtest=TestAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL
 
 # Run single test class in DOCKER mode
-mvn clean test -Dtest=TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_DOCKER
+mvn clean test -Dtest=TestAddProperty -Dexecution.mode=PLAYWRIGHT_DOCKER
 ```
 
 #### **Single Test Method**
 ```bash
 # Run specific test method
-mvn clean test -Dtest=TestPlaywrightAdminEmail#testPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL
-mvn clean test -Dtest=TestPlaywrightAddProperty#testPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_DOCKER
+mvn clean test -Dtest=TestAdminEmail#testPlaywrightAdminEmail -Dexecution.mode=PLAYWRIGHT_LOCAL
+mvn clean test -Dtest=TestAddProperty#testPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_DOCKER
 ```
 
 #### **Multiple Test Classes**
 ```bash
 # Run multiple test classes
-mvn clean test -Dtest=TestPlaywrightAdminEmail,TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_LOCAL
+mvn clean test -Dtest=TestAdminEmail,TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_LOCAL
 ```
