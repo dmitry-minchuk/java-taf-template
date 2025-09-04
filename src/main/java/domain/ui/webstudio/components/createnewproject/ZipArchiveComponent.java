@@ -45,7 +45,7 @@ public class ZipArchiveComponent extends BaseComponent {
     
     private void setProjectName(String projectName) {
         projectNameField.waitForVisible();
-        projectNameField.fill("");
+        projectNameField.clear();
         projectNameField.fillSequentially(projectName);
     }
 }
