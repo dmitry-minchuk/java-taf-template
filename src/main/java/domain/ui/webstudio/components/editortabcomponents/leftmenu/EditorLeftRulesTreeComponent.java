@@ -119,7 +119,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     // Find specific folder in the tree by name
     private EditorTreeFolderComponent findFolderInTree(String folderName) {
         Optional<EditorTreeFolderComponent> result = WaitUtil.waitForResult(() -> findTreeFolders().stream()
-                        .filter(f -> f.getFolderName().equals(folderName))
+                        .filter(f -> folderName.equals(f.getFolderName()))
                         .findFirst(), DEFAULT_TIMEOUT_MS, 100
         );
 

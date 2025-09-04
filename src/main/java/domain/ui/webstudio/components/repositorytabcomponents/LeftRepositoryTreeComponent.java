@@ -1,13 +1,14 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LeftRepositoryTreeComponent extends BaseComponent {
 
@@ -57,10 +58,13 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
 
     // Find specific folder in the tree by name
     private RepositoryTreeFolderComponent findFolderInTree(String folderName) {
-        return findTreeFolders().stream()
-                .filter(folder -> folder.getFolderName().equals(folderName))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
+        Optional<RepositoryTreeFolderComponent> result = WaitUtil.waitForResult(() -> findTreeFolders().stream()
+                .filter(f -> folderName.equals(f.getFolderName()))
+                .findFirst(), DEFAULT_TIMEOUT_MS, 100
+        );
+
+        return result.orElseThrow(() ->
+                new RuntimeException(String.format("Folder with name %s not found", folderName)));
     }
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
