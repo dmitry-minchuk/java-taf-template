@@ -3,9 +3,8 @@ package domain.ui.webstudio.pages;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.common.CurrentUserComponent;
+import domain.ui.webstudio.components.common.UserSlidingRightMenuComponent;
 import domain.ui.webstudio.components.common.MessageComponent;
-import helpers.utils.WaitUtil;
 
 import java.util.List;
 
@@ -31,25 +30,23 @@ public abstract class BasePage extends CorePage {
         userLogo = new WebElement(page, "xpath=//div[contains(@class,'user-logo')][not(ancestor::div[contains(@class, 'ant-drawer-right')])]//span", "User Logo");
         messages = createComponentList(MessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
         userMenuDrawer = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
-        contentLoadingSpinner = new WebElement(page, "//div[@id='loadingPanel']", "contentLoadingSpinner");
+        contentLoadingSpinner = new WebElement(page, "xpath=//div[@id='loadingPanel']", "contentLoadingSpinner");
     }
 
     public void closeAllMessages() {
         LOGGER.debug("messages.size() = {}", messages.size());
-        for(MessageComponent msg : messages) {
-            msg.closeMessage();
-        }
+        messages.forEach(MessageComponent::closeMessage);
     }
 
     public boolean isStudioMessageDisplayed(String text) {
         return messages.stream().anyMatch(m -> m.getMessageText().contains(text));
     }
 
-    public CurrentUserComponent getCurrentUserComponent() {
+    public UserSlidingRightMenuComponent openUserMenu() {
         closeAllMessages();
         userLogo.click();
         userMenuDrawer.waitForVisible();
-        return new CurrentUserComponent(userMenuDrawer);
+        return new UserSlidingRightMenuComponent(userMenuDrawer);
     }
 
     public void waitUntilSpinnerLoaded() {
