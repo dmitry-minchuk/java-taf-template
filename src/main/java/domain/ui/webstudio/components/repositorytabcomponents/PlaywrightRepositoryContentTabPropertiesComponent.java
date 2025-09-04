@@ -1,10 +1,9 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.core.ui.PlaywrightTableComponent;
 import configuration.driver.PlaywrightDriverPool;
-import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PlaywrightRepositoryContentTabPropertiesComponent extends PlaywrightBasePageComponent {
+public class PlaywrightRepositoryContentTabPropertiesComponent extends CoreComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryContentTabPropertiesComponent.class);
 

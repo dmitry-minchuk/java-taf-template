@@ -1,6 +1,6 @@
 package domain.ui.webstudio.components;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
@@ -8,7 +8,7 @@ import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComp
 import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
 import lombok.Getter;
 
-public class PlaywrightCreateNewProjectComponent extends PlaywrightBasePageComponent {
+public class PlaywrightCreateNewProjectComponent extends CoreComponent {
 
     private PlaywrightExcelFilesComponent excelFilesComponent;
     private PlaywrightZipArchiveComponent zipArchiveComponent;
@@ -34,7 +34,7 @@ public class PlaywrightCreateNewProjectComponent extends PlaywrightBasePageCompo
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends PlaywrightBasePageComponent> T selectTab(TabName tabName) {
+    public <T extends CoreComponent> T selectTab(TabName tabName) {
         tabTemplate.format(tabName.getValue()).click();
 
         return switch (tabName) {

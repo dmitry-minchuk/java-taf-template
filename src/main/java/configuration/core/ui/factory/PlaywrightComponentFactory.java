@@ -1,6 +1,6 @@
 package configuration.core.ui.factory;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 
 import java.util.List;
@@ -17,25 +17,25 @@ public interface PlaywrightComponentFactory {
      * 
      * <h3>Requirements for Component Class:</h3>
      * <ul>
-     *   <li>Must extend PlaywrightBasePageComponent</li>
+     *   <li>Must extend CoreComponent</li>
      *   <li>Must have a constructor accepting PlaywrightWebElement parameter</li>
      *   <li>Constructor must be public and accessible</li>
      * </ul>
      */
-    <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName);
+    <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName);
     
     /**
      * Creates a scoped child component from an existing PlaywrightWebElement.
      */
-    <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator);
+    <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator);
     
     /**
      * Creates list of components from selector.
      */
-    <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName);
+    <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName);
     
     /**
      * Creates list of components from selector.
      */
-    <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector);
+    <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector);
 }

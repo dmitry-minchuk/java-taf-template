@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightRepositoryTreeFolderComponent extends PlaywrightBasePageComponent {
+public class PlaywrightRepositoryTreeFolderComponent extends CoreComponent {
 
     private PlaywrightWebElement expanderClosed;
     private PlaywrightWebElement folderName;

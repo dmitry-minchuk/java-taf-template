@@ -1,13 +1,13 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaywrightMySettingsPageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightMySettingsPageComponent extends CoreComponent {
 
     private PlaywrightWebElement showHeaderCheckbox;
     private PlaywrightWebElement showFormulasCheckbox;

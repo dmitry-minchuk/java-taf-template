@@ -10,20 +10,20 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public abstract class PlaywrightBasePageComponent implements PlaywrightComponentFactory {
+public abstract class CoreComponent implements PlaywrightComponentFactory {
 
-    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePageComponent.class);
+    protected static final Logger LOGGER = LogManager.getLogger(CoreComponent.class);
     protected final Page page;
     protected final PlaywrightWebElement rootLocator;
 
     // Creates a page-level component without scoping boundaries.
-    public PlaywrightBasePageComponent(Page page) {
+    public CoreComponent(Page page) {
         this.page = page;
         this.rootLocator = null;
     }
 
     // Creates a root-scoped component with automatic page extraction.
-    public PlaywrightBasePageComponent(PlaywrightWebElement rootLocator) {
+    public CoreComponent(PlaywrightWebElement rootLocator) {
         this.page = rootLocator.getPage();
         this.rootLocator = rootLocator;
     }
@@ -70,25 +70,25 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
 
     // Creates a scoped child component using reflection with automatic element creation.
     @Override
-    public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
+    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, rootLocator);
     }
 
     // Creates a scoped child component from an existing PlaywrightWebElement.
     @Override
-    public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
     //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
-    public <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
+    public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector, baseName);
     }
     
     //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
-    public <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
+    public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector);
     }
     
@@ -103,12 +103,12 @@ public abstract class PlaywrightBasePageComponent implements PlaywrightComponent
     }
     
     //Finds scoped components within component.
-    protected <T extends PlaywrightBasePageComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector, String baseName) {
+    protected <T extends CoreComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector, String baseName) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector, baseName);
     }
     
     //Finds scoped components within component.
-    protected <T extends PlaywrightBasePageComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector) {
+    protected <T extends CoreComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector);
     }
 }

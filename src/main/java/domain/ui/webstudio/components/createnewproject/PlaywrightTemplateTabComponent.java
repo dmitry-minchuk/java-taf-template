@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.createnewproject;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightTemplateTabComponent extends PlaywrightBasePageComponent {
+public class PlaywrightTemplateTabComponent extends CoreComponent {
 
     private PlaywrightWebElement projectTemplate;
     private PlaywrightWebElement projectNameField;

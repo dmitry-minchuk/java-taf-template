@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.createnewproject;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightOpenApiComponent extends PlaywrightBasePageComponent {
+public class PlaywrightOpenApiComponent extends CoreComponent {
 
     private PlaywrightWebElement openApiUrlField;
     private PlaywrightWebElement projectNameField;

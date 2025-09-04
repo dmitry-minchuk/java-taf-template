@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightProjectModuleDetailsComponent extends PlaywrightBasePageComponent {
+public class PlaywrightProjectModuleDetailsComponent extends CoreComponent {
 
     private PlaywrightWebElement moduleDetailsPanel;
     private PlaywrightWebElement moduleNameHeader;

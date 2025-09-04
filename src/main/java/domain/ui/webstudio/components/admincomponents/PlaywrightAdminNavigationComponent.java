@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import lombok.Getter;
 
-public class PlaywrightAdminNavigationComponent extends PlaywrightBasePageComponent {
+public class PlaywrightAdminNavigationComponent extends CoreComponent {
 
     private PlaywrightWebElement navigationItemTemplate;
 

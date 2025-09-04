@@ -1,7 +1,7 @@
 package configuration.core.ui.factory;
 
 import com.microsoft.playwright.Page;
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public final class PlaywrightComponentFactoryImpl {
      * <p>This method creates a PlaywrightWebElement from the provided selector and page context,
      * then uses reflection to instantiate the component class with the created element as root locator.</p>
      */
-    public static <T extends PlaywrightBasePageComponent> T createScopedComponent(
+    public static <T extends CoreComponent> T createScopedComponent(
             Class<T> componentClass, 
             String selector, 
             String componentName,
@@ -55,7 +55,7 @@ public final class PlaywrightComponentFactoryImpl {
      * element as the root locator. The component class must have a constructor that accepts
      * a PlaywrightWebElement parameter.</p>
      */
-    public static <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+    public static <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
         try {
             return componentClass.getConstructor(PlaywrightWebElement.class).newInstance(childLocator);
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public final class PlaywrightComponentFactoryImpl {
     /**
      * Creates list of components from selector.
      */
-    public static <T extends PlaywrightBasePageComponent> List<T> createComponentsList(
+    public static <T extends CoreComponent> List<T> createComponentsList(
             Class<T> componentClass,
             String selector,
             String baseName,
@@ -79,7 +79,7 @@ public final class PlaywrightComponentFactoryImpl {
     /**
      * Creates list of components from selector.
      */
-    public static <T extends PlaywrightBasePageComponent> List<T> createComponentsList(
+    public static <T extends CoreComponent> List<T> createComponentsList(
             Class<T> componentClass,
             String selector,
             Page page,

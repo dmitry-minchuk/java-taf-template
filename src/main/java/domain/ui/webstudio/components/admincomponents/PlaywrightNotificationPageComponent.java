@@ -1,10 +1,10 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 
-public class PlaywrightNotificationPageComponent extends PlaywrightBasePageComponent {
+public class PlaywrightNotificationPageComponent extends CoreComponent {
 
     private PlaywrightWebElement enableNotificationsCheckbox;
     private PlaywrightWebElement emailNotificationsCheckbox;

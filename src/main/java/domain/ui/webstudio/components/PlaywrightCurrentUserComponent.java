@@ -1,11 +1,11 @@
 package domain.ui.webstudio.components;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import domain.ui.webstudio.pages.mainpages.PlaywrightAdminPage;
 
-public class PlaywrightCurrentUserComponent extends PlaywrightBasePageComponent {
+public class PlaywrightCurrentUserComponent extends CoreComponent {
 
     private PlaywrightWebElement myProfileMenuItem;
     private PlaywrightWebElement mySettingsMenuItem;

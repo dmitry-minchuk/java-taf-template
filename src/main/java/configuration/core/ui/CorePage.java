@@ -59,25 +59,25 @@ public abstract class CorePage implements PlaywrightComponentFactory {
 
     //Creates a scoped child component at page level using selector.
     @Override
-    public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
+    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, null);
     }
 
     //Creates a scoped child component from an existing element.
     @Override
-    public <T extends PlaywrightBasePageComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
+    public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
         return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
     //Creates list of components from selector using lazy initialization.
     @Override
-    public <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
+    public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, null, selector, baseName);
     }
     
     //Creates list of components from selector using lazy initialization.
     @Override
-    public <T extends PlaywrightBasePageComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
+    public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
         return new LazyPlaywrightComponentsList<>(componentClass, page, null, selector);
     }
     

@@ -1,11 +1,11 @@
 package domain.ui.webstudio.components.createnewproject;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.TestDataUtil;
 
-public class PlaywrightExcelFilesComponent extends PlaywrightBasePageComponent {
+public class PlaywrightExcelFilesComponent extends CoreComponent {
 
     private PlaywrightWebElement fileInputField;
     private PlaywrightWebElement projectNameField;

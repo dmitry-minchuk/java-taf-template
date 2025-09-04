@@ -1,17 +1,15 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import configuration.core.ui.PlaywrightBasePageComponent;
+import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightTreeFolderComponent;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class PlaywrightLeftRepositoryTreeComponent extends PlaywrightBasePageComponent {
+public class PlaywrightLeftRepositoryTreeComponent extends CoreComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightLeftRepositoryTreeComponent.class);
 
