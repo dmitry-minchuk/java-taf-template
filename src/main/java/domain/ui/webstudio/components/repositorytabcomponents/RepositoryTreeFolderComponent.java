@@ -4,18 +4,18 @@ import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightRepositoryTreeFolderComponent extends CoreComponent {
+public class RepositoryTreeFolderComponent extends CoreComponent {
 
     private WebElement expanderClosed;
     private WebElement folderName;
     private WebElement itemTemplate;
 
-    public PlaywrightRepositoryTreeFolderComponent() {
+    public RepositoryTreeFolderComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightRepositoryTreeFolderComponent(WebElement rootLocator) {
+    public RepositoryTreeFolderComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

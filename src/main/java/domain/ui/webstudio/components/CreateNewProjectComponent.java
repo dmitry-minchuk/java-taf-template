@@ -3,16 +3,16 @@ package domain.ui.webstudio.components;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
-import domain.ui.webstudio.components.createnewproject.PlaywrightExcelFilesComponent;
-import domain.ui.webstudio.components.createnewproject.PlaywrightTemplateTabComponent;
-import domain.ui.webstudio.components.createnewproject.PlaywrightZipArchiveComponent;
+import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
+import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
+import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import lombok.Getter;
 
 public class CreateNewProjectComponent extends CoreComponent {
 
-    private PlaywrightExcelFilesComponent excelFilesComponent;
-    private PlaywrightZipArchiveComponent zipArchiveComponent;
-    private PlaywrightTemplateTabComponent templateTabComponent;
+    private ExcelFilesComponent excelFilesComponent;
+    private ZipArchiveComponent zipArchiveComponent;
+    private TemplateTabComponent templateTabComponent;
 
     private WebElement tabTemplate;
 
@@ -28,9 +28,9 @@ public class CreateNewProjectComponent extends CoreComponent {
 
     private void initializeElements() {
         tabTemplate = createScopedElement("xpath=.//span[@class='rf-tab-lbl' and contains(text(), '%s')]", "projectTabLabel");
-        excelFilesComponent = createScopedComponent(PlaywrightExcelFilesComponent.class, "xpath=.//form[@name='createProjectFormFiles']", "excelFilesComponent");
-        zipArchiveComponent = createScopedComponent(PlaywrightZipArchiveComponent.class, "xpath=.//form[@name='uploadProjectForm']", "zipArchiveComponent");
-        templateTabComponent = createScopedComponent(PlaywrightTemplateTabComponent.class, "xpath=.//form[@name='createProjectFormTempl']", "templateTabComponent");
+        excelFilesComponent = createScopedComponent(ExcelFilesComponent.class, "xpath=.//form[@name='createProjectFormFiles']", "excelFilesComponent");
+        zipArchiveComponent = createScopedComponent(ZipArchiveComponent.class, "xpath=.//form[@name='uploadProjectForm']", "zipArchiveComponent");
+        templateTabComponent = createScopedComponent(TemplateTabComponent.class, "xpath=.//form[@name='createProjectFormTempl']", "templateTabComponent");
     }
 
     @SuppressWarnings("unchecked")

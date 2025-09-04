@@ -24,7 +24,7 @@ public class TestClickOnOpenApiError extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickOnOpenApiError.zip");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent()
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Algorithm");
         
         // Click on the specific OpenAPI error in the problems panel

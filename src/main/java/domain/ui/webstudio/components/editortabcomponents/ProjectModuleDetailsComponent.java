@@ -4,7 +4,7 @@ import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightProjectModuleDetailsComponent extends CoreComponent {
+public class ProjectModuleDetailsComponent extends CoreComponent {
 
     private WebElement moduleDetailsPanel;
     private WebElement moduleNameHeader;
@@ -12,12 +12,12 @@ public class PlaywrightProjectModuleDetailsComponent extends CoreComponent {
     private WebElement saveBtn;
     private WebElement cancelBtn;
 
-    public PlaywrightProjectModuleDetailsComponent() {
+    public ProjectModuleDetailsComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightProjectModuleDetailsComponent(WebElement rootLocator) {
+    public ProjectModuleDetailsComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

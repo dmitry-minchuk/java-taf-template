@@ -4,7 +4,7 @@ import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightWorkspaceComponent extends CoreComponent {
+public class WorkspaceComponent extends CoreComponent {
 
     private WebElement workspacePanel;
     private WebElement workspacePathField;
@@ -12,12 +12,12 @@ public class PlaywrightWorkspaceComponent extends CoreComponent {
     private WebElement saveBtn;
     private WebElement cancelBtn;
 
-    public PlaywrightWorkspaceComponent() {
+    public WorkspaceComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightWorkspaceComponent(WebElement rootLocator) {
+    public WorkspaceComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

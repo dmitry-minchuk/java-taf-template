@@ -4,7 +4,7 @@ import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.BasePage;
+import domain.ui.webstudio.pages.BasePage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import lombok.Getter;
 

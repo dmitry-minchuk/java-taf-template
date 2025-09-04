@@ -22,7 +22,7 @@ public class TestAddModuleWithPathExistingModule extends BaseTest {
     public void testPlaywrightAddModuleWithPathExistingModule() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
         EditorPage editorPage = new EditorPage();
-        editorPage.getLeftProjectModuleSelectorComponent().selectProject(projectName);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
         editorPage.getProjectDetailsComponent().openAddModulePopup();
         editorPage.getAddModulePopupComponent().fillForm("test", "Main.xlsx");
         assertThat(editorPage.getAddModulePopupComponent().isSpecificPropertyShown("Path is already covered with existing module.")).isTrue().as("'Path is already covered with existing module.' text is expected to be shown");

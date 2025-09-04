@@ -5,7 +5,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 
-public class PlaywrightCurrentUserComponent extends CoreComponent {
+public class CurrentUserComponent extends CoreComponent {
 
     private WebElement myProfileMenuItem;
     private WebElement mySettingsMenuItem;
@@ -13,12 +13,12 @@ public class PlaywrightCurrentUserComponent extends CoreComponent {
     private WebElement helpMenuItem;
     private WebElement signOutMenuItem;
 
-    public PlaywrightCurrentUserComponent() {
+    public CurrentUserComponent() {
         super(LocalDriverPool.getPage());
         initializeComponents();
     }
     
-    public PlaywrightCurrentUserComponent(WebElement rootLocator) {
+    public CurrentUserComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeComponents();
     }

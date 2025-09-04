@@ -4,19 +4,19 @@ import configuration.core.ui.CoreComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-public class PlaywrightTemplateTabComponent extends CoreComponent {
+public class TemplateTabComponent extends CoreComponent {
 
     private WebElement projectTemplate;
     private WebElement projectNameField;
     private WebElement createProjectBtn;
     private WebElement cancelBtn;
 
-    public PlaywrightTemplateTabComponent() {
+    public TemplateTabComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTemplateTabComponent(WebElement rootLocator) {
+    public TemplateTabComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
