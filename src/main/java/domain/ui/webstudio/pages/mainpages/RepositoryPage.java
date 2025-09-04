@@ -80,11 +80,11 @@ public class RepositoryPage extends BasePage {
         WebElement modalShade = new WebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
         if(modalShade.isVisible(3000))
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
-        refreshBtn.click();
+        refreshBtn.click(10000);
     }
 
     public void refresh() {
-        refreshBtn.click();
+        refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 
     public void createProjectFromTemplate(String projectName, String templateName) {
@@ -95,6 +95,6 @@ public class RepositoryPage extends BasePage {
         createDeployConfigBtn.click();
         configNameField.fillSequentially(configName);
         createBtn.click();
-        refreshBtn.click();
+        refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 }

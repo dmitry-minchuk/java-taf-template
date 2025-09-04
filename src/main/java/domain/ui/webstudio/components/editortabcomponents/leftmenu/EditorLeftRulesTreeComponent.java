@@ -40,13 +40,13 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
             while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(200)) {
-                WaitUtil.sleep(250);
                 try {
+                    WaitUtil.sleep(250);
                     viewFilterLink.click();
+                    WaitUtil.sleep(250);
+                    filterOptionTemplate.format(filterOption.getValue()).click();
                 } catch (Exception ignored) {}
-                WaitUtil.sleep(250);
             }
-            filterOptionTemplate.format(filterOption.getValue()).click();
         }
         return this;
     }

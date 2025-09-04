@@ -19,7 +19,7 @@ import java.util.List;
 
 public abstract class CorePage implements ComponentFactory {
     protected static final Logger LOGGER = LogManager.getLogger(CorePage.class);
-    private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
+    protected static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     protected String absoluteUrl = null;
     protected String urlAppender = "";
     @Getter
