@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 public class PlaywrightEditTablePanelComponent extends CoreComponent {
@@ -14,7 +14,7 @@ public class PlaywrightEditTablePanelComponent extends CoreComponent {
     private PlaywrightWebElement removeRowBtn;
 
     public PlaywrightEditTablePanelComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

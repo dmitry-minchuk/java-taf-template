@@ -14,7 +14,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightClickDatatypeNotFoundError extends BaseTest {
+public class TestClickDatatypeNotFoundError extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-11609")

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * This class implements full List<T> interface but recalculates elements on every access,
  * ensuring that the list always reflects the current DOM state.
  */
-public class LazyPlaywrightComponentsList<T extends CoreComponent> implements List<T> {
+public class LazyComponentsList<T extends CoreComponent> implements List<T> {
     
     private final Class<T> componentClass;
     private final Page page;
@@ -25,7 +25,7 @@ public class LazyPlaywrightComponentsList<T extends CoreComponent> implements Li
     private final String selector;
     private final String baseName;
     
-    public LazyPlaywrightComponentsList(
+    public LazyComponentsList(
             Class<T> componentClass,
             Page page,
             PlaywrightWebElement parentElement,
@@ -38,7 +38,7 @@ public class LazyPlaywrightComponentsList<T extends CoreComponent> implements Li
         this.baseName = baseName;
     }
     
-    public LazyPlaywrightComponentsList(
+    public LazyComponentsList(
             Class<T> componentClass,
             Page page,
             PlaywrightWebElement parentElement,
@@ -51,7 +51,7 @@ public class LazyPlaywrightComponentsList<T extends CoreComponent> implements Li
      * This ensures the list is always current with DOM state.
      */
     private List<T> getCurrentComponents() {
-        return PlaywrightListFactory.createComponentsList(
+        return ListFactory.createComponentsList(
             componentClass, page, parentElement, selector, baseName);
     }
     
@@ -221,7 +221,7 @@ public class LazyPlaywrightComponentsList<T extends CoreComponent> implements Li
     // Override toString for better debugging
     @Override
     public String toString() {
-        return String.format("LazyPlaywrightComponentsList[%s, selector='%s', size=%d]", 
+        return String.format("LazyComponentsList[%s, selector='%s', size=%d]",
             componentClass.getSimpleName(), selector, size());
     }
     

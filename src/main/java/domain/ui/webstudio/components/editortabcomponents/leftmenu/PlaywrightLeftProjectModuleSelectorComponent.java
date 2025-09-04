@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 
@@ -13,7 +13,7 @@ public class PlaywrightLeftProjectModuleSelectorComponent extends CoreComponent 
     private PlaywrightWebElement projectModuleTemplate;
 
     public PlaywrightLeftProjectModuleSelectorComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

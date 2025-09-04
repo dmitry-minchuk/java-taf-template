@@ -6,7 +6,7 @@ import configuration.core.ui.PlaywrightWebElement;
 import java.util.List;
 
 //Factory interface for creating Playwright components with proper scoping.
-public interface PlaywrightComponentFactory {
+public interface ComponentFactory {
     
     /**
      * Creates a scoped child component using reflection with automatic element creation.

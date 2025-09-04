@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class PlaywrightEditorMainContentProblemsPanelComponent extends CoreCompo
     private List<PlaywrightWebElement> errorMessages;
 
     public PlaywrightEditorMainContentProblemsPanelComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

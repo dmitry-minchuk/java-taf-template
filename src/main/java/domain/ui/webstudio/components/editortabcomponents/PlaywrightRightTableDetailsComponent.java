@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
@@ -18,7 +18,7 @@ public class PlaywrightRightTableDetailsComponent extends CoreComponent {
     private PlaywrightWebElement propertyValueTemplate;
 
     public PlaywrightRightTableDetailsComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

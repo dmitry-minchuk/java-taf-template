@@ -4,8 +4,8 @@ import com.epam.reportportal.service.ReportPortal;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.PlaywrightDockerDriverPool;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.DockerDriverPool;
+import configuration.driver.LocalDriverPool;
 import configuration.network.NetworkPool;
 import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
@@ -86,7 +86,7 @@ public abstract class BaseTest {
         setupAppContainer(result, null);
 
         // Initialize Playwright through unified interface (no network needed for Phase 1)
-        PlaywrightDriverPool.initializePlaywright(null);
+        LocalDriverPool.initializePlaywright(null);
     }
 
     private void initializePlaywrightDockerTest(ITestResult result) {
@@ -101,7 +101,7 @@ public abstract class BaseTest {
         setupAppContainer(result, network);
 
         // Initialize Playwright through unified interface with network
-        PlaywrightDriverPool.initializePlaywright(network);
+        LocalDriverPool.initializePlaywright(network);
     }
 
     private void setupAppContainer(ITestResult result, Network network) {
@@ -134,7 +134,7 @@ public abstract class BaseTest {
         }
 
         // Close Playwright
-        PlaywrightDriverPool.closePlaywright();
+        LocalDriverPool.closePlaywright();
 
         // Close app container
         AppContainerPool.closeAppContainer();
@@ -157,7 +157,7 @@ public abstract class BaseTest {
         }
 
         // Close Playwright Docker (page already closed by video attachment if failure occurred)
-        PlaywrightDockerDriverPool.closePlaywrightDocker();
+        DockerDriverPool.closePlaywrightDocker();
 
         // Close app container and network
         AppContainerPool.closeAppContainer();

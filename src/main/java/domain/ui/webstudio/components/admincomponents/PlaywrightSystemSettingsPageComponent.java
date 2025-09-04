@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightSystemSettingsPageComponent extends CoreComponent {
 
@@ -16,7 +16,7 @@ public class PlaywrightSystemSettingsPageComponent extends CoreComponent {
     private PlaywrightWebElement cancelBtn;
 
     public PlaywrightSystemSettingsPageComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

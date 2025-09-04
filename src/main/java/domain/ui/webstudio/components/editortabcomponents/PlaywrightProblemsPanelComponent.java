@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class PlaywrightProblemsPanelComponent extends CoreComponent {
     private List<PlaywrightWebElement> warningElements;
 
     public PlaywrightProblemsPanelComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

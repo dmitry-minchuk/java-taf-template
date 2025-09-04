@@ -1,7 +1,7 @@
 package helpers.utils;
 
 import com.microsoft.playwright.Page;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +18,7 @@ public class ScreenshotUtil {
     private final static String HOST_SCREENSHOT_RELATIVE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_SCREENSHOTS_PATH);
 
     public static File takeAndSaveScreenshot() {
-        return takeAndSaveScreenshot(PlaywrightDriverPool.getPage());
+        return takeAndSaveScreenshot(LocalDriverPool.getPage());
     }
 
     public static File takeAndSaveScreenshot(Page page) {

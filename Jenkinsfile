@@ -40,7 +40,7 @@ class Job {
 }
 
 def jenkinsLabel = new JenkinsLabel()
-def functionalJobList = [new Job("playwright_parallel_suite", image_hub_registry + studio, "", jenkinsLabel.master.nodeLabel),
+def functionalJobList = [
                          new Job("studio_issues", image_hub_registry + studio, "", jenkinsLabel.master.nodeLabel),
                          new Job("studio_smoke", image_hub_registry + studio, "", jenkinsLabel.slave1.nodeLabel),
                          new Job("rules_editor", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel)

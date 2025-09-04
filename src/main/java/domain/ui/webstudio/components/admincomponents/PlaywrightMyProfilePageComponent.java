@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightMyProfilePageComponent extends CoreComponent {
 
@@ -21,7 +21,7 @@ public class PlaywrightMyProfilePageComponent extends CoreComponent {
     private PlaywrightWebElement displayNamePatternDropdown;
 
     public PlaywrightMyProfilePageComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

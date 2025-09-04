@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
 @Getter
@@ -15,7 +15,7 @@ public class PlaywrightAddModuleComponent extends CoreComponent {
     private PlaywrightWebElement commonProperty;
 
     public PlaywrightAddModuleComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

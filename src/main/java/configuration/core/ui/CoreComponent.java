@@ -1,16 +1,16 @@
 package configuration.core.ui;
 
 import com.microsoft.playwright.Page;
-import configuration.core.ui.factory.LazyPlaywrightComponentsList;
-import configuration.core.ui.factory.LazyPlaywrightElementsList;
-import configuration.core.ui.factory.PlaywrightComponentFactory;
-import configuration.core.ui.factory.PlaywrightComponentFactoryImpl;
+import configuration.core.ui.factory.ComponentFactoryImpl;
+import configuration.core.ui.factory.LazyComponentsList;
+import configuration.core.ui.factory.LazyElementsList;
+import configuration.core.ui.factory.ComponentFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public abstract class CoreComponent implements PlaywrightComponentFactory {
+public abstract class CoreComponent implements ComponentFactory {
 
     protected static final Logger LOGGER = LogManager.getLogger(CoreComponent.class);
     protected final Page page;
@@ -66,49 +66,49 @@ public abstract class CoreComponent implements PlaywrightComponentFactory {
         }
     }
     
-    // Implementation of PlaywrightComponentFactory interface
+    // Implementation of ComponentFactory interface
 
     // Creates a scoped child component using reflection with automatic element creation.
     @Override
     public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, String selector, String componentName) {
-        return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, rootLocator);
+        return ComponentFactoryImpl.createScopedComponent(componentClass, selector, componentName, page, rootLocator);
     }
 
     // Creates a scoped child component from an existing PlaywrightWebElement.
     @Override
     public <T extends CoreComponent> T createScopedComponent(Class<T> componentClass, PlaywrightWebElement childLocator) {
-        return PlaywrightComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
+        return ComponentFactoryImpl.createScopedComponent(componentClass, childLocator);
     }
     
     //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
     public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
-        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector, baseName);
+        return new LazyComponentsList<>(componentClass, page, rootLocator, selector, baseName);
     }
     
     //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
     public <T extends CoreComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
-        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector);
+        return new LazyComponentsList<>(componentClass, page, rootLocator, selector);
     }
     
     //Finds scoped elements within component.
     protected List<PlaywrightWebElement> createScopedElementList(String selector, String baseName) {
-        return new LazyPlaywrightElementsList(page, rootLocator, selector, baseName);
+        return new LazyElementsList(page, rootLocator, selector, baseName);
     }
     
     //Finds scoped elements within component.
     protected List<PlaywrightWebElement> createScopedElementList(String selector) {
-        return new LazyPlaywrightElementsList(page, rootLocator, selector);
+        return new LazyElementsList(page, rootLocator, selector);
     }
     
     //Finds scoped components within component.
     protected <T extends CoreComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector, String baseName) {
-        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector, baseName);
+        return new LazyComponentsList<>(componentClass, page, rootLocator, selector, baseName);
     }
     
     //Finds scoped components within component.
     protected <T extends CoreComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector) {
-        return new LazyPlaywrightComponentsList<>(componentClass, page, rootLocator, selector);
+        return new LazyComponentsList<>(componentClass, page, rootLocator, selector);
     }
 }

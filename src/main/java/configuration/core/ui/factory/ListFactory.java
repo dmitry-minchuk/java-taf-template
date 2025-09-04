@@ -13,12 +13,12 @@ import java.util.List;
 /**
  * Utility class for creating lists of Playwright elements and components.
  */
-public final class PlaywrightListFactory {
+public final class ListFactory {
     
-    private static final Logger logger = LoggerFactory.getLogger(PlaywrightListFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(ListFactory.class);
     
-    private PlaywrightListFactory() {
-        throw new UnsupportedOperationException("PlaywrightListFactory is a utility class and should not be instantiated");
+    private ListFactory() {
+        throw new UnsupportedOperationException("ListFactory is a utility class and should not be instantiated");
     }
     
     /**

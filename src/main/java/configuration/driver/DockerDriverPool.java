@@ -17,9 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 
-public class PlaywrightDockerDriverPool {
+public class DockerDriverPool {
 
-    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightDockerDriverPool.class);
+    protected static final Logger LOGGER = LogManager.getLogger(DockerDriverPool.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
 
     private static final ThreadLocal<PlaywrightDockerContext> threadLocalContext = new ThreadLocal<>();

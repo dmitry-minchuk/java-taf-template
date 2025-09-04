@@ -14,7 +14,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightAddElementToCollectionSet extends BaseTest {
+public class TestAddElementToCollectionSet extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-10142")

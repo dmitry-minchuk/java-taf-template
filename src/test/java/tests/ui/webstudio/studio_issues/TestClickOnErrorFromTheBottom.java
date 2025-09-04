@@ -14,7 +14,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightClickOnErrorFromTheBottom extends BaseTest {
+public class TestClickOnErrorFromTheBottom extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-9309")

@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightArrayOfAliasValuesInRunTrace extends BaseTest {
+public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
 
     private final List<String> tables = Arrays.asList("myRule2", "myRule3", "myRule5", "myRule_array", "myRule_x_array",
             "myRule_x", "myRule");

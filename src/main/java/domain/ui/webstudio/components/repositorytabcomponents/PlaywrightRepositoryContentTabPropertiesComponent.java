@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import domain.ui.webstudio.components.TableComponent;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +25,7 @@ public class PlaywrightRepositoryContentTabPropertiesComponent extends CoreCompo
     private PlaywrightWebElement tagsSection;
 
     public PlaywrightRepositoryContentTabPropertiesComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

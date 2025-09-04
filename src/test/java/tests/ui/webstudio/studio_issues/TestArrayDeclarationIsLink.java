@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightArrayDeclarationIsLink extends BaseTest {
+public class TestArrayDeclarationIsLink extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-11230")

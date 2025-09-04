@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.CoreComponent;
 import domain.ui.webstudio.components.TableComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import lombok.Getter;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class PlaywrightTestResultValidationComponent extends CoreComponent {
     private List<PlaywrightWebElement> testResultRowElementsList;
 
     public PlaywrightTestResultValidationComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 

@@ -4,7 +4,7 @@ import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -45,7 +45,7 @@ public class PlaywrightTableToolbarPanelComponent extends CoreComponent {
     private PlaywrightWebElement inputSelectFieldTemplate;
 
     public PlaywrightTableToolbarPanelComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 
@@ -302,7 +302,7 @@ public class PlaywrightTableToolbarPanelComponent extends CoreComponent {
     }
 
     public void removeCurrentTable() {
-        PlaywrightDriverPool.getPage().onDialog(Dialog::accept);
+        LocalDriverPool.getPage().onDialog(Dialog::accept);
         clickRemove();
     }
 }

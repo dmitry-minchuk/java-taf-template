@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightMethodTable extends BaseTest {
+public class TestMethodTable extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-31319")

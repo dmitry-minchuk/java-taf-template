@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.ui.webstudio.components.TableComponent;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
@@ -26,14 +26,14 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This test is incomplete and failing expectedly
+public class TestUserSettingsAndDetails extends BaseTest { // This test is incomplete and failing expectedly
 
     @Test
     @TestCaseId("IPBQA-31293")
     @Description("User settings and profile management test covering all 17 scenarios from original test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightUserSettingsAndDetails() {
-        LoginService loginService = new LoginService(PlaywrightDriverPool.getPage());
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));

@@ -13,7 +13,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestPlaywrightTraceIntoFileJsonRequest extends BaseTest {
+public class TestTraceIntoFileJsonRequest extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-8215")

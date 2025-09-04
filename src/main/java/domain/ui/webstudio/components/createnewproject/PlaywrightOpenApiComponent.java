@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.createnewproject;
 
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
-import configuration.driver.PlaywrightDriverPool;
+import configuration.driver.LocalDriverPool;
 
 public class PlaywrightOpenApiComponent extends CoreComponent {
 
@@ -12,7 +12,7 @@ public class PlaywrightOpenApiComponent extends CoreComponent {
     private PlaywrightWebElement cancelBtn;
 
     public PlaywrightOpenApiComponent() {
-        super(PlaywrightDriverPool.getPage());
+        super(LocalDriverPool.getPage());
         initializeElements();
     }
 
