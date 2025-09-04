@@ -5,8 +5,8 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -20,8 +20,8 @@ public class TestPlaywrightAddModuleWithPathExistingModule extends BaseTest {
     @Description("BUG: Two modules with the same path can be created")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddModuleWithPathExistingModule() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectProject(projectName);
         editorPage.getProjectDetailsComponent().openAddModulePopup();
         editorPage.getAddModulePopupComponent().fillForm("test", "Main.xlsx");

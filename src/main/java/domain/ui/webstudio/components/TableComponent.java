@@ -1,21 +1,23 @@
-package configuration.core.ui;
+package domain.ui.webstudio.components;
 
+import configuration.core.ui.CoreComponent;
+import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public class PlaywrightTableComponent extends CoreComponent {
+public class TableComponent extends CoreComponent {
 
     private PlaywrightWebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
 
-    public PlaywrightTableComponent() {
+    public TableComponent() {
         super(PlaywrightDriverPool.getPage());
         initializeElements();
     }
 
-    public PlaywrightTableComponent(PlaywrightWebElement rootLocator) {
+    public TableComponent(PlaywrightWebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

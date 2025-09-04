@@ -5,11 +5,9 @@ import com.microsoft.playwright.options.ScreenshotType;
 import com.microsoft.playwright.options.WaitUntilState;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import helpers.utils.DownloadUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.nio.file.Path;
-import java.util.function.Consumer;
 
 // Unified Playwright driver pool with automatic mode detection for local and Docker execution
 public class PlaywrightDriverPool {
@@ -329,11 +327,11 @@ public class PlaywrightDriverPool {
     }
 
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) throws java.io.IOException {
-        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
+        return DownloadUtil.downloadFile(trigger);
     }
 
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) throws java.io.IOException {
-        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger, timeoutMs);
+        return DownloadUtil.downloadFile(trigger, timeoutMs);
     }
 
     public static ExecutionMode getCurrentExecutionMode() {

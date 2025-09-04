@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class PlaywrightReportPortalUtil {
+public class ReportPortalUtil {
     
-    private static final Logger LOGGER = LogManager.getLogger(PlaywrightReportPortalUtil.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReportPortalUtil.class);
     
     private static final String SCREENSHOT_DIR = "target/screenshots";
     private static final String VIDEO_DIR = "target/videos"; 

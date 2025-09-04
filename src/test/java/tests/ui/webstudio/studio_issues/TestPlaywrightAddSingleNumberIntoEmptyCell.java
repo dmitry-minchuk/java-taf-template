@@ -4,12 +4,12 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.PlaywrightTableComponent;
+import domain.ui.webstudio.components.TableComponent;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightEditTablePanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -23,8 +23,8 @@ public class TestPlaywrightAddSingleNumberIntoEmptyCell extends BaseTest {
     @Description("BUG: Impossible to add single number into empty cell")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightAddSingleNumberIntoEmptyCell() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getLeftRulesTreeComponent()
                 .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)
@@ -32,7 +32,7 @@ public class TestPlaywrightAddSingleNumberIntoEmptyCell extends BaseTest {
                 .selectItemInFolder("Decision", "BankLimitIndex");
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
         PlaywrightEditTablePanelComponent editTablePanel = editorPage.getEditTablePanelComponent();
-        PlaywrightTableComponent tableComponent = editorPage.getCenterTable();
+        TableComponent tableComponent = editorPage.getCenterTable();
         tableComponent.clickCell(10, 1);
         editTablePanel.clickInsertRowAfter();
         tableComponent.editCell(11, 1, "13", true);

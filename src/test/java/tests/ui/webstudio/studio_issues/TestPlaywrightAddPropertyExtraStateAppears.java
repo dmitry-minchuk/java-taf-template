@@ -7,8 +7,8 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightRightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import helpers.service.PlaywrightWorkflowService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -22,8 +22,8 @@ public class TestPlaywrightAddPropertyExtraStateAppears extends BaseTest {
     @Description("'State' property is added to table instead of inherited")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddPropertyExtraStateAppears() {
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromZip(User.ADMIN, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
-        PlaywrightEditorPage editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "StudioIssues.TestAddPropertyExtraStateAppears.zip");
+        EditorPage editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, "Test Project-CW-20200101-20200101");
         editorPage.getLeftRulesTreeComponent()
                 .setViewFilter(PlaywrightLeftRulesTreeComponent.FilterOptions.BY_TYPE)

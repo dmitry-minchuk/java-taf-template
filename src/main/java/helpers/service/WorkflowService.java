@@ -4,16 +4,16 @@ import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.PlaywrightCreateNewProjectComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.utils.StringUtil;
 
 // Playwright version of WorkflowService for complete login → project creation → editor workflow
-public class PlaywrightWorkflowService {
+public class WorkflowService {
     private static String loginCreateProject(User user, PlaywrightCreateNewProjectComponent.TabName projectType, String sourceName) {
-        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
-        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(user));
-        PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
+        LoginService loginService = new LoginService(PlaywrightDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(user));
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
         String projectName = StringUtil.generateUniqueName("project");
         repositoryPage.createProject(projectType, projectName, sourceName);
         repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);

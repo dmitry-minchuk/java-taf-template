@@ -16,9 +16,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Getter
-public class PlaywrightRepositoryPage extends PlaywrightProxyBasePage {
+public class RepositoryPage extends BasePage {
 
-    private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(RepositoryPage.class);
 
     private PlaywrightTabSwitcherComponent tabSwitcherComponent;
     // top menu elements:
@@ -36,7 +36,7 @@ public class PlaywrightRepositoryPage extends PlaywrightProxyBasePage {
     private PlaywrightRepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
     private PlaywrightDeployConfigurationTabsComponent deployConfigurationTabsComponent;
 
-    public PlaywrightRepositoryPage() {
+    public RepositoryPage() {
         super();
         initializeComponents();
     }

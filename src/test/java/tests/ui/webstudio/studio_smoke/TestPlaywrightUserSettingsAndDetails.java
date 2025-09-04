@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.PlaywrightTableComponent;
+import domain.ui.webstudio.components.TableComponent;
 import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
@@ -13,11 +13,11 @@ import domain.ui.webstudio.components.admincomponents.PlaywrightMyProfilePageCom
 import domain.ui.webstudio.components.admincomponents.PlaywrightMySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.PlaywrightUsersPageComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.PlaywrightLeftRulesTreeComponent;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
-import helpers.service.PlaywrightLoginService;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.service.LoginService;
 import helpers.service.UserService;
-import helpers.service.PlaywrightWorkflowService;
+import helpers.service.WorkflowService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -33,10 +33,10 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This tes
     @Description("User settings and profile management test covering all 17 scenarios from original test")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightUserSettingsAndDetails() {
-        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
+        LoginService loginService = new LoginService(PlaywrightDriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
-        PlaywrightEditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
         PlaywrightMyProfilePageComponent myProfileComponent = editorPage
                 .getCurrentUserComponent()
                 .navigateToAdministration()
@@ -154,8 +154,8 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This tes
 
         // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
         String testFileName = "TestUserSettingsAndDetails";
-        String projectName = PlaywrightWorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, testFileName + ".xlsx");
-        editorPage = new PlaywrightEditorPage();
+        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, testFileName + ".xlsx");
+        editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
         editorPage.getLeftRulesTreeComponent()
@@ -163,7 +163,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This tes
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
 
-        PlaywrightTableComponent tableComponent = editorPage.getCenterTable();
+        TableComponent tableComponent = editorPage.getCenterTable();
         Assert.assertEquals(tableComponent.getCellText(3, 2), "2500", "Cell content should be '2500'");
 
         // Change settings to show formulas and headers
@@ -182,7 +182,7 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This tes
         editorPage = loginService.login(user1Data);
         
         // Navigate to the same project as user1
-        PlaywrightRepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
         // Open the project using repository methods
         repositoryPage.getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.EDITOR);
 
@@ -208,8 +208,8 @@ public class TestPlaywrightUserSettingsAndDetails extends BaseTest { // This tes
         mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
-                String nameExample1Project = PlaywrightWorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
-        editorPage = new PlaywrightEditorPage();
+                String nameExample1Project = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
+        editorPage = new EditorPage();
         editorPage.getLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
 
         // Test execution dropdown verification would be done through TableToolbarPanelComponent

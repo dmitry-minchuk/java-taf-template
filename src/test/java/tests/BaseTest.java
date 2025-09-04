@@ -9,7 +9,7 @@ import configuration.driver.PlaywrightDriverPool;
 import configuration.network.NetworkPool;
 import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
-import helpers.utils.PlaywrightReportPortalUtil;
+import helpers.utils.ReportPortalUtil;
 import helpers.utils.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,10 +124,10 @@ public abstract class BaseTest {
         String testName = result.getMethod().getMethodName();
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            // Enhanced ReportPortal logging with PlaywrightReportPortalUtil
-            PlaywrightReportPortalUtil.attachScreenshotOnFailure(testName);
-            PlaywrightReportPortalUtil.attachPageContent("Page Content at Failure");
-            PlaywrightReportPortalUtil.attachExecutionInfo();
+            // Enhanced ReportPortal logging with ReportPortalUtil
+            ReportPortalUtil.attachScreenshotOnFailure(testName);
+            ReportPortalUtil.attachPageContent("Page Content at Failure");
+            ReportPortalUtil.attachExecutionInfo();
 
             // Log application logs (same as Selenium mode)
             ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
@@ -144,13 +144,13 @@ public abstract class BaseTest {
         String testName = result.getMethod().getMethodName();
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            // Enhanced ReportPortal logging with PlaywrightReportPortalUtil
-            PlaywrightReportPortalUtil.attachScreenshotOnFailure(testName);
-            PlaywrightReportPortalUtil.attachPageContent("Page Content at Failure");
-            PlaywrightReportPortalUtil.attachExecutionInfo();
+            // Enhanced ReportPortal logging with ReportPortalUtil
+            ReportPortalUtil.attachScreenshotOnFailure(testName);
+            ReportPortalUtil.attachPageContent("Page Content at Failure");
+            ReportPortalUtil.attachExecutionInfo();
             
             // Attach video for failed tests BEFORE closing Playwright (this will close page internally)
-            PlaywrightReportPortalUtil.attachVideoOnFailure(testName);
+            ReportPortalUtil.attachVideoOnFailure(testName);
 
             // Log application logs (same as Selenium mode)
             ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));

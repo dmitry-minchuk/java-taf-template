@@ -3,9 +3,9 @@ package domain.ui.webstudio.components;
 import configuration.core.ui.CoreComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
-import domain.ui.webstudio.pages.mainpages.PlaywrightEditorPage;
-import domain.ui.webstudio.pages.mainpages.PlaywrightProxyBasePage;
-import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.BasePage;
+import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import lombok.Getter;
 
 public class PlaywrightTabSwitcherComponent extends CoreComponent {
@@ -27,12 +27,12 @@ public class PlaywrightTabSwitcherComponent extends CoreComponent {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends PlaywrightProxyBasePage> T selectTab(TabName tabName) {
+    public <T extends BasePage> T selectTab(TabName tabName) {
         tabTemplate.format(tabName.getValue()).click();
 
         return switch (tabName) {
-            case EDITOR -> (T) new PlaywrightEditorPage();
-            case REPOSITORY -> (T) new PlaywrightRepositoryPage();
+            case EDITOR -> (T) new EditorPage();
+            case REPOSITORY -> (T) new RepositoryPage();
         };
     }
 

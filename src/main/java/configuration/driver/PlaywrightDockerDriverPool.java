@@ -4,6 +4,7 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.ScreenshotType;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import helpers.utils.DownloadUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.BindMode;
@@ -409,10 +410,10 @@ public class PlaywrightDockerDriverPool {
     }
 
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) {
-        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger);
+        return DownloadUtil.downloadFile(trigger);
     }
 
     public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) {
-        return helpers.utils.PlaywrightDownloadUtil.downloadFile(trigger, timeoutMs);
+        return DownloadUtil.downloadFile(trigger, timeoutMs);
     }
 }

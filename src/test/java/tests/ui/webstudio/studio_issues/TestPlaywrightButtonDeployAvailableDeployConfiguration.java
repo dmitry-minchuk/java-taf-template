@@ -6,9 +6,9 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.PlaywrightDriverPool;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.pages.mainpages.PlaywrightRepositoryPage;
+import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
-import helpers.service.PlaywrightLoginService;
+import helpers.service.LoginService;
 import helpers.service.UserService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -22,10 +22,10 @@ public class TestPlaywrightButtonDeployAvailableDeployConfiguration extends Base
     @Description("Deploy button should be available after adding a project to a deploy configuration and saving it.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPlaywrightButtonDeployAvailableDeployConfiguration() {
-        PlaywrightLoginService loginService = new PlaywrightLoginService(PlaywrightDriverPool.getPage());
+        LoginService loginService = new LoginService(PlaywrightDriverPool.getPage());
         loginService.login(UserService.getUser(User.ADMIN));
 
-        PlaywrightRepositoryPage repositoryPage = new PlaywrightRepositoryPage().getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = new RepositoryPage().getTabSwitcherComponent().selectTab(PlaywrightTabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProjectFromTemplate("1", "Example 1 - Bank Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
