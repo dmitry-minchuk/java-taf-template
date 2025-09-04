@@ -16,22 +16,22 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
-    protected static final Logger LOGGER = LogManager.getLogger(PlaywrightBasePage.class);
+public abstract class CorePage implements PlaywrightComponentFactory {
+    protected static final Logger LOGGER = LogManager.getLogger(CorePage.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     protected String absoluteUrl = null;
     protected String urlAppender = "";
     @Getter
     protected Page page;
 
-    public PlaywrightBasePage() {
+    public CorePage() {
         this.page = PlaywrightDriverPool.getPage();
         LOGGER.info("{} was opened.", this.getClass().getName());
     }
 
-    public PlaywrightBasePage(Page page) {
+    public CorePage(Page page) {
         this.page = page;
-        LOGGER.info("{} was opened.", this.getClass().getName());
+        LOGGER.info("{} was opened", this.getClass().getName());
     }
 
     public void open() {
@@ -41,7 +41,7 @@ public abstract class PlaywrightBasePage implements PlaywrightComponentFactory {
         // Navigate with Playwright's built-in wait conditions
         page.navigate(url, new Page.NavigateOptions()
                 .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(DEFAULT_TIMEOUT_MS)); // 5 seconds timeout
+                .setTimeout(DEFAULT_TIMEOUT_MS));
 
         // Set viewport to maximize equivalent
         page.setViewportSize(1920, 1080);

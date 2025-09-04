@@ -1,6 +1,5 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import configuration.core.ui.PlaywrightWebElement;
 import configuration.core.ui.PlaywrightTableComponent;
 import domain.ui.webstudio.components.PlaywrightTabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.PlaywrightAddModuleComponent;
@@ -17,7 +16,7 @@ import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 @Getter
-public class PlaywrightEditorPage extends PlaywrightProxyMainPage {
+public class PlaywrightEditorPage extends PlaywrightProxyBasePage {
 
     private PlaywrightLeftProjectModuleSelectorComponent leftProjectModuleSelectorComponent;
     private PlaywrightLeftRulesTreeComponent leftRulesTreeComponent;

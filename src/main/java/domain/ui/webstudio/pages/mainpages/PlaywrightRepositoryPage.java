@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Getter
-public class PlaywrightRepositoryPage extends PlaywrightProxyMainPage {
+public class PlaywrightRepositoryPage extends PlaywrightProxyBasePage {
 
     private static final Logger LOGGER = LogManager.getLogger(PlaywrightRepositoryPage.class);
 

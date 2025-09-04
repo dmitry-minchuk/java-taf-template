@@ -13,7 +13,7 @@ import domain.ui.webstudio.components.admincomponents.PlaywrightTagsPageComponen
 import domain.ui.webstudio.components.admincomponents.PlaywrightUsersPageComponent;
 import lombok.Getter;
 
-public class PlaywrightAdminPage extends PlaywrightProxyMainPage {
+public class PlaywrightAdminPage extends PlaywrightProxyBasePage {
 
     @Getter
     private PlaywrightAdminNavigationComponent adminNavigationComponent;

@@ -1,20 +1,29 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import configuration.core.ui.PlaywrightBasePage;
+import com.microsoft.playwright.Page;
+import configuration.core.ui.CorePage;
 import configuration.core.ui.PlaywrightWebElement;
 import domain.ui.webstudio.components.PlaywrightCurrentUserComponent;
 import domain.ui.webstudio.components.PlaywrightMessageComponent;
+import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
+// This class is separated from BasePage and created for specific element storage
+public abstract class PlaywrightProxyBasePage extends CorePage {
 
     private PlaywrightWebElement userLogo;
     private List<PlaywrightMessageComponent> messages;
     private PlaywrightWebElement userMenuDrawer;
+    private PlaywrightWebElement contentLoadingSpinner;
 
-    public PlaywrightProxyMainPage() {
+    public PlaywrightProxyBasePage() {
         super();
+        initializeComponents();
+    }
+
+    public PlaywrightProxyBasePage(Page page) {
+        super(page);
         initializeComponents();
     }
 
@@ -22,6 +31,7 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
         userLogo = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'user-logo')][not(ancestor::div[contains(@class, 'ant-drawer-right')])]//span", "User Logo");
         messages = createComponentList(PlaywrightMessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
         userMenuDrawer = new PlaywrightWebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
+        contentLoadingSpinner = new PlaywrightWebElement(page, "//div[@id='loadingPanel']", "contentLoadingSpinner");
     }
 
     public void closeAllMessages() {
@@ -40,5 +50,12 @@ public abstract class PlaywrightProxyMainPage extends PlaywrightBasePage {
         userLogo.click();
         userMenuDrawer.waitForVisible();
         return new PlaywrightCurrentUserComponent(userMenuDrawer);
+    }
+
+    public void waitUntilPageContentLoaded() {
+        while(contentLoadingSpinner.isVisible()) {
+            LOGGER.info("Waiting until loading spinner to disappear...");
+            WaitUtil.sleep(100);
+        }
     }
 }
