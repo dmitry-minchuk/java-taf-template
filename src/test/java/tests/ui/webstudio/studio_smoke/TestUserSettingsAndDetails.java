@@ -30,9 +30,9 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
     @Test
     @TestCaseId("IPBQA-31293")
-    @Description("User settings and profile management test covering all 17 scenarios from original test")
+    @Description("User settings and profile management")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightUserSettingsAndDetails() {
+    public void testUserSettingsAndDetails() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
@@ -59,7 +59,12 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(displayName, "", "Display name should be empty");
 
         // Scenario 3: Update profile and check users table (lines 58-76 from original)
-        myProfileComponent.setFirstName("Abc").setLastName("Bcd").setEmail("admin@admin.com").setDisplayNamePattern("First Last").saveProfile();
+        myProfileComponent
+                .setFirstName("Abc")
+                .setLastName("Bcd")
+                .setEmail("admin@admin.com")
+                .setDisplayNamePattern("First Last")
+                .saveProfile();
 
         myProfileComponent = editorPage.getCurrentUserComponent()
                 .navigateToAdministration()

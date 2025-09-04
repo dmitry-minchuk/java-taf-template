@@ -21,7 +21,7 @@ public class TestButtonDeployAvailableDeployConfiguration extends BaseTest {
     @TestCaseId("EPBDS-8289")
     @Description("Deploy button should be available after adding a project to a deploy configuration and saving it.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightButtonDeployAvailableDeployConfiguration() {
+    public void testButtonDeployAvailableDeployConfiguration() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         loginService.login(UserService.getUser(User.ADMIN));
 

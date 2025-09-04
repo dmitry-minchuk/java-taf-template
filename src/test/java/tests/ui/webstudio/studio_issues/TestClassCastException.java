@@ -22,7 +22,7 @@ public class TestClassCastException extends BaseTest {
     @TestCaseId("EPBDS-7018")
     @Description("Test that ClassCastException doesn't occur when running a spreadsheet and validate result table appears")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightClassCastException() {
+    public void testClassCastException() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN,
                 "TestClassCastException.xlsx");
         EditorPage editorPage = new EditorPage();

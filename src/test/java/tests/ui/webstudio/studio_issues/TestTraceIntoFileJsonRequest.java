@@ -19,7 +19,7 @@ public class TestTraceIntoFileJsonRequest extends BaseTest {
     @TestCaseId("EPBDS-8215")
     @Description("BUG: Internal Server error appears if user entered JSON request in 'Trace into File'")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightTraceIntoFileJsonRequest() {
+    public void testTraceIntoFileJsonRequest() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "testTraceIntoFileJsonRequest.zip");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "the_nulls_input_parameters");

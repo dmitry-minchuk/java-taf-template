@@ -20,7 +20,7 @@ public class TestClickOnErrorFromTheBottom extends BaseTest {
     @TestCaseId("EPBDS-9309")
     @Description("Test clicking on error from the bottom problems panel by index - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightClickOnErrorFromTheBottom() {
+    public void testClickOnErrorFromTheBottom() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickOnErrorFromTheBottom.zip");
         EditorPage editorPage = new EditorPage();

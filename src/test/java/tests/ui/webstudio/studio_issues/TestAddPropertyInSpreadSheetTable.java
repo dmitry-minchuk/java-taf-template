@@ -23,7 +23,7 @@ public class TestAddPropertyInSpreadSheetTable extends BaseTest {
     @TestCaseId("EPBDS-7578")
     @Description("BUG: Exception appears in log file on adding properties for Spreadsheet")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddPropertyInSpreadSheetTable() {
+    public void testAddPropertyInSpreadSheetTable() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddPropertyInSpreadSheetTable.xlsx");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddPropertyInSpreadSheetTable");

@@ -23,7 +23,7 @@ public class TestMethodTable extends BaseTest {
     @TestCaseId("IPBQA-31319")
     @Description("Test Method table operations: creation, editing, run, table management")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightMethodTable() {
+    public void testMethodTable() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestMethodTable.xlsx");
         EditorPage editorPage = new EditorPage();
 

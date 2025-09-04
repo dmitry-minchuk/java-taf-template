@@ -20,7 +20,7 @@ public class TestClickDatatypeNotFoundError extends BaseTest {
     @TestCaseId("EPBDS-11609")
     @Description("Test clicking on datatype not found error and validating tree selection")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightClickDatatypeNotFoundError() {
+    public void testClickDatatypeNotFoundError() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickDatatypeNotFoundError.zip");
         EditorPage editorPage = new EditorPage();

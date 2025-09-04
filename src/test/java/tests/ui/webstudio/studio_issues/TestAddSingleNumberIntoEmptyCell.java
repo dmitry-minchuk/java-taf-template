@@ -22,7 +22,7 @@ public class TestAddSingleNumberIntoEmptyCell extends BaseTest {
     @TestCaseId("EPBDS-7232")
     @Description("BUG: Impossible to add single number into empty cell")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddSingleNumberIntoEmptyCell() {
+    public void testAddSingleNumberIntoEmptyCell() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");

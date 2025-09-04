@@ -22,7 +22,7 @@ public class TestAddDeleteRowWithoutSaving extends BaseTest {
     @TestCaseId("EPBDS-7474")
     @Description("BUG: Added row is deleted incorrectly - the value of the next row is changed")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddDeleteRowWithoutSaving() {
+    public void testAddDeleteRowWithoutSaving() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Tutorial 6 - Introduction to Spreadsheet Tables");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent()

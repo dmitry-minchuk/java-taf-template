@@ -20,7 +20,7 @@ public class TestClickOnOpenApiError extends BaseTest {
     @TestCaseId("EPBDS-10252")
     @Description("Test clicking on OpenAPI error from the bottom problems panel by text content - Playwright version")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightClickOnOpenApiError() {
+    public void testClickOnOpenApiError() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN,
                 "TestClickOnOpenApiError.zip");
         EditorPage editorPage = new EditorPage();

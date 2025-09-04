@@ -37,7 +37,7 @@ public class TestAllStepsDisplayedInTrace extends BaseTest {
     @TestCaseId("EPBDS-8215")
     @Description("BUG: Some Steps are not displayed in Trace")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAllStepsDisplayedInTrace() {
+    public void testAllStepsDisplayedInTrace() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "TestAllStepsDisplayedInTrace.zip");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "CO-rules");

@@ -42,6 +42,7 @@ public class CurrentUserComponent extends BaseComponent {
     }
 
     public AdminPage navigateToAdministration() {
+
         select(MenuElements.ADMINISTRATION);
         return new AdminPage();
     }

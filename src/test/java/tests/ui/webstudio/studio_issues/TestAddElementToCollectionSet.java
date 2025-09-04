@@ -20,7 +20,7 @@ public class TestAddElementToCollectionSet extends BaseTest {
     @TestCaseId("EPBDS-10142")
     @Description("BUG: Error on clicking '+' for input types Collection, Set")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testPlaywrightAddElementToCollectionSet() {
+    public void testAddElementToCollectionSet() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAddElementToCollectionSet.xlsx");
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "TestAddElementToCollectionSet");
