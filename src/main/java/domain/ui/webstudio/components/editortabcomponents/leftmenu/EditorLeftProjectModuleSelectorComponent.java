@@ -28,7 +28,7 @@ public class EditorLeftProjectModuleSelectorComponent extends BaseComponent {
     }
 
     public void selectProject(String projectName) {
-        projectNameTemplate.format(projectName).waitForVisible().click();
+        projectNameTemplate.format(projectName).waitForVisible(DEFAULT_TIMEOUT_MS).click();
     }
 
     public void selectModule(String projectName, String projectModuleName) {
