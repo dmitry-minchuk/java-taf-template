@@ -32,7 +32,7 @@ public class TestPlaywrightAddPropertyExtraStateAppears extends BaseTest {
         editorPage.getRightTableDetailsComponent()
                 .addProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
                 .setProperty(PlaywrightRightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
-                .getSaveBtn().click();
+                .clickSaveBtn();
         assertThat(editorPage.getCenterTable().getCellText(2, 2)).isEqualTo("description");
         assertThat(editorPage.getCenterTable().getCellText(3, 2)).contains("Result");
         assertThat(editorPage.getCenterTable().getCellText(4, 2)).contains("= new MyDatatype");

@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import configuration.core.ui.PlaywrightBasePageComponent;
 import configuration.core.ui.PlaywrightWebElement;
 import configuration.driver.PlaywrightDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 // Playwright version of RightTableDetailsComponent for property management
@@ -12,7 +13,6 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
     private PlaywrightWebElement propertyTypeSelector;
     private PlaywrightWebElement addBtn;
     private PlaywrightWebElement cancelBtn;
-    @Getter
     private PlaywrightWebElement saveBtn;
     private PlaywrightWebElement propertyInputTemplate;
     private PlaywrightWebElement propertyValueTemplate;
@@ -37,6 +37,11 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
         propertyValueTemplate = createScopedElement("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span[1][contains(text(),'%s')]", "propertyValueCell");
     }
 
+    public void clickSaveBtn() {
+        WaitUtil.sleep(100);
+        saveBtn.click();
+    }
+
     public PlaywrightRightTableDetailsComponent addProperty(String propertyName) {
         addPropertyLink.click();
         propertyTypeSelector.selectByVisibleText(propertyName);
@@ -45,7 +50,7 @@ public class PlaywrightRightTableDetailsComponent extends PlaywrightBasePageComp
     }
 
     public PlaywrightRightTableDetailsComponent setProperty(String propertyName, String propertyValue) {
-        propertyInputTemplate.format(propertyName).fill(propertyValue);
+        propertyInputTemplate.format(propertyName).fillSequentially(propertyValue);
         return this;
     }
 
