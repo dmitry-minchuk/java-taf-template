@@ -32,7 +32,8 @@ public class ExcelFilesComponent extends BaseComponent {
     public void createProjectFromExcelFile(String fileName, String projectName) {
         String filePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.setInputFiles(filePath);
-        projectNameField.fill(projectName);
+        projectNameField.clear();
+        projectNameField.fillSequentially(projectName);
         createProjectBtn.click();
     }
 }

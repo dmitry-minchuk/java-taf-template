@@ -38,18 +38,20 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     }
 
     public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
-        if(!viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase())) {
-            while(!filterOptionTemplate.format(filterOption.getValue()).isVisible(200)) {
+        WaitUtil.waitForCondition(() -> {
+            WaitUtil.waitForCondition(() -> {
                 try {
                     WaitUtil.sleep(250);
                     viewFilterLink.click();
                     WaitUtil.sleep(250);
                 } catch (Exception ignored) {}
-            }
+                return filterOptionTemplate.format(filterOption.getValue()).isVisible();
+            }, 5000, 200);
             try {
                 filterOptionTemplate.format(filterOption.getValue()).click();
             } catch (Exception ignored) {}
-        }
+            return viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase());
+        }, 5000, 200);
         return this;
     }
 
