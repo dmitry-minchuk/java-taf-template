@@ -70,6 +70,12 @@ public class WebElement {
         locator.click();
     }
 
+    public void click(int timeoutInMillis) {
+        isVisible(timeoutInMillis);
+        LOGGER.info("Clicking with increased timeout {} ", elementName);
+        locator.click();
+    }
+
     public void doubleClick() {
         isVisible();
         LOGGER.info("Double clicking {} ", elementName);
