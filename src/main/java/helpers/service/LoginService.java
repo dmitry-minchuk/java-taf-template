@@ -4,6 +4,7 @@ import com.microsoft.playwright.Page;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.LoginPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,24 +21,10 @@ public class LoginService {
         LOGGER.info("Logging in with user: {}", user.getLogin());
         
         // Navigate to login page using proper URL resolution (LOCAL vs DOCKER mode aware)
-        String loginUrl = LocalDriverPool.getAppUrl();
-        page.navigate(loginUrl);
-        LOGGER.info("Navigated to login page: {}", loginUrl);
+        String baseUrl = LocalDriverPool.getAppUrl();
+        page.navigate(baseUrl);
+        LOGGER.info("Navigated to login page: {}", baseUrl);
         
-        // Wait for login form to be visible and fill credentials
-        var usernameField = page.locator("input#loginName");
-        var passwordField = page.locator("input#loginPassword");
-        var loginButton = page.locator("input#loginSubmit");
-        
-        usernameField.waitFor();
-        usernameField.fill(user.getLogin());
-        passwordField.fill(user.getPassword());
-        loginButton.click();
-        
-        // Wait for successful login - editor page should load
-        page.waitForURL("**/", new Page.WaitForURLOptions().setTimeout(10000));
-        
-        LOGGER.info("Successfully logged in as: {}", user.getLogin());
-        return new EditorPage();
+        return new LoginPage().login(user);
     }
 }
