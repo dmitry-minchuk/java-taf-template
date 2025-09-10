@@ -3,8 +3,8 @@ package domain.ui.webstudio.pages;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.common.UserSlidingRightMenuComponent;
 import domain.ui.webstudio.components.common.MessageComponent;
+import domain.ui.webstudio.components.common.UserSlidingRightMenuComponent;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
