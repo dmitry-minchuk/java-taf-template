@@ -15,7 +15,7 @@ import java.util.List;
  */
 public final class ListFactory {
     
-    private static final Logger logger = LoggerFactory.getLogger(ListFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListFactory.class);
     
     private ListFactory() {
         throw new UnsupportedOperationException("ListFactory is a utility class and should not be instantiated");
@@ -44,7 +44,7 @@ public final class ListFactory {
             String selector, 
             String baseName) {
         
-        logger.info("[DEBUG] createElementsList called with selector='{}', parentElement={}, baseName='{}'", 
+        LOGGER.info("[DEBUG] createElementsList called with selector='{}', parentElement={}, baseName='{}'",
                    selector, (parentElement != null ? "present" : "null"), baseName);
         
         // Create base locator (scoped or page-level)
@@ -53,11 +53,11 @@ public final class ListFactory {
             page.locator(selector);
             
         int count = baseLocator.count();
-        logger.info("[DEBUG] baseLocator.count() returned: {}", count);
+        LOGGER.info("[DEBUG] baseLocator.count() returned: {}", count);
         
         // Additional debug: try direct page locator for comparison
         int directCount = page.locator(selector).count();
-        logger.info("[DEBUG] direct page.locator(selector).count() returned: {}", directCount);
+        LOGGER.info("[DEBUG] direct page.locator(selector).count() returned: {}", directCount);
         
         List<WebElement> elements = new ArrayList<>();
         
@@ -66,7 +66,7 @@ public final class ListFactory {
             
             // Create indexed selector for each element (supports both XPath and CSS)
             String indexedSelector = createIndexedSelector(selector, i);
-            logger.info("[DEBUG] Creating element {}: indexedSelector='{}', elementName='{}'", i, indexedSelector, elementName);
+            LOGGER.info("[DEBUG] Creating element {}: indexedSelector='{}', elementName='{}'", i, indexedSelector, elementName);
             
             WebElement element = (parentElement != null) ?
                 new WebElement(parentElement, indexedSelector, elementName) :
@@ -75,7 +75,7 @@ public final class ListFactory {
             elements.add(element);
         }
         
-        logger.info("[DEBUG] createElementsList finished: created {} elements", elements.size());
+        LOGGER.info("[DEBUG] createElementsList finished: created {} elements", elements.size());
         return elements;
     }
     
@@ -104,7 +104,12 @@ public final class ListFactory {
             parentElement.getLocator().locator(selector) : 
             page.locator(selector);
             
-        int count = baseLocator.count();
+        int count = 0;
+        try {
+            count = baseLocator.count();
+        } catch (Exception e) {
+            LOGGER.info("Could not count elements: setting count = 0. \nError: {}", e.getMessage());
+        }
         List<T> components = new ArrayList<>();
         
         for (int i = 0; i < count; i++) {
