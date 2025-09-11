@@ -51,8 +51,7 @@ public class LazyComponentsList<T extends BaseComponent> implements List<T> {
      * This ensures the list is always current with DOM state.
      */
     private List<T> getCurrentComponents() {
-        return ListFactory.createComponentsList(
-            componentClass, page, parentElement, selector, baseName);
+        return ListFactory.createComponentsList(componentClass, page, parentElement, selector, baseName);
     }
     
     // Core List methods that use getCurrentComponents()
