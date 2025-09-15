@@ -30,10 +30,6 @@ public class ProjectModuleDetailsComponent extends BaseComponent {
         cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
-    public boolean isModuleDetailsPanelVisible() {
-        return moduleDetailsPanel.isVisible();
-    }
-
     public String getModuleName() {
         return moduleNameHeader.getText();
     }
