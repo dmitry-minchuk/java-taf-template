@@ -2,14 +2,7 @@ package domain.ui.webstudio.pages.mainpages;
 
 import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.editortabcomponents.AddModuleComponent;
-import domain.ui.webstudio.components.editortabcomponents.EditTablePanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.EditorMainContentProblemsPanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.ProblemsPanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.ProjectDetailsComponent;
-import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
-import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
-import domain.ui.webstudio.components.editortabcomponents.TestResultValidationComponent;
+import domain.ui.webstudio.components.editortabcomponents.*;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftProjectModuleSelectorComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.BasePage;
@@ -31,6 +24,7 @@ public class EditorPage extends BasePage {
     private EditTablePanelComponent editTablePanelComponent;
     private TestResultValidationComponent testResultValidationComponent;
     private EditorMainContentProblemsPanelComponent editorMainContentProblemsPanelComponent;
+    private ProjectModuleDetailsComponent projectModuleDetailsComponent;
 
     public EditorPage() {
         super();
@@ -50,6 +44,7 @@ public class EditorPage extends BasePage {
         addModulePopupComponent = createScopedComponent(AddModuleComponent.class, "xpath=//div[@id='editModulePopup_container']", "addModulePopupComponent");
         editTablePanelComponent = createScopedComponent(EditTablePanelComponent.class, "xpath=//div[@class='te_toolbar']", "editTablePanelComponent");
         editorMainContentProblemsPanelComponent = createScopedComponent(EditorMainContentProblemsPanelComponent.class, "xpath=//div[@id='content']", "editorMainContentProblemsPanelComponent");
+        projectModuleDetailsComponent = createScopedComponent(ProjectModuleDetailsComponent.class, "xpath=//div[contains(@class, 'ui-layout-center') and @id='content']", "projectModuleDetailsComponent");
     }
 
     public TableComponent getCenterTable() {
