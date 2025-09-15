@@ -49,15 +49,8 @@ public enum AppContainerStartParameters {
             case DEFAULT_STUDIO_PARAMS:
             default:
                 config.putAll(EMPTY.getParameterMap());
-//                config.put("webstudio.configured", "true");
                 config.put("user.mode", "multi");
                 config.put("security.administrators", "admin");
-                config.put("repository.production1.$ref", "repo-jdbc");
-                config.put("production-repository-configs", "production1");
-                config.put("repository.production1.base.path.$ref", "repo-default.production.base.path");
-                config.put("repository.production1.name", "Deployment");
-                config.put("repository.production1.comment-template.$ref", "repo-default.production.comment-template");
-                config.put("repository.production1.comment-template.use-custom-comments", "false");
                 break;
         }
         return config;

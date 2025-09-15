@@ -39,63 +39,63 @@ public class NotificationPageComponent extends BaseComponent {
     }
 
     public void setEnableNotifications(boolean enable) {
-        if (enable != enableNotificationsCheckbox.isSelected()) {
+        if (enable != enableNotificationsCheckbox.isChecked()) {
             enableNotificationsCheckbox.click();
         }
     }
 
     public boolean isNotificationsEnabled() {
-        return enableNotificationsCheckbox.isSelected();
+        return enableNotificationsCheckbox.isChecked();
     }
 
     public void setEmailNotifications(boolean enable) {
-        if (enable != emailNotificationsCheckbox.isSelected()) {
+        if (enable != emailNotificationsCheckbox.isChecked()) {
             emailNotificationsCheckbox.click();
         }
     }
 
     public boolean isEmailNotificationsEnabled() {
-        return emailNotificationsCheckbox.isSelected();
+        return emailNotificationsCheckbox.isChecked();
     }
 
     public void setBrowserNotifications(boolean enable) {
-        if (enable != browserNotificationsCheckbox.isSelected()) {
+        if (enable != browserNotificationsCheckbox.isChecked()) {
             browserNotificationsCheckbox.click();
         }
     }
 
     public boolean isBrowserNotificationsEnabled() {
-        return browserNotificationsCheckbox.isSelected();
+        return browserNotificationsCheckbox.isChecked();
     }
 
     public void setSystemNotifications(boolean enable) {
-        if (enable != systemNotificationsCheckbox.isSelected()) {
+        if (enable != systemNotificationsCheckbox.isChecked()) {
             systemNotificationsCheckbox.click();
         }
     }
 
     public boolean isSystemNotificationsEnabled() {
-        return systemNotificationsCheckbox.isSelected();
+        return systemNotificationsCheckbox.isChecked();
     }
 
     public void setDeploymentNotifications(boolean enable) {
-        if (enable != deploymentNotificationsCheckbox.isSelected()) {
+        if (enable != deploymentNotificationsCheckbox.isChecked()) {
             deploymentNotificationsCheckbox.click();
         }
     }
 
     public boolean isDeploymentNotificationsEnabled() {
-        return deploymentNotificationsCheckbox.isSelected();
+        return deploymentNotificationsCheckbox.isChecked();
     }
 
     public void setBuildNotifications(boolean enable) {
-        if (enable != buildNotificationsCheckbox.isSelected()) {
+        if (enable != buildNotificationsCheckbox.isChecked()) {
             buildNotificationsCheckbox.click();
         }
     }
 
     public boolean isBuildNotificationsEnabled() {
-        return buildNotificationsCheckbox.isSelected();
+        return buildNotificationsCheckbox.isChecked();
     }
 
     public void saveSettings() {

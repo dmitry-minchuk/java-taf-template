@@ -55,23 +55,23 @@ public class SecurityPageComponent extends BaseComponent {
     }
 
     public boolean isSingleUserModeSelected() {
-        return singleUserModeRadio.isSelected();
+        return singleUserModeRadio.isChecked();
     }
 
     public boolean isMultiUserModeSelected() {
-        return multiUserModeRadio.isSelected();
+        return multiUserModeRadio.isChecked();
     }
 
     public boolean isActiveDirectoryModeSelected() {
-        return activeDirectoryModeRadio.isSelected();
+        return activeDirectoryModeRadio.isChecked();
     }
 
     public boolean isSamlModeSelected() {
-        return samlModeRadio.isSelected();
+        return samlModeRadio.isChecked();
     }
 
     public boolean isOAuth2ModeSelected() {
-        return oauth2ModeRadio.isSelected();
+        return oauth2ModeRadio.isChecked();
     }
 
     public void saveSecuritySettings() {
