@@ -4,6 +4,7 @@ import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
@@ -15,6 +16,9 @@ import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class RepositoryPage extends BasePage {
@@ -37,6 +41,8 @@ public class RepositoryPage extends BasePage {
     private RepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
     private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
 
+    private TableComponent projectsTable;
+
     public RepositoryPage() {
         super();
         initializeComponents();
@@ -56,6 +62,7 @@ public class RepositoryPage extends BasePage {
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
         repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
         deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
+        projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table')]", "projectsTable");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -96,5 +103,26 @@ public class RepositoryPage extends BasePage {
         configNameField.fillSequentially(configName);
         createBtn.click();
         refreshBtn.click(DEFAULT_TIMEOUT_MS);
+    }
+
+    public void unlockAllProjects() {
+        for (int i = 1; i <= projectsTable.getRowsCount(); i++) {
+            List<WebElement> cells = projectsTable.getRow(i).getCells();
+            WebElement lastCell = cells.getLast();
+            if (lastCell.getText().contains("Close")) {
+                lastCell.click();
+            }
+        }
+    }
+
+    public List<String> getAllVisibleProjectsInTable() {
+        List<String> projectNames = new ArrayList<>();
+        for (int i = 1; i <= projectsTable.getRowsCount(); i++) {
+            List<String> rowValues = projectsTable.getRow(i).getValue();
+            if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty()) {
+                projectNames.add(rowValues.getFirst().trim());
+            }
+        }
+        return projectNames;
     }
 }

@@ -1,8 +1,11 @@
 package domain.ui.webstudio.components.admincomponents;
 
+import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.service.LoginService;
+import helpers.service.UserService;
 
 public class RepositoriesPageComponent extends BaseComponent {
 
@@ -15,6 +18,14 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement repositoryUrlField;
     private WebElement saveBtn;
     private WebElement cancelBtn;
+
+    // fields for Git repository configuration (from legacy TestLocalCentralProjects)
+    private WebElement remoteRepositoryCheckBox;
+    private WebElement loginField;
+    private WebElement passwordField;
+    private WebElement branchField;
+    private WebElement flatFolderStructureCheckBox;
+    private WebElement applyChangesBtn;
 
     public RepositoriesPageComponent() {
         super(LocalDriverPool.getPage());
@@ -36,6 +47,17 @@ public class RepositoriesPageComponent extends BaseComponent {
         repositoryUrlField = createScopedElement("xpath=.//input[@placeholder='URL' or @id='repositoryUrl']", "repositoryUrlField");
         saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
         cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
+
+        // Initialize Git repository configuration fields using legacy locator patterns
+        String universalLocator = "xpath=.//input[contains(@id, '%s') and not(ancestor::div[@style='display: none;'])]";
+        String credentialsLocator = "xpath=.//input[ancestor::td/preceding-sibling::td[text()='%s'] and not(ancestor::div[@style='display: none;'])]";
+
+        remoteRepositoryCheckBox = createScopedElement(String.format(universalLocator, "designgitRemoteRepository"), "remoteRepositoryCheckBox");
+        loginField = createScopedElement(String.format(credentialsLocator, "Login:"), "loginField");
+        passwordField = createScopedElement(String.format(credentialsLocator, "Password:"), "passwordField");
+        branchField = createScopedElement(String.format(credentialsLocator, "Branch:"), "branchField");
+        flatFolderStructureCheckBox = createScopedElement(String.format(universalLocator, "designflatFolderStructure"), "flatFolderStructureCheckBox");
+        applyChangesBtn = createScopedElement("xpath=.//button[./span[text()='Apply Changes'] or @value='Apply Changes']", "applyChangesBtn");
     }
 
     public void clickDesignRepositoriesTab() {
@@ -93,5 +115,34 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     public boolean isAddRepositoryButtonVisible() {
         return addRepositoryBtn.isVisible();
+    }
+
+    // Method needed for TestLocalCentralProjects migration
+    public void addDesignRepository() {
+        clickDesignRepositoriesTab();
+        clickAddRepository();
+    }
+
+    public void createDesignRepository(String repositoryUrl, String login, String password, String branch) {
+        addDesignRepository();
+        // Set remote repository checkbox
+        if (!remoteRepositoryCheckBox.isSelected()) {
+            remoteRepositoryCheckBox.click();
+        }
+        // Set repository URL (reuse existing field)
+        setRepositoryUrl(repositoryUrl);
+        // Set credentials
+        loginField.fill(login);
+        passwordField.fill(password);
+        branchField.fill(branch);
+        // Set flat folder structure to false
+        if (flatFolderStructureCheckBox.isSelected()) {
+            flatFolderStructureCheckBox.click();
+        }
+    }
+
+    public void applyChangesAndRelogin(User user) {
+        applyChangesBtn.click();
+        new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(user));
     }
 }
