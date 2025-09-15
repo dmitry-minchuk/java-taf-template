@@ -133,7 +133,7 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void setAdministratorsGroup(boolean isAdmin) {
-        if (isAdmin != administratorsGroupCheckbox.isSelected()) {
+        if (isAdmin != administratorsGroupCheckbox.isChecked()) {
             administratorsGroupCheckbox.click();
         }
     }

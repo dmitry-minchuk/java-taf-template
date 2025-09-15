@@ -58,25 +58,25 @@ public class MySettingsPageComponent extends BaseComponent {
     }
 
     public MySettingsPageComponent setShowHeader(boolean show) {
-        if (show != showHeaderCheckbox.isSelected()) {
+        if (show != showHeaderCheckbox.isChecked()) {
             showHeaderCheckbox.click();
         }
         return this;
     }
 
     public boolean isShowHeaderEnabled() {
-        return showHeaderCheckbox.isSelected();
+        return showHeaderCheckbox.isChecked();
     }
 
     public MySettingsPageComponent setShowFormulas(boolean show) {
-        if (show != showFormulasCheckbox.isSelected()) {
+        if (show != showFormulasCheckbox.isChecked()) {
             showFormulasCheckbox.click();
         }
         return this;
     }
 
     public boolean isShowFormulasEnabled() {
-        return showFormulasCheckbox.isSelected();
+        return showFormulasCheckbox.isChecked();
     }
 
     public void setDefaultOrder(String orderOption) {
@@ -111,36 +111,36 @@ public class MySettingsPageComponent extends BaseComponent {
     }
 
     public MySettingsPageComponent setFailuresOnly(boolean failuresOnly) {
-        if (failuresOnly != failuresOnlyCheckbox.isSelected()) {
+        if (failuresOnly != failuresOnlyCheckbox.isChecked()) {
             failuresOnlyCheckbox.click();
         }
         return this;
     }
 
     public boolean isFailuresOnlyEnabled() {
-        return failuresOnlyCheckbox.isSelected();
+        return failuresOnlyCheckbox.isChecked();
     }
 
     public MySettingsPageComponent setCompoundResult(boolean compoundResult) {
-        if (compoundResult != compoundResultCheckbox.isSelected()) {
+        if (compoundResult != compoundResultCheckbox.isChecked()) {
             compoundResultCheckbox.click();
         }
         return this;
     }
 
     public boolean isCompoundResultEnabled() {
-        return compoundResultCheckbox.isSelected();
+        return compoundResultCheckbox.isChecked();
     }
 
     public MySettingsPageComponent setShowNumbersWithoutFormatting(boolean show) {
-        if (show != showNumbersWithoutFormattingCheckbox.isSelected()) {
+        if (show != showNumbersWithoutFormattingCheckbox.isChecked()) {
             showNumbersWithoutFormattingCheckbox.click();
         }
         return this;
     }
 
     public boolean isShowNumbersWithoutFormattingEnabled() {
-        return showNumbersWithoutFormattingCheckbox.isSelected();
+        return showNumbersWithoutFormattingCheckbox.isChecked();
     }
 
     public MySettingsPageComponent saveSettings() {

@@ -37,23 +37,15 @@ public class SystemSettingsPageComponent extends BaseComponent {
     }
 
     public void setDispatchingValidation(boolean enable) {
-        if (enable != dispatchingValidationCheckbox.isSelected()) {
+        if (enable != dispatchingValidationCheckbox.isChecked()) {
             dispatchingValidationCheckbox.click();
         }
     }
 
-    public boolean isDispatchingValidationEnabled() {
-        return dispatchingValidationCheckbox.isSelected();
-    }
-
     public void setVerifyOnEdit(boolean enable) {
-        if (enable != verifyOnEditCheckbox.isSelected()) {
+        if (enable != verifyOnEditCheckbox.isChecked()) {
             verifyOnEditCheckbox.click();
         }
-    }
-
-    public boolean isVerifyOnEditEnabled() {
-        return verifyOnEditCheckbox.isSelected();
     }
 
     public void setTestThreadCount(int count) {
@@ -79,13 +71,13 @@ public class SystemSettingsPageComponent extends BaseComponent {
     }
 
     public void setUpdateSystemProperties(boolean enable) {
-        if (enable != updateSystemPropertiesCheckbox.isSelected()) {
+        if (enable != updateSystemPropertiesCheckbox.isChecked()) {
             updateSystemPropertiesCheckbox.click();
         }
     }
 
     public boolean isUpdateSystemPropertiesEnabled() {
-        return updateSystemPropertiesCheckbox.isSelected();
+        return updateSystemPropertiesCheckbox.isChecked();
     }
 
     public void saveSettings() {

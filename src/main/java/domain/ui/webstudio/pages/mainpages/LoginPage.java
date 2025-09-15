@@ -28,7 +28,11 @@ public class LoginPage extends BasePage {
     }
 
     public EditorPage login(UserData user) {
-        usernameField.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return login(user, DEFAULT_TIMEOUT_MS);
+    }
+
+    public EditorPage login(UserData user, long EXTENDED_TIME_PERIOD) {
+        usernameField.waitForVisible(EXTENDED_TIME_PERIOD);
         usernameField.fill(user.getLogin());
         passwordField.fill(user.getPassword());
         loginButton.click();

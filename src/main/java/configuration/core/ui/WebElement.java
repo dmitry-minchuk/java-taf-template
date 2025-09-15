@@ -143,9 +143,19 @@ public class WebElement {
         return true;
     }
     
-    public boolean isSelected() {
+    public boolean isChecked() {
         isVisible();
         return locator.isChecked();
+    }
+
+    public void check() {
+        isVisible();
+        locator.check();
+    }
+
+    public void uncheck() {
+        isVisible();
+        locator.uncheck();
     }
     
     // Selection methods for dropdowns
@@ -229,6 +239,12 @@ public class WebElement {
         locator.waitFor(new Locator.WaitForOptions()
                 .setState(WaitForSelectorState.HIDDEN)
                 .setTimeout((int)(timeoutInMillis)));
+        return this;
+    }
+
+    public WebElement sleep(long timeoutInMillis) {
+        LOGGER.info("Sleeping for {} ", elementName);
+        WaitUtil.sleep(timeoutInMillis);
         return this;
     }
     

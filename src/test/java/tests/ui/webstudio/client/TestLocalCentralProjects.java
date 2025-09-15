@@ -42,9 +42,7 @@ public class TestLocalCentralProjects extends BaseTest {
                 .navigateToRepositoriesPage();
 
         repositoryUrlList.forEach(repositoryUrl ->
-                repositoriesPageComponent.createDesignRepository(repositoryUrl, MY_GITLAB_LOGIN, MY_GITLAB_PASSWORD, GITLAB_BRANCH));
-
-        repositoriesPageComponent.applyChangesAndRelogin(User.ADMIN);
+                repositoriesPageComponent.createDesignRepository(repositoryUrl, MY_GITLAB_LOGIN, MY_GITLAB_PASSWORD, GITLAB_BRANCH, User.ADMIN));
 
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.open();
