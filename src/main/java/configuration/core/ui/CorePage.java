@@ -20,8 +20,6 @@ import java.util.List;
 public abstract class CorePage implements ComponentFactory {
     protected static final Logger LOGGER = LogManager.getLogger(CorePage.class);
     protected static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
-    protected String absoluteUrl = null;
-    protected String urlAppender = "";
     @Getter
     protected Page page;
 
@@ -33,19 +31,6 @@ public abstract class CorePage implements ComponentFactory {
     public CorePage(Page page) {
         this.page = page;
         LOGGER.info("{} was opened", this.getClass().getName());
-    }
-
-    public void open() {
-        String url = AppContainerPool.get().getAppHostUrl() + urlAppender;
-        LOGGER.info("Opening page: {}", url);
-
-        // Navigate with Playwright's built-in wait conditions
-        page.navigate(url, new Page.NavigateOptions()
-                .setWaitUntil(com.microsoft.playwright.options.WaitUntilState.DOMCONTENTLOADED)
-                .setTimeout(DEFAULT_TIMEOUT_MS));
-
-        // Set viewport to maximize equivalent
-        page.setViewportSize(1920, 1080);
     }
 
     public String getTitle() {

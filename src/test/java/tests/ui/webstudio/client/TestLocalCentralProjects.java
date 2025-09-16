@@ -5,6 +5,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
@@ -45,7 +46,7 @@ public class TestLocalCentralProjects extends BaseTest {
                 repositoriesPageComponent.createDesignRepository(repositoryUrl, MY_GITLAB_LOGIN, MY_GITLAB_PASSWORD, GITLAB_BRANCH, User.ADMIN));
 
         RepositoryPage repositoryPage = new RepositoryPage();
-        repositoryPage.open();
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.unlockAllProjects();
         List<String> projectNames = repositoryPage.getAllVisibleProjectsInTable();
 

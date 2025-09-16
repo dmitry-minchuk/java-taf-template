@@ -25,7 +25,14 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement removeBtn;
     private WebElement factorTextField;
     private WebElement traceDropdownBtn;
-    
+
+    // Run Tests Menu elements
+    private WebElement testDropdownBtn;
+    private WebElement testPerPageDropdown;
+    private WebElement failuresOnlyCheckbox;
+    private WebElement compoundResultCheckbox;
+    private WebElement runTestsBtn;
+
     // Run Menu elements
     private WebElement createItemBtn;
     private WebElement expandTypesBtn;
@@ -67,6 +74,13 @@ public class TableToolbarPanelComponent extends BaseComponent {
         copyBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
         removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
+
+        // Run Tests Menu elements initialization
+        testDropdownBtn = new WebElement(page, "xpath=//a[@id='testButton']//td[@class='arrow']", "testDropdownBtn");
+        testPerPageDropdown = new WebElement(page, "xpath=//select[@name='testPerPage']", "testPerPageDropdown");
+        failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
+        compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='compoundResult']", "compoundResultCheckbox");
+        runTestsBtn = new WebElement(page, "xpath=//input[@id='runTestButton']", "runTestsBtn");
         
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
         createItemBtn = new WebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
@@ -122,6 +136,11 @@ public class TableToolbarPanelComponent extends BaseComponent {
         return new TraceMenu();
     }
 
+    public IRunTestsMenu clickTestDropdown() {
+        testDropdownBtn.click();
+        return new RunTestsMenu();
+    }
+
     // Interface for Playwright Run Menu
     public interface IRunMenu {
         IRunMenu clickCreateItem();
@@ -133,6 +152,14 @@ public class TableToolbarPanelComponent extends BaseComponent {
         // Input parameter methods from RunDropDown.java
         IRunMenu setInputTextField(String index, String value);
         IRunMenu setInputSelectField(String index, String value);
+    }
+
+    // Interface for Run Tests Menu
+    public interface IRunTestsMenu {
+        IRunTestsMenu setTestPerPage(String testsPerPage);
+        IRunTestsMenu setFailuresOnly(boolean failuresOnly);
+        IRunTestsMenu setCompoundResult(boolean compoundResult);
+        void runTests();
     }
 
     // Implementation for Playwright Run Menu
@@ -195,6 +222,39 @@ public class TableToolbarPanelComponent extends BaseComponent {
         public IRunMenu setInputSelectField(String index, String value) {
             inputSelectFieldTemplate.format(index).selectByVisibleText(value);
             return this;
+        }
+    }
+
+    // Implementation for Run Tests Menu
+    public class RunTestsMenu implements IRunTestsMenu {
+
+        @Override
+        public IRunTestsMenu setTestPerPage(String testsPerPage) {
+            if (testsPerPage != null && !testsPerPage.isEmpty() && !testsPerPage.equals("empty")) {
+                testPerPageDropdown.selectByVisibleText(testsPerPage);
+            }
+            return this;
+        }
+
+        @Override
+        public IRunTestsMenu setFailuresOnly(boolean failuresOnly) {
+            if (failuresOnly != failuresOnlyCheckbox.isChecked()) {
+                failuresOnlyCheckbox.click();
+            }
+            return this;
+        }
+
+        @Override
+        public IRunTestsMenu setCompoundResult(boolean compoundResult) {
+            if (compoundResult != compoundResultCheckbox.isChecked()) {
+                compoundResultCheckbox.click();
+            }
+            return this;
+        }
+
+        @Override
+        public void runTests() {
+            runTestsBtn.click();
         }
     }
 
