@@ -40,21 +40,21 @@ public class TestLocalZippedProjects extends BaseTest {
     public void testLocalZippedProjects(String path1, String path2, String path3) {
         List<String> projectPaths = new ArrayList<>();
         projectPaths.add(path1);
-        LOGGER.info("Project path_1: " + path1);
+        LOGGER.info("Project path_1: {}", path1);
         if (path2 != null) {
             projectPaths.add(path2);
-            LOGGER.info("Project path_2: " + path2);
+            LOGGER.info("Project path_2: {}", path2);
         }
         if (path3 != null) {
             projectPaths.add(path3);
-            LOGGER.info("Project path_3: " + path3);
+            LOGGER.info("Project path_3: {}", path3);
         }
 
         List<String> projectNames = new ArrayList<>();
         EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
 
         for (String projectPath : projectPaths) {
-            LOGGER.info("Project path:" + projectPath);
+            LOGGER.info("Project path:{}", projectPath);
             projectNames.add(createProjectFromZipFile(projectPath));
         }
 
@@ -64,7 +64,7 @@ public class TestLocalZippedProjects extends BaseTest {
             List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(nameProject);
 
             if (!modules.isEmpty()) {
-                editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameProject, modules.get(0));
+                editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameProject, modules.getFirst());
                 editorPage.getProjectModuleDetailsComponent().isVisible();
 
                 softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(),
