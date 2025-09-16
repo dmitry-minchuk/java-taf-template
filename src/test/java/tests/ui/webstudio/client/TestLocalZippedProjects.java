@@ -2,7 +2,6 @@ package tests.ui.webstudio.client;
 
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -60,7 +59,7 @@ public class TestLocalZippedProjects extends BaseTest {
         }
 
         for (String nameProject : projectNames) {
-            getToEditorTab();
+            editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
             editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
             List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(nameProject);
 
@@ -71,35 +70,16 @@ public class TestLocalZippedProjects extends BaseTest {
                 softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(),
                         String.format("\nCompilation errors detected in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths)));
 
-                if (isRunAllTestsAvailable()) {
-                    runAllTests();
+                if (editorPage.getTableToolbarPanelComponent().isVisible()) {
+                    editorPage.getTableToolbarPanelComponent()
+                            .clickTestDropdown()
+                            .runTests();
+                    WaitUtil.sleep(2000);
                     softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(),
                             String.format("\nThere are test failures in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths)));
                 }
             }
         }
-    }
-
-    private boolean isRunAllTestsAvailable() {
-        try {
-            EditorPage editorPage = new EditorPage();
-            return editorPage.getTableToolbarPanelComponent().clickTestDropdown() != null;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private void runAllTests() {
-        EditorPage editorPage = new EditorPage();
-        editorPage.getTableToolbarPanelComponent()
-                .clickTestDropdown()
-                .runTests();
-        WaitUtil.sleep(2000);
-    }
-
-    private void getToEditorTab() {
-        EditorPage editorPage = new EditorPage();
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
     }
 
     private Map<Integer, List<String>> collectFiles(List<String> pathList) {
