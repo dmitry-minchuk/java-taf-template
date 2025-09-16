@@ -20,6 +20,7 @@ public class TestResultValidationComponent extends BaseComponent {
     private List<WebElement> caseErrorElementsList;
     private List<WebElement> caseSuccessElementsList;
     private List<WebElement> testResultRowElementsList;
+    private WebElement testResultBadgeError;
 
     public TestResultValidationComponent() {
         super(LocalDriverPool.getPage());
@@ -40,14 +41,15 @@ public class TestResultValidationComponent extends BaseComponent {
         caseErrorElementsList = createScopedElementList("xpath=.//tr//span[@class='case-error']", "caseErrorElements");
         caseSuccessElementsList = createScopedElementList("xpath=.//tr//span[@class='case-success']", "caseSuccessElements");
         testResultRowElementsList = createScopedElementList("xpath=.//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]", "testResultRowElements");
+        testResultBadgeError = createScopedElement("xpath=.//span[@class='badge badge-error']", "testResultBadgeError");
     }
 
     public boolean isTestTableFailed() {
-        return WaitUtil.isListNotEmpty(() -> caseErrorElementsList, DEFAULT_TIMEOUT_MS, 100);
+        return WaitUtil.isListNotEmpty(() -> caseErrorElementsList, DEFAULT_TIMEOUT_MS, 100) && testResultBadgeError.isVisible();
     }
 
     public boolean isTestTablePassed() {
-        return WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, DEFAULT_TIMEOUT_MS, 100);
+        return WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, DEFAULT_TIMEOUT_MS, 100) && !testResultBadgeError.isVisible();
     }
 
     public int getFailedTestCount() {

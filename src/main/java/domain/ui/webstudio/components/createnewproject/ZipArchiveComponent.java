@@ -5,7 +5,9 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.TestDataUtil;
 import helpers.utils.WaitUtil;
+import lombok.Getter;
 
+@Getter
 public class ZipArchiveComponent extends BaseComponent {
 
     private WebElement fileInputField;

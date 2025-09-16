@@ -88,14 +88,14 @@ public class TableToolbarPanelComponent extends BaseComponent {
         inputSelectFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
     }
 
-    public IPlaywrightRunMenu clickRun() {
+    public IRunMenu clickRun() {
         runBtn.click();
-        return new PlaywrightRunMenu();
+        return new RunMenu();
     }
 
-    public IPlaywrightTraceMenu clickTrace() {
+    public ITraceMenu clickTrace() {
         traceBtn.click();
-        return new PlaywrightTraceMenu();
+        return new TraceMenu();
     }
 
     public void clickBenchmark() {
@@ -116,54 +116,54 @@ public class TableToolbarPanelComponent extends BaseComponent {
         WaitUtil.sleep(100);
     }
 
-    public PlaywrightTraceMenu setFactorTextField(String text) {
+    public TraceMenu setFactorTextField(String text) {
         factorTextField.fill(text);
-        return new PlaywrightTraceMenu();
+        return new TraceMenu();
     }
 
     // Interface for Playwright Run Menu
-    public interface IPlaywrightRunMenu {
-        IPlaywrightRunMenu clickCreateItem();
-        IPlaywrightRunMenu clickAddElementToCollectionBtn(String containsText);
-        IPlaywrightRunMenu clickExpandCollection();
-        IPlaywrightRunMenu clickRunInsideMenu();
-        IPlaywrightRunMenu clickAddedElementsExpander(String containsText);
+    public interface IRunMenu {
+        IRunMenu clickCreateItem();
+        IRunMenu clickAddElementToCollectionBtn(String containsText);
+        IRunMenu clickExpandCollection();
+        IRunMenu clickRunInsideMenu();
+        IRunMenu clickAddedElementsExpander(String containsText);
         java.util.List<String> getAliasDropdownValues();
         // Input parameter methods from RunDropDown.java
-        IPlaywrightRunMenu setInputTextField(String index, String value);
-        IPlaywrightRunMenu setInputSelectField(String index, String value);
+        IRunMenu setInputTextField(String index, String value);
+        IRunMenu setInputSelectField(String index, String value);
     }
 
     // Implementation for Playwright Run Menu
-    public class PlaywrightRunMenu implements IPlaywrightRunMenu {
+    public class RunMenu implements IRunMenu {
         
         @Override
-        public IPlaywrightRunMenu clickCreateItem() {
+        public IRunMenu clickCreateItem() {
             createItemBtn.click();
             return this;
         }
 
         @Override
-        public IPlaywrightRunMenu clickAddElementToCollectionBtn(String containsText) {
+        public IRunMenu clickAddElementToCollectionBtn(String containsText) {
             addElementToCollectionBtnTemplate.format(containsText).click();
             return this;
         }
 
         @Override
-        public IPlaywrightRunMenu clickExpandCollection() {
+        public IRunMenu clickExpandCollection() {
             expandTypesBtn.click();
             return this;
         }
 
         @Override
-        public IPlaywrightRunMenu clickRunInsideMenu() {
+        public IRunMenu clickRunInsideMenu() {
             runInsideDropdownBtn.click();
             WaitUtil.sleep(250);
             return this;
         }
 
         @Override
-        public IPlaywrightRunMenu clickAddedElementsExpander(String containsText) {
+        public IRunMenu clickAddedElementsExpander(String containsText) {
             addedElementsExpanderTemplate.format(containsText).click();
             return this;
         }
@@ -185,32 +185,32 @@ public class TableToolbarPanelComponent extends BaseComponent {
         }
 
         @Override
-        public IPlaywrightRunMenu setInputTextField(String index, String value) {
+        public IRunMenu setInputTextField(String index, String value) {
             inputTextFieldTemplate.format(index).fill(value);
             return this;
         }
 
         @Override
-        public IPlaywrightRunMenu setInputSelectField(String index, String value) {
+        public IRunMenu setInputSelectField(String index, String value) {
             inputSelectFieldTemplate.format(index).selectByVisibleText(value);
             return this;
         }
     }
 
     // Interface for Playwright Trace Menu  
-    public interface IPlaywrightTraceMenu {
-        IPlaywrightTraceMenu setFactorTextField(String text);
-        IPlaywrightTraceMenu selectJSONTrace(String json);
-        IPlaywrightTraceMenu clickTraceIntoFile();
-        IPlaywrightTraceWindow clickTraceInsideMenu();
-        java.util.List<String> getAliasDropdownValues();
+    public interface ITraceMenu {
+        ITraceMenu setFactorTextField(String text);
+        ITraceMenu selectJSONTrace(String json);
+        ITraceMenu clickTraceIntoFile();
+        ITraceWindow clickTraceInsideMenu();
+        List<String> getAliasDropdownValues();
     }
 
     // Implementation for Playwright Trace Menu
-    public class PlaywrightTraceMenu implements IPlaywrightTraceMenu {
+    public class TraceMenu implements ITraceMenu {
         
         @Override
-        public IPlaywrightTraceMenu setFactorTextField(String text) {
+        public ITraceMenu setFactorTextField(String text) {
             if (factorTextFieldForTrace.isVisible()) {
                 factorTextFieldForTrace.fill(text);
             }
@@ -218,20 +218,20 @@ public class TableToolbarPanelComponent extends BaseComponent {
         }
 
         @Override
-        public IPlaywrightTraceMenu selectJSONTrace(String json) {
+        public ITraceMenu selectJSONTrace(String json) {
             jsonRadioBtn.click();
             jsonTextField.fill(json);
             return this;
         }
 
         @Override
-        public IPlaywrightTraceMenu clickTraceIntoFile() {
+        public ITraceMenu clickTraceIntoFile() {
             traceIntoFileBtn.click();
             return this;
         }
 
         @Override
-        public IPlaywrightTraceWindow clickTraceInsideMenu() {
+        public ITraceWindow clickTraceInsideMenu() {
             // Wait for popup to open after click
             Page popup = page.waitForPopup(() -> {
                 traceInsideMenuBtn.click();
@@ -240,7 +240,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
             // Wait for popup to load and trace tree to be ready
             popup.waitForLoadState();
             popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
-            return new PlaywrightTraceWindow(popup);
+            return new TraceWindow(popup);
         }
 
         // TODO: refactor this!
@@ -261,17 +261,17 @@ public class TableToolbarPanelComponent extends BaseComponent {
     }
 
     // Interface for Playwright Trace Window
-    public interface IPlaywrightTraceWindow {
-        IPlaywrightTraceWindow expandItemInTree(int position);
+    public interface ITraceWindow {
+        ITraceWindow expandItemInTree(int position);
         List<String> getVisibleItemsFromTree();
     }
 
     // Implementation for Playwright Trace Window
-    public class PlaywrightTraceWindow extends BasePage implements IPlaywrightTraceWindow {
+    public class TraceWindow extends BasePage implements ITraceWindow {
         private WebElement traceExpanderTemplate;
         private List<WebElement> visibleItemsFromTree;
 
-        public PlaywrightTraceWindow(Page tracePage) {
+        public TraceWindow(Page tracePage) {
             super(tracePage);
             // Initialize trace window elements based on actual HTML structure
             traceExpanderTemplate = new WebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
@@ -279,7 +279,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
         }
 
         @Override
-        public IPlaywrightTraceWindow expandItemInTree(int position) {
+        public ITraceWindow expandItemInTree(int position) {
             WebElement item = traceExpanderTemplate.format(position + 1);
             item.click();
             WaitUtil.sleep(100); // Waiting for expander to get expanded
