@@ -2,10 +2,12 @@ package tests.ui.webstudio.client;
 
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
+import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -122,18 +124,29 @@ public class TestLocalZippedProjects extends BaseTest {
         return files;
     }
 
-    private String createProjectFromZipFile(String pathFile) {
+    private String createProjectFromZipFile(String absoluteFilePath) {
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.getCreateProjectLink().click();
+        String projectName = getPureName(absoluteFilePath);
 
-        File zip = new File(pathFile);
-        String projectName = zip.getName().replace(EXT, "");
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, projectName, zip.getAbsolutePath());
+        CreateNewProjectComponent createNewProjectComponent = repositoryPage.getCreateNewProjectComponent();
+        ZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.ZIP_ARCHIVE);
+        zipComponent.getFileInputField().sendKeys(absoluteFilePath);
+        zipComponent.getProjectNameField().fillSequentially(projectName);
+        zipComponent.getCreateProjectBtn().click();
 
-        repositoryPage.refresh();
-        WaitUtil.sleep(1000);
+        if(repositoryPage.getConfigureCommitInfoComponent().isVisible(1500))
+            repositoryPage.getConfigureCommitInfoComponent().fillCommitInfoWithRandomData();
 
+        repositoryPage.getRefreshBtn().click(10000);
         return projectName;
+    }
+
+    private String getPureName(String path) {
+        String fileName = path.substring(path.lastIndexOf('/') + 1);
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex != -1) ? fileName.substring(0, dotIndex) : fileName;
     }
 
     @DataProvider(name = "Projects")
