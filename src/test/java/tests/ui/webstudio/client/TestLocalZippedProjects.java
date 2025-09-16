@@ -70,11 +70,11 @@ public class TestLocalZippedProjects extends BaseTest {
                 softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(),
                         String.format("\nCompilation errors detected in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths)));
 
-                if (editorPage.getTableToolbarPanelComponent().isVisible()) {
+                if (editorPage.getTableToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
                     editorPage.getTableToolbarPanelComponent()
                             .clickTestDropdown()
                             .runTests();
-                    WaitUtil.sleep(2000);
+                    editorPage.waitUntilSpinnerLoaded();
                     softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(),
                             String.format("\nThere are test failures in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths)));
                 }

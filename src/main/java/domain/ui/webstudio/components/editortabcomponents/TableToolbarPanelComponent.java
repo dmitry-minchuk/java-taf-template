@@ -12,27 +12,28 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public class TableToolbarPanelComponent extends BaseComponent {
 
-    private WebElement runBtn;
-    private WebElement traceBtn;
-    private WebElement benchmarkBtn;
+    // TOP LINE TOOLBAR
     private WebElement exportBtn;
-    @Getter
-    private WebElement editBtn;
-    private WebElement copyBtn;
-    private WebElement removeBtn;
-    private WebElement factorTextField;
-    private WebElement traceDropdownBtn;
-
     // Run Tests Menu elements
+    @Getter
     private WebElement testDropdownBtn;
     private WebElement testPerPageDropdown;
     private WebElement failuresOnlyCheckbox;
     private WebElement compoundResultCheckbox;
     private WebElement runTestsBtn;
 
+    // SECOND LINE TOOLBAR
+    private WebElement runBtn;
+    private WebElement traceBtn;
+    private WebElement benchmarkBtn;
+    @Getter
+    private WebElement editBtn;
+    private WebElement copyBtn;
+    private WebElement removeBtn;
+    private WebElement factorTextField;
+    private WebElement traceDropdownBtn;
     // Run Menu elements
     private WebElement createItemBtn;
     private WebElement expandTypesBtn;
@@ -40,14 +41,12 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement runInsideDropdownBtn;
     private WebElement addedElementsExpanderTemplate;
     private WebElement selectTypeDropdown;
-    
     // Trace Menu elements  
     private WebElement traceInsideMenuBtn;
     private WebElement traceIntoFileBtn;
     private WebElement factorTextFieldForTrace;
     private WebElement jsonRadioBtn;
     private WebElement jsonTextField;
-    
     // Input parameter elements - from RunDropDown.java
     private WebElement inputTextFieldTemplate;
     private WebElement inputSelectFieldTemplate;
@@ -63,9 +62,16 @@ public class TableToolbarPanelComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        // Top line toolbar
-        exportBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+        // TOP LINE TOOLBAR
+        exportBtn = new WebElement(page, "xpath=//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+        // Run Tests Menu elements initialization
+        testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
+        testPerPageDropdown = new WebElement(page, "xpath=//select[@name='testPerPage']", "testPerPageDropdown");
+        failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
+        compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='compoundResult']", "compoundResultCheckbox");
+        runTestsBtn = new WebElement(page, "xpath=//a[@class='button' and text()='Test']", "runTestsBtn");
 
+        // SECOND LINE TOOLBAR
         // Toolbar elements - scoped to toolbar container
         runBtn = createScopedElement("xpath=.//img[contains(@src, 'run')]", "runBtn");
         traceBtn = createScopedElement("xpath=.//img[contains(@src, 'trace')]", "traceBtn");
@@ -74,14 +80,6 @@ public class TableToolbarPanelComponent extends BaseComponent {
         copyBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
         removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
-
-        // Run Tests Menu elements initialization
-        testDropdownBtn = new WebElement(page, "xpath=//a[@id='testButton']//td[@class='arrow']", "testDropdownBtn");
-        testPerPageDropdown = new WebElement(page, "xpath=//select[@name='testPerPage']", "testPerPageDropdown");
-        failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
-        compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='compoundResult']", "compoundResultCheckbox");
-        runTestsBtn = new WebElement(page, "xpath=//input[@id='runTestButton']", "runTestsBtn");
-        
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
         createItemBtn = new WebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
         expandTypesBtn = new WebElement(page, "xpath=//table[@class='table']//span[contains(@class, 'rf-trn-hnd-colps') and contains(@class, 'rf-trn-hnd')]", "expandTypesBtn");
@@ -89,7 +87,6 @@ public class TableToolbarPanelComponent extends BaseComponent {
         runInsideDropdownBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runDropdownBtn");
         addedElementsExpanderTemplate = new WebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
         selectTypeDropdown = new WebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
-        
         // Trace Menu elements - page-level (form elements)
         traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
         traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
@@ -97,7 +94,6 @@ public class TableToolbarPanelComponent extends BaseComponent {
         factorTextFieldForTrace = new WebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
         jsonRadioBtn = new WebElement(page, "xpath=//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
         jsonTextField = new WebElement(page, "xpath=//textarea[contains(@id, 'jsonInput')]", "jsonTextField");
-        
         // Input parameter templates - page-level (form inputs)  
         inputTextFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
         inputSelectFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
