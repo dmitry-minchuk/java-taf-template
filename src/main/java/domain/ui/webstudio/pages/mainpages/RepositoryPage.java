@@ -35,6 +35,7 @@ public class RepositoryPage extends BasePage {
     private WebElement createBtn;
     // other components:
     private CreateNewProjectComponent createNewProjectComponent;
+    @Getter
     private ConfigureCommitInfoComponent configureCommitInfoComponent;
     private LeftRepositoryTreeComponent leftRepositoryTreeComponent;
     private RepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
