@@ -40,7 +40,7 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
             // Select the item from the already expanded folder
             editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", tableName);
 
-            TableToolbarPanelComponent.IPlaywrightRunMenu runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
+            TableToolbarPanelComponent.IRunMenu runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
             runMenu.clickCreateItem()
                     .clickAddElementToCollectionBtn("my =")
                     .clickExpandCollection();
@@ -51,7 +51,7 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
                     .containsExactly("", "bla1", "bla2", "bla3");
 
             // Switch to Trace and verify again
-            TableToolbarPanelComponent.IPlaywrightTraceMenu traceMenu = editorPage.getTableToolbarPanelComponent().clickTrace();
+            TableToolbarPanelComponent.ITraceMenu traceMenu = editorPage.getTableToolbarPanelComponent().clickTrace();
             assertThat(traceMenu.getAliasDropdownValues())
                     .as("Dropdown for alias values should contain expected values in Trace menu for table: " + tableName)
                     .containsExactly("", "bla1", "bla2", "bla3");
