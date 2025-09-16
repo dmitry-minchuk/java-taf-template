@@ -129,7 +129,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
         IRunMenu clickExpandCollection();
         IRunMenu clickRunInsideMenu();
         IRunMenu clickAddedElementsExpander(String containsText);
-        java.util.List<String> getAliasDropdownValues();
+        List<String> getAliasDropdownValues();
         // Input parameter methods from RunDropDown.java
         IRunMenu setInputTextField(String index, String value);
         IRunMenu setInputSelectField(String index, String value);
