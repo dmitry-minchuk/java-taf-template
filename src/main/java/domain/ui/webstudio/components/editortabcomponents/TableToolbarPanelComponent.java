@@ -9,6 +9,7 @@ import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -170,8 +171,8 @@ public class TableToolbarPanelComponent extends BaseComponent {
 
         // TODO: refactor this!
         @Override
-        public java.util.List<String> getAliasDropdownValues() {
-            java.util.List<String> values = new java.util.ArrayList<>();
+        public List<String> getAliasDropdownValues() {
+            List<String> values = new ArrayList<>();
             String baseSelector = selectTypeDropdown.getSelector();
             // Remove xpath= prefix if present and add //option
             String optionsSelector = baseSelector.startsWith("xpath=") ? baseSelector.substring(6) + "//option" : "xpath=" + baseSelector + "//option";
@@ -246,7 +247,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
         // TODO: refactor this!
         @Override
         public List<String> getAliasDropdownValues() {
-            List<String> values = new java.util.ArrayList<>();
+            List<String> values = new ArrayList<>();
             String baseSelector = selectTypeDropdown.getSelector();
             // Remove xpath= prefix if present and add //option
             String optionsSelector = baseSelector.startsWith("xpath=") ? baseSelector.substring(6) + "//option" : "xpath=" + baseSelector + "//option";
