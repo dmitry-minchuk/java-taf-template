@@ -27,8 +27,8 @@ public class ZipArchiveComponent extends BaseComponent {
 
     private void initializeElements() {
         fileInputField = createScopedElement("xpath=.//input[@type='file']", "fileInputField");
-        projectNameField = createScopedElement("xpath=.//input[contains(@id,'projectName')]", "projectNameField");
-        createProjectBtn = createScopedElement("xpath=.//input[@value='Create']", "createProjectBtn");
+        projectNameField = createScopedElement("xpath=.//input[@id='uploadProjectForm:projectName']", "projectNameField");
+        createProjectBtn = createScopedElement("xpath=.//input[@id='uploadProjectForm:sbtZipsBtn']", "createProjectBtn");
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
@@ -37,14 +37,14 @@ public class ZipArchiveComponent extends BaseComponent {
         setProjectName(projectName);
         createProjectBtn.click();
     }
-    
-    private void uploadZipFile(String fileName) {
+
+    public void uploadZipFile(String fileName) {
         String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);
         WaitUtil.sleep(1000); // For progress bar to finish
     }
-    
-    private void setProjectName(String projectName) {
+
+    public void setProjectName(String projectName) {
         projectNameField.clearByKeyCombination();
         projectNameField.fillSequentially(projectName);
     }
