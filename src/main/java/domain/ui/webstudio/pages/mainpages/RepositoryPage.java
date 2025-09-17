@@ -1,5 +1,6 @@
 package domain.ui.webstudio.pages.mainpages;
 
+import com.microsoft.playwright.Locator;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -43,6 +44,7 @@ public class RepositoryPage extends BasePage {
     private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
 
     private TableComponent projectsTable;
+    WebElement confirmOpeningDialogBtn;
 
     public RepositoryPage() {
         super();
@@ -64,7 +66,9 @@ public class RepositoryPage extends BasePage {
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
         repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
         deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
-        projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table')]", "projectsTable");
+        projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
+
+        confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -109,9 +113,14 @@ public class RepositoryPage extends BasePage {
     public void unlockAllProjects() {
         for (int i = 1; i <= projectsTable.getRowsCount(); i++) {
             List<WebElement> cells = projectsTable.getRow(i).getCells();
-            WebElement lastCell = cells.getLast();
-            if (lastCell.getText().contains("Close")) {
-                lastCell.click();
+            if (projectsTable.getRow(i).getCells().size() == 6) {
+                WebElement lastCell = cells.get(5);
+                Locator openOrCloseBtn = lastCell.sleep(750).getLocator().locator("xpath=.//a/img[@class='actionImage' and contains(@src,'repository')]");
+                if (openOrCloseBtn.isVisible() && openOrCloseBtn.getAttribute("alt").equalsIgnoreCase("Open")) {
+                    openOrCloseBtn.click();
+                    if (confirmOpeningDialogBtn.isVisible(200))
+                        confirmOpeningDialogBtn.click();
+                }
             }
         }
     }
@@ -120,9 +129,8 @@ public class RepositoryPage extends BasePage {
         List<String> projectNames = new ArrayList<>();
         for (int i = 1; i <= projectsTable.getRowsCount(); i++) {
             List<String> rowValues = projectsTable.getRow(i).getValue();
-            if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty()) {
+            if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty())
                 projectNames.add(rowValues.getFirst().trim());
-            }
         }
         return projectNames;
     }

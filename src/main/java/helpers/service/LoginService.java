@@ -18,13 +18,13 @@ public class LoginService {
     }
     
     public EditorPage login(UserData user) {
+        return login(user, LocalDriverPool.getAppUrl());
+    }
+
+    public EditorPage login(UserData user, String appUrl) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
-        
-        // Navigate to login page using proper URL resolution (LOCAL vs DOCKER mode aware)
-        String baseUrl = LocalDriverPool.getAppUrl();
-        page.navigate(baseUrl);
-        LOGGER.info("Navigated to login page: {}", baseUrl);
-        
+        page.navigate(appUrl);
+        LOGGER.info("Navigated to login page: {}", appUrl);
         return new LoginPage().login(user);
     }
 }
