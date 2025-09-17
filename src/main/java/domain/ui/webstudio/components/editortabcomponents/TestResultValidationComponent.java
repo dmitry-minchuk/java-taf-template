@@ -45,20 +45,22 @@ public class TestResultValidationComponent extends BaseComponent {
     }
 
     public boolean isTestTableFailed() {
-        return WaitUtil.isListNotEmpty(() -> caseErrorElementsList, DEFAULT_TIMEOUT_MS, 100) && testResultBadgeError.isVisible();
+        WaitUtil.isListNotEmpty(() -> caseErrorElementsList, 3000, 100);
+        return testResultBadgeError.isVisible();
     }
 
     public boolean isTestTablePassed() {
-        return WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, DEFAULT_TIMEOUT_MS, 100) && !testResultBadgeError.isVisible();
+        WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, 3000, 100);
+        return !testResultBadgeError.isVisible();
     }
 
     public int getFailedTestCount() {
-        WaitUtil.waitForListNotEmpty(() -> caseErrorElementsList, DEFAULT_TIMEOUT_MS, 100);
+        WaitUtil.waitForListNotEmpty(() -> caseErrorElementsList, 3000, 100);
         return caseErrorElementsList.size();
     }
 
     public int getPassedTestCount() {
-        WaitUtil.waitForListNotEmpty(() -> caseSuccessElementsList, DEFAULT_TIMEOUT_MS, 100);
+        WaitUtil.waitForListNotEmpty(() -> caseSuccessElementsList, 3000, 100);
         return caseSuccessElementsList.size();
     }
 

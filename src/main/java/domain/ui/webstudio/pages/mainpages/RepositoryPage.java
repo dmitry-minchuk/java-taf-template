@@ -35,8 +35,8 @@ public class RepositoryPage extends BasePage {
     private WebElement createBtn;
     // other components:
     private CreateNewProjectComponent createNewProjectComponent;
-    @Getter
     private ConfigureCommitInfoComponent configureCommitInfoComponent;
+    private WebElement configureCommitInfoComponentShade;
     private LeftRepositoryTreeComponent leftRepositoryTreeComponent;
     private RepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
     private RepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
@@ -58,6 +58,7 @@ public class RepositoryPage extends BasePage {
 
         createNewProjectComponent = createScopedComponent(CreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
         tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
+        configureCommitInfoComponentShade = new WebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
         configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
         leftRepositoryTreeComponent = createScopedComponent(LeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
@@ -85,8 +86,7 @@ public class RepositoryPage extends BasePage {
                 throw new IllegalArgumentException("Unsupported project type: " + projectType);
         }
 
-        WebElement modalShade = new WebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
-        if(modalShade.isVisible(3000))
+        if(configureCommitInfoComponentShade.isVisible(3000))
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
         refreshBtn.click(10000);
     }
