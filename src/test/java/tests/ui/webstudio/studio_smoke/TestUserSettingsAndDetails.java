@@ -136,7 +136,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         // Verify user in Users table
         usersComponent = editorPage.openUserMenu()
-                .navigateToAdministration() // FAILING: user1 tries to click Administration but he jas not permissions
+                .navigateToAdministration() // FAILING: user1 tries to click Administration but he has no permissions
                 .navigateToUsersPage();
         Assert.assertEquals(usersComponent.getSpecificUserElement("user1", "users-displayname"), "Bbb Aaa", "Display name should be updated in users table");
 
