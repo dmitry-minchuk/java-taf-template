@@ -54,6 +54,6 @@ public abstract class BasePage extends CorePage {
     }
 
     public void waitUntilSpinnerLoaded() {
-        contentLoadingSpinner.waitForHidden(30000);
+        contentLoadingSpinner.waitForHidden(DEFAULT_TIMEOUT_MS * 100L);
     }
 }

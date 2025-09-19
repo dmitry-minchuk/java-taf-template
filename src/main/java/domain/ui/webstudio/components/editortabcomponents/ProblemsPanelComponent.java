@@ -65,8 +65,13 @@ public class ProblemsPanelComponent extends BaseComponent {
     }
 
     public boolean isCompilationInProgress() {
-        String compilationStatus = compilationProgressBar.getText();
         String compilationComplete = "Loaded 100%";
+        String compilationStatus;
+        try {
+            compilationStatus = compilationProgressBar.getText();
+        } catch (Exception e) {
+            compilationStatus = compilationComplete;
+        }
         return !compilationStatus.contains(compilationComplete);
     }
 

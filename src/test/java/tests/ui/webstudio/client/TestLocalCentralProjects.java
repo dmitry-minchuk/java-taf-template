@@ -35,7 +35,7 @@ public class TestLocalCentralProjects extends BaseTest {
             List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(nameProject);
 
             if (!modules.isEmpty()) {
-                editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameProject, modules.get(0));
+                editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameProject, modules.getFirst());
                 editorPage.getProjectModuleDetailsComponent().isVisible();
 
                 if(editorPage.getProblemsPanelComponent().hasErrors()) {
