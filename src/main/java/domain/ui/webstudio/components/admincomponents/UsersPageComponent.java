@@ -106,18 +106,6 @@ public class UsersPageComponent extends BaseComponent {
         saveUser();
     }
 
-    public boolean isUserTableVisible() {
-        return userTableBody.isVisible();
-    }
-
-    public boolean isAddUserButtonVisible() {
-        return addUserBtn.isVisible();
-    }
-
-    public int getUserCount() {
-        return page.locator(".//table//tbody[@class='ant-table-tbody']//tr[@class='ant-table-row ant-table-row-level-0']").count();
-    }
-
     public void setDisplayNamePattern(String pattern) {
         displayNamePatternField.click();
         WebElement option = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'" + pattern + "')]", "displayNamePatternOption");
@@ -126,10 +114,6 @@ public class UsersPageComponent extends BaseComponent {
 
     public void setDisplayName(String displayName) {
         displayNameField.fill(displayName);
-    }
-
-    public String getDisplayName() {
-        return displayNameField.getAttribute("value");
     }
 
     public void setAdministratorsGroup(boolean isAdmin) {
@@ -192,61 +176,6 @@ public class UsersPageComponent extends BaseComponent {
     
     private String getFullNameForUser(String username) {
         WebElement fullNameElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[2]", username), "userFullName");
-        return fullNameElement.getText();
-    }
-
-    public boolean isUserPresent(String username) {
-        // Using generic table row locator - may need refinement with actual UI locators
-        WebElement userRow = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]", "userRow");
-        return userRow.isVisible();
-    }
-
-    public void editUser(String username) {
-        // Returns empty implementation - locators need to be found in openl-tests
-        WebElement editButton = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]//button[contains(@class,'edit')]", "editUserButton");
-        editButton.click();
-    }
-
-    public void deleteUser(String username) {
-        // Returns empty implementation - locators need to be found in openl-tests  
-        WebElement deleteButton = createScopedElement("xpath=.//table//tbody//tr[contains(.,'" + username + "')]//button[contains(@class,'delete')]", "deleteUserButton");
-        deleteButton.click();
-    }
-
-    public void verifyUserInfoInTable(String username, String firstName, String lastName, String groups,
-                                    String localUser, String email, String displayName,
-                                    boolean isEditable, boolean isRemovable) {
-        // Verification implementation - locators need to be found in openl-tests
-        // This method would verify all user information is correctly displayed in the table
-        // For now, using basic presence check
-        assert isUserPresent(username) : "User " + username + " should be present in table";
-    }
-
-    public boolean isUserRemovableTypeNotSpecified(String username) {
-        // Returns false as default - actual implementation needs proper locators
-        return false;
-    }
-
-    public boolean isUnsafePasswordWarningDisplayed(String username) {
-        // Returns false as default - actual implementation needs proper locators  
-        return false;
-    }
-
-    public void checkUserInfoUserTypeNotSpecified(String username, String firstName, String lastName,
-                                                 String groups, String email, String displayName,
-                                                 boolean isEditable, boolean isRemovable) {
-        // Implementation placeholder - needs proper locators from openl-tests
-        verifyUserInfoInTable(username, firstName, lastName, groups, "not specified", email, displayName, isEditable, isRemovable);
-    }
-
-    public void deleteUserTypeNotSpecified(String username) {
-        // Implementation placeholder - needs proper locators from openl-tests
-        deleteUser(username);
-    }
-
-    public String getUsersPageInfo() {
-        return String.format("Users Page - Total Users: %d | Add User Available: %s",
-                getUserCount(),
-                isAddUserButtonVisible());
+        return fullNameElement.sleep(350).getText();
     }
 }
