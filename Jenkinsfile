@@ -52,7 +52,7 @@ pipeline {
         label jenkinsLabel.master.nodeLabel
     }
     triggers {
-        parameterizedCron('H 3 * * * %APPLICATION_GIT_COMMIT_HASH_VERSION=latest_nightly_run;TESTS_BRANCH=playwright_testcontainers')
+        parameterizedCron('H 3 * * * %APPLICATION_GIT_COMMIT_HASH_VERSION=;TESTS_BRANCH=playwright_testcontainers')
     }
     options {
         throttleJobProperty categories: [], limitOneJobWithMatchingParams: false, maxConcurrentPerNode: 3, maxConcurrentTotal: 9, paramsToUseForLimit: '', throttleEnabled: true, throttleOption: 'project'
