@@ -121,7 +121,6 @@ pipeline {
                     if (!buildNumber || buildNumber.trim().isEmpty()) {
                         def currentDate = new Date()
                         buildNumber = currentDate.format("MMM_dd_yyyy'|'HH:mm", TimeZone.getTimeZone('UTC'))
-                        buildNumber = buildNumber.replace("|", "\\|")
                         echo "APPLICATION_GIT_COMMIT_HASH_VERSION is empty, generated timestamp: ${buildNumber}"
                     }
 
@@ -143,7 +142,7 @@ pipeline {
                                             -Drp.endpoint=http://10.23.172.185:8080 \\
                                             -Dexecution.mode=PLAYWRIGHT_DOCKER \\
                                             -Drp.project=OpenL_Tests \\
-                                            -Drp.launch=test_run_${buildNumber} \\
+                                            -Drp.launch=${suite.suiteName} \\
                                             -Drp.uuid=${RP_UUID} \\
                                             -Drp.attributes="build:${buildNumber};tests_branch:${TESTS_BRANCH}" \\
                                             -Dsuite=${suite.suiteName} \\
