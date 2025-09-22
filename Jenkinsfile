@@ -135,7 +135,7 @@ pipeline {
                                             -Drp.endpoint=http://10.23.172.185:8080 \\
                                             -Dexecution.mode=PLAYWRIGHT_DOCKER \\
                                             -Drp.project=OpenL_Tests \\
-                                            -Drp.launch=test_run_${env.BUILD_NUMBER} \\
+                                            -Drp.launch=${suite.suiteName} \\
                                             -Drp.uuid=${RP_UUID} \\
                                             -Drp.attributes="build:${APPLICATION_GIT_COMMIT_HASH_VERSION};tests_branch:${TESTS_BRANCH}" \\
                                             -Dsuite=${suite.suiteName} \\
