@@ -120,7 +120,7 @@ pipeline {
                     def buildNumber = params.APPLICATION_GIT_COMMIT_HASH_VERSION
                     if (!buildNumber || buildNumber.trim().isEmpty()) {
                         def currentDate = new Date()
-                        buildNumber = currentDate.format("MMM_dd_yyyy[HH:mm]", TimeZone.getTimeZone('UTC'))
+                        buildNumber = currentDate.format("MMM_dd_yyyy_HH:mm", TimeZone.getTimeZone('UTC'))
                         echo "APPLICATION_GIT_COMMIT_HASH_VERSION is empty, generated timestamp: ${buildNumber}"
                     }
 
