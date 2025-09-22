@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 public class WebElement {
     
@@ -159,10 +160,24 @@ public class WebElement {
     }
     
     // Selection methods for dropdowns
-    
+
+    // This method does not require clicking by selector - everything will be done automatically if selector implemented as <select>
     public void selectByVisibleText(String text) {
         LOGGER.info("Selecting option '{}' in {}", text, elementName);
         locator.selectOption(text);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getSelectValues() {
+        isVisible();
+        LOGGER.info("Getting select option values from {}", elementName);
+        return (List<String>) locator.locator("option").evaluateAll("options => options.map(option => option.value || '')");
+    }
+
+    public List<String> getSelectVisibleTextValues() {
+        isVisible();
+        LOGGER.info("Getting select option texts from {}", elementName);
+        return locator.locator("option").allTextContents();
     }
     
     // Dynamic locator formatting - Builder pattern implementation
