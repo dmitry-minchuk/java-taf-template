@@ -64,7 +64,7 @@ pipeline {
         PATH = "${env.M2_HOME}/bin:${env.PATH}"
     }
     parameters {
-        string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: 'latest_nightly_run', description: 'Source application branch (openl-tablets)')
+        string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Source application branch (openl-tablets)')
         string(name: 'TESTS_BRANCH', defaultValue: 'playwright_testcontainers', description: 'Autotests branch (openl-tests)')
     }
     stages {
@@ -117,6 +117,13 @@ pipeline {
         stage('Run Test Suites') {
             steps {
                 script {
+                    def buildNumber = params.APPLICATION_GIT_COMMIT_HASH_VERSION
+                    if (!buildNumber || buildNumber.trim().isEmpty()) {
+                        def currentDate = new Date()
+                        buildNumber = currentDate.format("MMM_dd_yyyy|HH:mm", TimeZone.getTimeZone('UTC'))
+                        echo "APPLICATION_GIT_COMMIT_HASH_VERSION is empty, generated timestamp: ${buildNumber}"
+                    }
+
                     parallel functionalJobList.collectEntries() { suite ->
                         [(suite): {
                             node(suite.nodeToRunOn) {
@@ -127,7 +134,7 @@ pipeline {
                                         extensions: [[$class: 'CloneOption', noTags: true, shallow: true, depth: 20, timeout: 30]],
                                         userRemoteConfigs: [[url: openlTestsGitIrl]]
                                 ])
-                                env.BUILD_NUMBER = params.APPLICATION_GIT_COMMIT_HASH_VERSION
+                                env.BUILD_NUMBER = buildNumber
                                 withMaven() {
                                     sh("bash -lc 'git branch'")
                                     sh("""bash -lc '
@@ -135,9 +142,9 @@ pipeline {
                                             -Drp.endpoint=http://10.23.172.185:8080 \\
                                             -Dexecution.mode=PLAYWRIGHT_DOCKER \\
                                             -Drp.project=OpenL_Tests \\
-                                            -Drp.launch=${suite.suiteName} \\
+                                            -Drp.launch=test_run_${buildNumber} \\
                                             -Drp.uuid=${RP_UUID} \\
-                                            -Drp.attributes="build:${APPLICATION_GIT_COMMIT_HASH_VERSION};tests_branch:${TESTS_BRANCH}" \\
+                                            -Drp.attributes="build:${buildNumber};tests_branch:${TESTS_BRANCH}" \\
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.imageName} \\
