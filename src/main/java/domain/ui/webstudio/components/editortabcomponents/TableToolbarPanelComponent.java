@@ -9,7 +9,6 @@ import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TableToolbarPanelComponent extends BaseComponent {
@@ -192,20 +191,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
             return this;
         }
 
-        // TODO: refactor this!
         @Override
         public List<String> getAliasDropdownValues() {
-            List<String> values = new ArrayList<>();
-            String baseSelector = selectTypeDropdown.getSelector();
-            // Remove xpath= prefix if present and add //option
-            String optionsSelector = baseSelector.startsWith("xpath=") ? baseSelector.substring(6) + "//option" : "xpath=" + baseSelector + "//option";
-            var options = page.locator(optionsSelector);
-            int count = options.count();
-            for (int i = 0; i < count; i++) {
-                String value = options.nth(i).getAttribute("value");
-                values.add(value != null ? value : "");
-            }
-            return values;
+            return selectTypeDropdown.getSelectValues();
         }
 
         @Override
@@ -300,20 +288,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
             return new TraceWindow(popup);
         }
 
-        // TODO: refactor this!
         @Override
         public List<String> getAliasDropdownValues() {
-            List<String> values = new ArrayList<>();
-            String baseSelector = selectTypeDropdown.getSelector();
-            // Remove xpath= prefix if present and add //option
-            String optionsSelector = baseSelector.startsWith("xpath=") ? baseSelector.substring(6) + "//option" : "xpath=" + baseSelector + "//option";
-            var options = page.locator(optionsSelector);
-            int count = options.count();
-            for (int i = 0; i < count; i++) {
-                String value = options.nth(i).getAttribute("value");
-                values.add(value != null ? value : "");
-            }
-            return values;
+            return selectTypeDropdown.getSelectValues();
         }
     }
 

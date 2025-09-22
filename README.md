@@ -5,7 +5,7 @@ A Java test automation framework built with **Playwright**, **TestNG**, **TestCo
 ## 🏗️ Architecture Overview
 
 ```
-Components → PlaywrightDriverPool (Unified Interface)
+Components → DriverPool (Unified Interface)
                     ↓
             [Automatic Mode Detection]
                     ↓
@@ -15,7 +15,7 @@ Components → PlaywrightDriverPool (Unified Interface)
             [File Operations Support]
                     ↓
     Upload: Volume Mapping + TestDataUtil
-    Download: PlaywrightDownloadUtil (mode-aware)
+    Download: DownloadUtil (mode-aware)
 ```
 
 ## ✨ Key Features
