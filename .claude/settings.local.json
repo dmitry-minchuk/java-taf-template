@@ -50,7 +50,9 @@
       "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/**)",
       "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/**)",
       "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/src/main/java/actions/**)",
-      "Read(//Users/dmitryminchuk/Projects/eis/openl-tests/**)"
+      "Read(//Users/dmitryminchuk/Projects/eis/openl-tests/**)",
+      "Bash(mvn clean test:*)",
+      "Read(//Users/dmitryminchuk/Downloads/**)"
     ],
     "deny": []
   }
