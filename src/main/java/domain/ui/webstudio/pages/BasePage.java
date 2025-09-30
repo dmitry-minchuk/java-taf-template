@@ -6,6 +6,7 @@ import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.MessageComponent;
 import domain.ui.webstudio.components.common.UserSlidingRightMenuComponent;
 import helpers.utils.WaitUtil;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public abstract class BasePage extends CorePage {
     private List<MessageComponent> messages;
     private WebElement userMenuDrawer;
     private WebElement contentLoadingSpinner;
+    @Getter
+    private WebElement modalOkBtn;
 
     public BasePage() {
         super();
@@ -32,6 +35,7 @@ public abstract class BasePage extends CorePage {
         messages = createComponentList(MessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
         userMenuDrawer = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
         contentLoadingSpinner = new WebElement(page, "xpath=//div[@id='loadingPanel']", "contentLoadingSpinner");
+        modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-content']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
     }
 
     public void closeAllMessages() {

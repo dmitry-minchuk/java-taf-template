@@ -24,6 +24,7 @@ import tests.BaseTest;
 
 import java.util.List;
 
+import static domain.ui.webstudio.components.admincomponents.SecurityPageComponent.DefaultGroup.ADMINISTRATORS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestUserSettingsAndDetails extends BaseTest { // This test is incomplete and failing expectedly
@@ -37,6 +38,13 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        editorPage
+                .openUserMenu()
+                .navigateToAdministration()
+                .navigateToSecurityPage()
+                .selectDefaultGroup(ADMINISTRATORS.getValue())
+                .clickApply();
+        loginService.login(UserService.getUser(User.ADMIN));
         MyProfilePageComponent myProfileComponent = editorPage
                 .openUserMenu()
                 .navigateToAdministration()

@@ -49,7 +49,8 @@
       "Read(/Users/dmitryminchuk/Desktop/**)",
       "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/**)",
       "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/**)",
-      "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/src/main/java/actions/**)"
+      "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/src/main/java/actions/**)",
+      "Read(//Users/dmitryminchuk/Projects/eis/openl-tests/**)"
     ],
     "deny": []
   }
