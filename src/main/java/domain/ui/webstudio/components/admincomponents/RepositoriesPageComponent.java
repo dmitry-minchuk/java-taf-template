@@ -6,14 +6,16 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
 import helpers.service.UserService;
-import helpers.utils.WaitUtil;
+import helpers.utils.StringUtil;
 
 import java.util.List;
 
 public class RepositoriesPageComponent extends BaseComponent {
 
     private WebElement designRepositoriesTab;
+    private WebElement deploymentRepositoriesTab;
     private WebElement addRepositoryBtn;
+    private WebElement addDeploymentRepositoryBtn;
     private List<WebElement> designRepositoryList;
 
     private WebElement remoteRepositoryNameField;
@@ -25,7 +27,6 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement remoteRepositoryBranchField;
     private WebElement flatFolderStructureCheckBox;
     private WebElement applyChangesBtn;
-    private WebElement modalOkBtn;
 
     public RepositoriesPageComponent() {
         super(LocalDriverPool.getPage());
@@ -39,7 +40,9 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     private void initializeElements() {
         designRepositoriesTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-tab') and contains(text(),'Design Repositories')]", "designRepositoriesTab");
+        deploymentRepositoriesTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deployment Repositories')]", "deploymentRepositoriesTab");
         addRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Design Repository')]]", "addRepositoryBtn");
+        addDeploymentRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Deployment Repository')]]", "addDeploymentRepositoryBtn");
         designRepositoryList = createScopedElementList("xpath=.//div[@class='ant-tabs-content-holder']//div[@class='ant-tabs-nav-list']/div[@data-node-key]", "designRepositoryList");
 
         remoteRepositoryNameField = createScopedElement("xpath=.//input[@id='name']", "remoteRepositoryCheckBox");
@@ -51,7 +54,6 @@ public class RepositoriesPageComponent extends BaseComponent {
         remoteRepositoryBranchField = createScopedElement("xpath=.//input[@id='settings_branch']", "remoteRepositorBranchField");
         flatFolderStructureCheckBox = createScopedElement("xpath=.//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
-        modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-content']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
     }
 
     public void clickDesignRepositoriesTab() {
@@ -80,7 +82,27 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     public void applyChangesAndRelogin(User user) {
         applyChangesBtn.click();
-        modalOkBtn.click();
+        getModalOkBtn().click();
         new LoginPage().login(UserService.getUser(user), DEFAULT_TIMEOUT_MS * 100L);
+    }
+
+    public void clickDeploymentRepositoriesTab() {
+        deploymentRepositoriesTab.click();
+    }
+
+    public void clickAddDeploymentRepository() {
+        addDeploymentRepositoryBtn.sleep(500).click();
+    }
+
+    public void addDeploymentRepository() {
+        clickDeploymentRepositoriesTab();
+        clickAddDeploymentRepository();
+    }
+
+    public void createH2DeploymentRepository(User user) {
+        String repoUrl = String.format("jdbc:h2:mem:repo%s;DB_CLOSE_DELAY=-1", StringUtil.generateUniqueName(5));
+        addDeploymentRepository();
+        remoteRepositoryPathField.fillSequentially(repoUrl);
+        applyChangesAndRelogin(user);
     }
 }

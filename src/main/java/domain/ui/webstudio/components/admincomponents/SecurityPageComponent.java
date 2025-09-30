@@ -3,16 +3,25 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import lombok.Getter;
 
+@Getter
 public class SecurityPageComponent extends BaseComponent {
 
+    // User Mode Radio Buttons
     private WebElement singleUserModeRadio;
     private WebElement multiUserModeRadio;
     private WebElement activeDirectoryModeRadio;
     private WebElement samlModeRadio;
     private WebElement oauth2ModeRadio;
-    private WebElement saveBtn;
-    private WebElement cancelBtn;
+
+    // Multi-User Mode Fields
+    private WebElement administratorsField;
+    private WebElement defaultGroupDropdown;
+    private WebElement defaultGroupDropdownList;
+
+    // Buttons
+    private WebElement applyBtn;
 
     public SecurityPageComponent() {
         super(LocalDriverPool.getPage());
@@ -25,60 +34,59 @@ public class SecurityPageComponent extends BaseComponent {
     }
 
     private void initializeElements() {
+        // User Mode Radio Buttons
         singleUserModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='single']", "singleUserModeRadio");
         multiUserModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='multi']", "multiUserModeRadio");
         activeDirectoryModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='ad']", "activeDirectoryModeRadio");
         samlModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='saml']", "samlModeRadio");
         oauth2ModeRadio = createScopedElement("xpath=.//input[@type='radio' and @value='oauth2']", "oauth2ModeRadio");
-        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
+
+        // Multi-User Mode Fields (visible when multi-user mode is selected)
+        administratorsField = createScopedElement("xpath=.//input[@id='administrators']", "administratorsField");
+        defaultGroupDropdown = createScopedElement("xpath=.//div[./label[@title='Default Group']]/following-sibling::div//div[@class='ant-form-item-control-input-content']", "defaultGroupDropdown");
+        defaultGroupDropdownList = new WebElement(page, "xpath=//div[@class='rc-virtual-list-holder']//div[contains(@class,'ant-select-item-option') and @title='%s']", "defaultGroupDropdownList");
+
+        // Buttons
+        applyBtn = createScopedElement("xpath=.//button[./span[text()='Apply']]", "applyBtn");
     }
 
-    public void selectSingleUserMode() {
-        singleUserModeRadio.click();
+    public void clickApply() {
+        applyBtn.click();
+        getModalOkBtn().click();
     }
 
-    public void selectMultiUserMode() {
-        multiUserModeRadio.click();
+    public enum DefaultGroup {
+        NONE("None"),
+        ADMINISTRATORS("Administrators"),
+        ANALYSTS("Analysts"),
+        DEPLOYERS("Deployers"),
+        DEVELOPERS("Developers"),
+        TESTERS("Testers"),
+        VIEWERS("Viewers");
+
+        private final String value;
+
+        DefaultGroup(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static DefaultGroup fromValue(String value) {
+            for (DefaultGroup group : values()) {
+                if (group.getValue().equalsIgnoreCase(value)) {
+                    return group;
+                }
+            }
+            return null;
+        }
     }
 
-    public void selectActiveDirectoryMode() {
-        activeDirectoryModeRadio.click();
-    }
-
-    public void selectSamlMode() {
-        samlModeRadio.click();
-    }
-
-    public void selectOAuth2Mode() {
-        oauth2ModeRadio.click();
-    }
-
-    public boolean isSingleUserModeSelected() {
-        return singleUserModeRadio.isChecked();
-    }
-
-    public boolean isMultiUserModeSelected() {
-        return multiUserModeRadio.isChecked();
-    }
-
-    public boolean isActiveDirectoryModeSelected() {
-        return activeDirectoryModeRadio.isChecked();
-    }
-
-    public boolean isSamlModeSelected() {
-        return samlModeRadio.isChecked();
-    }
-
-    public boolean isOAuth2ModeSelected() {
-        return oauth2ModeRadio.isChecked();
-    }
-
-    public void saveSecuritySettings() {
-        saveBtn.click();
-    }
-
-    public void cancelSecuritySettings() {
-        cancelBtn.click();
+    public SecurityPageComponent selectDefaultGroup(String value) {
+        defaultGroupDropdown.click();
+        defaultGroupDropdownList.format(value).waitForVisible(500).click();
+        return this;
     }
 }

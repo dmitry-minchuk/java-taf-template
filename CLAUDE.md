@@ -30,7 +30,7 @@ Before responding, follow this internal reasoning protocol:
 
 ### **ARCHITECTURAL OVERVIEW** 🏗️
 ```
-Components → PlaywrightDriverPool (Unified Interface)
+Components → DriverPool (Unified Interface)
                     ↓
             [Automatic Mode Detection]
                     ↓
