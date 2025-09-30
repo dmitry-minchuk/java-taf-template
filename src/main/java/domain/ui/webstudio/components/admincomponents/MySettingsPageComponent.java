@@ -4,57 +4,47 @@ import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MySettingsPageComponent extends BaseComponent {
 
     private WebElement showHeaderCheckbox;
     private WebElement showFormulasCheckbox;
     private WebElement defaultOrderDropdown;
-    private WebElement byExcelSheetOption;
-    private WebElement testsPerPageField;
+    private WebElement defaultOrderDropdownList;
+    private WebElement defaultOrderSelectedItem;
+    private WebElement testsPerPageDropdown;
+    private WebElement testsPerPageDropdownList;
+    private WebElement testsPerPageSelectedItem;
     private WebElement failuresOnlyCheckbox;
     private WebElement compoundResultCheckbox;
     private WebElement showNumbersWithoutFormattingCheckbox;
     private WebElement saveBtn;
-    private WebElement resetBtn;
-    private WebElement cancelBtn;
-    private WebElement successNotification;
-    private WebElement errorNotification;
-
-    private final Map<String, WebElement> orderOptionMappings = new HashMap<>();
 
     public MySettingsPageComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
-        initializeOrderOptionMappings();
     }
 
     public MySettingsPageComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
-        initializeOrderOptionMappings();
     }
 
     private void initializeElements() {
-        showHeaderCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'showHeader') or ./following-sibling::*[contains(text(),'Show Header')])]", "showHeaderCheckbox");
-        showFormulasCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'showFormulas') or ./following-sibling::*[contains(text(),'Show Formulas')])]", "showFormulasCheckbox");
-        defaultOrderDropdown = createScopedElement("xpath=.//select[contains(@id,'defaultOrder') or ./preceding-sibling::*[contains(text(),'Default Order')]] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Default Order')]]", "defaultOrderDropdown");
-        byExcelSheetOption = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'By Excel Sheet')]", "byExcelSheetOption");
-        testsPerPageField = createScopedElement("xpath=.//input[@type='number' and (contains(@id,'testsPerPage') or ./preceding-sibling::*[contains(text(),'Tests Per Page')])]", "testsPerPageField");
-        failuresOnlyCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'failuresOnly') or ./following-sibling::*[contains(text(),'Failures Only')])]", "failuresOnlyCheckbox");
-        compoundResultCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'compoundResult') or ./following-sibling::*[contains(text(),'Compound Result')])]", "compoundResultCheckbox");
-        showNumbersWithoutFormattingCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'showNumbers') or ./following-sibling::*[contains(text(),'Show Numbers Without Formatting')])]", "showNumbersWithoutFormattingCheckbox");
-        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        resetBtn = createScopedElement("xpath=.//button[./span[text()='Reset'] or ./span[text()='Reset to Default']]", "resetBtn");
-        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
-        successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
-        errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
-    }
+        showHeaderCheckbox = createScopedElement("xpath=.//input[@id='showHeader']", "showHeaderCheckbox");
+        showFormulasCheckbox = createScopedElement("xpath=.//input[@id='showFormulas']", "showFormulasCheckbox");
 
-    private void initializeOrderOptionMappings() {
-        orderOptionMappings.put("by excel sheet", byExcelSheetOption);
+        defaultOrderDropdown = createScopedElement("xpath=.//input[@id='treeView']", "defaultOrderDropdown");
+        defaultOrderDropdownList = new WebElement(page, "xpath=//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item-option') and @title='%s']", "defaultOrderDropdownList");
+        defaultOrderSelectedItem = createScopedElement("xpath=.//input[@id='treeView']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "defaultOrderSelectedItem");
+
+        testsPerPageDropdown = createScopedElement("xpath=.//input[@id='testsPerPage']", "testsPerPageDropdown");
+        testsPerPageDropdownList = new WebElement(page, "xpath=//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item-option') and @title='%s']", "testsPerPageDropdownList");
+        testsPerPageSelectedItem = createScopedElement("xpath=.//input[@id='testsPerPage']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "testsPerPageSelectedItem");
+
+        failuresOnlyCheckbox = createScopedElement("xpath=.//input[@id='testsFailuresOnly']", "failuresOnlyCheckbox");
+        compoundResultCheckbox = createScopedElement("xpath=.//input[@id='showComplexResult']", "compoundResultCheckbox");
+        showNumbersWithoutFormattingCheckbox = createScopedElement("xpath=.//input[@id='showRealNumbers']", "showNumbersWithoutFormattingCheckbox");
+        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
     }
 
     public MySettingsPageComponent setShowHeader(boolean show) {
@@ -81,32 +71,21 @@ public class MySettingsPageComponent extends BaseComponent {
 
     public void setDefaultOrder(String orderOption) {
         defaultOrderDropdown.click();
-        
-        WebElement optionElement = getOrderOptionElement(orderOption);
-        if (optionElement != null) {
-            optionElement.click();
-        }
-    }
-
-    private WebElement getOrderOptionElement(String orderOption) {
-        return orderOptionMappings.get(orderOption.toLowerCase());
-    }
-
-    public void setDefaultOrderByExcelSheet() {
-        setDefaultOrder("By Excel Sheet");
+        defaultOrderDropdownList.format(orderOption).waitForVisible(500).click();
     }
 
     public String getDefaultOrder() {
-        return defaultOrderDropdown.getAttribute("title");
+        return defaultOrderSelectedItem.getAttribute("title");
     }
 
     public MySettingsPageComponent setTestsPerPage(int testsPerPage) {
-        testsPerPageField.fill(String.valueOf(testsPerPage));
+        testsPerPageDropdown.click();
+        testsPerPageDropdownList.format(String.valueOf(testsPerPage)).waitForVisible(500).click();
         return this;
     }
 
     public int getTestsPerPage() {
-        String value = testsPerPageField.getAttribute("value");
+        String value = testsPerPageSelectedItem.getAttribute("title");
         return value != null && !value.isEmpty() ? Integer.parseInt(value) : 5;
     }
 
@@ -146,70 +125,5 @@ public class MySettingsPageComponent extends BaseComponent {
     public MySettingsPageComponent saveSettings() {
         saveBtn.click();
         return this;
-    }
-
-    public void resetSettings() {
-        resetBtn.click();
-    }
-
-    public void cancelSettings() {
-        cancelBtn.click();
-    }
-
-    public void configureTableSettings(boolean showHeader, boolean showFormulas, String defaultOrder) {
-        setShowHeader(showHeader);
-        setShowFormulas(showFormulas);
-        if (defaultOrder != null) {
-            setDefaultOrder(defaultOrder);
-        }
-    }
-
-    public void configureTestingSettings(int testsPerPage, boolean failuresOnly, boolean compoundResult) {
-        setTestsPerPage(testsPerPage);
-        setFailuresOnly(failuresOnly);
-        setCompoundResult(compoundResult);
-    }
-
-    public void configureTraceSettings(boolean showNumbersWithoutFormatting) {
-        setShowNumbersWithoutFormatting(showNumbersWithoutFormatting);
-    }
-
-    public void configureAllSettings(boolean showHeader, boolean showFormulas, String defaultOrder,
-                                   int testsPerPage, boolean failuresOnly, boolean compoundResult,
-                                   boolean showNumbersWithoutFormatting) {
-        configureTableSettings(showHeader, showFormulas, defaultOrder);
-        configureTestingSettings(testsPerPage, failuresOnly, compoundResult);
-        configureTraceSettings(showNumbersWithoutFormatting);
-        saveSettings();
-    }
-
-    public void configureDefaultSettings(int testsPerPage) {
-        configureAllSettings(true, true, "By Excel Sheet", testsPerPage, false, false, false);
-    }
-
-    public boolean validateSettings(Boolean expectedShowHeader, Boolean expectedShowFormulas,
-                                  Integer expectedTestsPerPage, Boolean expectedFailuresOnly,
-                                  Boolean expectedCompoundResult, Boolean expectedShowNumbersWithoutFormatting) {
-        boolean headerMatches = expectedShowHeader == null || expectedShowHeader.equals(isShowHeaderEnabled());
-        boolean formulasMatches = expectedShowFormulas == null || expectedShowFormulas.equals(isShowFormulasEnabled());
-        boolean testsPerPageMatches = expectedTestsPerPage == null || expectedTestsPerPage.equals(getTestsPerPage());
-        boolean failuresOnlyMatches = expectedFailuresOnly == null || expectedFailuresOnly.equals(isFailuresOnlyEnabled());
-        boolean compoundResultMatches = expectedCompoundResult == null || expectedCompoundResult.equals(isCompoundResultEnabled());
-        boolean numbersFormattingMatches = expectedShowNumbersWithoutFormatting == null || 
-                                         expectedShowNumbersWithoutFormatting.equals(isShowNumbersWithoutFormattingEnabled());
-        
-        return headerMatches && formulasMatches && testsPerPageMatches && 
-               failuresOnlyMatches && compoundResultMatches && numbersFormattingMatches;
-    }
-
-    public String getSettingsInfo() {
-        return String.format("Settings - Header: %s | Formulas: %s | Order: %s | Tests/Page: %d | Failures Only: %s | Compound: %s | Numbers Without Formatting: %s",
-                isShowHeaderEnabled(),
-                isShowFormulasEnabled(),
-                getDefaultOrder(),
-                getTestsPerPage(),
-                isFailuresOnlyEnabled(),
-                isCompoundResultEnabled(),
-                isShowNumbersWithoutFormattingEnabled());
     }
 }

@@ -44,7 +44,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
                 .navigateToSecurityPage()
                 .selectDefaultGroup(ADMINISTRATORS.getValue())
                 .clickApply();
-        loginService.login(UserService.getUser(User.ADMIN));
+        editorPage = loginService.login(UserService.getUser(User.ADMIN));
         MyProfilePageComponent myProfileComponent = editorPage
                 .openUserMenu()
                 .navigateToAdministration()
@@ -163,12 +163,12 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertFalse(mySettingsComponent.isFailuresOnlyEnabled(), "Failures Only should be false");
         Assert.assertFalse(mySettingsComponent.isCompoundResultEnabled(), "Compound Result should be false");
         Assert.assertFalse(mySettingsComponent.isShowNumbersWithoutFormattingEnabled(), "Show numbers without formatting should be false");
-        mySettingsComponent.cancelSettings();
+        editorPage.openUserMenu().signOut();
 
         // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
         String testFileName = "TestUserSettingsAndDetails";
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, testFileName + ".xlsx");
-        editorPage = new EditorPage();
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
 
         editorPage.getEditorLeftRulesTreeComponent()
@@ -196,7 +196,6 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         
         // Navigate to the same project as user1
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        // Open the project using repository methods
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
@@ -221,7 +220,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
-                String nameExample1Project = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
+        String nameExample1Project = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
 
@@ -242,7 +241,6 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         Assert.assertEquals(mySettingsComponent.getTestsPerPage(), 5, "User1 Tests per page should still be 5");
         Assert.assertFalse(mySettingsComponent.isFailuresOnlyEnabled(), "User1 Failures Only should still be false");
         Assert.assertFalse(mySettingsComponent.isCompoundResultEnabled(), "User1 Compound Result should still be false");
-        mySettingsComponent.cancelSettings();
 
         // Scenario 12: Test Help functionality (lines 196-201 from original)
         LOGGER.info("Help functionality test - implementation depends on UserSlidingRightMenuComponent methods");
