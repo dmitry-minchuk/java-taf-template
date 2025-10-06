@@ -155,6 +155,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
         IRunTestsMenu setFailuresOnly(boolean failuresOnly);
         IRunTestsMenu setCompoundResult(boolean compoundResult);
         void runTests();
+        String getTestPerPage();
+        boolean isFailuresOnlyChecked();
+        boolean isCompoundResultChecked();
     }
 
     // Implementation for Playwright Run Menu
@@ -239,6 +242,21 @@ public class TableToolbarPanelComponent extends BaseComponent {
         @Override
         public void runTests() {
             runTestsBtn.click();
+        }
+
+        @Override
+        public String getTestPerPage() {
+            return testPerPageDropdown.getLocator().inputValue();
+        }
+
+        @Override
+        public boolean isFailuresOnlyChecked() {
+            return failuresOnlyCheckbox.isChecked();
+        }
+
+        @Override
+        public boolean isCompoundResultChecked() {
+            return compoundResultCheckbox.isChecked();
         }
     }
 

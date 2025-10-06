@@ -124,6 +124,10 @@ public class MyProfilePageComponent extends BaseComponent {
         changePassword(currentPassword, newPassword, newPassword);
     }
 
+    public WebElement getSaveProfileBtn() {
+        return saveBtn;
+    }
+
     public MyProfilePageComponent saveProfile() {
         saveBtn.click();
         closeAllMessages();
