@@ -1,8 +1,8 @@
 package domain.ui.webstudio.components.common;
 
-import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 
 public class UserSlidingRightMenuComponent extends BaseComponent {

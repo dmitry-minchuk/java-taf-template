@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 @Getter
@@ -53,6 +54,7 @@ public class SecurityPageComponent extends BaseComponent {
     public void clickApply() {
         applyBtn.click();
         getModalOkBtn().click();
+        WaitUtil.sleep(1000);
     }
 
     public enum DefaultGroup {

@@ -10,6 +10,7 @@ public class LoginPage extends BasePage {
     private WebElement usernameField;
     private WebElement passwordField;
     private WebElement loginButton;
+    private WebElement loginErrorMessage;
 
     public LoginPage() {
         super();
@@ -25,6 +26,7 @@ public class LoginPage extends BasePage {
         usernameField = new WebElement(page, "xpath=//input[@id='username']", "usernameField");
         passwordField = new WebElement(page, "xpath=//input[@id='password']", "passwordField");
         loginButton = new WebElement(page, "xpath=//button[@type='submit']", "loginButton");
+        loginErrorMessage = new WebElement(page, "xpath=//*[@class='error' or @id='input-error']", "loginErrorMessage");
     }
 
     public EditorPage login(UserData user) {
@@ -37,5 +39,13 @@ public class LoginPage extends BasePage {
         passwordField.fill(user.getPassword());
         loginButton.click();
         return new EditorPage();
+    }
+
+    public String getLoginErrorMessage() {
+        return loginErrorMessage.waitForVisible(DEFAULT_TIMEOUT_MS).getText();
+    }
+
+    public boolean isLoginErrorDisplayed() {
+        return loginErrorMessage.isVisible();
     }
 }
