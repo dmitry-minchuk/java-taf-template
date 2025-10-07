@@ -126,7 +126,16 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
                 .navigateToUsersPage();
 
         // Create new user1 with full details
-        usersComponent.addNewUser("user1", "user1@example.com", "Aaa", "Bbb", "user1");
+        usersComponent.clickAddUser()
+                .setUsername("user1")
+                .setEmail("user1@example.com")
+                .setFirstName("Aaa")
+                .setLastName("Bbb")
+                .setPassword("user1")
+                .clickAddRoleBtn()
+                .setRoleRepository(0, "Design")
+                .setRole(0, "Manager")
+                .saveUser();
         
         // Logout admin and login as user1
         editorPage.openUserMenu().signOut();
@@ -221,6 +230,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         // Navigate to the same project as user1
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.unlockAllProjects();
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1"); //User1 is NOT admin
         editorPage.getEditorLeftRulesTreeComponent()
@@ -242,7 +252,10 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
-        mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
+        mySettingsComponent.setTestsPerPage(20)
+                .setFailuresOnly(true)
+                .setCompoundResult(true)
+                .saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
         // Reuse already created projectNameTemplate from Scenario 7

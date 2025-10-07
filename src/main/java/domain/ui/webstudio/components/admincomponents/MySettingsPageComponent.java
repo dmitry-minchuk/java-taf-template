@@ -9,10 +9,9 @@ public class MySettingsPageComponent extends BaseComponent {
     private WebElement showHeaderCheckbox;
     private WebElement showFormulasCheckbox;
     private WebElement defaultOrderDropdown;
-    private WebElement defaultOrderDropdownList;
     private WebElement defaultOrderSelectedItem;
     private WebElement testsPerPageDropdown;
-    private WebElement testsPerPageDropdownList;
+    private WebElement selectOptionTemplate;
     private WebElement testsPerPageSelectedItem;
     private WebElement failuresOnlyCheckbox;
     private WebElement compoundResultCheckbox;
@@ -33,12 +32,11 @@ public class MySettingsPageComponent extends BaseComponent {
         showHeaderCheckbox = createScopedElement("xpath=.//input[@id='showHeader']", "showHeaderCheckbox");
         showFormulasCheckbox = createScopedElement("xpath=.//input[@id='showFormulas']", "showFormulasCheckbox");
 
-        defaultOrderDropdown = createScopedElement("xpath=.//input[@id='treeView']", "defaultOrderDropdown");
-        defaultOrderDropdownList = new WebElement(page, "xpath=//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item-option') and @title='%s']", "defaultOrderDropdownList");
+        defaultOrderDropdown = createScopedElement("xpath=.//div[./label[@title='Default Order']]/following-sibling::div//div[@class='ant-select-selector']", "defaultOrderDropdown");
         defaultOrderSelectedItem = createScopedElement("xpath=.//input[@id='treeView']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "defaultOrderSelectedItem");
 
-        testsPerPageDropdown = createScopedElement("xpath=.//input[@id='testsPerPage']", "testsPerPageDropdown");
-        testsPerPageDropdownList = new WebElement(page, "xpath=//div[contains(@class,'ant-select-dropdown')]//div[contains(@class,'ant-select-item-option') and @title='%s']", "testsPerPageDropdownList");
+        testsPerPageDropdown = createScopedElement("xpath=.//div[./label[@title='Tests Per Page']]/following-sibling::div//div[@class='ant-select-selector']", "testsPerPageDropdown");
+        selectOptionTemplate =  new WebElement(page,"xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
         testsPerPageSelectedItem = createScopedElement("xpath=.//input[@id='testsPerPage']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "testsPerPageSelectedItem");
 
         failuresOnlyCheckbox = createScopedElement("xpath=.//input[@id='testsFailuresOnly']", "failuresOnlyCheckbox");
@@ -71,7 +69,7 @@ public class MySettingsPageComponent extends BaseComponent {
 
     public void setDefaultOrder(String orderOption) {
         defaultOrderDropdown.click();
-        defaultOrderDropdownList.format(orderOption).waitForVisible(500).click();
+        selectOptionTemplate.format(orderOption).waitForVisible().click();
     }
 
     public String getDefaultOrder() {
@@ -80,7 +78,7 @@ public class MySettingsPageComponent extends BaseComponent {
 
     public MySettingsPageComponent setTestsPerPage(int testsPerPage) {
         testsPerPageDropdown.click();
-        testsPerPageDropdownList.format(String.valueOf(testsPerPage)).waitForVisible(500).click();
+        selectOptionTemplate.format(String.valueOf(testsPerPage)).waitForVisible().click();
         return this;
     }
 
