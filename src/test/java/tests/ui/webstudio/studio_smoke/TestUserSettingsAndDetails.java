@@ -104,7 +104,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         myProfileComponent.setCurrentPassword("admin").setNewPassword("12345").setConfirmPassword("12345").saveProfile();
 
-        // Logout and test old password (should fail) - NOW NO ERRORS ON UI
+        //TODO: Logout and test old password (should fail) - NOW NO ERRORS ON UI
         editorPage.openUserMenu().signOut();
         LoginPage loginPage = new LoginPage();
         UserData oldPasswordData = new UserData("admin", "admin");
@@ -180,12 +180,17 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         myProfileComponent.setCurrentPassword("12345").setNewPassword("admin").setConfirmPassword("admin").saveProfile();
         editorPage.openUserMenu().signOut();
 
-        // Scenario 7: Test ShowFormulas with project (lines 144-153 from original)
-        String testFileName = "TestUserSettingsAndDetails";
-        String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, testFileName + ".xlsx");
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
+        // Scenario 7: Verify "View project in Single module mode" (from JIRA scenario 7)
+        // NOTE: This setting will be removed in 5.25 (EPBDS-10660), so test is partially commented out
+        // The "View project in Single module mode" setting has been removed, skipping this part of scenario 7
+        // mySettingsComponent = editorPage.openUserMenu().navigateToAdministration().navigateToMySettingsPage();
+        // mySettingsComponent.setViewProjectInSingleModuleMode(true).saveSettings();
+        // ... (rest of scenario 7 validation is skipped as feature will be removed)
 
+        // Scenario 8: Verify Table Settings (from JIRA scenario 8)
+        String projectNameTest1 = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "Test1.xlsx");
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1");
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
@@ -194,7 +199,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         TableComponent tableComponent = editorPage.getCenterTable();
         Assert.assertEquals(tableComponent.getCellText(3, 2), "2500", "Cell content should be '2500'");
 
-        // Change settings to show formulas and headers
+        // Click "arrow" after admin, Click "User settings", Set Show Header: false, Show Formulas: true, Click "Save"
         mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
@@ -202,32 +207,37 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         // Return to table and verify
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        Assert.assertEquals(tableComponent.getRowsCount(), 7, "Table should have 7 rows");
-        Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
-
-        // Scenario 8: Check settings isolation for different users (lines 154-164 from original)
-        editorPage.openUserMenu().signOut();
-        editorPage = loginService.login(user1Data);
-        
-        // Navigate to the same project as user1
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1");
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
-        
+        Assert.assertEquals(tableComponent.getRowsCount(), 7, "Table should have 7 rows");
+        Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
+
+        // Scenario 9: Check settings isolation for different users (lines 154-164 from original)
+        editorPage.openUserMenu().signOut();
+        editorPage = loginService.login(user1Data);
+
+        // Navigate to the same project as user1
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1"); //User1 is NOT admin
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "CapitalAdequacyScore");
+
         // User1 should see different table format (8 rows instead of 7) due to different settings
-        Assert.assertEquals(tableComponent.getRowsCount(), 8, "Table should have 8 rows for user1 (different settings)");
+        TableComponent tableComponentUser1 = editorPage.getCenterTable();
+        Assert.assertEquals(tableComponentUser1.getRowsCount(), 8, "Table should have 8 rows for user1 (different settings)");
         // User1 should see different header row content
-        Assert.assertEquals(tableComponent.getCellText(1, 1), "SimpleRules Double CapitalAdequacyScore (Double capitalAdequacy)", 
+        Assert.assertEquals(tableComponentUser1.getCellText(1, 1), "SimpleRules Double CapitalAdequacyScore (Double capitalAdequacy)",
                            "User1 should see different header format");
 
         // Scenario 9: Change test settings (lines 165-176 from original)
         editorPage.openUserMenu().signOut();
-        editorPage = loginService.login(adminNewPassword);
+        String projectNameTemplate = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
@@ -235,9 +245,9 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         mySettingsComponent.setTestsPerPage(20).setFailuresOnly(true).setCompoundResult(true).saveSettings();
 
         // Scenario 10: Verify settings in TestRunDropDown (lines 177-184 from original)
-        String nameExample1Project = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
-        editorPage = new EditorPage();
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameExample1Project, "Bank Rating");
+        // Reuse already created projectNameTemplate from Scenario 7
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTemplate, "Bank Rating");
 
         // Verify test execution settings in dropdown
         TableToolbarPanelComponent.IRunTestsMenu testSettings = editorPage.getTableToolbarPanelComponent().clickTestDropdown();
@@ -268,7 +278,8 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(adminNewPassword);
 
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, testFileName);
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1");
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
