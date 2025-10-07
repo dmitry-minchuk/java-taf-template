@@ -54,4 +54,8 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     public boolean isDeployButtonEnabled() {
         return deployBtn.isEnabled();
     }
+
+    public void clickDeploy() {
+        deployBtn.click();
+    }
 }
