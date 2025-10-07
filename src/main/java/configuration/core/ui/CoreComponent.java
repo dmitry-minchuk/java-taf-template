@@ -115,4 +115,14 @@ public abstract class CoreComponent implements ComponentFactory {
     protected <T extends BaseComponent> List<T> createScopedComponentList(Class<T> componentClass, String selector) {
         return new LazyComponentsList<>(componentClass, page, rootLocator, selector);
     }
+
+    //Finds list of elements on page using lazy initialization.
+    public List<WebElement> createElementList(String selector, String baseName) {
+        return new LazyElementsList(page, null, selector, baseName);
+    }
+
+    //Finds list of elements on page using lazy initialization.
+    public List<WebElement> createElementList(String selector) {
+        return new LazyElementsList(page, null, selector);
+    }
 }

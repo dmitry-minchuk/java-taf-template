@@ -3,6 +3,9 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
+
+import java.util.List;
 
 public class UsersPageComponent extends BaseComponent {
 
@@ -14,6 +17,10 @@ public class UsersPageComponent extends BaseComponent {
     private WebElement firstNameField;
     private WebElement lastNameField;
     private WebElement passwordField;
+    private WebElement addRoleBtn;
+    private WebElement selectOptionTemplate;
+    private WebElement roleSelectorTemplate;
+    private WebElement designRepoSelectorTemplate;
     private WebElement saveBtn;
     private WebElement cancelBtn;
     private WebElement displayNamePatternField;
@@ -44,48 +51,75 @@ public class UsersPageComponent extends BaseComponent {
         firstNameField = new WebElement(page, "xpath=//input[@id='firstName']", "firstNameField");
         lastNameField = new WebElement(page, "xpath=//input[@id='lastName']", "lastNameField");
         passwordField = new WebElement(page, "xpath=//input[@id='password' or @type='password']", "passwordField");
+        addRoleBtn = new WebElement(page, "xpath=//button[./span[contains(text(),'Add Role')] and not(ancestor::div[@aria-hidden='true'])]", "addRoleBtn");
+        designRepoSelectorTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_id']", "designRepoSelectorTemplate");
+        roleSelectorTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_role']", "roleSelectorTemplate");
+        selectOptionTemplate =  new WebElement(page,"xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
         saveBtn = new WebElement(page, "xpath=//button[./span[text()='Save'] or @type='submit']", "saveBtn");
         cancelBtn = new WebElement(page, "xpath=//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
-    public void clickAddUser() {
+    public UsersPageComponent clickAddUser() {
         addUserBtn.click();
+        return this;
     }
 
-    public void setUsername(String username) {
+    public UsersPageComponent setUsername(String username) {
         usernameField.fill(username);
+        return this;
     }
 
     public String getUsername() {
         return usernameField.getAttribute("value");
     }
 
-    public void setEmail(String email) {
+    public UsersPageComponent setEmail(String email) {
         emailField.fill(email);
+        return this;
     }
 
     public String getEmail() {
         return emailField.getAttribute("value");
     }
 
-    public void setFirstName(String firstName) {
+    public UsersPageComponent setFirstName(String firstName) {
         firstNameField.fill(firstName);
+        return this;
     }
 
     public String getFirstName() {
         return firstNameField.getAttribute("value");
     }
 
-    public void setLastName(String lastName) {
+    public UsersPageComponent setLastName(String lastName) {
         lastNameField.fill(lastName);
+        return this;
     }
 
     public String getLastName() {
         return lastNameField.getAttribute("value");
     }
 
-    public void setPassword(String password) {
+    public UsersPageComponent setPassword(String password) {
         passwordField.fill(password);
+        return this;
+    }
+
+    public UsersPageComponent clickAddRoleBtn() {
+        addRoleBtn.click();
+        return this;
+    }
+
+    public UsersPageComponent setRoleRepository(int row, String repositoryName) {
+        designRepoSelectorTemplate.format(row).click();
+        selectOptionTemplate.format(repositoryName).waitForVisible().click();
+        return this;
+    }
+
+    public UsersPageComponent setRole(int row, String role) {
+        roleSelectorTemplate.format(row).click();
+        selectOptionTemplate.format(role).waitForVisible().click();
+        return this;
     }
 
     public void saveUser() {

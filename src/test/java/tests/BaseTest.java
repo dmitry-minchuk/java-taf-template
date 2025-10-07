@@ -24,15 +24,14 @@ import java.util.Map;
 
 public abstract class BaseTest {
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
+    // Support multiple Playwright execution modes
+    private static final ExecutionMode EXECUTION_MODE = getExecutionMode();
 
     // Execution modes for Playwright
     public enum ExecutionMode {
         PLAYWRIGHT_LOCAL,   // Phase 1: Playwright local execution
         PLAYWRIGHT_DOCKER   // Phase 3: Playwright with Docker integration
     }
-
-    // Support multiple Playwright execution modes
-    private static final ExecutionMode EXECUTION_MODE = getExecutionMode();
 
     private static ExecutionMode getExecutionMode() {
         String mode = System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL");
@@ -79,8 +78,7 @@ public abstract class BaseTest {
     }
 
     private void initializePlaywrightLocalTest(ITestResult result) {
-        LOGGER.info("Initializing test with Playwright: {}",
-                result.getMethod().getMethodName());
+        LOGGER.info("Initializing test with Playwright: {}", result.getMethod().getMethodName());
 
         // Set up app container first
         setupAppContainer(result, null);
@@ -90,8 +88,7 @@ public abstract class BaseTest {
     }
 
     private void initializePlaywrightDockerTest(ITestResult result) {
-        LOGGER.info("Initializing test with Playwright Docker: {}",
-                result.getMethod().getMethodName());
+        LOGGER.info("Initializing test with Playwright Docker: {}", result.getMethod().getMethodName());
 
         // Create Docker network for container communication
         Network network = Network.newNetwork();
