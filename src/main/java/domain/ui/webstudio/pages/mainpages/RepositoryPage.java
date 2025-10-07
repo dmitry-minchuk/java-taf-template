@@ -13,6 +13,7 @@ import domain.ui.webstudio.components.repositorytabcomponents.LeftRepositoryTree
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployConfigurationTabsComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +43,7 @@ public class RepositoryPage extends BasePage {
     private RepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
     private RepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
     private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
+    private DeployModalComponent deployModalComponent;
 
     private TableComponent projectsTable;
     WebElement confirmOpeningDialogBtn;
@@ -66,6 +68,7 @@ public class RepositoryPage extends BasePage {
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
         repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
         deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
+        deployModalComponent = new DeployModalComponent();
         projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
