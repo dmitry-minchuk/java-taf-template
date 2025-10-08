@@ -65,9 +65,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
         exportBtn = new WebElement(page, "xpath=//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
         // Run Tests Menu elements initialization
         testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
-        testPerPageDropdown = new WebElement(page, "xpath=//select[@name='testPerPage']", "testPerPageDropdown");
+        testPerPageDropdown = new WebElement(page, "xpath=//select[@name='pp']", "testPerPageDropdown");
         failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
-        compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='compoundResult']", "compoundResultCheckbox");
+        compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='complexResult']", "compoundResultCheckbox");
         runTestsBtn = new WebElement(page, "xpath=//a[@class='button' and text()='Test']", "runTestsBtn");
 
         // SECOND LINE TOOLBAR

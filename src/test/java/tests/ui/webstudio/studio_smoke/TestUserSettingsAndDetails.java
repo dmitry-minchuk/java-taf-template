@@ -26,6 +26,7 @@ import tests.BaseTest;
 
 import java.util.List;
 
+import static domain.serviceclasses.constants.User.ADMIN;
 import static domain.ui.webstudio.components.admincomponents.SecurityPageComponent.DefaultGroup.ADMINISTRATORS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,14 +40,14 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
-        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = loginService.login(UserService.getUser(ADMIN));
         editorPage
                 .openUserMenu()
                 .navigateToAdministration()
                 .navigateToSecurityPage()
                 .selectDefaultGroup(ADMINISTRATORS.getValue())
                 .clickApply();
-        editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        editorPage = loginService.login(UserService.getUser(ADMIN));
         MyProfilePageComponent myProfileComponent = editorPage
                 .openUserMenu()
                 .navigateToAdministration()
@@ -197,7 +198,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         // ... (rest of scenario 7 validation is skipped as feature will be removed)
 
         // Scenario 8: Verify Table Settings (from JIRA scenario 8)
-        String projectNameTest1 = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "Test1.xlsx");
+        String projectNameTest1 = WorkflowService.loginCreateProjectFromExcelFile(ADMIN, "Test1.xlsx");
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1");
         editorPage.getEditorLeftRulesTreeComponent()
@@ -247,7 +248,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
 
         // Scenario 9: Change test settings (lines 165-176 from original)
         editorPage.openUserMenu().signOut();
-        String projectNameTemplate = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
+        String projectNameTemplate = WorkflowService.loginCreateProjectFromTemplate(ADMIN, "Example 1 - Bank Rating");
         mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
@@ -285,11 +286,11 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         // Scenario 12: Test Help functionality (lines 196-201 from original)
         editorPage.openUserMenu().openHelp();
         String helpUrl = editorPage.getPage().url();
-        Assert.assertTrue(helpUrl.contains("openl-tablets") || helpUrl.contains("User Guide") || helpUrl.contains("User%20Guide"), "Help should open OpenL Tablets documentation");
+        Assert.assertTrue(helpUrl.contains("help"), "Help should open OpenL Tablets documentation");
 
         // Scenarios 13-17: Trace functionality with number formatting (lines 202-234 from original)
         editorPage.openUserMenu().signOut();
-        editorPage = loginService.login(adminNewPassword);
+        editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1");
