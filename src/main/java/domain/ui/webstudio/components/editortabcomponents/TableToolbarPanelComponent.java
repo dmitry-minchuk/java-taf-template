@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -106,6 +107,18 @@ public class TableToolbarPanelComponent extends BaseComponent {
     public ITraceMenu clickTrace() {
         traceBtn.click();
         return new TraceMenu();
+    }
+
+    public ITraceWindow clickTraceExpectTraceWindow() {
+        // Wait for popup to open after click
+        Page popup = page.waitForPopup(() -> {
+            traceBtn.click();
+        });
+
+        // Wait for popup to load and trace tree to be ready
+        popup.waitForLoadState();
+        popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
+        return new TraceWindow(popup);
     }
 
     public void clickBenchmark() {
@@ -316,18 +329,22 @@ public class TableToolbarPanelComponent extends BaseComponent {
     public interface ITraceWindow {
         ITraceWindow expandItemInTree(int position);
         List<String> getVisibleItemsFromTree();
+        TableComponent getCenterTable();
+        void close();
     }
 
     // Implementation for Playwright Trace Window
     public class TraceWindow extends BasePage implements ITraceWindow {
         private WebElement traceExpanderTemplate;
         private List<WebElement> visibleItemsFromTree;
+        private TableComponent centerTable;
 
         public TraceWindow(Page tracePage) {
             super(tracePage);
             // Initialize trace window elements based on actual HTML structure
             traceExpanderTemplate = new WebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
             visibleItemsFromTree = createElementList("xpath=//span[@class='fancytree-title']", "visibleItemsFromTree");
+            centerTable = createScopedComponent(TableComponent.class, "xpath=//table[@class='te_table']", "centerTable");
         }
 
         @Override
@@ -340,7 +357,21 @@ public class TableToolbarPanelComponent extends BaseComponent {
 
         @Override
         public List<String> getVisibleItemsFromTree() {
+            WaitUtil.sleep(500);
             return visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
+        }
+
+        @Override
+        public TableComponent getCenterTable() {
+            return centerTable;
+        }
+
+        @Override
+        public void close() {
+            if (getPage() != null && !getPage().isClosed()) {
+                LOGGER.debug("Closing trace popup window");
+                getPage().close();
+            }
         }
     }
 

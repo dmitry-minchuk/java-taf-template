@@ -20,9 +20,9 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestNewDeployPopup extends BaseTest {
+public class TestNewDeployPopup extends BaseTest { // This is not realistic to automate yet because we cannot run compose file
 
-    @Test
+    //@Test
     @TestCaseId("IPBQA-32875")
     @Description("Test new deploy popup with mandatory field validation and deployment configuration creation")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
