@@ -64,7 +64,6 @@ public class TableComponent extends BaseComponent {
     }
 
     public int getRowsCount() {
-        WaitUtil.sleep(100); // Wait for table to get filled up with values
         WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250);
         return rows.size();
     }

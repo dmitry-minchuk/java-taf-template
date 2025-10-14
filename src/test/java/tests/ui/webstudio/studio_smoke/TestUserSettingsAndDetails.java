@@ -141,7 +141,7 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
                 .clickAddRoleBtn()
                 .setRoleRepository(0, "Design")
                 .setRole(0, "Manager")
-                .saveUser();
+                .inviteUser();
         
         // Logout admin and login as user1
         editorPage.openUserMenu().signOut();

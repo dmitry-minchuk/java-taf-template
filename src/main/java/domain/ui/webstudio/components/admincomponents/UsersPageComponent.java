@@ -4,6 +4,7 @@ import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.common.TableComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class UsersPageComponent extends BaseComponent {
     private WebElement displayNamePatternDropdown;
     private WebElement displayNameField;
     private WebElement saveBtn;
+    private WebElement inviteBtn;
     private WebElement cancelBtn;
 
     // ==== Role Management Section ====
@@ -75,6 +77,7 @@ public class UsersPageComponent extends BaseComponent {
 
         // Form buttons
         saveBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Save']]", "saveBtn");
+        inviteBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Invite']]", "inviteBtn");
         cancelBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Cancel']]", "cancelBtn");
 
         // Role management
@@ -90,6 +93,7 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public int getUserRow(String username) {
+        WaitUtil.waitForCondition(() -> getAllUsernames().contains(username), DEFAULT_TIMEOUT_MS, 100);
         int rowCount = usersTable.getRowsCount();
         for (int i = 1; i <= rowCount; i++) {
             String cellText = usersTable.getCellText(i, COL_USERNAME);
@@ -239,6 +243,11 @@ public class UsersPageComponent extends BaseComponent {
 
     public void saveUser() {
         saveBtn.click();
+        drawer.waitForHidden(3000);
+    }
+
+    public void inviteUser() {
+        inviteBtn.click();
         drawer.waitForHidden(3000);
     }
 

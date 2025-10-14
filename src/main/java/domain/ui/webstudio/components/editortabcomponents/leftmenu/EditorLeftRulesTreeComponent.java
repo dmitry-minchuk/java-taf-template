@@ -125,8 +125,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                         .findFirst(), DEFAULT_TIMEOUT_MS, 100
         );
 
-        return result.orElseThrow(() ->
-                new RuntimeException(String.format("Folder with name %s not found", folderName)));
+        return result.orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
     }
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
