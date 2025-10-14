@@ -1,32 +1,49 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
+import domain.ui.webstudio.components.common.TableComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
-import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class UsersPageComponent extends BaseComponent {
 
-    private WebElement userTableBody;
-    private WebElement userTableHeader;
+    // Column indices for users table (1-based)
+    private static final int COL_USERNAME = 1;
+    private static final int COL_FULLNAME = 2;
+    private static final int COL_EMAIL = 3;
+    private static final int COL_ACTIONS = 4;
+
+    // ==== Table Section ====
+    private TableComponent usersTable;
     private WebElement addUserBtn;
+
+    // ==== Drawer (Edit Form) Section ====
+    private WebElement drawer;
+    private WebElement drawerCloseBtn;
     private WebElement usernameField;
     private WebElement emailField;
+    private WebElement passwordField;
     private WebElement firstNameField;
     private WebElement lastNameField;
-    private WebElement passwordField;
-    private WebElement addRoleBtn;
-    private WebElement selectOptionTemplate;
-    private WebElement roleSelectorTemplate;
-    private WebElement designRepoSelectorTemplate;
+    private WebElement displayNamePatternDropdown;
+    private WebElement displayNameField;
     private WebElement saveBtn;
     private WebElement cancelBtn;
-    private WebElement displayNamePatternField;
-    private WebElement displayNameField;
-    private WebElement administratorsGroupCheckbox;
+
+    // ==== Role Management Section ====
+    private WebElement addRoleBtn;
+    private WebElement roleRepositoryTemplate;
+    private WebElement roleNameTemplate;
+    private WebElement removeRoleBtn;
+    private WebElement selectOptionTemplate;
+
+    // ==== Error Handling Section ====
+    private WebElement errorNotification;
+    private WebElement errorDescription;
 
     public UsersPageComponent() {
         super(LocalDriverPool.getPage());
@@ -39,29 +56,111 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        userTableBody = createScopedElement("xpath=.//table//tbody[@class='ant-table-tbody']", "userTableBody");
-        userTableHeader = createScopedElement("xpath=.//table//thead[@class='ant-table-thead']", "userTableHeader");
+        // Initialize table
+        usersTable = createScopedComponent(TableComponent.class, "xpath=.//table", "usersTable");
         addUserBtn = createScopedElement("xpath=.//button[./span[text()='Add User']]", "addUserBtn");
-        displayNamePatternField = createScopedElement("xpath=.//select[@id='displayNamePattern'] | .//div[contains(@class,'ant-select') and ./preceding-sibling::*[contains(text(),'Display Name Pattern')]]", "displayNamePatternField");
-        displayNameField = createScopedElement("xpath=.//input[@placeholder='Display Name' or @id='displayName']", "displayNameField");
-        administratorsGroupCheckbox = createScopedElement("xpath=.//input[@type='checkbox' and (contains(@id,'admin') or ./following-sibling::*[contains(text(),'Administrator')])]", "administratorsGroupCheckbox");
 
-        // Right panel not belonging to users page html hierarchy
+        // Drawer elements (not scoped to rootLocator as drawer is outside content div)
+        drawer = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]", "drawer");
+        drawerCloseBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[contains(@class,'ant-drawer-close')]", "drawerCloseBtn");
+
+        // Form fields
         usernameField = new WebElement(page, "xpath=//input[@id='username']", "usernameField");
         emailField = new WebElement(page, "xpath=//input[@id='email']", "emailField");
+        passwordField = new WebElement(page, "xpath=//input[@id='password']", "passwordField");
         firstNameField = new WebElement(page, "xpath=//input[@id='firstName']", "firstNameField");
         lastNameField = new WebElement(page, "xpath=//input[@id='lastName']", "lastNameField");
-        passwordField = new WebElement(page, "xpath=//input[@id='password' or @type='password']", "passwordField");
-        addRoleBtn = new WebElement(page, "xpath=//button[./span[contains(text(),'Add Role')] and not(ancestor::div[@aria-hidden='true'])]", "addRoleBtn");
-        designRepoSelectorTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_id']", "designRepoSelectorTemplate");
-        roleSelectorTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_role']", "roleSelectorTemplate");
-        selectOptionTemplate =  new WebElement(page,"xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
-        saveBtn = new WebElement(page, "xpath=//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = new WebElement(page, "xpath=//button[./span[text()='Cancel']]", "cancelBtn");
+        displayNamePatternDropdown = new WebElement(page, "xpath=//input[@id='displayNameSelect']", "displayNamePatternDropdown");
+        displayNameField = new WebElement(page, "xpath=//input[@id='displayName']", "displayNameField");
+
+        // Form buttons
+        saveBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Save']]", "saveBtn");
+        cancelBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Cancel']]", "cancelBtn");
+
+        // Role management
+        addRoleBtn = new WebElement(page, "xpath=//div[@role='tabpanel' and @aria-hidden='false']//button[./span[contains(text(),'Add Role')]]", "addRoleBtn");
+        roleRepositoryTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_id']", "designRepoSelectorTemplate");
+        roleNameTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_role']", "roleSelectorTemplate");
+        removeRoleBtn = new WebElement(page, "xpath=//button[./span[contains(@aria-label,'delete')] and ancestor::div[contains(@class,'ant-form-item')]]", "removeRoleBtn");
+        selectOptionTemplate = new WebElement(page, "xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
+
+        // Error handling
+        errorNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]", "errorNotification");
+        errorDescription = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]//div[contains(@class,'ant-notification-notice-description')]", "errorDescription");
     }
+
+    public int getUserRow(String username) {
+        int rowCount = usersTable.getRowsCount();
+        for (int i = 1; i <= rowCount; i++) {
+            String cellText = usersTable.getCellText(i, COL_USERNAME);
+            if (cellText.contains(username)) {
+                return i;
+            }
+        }
+        throw new NoSuchElementException("User not found in table: " + username);
+    }
+
+    public String getUsernameFromRow(int rowIndex) {
+        return usersTable.getCellText(rowIndex, COL_USERNAME).replaceAll("\\s+", " ").trim();
+    }
+
+    public String getEmailFromRow(int rowIndex) {
+        return usersTable.getCellText(rowIndex, COL_EMAIL);
+    }
+
+    public String getFullNameFromRow(int rowIndex) {
+        return usersTable.getCellText(rowIndex, COL_FULLNAME);
+    }
+
+    public boolean isUserInList(String username) {
+        try {
+            getUserRow(username);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public List<String> getAllUsernames() {
+        List<String> usernames = new ArrayList<>();
+        int rowCount = usersTable.getRowsCount();
+        for (int i = 1; i <= rowCount; i++) {
+            usernames.add(getUsernameFromRow(i));
+        }
+        return usernames;
+    }
+
+    public int getUsersCount() {
+        return usersTable.getRowsCount();
+    }
+
+    public boolean areActionsAvailableForUser(String username) {
+        int row = getUserRow(username);
+        WebElement actionsCell = usersTable.getCell(row, COL_ACTIONS);
+        return actionsCell.getLocator().locator("button >> svg[data-icon='edit']").isVisible() &&
+               actionsCell.getLocator().locator("button >> svg[data-icon='delete']").isVisible();
+    }
+
+    public UsersPageComponent clickEditUser(String username) {
+        int row = getUserRow(username);
+        usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='edit']").first().click();
+        drawer.waitForVisible(3000);
+        return this;
+    }
+
+    public void clickDeleteUser(String username) {
+        int row = getUserRow(username);
+        usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='delete']").first().click();
+        getModalOkBtn().click();
+    }
+
+    // ========================================
+    // Form Methods - Add/Edit User
+    // ========================================
 
     public UsersPageComponent clickAddUser() {
         addUserBtn.click();
+        drawer.waitForVisible(3000);
         return this;
     }
 
@@ -112,179 +211,82 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public UsersPageComponent setRoleRepository(int row, String repositoryName) {
-        designRepoSelectorTemplate.format(row).click();
+        roleRepositoryTemplate.format(row).click();
         selectOptionTemplate.format(repositoryName).waitForVisible().click();
         return this;
     }
 
     public UsersPageComponent setRole(int row, String role) {
-        roleSelectorTemplate.format(row).click();
+        roleNameTemplate.format(row).click();
         selectOptionTemplate.format(role).waitForVisible().click();
         return this;
     }
 
-    public void saveUser() {
-        saveBtn.click();
+    public String getRoleRepository(int row) {
+        return roleRepositoryTemplate.format(row).getAttribute("value");
     }
 
-    public void cancelUser() {
-        cancelBtn.click();
-    }
-
-    public void addNewUser(String username, String email, String firstName, String lastName, String password) {
-        clickAddUser();
-        setUsername(username);
-        setEmail(email);
-        setFirstName(firstName);
-        setLastName(lastName);
-        setPassword(password);
-        saveUser();
-    }
-
-    public void setDisplayNamePattern(String pattern) {
-        displayNamePatternField.click();
-        WebElement option = createScopedElement("xpath=.//div[contains(@class,'ant-select-item') and contains(text(),'" + pattern + "')]", "displayNamePatternOption");
-        option.click();
-    }
-
-    public void setDisplayName(String displayName) {
-        displayNameField.fill(displayName);
-    }
-
-    public void setAdministratorsGroup(boolean isAdmin) {
-        if (isAdmin != administratorsGroupCheckbox.isChecked()) {
-            administratorsGroupCheckbox.click();
-        }
-    }
-
-    public void addNewUser(String username,
-                           String email,
-                           String firstName,
-                           String lastName,
-                           String password,
-                           String displayNamePattern,
-                           String displayName,
-                           boolean isAdmin) {
-        clickAddUser();
-        setUsername(username);
-        setEmail(email);
-        setFirstName(firstName);
-        setLastName(lastName);
-        setPassword(password);
-        if (displayNamePattern != null) {
-            setDisplayNamePattern(displayNamePattern);
-        }
-        if (displayName != null) {
-            setDisplayName(displayName);
-        }
-        setAdministratorsGroup(isAdmin);
-        saveUser();
-    }
-
-    // User table verification methods
-    public String getSpecificUserElement(String username, String elementType) {
-        switch (elementType) {
-            case "users-firstname":
-                // Extract first name from Full Name column (column 2)
-                String fullName = getFullNameForUser(username);
-                return fullName.split(" ")[0]; // First word as first name
-                
-            case "users-lastname":
-                // Extract last name from Full Name column (column 2)
-                String fullNameLast = getFullNameForUser(username);
-                String[] nameParts = fullNameLast.split(" ");
-                return nameParts.length > 1 ? nameParts[nameParts.length - 1] : ""; // Last word as last name
-                
-            case "users-displayname":
-                // Full Name is the display name in new UI
-                return getFullNameForUser(username);
-                
-            default:
-                return "";
-        }
-    }
-
-    public String getSpecificUserEmail(String username) {
-        WebElement emailElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[3]", username), "userEmail");
-        return emailElement.getText();
-    }
-    
-    private String getFullNameForUser(String username) {
-        WebElement fullNameElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[2]", username), "userFullName");
-        return fullNameElement.sleep(350).getText();
-    }
-
-    public UsersPageComponent clickEditUser(String username) {
-        WebElement editButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[contains(@class,'ant-btn') and .//span[contains(@aria-label,'edit')]]", username), "editUserButton");
-        editButton.click();
-        return this;
-    }
-
-    public void clickDeleteUser(String username) {
-        WebElement deleteButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[contains(@class,'ant-btn') and .//span[contains(@aria-label,'delete')]]", username), "deleteUserButton");
-        deleteButton.click();
-        getModalOkBtn().click();
-    }
-
-    public boolean isUserInList(String username) {
-        WebElement userRow = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']", username), "userRow");
-        return userRow.isVisible(2000);
-    }
-
-    public int getUsersCount() {
-        WebElement tableBody = createScopedElement("xpath=.//tbody[@class='ant-table-tbody']", "tableBody");
-        return tableBody.getLocator().locator("tr").count();
-    }
-
-    public String getErrorMessage() {
-        WebElement errorNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]//div[contains(@class,'ant-notification-notice-message')]", "errorNotification");
-        return errorNotification.waitForVisible().getText();
-    }
-
-    public boolean isErrorMessageDisplayed() {
-        WebElement errorNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]", "errorNotification");
-        return errorNotification.isVisible(3000);
-    }
-
-    public String getErrorDescription() {
-        WebElement errorDescription = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]//div[contains(@class,'ant-notification-notice-description')]", "errorDescription");
-        return errorDescription.waitForVisible().getText();
+    public String getRole(int row) {
+        return roleNameTemplate.format(row).getAttribute("value");
     }
 
     public UsersPageComponent clearAllRoles() {
-        WebElement removeRoleBtn = new WebElement(page, "xpath=//button[./span[contains(@aria-label,'delete')] and ancestor::div[contains(@class,'ant-form-item')]]", "removeRoleBtn");
         while (removeRoleBtn.isVisible(1000)) {
             removeRoleBtn.click();
         }
         return this;
     }
 
-    public String getRoleRepository(int row) {
-        WebElement designRepoField = designRepoSelectorTemplate.format(row);
-        return designRepoField.getAttribute("value");
+    public void saveUser() {
+        saveBtn.click();
+        drawer.waitForHidden(3000);
     }
 
-    public String getRole(int row) {
-        WebElement roleField = roleSelectorTemplate.format(row);
-        return roleField.getAttribute("value");
+    public void cancelUser() {
+        cancelBtn.click();
+        drawer.waitForHidden(3000);
     }
 
-    public List<String> getAllUsernames() {
-        WebElement tableBody = createScopedElement("xpath=.//tbody[@class='ant-table-tbody']", "tableBody");
-        List<String> usernames = new ArrayList<>();
-        int rowCount = tableBody.getLocator().locator("tr").count();
-        for (int i = 0; i < rowCount; i++) {
-            String username = tableBody.getLocator().locator("tr").nth(i).getAttribute("data-row-key");
-            if (username != null && !username.isEmpty()) {
-                usernames.add(username);
-            }
+    // ========================================
+    // Error Handling Methods
+    // ========================================
+
+    public boolean isErrorMessageDisplayed() {
+        return errorNotification.isVisible(3000);
+    }
+
+    public String getErrorMessage() {
+        return errorNotification.waitForVisible().getText();
+    }
+
+    public String getErrorDescription() {
+        return errorDescription.waitForVisible().getText();
+    }
+
+    // ========================================
+    // Legacy Methods (for backward compatibility)
+    // ========================================
+
+    @Deprecated
+    public String getSpecificUserEmail(String username) {
+        return getEmailFromRow(getUserRow(username));
+    }
+
+    @Deprecated
+    public String getSpecificUserElement(String username, String elementType) {
+        int row = getUserRow(username);
+        switch (elementType) {
+            case "users-firstname":
+                String fullName = getFullNameFromRow(row);
+                return fullName.split(" ")[0];
+            case "users-lastname":
+                String fullNameLast = getFullNameFromRow(row);
+                String[] nameParts = fullNameLast.split(" ");
+                return nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+            case "users-displayname":
+                return getFullNameFromRow(row);
+            default:
+                return "";
         }
-        return usernames;
-    }
-
-    public boolean areActionsAvailableForUser(String username) {
-        WebElement editButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[.//span[contains(@aria-label,'edit')]]", username), "editButton");
-        WebElement deleteButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[.//span[contains(@aria-label,'delete')]]", username), "deleteButton");
-        return editButton.isVisible() && deleteButton.isVisible();
     }
 }
