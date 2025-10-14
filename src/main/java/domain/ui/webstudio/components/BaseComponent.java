@@ -13,6 +13,7 @@ import java.util.List;
 public abstract class BaseComponent extends CoreComponent {
 
     private WebElement contentLoadingSpinner;
+    @Getter
     private List<MessageComponent> messages;
     @Getter
     private WebElement modalOkBtn;

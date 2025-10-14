@@ -63,6 +63,11 @@ public class TableComponent extends BaseComponent {
         editCell(rowIndex, columnIndex, text, true);
     }
 
+    public List<PlaywrightTableRowComponent> getRows() {
+        WaitUtil.waitForCondition(() -> !rows.isEmpty(), 3000, 250);
+        return rows;
+    }
+
     public int getRowsCount() {
         WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250);
         return rows.size();

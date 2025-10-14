@@ -14,6 +14,7 @@ import java.util.List;
 public abstract class BasePage extends CorePage {
 
     private WebElement userLogo;
+    @Getter
     private List<MessageComponent> messages;
     private WebElement userMenuDrawer;
     private WebElement contentLoadingSpinner;
