@@ -5,6 +5,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsersPageComponent extends BaseComponent {
@@ -211,5 +212,79 @@ public class UsersPageComponent extends BaseComponent {
     private String getFullNameForUser(String username) {
         WebElement fullNameElement = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//td[2]", username), "userFullName");
         return fullNameElement.sleep(350).getText();
+    }
+
+    public UsersPageComponent clickEditUser(String username) {
+        WebElement editButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[contains(@class,'ant-btn') and .//span[contains(@aria-label,'edit')]]", username), "editUserButton");
+        editButton.click();
+        return this;
+    }
+
+    public void clickDeleteUser(String username) {
+        WebElement deleteButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[contains(@class,'ant-btn') and .//span[contains(@aria-label,'delete')]]", username), "deleteUserButton");
+        deleteButton.click();
+        getModalOkBtn().click();
+    }
+
+    public boolean isUserInList(String username) {
+        WebElement userRow = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']", username), "userRow");
+        return userRow.isVisible(2000);
+    }
+
+    public int getUsersCount() {
+        WebElement tableBody = createScopedElement("xpath=.//tbody[@class='ant-table-tbody']", "tableBody");
+        return tableBody.getLocator().locator("tr").count();
+    }
+
+    public String getErrorMessage() {
+        WebElement errorNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]//div[contains(@class,'ant-notification-notice-message')]", "errorNotification");
+        return errorNotification.waitForVisible().getText();
+    }
+
+    public boolean isErrorMessageDisplayed() {
+        WebElement errorNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]", "errorNotification");
+        return errorNotification.isVisible(3000);
+    }
+
+    public String getErrorDescription() {
+        WebElement errorDescription = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]//div[contains(@class,'ant-notification-notice-description')]", "errorDescription");
+        return errorDescription.waitForVisible().getText();
+    }
+
+    public UsersPageComponent clearAllRoles() {
+        WebElement removeRoleBtn = new WebElement(page, "xpath=//button[./span[contains(@aria-label,'delete')] and ancestor::div[contains(@class,'ant-form-item')]]", "removeRoleBtn");
+        while (removeRoleBtn.isVisible(1000)) {
+            removeRoleBtn.click();
+        }
+        return this;
+    }
+
+    public String getRoleRepository(int row) {
+        WebElement designRepoField = designRepoSelectorTemplate.format(row);
+        return designRepoField.getAttribute("value");
+    }
+
+    public String getRole(int row) {
+        WebElement roleField = roleSelectorTemplate.format(row);
+        return roleField.getAttribute("value");
+    }
+
+    public List<String> getAllUsernames() {
+        WebElement tableBody = createScopedElement("xpath=.//tbody[@class='ant-table-tbody']", "tableBody");
+        List<String> usernames = new ArrayList<>();
+        int rowCount = tableBody.getLocator().locator("tr").count();
+        for (int i = 0; i < rowCount; i++) {
+            String username = tableBody.getLocator().locator("tr").nth(i).getAttribute("data-row-key");
+            if (username != null && !username.isEmpty()) {
+                usernames.add(username);
+            }
+        }
+        return usernames;
+    }
+
+    public boolean areActionsAvailableForUser(String username) {
+        WebElement editButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[.//span[contains(@aria-label,'edit')]]", username), "editButton");
+        WebElement deleteButton = createScopedElement(String.format("xpath=.//tbody[@class='ant-table-tbody']//tr[@data-row-key='%s']//button[.//span[contains(@aria-label,'delete')]]", username), "deleteButton");
+        return editButton.isVisible() && deleteButton.isVisible();
     }
 }
