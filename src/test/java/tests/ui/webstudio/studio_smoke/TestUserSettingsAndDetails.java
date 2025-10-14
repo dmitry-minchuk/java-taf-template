@@ -92,11 +92,16 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         UsersPageComponent usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
-        
-        Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-firstname"), "Abc", "Admin first name in Users table should be 'Abc'");
-        Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-lastname"), "Bcd", "Admin last name in Users table should be 'Bcd'"); 
-        Assert.assertEquals(usersComponent.getSpecificUserEmail("admin"), "admin@admin.com", "Admin email in Users table should be 'admin@admin.com'");
-        Assert.assertEquals(usersComponent.getSpecificUserElement("admin", "users-displayname"), "Abc Bcd", "Admin display name in Users table should be 'Abc Bcd'");
+
+        // Use new API with row index
+        int adminRow = usersComponent.getUserRow("admin");
+        String adminFullName = usersComponent.getFullNameFromRow(adminRow);
+        String[] nameParts = adminFullName.split(" ");
+
+        Assert.assertEquals(nameParts[0], "Abc", "Admin first name in Users table should be 'Abc'");
+        Assert.assertEquals(nameParts[1], "Bcd", "Admin last name in Users table should be 'Bcd'");
+        Assert.assertEquals(usersComponent.getEmailFromRow(adminRow), "admin@admin.com", "Admin email in Users table should be 'admin@admin.com'");
+        Assert.assertEquals(adminFullName, "Abc Bcd", "Admin display name in Users table should be 'Abc Bcd'");
 
         // Scenario 4: Change password and test authentication (lines 77-95 from original)
         myProfileComponent = editorPage.openUserMenu()
@@ -166,7 +171,8 @@ public class TestUserSettingsAndDetails extends BaseTest { // This test is incom
         usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
-        Assert.assertEquals(usersComponent.getSpecificUserElement("user1", "users-displayname"), "Bbb Aaa", "Display name should be updated in users table");
+        int user1Row = usersComponent.getUserRow("user1");
+        Assert.assertEquals(usersComponent.getFullNameFromRow(user1Row), "Bbb Aaa", "Display name should be updated in users table");
 
         // Scenario 6: Check default settings (lines 133-143 from original)
         editorPage.openUserMenu().signOut();

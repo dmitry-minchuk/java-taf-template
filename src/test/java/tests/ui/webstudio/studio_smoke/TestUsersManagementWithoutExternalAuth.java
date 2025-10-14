@@ -52,7 +52,6 @@ public class TestUsersManagementWithoutExternalAuth extends BaseTest {
                 .setPassword("test")
                 .saveUser();
 
-        LOGGER.info("Step 5: Verify new user 'test' is added to user list");
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1,
                 "User count should increase by 1");
