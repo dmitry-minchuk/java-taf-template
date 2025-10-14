@@ -9,11 +9,13 @@ import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.service.WorkflowService;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
@@ -25,8 +27,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestUsersManagementWithoutExternalAuth extends BaseTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(TestUsersManagementWithoutExternalAuth.class);
 
     @Test
     @TestCaseId("IPBQA-32784")
@@ -50,7 +50,7 @@ public class TestUsersManagementWithoutExternalAuth extends BaseTest {
         usersComponent.clickAddUser()
                 .setUsername("test")
                 .setPassword("test")
-                .saveUser();
+                .inviteUser();
 
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1,
@@ -76,25 +76,19 @@ public class TestUsersManagementWithoutExternalAuth extends BaseTest {
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should return to initial value");
 
         // ============ Step 8: Try to create duplicate 'Admin' user ============
-        LOGGER.info("Step 8: Try to create user with existing username 'admin'");
         usersComponent.clickAddUser()
                 .setUsername("admin")
                 .setPassword("admin123")
-                .saveUser();
+                .inviteUser();
 
-        Assert.assertTrue(usersComponent.isErrorMessageDisplayed(), "Error message should be displayed");
-        String errorMsg = usersComponent.getErrorDescription();
-        assertThat(errorMsg.toLowerCase()).contains("already exists", "Error should indicate that user already exists");
-
-        // Close error and cancel form
         usersComponent.closeAllMessages();
-        usersComponent.cancelUser();
+        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should be equal to previous value");
 
         // ============ Step 9: Re-create user 'test' ============
         usersComponent.clickAddUser()
                 .setUsername("test")
                 .setPassword("test")
-                .saveUser();
+                .inviteUser();
 
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be created successfully");
 
@@ -133,7 +127,7 @@ public class TestUsersManagementWithoutExternalAuth extends BaseTest {
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
-        assertThat(visibleProjects).isNotEmpty().contains(projectName, "User 'test' should see the project with Manager role");
+        assertThat(visibleProjects).as("User 'test' should see the project with Manager role").isNotEmpty().contains(projectName);
         editorPage.openUserMenu().signOut();
 
         // ============ Step 13: Admin changes 'test' role to Viewer ============

@@ -149,6 +149,7 @@ public class UsersPageComponent extends BaseComponent {
         int row = getUserRow(username);
         usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='edit']").first().click();
         drawer.waitForVisible(3000);
+        WaitUtil.sleep(150);
         return this;
     }
 
@@ -156,6 +157,7 @@ public class UsersPageComponent extends BaseComponent {
         int row = getUserRow(username);
         usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='delete']").first().click();
         getModalOkBtn().click();
+        WaitUtil.sleep(150);
     }
 
     // ========================================
@@ -227,11 +229,11 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public String getRoleRepository(int row) {
-        return roleRepositoryTemplate.format(row).getAttribute("value");
+        return roleRepositoryTemplate.format(row).getLocator().locator("xpath=/ancestor::span/following-sibling::span").getAttribute("title");
     }
 
     public String getRole(int row) {
-        return roleNameTemplate.format(row).getAttribute("value");
+        return roleNameTemplate.format(row).getLocator().locator("xpath=/ancestor::span/following-sibling::span").getAttribute("title");
     }
 
     public UsersPageComponent clearAllRoles() {
@@ -254,22 +256,6 @@ public class UsersPageComponent extends BaseComponent {
     public void cancelUser() {
         cancelBtn.click();
         drawer.waitForHidden(3000);
-    }
-
-    // ========================================
-    // Error Handling Methods
-    // ========================================
-
-    public boolean isErrorMessageDisplayed() {
-        return errorNotification.isVisible(3000);
-    }
-
-    public String getErrorMessage() {
-        return errorNotification.waitForVisible().getText();
-    }
-
-    public String getErrorDescription() {
-        return errorDescription.waitForVisible().getText();
     }
 
     // ========================================

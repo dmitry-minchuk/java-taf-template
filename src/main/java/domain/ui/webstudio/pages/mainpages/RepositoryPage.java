@@ -130,7 +130,7 @@ public class RepositoryPage extends BasePage {
 
     public List<String> getAllVisibleProjectsInTable() {
         List<String> projectNames = new ArrayList<>();
-        for (int i = 1; i <= projectsTable.getRowsCount(); i++) {
+        for (int i = 1; i <= projectsTable.getRows().size(); i++) {
             List<String> rowValues = projectsTable.getRow(i).getValue();
             if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty())
                 projectNames.add(rowValues.getFirst().trim());
