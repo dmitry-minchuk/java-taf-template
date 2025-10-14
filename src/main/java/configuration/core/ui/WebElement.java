@@ -237,24 +237,19 @@ public class WebElement {
     
     public WebElement waitForVisible() {
         LOGGER.info("Waiting for {} to be visible", elementName);
-        locator.waitFor(new Locator.WaitForOptions()
-                .setState(WaitForSelectorState.VISIBLE));
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         return this;
     }
     
     public WebElement waitForVisible(long timeoutInMillis) {
         LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInMillis);
-        locator.waitFor(new Locator.WaitForOptions()
-                .setState(WaitForSelectorState.VISIBLE)
-                .setTimeout((int)(timeoutInMillis)));
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE).setTimeout(timeoutInMillis));
         return this;
     }
     
     public WebElement waitForHidden(long timeoutInMillis) {
         LOGGER.info("Waiting for {} to be hidden", elementName);
-        locator.waitFor(new Locator.WaitForOptions()
-                .setState(WaitForSelectorState.HIDDEN)
-                .setTimeout((int)(timeoutInMillis)));
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN).setTimeout(timeoutInMillis));
         return this;
     }
 
