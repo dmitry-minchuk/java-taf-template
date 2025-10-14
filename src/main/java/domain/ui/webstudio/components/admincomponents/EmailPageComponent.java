@@ -80,15 +80,8 @@ public class EmailPageComponent extends BaseComponent {
         setEmailUrl(url);
         setEmailUsername(username);
         setEmailPassword(password);
-
-        // Handle browser confirmation dialogs using Playwright's native dialog handling
-        page.onDialog(dialog -> {
-            if (dialog.type().equals("confirm")) {
-                dialog.accept();
-            }
-        });
-        
         applyBtn.click();
+        getModalOkBtn().click();
     }
 
     public void enableEmailVerificationWithCredentials(String url, String username, String password) {
@@ -98,5 +91,14 @@ public class EmailPageComponent extends BaseComponent {
 
     public void togglePasswordVisibility() {
         showPasswordBtn.click();
+    }
+
+    public String getPasswordFieldType() {
+        return emailPasswordField.getAttribute("type");
+    }
+
+    public boolean isPasswordVisible() {
+        String type = getPasswordFieldType();
+        return type != null && !type.equals("password");
     }
 }

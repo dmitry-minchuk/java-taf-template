@@ -4,6 +4,7 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.BasePage;
+import helpers.utils.WaitUtil;
 
 public class LoginPage extends BasePage {
 
@@ -34,6 +35,7 @@ public class LoginPage extends BasePage {
     }
 
     public EditorPage login(UserData user, long EXTENDED_TIME_PERIOD) {
+        WaitUtil.waitForCondition(() -> page.url().contains("/login"), EXTENDED_TIME_PERIOD, 250);
         usernameField.waitForVisible(EXTENDED_TIME_PERIOD);
         usernameField.fill(user.getLogin());
         passwordField.fill(user.getPassword());

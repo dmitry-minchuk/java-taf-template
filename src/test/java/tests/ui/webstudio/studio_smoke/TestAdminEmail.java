@@ -9,65 +9,67 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.LoginPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import helpers.utils.TestDataUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.http.impl.conn.LoggingSessionInputBuffer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.util.Properties;
-
 public class TestAdminEmail extends BaseTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(TestAdminEmail.class);
 
     @Test
     @TestCaseId("IPBQA-32798")
-    @Description("Admin UI 'Email' page - Email verification configuration test")
+    @Description("Admin UI 'Email' page - Email verification configuration and persistence test.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAdminEmail() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        // Step 2: Navigate to Administration (exact same as Selenium: editorPage.getCurrentUserComponent().navigateToAdministration())
+        // Step 1-2: Navigate to Administration → Email page
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         EmailPageComponent emailPageComponent = adminPage.navigateToEmailPage();
 
         // Step 3: Verify "Email" tab contains inactive checkbox "Enable email address verification"
-        Assert.assertFalse(emailPageComponent.isEmailVerificationEnabled(),
-            "Email verification checkbox should be initially disabled");
+        Assert.assertFalse(emailPageComponent.isEmailVerificationEnabled(), "Email verification checkbox should be initially disabled");
 
-        // Step 4: Load email credentials from test data properties file
-        Properties emailProperties = TestDataUtil.makePropertiesFromFile("TestAdminEmailWebStudio.properties");
-        String emailUrl = emailProperties.getProperty("mail.url");
-        String emailUsername = emailProperties.getProperty("mail.username");
-        String emailPassword = emailProperties.getProperty("mail.password");
-        
-        // Enable email verification and set credentials
+        // Step 3: Load email credentials from test data properties file and enable email verification
+        String emailUrl = "smtps://smtp.gmail.com";
+        String emailUsername = "webstudiotest21@gmail.com";
+        String emailPassword = "pcukwundeupvipfo";
+
+        // Step 3: Enable email verification and set credentials, then click Apply
+        // Expected: User should be logged out after applying email settings
         emailPageComponent.enableEmailVerificationWithCredentials(emailUrl, emailUsername, emailPassword);
 
-        // Step 5: APPLICATION BUG DOCUMENTED - User should be logged out after applying email settings
-        // BUG: In Selenium tests, user gets logged out after applying email settings and needs to login again
-        // BUG: In Playwright tests, user remains logged in - this is inconsistent application behavior
-        // BUG: Expected behavior: User should be redirected to login page after applying email configuration
-        // BUG: Actual behavior: User session persists, no logout occurs
-        // WORKAROUND: Skip second login attempt and verify settings persistence is not reliable
-        // TEST ENDS HERE DUE TO APPLICATION BUG - Cannot verify settings persistence without proper logout/login cycle
-        
-        LOGGER.warn("APPLICATION BUG: User should be logged out after applying email settings but remains logged in");
-        LOGGER.warn("TEST INCOMPLETE: Cannot verify email settings persistence due to application logout bug");
-        
-        // Step 6: SKIPPED - Settings persistence verification not possible due to application bug
-        // Following assertions would fail due to application behavior inconsistency:
-        // - Email URL persistence check
-        // - Email username persistence check 
-        // - Password visibility verification
-        // - Password toggle functionality test
-        
-        // TEST RESULT: PARTIAL SUCCESS - Email configuration applied but persistence cannot be verified
-        LOGGER.info("TEST COMPLETED WITH APPLICATION BUG DOCUMENTATION");
+        // Step 4: Login again with admin user to verify settings persistence
+        editorPage = new LoginPage().login(UserService.getUser(User.ADMIN));
+
+        // Step 4: Navigate back to Email page to verify settings were saved
+        adminPage = editorPage.openUserMenu().navigateToAdministration();
+        emailPageComponent = adminPage.navigateToEmailPage();
+
+        // Step 4: Verify that email verification is still enabled and credentials persisted
+        Assert.assertTrue(emailPageComponent.isEmailVerificationEnabled(), "Email verification should remain enabled after logout/login");
+        Assert.assertEquals(emailPageComponent.getEmailUrl(), emailUrl, "Email URL should persist after logout/login");
+        Assert.assertEquals(emailPageComponent.getEmailUsername(), emailUsername, "Email username should persist after logout/login");
+
+        // Verify password field is empty
+        String savedPassword = emailPageComponent.getEmailPassword();
+        Assert.assertTrue(savedPassword.isEmpty(), "Saved password field should be empty after relogin");
+
+        // Step 5: Test password visibility toggle (JIRA Step 5: "Press eye on password field for email")
+        // According to JIRA requirements: "Email password is not shown"
+        // Verify password is initially hidden (type="password")
+        emailPageComponent.setEmailPassword("qwerty");
+        Assert.assertEquals(emailPageComponent.getPasswordFieldType(), "password", "Password field should have type='password' initially (hidden)");
+        Assert.assertFalse(emailPageComponent.isPasswordVisible(), "Password should be hidden initially");
+
+        // Step 5: Click the eye icon to toggle password visibility
+        emailPageComponent.togglePasswordVisibility();
+        Assert.assertEquals(emailPageComponent.getPasswordFieldType(), "text", "Password field should be type='text' after clicking eye icon");
+        Assert.assertTrue(emailPageComponent.isPasswordVisible(), "Password should not be hidden after clicking eye icon");
+
     }
 }
