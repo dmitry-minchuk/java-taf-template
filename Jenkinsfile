@@ -64,8 +64,8 @@ pipeline {
         PATH = "${env.M2_HOME}/bin:${env.PATH}"
     }
     parameters {
-        string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Source application branch (openl-tablets). Special chars like : or | or [] not allowed here!')
-        string(name: 'TESTS_BRANCH', defaultValue: 'playwright_testcontainers', description: 'Autotests branch (openl-tests)')
+        string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Tested application version (openl-tablets). Special chars like : or | or [] not allowed here!')
+        string(name: 'TESTS_BRANCH', defaultValue: 'playwright_testcontainers', description: 'Autotests repository branch')
     }
     stages {
         stage('Pull Docker Images') {
