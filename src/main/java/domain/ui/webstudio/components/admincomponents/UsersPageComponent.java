@@ -217,13 +217,13 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public UsersPageComponent setRoleRepository(int row, String repositoryName) {
-        roleRepositoryTemplate.format(row).click();
+        roleRepositoryTemplate.format(row).getLocator().locator("xpath=/ancestor::span[@class='ant-select-selection-wrap']").click();
         selectOptionTemplate.format(repositoryName).waitForVisible().click();
         return this;
     }
 
     public UsersPageComponent setRole(int row, String role) {
-        roleNameTemplate.format(row).click();
+        roleNameTemplate.format(row).getLocator().locator("xpath=/ancestor::span[@class='ant-select-selection-wrap']").click();
         selectOptionTemplate.format(role).waitForVisible().click();
         return this;
     }
