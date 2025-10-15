@@ -15,9 +15,9 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestButtonDeployAvailableDeployConfiguration extends BaseTest {
+public class TestButtonDeployAvailableDeployConfiguration extends BaseTest { // We do not have Deploy Configuration btn anymore
 
-    @Test
+    //@Test
     @TestCaseId("EPBDS-8289")
     @Description("Deploy button should be available after adding a project to a deploy configuration and saving it.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
