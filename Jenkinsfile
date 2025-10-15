@@ -83,8 +83,8 @@ pipeline {
                                   sh "docker image rm -f ghcr.io/${studio_image.imageName()}"
                                   sh "docker image rm -f ghcr.io/${ws_image.imageName()}"
 //                                   sh "docker image rm -f ghcr.io/${demo_image.imageName()}"
-                                  sh "docker pull ${studio_image.imageName()}"
-                                  sh "docker pull ${ws_image.imageName()}"
+                                  sh "docker pull ${studio_image.imageName()}"  // Always pulling latest image here :x
+                                  sh "docker pull ${ws_image.imageName()}"  // Always pulling latest image here :x
 //                                   sh "docker pull ${demo_image.imageName()}"
                                 }
                             }
