@@ -151,6 +151,6 @@ public class TestUsersManagementWithoutExternalAuth extends BaseTest {
         editorPage = loginService.login(testUser);
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
-        assertThat(visibleProjects).isNotEmpty().contains(projectName, "User 'test' should still see the project with Viewer role");
+        assertThat(visibleProjects).as("User 'test' should still see the project with Viewer role").isNotEmpty().contains(projectName);
     }
 }
