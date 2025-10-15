@@ -43,7 +43,7 @@ public abstract class BasePage extends CorePage {
         LOGGER.debug("messages.size() = {}", messages.size());
         for(int i = 0; i < 3; i++) {
             messages.forEach(MessageComponent::closeMessage);
-            WaitUtil.sleep(100);
+            WaitUtil.sleep(100, "Waiting between message close attempts");
         }
     }
 

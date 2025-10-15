@@ -42,7 +42,7 @@ public class ZipArchiveComponent extends BaseComponent {
     public void uploadZipFile(String fileName) {
         String absoluteFilePath = TestDataUtil.getFilePathFromResources(fileName);
         fileInputField.sendKeys(absoluteFilePath);
-        WaitUtil.sleep(1000); // For progress bar to finish
+        WaitUtil.sleep(1000, "Waiting for zip file upload progress bar to complete");
     }
 
     public void setProjectName(String projectName) {

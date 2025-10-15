@@ -45,22 +45,22 @@ public class TestResultValidationComponent extends BaseComponent {
     }
 
     public boolean isTestTableFailed() {
-        WaitUtil.isListNotEmpty(() -> caseErrorElementsList, 3000, 100);
+        WaitUtil.isListNotEmpty(() -> caseErrorElementsList, 3000, 100, "Checking if test table has error elements");
         return testResultBadgeError.isVisible();
     }
 
     public boolean isTestTablePassed() {
-        WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, 3000, 100);
+        WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, 3000, 100, "Checking if test table has success elements");
         return !testResultBadgeError.isVisible();
     }
 
     public int getFailedTestCount() {
-        WaitUtil.waitForListNotEmpty(() -> caseErrorElementsList, 3000, 100);
+        WaitUtil.waitForListNotEmpty(() -> caseErrorElementsList, 3000, 100, "Waiting for failed test elements to be available");
         return caseErrorElementsList.size();
     }
 
     public int getPassedTestCount() {
-        WaitUtil.waitForListNotEmpty(() -> caseSuccessElementsList, 3000, 100);
+        WaitUtil.waitForListNotEmpty(() -> caseSuccessElementsList, 3000, 100, "Waiting for passed test elements to be available");
         return caseSuccessElementsList.size();
     }
 

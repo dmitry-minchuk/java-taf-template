@@ -148,7 +148,7 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
 
     // Helper method to find row index by text content (returns 1-based index)
     private int findRowByText(String text) {
-        WaitUtil.sleep(500);
+        WaitUtil.sleep(500, "Waiting for properties table to fully render before searching for row");
         int rowCount = propertiesTable.getRowsCount();
         for (int i = 1; i <= rowCount; i++) {
             String cellText = propertiesTable.getCell(i, 1).getText().trim().replaceAll("\n", "");
