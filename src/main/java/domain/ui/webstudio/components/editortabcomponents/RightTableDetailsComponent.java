@@ -39,7 +39,7 @@ public class RightTableDetailsComponent extends BaseComponent {
 
     public void clickSaveBtn() {
         saveBtn.click();
-        WaitUtil.sleep(500);
+        WaitUtil.sleep(500, "Waiting for table properties to be saved and UI to refresh");
     }
 
     public RightTableDetailsComponent addProperty(String propertyName) {

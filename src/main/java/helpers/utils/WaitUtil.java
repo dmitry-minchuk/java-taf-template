@@ -11,58 +11,68 @@ public class WaitUtil {
 
     private static final Logger LOGGER = LogManager.getLogger(WaitUtil.class);
 
-    public static void sleep(long timeoutMillis) {
+    public static void sleep(long timeoutMillis, String description) {
         try {
+            LOGGER.info("Sleeping for {}ms: {}", timeoutMillis, description);
             Thread.sleep(timeoutMillis);
-            LOGGER.info("Thread.sleep({}) here...", timeoutMillis);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Sleep interrupted: " + description, e);
         }
     }
 
-    public static <T> void waitForListNotEmpty(Supplier<List<T>> listSupplier, long timeoutMs, long pollingIntervalMs) {
-        if (!isListNotEmpty(listSupplier, timeoutMs, pollingIntervalMs)) {
-            throw new RuntimeException("List remained empty after " + timeoutMs + "ms timeout");
+    public static <T> void waitForListNotEmpty(Supplier<List<T>> listSupplier, long timeoutMs, long pollingIntervalMs, String description) {
+        LOGGER.info("Waiting for list not to be empty (timeout: {}ms, polling: {}ms): {}", timeoutMs, pollingIntervalMs, description);
+        if (!isListNotEmpty(listSupplier, timeoutMs, pollingIntervalMs, description)) {
+            throw new RuntimeException("List remained empty after " + timeoutMs + "ms timeout: " + description);
         }
     }
 
-    public static <T> boolean isListNotEmpty(Supplier<List<T>> listSupplier, long timeoutMs, long pollingIntervalMs) {
+    public static <T> boolean isListNotEmpty(Supplier<List<T>> listSupplier, long timeoutMs, long pollingIntervalMs, String description) {
         long endTime = System.currentTimeMillis() + timeoutMs;
+        long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < endTime) {
             List<T> currentList = listSupplier.get();
             if (currentList != null && !currentList.isEmpty()) {
+                LOGGER.info("List became non-empty after {}ms: {}", System.currentTimeMillis() - startTime, description);
                 return true;
             }
-            LOGGER.info("Waiting for collection not to be empty...");
-            sleep((int) pollingIntervalMs);
+            sleep((int) pollingIntervalMs, "Polling for list (attempt): " + description);
         }
+        LOGGER.warn("List remained empty after {}ms timeout: {}", timeoutMs, description);
         return false;
     }
 
-    public static boolean waitForCondition(Supplier<Boolean> listSupplier, long timeoutMs, long pollingIntervalMs) {
+    public static boolean waitForCondition(Supplier<Boolean> conditionSupplier, long timeoutMs, long pollingIntervalMs, String description) {
+        LOGGER.info("Waiting for condition (timeout: {}ms, polling: {}ms): {}", timeoutMs, pollingIntervalMs, description);
         long endTime = System.currentTimeMillis() + timeoutMs;
+        long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < endTime) {
-            Boolean currentState = listSupplier.get();
+            Boolean currentState = conditionSupplier.get();
             if (currentState) {
+                LOGGER.info("Condition met after {}ms: {}", System.currentTimeMillis() - startTime, description);
                 return true;
             }
-            LOGGER.info("Waiting for condition to be True...");
-            sleep((int) pollingIntervalMs);
+            sleep((int) pollingIntervalMs, "Polling for condition (attempt): " + description);
         }
+        LOGGER.warn("Condition not met after {}ms timeout: {}", timeoutMs, description);
         return false;
     }
 
-    public static <T> Optional<T> waitForResult(Supplier<Optional<T>> supplier, long timeoutMs, long intervalMs) {
+    public static <T> Optional<T> waitForResult(Supplier<Optional<T>> supplier, long timeoutMs, long intervalMs, String description) {
+        LOGGER.info("Waiting for result (timeout: {}ms, polling: {}ms): {}", timeoutMs, intervalMs, description);
         long startTime = System.currentTimeMillis();
 
         while (System.currentTimeMillis() - startTime < timeoutMs) {
             Optional<T> result = supplier.get();
             if (result.isPresent()) {
+                LOGGER.info("Result found after {}ms: {}", System.currentTimeMillis() - startTime, description);
                 return result;
             }
-            sleep(intervalMs);
+            sleep(intervalMs, "Polling for result (attempt): " + description);
         }
 
+        LOGGER.warn("Result not found after {}ms timeout: {}", timeoutMs, description);
         return Optional.empty();
     }
 }

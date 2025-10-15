@@ -47,7 +47,7 @@ public class DeployModalComponent extends BaseComponent {
     }
 
     public DeployModalComponent waitForModal() {
-        boolean modalAppeared = WaitUtil.waitForCondition(() -> isModalVisible(), DEFAULT_TIMEOUT_MS, 500);
+        boolean modalAppeared = WaitUtil.waitForCondition(() -> isModalVisible(), DEFAULT_TIMEOUT_MS, 500, "Waiting for deploy configuration modal to appear");
         if (!modalAppeared) {
             throw new RuntimeException("Deploy modal did not appear within timeout");
         }

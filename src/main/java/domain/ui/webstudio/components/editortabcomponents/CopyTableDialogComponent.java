@@ -48,7 +48,7 @@ public class CopyTableDialogComponent extends BaseComponent {
 
     public CopyTableDialogComponent selectCopyAs(String value) {
         typeComboBox.selectByVisibleText(value);
-        WaitUtil.sleep(250);
+        WaitUtil.sleep(250, "Waiting for copy type selection to apply and form fields to update");
         return this;
     }
 

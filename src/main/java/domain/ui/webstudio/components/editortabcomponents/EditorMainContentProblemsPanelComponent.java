@@ -58,6 +58,6 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     }
 
     public boolean isErrorMessagePresent() {
-        return WaitUtil.isListNotEmpty(() -> errorMessages, 5000, 250);
+        return WaitUtil.isListNotEmpty(() -> errorMessages, 5000, 250, "Waiting for error messages to appear in problems panel");
     }
 }

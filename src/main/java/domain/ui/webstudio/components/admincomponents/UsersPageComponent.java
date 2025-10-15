@@ -93,7 +93,7 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public int getUserRow(String username) {
-        WaitUtil.waitForCondition(() -> getAllUsernames().contains(username), DEFAULT_TIMEOUT_MS, 100);
+        WaitUtil.waitForCondition(() -> getAllUsernames().contains(username), DEFAULT_TIMEOUT_MS, 100, "Waiting for user '" + username + "' to appear in users table");
         int rowCount = usersTable.getRowsCount();
         for (int i = 1; i <= rowCount; i++) {
             String cellText = usersTable.getCellText(i, COL_USERNAME);
@@ -149,7 +149,7 @@ public class UsersPageComponent extends BaseComponent {
         int row = getUserRow(username);
         usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='edit']").first().click();
         drawer.waitForVisible(3000);
-        WaitUtil.sleep(150);
+        WaitUtil.sleep(150, "Waiting for user edit drawer to fully open");
         return this;
     }
 
@@ -157,7 +157,7 @@ public class UsersPageComponent extends BaseComponent {
         int row = getUserRow(username);
         usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='delete']").first().click();
         getModalOkBtn().click();
-        WaitUtil.sleep(150);
+        WaitUtil.sleep(150, "Waiting for user deletion to complete");
     }
 
     // ========================================

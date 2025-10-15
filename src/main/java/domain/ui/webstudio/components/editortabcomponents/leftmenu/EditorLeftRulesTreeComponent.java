@@ -41,17 +41,17 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         WaitUtil.waitForCondition(() -> {
             WaitUtil.waitForCondition(() -> {
                 try {
-                    WaitUtil.sleep(250);
+                    WaitUtil.sleep(250, "Waiting before clicking view filter link");
                     viewFilterLink.click();
-                    WaitUtil.sleep(250);
+                    WaitUtil.sleep(250, "Waiting for filter dropdown to appear");
                 } catch (Exception ignored) {}
                 return filterOptionTemplate.format(filterOption.getValue()).isVisible();
-            }, 5000, 200);
+            }, 5000, 200, "Waiting for filter option '" + filterOption.getValue() + "' to be visible");
             try {
                 filterOptionTemplate.format(filterOption.getValue()).click();
             } catch (Exception ignored) {}
             return viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase());
-        }, 5000, 200);
+        }, 5000, 200, "Waiting for filter '" + filterOption.getValue() + "' to be applied");
         return this;
     }
 
@@ -104,7 +104,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
             } catch (RuntimeException e) {
                 return false;
             }
-        }, DEFAULT_TIMEOUT_MS, 100);
+        }, DEFAULT_TIMEOUT_MS, 100, "Checking if item '" + itemName + "' exists in folder '" + folderName + "'");
     }
 
     public boolean isItemNotExistsInFolder(String folderName, String itemName) {
@@ -115,14 +115,15 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
             } catch (RuntimeException e) {
                 return true;
             }
-        }, DEFAULT_TIMEOUT_MS, 100);
+        }, DEFAULT_TIMEOUT_MS, 100, "Checking if item '" + itemName + "' does NOT exist in folder '" + folderName + "'");
     }
 
     // Find specific folder in the tree by name
     private EditorTreeFolderComponent findFolderInTree(String folderName) {
         Optional<EditorTreeFolderComponent> result = WaitUtil.waitForResult(() -> findTreeFolders().stream()
                         .filter(f -> folderName.equals(f.getFolderName()))
-                        .findFirst(), DEFAULT_TIMEOUT_MS, 100
+                        .findFirst(), DEFAULT_TIMEOUT_MS, 100,
+                "Searching for folder '" + folderName + "' in editor tree"
         );
 
         return result.orElseThrow(() -> new RuntimeException(String.format("Folder with name %s not found", folderName)));
@@ -130,7 +131,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<EditorTreeFolderComponent> findTreeFolders() {
-        WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100);
+        WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100, "Waiting for editor tree folders to load");
         return folders;
     }
 

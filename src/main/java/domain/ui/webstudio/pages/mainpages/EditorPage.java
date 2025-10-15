@@ -49,7 +49,7 @@ public class EditorPage extends BasePage {
 
     public TableComponent getCenterTable() {
         centerTable.isVisible();
-        WaitUtil.sleep(500);
+        WaitUtil.sleep(500, "Waiting for center table to fully load");
         return centerTable;
     }
 }

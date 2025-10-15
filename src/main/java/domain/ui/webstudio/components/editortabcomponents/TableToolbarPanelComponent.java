@@ -136,7 +136,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
     
     public void clickRemove() {
         removeBtn.click();
-        WaitUtil.sleep(100);
+        WaitUtil.sleep(100, "Waiting for table removal action to complete");
     }
 
     public TraceMenu setFactorTextField(String text) {
@@ -197,7 +197,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
         @Override
         public IRunMenu clickRunInsideMenu() {
             runInsideDropdownBtn.click();
-            WaitUtil.sleep(250);
+            WaitUtil.sleep(250, "Waiting for run menu action to complete");
             return this;
         }
 
@@ -351,13 +351,13 @@ public class TableToolbarPanelComponent extends BaseComponent {
         public ITraceWindow expandItemInTree(int position) {
             WebElement item = traceExpanderTemplate.format(position + 1);
             item.click();
-            WaitUtil.sleep(100); // Waiting for expander to get expanded
+            WaitUtil.sleep(100, "Waiting for trace tree item " + position + " to expand");
             return this;
         }
 
         @Override
         public List<String> getVisibleItemsFromTree() {
-            WaitUtil.sleep(500);
+            WaitUtil.sleep(500, "Waiting for trace tree items to be fully rendered");
             return visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
         }
 

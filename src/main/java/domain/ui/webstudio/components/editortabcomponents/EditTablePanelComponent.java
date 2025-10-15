@@ -32,7 +32,7 @@ public class EditTablePanelComponent extends BaseComponent {
     }
 
     private void waitWhileTablePanelActionExecuted() {
-        WaitUtil.sleep(250);
+        WaitUtil.sleep(250, "Waiting for table panel action to complete and UI to update");
     }
 
     public void clickSaveChanges() {

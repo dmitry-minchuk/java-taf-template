@@ -39,7 +39,7 @@ public class EditorTreeFolderComponent extends BaseComponent {
                 return true;
             } else
                 return false;
-        }, 1000, 100);
+        }, 1000, 100, "Waiting for folder expander to be visible and expanding tree folder");
     }
 
     public String getFolderName() {

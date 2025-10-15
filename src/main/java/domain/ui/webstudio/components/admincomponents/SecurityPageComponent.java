@@ -54,7 +54,7 @@ public class SecurityPageComponent extends BaseComponent {
     public void clickApply() {
         applyBtn.click();
         getModalOkBtn().click();
-        WaitUtil.sleep(1000);
+        WaitUtil.sleep(1000, "Waiting for security settings to be applied");
     }
 
     public enum DefaultGroup {

@@ -113,7 +113,7 @@ public class WebElement {
     }
 
     public String getText(int timeoutInMillis) {
-        WaitUtil.sleep(timeoutInMillis);
+        WaitUtil.sleep(timeoutInMillis, "Sleeping before getting text from " + elementName);
         return getText();
     }
     
@@ -255,7 +255,7 @@ public class WebElement {
 
     public WebElement sleep(long timeoutInMillis) {
         LOGGER.info("Sleeping for {} ", elementName);
-        WaitUtil.sleep(timeoutInMillis);
+        WaitUtil.sleep(timeoutInMillis, "Element sleep for " + elementName);
         return this;
     }
     

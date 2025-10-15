@@ -114,7 +114,7 @@ public class ProblemsPanelComponent extends BaseComponent {
         long maxAttempts = timeoutMillis / pollIntervalMillis;
         for (int attempt = 1; attempt <= maxAttempts && isCompilationInProgress(); attempt++) {
             LOGGER.info("Compilation in progress, waiting... ({}/{})", attempt, maxAttempts);
-            WaitUtil.sleep((int) pollIntervalMillis);
+            WaitUtil.sleep((int) pollIntervalMillis, "Waiting for project compilation to complete (polling)");
         }
         LOGGER.info(isCompilationInProgress() ? "Compilation timeout reached" : "Compilation completed");
     }

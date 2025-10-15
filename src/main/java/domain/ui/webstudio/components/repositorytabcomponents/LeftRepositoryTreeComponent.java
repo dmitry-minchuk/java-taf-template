@@ -60,7 +60,8 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
     private RepositoryTreeFolderComponent findFolderInTree(String folderName) {
         Optional<RepositoryTreeFolderComponent> result = WaitUtil.waitForResult(() -> findTreeFolders().stream()
                 .filter(f -> folderName.equals(f.getFolderName()))
-                .findFirst(), DEFAULT_TIMEOUT_MS, 100
+                .findFirst(), DEFAULT_TIMEOUT_MS, 100,
+                "Searching for folder '" + folderName + "' in repository tree"
         );
 
         return result.orElseThrow(() ->
@@ -69,7 +70,7 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)
     private List<RepositoryTreeFolderComponent> findTreeFolders() {
-        WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100);
+        WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100, "Waiting for repository tree folders to load");
         return folders;
     }
 }

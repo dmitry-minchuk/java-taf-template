@@ -32,7 +32,7 @@ public class TableComponent extends BaseComponent {
     }
 
     public WebElement getCell(int rowIndex, int columnIndex) {
-        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 100);
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 100, "Waiting for table rows to load before getting cell [" + rowIndex + "," + columnIndex + "]");
         PlaywrightTableRowComponent row = rows.get(rowIndex - 1);
         List<WebElement> cells = row.getCells();
         return cells.get(columnIndex - 1);
@@ -56,7 +56,7 @@ public class TableComponent extends BaseComponent {
         if (pressEnter) {
             inputLocator.press("Enter");
         }
-        WaitUtil.sleep(250);
+        WaitUtil.sleep(250, "Waiting for cell edit to be applied");
     }
 
     public void editCell(int rowIndex, int columnIndex, String text) {
@@ -64,17 +64,17 @@ public class TableComponent extends BaseComponent {
     }
 
     public List<PlaywrightTableRowComponent> getRows() {
-        WaitUtil.waitForCondition(() -> !rows.isEmpty(), 3000, 250);
+        WaitUtil.waitForCondition(() -> !rows.isEmpty(), 3000, 250, "Waiting for table rows to be loaded");
         return rows;
     }
 
     public int getRowsCount() {
-        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250);
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250, "Waiting for table rows before counting");
         return rows.size();
     }
 
     public PlaywrightTableRowComponent getRow(int rowIndex) {
-        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250);
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250, "Waiting for table rows before getting row " + rowIndex);
         return rows.get(rowIndex - 1);
     }
 
@@ -97,7 +97,7 @@ public class TableComponent extends BaseComponent {
         }
 
         public  List<WebElement> getCells() {
-            WaitUtil.waitForListNotEmpty(() -> cells, 250, 50);
+            WaitUtil.waitForListNotEmpty(() -> cells, 250, 50, "Waiting for table row cells to load");
             return cells;
         }
 
