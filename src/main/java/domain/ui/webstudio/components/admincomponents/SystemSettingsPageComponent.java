@@ -11,9 +11,6 @@ public class SystemSettingsPageComponent extends BaseComponent {
     private WebElement testThreadCountField;
     private WebElement projectHistoryCountField;
     private WebElement clearAllHistoryBtn;
-    private WebElement updateSystemPropertiesCheckbox;
-    private WebElement saveBtn;
-    private WebElement cancelBtn;
 
     public SystemSettingsPageComponent() {
         super(LocalDriverPool.getPage());
@@ -31,9 +28,6 @@ public class SystemSettingsPageComponent extends BaseComponent {
         testThreadCountField = createScopedElement("#testRunThreadCount", "testThreadCountField");
         projectHistoryCountField = createScopedElement("#projectHistoryCount", "projectHistoryCountField");
         clearAllHistoryBtn = createScopedElement("xpath=.//button[./span[text()='Clear All History']]", "clearAllHistoryBtn");
-        updateSystemPropertiesCheckbox = createScopedElement("#updateSystemProperties", "updateSystemPropertiesCheckbox");
-        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
     }
 
     public void setDispatchingValidation(boolean enable) {
@@ -68,34 +62,5 @@ public class SystemSettingsPageComponent extends BaseComponent {
 
     public void clearAllHistory() {
         clearAllHistoryBtn.click();
-    }
-
-    public void setUpdateSystemProperties(boolean enable) {
-        if (enable != updateSystemPropertiesCheckbox.isChecked()) {
-            updateSystemPropertiesCheckbox.click();
-        }
-    }
-
-    public boolean isUpdateSystemPropertiesEnabled() {
-        return updateSystemPropertiesCheckbox.isChecked();
-    }
-
-    public void saveSettings() {
-        saveBtn.click();
-    }
-
-    public void cancelSettings() {
-        cancelBtn.click();
-    }
-
-    public void configureSystemSettings(boolean dispatchingValidation, boolean verifyOnEdit, 
-                                      int testThreadCount, int projectHistoryCount, 
-                                      boolean updateSystemProperties) {
-        setDispatchingValidation(dispatchingValidation);
-        setVerifyOnEdit(verifyOnEdit);
-        setTestThreadCount(testThreadCount);
-        setProjectHistoryCount(projectHistoryCount);
-        setUpdateSystemProperties(updateSystemProperties);
-        saveSettings();
     }
 }

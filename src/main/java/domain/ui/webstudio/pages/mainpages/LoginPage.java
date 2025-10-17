@@ -31,7 +31,7 @@ public class LoginPage extends BasePage {
     }
 
     public EditorPage login(UserData user) {
-        return login(user, DEFAULT_TIMEOUT_MS);
+        return login(user, 15000);
     }
 
     public EditorPage login(UserData user, long EXTENDED_TIME_PERIOD) {
