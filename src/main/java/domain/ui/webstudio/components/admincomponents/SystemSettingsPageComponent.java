@@ -7,6 +7,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
 import helpers.service.UserService;
 import com.microsoft.playwright.options.WaitForSelectorState;
+import helpers.utils.WaitUtil;
 
 public class SystemSettingsPageComponent extends BaseComponent {
 
@@ -113,11 +114,7 @@ public class SystemSettingsPageComponent extends BaseComponent {
 
     public void applySettingsAndRelogin(User user) {
         clickApplyButton();
-
-        // Wait for logout/login page to appear
-        page.waitForURL("**/login**", new com.microsoft.playwright.Page.WaitForURLOptions().setTimeout(10000));
-
-        // Re-login
+        WaitUtil.waitForCondition(() -> page.url().contains("/login"), DEFAULT_TIMEOUT_MS, 250, "Waiting for login page to be ready");
         new LoginPage().login(UserService.getUser(user));
     }
 }
