@@ -16,6 +16,8 @@ public class TableToolbarPanelComponent extends BaseComponent {
 
     // TOP LINE TOOLBAR
     private WebElement exportBtn;
+    private WebElement saveBtn;
+    private WebElement verifyBtn;
     // Run Tests Menu elements
     @Getter
     private WebElement testDropdownBtn;
@@ -64,6 +66,8 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private void initializeElements() {
         // TOP LINE TOOLBAR
         exportBtn = new WebElement(page, "xpath=//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+        verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
+        saveBtn = new WebElement(page,"//a[./span[text()='saveProjectBtn'] or @type='submit']", "saveBtn");
         // Run Tests Menu elements initialization
         testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
         testPerPageDropdown = new WebElement(page, "xpath=//select[@name='pp']", "testPerPageDropdown");
@@ -97,6 +101,14 @@ public class TableToolbarPanelComponent extends BaseComponent {
         // Input parameter templates - page-level (form inputs)  
         inputTextFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
         inputSelectFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
+    }
+
+    public void clickVerify() {
+        verifyBtn.click();
+    }
+
+    public boolean isVerifyButtonPresent() {
+        return verifyBtn.isVisible(2000);
     }
 
     public IRunMenu clickRun() {

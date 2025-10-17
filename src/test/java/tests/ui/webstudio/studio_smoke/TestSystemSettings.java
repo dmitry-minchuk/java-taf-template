@@ -74,18 +74,19 @@ public class TestSystemSettings extends BaseTest {
         editorPage.getCenterTable().editCell(4, 2, "Integer aaa", true);
         editorPage.getEditTablePanelComponent().clickSaveChanges();
 
-        Assert.assertTrue(editorPage.getProblemsPanelComponent().hasErrors(),
-            "Problems panel should show errors when invalid data is saved with Verify on Edit disabled");
+        editorPage.getProblemsPanelComponent().checkNoProblems();
+        Assert.assertTrue(editorPage.getTableToolbarPanelComponent().isVerifyButtonPresent(), "Verify button should be present when Verify on Edit is disabled");
+        editorPage.getTableToolbarPanelComponent().clickVerify();
+        Assert.assertEquals(editorPage.getProblemsPanelComponent().getErrorsCount(), 1, "Should have 1 error after clicking Verify button");
 
         // Step 4: Test Dispatching Validation = true
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
         systemSettings.setDispatchingValidation(true);
-        systemSettings.applySettingsAndRelogin(User.ADMIN);
+        systemSettings.clickApplyButton();
 
-        String projectNameForDispatch = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN,
-            "SmokeStudio.TestSystemSettings.xlsx");
+        String projectNameForDispatch = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestSystemSettings.xlsx");
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForDispatch, projectNameForDispatch);
@@ -94,8 +95,7 @@ public class TestSystemSettings extends BaseTest {
                 .clickTestDropdown()
                 .runTests();
 
-        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTableFailed(),
-            "Tests should fail with dispatching validation enabled");
+        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTableFailed(), "Tests should fail with dispatching validation enabled");
 
         // Step 5: Test Dispatching Validation = false
         systemSettings = editorPage.openUserMenu()
@@ -112,8 +112,7 @@ public class TestSystemSettings extends BaseTest {
                 .clickTestDropdown()
                 .runTests();
 
-        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(),
-            "Tests should pass with dispatching validation disabled");
+        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), "Tests should pass with dispatching validation disabled");
 
         // Step 6: Test Thread Number validation
         systemSettings = editorPage.openUserMenu()
