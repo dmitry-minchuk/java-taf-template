@@ -6,6 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
@@ -40,6 +41,7 @@ public class TestSystemSettings extends BaseTest {
         systemSettings.setVerifyOnEdit(true);
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForVerification, "Main");
 
@@ -49,7 +51,7 @@ public class TestSystemSettings extends BaseTest {
                 .selectItemInFolder("Decision", "Hello");
 
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
-        editorPage.getCenterTable().editCell(6, 2, "1000", false);
+        editorPage.getCenterTable().editCell(6, 2, "1000", true);
         editorPage.getEditTablePanelComponent().clickSaveChanges();
 
         // Step 3: Test Verify on Edit = false
@@ -59,6 +61,7 @@ public class TestSystemSettings extends BaseTest {
         systemSettings.setVerifyOnEdit(false);
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForVerification, "Main");
 
@@ -68,7 +71,7 @@ public class TestSystemSettings extends BaseTest {
                 .selectItemInFolder("Decision", "Hello");
 
         editorPage.getTableToolbarPanelComponent().getEditBtn().click();
-        editorPage.getCenterTable().editCell(4, 2, "Integer aaa", false);
+        editorPage.getCenterTable().editCell(4, 2, "Integer aaa", true);
         editorPage.getEditTablePanelComponent().clickSaveChanges();
 
         Assert.assertTrue(editorPage.getProblemsPanelComponent().hasErrors(),
@@ -82,7 +85,7 @@ public class TestSystemSettings extends BaseTest {
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
         String projectNameForDispatch = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN,
-            "TestSystemSettings/SmokeStudio.TestSystemSettings.xlsx");
+            "SmokeStudio.TestSystemSettings.xlsx");
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForDispatch, projectNameForDispatch);
@@ -101,6 +104,7 @@ public class TestSystemSettings extends BaseTest {
         systemSettings.setDispatchingValidation(false);
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForDispatch, projectNameForDispatch);
 
