@@ -3,6 +3,10 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import domain.serviceclasses.constants.User;
+import domain.ui.webstudio.pages.mainpages.LoginPage;
+import helpers.service.UserService;
+import com.microsoft.playwright.options.WaitForSelectorState;
 
 public class SystemSettingsPageComponent extends BaseComponent {
 
@@ -11,6 +15,8 @@ public class SystemSettingsPageComponent extends BaseComponent {
     private WebElement testThreadCountField;
     private WebElement projectHistoryCountField;
     private WebElement clearAllHistoryBtn;
+    private WebElement applyButton;
+    private WebElement errorMessage;
 
     public SystemSettingsPageComponent() {
         super(LocalDriverPool.getPage());
@@ -28,6 +34,8 @@ public class SystemSettingsPageComponent extends BaseComponent {
         testThreadCountField = createScopedElement("#testRunThreadCount", "testThreadCountField");
         projectHistoryCountField = createScopedElement("#projectHistoryCount", "projectHistoryCountField");
         clearAllHistoryBtn = createScopedElement("xpath=.//button[./span[text()='Clear All History']]", "clearAllHistoryBtn");
+        applyButton = createScopedElement("xpath=.//button[./span[text()='Apply Changes'] or ./span[text()='Apply']]", "applyButton");
+        errorMessage = createScopedElement("xpath=.//div[contains(@class, 'ant-form-item-explain-error')]", "errorMessage");
     }
 
     public void setDispatchingValidation(boolean enable) {
@@ -62,5 +70,54 @@ public class SystemSettingsPageComponent extends BaseComponent {
 
     public void clearAllHistory() {
         clearAllHistoryBtn.click();
+    }
+
+    // New methods for test validation and error handling
+
+    public void setTestThreadCount(String value) {
+        testThreadCountField.fill(value);
+    }
+
+    public boolean isDispatchingValidationEnabled() {
+        return dispatchingValidationCheckbox.isChecked();
+    }
+
+    public boolean isVerifyOnEditEnabled() {
+        return verifyOnEditCheckbox.isChecked();
+    }
+
+    public String getErrorMessage() {
+        if (errorMessage.isVisible()) {
+            return errorMessage.getText();
+        }
+        return "";
+    }
+
+    public void clickApplyButton() {
+        applyButton.click();
+        // Wait for potential alert and handle it
+        try {
+            page.waitForCondition(() -> {
+                if (page.locator("role=dialog").isVisible()) {
+                    return true;
+                }
+                return false;
+            }, new com.microsoft.playwright.Page.WaitForConditionOptions().setTimeout(2000));
+
+            // If alert appears, accept it
+            page.locator("role=dialog >> button:has-text('OK'), button:has-text('Yes')").click();
+        } catch (Exception e) {
+            // No alert appeared, continue
+        }
+    }
+
+    public void applySettingsAndRelogin(User user) {
+        clickApplyButton();
+
+        // Wait for logout/login page to appear
+        page.waitForURL("**/login**", new com.microsoft.playwright.Page.WaitForURLOptions().setTimeout(10000));
+
+        // Re-login
+        new LoginPage().login(UserService.getUser(user));
     }
 }
