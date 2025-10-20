@@ -51,40 +51,8 @@ public class SystemSettingsPageComponent extends BaseComponent {
         }
     }
 
-    public void setTestThreadCount(int count) {
-        testThreadCountField.fill(String.valueOf(count));
-    }
-
-    public int getTestThreadCount() {
-        String value = testThreadCountField.getAttribute("value");
-        return value != null && !value.isEmpty() ? Integer.parseInt(value) : 1;
-    }
-
-    public void setProjectHistoryCount(int count) {
-        projectHistoryCountField.fill(String.valueOf(count));
-    }
-
-    public int getProjectHistoryCount() {
-        String value = projectHistoryCountField.getAttribute("value");
-        return value != null && !value.isEmpty() ? Integer.parseInt(value) : 10;
-    }
-
-    public void clearAllHistory() {
-        clearAllHistoryBtn.click();
-    }
-
-    // New methods for test validation and error handling
-
     public void setTestThreadCount(String value) {
         testThreadCountField.fill(value);
-    }
-
-    public boolean isDispatchingValidationEnabled() {
-        return dispatchingValidationCheckbox.isChecked();
-    }
-
-    public boolean isVerifyOnEditEnabled() {
-        return verifyOnEditCheckbox.isChecked();
     }
 
     public String getErrorMessage() {
@@ -96,25 +64,11 @@ public class SystemSettingsPageComponent extends BaseComponent {
 
     public void clickApplyButton() {
         applyButton.click();
-        // Wait for potential alert and handle it
-        try {
-            page.waitForCondition(() -> {
-                if (page.locator("role=dialog").isVisible()) {
-                    return true;
-                }
-                return false;
-            }, new com.microsoft.playwright.Page.WaitForConditionOptions().setTimeout(2000));
-
-            // If alert appears, accept it
-            page.locator("role=dialog >> button:has-text('OK'), button:has-text('Yes')").click();
-        } catch (Exception e) {
-            // No alert appeared, continue
-        }
+        getModalOkBtn().click();
     }
 
     public void applySettingsAndRelogin(User user) {
         clickApplyButton();
-        WaitUtil.waitForCondition(() -> page.url().contains("/login"), DEFAULT_TIMEOUT_MS, 250, "Waiting for login page to be ready");
         new LoginPage().login(UserService.getUser(user));
     }
 }

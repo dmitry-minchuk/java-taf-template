@@ -35,7 +35,6 @@ public class LoginPage extends BasePage {
     }
 
     public EditorPage login(UserData user, long EXTENDED_TIME_PERIOD) {
-        WaitUtil.waitForCondition(() -> page.url().contains("/login"), EXTENDED_TIME_PERIOD, 250, "Waiting for login page to be ready");
         usernameField.waitForVisible(EXTENDED_TIME_PERIOD);
         usernameField.fill(user.getLogin());
         passwordField.fill(user.getPassword());

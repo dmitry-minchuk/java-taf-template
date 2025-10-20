@@ -89,7 +89,7 @@ public class TestSystemSettings extends BaseTest {
         String projectNameForDispatch = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestSystemSettings.xlsx");
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(projectNameForDispatch, projectNameForDispatch);
+                .selectModule(projectNameForDispatch, "TestSystemSettings");
 
         editorPage.getTableToolbarPanelComponent()
                 .clickTestDropdown()
@@ -106,7 +106,7 @@ public class TestSystemSettings extends BaseTest {
 
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(projectNameForDispatch, projectNameForDispatch);
+                .selectModule(projectNameForDispatch, "TestSystemSettings");
 
         editorPage.getTableToolbarPanelComponent()
                 .clickTestDropdown()
@@ -130,6 +130,6 @@ public class TestSystemSettings extends BaseTest {
         systemSettings.setTestThreadCount(invalidValue);
         systemSettings.clickApplyButton();
         String errorMsg = systemSettings.getErrorMessage();
-        assertThat(errorMsg).contains(expectedErrorMessage);
+        assertThat(errorMsg).contains(expectedErrorMessage); // BUG: no errors shown
     }
 }
