@@ -24,7 +24,10 @@ public class LoginService {
 
     public EditorPage login(UserData user, String appUrl) {
         LOGGER.info("Logging in with user: {}", user.getLogin());
-        page.navigate(appUrl);
+        WaitUtil.sleep(500, "Waiting for possible redirects to finish");
+        page.waitForLoadState();
+        if(page.url().isEmpty() || page.url().isBlank() || !page.url().contains("/login"))
+            page.navigate(appUrl);
         LOGGER.info("Navigated to login page: {}", appUrl);
         return new LoginPage().login(user);
     }
