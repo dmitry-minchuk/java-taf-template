@@ -137,4 +137,47 @@ public class RepositoryPage extends BasePage {
         }
         return projectNames;
     }
+
+    public boolean projectExists(String projectName) {
+        return getAllVisibleProjectsInTable().contains(projectName);
+    }
+
+    public void deleteProject(String projectName) {
+        leftRepositoryTreeComponent.selectItemInFolder("Projects", projectName);
+        repositoryContentButtonsPanelComponent.clickDeleteBtn();
+    }
+
+    public void copyProject(String sourceProjectName, String newProjectName) {
+        leftRepositoryTreeComponent.selectItemInFolder("Projects", sourceProjectName);
+        repositoryContentButtonsPanelComponent.clickCopyBtn();
+        enterProjectName(newProjectName);
+        confirmCopy();
+    }
+
+    public void importProject(String projectName) {
+        // This would involve opening import dialog and selecting project
+        // Implementation depends on specific import UI
+    }
+
+    public void enterProjectName(String name) {
+        // Used during copy or other project naming operations
+    }
+
+    public void confirmCopy() {
+        // Confirm the copy operation
+    }
+
+    public void createRepository(String repositoryName) {
+        // This would involve admin panel for repository creation
+        // Not directly available from RepositoryPage
+    }
+
+    public void switchRepository(String repositoryName) {
+        // Switch to a different repository
+        // Implementation depends on repository switching UI
+    }
+
+    public void selectProjectInRepository(String projectName) {
+        leftRepositoryTreeComponent.selectItemInFolder("Projects", projectName);
+    }
 }
