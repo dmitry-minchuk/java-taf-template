@@ -114,7 +114,7 @@ public class TestSystemSettings extends BaseTest {
 
         Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), "Tests should pass with dispatching validation disabled");
 
-        // Step 6: Test Thread Number validation
+        // Step 6: Test Thread Number validation // BUG: no errors shown
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -122,6 +122,56 @@ public class TestSystemSettings extends BaseTest {
         for (String[] testData : INVALID_THREAD_COUNT_DATA) {
             validateThreadCountError(systemSettings, testData[0], testData[1]);
         }
+
+        // Step 7: Test Date/Time Format changes
+        systemSettings = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToSystemSettingsPage();
+
+        String originalDateFormat = systemSettings.getDateFormat();
+        String originalTimeFormat = systemSettings.getTimeFormat();
+
+        systemSettings.setDateFormat("yyyy-MM-dd");
+        systemSettings.setTimeFormat("HH:mm:ss");
+        systemSettings.applySettingsAndRelogin(User.ADMIN);
+
+        // Verify formats changed
+        systemSettings = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToSystemSettingsPage();
+        assertThat(systemSettings.getDateFormat()).isEqualTo("yyyy-MM-dd");
+        assertThat(systemSettings.getTimeFormat()).isEqualTo("HH:mm:ss");
+
+        // Restore original formats
+        systemSettings.setDateFormat(originalDateFormat);
+        systemSettings.setTimeFormat(originalTimeFormat);
+        systemSettings.applySettingsAndRelogin(User.ADMIN);
+
+        // Step 8: Test Invalid Date Format // // BUG: no errors shown
+        systemSettings = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToSystemSettingsPage();
+        systemSettings.setDateFormat("abc");
+        systemSettings.clickApplyButton();
+        assertThat(systemSettings.getAllMessages()).contains("Error: Invalid date pattern");
+
+        // Step 9: Test Invalid Time Format
+        systemSettings.setDateFormat(originalDateFormat); // Reset to valid
+        systemSettings.setTimeFormat("xyz");
+        systemSettings.clickApplyButton();
+        assertThat(systemSettings.getAllMessages()).contains("Error: Invalid time pattern");
+
+        // Step 10: Test Empty Date/Time Formats
+        systemSettings.setTimeFormat(originalTimeFormat); // Reset to valid
+        systemSettings.setDateFormat("");
+        systemSettings.clickApplyButton();
+        assertThat(systemSettings.getAllMessages()).contains("Error: Cannot be empty.");
+
+        systemSettings.closeAllMessages();
+        systemSettings.setDateFormat(originalDateFormat); // Reset to valid
+        systemSettings.setTimeFormat("");
+        systemSettings.clickApplyButton();
+        assertThat(systemSettings.getAllMessages()).contains("Error: Cannot be empty.");
     }
 
     private void validateThreadCountError(SystemSettingsPageComponent systemSettings,
@@ -129,7 +179,6 @@ public class TestSystemSettings extends BaseTest {
                                          String expectedErrorMessage) {
         systemSettings.setTestThreadCount(invalidValue);
         systemSettings.clickApplyButton();
-        String errorMsg = systemSettings.getErrorMessage();
-        assertThat(errorMsg).contains(expectedErrorMessage); // BUG: no errors shown
+        assertThat(systemSettings.getAllMessages()).contains(expectedErrorMessage); // BUG: no errors shown
     }
 }

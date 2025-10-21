@@ -87,13 +87,13 @@ public abstract class CoreComponent implements ComponentFactory {
     //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
     public <T extends BaseComponent> List<T> createComponentList(Class<T> componentClass, String selector, String baseName) {
-        return new LazyComponentsList<>(componentClass, page, rootLocator, selector, baseName);
+        return new LazyComponentsList<>(componentClass, page, null, selector, baseName);
     }
 
     //Creates list of components from selector using lazy initialization (implementation for interface).
     @Override
     public <T extends BaseComponent> List<T> createComponentList(Class<T> componentClass, String selector) {
-        return new LazyComponentsList<>(componentClass, page, rootLocator, selector);
+        return new LazyComponentsList<>(componentClass, page, null, selector);
     }
 
     //Finds scoped elements within component.
