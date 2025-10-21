@@ -39,7 +39,7 @@ public abstract class BasePage extends CorePage {
         userMenuDrawer = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-content-wrapper')]", "User Menu Drawer");
         contentLoadingSpinner = new WebElement(page, "xpath=//div[@id='loadingPanel']", "contentLoadingSpinner");
         modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-content']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
-        notificationPanel = new WebElement(page, "xpath=//div[@class='ant-alert-content']/div", "Notification Panel");
+        notificationPanel = new WebElement(page, "xpath=//div[@data-show='true' and contains(@class, 'ant-alert-banner')]", "Notification Panel");
     }
 
     public void closeAllMessages() {
