@@ -89,6 +89,6 @@ public class TestNotifications extends BaseTest {
         assertThat(notificationComponent.isNotificationVisible()).isFalse();
 
         notificationComponent.sendNotification("   ");
-        assertThat(notificationComponent.isNotificationVisible()).isFalse();
+        assertThat(notificationComponent.isNotificationVisible()).isFalse(); //should not be visible
     }
 }
