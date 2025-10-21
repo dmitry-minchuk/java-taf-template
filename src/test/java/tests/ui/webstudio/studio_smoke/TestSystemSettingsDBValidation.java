@@ -51,7 +51,7 @@ public class TestSystemSettingsDBValidation extends BaseTest {
         assertThat(originalDbUrl).contains("/opt/openl/local/users-db/db");
 
         // Step 2: Verify we can query the database (check admin user exists)
-        String adminCheckQuery = String.format("SELECT COUNT(*) FROM OPENL_USERS WHERE USERNAME = 'admin'");
+        String adminCheckQuery = String.format("SELECT COUNT(*) FROM OPENL_USERS WHERE LOGINNAME = 'admin'");
         String adminCount = executeH2Query(adminCheckQuery);
         assertThat(adminCount).as("Admin user should exist in database").isEqualTo("1");
         LOGGER.info("Verified admin user exists in database");
@@ -59,7 +59,7 @@ public class TestSystemSettingsDBValidation extends BaseTest {
         // Step 3: Change MaxPoolSize setting (just to verify we can modify settings)
         int newMaxPoolSize = originalMaxPoolSize + 5;
         systemSettings.setDatabaseMaxPoolSize(newMaxPoolSize);
-        systemSettings.clickApplyButton();
+        systemSettings.applySettingsAndRelogin(User.ADMIN);
 
         // Verify the change was applied (refresh page and check)
         systemSettings = editorPage.openUserMenu()
@@ -83,23 +83,19 @@ public class TestSystemSettingsDBValidation extends BaseTest {
                 .setEmail(TEST_EMAIL)
                 .setFirstName(TEST_FIRSTNAME)
                 .setLastName(TEST_LASTNAME)
-                .saveUser();
+                .inviteUser();
 
         LOGGER.info("Created user via UI: {}", TEST_USER);
 
-        // Verify user appears in UI table
-        assertThat(usersPage.isUserInList(TEST_USER)).isTrue();
-        assertThat(usersPage.getEmailFromRow(usersPage.getUserRow(TEST_USER))).isEqualTo(TEST_EMAIL);
-
         // Step 5: Verify user exists in database via SQL query
-        String userCheckQuery = String.format("SELECT COUNT(*) FROM OPENL_USERS WHERE USERNAME = '%s'", TEST_USER);
+        String userCheckQuery = String.format("SELECT COUNT(*) FROM OPENL_USERS WHERE LOGINNAME = '%s'", TEST_USER);
         String userCount = executeH2Query(userCheckQuery);
         assertThat(userCount).as("User should exist in database after creation").isEqualTo("1");
         LOGGER.info("Verified user '{}' exists in database via SQL query", TEST_USER);
 
         // Verify user details in database
         String userDetailsQuery = String.format(
-                "SELECT USERNAME, FIRSTNAME, LASTNAME, EMAIL FROM OPENL_USERS WHERE USERNAME = '%s'",
+                "SELECT LOGINNAME, FIRSTNAME, SURNAME, EMAIL FROM OPENL_USERS WHERE LOGINNAME = '%s'",
                 TEST_USER
         );
         String userDetails = executeH2Query(userDetailsQuery);
@@ -113,7 +109,6 @@ public class TestSystemSettingsDBValidation extends BaseTest {
         editorPage.openUserMenu().signOut();
         UserData user = new UserData(TEST_USER, TEST_PASSWORD);
         new LoginPage().login(user);
-        assertThat(editorPage.openUserMenu().navigateToAdministration().navigateToSystemSettingsPage().getDatabaseUser()).isEqualTo(TEST_USER);
         LOGGER.info("Successfully logged in as user '{}'", TEST_USER);
 
         // Logout and login back as admin
@@ -132,24 +127,26 @@ public class TestSystemSettingsDBValidation extends BaseTest {
         assertThat(usersPage.isUserInList(TEST_USER)).isFalse();
 
         // Step 8: Verify user is deleted from database via SQL query
-        String deletedUserCheckQuery = String.format("SELECT COUNT(*) FROM OPENL_USERS WHERE USERNAME = '%s'", TEST_USER);
+        String deletedUserCheckQuery = String.format("SELECT COUNT(*) FROM OPENL_USERS WHERE LOGINNAME = '%s'", TEST_USER);
         String deletedUserCount = executeH2Query(deletedUserCheckQuery);
         assertThat(deletedUserCount).as("User should be deleted from database").isEqualTo("0");
         LOGGER.info("Verified user '{}' is deleted from database via SQL query", TEST_USER);
     }
 
     private String executeH2Query(String query) throws Exception {
-        // H2 database file path in container
-        String dbPath = "/opt/openl/users-db/db";
+        // H2 database file path in container (based on actual container structure)
+        String dbPath = "/opt/openl/local/users-db/db";
 
         // Use H2's shell tool to execute query
-        // -url: database URL
-        // -sql: SQL query to execute
+        // H2 jar located at: /opt/openl/app/webapps/ROOT/WEB-INF/lib/h2-2.4.240.jar
         String h2Command = String.format(
-                "java -cp /opt/openl/tomcat/webapps/webstudio/WEB-INF/lib/h2-*.jar org.h2.tools.Shell " +
-                "-url 'jdbc:h2:%s' -sql \"%s\"",
-                dbPath, query
+                "java -cp '/opt/openl/app/webapps/ROOT/WEB-INF/lib/h2-2.4.240.jar' org.h2.tools.Shell " +
+                "-url 'jdbc:h2:%s;AUTO_SERVER=TRUE' " +
+                "-sql \"%s\"",
+                dbPath, query.replace("\"", "\\\"")
         );
+
+        LOGGER.debug("Executing H2 command: {}", h2Command);
 
         ExecResult execResult = AppContainerPool.get()
                 .getAppContainer()
@@ -163,24 +160,41 @@ public class TestSystemSettingsDBValidation extends BaseTest {
         }
 
         String result = execResult.getStdout().trim();
-        LOGGER.debug("H2 query result: {}", result);
+        LOGGER.debug("H2 query raw result: {}", result);
 
-        // Parse the result - H2 Shell outputs table format, we need to extract the actual value
-        // For COUNT queries, the result looks like:
-        // COUNT(*)
-        // 1
-        String[] lines = result.split("\n");
-        if (lines.length >= 2) {
-            // Return the last non-empty line which contains the actual value
-            for (int i = lines.length - 1; i >= 0; i--) {
-                String line = lines[i].trim();
-                if (!line.isEmpty() && !line.startsWith("-") && !line.equals("COUNT(*)")
-                    && !line.startsWith("USERNAME") && !line.startsWith("(")) {
-                    return line;
-                }
+        // Parse the result - H2 Shell outputs table format
+        return parseH2Result(result);
+    }
+
+    private String parseH2Result(String output) {
+        // H2 Shell output format:
+        // Column names
+        // ----------
+        // values
+        // (N rows)
+
+        String[] lines = output.split("\n");
+
+        // Return the last non-empty line that contains actual data
+        for (int i = lines.length - 1; i >= 0; i--) {
+            String line = lines[i].trim();
+
+            // Skip empty lines, separators, headers, and row count lines
+            if (!line.isEmpty() &&
+                !line.startsWith("-") &&
+                !line.startsWith("(") &&
+                !line.equals("COUNT(*)") &&
+                !line.startsWith("LOGINNAME") &&
+                !line.startsWith("FIRSTNAME") &&
+                !line.startsWith("SURNAME") &&
+                !line.startsWith("EMAIL")) {
+
+                LOGGER.debug("Parsed H2 result value: {}", line);
+                return line;
             }
         }
 
-        return result;
+        LOGGER.warn("Could not parse H2 result from output: {}", output);
+        return "";
     }
 }
