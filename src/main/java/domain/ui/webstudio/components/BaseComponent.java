@@ -18,6 +18,7 @@ public abstract class BaseComponent extends CoreComponent {
     private List<MessageComponent> messages;
     @Getter
     private WebElement modalOkBtn;
+    private WebElement notificationPanel;
 
     public BaseComponent(Page page) {
         super(page);
@@ -33,6 +34,7 @@ public abstract class BaseComponent extends CoreComponent {
         contentLoadingSpinner = new WebElement(page, "xpath=//div[@id='loadingPanel']", "contentLoadingSpinner");
         messages = createComponentList(MessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
         modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-content']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
+        notificationPanel = new WebElement(page, "xpath=//div[@class='ant-alert-content']/div", "Notification Panel");
     }
 
     public void waitUntilSpinnerLoaded() {
@@ -57,5 +59,17 @@ public abstract class BaseComponent extends CoreComponent {
             WaitUtil.sleep(50, "Waiting between message get_text attempts");
         }
         return messagesTextList;
+    }
+
+    public boolean isNotificationVisible() {
+        return notificationPanel.sleep(500).isVisible();
+    }
+
+    public String getNotificationText() {
+        WaitUtil.waitForCondition(() -> notificationPanel.isVisible(), 100, 1000, "Waiting for notification to be visible");
+        if (isNotificationVisible()) {
+            return notificationPanel.getText();
+        }
+        throw new RuntimeException("No Notification text found!");
     }
 }
