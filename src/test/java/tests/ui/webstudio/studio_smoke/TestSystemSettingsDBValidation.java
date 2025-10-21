@@ -138,9 +138,10 @@ public class TestSystemSettingsDBValidation extends BaseTest {
         String dbPath = "/opt/openl/local/users-db/db";
 
         // Use H2's shell tool to execute query
-        // H2 jar located at: /opt/openl/app/webapps/ROOT/WEB-INF/lib/h2-2.4.240.jar
+        // Find H2 jar dynamically to support any version - use shell to expand wildcard
         String h2Command = String.format(
-                "java -cp '/opt/openl/app/webapps/ROOT/WEB-INF/lib/h2-2.4.240.jar' org.h2.tools.Shell " +
+                "H2_JAR=$(ls /opt/openl/app/webapps/ROOT/WEB-INF/lib/h2-*.jar | head -1) && " +
+                "java -cp \"$H2_JAR\" org.h2.tools.Shell " +
                 "-url 'jdbc:h2:%s;AUTO_SERVER=TRUE' " +
                 "-sql \"%s\"",
                 dbPath, query.replace("\"", "\\\"")
