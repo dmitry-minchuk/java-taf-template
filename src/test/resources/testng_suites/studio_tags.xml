@@ -1,0 +1,26 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite verbose="1" name="WebStudio Tags Tests" annotations="JDK" parallel="tests" thread-count="1">
+
+    <listeners>
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
+        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
+    </listeners>
+
+    <test name="TestTagManagement"><classes><class name="tests.ui.webstudio.studio_tags.TestTagManagement"/></classes></test>
+    <test name="TestProjectTagSelection"><classes><class name="tests.ui.webstudio.studio_tags.TestProjectTagSelection"/></classes></test>
+    <test name="TestTagsAutoFill"><classes><class name="tests.ui.webstudio.studio_tags.TestTagsAutoFill"/></classes></test>
+    <test name="TestProjectTagEditing"><classes><class name="tests.ui.webstudio.studio_tags.TestProjectTagEditing"/></classes></test>
+    <test name="TestCreateProjectWithTags"><classes><class name="tests.ui.webstudio.studio_tags.TestCreateProjectWithTags"/></classes></test>
+    <test name="TestProjectGroupingAndFiltering"><classes><class name="tests.ui.webstudio.studio_tags.TestProjectGroupingAndFiltering"/></classes></test>
+    <test name="TestTagFiltering"><classes><class name="tests.ui.webstudio.studio_tags.TestTagFiltering"/></classes></test>
+    <test name="TestTagsAlreadyApplied"><classes><class name="tests.ui.webstudio.studio_tags.TestTagsAlreadyApplied"/></classes></test>
+    <test name="TestAutoFillTagExtraction"><classes><class name="tests.ui.webstudio.studio_tags.TestAutoFillTagExtraction"/></classes></test>
+    <test name="TestAutoFillNonExtensibleBehavior"><classes><class name="tests.ui.webstudio.studio_tags.TestAutoFillNonExtensibleBehavior"/></classes></test>
+    <test name="TestProjectCopyWithTags"><classes><class name="tests.ui.webstudio.studio_tags.TestProjectCopyWithTags"/></classes></test>
+    <test name="TestMultiUserTagScenarios"><classes><class name="tests.ui.webstudio.studio_tags.TestMultiUserTagScenarios"/></classes></test>
+    <test name="TestImportProjectWithTags"><classes><class name="tests.ui.webstudio.studio_tags.TestImportProjectWithTags"/></classes></test>
+    <test name="TestGroupingEdgeCases"><classes><class name="tests.ui.webstudio.studio_tags.TestGroupingEdgeCases"/></classes></test>
+    <test name="TestTemplateErrorValidation"><classes><class name="tests.ui.webstudio.studio_tags.TestTemplateErrorValidation"/></classes></test>
+    <test name="TestMultiRepositoryAutoFill"><classes><class name="tests.ui.webstudio.studio_tags.TestMultiRepositoryAutoFill"/></classes></test>
+
+</suite>

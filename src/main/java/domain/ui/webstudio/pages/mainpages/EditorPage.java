@@ -52,4 +52,18 @@ public class EditorPage extends BasePage {
         WaitUtil.sleep(500, "Waiting for center table to fully load");
         return centerTable;
     }
+
+    public void logout() {
+        // Implementation for logout - depends on UI structure
+    }
+
+    public void openRepository() {
+        // Switch to repository tab
+        tabSwitcherComponent.switchToTab("Repository");
+    }
+
+    public RepositoryPage goToRepository() {
+        openRepository();
+        return new RepositoryPage();
+    }
 }
