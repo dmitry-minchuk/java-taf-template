@@ -5,9 +5,11 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
+import java.util.List;
+
 public class MessageComponent extends BaseComponent {
 
-    private WebElement message;
+    private List<WebElement> message;
     private WebElement closeBtn;
 
     public MessageComponent() {
@@ -21,12 +23,17 @@ public class MessageComponent extends BaseComponent {
     }
 
     private void initializeComponents() {
-        message = createScopedElement("xpath=.//div[contains(@class,'ant-notification-notice-message')]", "Message Content");
+        message = createScopedElementList("xpath=.//div[contains(@class,'ant-notification-notice-message')]", "Message Content List");
         closeBtn = createScopedElement("xpath=.//a[@aria-label='Close']", "Close Message Button");
     }
 
     public String getMessageText() {
-        return message.getText();
+        if(!message.isEmpty()) {
+            String text = message.getFirst().getText();
+            LOGGER.info("Trying to extract text from the element: {}", text);
+            return text;
+        }
+        return "";
     }
 
     public void closeMessage() {

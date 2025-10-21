@@ -7,6 +7,7 @@ import domain.ui.webstudio.components.common.MessageComponent;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // This class is separated from CoreComponent and created for specific element storage
@@ -39,10 +40,22 @@ public abstract class BaseComponent extends CoreComponent {
     }
 
     public void closeAllMessages() {
-        LOGGER.info("messages.size() = {}", messages.size());
+        LOGGER.info("Messages currently open: {}", messages.size());
         for(int i = 0; i < 3; i++) {
             messages.forEach(MessageComponent::closeMessage);
             WaitUtil.sleep(100, "Waiting between message close attempts");
         }
+    }
+
+    public List<String> getAllMessages() {
+        List<String> messagesTextList = new ArrayList<>();
+        for(int i = 0; i < 30; i++) {
+            messages.forEach(m -> {
+                if(!messagesTextList.contains(m.getMessageText()))
+                    messagesTextList.add(m.getMessageText());
+            });
+            WaitUtil.sleep(50, "Waiting between message get_text attempts");
+        }
+        return messagesTextList;
     }
 }

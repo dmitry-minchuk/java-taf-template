@@ -10,5 +10,6 @@
     <test name="TestUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestUserSettingsAndDetails"/></classes></test>
     <test name="TestUsersManagementWithoutExternalAuth"><classes><class name="tests.ui.webstudio.studio_smoke.TestUsersManagementWithoutExternalAuth"/></classes></test>
     <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestSystemSettings"/></classes></test>
+    <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestSystemSettingsDBValidation"/></classes></test>
 
 </suite>
