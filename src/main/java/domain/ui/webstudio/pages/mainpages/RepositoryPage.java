@@ -14,6 +14,7 @@ import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentB
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployConfigurationTabsComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.TagsPopupComponent;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +45,7 @@ public class RepositoryPage extends BasePage {
     private RepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
     private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
     private DeployModalComponent deployModalComponent;
+    private TagsPopupComponent tagsPopupComponent;
 
     private TableComponent projectsTable;
     WebElement confirmOpeningDialogBtn;
@@ -69,12 +71,17 @@ public class RepositoryPage extends BasePage {
         repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
         deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
         deployModalComponent = new DeployModalComponent();
+        tagsPopupComponent = createScopedComponent(TagsPopupComponent.class, "xpath=//div[@id='modalCreateProjectTags']", "tagsPopupComponent");
         projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
+        createProject(projectType, projectName, sourceName, true);
+    }
+
+    public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName, boolean finalize) {
         createProjectLink.click();
         switch (projectType) {
             case EXCEL_FILES:
@@ -93,9 +100,11 @@ public class RepositoryPage extends BasePage {
                 throw new IllegalArgumentException("Unsupported project type: " + projectType);
         }
 
-        if(configureCommitInfoComponentShade.isVisible(3000))
-            configureCommitInfoComponent.fillCommitInfoWithRandomData();
-        refreshBtn.click(10000);
+        if(finalize) {
+            if (configureCommitInfoComponentShade.isVisible(3000))
+                configureCommitInfoComponent.fillCommitInfoWithRandomData();
+            refreshBtn.click(10000);
+        }
     }
 
     public void refresh() {
