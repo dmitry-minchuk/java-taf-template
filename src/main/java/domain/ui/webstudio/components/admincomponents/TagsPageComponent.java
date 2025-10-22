@@ -1,17 +1,31 @@
 package domain.ui.webstudio.components.admincomponents;
 
-import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.BaseComponent;
+import domain.ui.webstudio.components.common.TableComponent;
 
 public class TagsPageComponent extends BaseComponent {
 
-    private WebElement addTagBtn;
-    private WebElement tagNameField;
-    private WebElement tagDescriptionField;
-    private WebElement saveBtn;
-    private WebElement cancelBtn;
-    private WebElement tagsTable;
+    private static final int COL_TAG_TYPE = 1;
+    private static final int COL_EXTENSIBLE = 2;
+    private static final int COL_NULLABLE = 3;
+    private static final int COL_TAGS = 4;
+    private static final int COL_ACTIONS = 5;
+
+    private TableComponent tagsTable;
+
+    private WebElement tagTypeNameTemplate;
+    private WebElement extensibleCheckboxTemplate;
+    private WebElement nullableCheckboxTemplate;
+    private WebElement deleteActionBtnTemplate;
+    private WebElement addTagBtnTemplate;
+    private WebElement tagTemplate;
+
+    private WebElement newTagTypeInput;
+    private WebElement projectNameTemplatesTextarea;
+    private WebElement saveTemplatesBtn;
+    private WebElement fillTagsForProjectBtn;
 
     public TagsPageComponent() {
         super(LocalDriverPool.getPage());
@@ -24,54 +38,108 @@ public class TagsPageComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        addTagBtn = createScopedElement("xpath=.//button[./span[text()='Add Tag'] or ./span[contains(text(),'Add')]]", "addTagBtn");
-        tagNameField = createScopedElement("xpath=.//input[@placeholder='Tag Name' or @id='tagName']", "tagNameField");
-        tagDescriptionField = createScopedElement("xpath=.//input[@placeholder='Description' or @id='tagDescription'] | .//textarea[@placeholder='Description']", "tagDescriptionField");
-        saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement("xpath=.//button[./span[text()='Cancel']]", "cancelBtn");
-        tagsTable = createScopedElement("xpath=.//table//tbody[@class='ant-table-tbody']", "tagsTable");
+        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[@class='ant-table-wrapper tag-table']//table", "tagsTable");
+
+        tagTypeNameTemplate = createScopedElement("xpath=.//div[@class='editable-cell-wrap']", "tagTypeName");
+        extensibleCheckboxTemplate = createScopedElement("xpath=.//label[@class='ant-checkbox-wrapper']//input[@type='checkbox']", "extensibleCheckbox");
+        nullableCheckboxTemplate = createScopedElement("xpath=((.//label[@class='ant-checkbox-wrapper']//input[@type='checkbox']))[2]", "nullableCheckbox");
+        deleteActionBtnTemplate = createScopedElement("xpath=.//span[@role='img' and @aria-label='delete']", "deleteActionBtn");
+        addTagBtnTemplate = createScopedElement("xpath=.//span[@class='ant-tag' and contains(@style, 'dashed')]", "addTagBtn");
+        tagTemplate = createScopedElement("xpath=.//span[@class='ant-tag' and not(contains(@style, 'dashed'))]", "tag");
+
+        newTagTypeInput = createScopedElement("xpath=.//input[@name='tag-type' and @placeholder='New Tag Type']", "newTagTypeInput");
+        projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[@class='ant-input']", "projectNameTemplatesTextarea");
+        saveTemplatesBtn = createScopedElement("xpath=.//button[.//span[text()='Save Templates']]", "saveTemplatesBtn");
+        fillTagsForProjectBtn = createScopedElement("xpath=.//button[.//span[text()='Fill Tags for Project']]", "fillTagsForProjectBtn");
     }
 
-    public void clickAddTag() {
-        addTagBtn.click();
+    public TableComponent getTagsTable() {
+        tagsTable.isVisible();
+        return tagsTable;
     }
 
-    public void setTagName(String name) {
-        tagNameField.fill(name);
+    public int getTagTypeRowByName(String tagTypeName) {
+        for (int i = 1; i <= tagsTable.getRows().size(); i++)
+            if (getTagTypeName(i).equals(tagTypeName))
+                return i;
+        throw new RuntimeException("No such tagTypeName found!");
     }
 
-    public String getTagName() {
-        return tagNameField.getAttribute("value");
+    public TagsPageComponent editTagTypeName(String oldTagTypeName, String newTagTypeName) {
+        int row = getTagTypeRowByName(oldTagTypeName);
+        tagsTable.getCell(row, COL_TAG_TYPE).getLocator().locator("xpath=.//div[@class='editable-cell-wrap']").click();
+        tagsTable.getCell(row, COL_TAG_TYPE).getLocator().locator("xpath=.//div/input").clear();
+        tagsTable.getCell(row, COL_TAG_TYPE).getLocator().locator("xpath=.//div/input").fill(newTagTypeName);
+        return this;
     }
 
-    public void setTagDescription(String description) {
-        tagDescriptionField.fill(description);
+    public String getTagTypeName(int rowIndex) {
+        return tagsTable.getCell(rowIndex, COL_TAG_TYPE).getText().trim();
     }
 
-    public String getTagDescription() {
-        return tagDescriptionField.getAttribute("value");
+    public boolean isExtensibleChecked(int rowIndex) {
+        return tagsTable.getCell(rowIndex, COL_EXTENSIBLE).getLocator().locator("xpath=.//input[@type='checkbox']").isChecked();
     }
 
-    public void saveTag() {
-        saveBtn.click();
+    public TagsPageComponent setExtensible(int rowIndex, boolean checked) {
+        if (isExtensibleChecked(rowIndex) != checked)
+            tagsTable.getCell(rowIndex, COL_EXTENSIBLE).getLocator().locator("xpath=.//input[@type='checkbox']").click();
+        return this;
     }
 
-    public void cancelTag() {
-        cancelBtn.click();
+    public boolean isNullableChecked(int rowIndex) {
+        return tagsTable.getCell(rowIndex, COL_NULLABLE).getLocator().locator("xpath=.//input[@type='checkbox']").isChecked();
     }
 
-    public void addNewTag(String name, String description) {
-        clickAddTag();
-        setTagName(name);
-        setTagDescription(description);
-        saveTag();
+    public TagsPageComponent setNullable(int rowIndex, boolean checked) {
+        if (isNullableChecked(rowIndex) != checked)
+            tagsTable.getCell(rowIndex, COL_NULLABLE).getLocator().locator("xpath=.//input[@type='checkbox']").click();
+        return this;
     }
 
-    public boolean isTagsTableVisible() {
-        return tagsTable.isVisible();
+    public TagsPageComponent addTag(String tagTypeName, String tagToAdd) {
+        int row = getTagTypeRowByName(tagTypeName);
+        tagsTable.getCell(row, COL_TAGS).getLocator().locator("xpath=.//span[@class='ant-tag' and contains(@style, 'dashed')]").click();
+        tagsTable.getCell(row, COL_TAGS).getLocator().locator("xpath=.//input").fill(tagToAdd);
+        return this;
     }
 
-    public boolean isAddTagButtonVisible() {
-        return addTagBtn.isVisible();
+    public TagsPageComponent removeTag(String tagTypeName, String tagText) {
+        int row = getTagTypeRowByName(tagTypeName);
+        tagsTable.getCell(row, COL_TAGS).getLocator()
+                .locator(String.format("xpath=.//span[@class='ant-tag' and .//span[text()='%s']]", tagText))
+                .locator("xpath=./span[@class='anticon anticon-close']").click();
+        return this;
+    }
+
+    public TagsPageComponent deleteTagType(String tagTypeName) {
+        int row = getTagTypeRowByName(tagTypeName);
+        tagsTable.getCell(row, COL_ACTIONS).getLocator().locator("xpath=.//span[@role='img' and @aria-label='delete']").click();
+        return this;
+    }
+
+    public TagsPageComponent addNewTagType(String tagTypeName) {
+        newTagTypeInput.fill(tagTypeName);
+        newTagTypeInput.press("Enter");
+        return this;
+    }
+
+    public TagsPageComponent setProjectNameTemplates(String templates) {
+        projectNameTemplatesTextarea.fill(templates);
+        return this;
+    }
+
+    public String getProjectNameTemplates() {
+        return projectNameTemplatesTextarea.getAttribute("value");
+    }
+
+    public TagsPageComponent saveTemplates() {
+        saveTemplatesBtn.click();
+        return this;
+    }
+
+    public TagsPageComponent fillTagsForProject() {
+        fillTagsForProjectBtn.click();
+        return this;
     }
 }
