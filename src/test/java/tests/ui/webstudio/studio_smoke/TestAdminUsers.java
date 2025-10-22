@@ -9,15 +9,11 @@ import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.service.WorkflowService;
-import helpers.utils.WaitUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -26,7 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestUsersManagementWithoutExternalAuth extends BaseTest {
+public class TestAdminUsers extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-32784")

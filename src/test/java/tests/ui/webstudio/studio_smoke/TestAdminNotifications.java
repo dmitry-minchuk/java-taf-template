@@ -18,7 +18,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestNotifications extends BaseTest {
+public class TestAdminNotifications extends BaseTest {
 
     private String testMessage = "Check message!";
     private String message256 = "aultdsswodeisanalytic12skallodOOOlickslickdbsdefaultdsswodeisanalytic12skallodOOOlickslickdbsdefausanalytic12skallodOOOlickslickdbsdefaultdsswodeisanalytic12skallodOOOlicklytic12skallodOOOlickslickdbsdefausanalytic12skallodOOOlickslickdbsdefaultdsswodei256";

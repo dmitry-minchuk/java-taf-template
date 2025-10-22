@@ -20,7 +20,7 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestSystemSettingsDBValidation extends BaseTest {
+public class TestAdminSystemSettingsDBValidation extends BaseTest {
 
     private static final String TEST_USER = "testdbuser";
     private static final String TEST_PASSWORD = "Test123!";

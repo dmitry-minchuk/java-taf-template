@@ -30,7 +30,7 @@ import static domain.serviceclasses.constants.User.ADMIN;
 import static domain.ui.webstudio.components.admincomponents.SecurityPageComponent.DefaultGroup.ADMINISTRATORS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestUserSettingsAndDetails extends BaseTest {
+public class TestAdminUserSettings extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-31293")
