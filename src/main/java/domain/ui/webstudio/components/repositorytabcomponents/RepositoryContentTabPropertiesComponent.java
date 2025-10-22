@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RepositoryContentTabPropertiesComponent extends BaseComponent {
@@ -18,6 +19,7 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     private static final Logger LOGGER = LogManager.getLogger(RepositoryContentTabPropertiesComponent.class);
 
     private TableComponent propertiesTable;
+    private TableComponent tagsTable;
 
     public RepositoryContentTabPropertiesComponent() {
         super(LocalDriverPool.getPage());
@@ -31,6 +33,7 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
 
     private void initializeElements() {
         propertiesTable = createScopedComponent(TableComponent.class, "xpath=.//table[@class='formfields']", "propertiesTable");
+        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//h3[text()='Tags']/following-sibling::table[@class='formfields']", "tagsTable");
     }
 
     @Getter
@@ -111,5 +114,46 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
 
     public String getRepository() {
         return getProperty(Property.REPOSITORY);
+    }
+
+    public int getTagTypeRowByName(String tagTypeName) {
+        int rowCount = tagsTable.getRowsCount();
+        for (int i = 1; i <= rowCount; i++) {
+            String cellText = tagsTable.getCell(i, 1).getText().trim().replace(":", "");
+            if (cellText.equals(tagTypeName))
+                return i;
+        }
+        throw new RuntimeException("Tag type '" + tagTypeName + "' not found in tags table");
+    }
+
+    public List<String> getAllTagTypeNames() {
+        return tagsTable.getRows().stream()
+                .map(row -> row.getCells().getFirst().getText().trim().replace(":", ""))
+                .toList();
+    }
+
+    public List<String> getAvailableTagsForType(String tagTypeName) {
+        int row = getTagTypeRowByName(tagTypeName);
+        return tagsTable.getCell(row, 2).getLocator()
+                .locator("xpath=.//ul[@class='es-list']/li")
+                .allTextContents();
+    }
+
+    public RepositoryContentTabPropertiesComponent selectTagForType(String tagTypeName, String tagValue) {
+        int row = getTagTypeRowByName(tagTypeName);
+        tagsTable.getCell(row, 2).getLocator()
+                .locator("xpath=.//input[@class='editable-select es-input']")
+                .click();
+        tagsTable.getCell(row, 2).getLocator()
+                .locator(String.format("xpath=.//ul[@class='es-list']/li[@value='%s']", tagValue))
+                .click();
+        return this;
+    }
+
+    public String getSelectedTagForType(String tagTypeName) {
+        int row = getTagTypeRowByName(tagTypeName);
+        return tagsTable.getCell(row, 2).getLocator()
+                .locator("xpath=.//input[@class='editable-select es-input']")
+                .getAttribute("value");
     }
 }
