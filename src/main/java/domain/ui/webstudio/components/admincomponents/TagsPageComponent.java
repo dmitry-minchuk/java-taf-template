@@ -16,13 +16,6 @@ public class TagsPageComponent extends BaseComponent {
 
     private TableComponent tagsTable;
 
-    private WebElement tagTypeNameTemplate;
-    private WebElement extensibleCheckboxTemplate;
-    private WebElement nullableCheckboxTemplate;
-    private WebElement deleteActionBtnTemplate;
-    private WebElement addTagBtnTemplate;
-    private WebElement tagTemplate;
-
     private WebElement newTagTypeInput;
     private WebElement projectNameTemplatesTextarea;
     private WebElement saveTemplatesBtn;
@@ -40,13 +33,6 @@ public class TagsPageComponent extends BaseComponent {
 
     private void initializeElements() {
         tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[@class='ant-table-wrapper tag-table']//table", "tagsTable");
-
-        tagTypeNameTemplate = createScopedElement("xpath=.//div[@class='editable-cell-wrap']", "tagTypeName");
-        extensibleCheckboxTemplate = createScopedElement("xpath=.//label[@class='ant-checkbox-wrapper']//input[@type='checkbox']", "extensibleCheckbox");
-        nullableCheckboxTemplate = createScopedElement("xpath=((.//label[@class='ant-checkbox-wrapper']//input[@type='checkbox']))[2]", "nullableCheckbox");
-        deleteActionBtnTemplate = createScopedElement("xpath=.//span[@role='img' and @aria-label='delete']", "deleteActionBtn");
-        addTagBtnTemplate = createScopedElement("xpath=.//span[@class='ant-tag' and contains(@style, 'dashed')]", "addTagBtn");
-        tagTemplate = createScopedElement("xpath=.//span[@class='ant-tag' and not(contains(@style, 'dashed'))]", "tag");
 
         newTagTypeInput = createScopedElement("xpath=.//input[@name='tag-type' and @placeholder='New Tag Type']", "newTagTypeInput");
         projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[@class='ant-input']", "projectNameTemplatesTextarea");
