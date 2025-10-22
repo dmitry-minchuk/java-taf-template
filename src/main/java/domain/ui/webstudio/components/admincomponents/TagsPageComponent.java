@@ -4,6 +4,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.common.TableComponent;
+import java.util.List;
 
 public class TagsPageComponent extends BaseComponent {
 
@@ -110,6 +111,13 @@ public class TagsPageComponent extends BaseComponent {
                 .locator(String.format("xpath=.//span[@class='ant-tag' and .//span[text()='%s']]", tagText))
                 .locator("xpath=./span[@class='anticon anticon-close']").click();
         return this;
+    }
+
+    public List<String> getAllTagsForTagType(String tagTypeName) {
+        int row = getTagTypeRowByName(tagTypeName);
+        return tagsTable.getCell(row, COL_TAGS).getLocator()
+                .locator("xpath=.//div/span[not(contains(@style,'dashed'))]/span[1]")
+                .allTextContents();
     }
 
     public TagsPageComponent deleteTagType(String tagTypeName) {
