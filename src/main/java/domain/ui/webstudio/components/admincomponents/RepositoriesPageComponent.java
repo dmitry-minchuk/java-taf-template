@@ -20,6 +20,7 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     private WebElement remoteRepositoryNameField;
     private WebElement remoteRepositoryTypeSelector;
+    private WebElement localRepositoryPathField;
     private WebElement remoteRepositoryCheckBox;
     private WebElement remoteRepositoryPathField;
     private WebElement remoteRepositoryLoginField;
@@ -44,6 +45,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         addRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Design Repository')]]", "addRepositoryBtn");
         addDeploymentRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Deployment Repository')]]", "addDeploymentRepositoryBtn");
         designRepositoryList = createScopedElementList("xpath=.//div[@class='ant-tabs-content-holder']//div[@class='ant-tabs-nav-list']/div[@data-node-key]", "designRepositoryList");
+        localRepositoryPathField = createScopedElement("xpath=.//input[@id='settings_localRepositoryPath']", "localRepositoryPathField");
 
         remoteRepositoryNameField = createScopedElement("xpath=.//input[@id='name']", "remoteRepositoryCheckBox");
         remoteRepositoryTypeSelector = createScopedElement("xpath=.//input[@id='type']", "remoteRepositoryCheckBox");
@@ -66,8 +68,8 @@ public class RepositoriesPageComponent extends BaseComponent {
         return this;
     }
 
-    public RepositoriesPageComponent setRemoteRepositoryPath(String path) {
-        remoteRepositoryPathField.fillSequentially(path);
+    public RepositoriesPageComponent setLocalRepositoryPath(String path) {
+        localRepositoryPathField.fillSequentially(path);
         return this;
     }
 

@@ -6,6 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
+import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import helpers.service.LoginService;
@@ -26,14 +27,14 @@ public class TestButtonDeployAvailableDeployConfiguration extends BaseTest { // 
         loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = new RepositoryPage().getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProjectFromTemplate("1", "Example 1 - Bank Rating");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, "1", "Example 1 - Bank Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", "1");
         String revision1 = repositoryPage.getRepositoryContentTabPropertiesComponent().getRevision();
         LOGGER.info("revision1: {}", revision1);
 
-        repositoryPage.createProjectFromTemplate("2", "Example 2 - Corporate Rating");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,"2", "Example 2 - Corporate Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", "2");

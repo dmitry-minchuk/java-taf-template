@@ -24,7 +24,8 @@ import tests.BaseTest;
 
 public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
-    private static final String PROJECT_NAME = "WorkspaceProject1";
+    private static final String PROJECT_NAME_5 = "Project5";
+    private static final String PROJECT_NAME_6 = "Project6";
     private static final String ZIP_FILE_NAME_5 = "TagsTestProject5.zip";
     private static final String ZIP_FILE_NAME_6 = "TagsTestProject5.zip";
 
@@ -35,7 +36,7 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
     private static final String TAG_TYPE_OPT_EXT = "TagOptExt";
 
     @Test
-    @TestCaseId("IPBQA-32767-3")
+    @TestCaseId("IPBQA-32767")
     @Description("Create project from workspace with tags")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromWorkspaceWithTags() {
@@ -44,7 +45,7 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
         setupRequiredTagTypes(editorPage);
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME_5, false);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME_5, ZIP_FILE_NAME_5, false);
         repositoryPage.fillCommitInfo();
         repositoryPage.getMissingTagsPopupComponent().clickContinue();
         TagsPopupComponent tagsPopup = repositoryPage.getTagsPopupComponent();
@@ -55,7 +56,7 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
                 .clickSave();
 
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME_6, false);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME_6, ZIP_FILE_NAME_6, false);
         repositoryPage.getMissingTagsPopupComponent().clickContinue();
         tagsPopup.selectTagForType(TAG_TYPE_NAME, "Tag2")
                 .selectTagForType(TAG_TYPE_EXT, "TagExt2")
@@ -66,19 +67,16 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
         repositoryPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToRepositoriesPage()
-                .setRemoteRepositoryPath("/opt/openl/local/repositories/design1")
+                .setLocalRepositoryPath("/opt/openl/local/repositories/design1")
                 .applyChangesAndRelogin(User.ADMIN);
 
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME_6, false);
+        repositoryPage.createProjectFromWorkSpace(null, null, true);
 
-        // Step 5: After clicking create, warning popup appears and system proceeds to tags popup
-        Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().isVisible(500), "Missing Tags PopupComponent should be visible!");
-        repositoryPage.getMissingTagsPopupComponent().clickContinue();
-
-        // Step 6-7: Verify and select tags in TagsPopupComponent
-        String selectedTagValue = tagsPopup.getSelectedTagForType(TAG_TYPE_NAME);
-        Assert.assertTrue(selectedTagValue.equals("[None]"), "Tag value should be empty for new project");
+        Assert.assertEquals(tagsPopup.getSelectedTagForType(TAG_TYPE_NAME), "[None]", "Tag value should be empty for new project");
+        Assert.assertEquals(tagsPopup.getSelectedTagForType(TAG_TYPE_EXT), "[None]", "Tag value should be empty for new project");
+        Assert.assertEquals(tagsPopup.getSelectedTagForType(TAG_TYPE_OPT), "[None]", "Tag value should be empty for new project");
+        Assert.assertEquals(tagsPopup.getSelectedTagForType(TAG_TYPE_OPT_EXT), "[None]", "Tag value should be empty for new project");
 
         // Select tags for the project
         tagsPopup.selectTagForType(TAG_TYPE_NAME, "Tag1")
@@ -87,11 +85,15 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
                 .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt1")
                 .clickSave();
 
-        // Step 9: Verify tags in project properties
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
+                .selectItemInFolder("Projects", PROJECT_NAME_5);
         RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
+
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_NAME_6);
+        propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
 
         // Verify all tags are correctly saved
         verifyTagValue(propertiesComponent, TAG_TYPE_NAME, "Tag1");

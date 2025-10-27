@@ -29,7 +29,7 @@ public class TestAdminSystemSettingsDBValidation extends BaseTest {
     private static final String TEST_LASTNAME = "User";
 
     @Test
-    @TestCaseId("IPBQA-TBD")
+    @TestCaseId("IPBQA-30651")
     @Description("System Settings - Database Configuration validation with real DB interaction")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSystemSettingsDBValidation() throws Exception {
