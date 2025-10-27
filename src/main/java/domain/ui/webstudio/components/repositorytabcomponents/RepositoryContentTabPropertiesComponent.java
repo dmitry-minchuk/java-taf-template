@@ -32,8 +32,8 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        propertiesTable = createScopedComponent(TableComponent.class, "xpath=.//table[@class='formfields']", "propertiesTable");
-        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//h3[text()='Tags']/following-sibling::table[@class='formfields']", "tagsTable");
+        propertiesTable = createScopedComponent(TableComponent.class, "xpath=.//span[@id='propertiesContent']//table[@class='formfields']", "propertiesTable");
+        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//span[@id='editProjectTagsPanel']//table[@class='formfields']", "tagsTable");
     }
 
     @Getter

@@ -4,6 +4,8 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.common.TableComponent;
+import helpers.utils.WaitUtil;
+
 import java.util.List;
 
 public class TagsPageComponent extends BaseComponent {
@@ -32,7 +34,7 @@ public class TagsPageComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[@class='ant-table-wrapper tag-table']//table", "tagsTable");
+        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[contains(@class,'ant-table-wrapper tag-table')]//table", "tagsTable");
 
         newTagTypeInput = createScopedElement("xpath=.//input[@name='tag-type' and @placeholder='New Tag Type']", "newTagTypeInput");
         projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[@class='ant-input']", "projectNameTemplatesTextarea");
@@ -86,8 +88,9 @@ public class TagsPageComponent extends BaseComponent {
 
     public TagsPageComponent addTag(String tagTypeName, String tagToAdd) {
         int row = getTagTypeRowByName(tagTypeName);
-        tagsTable.getCell(row, COL_TAGS).getLocator().locator("xpath=.//span[@class='ant-tag' and contains(@style, 'dashed')]").click();
+        tagsTable.getCell(row, COL_TAGS).getLocator().locator("xpath=.//span[contains(@class,'ant-tag') and contains(@style, 'dashed')]").click();
         tagsTable.getCell(row, COL_TAGS).getLocator().locator("xpath=.//input").fill(tagToAdd);
+        tagsTable.getCell(row, COL_TAGS).getLocator().press("Enter");
         return this;
     }
 
@@ -115,6 +118,7 @@ public class TagsPageComponent extends BaseComponent {
     public TagsPageComponent addNewTagType(String tagTypeName) {
         newTagTypeInput.fill(tagTypeName);
         newTagTypeInput.press("Enter");
+        WaitUtil.sleep(500, "Waiter to let created Tag to appear inside the Tag Table");
         return this;
     }
 

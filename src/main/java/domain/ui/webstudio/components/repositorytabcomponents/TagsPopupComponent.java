@@ -10,6 +10,8 @@ import java.util.List;
 public class TagsPopupComponent extends BaseComponent {
 
     private TableComponent tagsTable;
+    private WebElement saveBtn;
+    private WebElement cancelBtn;
 
     public TagsPopupComponent() {
         super(LocalDriverPool.getPage());
@@ -23,6 +25,8 @@ public class TagsPopupComponent extends BaseComponent {
 
     private void initializeElements() {
         tagsTable = createScopedComponent(TableComponent.class, "xpath=.//table[@class='formfields']", "tagsTable");
+        saveBtn = createScopedElement("xpath=.//input[@value='Save']", "saveBtn");
+        cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
     private int getTagTypeRowByName(String tagTypeName) {
@@ -62,7 +66,15 @@ public class TagsPopupComponent extends BaseComponent {
     public String getSelectedTagForType(String tagTypeName) {
         int row = getTagTypeRowByName(tagTypeName);
         return tagsTable.getCell(row, 2).getLocator()
-                .locator("xpath=.//input[contains(@class, 'editable-select')]")
+                .locator("xpath=.//input[contains(@class, 'editable-select')]/following-sibling::ul/li[@selected='selected']")
                 .getAttribute("value");
+    }
+
+    public void clickSave() {
+        saveBtn.click();
+    }
+
+    public void clickCancel() {
+        cancelBtn.click();
     }
 }
