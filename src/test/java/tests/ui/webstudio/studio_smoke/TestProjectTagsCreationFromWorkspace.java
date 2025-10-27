@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.TagsPopupComponent;
@@ -21,22 +22,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-/**
- * Test Case: IPBQA-32767-3
- * Scenario: Verify Tags - Create project from workspace with bulk tag assignment
- *
- * Test Flow:
- * 1. Create required tag types in Admin section
- * 2. Update local repository path in Admin settings
- * 3. Create projects from workspace
- * 4. Assign tags during bulk creation
- * 5. Verify tags are correctly applied to all created projects
- */
 public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
-    private static final String PROJECT5_NAME = "Project5";
-    private static final String PROJECT6_NAME = "Project6";
-    private static final String WORKSPACE_PATH = "/opt/openl/local/repositories/design1";
+    private static final String PROJECT_NAME = "WorkspaceProject1";
+    private static final String ZIP_FILE_NAME = "TagsTestWorkspace.zip";
 
     // Tag type configuration
     private static final String TAG_TYPE_NAME = "Tag";
@@ -44,86 +33,48 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
     private static final String TAG_TYPE_EXT = "TagExt";
     private static final String TAG_TYPE_OPT_EXT = "TagOptExt";
 
-    @Test(testName = "Create projects from workspace with bulk tag assignment")
-    public void testCreateProjectsFromWorkspaceWithTags() {
-        // Login as admin
+    @Test
+    @TestCaseId("IPBQA-32767-3")
+    @Description("Create project from workspace with tags")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testCreateProjectFromWorkspaceWithTags() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        // Step 1: Setup required tag types in Admin
         setupRequiredTagTypes(editorPage);
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.WORKSPACE, PROJECT_NAME, ZIP_FILE_NAME, false);
+        repositoryPage.fillCommitInfo();
 
-        // Step 2: Update local repository path and restart
-        updateWorkspacePath(editorPage);
+        // Step 5: After clicking create, warning popup appears and system proceeds to tags popup
+        Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().isVisible(500), "Missing Tags PopupComponent should be visible!");
+        repositoryPage.getMissingTagsPopupComponent().clickContinue();
 
-        // Step 3: Navigate to Repository and create project from workspace
-        RepositoryPage repositoryPage = new RepositoryPage();
-
-        // Step 4-5: Create projects from workspace
-        repositoryPage.getCreateProjectLink().click();
-        CreateNewProjectComponent createNewProjectComponent = repositoryPage.getCreateNewProjectComponent();
-        WorkspaceComponent workspaceComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.WORKSPACE);
-
-        workspaceComponent.setWorkspacePath(WORKSPACE_PATH);
-
-        // Select all projects checkbox (this would be specific to workspace UI)
-        // This step depends on how WorkspaceComponent is implemented
-
-        // Step 6: Verify tags popup is displayed
-        repositoryPage = new RepositoryPage();
+        // Step 6-7: Verify and select tags in TagsPopupComponent
         TagsPopupComponent tagsPopup = repositoryPage.getTagsPopupComponent();
+        String selectedTagValue = tagsPopup.getSelectedTagForType(TAG_TYPE_NAME);
+        Assert.assertTrue(selectedTagValue.equals("[None]"), "Tag value should be empty for new project");
 
-        // Verify all tag types are present
-        Assert.assertTrue(tagsPopup.getAllTagTypeNames().contains(TAG_TYPE_NAME),
-                "Tag type '" + TAG_TYPE_NAME + "' should be present");
-        Assert.assertTrue(tagsPopup.getAllTagTypeNames().contains(TAG_TYPE_EXT),
-                "Tag type '" + TAG_TYPE_EXT + "' should be present");
-        Assert.assertTrue(tagsPopup.getAllTagTypeNames().contains(TAG_TYPE_OPT),
-                "Tag type '" + TAG_TYPE_OPT + "' should be present");
-        Assert.assertTrue(tagsPopup.getAllTagTypeNames().contains(TAG_TYPE_OPT_EXT),
-                "Tag type '" + TAG_TYPE_OPT_EXT + "' should be present");
-
-        // Verify all tags are initially empty
-        String tagValue = tagsPopup.getSelectedTagForType(TAG_TYPE_NAME);
-        Assert.assertTrue(tagValue == null || tagValue.isEmpty(),
-                "Tag should be initially empty");
-
-        // Step 7: Select tags for bulk assignment
+        // Select tags for the project
         tagsPopup.selectTagForType(TAG_TYPE_NAME, "Tag1")
                 .selectTagForType(TAG_TYPE_EXT, "TagExt1")
                 .selectTagForType(TAG_TYPE_OPT, "TagOpt1")
-                .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt1");
+                .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt1")
+                .clickSave();
 
-        // Step 8: Click save to create projects with tags
-        tagsPopup.clickSave();
+        // Step 9: Verify tags in project properties
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_NAME);
+        RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
 
-        // Step 9: Verify success messages
-        // System should show: "Project Project5 was created successfully"
-        // "Project Project6 was created successfully"
-        // This can be verified through getAllMessages() method from BaseComponent
-
-        // Step 10: Verify tags in Project5 properties
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(PROJECT5_NAME);
-        RepositoryContentTabPropertiesComponent project5Properties = repositoryPage.getRepositoryContentTabPropertiesComponent();
-
-        verifyTagValue(project5Properties, TAG_TYPE_NAME, "Tag1");
-        verifyTagValue(project5Properties, TAG_TYPE_EXT, "TagExt1");
-        verifyTagValue(project5Properties, TAG_TYPE_OPT, "TagOpt1");
-        verifyTagValue(project5Properties, TAG_TYPE_OPT_EXT, "TagOptExt1");
-
-        // Step 11: Verify tags in Project6 properties
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(PROJECT6_NAME);
-        RepositoryContentTabPropertiesComponent project6Properties = repositoryPage.getRepositoryContentTabPropertiesComponent();
-
-        verifyTagValue(project6Properties, TAG_TYPE_NAME, "Tag1");
-        verifyTagValue(project6Properties, TAG_TYPE_EXT, "TagExt1");
-        verifyTagValue(project6Properties, TAG_TYPE_OPT, "TagOpt1");
-        verifyTagValue(project6Properties, TAG_TYPE_OPT_EXT, "TagOptExt1");
+        // Verify all tags are correctly saved
+        verifyTagValue(propertiesComponent, TAG_TYPE_NAME, "Tag1");
+        verifyTagValue(propertiesComponent, TAG_TYPE_EXT, "TagExt1");
+        verifyTagValue(propertiesComponent, TAG_TYPE_OPT, "TagOpt1");
+        verifyTagValue(propertiesComponent, TAG_TYPE_OPT_EXT, "TagOptExt1");
     }
 
-    /**
-     * Setup required tag types in admin section
-     */
     private void setupRequiredTagTypes(EditorPage editorPage) {
         // Navigate to Admin -> Tags
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
@@ -161,30 +112,8 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
         tagsPageComponent.saveTemplates();
     }
 
-    /**
-     * Update workspace path in admin repositories settings
-     */
-    private void updateWorkspacePath(EditorPage editorPage) {
-        AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
-        RepositoriesPageComponent repositoriesPage = adminPage.navigateToRepositoriesPage();
-
-        // Update local path to workspace path
-        // This step depends on RepositoriesPageComponent implementation
-        // repositoriesPage.setLocalRepositoryPath(WORKSPACE_PATH);
-        // repositoriesPage.applyAllAndRestart();
-
-        // Alternative: Navigate back to repository after configuration
-        // editorPage = new EditorPage();
-    }
-
-    /**
-     * Helper method to verify tag value in properties
-     */
-    private void verifyTagValue(RepositoryContentTabPropertiesComponent propertiesComponent,
-                               String tagTypeName, String expectedValue) {
+    private void verifyTagValue(RepositoryContentTabPropertiesComponent propertiesComponent, String tagTypeName, String expectedValue) {
         String actualValue = propertiesComponent.getSelectedTagForType(tagTypeName);
-        Assert.assertEquals(actualValue, expectedValue,
-                String.format("Tag type '%s' should have value '%s', but got '%s'",
-                        tagTypeName, expectedValue, actualValue));
+        Assert.assertEquals(actualValue, expectedValue, String.format("Tag type '%s' should have value '%s', but got '%s'", tagTypeName, expectedValue, actualValue));
     }
 }
