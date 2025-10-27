@@ -32,7 +32,7 @@ public class TestProjectTagsCreationNonExistingType extends BaseTest {
     private static final String TAG_TYPE_OPT_EXT = "TagOptExt";
 
     @Test
-    @TestCaseId("IPBQA-32767-2")
+    @TestCaseId("IPBQA-32767")
     @Description("Create project from zip with non-existing tag type")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNonExistingTagTypeHandling() {

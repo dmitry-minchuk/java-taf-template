@@ -7,6 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
+import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.MessageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
@@ -34,7 +35,7 @@ public class TestNewDeployPopup extends BaseTest { // This is not realistic to a
 
         // Step 2: Create project "Example 1 - Bank Rating"
         String projectName = "TestProjectForDeploy";
-        repositoryPage.createProjectFromTemplate(projectName, "Example 1 - Bank Rating");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, "Example 1 - Bank Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", projectName);

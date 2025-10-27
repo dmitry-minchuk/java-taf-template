@@ -8,6 +8,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
+import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.*;
 import domain.ui.webstudio.pages.BasePage;
@@ -112,8 +113,17 @@ public class RepositoryPage extends BasePage {
         refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 
-    public void createProjectFromTemplate(String projectName, String templateName) {
-        createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, templateName);
+    public void createProjectFromWorkSpace(String projectName, String repository, boolean selectAllProjects) {
+        createProjectLink.click();
+        WorkspaceComponent workspaceComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.WORKSPACE);
+        if(!selectAllProjects && repository != null)
+            workspaceComponent.selectProject(projectName).selectRepository(repository).save();
+        else if(!selectAllProjects)
+            workspaceComponent.selectProject(projectName).save();
+        else if(repository == null)
+            workspaceComponent.selectAllProjects().save();
+        else
+            workspaceComponent.selectAllProjects().selectRepository(repository).save();
     }
 
     public void createDeployConfiguration(String configName) {
