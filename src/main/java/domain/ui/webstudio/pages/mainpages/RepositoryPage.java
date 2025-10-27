@@ -9,12 +9,7 @@ import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.LeftRepositoryTreeComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.DeployConfigurationTabsComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.TagsPopupComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.*;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +41,7 @@ public class RepositoryPage extends BasePage {
     private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
     private DeployModalComponent deployModalComponent;
     private TagsPopupComponent tagsPopupComponent;
+    private MissingTagsPopupComponent missingTagsPopupComponent;
 
     private TableComponent projectsTable;
     WebElement confirmOpeningDialogBtn;
@@ -68,10 +64,11 @@ public class RepositoryPage extends BasePage {
         configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
         leftRepositoryTreeComponent = createScopedComponent(LeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
-        repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//span[@id='propertiesContent']", "repositoryContentTabPropertiesComponent");
+        repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//div[@id='properties']", "repositoryContentTabPropertiesComponent");
         deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
         deployModalComponent = new DeployModalComponent();
-        tagsPopupComponent = createScopedComponent(TagsPopupComponent.class, "xpath=//div[@id='modalCreateProjectTags']", "tagsPopupComponent");
+        tagsPopupComponent = createScopedComponent(TagsPopupComponent.class, "xpath=//div[@id='modalCreateProjectTags_container']", "tagsPopupComponent");
+        missingTagsPopupComponent = createScopedComponent(MissingTagsPopupComponent.class, "xpath=//div[@id='modalConfirmIgnoreNonApplicableTags_container']", "tagsPopupComponent");
         projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
@@ -101,10 +98,14 @@ public class RepositoryPage extends BasePage {
         }
 
         if(finalize) {
-            if (configureCommitInfoComponentShade.isVisible(3000))
-                configureCommitInfoComponent.fillCommitInfoWithRandomData();
+            fillCommitInfo();
             refreshBtn.click(10000);
         }
+    }
+
+    public void fillCommitInfo() {
+        if (configureCommitInfoComponentShade.isVisible(3000))
+            configureCommitInfoComponent.fillCommitInfoWithRandomData();
     }
 
     public void refresh() {

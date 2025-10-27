@@ -52,7 +52,10 @@
       "Read(/Users/dmitryminchuk/Projects/eis/openl-tests/src/main/java/actions/**)",
       "Read(//Users/dmitryminchuk/Projects/eis/openl-tests/**)",
       "Bash(mvn clean test:*)",
-      "Read(//Users/dmitryminchuk/Downloads/**)"
+      "Read(//Users/dmitryminchuk/Downloads/**)",
+      "mcp__n8n-jira__Get_an_issue_in_Jira_Software",
+      "Bash(xargs:*)",
+      "Bash(mvn clean compile test-compile:*)"
     ],
     "deny": []
   }
