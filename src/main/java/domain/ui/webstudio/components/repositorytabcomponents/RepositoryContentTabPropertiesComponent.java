@@ -1,18 +1,15 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.common.TableComponent;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.BaseComponent;
+import domain.ui.webstudio.components.common.TableComponent;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class RepositoryContentTabPropertiesComponent extends BaseComponent {
 
@@ -153,7 +150,7 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     public String getSelectedTagForType(String tagTypeName) {
         int row = getTagTypeRowByName(tagTypeName);
         return tagsTable.getCell(row, 2).getLocator()
-                .locator("xpath=.//input[@class='editable-select es-input']")
+                .locator("xpath=.//input[contains(@class,'editable-select')]/following-sibling::ul/li[@selected='selected']")
                 .getAttribute("value");
     }
 }
