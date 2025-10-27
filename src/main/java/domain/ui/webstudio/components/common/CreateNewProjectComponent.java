@@ -5,6 +5,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
+import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     private ExcelFilesComponent excelFilesComponent;
     private ZipArchiveComponent zipArchiveComponent;
     private TemplateTabComponent templateTabComponent;
+    private WorkspaceComponent workspaceTabComponent;
 
     private WebElement tabTemplate;
 
@@ -31,6 +33,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         excelFilesComponent = createScopedComponent(ExcelFilesComponent.class, "xpath=.//form[@name='createProjectFormFiles']", "excelFilesComponent");
         zipArchiveComponent = createScopedComponent(ZipArchiveComponent.class, "xpath=.//form[@name='uploadProjectForm']", "zipArchiveComponent");
         templateTabComponent = createScopedComponent(TemplateTabComponent.class, "xpath=.//form[@name='createProjectFormTempl']", "templateTabComponent");
+        workspaceTabComponent = createScopedComponent(WorkspaceComponent.class, "xpath=.//form[@name='uploadWorkspaceProjectForm']", "workspaceTabComponent");
     }
 
     @SuppressWarnings("unchecked")
@@ -41,6 +44,7 @@ public class CreateNewProjectComponent extends BaseComponent {
             case TEMPLATE -> (T) templateTabComponent;
             case EXCEL_FILES -> (T) excelFilesComponent;
             case ZIP_ARCHIVE -> (T) zipArchiveComponent;
+            case WORKSPACE -> (T) workspaceTabComponent;
             default -> throw new IllegalArgumentException("Unsupported tab type: " + tabName);
         };
     }

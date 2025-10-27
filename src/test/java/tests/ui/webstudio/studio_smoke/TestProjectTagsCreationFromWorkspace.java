@@ -25,7 +25,8 @@ import tests.BaseTest;
 public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
     private static final String PROJECT_NAME = "WorkspaceProject1";
-    private static final String ZIP_FILE_NAME = "TagsTestWorkspace.zip";
+    private static final String ZIP_FILE_NAME_5 = "TagsTestProject5.zip";
+    private static final String ZIP_FILE_NAME_6 = "TagsTestProject5.zip";
 
     // Tag type configuration
     private static final String TAG_TYPE_NAME = "Tag";
@@ -43,15 +44,39 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
         setupRequiredTagTypes(editorPage);
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.WORKSPACE, PROJECT_NAME, ZIP_FILE_NAME, false);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME_5, false);
         repositoryPage.fillCommitInfo();
+        repositoryPage.getMissingTagsPopupComponent().clickContinue();
+        TagsPopupComponent tagsPopup = repositoryPage.getTagsPopupComponent();
+        tagsPopup.selectTagForType(TAG_TYPE_NAME, "Tag2")
+                .selectTagForType(TAG_TYPE_EXT, "TagExt2")
+                .selectTagForType(TAG_TYPE_OPT, "TagOpt2")
+                .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt2")
+                .clickSave();
+
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME_6, false);
+        repositoryPage.getMissingTagsPopupComponent().clickContinue();
+        tagsPopup.selectTagForType(TAG_TYPE_NAME, "Tag2")
+                .selectTagForType(TAG_TYPE_EXT, "TagExt2")
+                .selectTagForType(TAG_TYPE_OPT, "TagOpt2")
+                .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt2")
+                .clickSave();
+
+        repositoryPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToRepositoriesPage()
+                .setRemoteRepositoryPath("/opt/openl/local/repositories/design1")
+                .applyChangesAndRelogin(User.ADMIN);
+
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME_6, false);
 
         // Step 5: After clicking create, warning popup appears and system proceeds to tags popup
         Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().isVisible(500), "Missing Tags PopupComponent should be visible!");
         repositoryPage.getMissingTagsPopupComponent().clickContinue();
 
         // Step 6-7: Verify and select tags in TagsPopupComponent
-        TagsPopupComponent tagsPopup = repositoryPage.getTagsPopupComponent();
         String selectedTagValue = tagsPopup.getSelectedTagForType(TAG_TYPE_NAME);
         Assert.assertTrue(selectedTagValue.equals("[None]"), "Tag value should be empty for new project");
 
