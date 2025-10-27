@@ -56,12 +56,19 @@ public class RepositoriesPageComponent extends BaseComponent {
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
     }
 
-    public void clickDesignRepositoriesTab() {
+    public RepositoriesPageComponent clickDesignRepositoriesTab() {
         designRepositoriesTab.click();
+        return this;
     }
 
-    public void clickAddRepository() {
+    public RepositoriesPageComponent clickAddRepository() {
         addRepositoryBtn.sleep(500).click();
+        return this;
+    }
+
+    public RepositoriesPageComponent setRemoteRepositoryPath(String path) {
+        remoteRepositoryPathField.fillSequentially(path);
+        return this;
     }
 
     public void addDesignRepository() {

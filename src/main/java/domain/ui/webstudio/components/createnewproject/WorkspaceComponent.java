@@ -3,13 +3,13 @@ package domain.ui.webstudio.components.createnewproject;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webstudio.components.common.TableComponent;
 
 public class WorkspaceComponent extends BaseComponent {
 
-    private WebElement workspacePanel;
-    private WebElement workspacePathField;
-    private WebElement browseBtn;
-    private WebElement saveBtn;
+    private TableComponent workspaceProjectsTable;
+    private TableComponent repositoryTable;
+    private WebElement createBtn;
     private WebElement cancelBtn;
 
     public WorkspaceComponent() {
@@ -23,27 +23,14 @@ public class WorkspaceComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        workspacePanel = createScopedElement(".//div[contains(@class,'workspace-component')]", "workspacePanel");
-        workspacePathField = createScopedElement(".//input[@placeholder='Workspace Path' or contains(@id,'workspacePath')]", "workspacePathField");
-        browseBtn = createScopedElement(".//button[./span[text()='Browse'] or contains(@title,'Browse')]", "browseBtn");
-        saveBtn = createScopedElement(".//button[./span[text()='Save'] or @type='submit']", "saveBtn");
-        cancelBtn = createScopedElement(".//button[./span[text()='Cancel']]", "cancelBtn");
-    }
-
-    public void setWorkspacePath(String path) {
-        workspacePathField.fill(path);
-    }
-
-    public String getWorkspacePath() {
-        return workspacePathField.getAttribute("value");
-    }
-
-    public void clickBrowse() {
-        browseBtn.click();
+        workspaceProjectsTable = createScopedComponent(TableComponent.class, ".//table[@id='uploadPrjFromLocalTable']", "workspaceProjectsTable");
+        repositoryTable = createScopedComponent(TableComponent.class, ".//table[@id='workPanelRepo']", "repositoryTable");
+        createBtn = createScopedElement(".//input[@name='sbtWorkspaceBtn']", "createBtn");
+        cancelBtn = createScopedElement(".//button[@value='Cancel']", "cancelBtn");
     }
 
     public void save() {
-        saveBtn.click();
+        createBtn.click();
     }
 
     public void cancel() {
