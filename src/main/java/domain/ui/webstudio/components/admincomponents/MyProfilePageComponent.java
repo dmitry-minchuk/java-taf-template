@@ -91,7 +91,7 @@ public class MyProfilePageComponent extends BaseComponent {
     }
 
     public String getDisplayName() {
-        return displayNameField.getAttribute("value");
+        return displayNameField.sleep(100).waitForVisible(500).getAttribute("value");
     }
 
     public void setFullName(String firstName, String lastName) {
