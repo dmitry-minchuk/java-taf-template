@@ -20,7 +20,7 @@ public class TestResultValidationComponent extends BaseComponent {
     private List<WebElement> caseErrorElementsList;
     private List<WebElement> caseSuccessElementsList;
     private List<WebElement> testResultRowElementsList;
-    private WebElement testResultBadgeError;
+    private List<WebElement> testResultBadgeErrors;
 
     public TestResultValidationComponent() {
         super(LocalDriverPool.getPage());
@@ -41,17 +41,17 @@ public class TestResultValidationComponent extends BaseComponent {
         caseErrorElementsList = createScopedElementList("xpath=.//tr//span[@class='case-error']", "caseErrorElements");
         caseSuccessElementsList = createScopedElementList("xpath=.//tr//span[@class='case-success']", "caseSuccessElements");
         testResultRowElementsList = createScopedElementList("xpath=.//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]", "testResultRowElements");
-        testResultBadgeError = createScopedElement("xpath=.//h1[@class='page-header']//span[@class='badge badge-error']", "testResultBadgeError");
+        testResultBadgeErrors = createScopedElementList("xpath=.//span[@class='badge badge-error']", "testResultBadgeError");
     }
 
     public boolean isTestTableFailed() {
         WaitUtil.isListNotEmpty(() -> caseErrorElementsList, 3000, 100, "Checking if test table has error elements");
-        return testResultBadgeError.isVisible();
+        return testResultBadgeErrors.stream().anyMatch(WebElement::isVisible);
     }
 
     public boolean isTestTablePassed() {
         WaitUtil.isListNotEmpty(() -> caseSuccessElementsList, 3000, 100, "Checking if test table has success elements");
-        return !testResultBadgeError.isVisible();
+        return testResultBadgeErrors.stream().noneMatch(WebElement::isVisible);
     }
 
     public int getFailedTestCount() {

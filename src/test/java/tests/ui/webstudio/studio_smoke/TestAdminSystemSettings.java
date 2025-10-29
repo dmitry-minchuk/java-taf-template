@@ -86,10 +86,10 @@ public class TestAdminSystemSettings extends BaseTest {
         systemSettings.setDispatchingValidation(true);
         systemSettings.clickApplyButton();
 
-        String projectNameForDispatch = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestAdminSystemSettings.xlsx");
+        String projectNameForDispatch = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestSystemSettings.xlsx");
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(projectNameForDispatch, "TestAdminSystemSettings");
+                .selectModule(projectNameForDispatch, "TestSystemSettings");
 
         editorPage.getTableToolbarPanelComponent()
                 .clickTestDropdown()
@@ -106,7 +106,7 @@ public class TestAdminSystemSettings extends BaseTest {
 
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(projectNameForDispatch, "TestAdminSystemSettings");
+                .selectModule(projectNameForDispatch, "TestSystemSettings");
 
         editorPage.getTableToolbarPanelComponent()
                 .clickTestDropdown()

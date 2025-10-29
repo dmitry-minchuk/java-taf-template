@@ -99,7 +99,6 @@ public class TestAdminUsers extends BaseTest {
         editorPage.openUserMenu().signOut();
 
         // ============ Step 11: Admin adds Manager role for Project 1 to 'test' user ============
-        editorPage = loginService.login(UserService.getUser(User.ADMIN));
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
