@@ -53,7 +53,7 @@ public class ProblemsPanelComponent extends BaseComponent {
     public int getErrorsCount() {
         showProblemsPanel();
         waitForCompilationToComplete();
-        String errorText = errorsCounter.sleep(100).getText();
+        String errorText = errorsCounter.sleep(200).getText();
         return errorText != null && !errorText.isEmpty() ? Integer.parseInt(errorText.trim()) : 0;
     }
 
