@@ -89,6 +89,6 @@ public class TestAdminNotifications extends BaseTest {
         assertThat(notificationComponent.isNotificationVisible()).isFalse();
 
         notificationComponent.sendNotification("   ");
-        assertThat(notificationComponent.isNotificationVisible()).isFalse(); //should not be visible
+        assertThat(notificationComponent.isNotificationVisible()).isFalse(); // BUG: should not be visible
     }
 }

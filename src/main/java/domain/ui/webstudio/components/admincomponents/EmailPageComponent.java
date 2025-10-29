@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 
 public class EmailPageComponent extends BaseComponent {
     
@@ -82,6 +83,7 @@ public class EmailPageComponent extends BaseComponent {
         setEmailPassword(password);
         applyBtn.click();
         getModalOkBtn().click();
+        WaitUtil.waitForCondition(() -> getAllMessages().contains("Email server configuration saved"), 50, 5000, "Waiting for success message");
     }
 
     public void enableEmailVerificationWithCredentials(String url, String username, String password) {
