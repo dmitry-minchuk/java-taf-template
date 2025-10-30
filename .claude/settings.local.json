@@ -56,7 +56,8 @@
       "mcp__n8n-jira__Get_an_issue_in_Jira_Software",
       "Bash(xargs:*)",
       "Bash(mvn clean compile test-compile:*)",
-      "mcp__playwright__playwright_console_logs"
+      "mcp__playwright__playwright_console_logs",
+      "WebFetch(domain:jira.eisgroup.com)"
     ],
     "deny": []
   }
