@@ -66,8 +66,12 @@ public class TestSpecialSymbolsWarningMessages extends BaseTest {
                     .contains("'" + symbol + "'");
 
             assertThat(relevantWarning)
-                    .as("Warning message for symbol '%s' should NOT contain formula comparison in warning text", symbol)
+                    .as("Warning message for symbol '%s' should NOT contain formula comparison in warning text (EPBDS-12618 bugfix)", symbol)
                     .doesNotContain("someColor == ");
+
+            assertThat(relevantWarning)
+                    .as("Warning message for symbol '%s' should NOT contain ternary operator formula ?0:1 (EPBDS-12618 bugfix)", symbol)
+                    .doesNotContain("?0:1");
 
             assertThat(relevantWarning)
                     .as("Warning message for symbol '%s' should not be truncated", symbol)
