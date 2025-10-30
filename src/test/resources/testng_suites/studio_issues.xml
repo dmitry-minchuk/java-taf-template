@@ -25,4 +25,5 @@
     <test name="TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
     <test name="TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
     <test name="TestSpecialSymbolsWarningMessages"><classes><class name="tests.ui.webstudio.studio_issues.TestSpecialSymbolsWarningMessages"/></classes></test>
+    <test name="TestNullPointerExceptionDataTableBugFix"><classes><class name="tests.ui.webstudio.studio_issues.TestNullPointerExceptionDataTableBugFix"/></classes></test>
 </suite>
