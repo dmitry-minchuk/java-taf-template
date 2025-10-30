@@ -106,6 +106,15 @@ public class ProblemsPanelComponent extends BaseComponent {
         return errors;
     }
 
+    public List<String> getAllWarnings() {
+        showProblemsPanel();
+        waitForCompilationToComplete();
+        List<String> warnings = warningElements.stream()
+                .map(WebElement::getText)
+                .toList();
+        return warnings;
+    }
+
     private void waitForCompilationToComplete() {
         waitForCompilationToComplete(30000, 250);
     }

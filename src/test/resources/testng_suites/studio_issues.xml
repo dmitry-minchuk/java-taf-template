@@ -24,4 +24,5 @@
     <test name="TestClickDatatypeNotFoundError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickDatatypeNotFoundError"/></classes></test>
     <test name="TestClickOnErrorFromTheBottom"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnErrorFromTheBottom"/></classes></test>
     <test name="TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
+    <test name="TestSpecialSymbolsWarningMessages"><classes><class name="tests.ui.webstudio.studio_issues.TestSpecialSymbolsWarningMessages"/></classes></test>
 </suite>
