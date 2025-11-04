@@ -3,9 +3,11 @@ package tests.ui.webservice;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
+import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webservice.pages.ServicePage;
+import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -86,5 +88,6 @@ public class TestWebservicesDeployUI extends BaseTest {
 
         // Refresh page
         LocalDriverPool.getPage().reload();
+        LogsUtil.inspectLogFile(AppContainerPool.get());
     }
 }
