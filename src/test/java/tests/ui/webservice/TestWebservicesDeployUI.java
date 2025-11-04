@@ -7,6 +7,9 @@ import configuration.appcontainer.AppContainerStartParameters;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TestWebservicesDeployUI extends BaseTest {
     private static final String SIMPLE_PROJECT = "SimpleProject";
     private static final String SIMPLE_PROJECT_2 = "SimpleProject2";
@@ -14,6 +17,10 @@ public class TestWebservicesDeployUI extends BaseTest {
     private static final String MULTIPLE_PROJECT = "multiple-deployment/project1";
     private static final String MULTIPLE_PROJECT_2 = "multiple-deployment/project2";
     private static final String HELLO_RULE = "someDeployment/Hello_Rule";
+
+    private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
+            Map.entry("production-repository.base.path", "TestWebservicesDeployUI")
+    ));
 
     @Test
     @TestCaseId("IPBQA-28640")

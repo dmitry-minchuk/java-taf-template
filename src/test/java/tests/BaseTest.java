@@ -13,13 +13,16 @@ import helpers.utils.ReportPortalUtil;
 import helpers.utils.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.Network;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseTest {
@@ -109,12 +112,51 @@ public abstract class BaseTest {
 
         if (configAnnotation != null) {
             containerConfig = configAnnotation.startParams().getParameterMap();
+            containerConfig.putAll(getAdditionalContainerConfig(testMethod));
             String copyFileFromPath = configAnnotation.copyFileFromPath().isEmpty() ? null : configAnnotation.copyFileFromPath();
             String copyFileToContainerPath = configAnnotation.copyFileToContainerPath().isEmpty() ? null : configAnnotation.copyFileToContainerPath();
             AppContainerPool.setAppContainer(appContainerName, network, containerConfig, copyFileFromPath, copyFileToContainerPath);
         } else {
             AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);
         }
+    }
+
+    // This is needed for container extra configuration and not breaking annotation config logic
+    private Map<String, String> getAdditionalContainerConfig(Method testMethod) {
+        Field additionalConfig;
+        try {
+            additionalConfig = testMethod.getDeclaringClass().getDeclaredField("additionalContainerConfig");
+            additionalConfig.setAccessible(true);  // Allow access to private field
+        } catch (NoSuchFieldException e) {
+            return new HashMap<>();  // Return empty map if field doesn't exist
+        }
+
+        Object raw;
+        try {
+            raw = additionalConfig.get(null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return getStringStringMap(raw);
+    }
+
+    // This is needed for container extra configuration and not breaking annotation config logic
+    private static @NotNull Map<String, String> getStringStringMap(Object raw) {
+        if (!(raw instanceof Map<?, ?> map)) {
+            throw new IllegalStateException("additionalContainerConfig must be a Map<String,String>, but was " + (raw == null ? "null" : raw.getClass()));
+        }
+
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<?, ?> e : map.entrySet()) {
+            if (!(e.getKey() instanceof String key)) {
+                throw new IllegalStateException("Key must be String, but was " + e.getKey());
+            }
+            if (!(e.getValue() instanceof String value)) {
+                throw new IllegalStateException("Value must be String, but was " + e.getValue());
+            }
+            result.put(key, value);
+        }
+        return result;
     }
 
     private void cleanupPlaywrightLocalTest(ITestResult result) {
