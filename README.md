@@ -235,6 +235,11 @@ public void testAdminEmail() {
 ### Container Configuration
 
 ```java
+// use exact additionalContainerConfig named field to create additional parameters which will be added on runtime by reflection in BaseTest
+private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
+        Map.entry("production-repository.base.path", "TestWebservicesDeployUI")
+));
+
 // Use annotation for container setup
 @AppContainerConfig(
     startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS,
