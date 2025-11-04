@@ -4,22 +4,16 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.DockerDriverPool;
 import configuration.driver.LocalDriverPool;
+import domain.ui.webservice.pages.ServicePage;
 import org.testng.annotations.Test;
 import tests.BaseTest;
-import domain.ui.webservice.pages.ServicePage;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test class for WebService/RuleService deployment UI functionality
- * Validates that projects are correctly deployed to the rule service
- * and accessible through the WebService UI
- */
 public class TestWebservicesDeployUI extends BaseTest {
     private static final String SIMPLE_PROJECT = "SimpleProject";
     private static final String SIMPLE_PROJECT_2 = "SimpleProject2";
@@ -30,28 +24,18 @@ public class TestWebservicesDeployUI extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
             Map.entry("production-repository.base.path", "TestWebservicesDeployUI")
+            //For local run git.token.ruleservice HERE!!!
+            //Map.entry("production-repository.password", "git.token")
     ));
 
-    /**
-     * Test WebService deployment UI functionality
-     * Validates:
-     * - Projects are deployed and visible in the UI
-     * - Project download functionality works
-     * - Manifest links are accessible
-     * - Multiple deployments are handled correctly
-     *
-     * Test data is sourced from Git repository configured with base path: TestWebservicesDeployUI
-     */
     @Test
     @TestCaseId("IPBQA-28640")
     @Description("Test WebService deployment UI - verify projects are deployed and accessible")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
     public void testWebservicesDeployUi() {
-        // Navigate to the service container
-        DockerDriverPool.navigateToApp();
-
         // Initialize ServicePage
         ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        servicePage.open();
 
         // Part 1: Verify SimpleProject is present and accessible
         assertThat(servicePage.getProjectElement(SIMPLE_PROJECT).isVisible(5000))
