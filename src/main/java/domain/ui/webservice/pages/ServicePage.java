@@ -3,31 +3,28 @@ package domain.ui.webservice.pages;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
+import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 
 @Getter
 public class ServicePage extends BasePage {
-    // Project list and management elements
+    // Parameterized elements with %s placeholders
     private WebElement projectElement;
     private WebElement downloadProjectButton;
     private WebElement deleteProjectButton;
-    private WebElement deployButton;
-    private WebElement fileInput;
-
-    // Service information elements
     private WebElement manifestLink;
-    private WebElement swaggerUILink;
     private WebElement expandServiceButton;
     private WebElement listMethods;
     private WebElement failedIcon;
     private WebElement failedMethods;
     private WebElement kafkaService;
+    private WebElement serviceLink;
 
-    // Show all deployments checkbox
+    // Static elements
+    private WebElement deployButton;
+    private WebElement fileInput;
     private WebElement showAllDeploymentsCheckBox;
-
-    // API selector
     private WebElement apiSelector;
 
     public ServicePage() {
@@ -41,65 +38,67 @@ public class ServicePage extends BasePage {
     }
 
     private void initializeElements() {
-        // Deploy button
+        // Parameterized elements
+        projectElement = new WebElement(page, "xpath=//h3[a[text()='%s']]", "Project Element");
+        downloadProjectButton = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//button[@title='Download']", "Download Button");
+        deleteProjectButton = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//button[@title='Delete']", "Delete Button");
+        manifestLink = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//a[contains(text(), 'MANIFEST.MF')]", "Manifest Link");
+        expandServiceButton = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'status-deployed')]/span", "Expand Service Button");
+        listMethods = new WebElement(page, "xpath=//div[@data-service-name='%s']//ul", "List Methods");
+        failedIcon = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'status-failed')]/span", "Failed Icon");
+        failedMethods = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//div[@class='errors']", "Failed Methods");
+        kafkaService = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'KAFKA')]", "Kafka Service");
+        serviceLink = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//a[contains(text(), '%s')]", "Service Link");
+
+        // Static elements
         deployButton = new WebElement(page, "xpath=//button[@class='deploy-button']", "Deploy Button");
         fileInput = new WebElement(page, "xpath=//input[@id='file-input']", "File Input");
-
-        // Show all deployments checkbox
         showAllDeploymentsCheckBox = new WebElement(page, "xpath=//input[@id='showAll']", "Show All Deployments Checkbox");
-
-        // API selector
         apiSelector = new WebElement(page, "xpath=//select[@id='select-api']", "API Selector");
     }
 
+    public void open() {
+        this.page.navigate(LocalDriverPool.getAppUrl());
+    }
+
     public WebElement getProjectElement(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]", projectName);
-        return new WebElement(page, locator, "Project Element: " + projectName);
+        return projectElement.format(projectName);
     }
 
     public WebElement getDownloadProjectButton(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::*//button[@title='Download']", projectName);
-        return new WebElement(page, locator, "Download Button for: " + projectName);
+        return downloadProjectButton.format(projectName);
     }
 
     public WebElement getDeleteProjectButton(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::*//button[@title='Delete']", projectName);
-        return new WebElement(page, locator, "Delete Button for: " + projectName);
+        return deleteProjectButton.format(projectName);
     }
 
     public WebElement getServiceLink(String projectName, String linkName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::*//a[contains(text(), '%s')]", projectName, linkName);
-        return new WebElement(page, locator, "Service Link: " + linkName);
+        return serviceLink.format(projectName, linkName);
     }
 
     public WebElement getManifestLink(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::*//a[contains(text(), 'MANIFEST.MF')]", projectName);
-        return new WebElement(page, locator, "Manifest Link for: " + projectName);
+        return manifestLink.format(projectName);
     }
 
     public WebElement getExpandServiceButton(String serviceName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'status-deployed')]/span", serviceName);
-        return new WebElement(page, locator, "Expand Service Button for: " + serviceName);
+        return expandServiceButton.format(serviceName);
     }
 
     public WebElement getListMethods(String serviceName) {
-        String locator = String.format("xpath=//div[@data-service-name='%s']//ul", serviceName);
-        return new WebElement(page, locator, "List Methods for: " + serviceName);
+        return listMethods.format(serviceName);
     }
 
     public WebElement getFailedIcon(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'status-failed')]/span", projectName);
-        return new WebElement(page, locator, "Failed Icon for: " + projectName);
+        return failedIcon.format(projectName);
     }
 
     public WebElement getFailedMethods(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::*//div[@class='errors']", projectName);
-        return new WebElement(page, locator, "Failed Methods for: " + projectName);
+        return failedMethods.format(projectName);
     }
 
     public WebElement getKafkaService(String projectName) {
-        String locator = String.format("xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'KAFKA')]", projectName);
-        return new WebElement(page, locator, "Kafka Service for: " + projectName);
+        return kafkaService.format(projectName);
     }
 
     public void downloadProject(String projectName) {

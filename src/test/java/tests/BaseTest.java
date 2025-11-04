@@ -113,6 +113,7 @@ public abstract class BaseTest {
         if (configAnnotation != null) {
             containerConfig = configAnnotation.startParams().getParameterMap();
             containerConfig.putAll(getAdditionalContainerConfig(testMethod));
+            containerConfig.forEach((key, value) -> LOGGER.info(String.format("[%s] -> [%s]", key, value)));
             String copyFileFromPath = configAnnotation.copyFileFromPath().isEmpty() ? null : configAnnotation.copyFileFromPath();
             String copyFileToContainerPath = configAnnotation.copyFileToContainerPath().isEmpty() ? null : configAnnotation.copyFileToContainerPath();
             AppContainerPool.setAppContainer(appContainerName, network, containerConfig, copyFileFromPath, copyFileToContainerPath);
