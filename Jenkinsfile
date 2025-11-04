@@ -136,6 +136,7 @@ pipeline {
                                         userRemoteConfigs: [[url: openlTestsGitIrl]]
                                 ])
                                 env.BUILD_NUMBER = buildNumber
+                                // We need this because variables defined in Jenkins Global Properties are not straightfully accessible from Java and have to put them into the Maven process
                                 withMaven() {
                                     sh("bash -lc 'git branch'")
                                     sh("""bash -lc '
@@ -149,6 +150,7 @@ pipeline {
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.imageName} \\
+                                            -Dgit.token.ruleservice=${git.token.ruleservice} \\
                                             -Dtestng.dtd.http=true \\
                                     '""")
                                 }
