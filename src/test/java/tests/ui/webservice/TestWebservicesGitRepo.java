@@ -21,9 +21,9 @@ public class TestWebservicesGitRepo extends BaseTest {
     private static final String GIT_PROJECT_NAME = "SimpleGitProject";
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
-            Map.entry("production-repository.base.path", "deploy/"),
+            Map.entry("production-repository.base.path", "deploy/")
             //For local run git.token.ruleservice HERE!!!
-            Map.entry("production-repository.password", "***REMOVED***")
+            //Map.entry("production-repository.password", "ghp_token_here")
     ));
 
     @Test

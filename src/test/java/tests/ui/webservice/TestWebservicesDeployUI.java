@@ -27,7 +27,7 @@ public class TestWebservicesDeployUI extends BaseTest {
     private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
             Map.entry("production-repository.base.path", "TestWebservicesDeployUI")
             //For local run git.token.ruleservice HERE!!!
-            //Map.entry("production-repository.password", "git.token")
+            //Map.entry("production-repository.password", "ghp_token_here")
     ));
 
     @Test
