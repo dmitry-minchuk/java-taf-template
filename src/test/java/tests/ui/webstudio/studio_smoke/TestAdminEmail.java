@@ -12,6 +12,7 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import helpers.utils.WaitUtil;
 import org.apache.http.impl.conn.LoggingSessionInputBuffer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -51,6 +52,7 @@ public class TestAdminEmail extends BaseTest {
         emailPageComponent = adminPage.navigateToEmailPage();
 
         // Step 4: Verify that email verification is still enabled and credentials persisted
+        WaitUtil.waitForCondition(emailPageComponent::isEmailVerificationEnabled, 2000, 100, "Waiting for Email verification checkbox to load its state");
         Assert.assertTrue(emailPageComponent.isEmailVerificationEnabled(), "Email verification should remain enabled after logout/login");
         Assert.assertEquals(emailPageComponent.getEmailUrl(), emailUrl, "Email URL should persist after logout/login");
         Assert.assertEquals(emailPageComponent.getEmailUsername(), emailUsername, "Email username should persist after logout/login");
