@@ -42,7 +42,7 @@ public class TestClassCastException extends BaseTest {
         
         // Validate result table presence and header
         TestResultValidationComponent resultComponent = editorPage.getTestResultValidationComponent();
-        assertThat(resultComponent.getResultTable().isVisible(30000))
+        assertThat(resultComponent.getResultTable().isVisible(30000)) //Just to wait for spinner on Jenkins
                 .as("Result table should be present after running spreadsheet")
                 .isTrue();
         
