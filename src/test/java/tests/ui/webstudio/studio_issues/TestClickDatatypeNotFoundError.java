@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import helpers.utils.LogsUtil;
+import helpers.utils.WaitUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -30,6 +31,7 @@ public class TestClickDatatypeNotFoundError extends BaseTest {
         editorPage.getProblemsPanelComponent().selectProblemByText("is not found.");
         
         // Validate that the correct item is selected in the tree
+        WaitUtil.waitForCondition(() -> !editorPage.getEditorLeftRulesTreeComponent().getSelectedItemText().isEmpty(), 5000, 100, "Waiting");
         assertThat(editorPage.getEditorLeftRulesTreeComponent().getSelectedItemText())
                 .as("Selected tree item should be 'SmartRule2'")
                 .isEqualTo("SmartRule2");
