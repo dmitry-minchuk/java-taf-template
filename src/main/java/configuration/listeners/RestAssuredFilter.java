@@ -39,8 +39,8 @@ public class RestAssuredFilter implements Filter {
                     prettyResponse.append("Body: ").append(newLine).append(prettyJson);
                 }
 
-        LOGGER.info(prettyRequest.toString());
-        LOGGER.info(prettyResponse.toString());
+        LOGGER.debug(prettyRequest.toString());
+        LOGGER.debug(prettyResponse.toString());
         return response;
     }
 
