@@ -8,5 +8,6 @@
     </listeners>
 
     <test name="TestWebservicesDeployUI"><classes><class name="tests.ui.webservice.TestWebservicesDeployUI"/></classes></test>
+    <test name="TestDeployProjectsWithoutServiceNameInRulesDeploy"><classes><class name="tests.ui.webservice.TestDeployProjectsWithoutServiceNameInRulesDeploy"/></classes></test>
 
 </suite>
