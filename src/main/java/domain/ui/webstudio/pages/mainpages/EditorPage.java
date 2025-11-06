@@ -47,6 +47,11 @@ public class EditorPage extends BasePage {
         projectModuleDetailsComponent = createScopedComponent(ProjectModuleDetailsComponent.class, "xpath=//div[contains(@class, 'ui-layout-center') and @id='content']", "projectModuleDetailsComponent");
     }
 
+    public TableToolbarPanelComponent getTableToolbarPanelComponent() {
+        waitUntilSpinnerLoaded();
+        return tableToolbarPanelComponent;
+    }
+
     public TableComponent getCenterTable() {
         centerTable.isVisible();
         WaitUtil.sleep(500, "Waiting for center table to fully load");

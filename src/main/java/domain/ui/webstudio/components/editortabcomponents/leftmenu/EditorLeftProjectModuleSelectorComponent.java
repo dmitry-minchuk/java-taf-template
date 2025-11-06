@@ -36,11 +36,13 @@ public class EditorLeftProjectModuleSelectorComponent extends BaseComponent {
     }
 
     public void selectModule(String projectName, String projectModuleName) {
+        waitUntilSpinnerLoaded();
         selectProject(projectName);
         WaitUtil.sleep(200, "Waiting for module list to expand after project selection");
         WebElement moduleLink = projectModuleTemplate.format(projectName, projectModuleName);
         moduleLink.waitForVisible();
         moduleLink.click();
+        WaitUtil.sleep(200, "Waiting for module to open");
     }
 
     public List<String> getAllModuleNames(String projectName) {
