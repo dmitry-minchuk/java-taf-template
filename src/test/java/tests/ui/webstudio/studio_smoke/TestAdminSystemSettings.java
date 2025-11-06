@@ -10,6 +10,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
+import helpers.utils.WaitUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -77,6 +78,7 @@ public class TestAdminSystemSettings extends BaseTest {
         editorPage.getProblemsPanelComponent().checkNoProblems();
         Assert.assertTrue(editorPage.getTableToolbarPanelComponent().isVerifyButtonPresent(), "Verify button should be present when Verify on Edit is disabled");
         editorPage.getTableToolbarPanelComponent().clickVerify();
+        WaitUtil.waitForCondition(() -> editorPage.getProblemsPanelComponent().getErrorsCount() == 1, 5000, 100, "Waiting for errors ti be listed...");
         Assert.assertEquals(editorPage.getProblemsPanelComponent().getErrorsCount(), 1, "Should have 1 error after clicking Verify button");
 
         // Step 4: Test Dispatching Validation = true
