@@ -2,6 +2,8 @@ package domain.api;
 
 import configuration.appcontainer.AppContainerPool;
 import configuration.listeners.RestAssuredFilter;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
@@ -22,10 +24,19 @@ import java.nio.charset.Charset;
 public abstract class ApiBaseMethod {
     protected static final Logger LOGGER = LogManager.getLogger(ApiBaseMethod.class);
     private static final String TEMPLATE_PATH = "src/test/resources/api/";
+    private static final String API_BASE_URL = "http://localhost:";
     protected String fullApiUrl;
 
     public ApiBaseMethod(String path) {
-        this.fullApiUrl = AppContainerPool.get().getAppHostUrl() + path;
+        try {
+            int appPort = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
+            String deployedAppPath = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
+            int mappedPort = AppContainerPool.get().getAppContainer().getMappedPort(appPort);
+            this.fullApiUrl = API_BASE_URL + mappedPort + deployedAppPath + path;
+            LOGGER.debug("API URL constructed: {}", this.fullApiUrl);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to construct API URL from path: " + path, e);
+        }
     }
 
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl, boolean withLogs) {
@@ -48,6 +59,10 @@ public abstract class ApiBaseMethod {
 
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {
         return callApi(method, requestSpecification, fullApiUrl, true);
+    }
+
+    public Response callApi(Method method, RequestSpecification requestSpecification, boolean withLogs) {
+        return callApi(method, requestSpecification, fullApiUrl, withLogs);
     }
 
     public Response callApi(Method method, RequestSpecification requestSpecification) {
