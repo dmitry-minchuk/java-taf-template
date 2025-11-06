@@ -75,7 +75,7 @@ public class SystemSettingsPageComponent extends BaseComponent {
 
     public void clickApplyButton() {
         applyButton.click();
-        getModalOkBtn().click();
+        getModalOkBtn().waitForVisible().click();
     }
 
     public void applySettingsAndRelogin(User user) {

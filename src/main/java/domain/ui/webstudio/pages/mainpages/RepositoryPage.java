@@ -100,11 +100,13 @@ public class RepositoryPage extends BasePage {
 
         if(finalize) {
             fillCommitInfo();
+            waitUntilSpinnerLoaded();
             refreshBtn.click(10000);
         }
     }
 
     public void fillCommitInfo() {
+        waitUntilSpinnerLoaded();
         if (configureCommitInfoComponentShade.isVisible(3000))
             configureCommitInfoComponent.fillCommitInfoWithRandomData();
     }
