@@ -23,7 +23,7 @@ public class TestDeployProjectsWithoutServiceNameInRulesDeploy extends BaseTest 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
             Map.entry("production-repository.base.path", "TestDeployProjectsWithoutServiceNameInRulesDeploy"),
             //For local run git.token.ruleservice HERE!!!
-            Map.entry("production-repository.password", "ghp_token_here")
+            //Map.entry("production-repository.password", "ghp_token_here")
     ));
 
     @Test
