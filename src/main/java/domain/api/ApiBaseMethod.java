@@ -22,26 +22,24 @@ import java.nio.charset.Charset;
 public abstract class ApiBaseMethod {
     protected static final Logger LOGGER = LogManager.getLogger(ApiBaseMethod.class);
     private static final String TEMPLATE_PATH = "src/test/resources/api/";
-    private String fullApiUrl;
+    protected String fullApiUrl;
 
     public ApiBaseMethod(String path) {
-        fullApiUrl = AppContainerPool.get().getAppHostUrl();
+        this.fullApiUrl = AppContainerPool.get().getAppHostUrl() + path;
     }
 
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl, boolean withLogs) {
         RestAssured.useRelaxedHTTPSValidation();
         Response response;
         try {
-            if (withLogs) {
-                response = RestAssured
-                        .given(((requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification))
-                        .filter(new RestAssuredFilter())
-                        .request(method, new URL(fullApiUrl));
-            } else {
-                response = RestAssured
-                        .given(((requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification))
-                        .request(method, new URL(fullApiUrl));
-            }
+            RequestSpecification spec = (requestSpecification == null) ? new RequestSpecBuilder().build() : requestSpecification;
+
+            if (withLogs)
+                spec = spec.filter(new RestAssuredFilter());
+
+            response = RestAssured
+                    .given(spec)
+                    .request(method, new URL(fullApiUrl));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.toString());
         }
@@ -49,6 +47,10 @@ public abstract class ApiBaseMethod {
     }
 
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl) {
+        return callApi(method, requestSpecification, fullApiUrl, true);
+    }
+
+    public Response callApi(Method method, RequestSpecification requestSpecification) {
         return callApi(method, requestSpecification, fullApiUrl, true);
     }
 
