@@ -1,28 +1,18 @@
 package domain.api;
 
-import configuration.appcontainer.AppContainerPool;
-import configuration.projectconfig.ProjectConfiguration;
-import configuration.projectconfig.PropertyNameSpace;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 public class GetApplicationInfoMethod extends ApiBaseMethod {
-    
-    private static final String INFO_ENDPOINT = "/web/public/info/openl.json";
 
     public GetApplicationInfoMethod() {
-        super(INFO_ENDPOINT);
+        super("/web/public/info/openl.json");
     }
 
     public Response getApplicationInfo() {
-        // Use localhost with mapped port instead of container internal URL
-        int appPort = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
-        String deployedAppPath = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
-        int mappedPort = AppContainerPool.get().getAppContainer().getMappedPort(appPort);
-        String fullUrl = "http://localhost:" + mappedPort + deployedAppPath + INFO_ENDPOINT;
-        LOGGER.debug("Retrieving application info from: {}", fullUrl);
-        return callApi(Method.GET, null, fullUrl, false);
+        LOGGER.debug("Retrieving application info from: {}", fullApiUrl);
+        return callApi(Method.GET, null, true);
     }
 
     public String getApplicationInfoOneLiner() {
