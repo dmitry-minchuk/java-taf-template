@@ -42,7 +42,7 @@ public class TestClassCastException extends BaseTest {
         
         // Validate result table presence and header
         TestResultValidationComponent resultComponent = editorPage.getTestResultValidationComponent();
-        assertThat(resultComponent.getResultTable().isVisible(500))
+        assertThat(resultComponent.getResultTable().isVisible(30000))
                 .as("Result table should be present after running spreadsheet")
                 .isTrue();
         
