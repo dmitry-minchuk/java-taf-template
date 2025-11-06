@@ -9,6 +9,7 @@ import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsCompo
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
+import helpers.utils.WaitUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -33,6 +34,7 @@ public class TestAddPropertyExtraStateAppears extends BaseTest {
                 .addProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue())
                 .setProperty(RightTableDetailsComponent.DropdownOptions.DESCRIPTION.getValue(), "Description details")
                 .clickSaveBtn();
+        WaitUtil.waitForCondition(() -> editorPage.getCenterTable().getCellText(2, 2).equals("description"), 5000, 200, "Waiting for 'description' cell in center table");
         assertThat(editorPage.getCenterTable().getCellText(2, 2)).isEqualTo("description");
         assertThat(editorPage.getCenterTable().getCellText(3, 2)).contains("Result");
         assertThat(editorPage.getCenterTable().getCellText(4, 2)).contains("= new MyDatatype");

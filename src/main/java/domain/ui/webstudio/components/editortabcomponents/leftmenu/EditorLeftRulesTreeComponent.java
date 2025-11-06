@@ -38,6 +38,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     }
 
     public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
+        waitUntilSpinnerLoaded();
         WaitUtil.waitForCondition(() -> {
             WaitUtil.waitForCondition(() -> {
                 try {
@@ -56,12 +57,14 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     }
 
     public EditorLeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
+        waitUntilSpinnerLoaded();
         EditorTreeFolderComponent folder = findFolderInTree(folderName);
         folder.selectItem(itemName);
         return this;
     }
 
     public EditorLeftRulesTreeComponent expandFolderInTree(String folderName) {
+        waitUntilSpinnerLoaded();
         EditorTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();
         return this;
