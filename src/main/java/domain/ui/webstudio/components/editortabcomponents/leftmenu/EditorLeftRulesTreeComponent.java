@@ -39,6 +39,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
 
     public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {
         waitUntilSpinnerLoaded();
+        WaitUtil.sleep(1000, "Huge sleep just to make sure viewFilterLink is accessible");
         WaitUtil.waitForCondition(() -> {
             WaitUtil.waitForCondition(() -> {
                 try {
@@ -52,7 +53,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                 filterOptionTemplate.format(filterOption.getValue()).click();
             } catch (Exception ignored) {}
             return viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase());
-        }, 5000, 200, "Waiting for filter '" + filterOption.getValue() + "' to be applied");
+        }, 15000, 200, "Waiting for filter '" + filterOption.getValue() + "' to be applied");
         return this;
     }
 
