@@ -138,7 +138,7 @@ public class DockerDriverPool {
                 .withNetwork(network)
                 .withExposedPorts(3000) // Playwright Server port
                 .withCommand("/bin/sh", "-c", "npx -y playwright@1.52.0 run-server --port 3000 --host 0.0.0.0")
-                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30))) // Wait for port 3000 to be listening
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(90))) // Wait for port 3000 to be listening
                 .withWorkingDirectory("/home/pwuser")
                 .withSharedMemorySize(2147483648L) // 2GB shared memory for browsers
                 .withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);
@@ -146,15 +146,16 @@ public class DockerDriverPool {
 
         LOGGER.info("Creating Playwright Server Docker container with image: {}", dockerImageName);
         LOGGER.info("Volume mapping configured: {} (host) -> {} (container)", HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH);
-        
+
         LOGGER.info("Starting container and waiting for Playwright Server...");
         container.start();
-        
+
         // Log container startup information
         LOGGER.info("Container started - ID: {}", container.getContainerId());
         LOGGER.info("Mapped Playwright Server port: {}:{} -> 3000", container.getHost(), container.getMappedPort(3000));
+        LOGGER.info("Container is attached to network for service discovery");
         LOGGER.info("Container startup logs:\n{}", container.getLogs());
-        
+
         // Test Playwright Server availability
         String serverEndpoint = "http://" + container.getHost() + ":" + container.getMappedPort(3000);
         LOGGER.info("Playwright Server ready: {}", serverEndpoint);

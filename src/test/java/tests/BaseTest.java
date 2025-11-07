@@ -11,6 +11,7 @@ import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
 import helpers.utils.ReportPortalUtil;
 import helpers.utils.StringUtil;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -100,8 +101,20 @@ public abstract class BaseTest {
         // Set up app container with network
         setupAppContainer(result, network);
 
+        // CRITICAL: Wait for Docker DNS to sync container network aliases across the network
+        // This ensures that when Playwright container starts, it can resolve the app container hostname
+        waitForNetworkConnectivity(result);
+
         // Initialize Playwright through unified interface with network
         LocalDriverPool.initializePlaywright(network);
+    }
+
+    private void waitForNetworkConnectivity(ITestResult result) {
+        if (AppContainerPool.get() == null) {
+            LOGGER.warn("No app container found, skipping network connectivity check");
+            return;
+        }
+        WaitUtil.sleep(1000, "Initial wait for DNS propagation");
     }
 
     private void setupAppContainer(ITestResult result, Network network) {
