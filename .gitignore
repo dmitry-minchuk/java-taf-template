@@ -39,6 +39,10 @@ application.log
 sql.log
 velocity.log
 
+# Report Portal
+reportportal.lock
+reportportal.sync
+
 selenide-based/target
 selenide-based/test-output
 selenide-based/reports
