@@ -75,4 +75,37 @@ public class WaitUtil {
         LOGGER.warn("Result not found after {}ms timeout: {}", timeoutMs, description);
         return Optional.empty();
     }
+
+    public static boolean retryAction(CheckedRunnable action, long timeoutMs, long pollingIntervalMs, String description) {
+        LOGGER.info("Retrying action with polling (timeout: {}ms, polling: {}ms): {}", timeoutMs, pollingIntervalMs, description);
+        long endTime = System.currentTimeMillis() + timeoutMs;
+        long startTime = System.currentTimeMillis();
+        Exception lastException = null;
+
+        while (System.currentTimeMillis() < endTime) {
+            try {
+                action.run();
+                LOGGER.info("Action succeeded after {}ms: {}", System.currentTimeMillis() - startTime, description);
+                return true;
+            } catch (Exception e) {
+                lastException = e;
+                LOGGER.debug("Action attempt failed (will retry): {} - {}", description, e.getMessage());
+                long remainingTime = endTime - System.currentTimeMillis();
+                if (remainingTime > 0) {
+                    sleep(Math.min(pollingIntervalMs, remainingTime), "Retrying action: " + description);
+                }
+            }
+        }
+
+        LOGGER.warn("Action did not succeed after {}ms timeout: {}", timeoutMs, description);
+        if (lastException != null) {
+            LOGGER.debug("Last error: {}", lastException.getMessage());
+        }
+        return false;
+    }
+
+    @FunctionalInterface
+    public interface CheckedRunnable {
+        void run() throws Exception;
+    }
 }

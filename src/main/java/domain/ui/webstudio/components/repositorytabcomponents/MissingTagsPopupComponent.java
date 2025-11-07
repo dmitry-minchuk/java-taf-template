@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
+import helpers.utils.WaitUtil;
 
 import java.util.List;
 
@@ -36,6 +37,10 @@ public class MissingTagsPopupComponent extends BaseComponent {
 
     public void clickContinue() {
         continueBtn.click();
+    }
+
+    public void clickContinueIfPresent() {
+        WaitUtil.retryAction(() -> continueBtn.click(), 5000, 100, "Waiting for MissingTagsPopup 'continueBtn' to be present and clickable");
     }
 
     public void clickCancel() {

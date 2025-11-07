@@ -199,13 +199,18 @@ public class WebElement {
 
     public void clearByKeyCombination() {
         LOGGER.info("'Control+a' + 'Backspace' + 'Enter' {}", elementName);
-        String modifierKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "Meta" : "Control";
         locator.isVisible();
+        sleep(50);
         locator.click();
-        locator.press(modifierKey + "+a");
+        sleep(50);
+        locator.press("Control+a");
+        sleep(50);
         locator.press("Backspace");
+        sleep(50);
         locator.press("Tab");
+        sleep(50);
         locator.click();
+        sleep(50);
     }
     
     public void sendKeys(CharSequence... keysToSend) {
