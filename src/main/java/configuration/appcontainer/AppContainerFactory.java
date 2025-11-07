@@ -35,8 +35,10 @@ public class AppContainerFactory {
             container.withEnv(envVars);
         if(copyFileFromPath != null && copyFileToContainerPath != null)
             container.withCopyFileToContainer(getMountableFile(copyFileFromPath), copyFileToContainerPath);
+        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH).withStartupTimeout(Duration.ofSeconds(60)));
+        LOGGER.info("Starting app container: {}", containerName);
         container.start();
-        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH));
+
         LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
         LOGGER.info(String.format("App Url accessible from the Browser container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
         return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
