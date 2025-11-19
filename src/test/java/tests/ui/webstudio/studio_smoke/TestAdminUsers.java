@@ -75,10 +75,11 @@ public class TestAdminUsers extends BaseTest {
         usersComponent.clickAddUser()
                 .setUsername("admin")
                 .setPassword("admin123")
-                .inviteUser();
+                .inviteUser(false);
 
         usersComponent.closeAllMessages();
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should be equal to previous value");
+        usersComponent.cancelUser();
 
         // ============ Step 9: Re-create user 'test' ============
         usersComponent.clickAddUser()

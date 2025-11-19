@@ -248,9 +248,14 @@ public class UsersPageComponent extends BaseComponent {
         drawer.waitForHidden(3000);
     }
 
-    public void inviteUser() {
+    public void inviteUser(boolean waitForDrawerToGetHidden) {
         inviteBtn.click();
-        drawer.waitForHidden(3000);
+        if(waitForDrawerToGetHidden)
+            drawer.waitForHidden(3000);
+    }
+
+    public void inviteUser() {
+        inviteUser(true);
     }
 
     public void cancelUser() {
