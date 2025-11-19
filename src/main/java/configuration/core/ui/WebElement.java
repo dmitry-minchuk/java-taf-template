@@ -15,6 +15,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import static configuration.driver.LocalDriverPool.ExecutionMode.PLAYWRIGHT_DOCKER;
+
 public class WebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(WebElement.class);
@@ -198,12 +200,18 @@ public class WebElement {
     }
 
     public void clearByKeyCombination() {
+        String execMode = System.getProperty("execution.mode");
+        String modifierKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "Meta" : "Control";
+
         LOGGER.info("'Control+a' + 'Backspace' + 'Enter' {}", elementName);
         locator.isVisible();
         sleep(50);
         locator.click();
         sleep(50);
-        locator.press("Control+a");
+        if(execMode != null && execMode.equalsIgnoreCase(String.valueOf(PLAYWRIGHT_DOCKER)))
+            locator.press("Control+a");
+        else
+            locator.press(modifierKey + "+a");
         sleep(50);
         locator.press("Backspace");
         sleep(50);

@@ -6,11 +6,9 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.TagsPopupComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
@@ -67,7 +65,7 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
         repositoryPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToRepositoriesPage()
-                .setLocalRepositoryPath("/opt/openl/local/repositories/design1")
+                .setRepositoryPath("/opt/openl/local/repositories/design1")
                 .applyChangesAndRelogin(User.ADMIN);
 
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
