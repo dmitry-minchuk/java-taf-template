@@ -138,7 +138,7 @@ public class DockerDriverPool {
                 .withNetwork(network)
                 .withExposedPorts(3000) // Playwright Server port
                 .withCommand("/bin/sh", "-c", "npx -y playwright@1.52.0 run-server --port 3000 --host 0.0.0.0")
-                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(90))) // Wait for port 3000 to be listening
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(120))) // Wait for port 3000 to be listening
                 .withWorkingDirectory("/home/pwuser")
                 .withSharedMemorySize(2147483648L) // 2GB shared memory for browsers
                 .withFileSystemBind(HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH, BindMode.READ_ONLY);

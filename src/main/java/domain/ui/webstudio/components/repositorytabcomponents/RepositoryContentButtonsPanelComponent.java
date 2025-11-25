@@ -58,4 +58,32 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     public void clickDeploy() {
         deployBtn.click();
     }
+
+    public void clickCopyBtn() {
+        copyBtn.click();
+    }
+
+    public void clickUploadFileBtn() {
+        uploadFileBtn.click();
+    }
+
+    public void clickSaveBtn() {
+        saveBtn.click();
+    }
+
+    public void clickDeleteBtn() {
+        deleteBtn.click();
+    }
+
+    public void clickEraseBtn() {
+        deleteBtn.click();
+    }
+
+    public void clickAddFolderBtn() {
+        addFolderBtn.click();
+    }
+
+    public void clickExportBtn() {
+        exportBtn.click();
+    }
 }

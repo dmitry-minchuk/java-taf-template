@@ -43,9 +43,13 @@ public class RepositoryPage extends BasePage {
     private DeployModalComponent deployModalComponent;
     private TagsPopupComponent tagsPopupComponent;
     private MissingTagsPopupComponent missingTagsPopupComponent;
-
+    private CopyProjectDialogComponent copyProjectDialogComponent;
+    private UploadFileDialogComponent uploadFileDialogComponent;
+    private ElementsTabComponent elementsTabComponent;
+    private WebElement confirmOpeningDialogBtn;
+    private SaveChangesComponent saveChangesComponent;
     private TableComponent projectsTable;
-    WebElement confirmOpeningDialogBtn;
+    private RepositoryContentTabSwitcherComponent repositoryContentTabSwitcherComponent;
 
     public RepositoryPage() {
         super();
@@ -71,6 +75,11 @@ public class RepositoryPage extends BasePage {
         tagsPopupComponent = createScopedComponent(TagsPopupComponent.class, "xpath=//div[@id='modalCreateProjectTags_container']", "tagsPopupComponent");
         missingTagsPopupComponent = createScopedComponent(MissingTagsPopupComponent.class, "xpath=//div[@id='modalConfirmIgnoreNonApplicableTags_container']", "tagsPopupComponent");
         projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
+        copyProjectDialogComponent = createScopedComponent(CopyProjectDialogComponent.class, "xpath=//div[@id='modalCopyProject_container']", "copyProjectDialogComponent");
+        uploadFileDialogComponent = createScopedComponent(UploadFileDialogComponent.class, "xpath=//div[@id='modalNewFile_container']", "uploadFileDialogComponent");
+        elementsTabComponent = createScopedComponent(ElementsTabComponent.class, "xpath=//div[@id='elements']", "elementsTabComponent");
+        saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
+        repositoryContentTabSwitcherComponent = createScopedComponent(RepositoryContentTabSwitcherComponent.class, "xpath=//div[@id='nodeTabPanel']", "repositoryContentTabSwitcherComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
     }
