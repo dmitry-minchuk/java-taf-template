@@ -160,10 +160,10 @@ playwright_videos_path=target/videos
 user_pool=admin_user::openl_1_user::openl_2_user
 
 admin_user.login=admin
-***REMOVED***
+admin_user.password=admin
 
 openl_1_user.login=openl_1
-***REMOVED***
+openl_1_user.password=h1plaKvaska
 ```
 
 ### Environment Override
