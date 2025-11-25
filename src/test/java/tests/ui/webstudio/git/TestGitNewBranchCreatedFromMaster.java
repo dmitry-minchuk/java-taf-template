@@ -86,12 +86,12 @@ public class TestGitNewBranchCreatedFromMaster extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectProjectInTree(PROJECT_NAME);
 
-        ElementsTabComponent elementsTab = repositoryPage.getElementsTabComponent();
-        assertThat(elementsTab.verifyElementPresent(NEW_FILE_NAME))
+        ElementsTabComponent elementsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectElementsTab();
+        assertThat(elementsTab.getElementsTable().getCell(2, 2).getText().equalsIgnoreCase(NEW_FILE_NAME))
                 .as("File " + NEW_FILE_NAME + " should be present in the project")
                 .isTrue();
 
-        assertThat(elementsTab.verifyElementPresent(EXISTING_FILE_NAME))
+        assertThat(elementsTab.getElementsTable().getCell(1, 2).getText().equalsIgnoreCase(EXISTING_FILE_NAME))
                 .as("File " + EXISTING_FILE_NAME + " should be present in the project")
                 .isTrue();
     }

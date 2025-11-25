@@ -72,7 +72,7 @@ public class RepositoryActionsService {
     private static List<String> getBranchesForProject(RepositoryPage repositoryPage, String projectName) {
         try {
             repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(projectName);
-            RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
+            RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
 
             String currentBranch = propertiesComponent.getProperty(
                     RepositoryContentTabPropertiesComponent.Property.REPOSITORY);

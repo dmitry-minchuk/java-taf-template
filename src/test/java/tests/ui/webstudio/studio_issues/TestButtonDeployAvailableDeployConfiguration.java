@@ -31,14 +31,14 @@ public class TestButtonDeployAvailableDeployConfiguration extends BaseTest { // 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", "1");
-        String revision1 = repositoryPage.getRepositoryContentTabPropertiesComponent().getRevision();
+        String revision1 = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab().getRevision();
         LOGGER.info("revision1: {}", revision1);
 
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,"2", "Example 2 - Corporate Rating");
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", "2");
-        String revision2 = repositoryPage.getRepositoryContentTabPropertiesComponent().getRevision();
+        String revision2 = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab().getRevision();
         LOGGER.info("revision2: {}", revision2);
 
         repositoryPage.refresh();
@@ -48,13 +48,13 @@ public class TestButtonDeployAvailableDeployConfiguration extends BaseTest { // 
                 .expandFolderInTree("Deploy Configurations")
                 .selectItemInFolder("Deploy Configurations", deployConfigName);
 
-        repositoryPage.getDeployConfigurationTabsComponent()
+        repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab()
                 .openProjectsToDeployTab()
                 .addProject("1", revision1);
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Deploy Configurations")
                 .selectItemInFolder("Deploy Configurations", deployConfigName);
-        repositoryPage.getDeployConfigurationTabsComponent()
+        repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab()
                 .openProjectsToDeployTab()
                 .addProject("2", revision2);
         repositoryPage.getRepositoryContentButtonsPanelComponent().saveDeploy();

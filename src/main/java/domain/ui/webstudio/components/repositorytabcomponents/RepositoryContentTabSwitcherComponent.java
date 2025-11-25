@@ -11,6 +11,11 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
     private WebElement elementsTab;
     private WebElement deployConfigTab;
 
+    private RepositoryContentTabPropertiesComponent propertiesTabComponent;
+    private RepositoryContentRevisionsTabComponent revisionsTabComponent;
+    private ElementsTabComponent elementsTabComponent;
+    private DeployConfigurationTabsComponent deployConfigTabComponent;
+
     public RepositoryContentTabSwitcherComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
@@ -26,41 +31,30 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
         revisionsTab = createScopedElement("xpath=.//td[@data-tabname='Revisions']", "revisionsTab");
         elementsTab = createScopedElement("xpath=.//td[@data-tabname='Elements']", "elementsTab");
         deployConfigTab = createScopedElement("xpath=.//td[@data-tabname='RulesDeployConfiguration']", "deployConfigTab");
+
+        propertiesTabComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=.//div[@id='properties']", "propertiesTabComponent");
+        revisionsTabComponent = createScopedComponent(RepositoryContentRevisionsTabComponent.class, "xpath=.//div[@id='revisions']", "revisionsTabComponent");
+        elementsTabComponent = createScopedComponent(ElementsTabComponent.class, "xpath=.//div[@id='elements']", "elementsTabComponent");
+        deployConfigTabComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=.//div[@id='content']", "deployConfigTabComponent");
     }
 
-    public RepositoryContentTabSwitcherComponent selectPropertiesTab() {
+    public RepositoryContentTabPropertiesComponent selectPropertiesTab() {
         propertiesTab.click();
-        return this;
+        return propertiesTabComponent;
     }
 
-    public RepositoryContentTabSwitcherComponent selectRevisionsTab() {
+    public RepositoryContentRevisionsTabComponent selectRevisionsTab() {
         revisionsTab.click();
-        return this;
+        return revisionsTabComponent;
     }
 
-    public RepositoryContentTabSwitcherComponent selectElementsTab() {
+    public ElementsTabComponent selectElementsTab() {
         elementsTab.click();
-        return this;
+        return elementsTabComponent;
     }
 
-    public RepositoryContentTabSwitcherComponent selectDeployConfigTab() {
+    public DeployConfigurationTabsComponent selectDeployConfigTab() {
         deployConfigTab.click();
-        return this;
-    }
-
-    public boolean isPropertiesTabVisible() {
-        return propertiesTab.isVisible();
-    }
-
-    public boolean isRevisionsTabVisible() {
-        return revisionsTab.isVisible();
-    }
-
-    public boolean isElementsTabVisible() {
-        return elementsTab.isVisible();
-    }
-
-    public boolean isDeployConfigTabVisible() {
-        return deployConfigTab.isVisible();
+        return deployConfigTabComponent;
     }
 }

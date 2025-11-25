@@ -86,12 +86,12 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", PROJECT_NAME_5);
-        RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
+        RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", PROJECT_NAME_6);
-        propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
+        propertiesComponent = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
 
         // Verify all tags are correctly saved
         verifyTagValue(propertiesComponent, TAG_TYPE_NAME, "Tag1");

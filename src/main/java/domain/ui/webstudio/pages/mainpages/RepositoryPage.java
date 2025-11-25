@@ -38,18 +38,15 @@ public class RepositoryPage extends BasePage {
     private WebElement configureCommitInfoComponentShade;
     private LeftRepositoryTreeComponent leftRepositoryTreeComponent;
     private RepositoryContentButtonsPanelComponent repositoryContentButtonsPanelComponent;
-    private RepositoryContentTabPropertiesComponent repositoryContentTabPropertiesComponent;
-    private DeployConfigurationTabsComponent deployConfigurationTabsComponent;
+    private RepositoryContentTabSwitcherComponent repositoryContentTabSwitcherComponent;
     private DeployModalComponent deployModalComponent;
     private TagsPopupComponent tagsPopupComponent;
     private MissingTagsPopupComponent missingTagsPopupComponent;
     private CopyProjectDialogComponent copyProjectDialogComponent;
     private UploadFileDialogComponent uploadFileDialogComponent;
-    private ElementsTabComponent elementsTabComponent;
     private WebElement confirmOpeningDialogBtn;
     private SaveChangesComponent saveChangesComponent;
     private TableComponent projectsTable;
-    private RepositoryContentTabSwitcherComponent repositoryContentTabSwitcherComponent;
 
     public RepositoryPage() {
         super();
@@ -69,17 +66,14 @@ public class RepositoryPage extends BasePage {
         configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
         leftRepositoryTreeComponent = createScopedComponent(LeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
-        repositoryContentTabPropertiesComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=//div[@id='properties']", "repositoryContentTabPropertiesComponent");
-        deployConfigurationTabsComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=//div[@id='content']", "deployConfigurationTabsComponent");
+        repositoryContentTabSwitcherComponent = createScopedComponent(RepositoryContentTabSwitcherComponent.class, "xpath=//div[@id='nodeTabPanel']", "repositoryContentTabSwitcherComponent");
         deployModalComponent = new DeployModalComponent();
         tagsPopupComponent = createScopedComponent(TagsPopupComponent.class, "xpath=//div[@id='modalCreateProjectTags_container']", "tagsPopupComponent");
         missingTagsPopupComponent = createScopedComponent(MissingTagsPopupComponent.class, "xpath=//div[@id='modalConfirmIgnoreNonApplicableTags_container']", "tagsPopupComponent");
         projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
         copyProjectDialogComponent = createScopedComponent(CopyProjectDialogComponent.class, "xpath=//div[@id='modalCopyProject_container']", "copyProjectDialogComponent");
         uploadFileDialogComponent = createScopedComponent(UploadFileDialogComponent.class, "xpath=//div[@id='modalNewFile_container']", "uploadFileDialogComponent");
-        elementsTabComponent = createScopedComponent(ElementsTabComponent.class, "xpath=//div[@id='elements']", "elementsTabComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
-        repositoryContentTabSwitcherComponent = createScopedComponent(RepositoryContentTabSwitcherComponent.class, "xpath=//div[@id='nodeTabPanel']", "repositoryContentTabSwitcherComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
     }

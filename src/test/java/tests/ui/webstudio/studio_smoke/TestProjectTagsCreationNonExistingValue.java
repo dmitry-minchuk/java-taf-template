@@ -69,7 +69,7 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", PROJECT_NAME);
-        RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabPropertiesComponent();
+        RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
 
         // Verify all tags are correctly saved
         verifyTagValue(propertiesComponent, TAG_TYPE_NAME, "Tag2");
