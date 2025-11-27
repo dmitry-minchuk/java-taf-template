@@ -18,6 +18,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement exportBtn;
     private WebElement saveBtn;
     private WebElement verifyBtn;
+    private WebElement copyProjectBtn;
     // Run Tests Menu elements
     @Getter
     private WebElement testDropdownBtn;
@@ -68,6 +69,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
         exportBtn = new WebElement(page, "xpath=//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
         verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
         saveBtn = new WebElement(page,"//a[./span[text()='saveProjectBtn'] or @type='submit']", "saveBtn");
+        copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
         // Run Tests Menu elements initialization
         testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
         testPerPageDropdown = new WebElement(page, "xpath=//select[@name='pp']", "testPerPageDropdown");
@@ -109,6 +111,10 @@ public class TableToolbarPanelComponent extends BaseComponent {
 
     public boolean isVerifyButtonPresent() {
         return verifyBtn.isVisible(2000);
+    }
+
+    public void clickCopyProjectBtn() {
+        copyProjectBtn.click();
     }
 
     public IRunMenu clickRun() {

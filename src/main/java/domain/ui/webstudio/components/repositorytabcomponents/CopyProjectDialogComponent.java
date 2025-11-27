@@ -7,6 +7,8 @@ import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class CopyProjectDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
@@ -24,6 +26,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
     private WebElement separateProjectCheckbox;
     private WebElement repositorySelect;
     private WebElement projectFolderField;
+    private List<WebElement> errors;
 
     public CopyProjectDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -41,7 +44,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
         copyButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Copy']", "copyButton");
         cancelButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Cancel']", "cancelButton");
         currentProjectNameDisplay = createScopedElement("xpath=.//div[@id='copyProjectForm:currentProjectName']", "currentProjectNameDisplay");
-        currentBranchDisplay = createScopedElement("xpath=.//div[@id='copyProjectForm:currentBranchName']", "currentBranchDisplay");
+        currentBranchDisplay = createScopedElement("xpath=.//span[@id='copyProjectForm:currentBranchName']", "currentBranchDisplay");
         newProjectNameField = createScopedElement("xpath=.//input[@id='copyProjectForm:newProjectName']", "newProjectNameField");
         commentField = createScopedElement("xpath=.//textarea[@id='copyProjectForm:comment']", "commentField");
         copyOldVersionCheckbox = createScopedElement("xpath=.//input[@id='copyProjectForm:copyOldRevisions']", "copyOldVersionCheckbox");
@@ -49,6 +52,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
         separateProjectCheckbox = createScopedElement("xpath=.//input[@id='copyProjectForm:separateProjectCheckbox']", "separateProjectCheckbox");
         repositorySelect = createScopedElement("xpath=.//select[@id='copyProjectForm:repository']", "repositorySelect");
         projectFolderField = createScopedElement("xpath=.//input[@id='copyProjectForm:projectFolder']", "projectFolderField");
+        errors = createScopedElementList("xpath=.//span[@class='error']", "errors");
     }
 
     public CopyProjectDialogComponent setNewBranchName(String branchName) {
@@ -144,5 +148,9 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     public void waitForDialogToClose() {
         WaitUtil.waitForCondition(() -> !isDialogVisible(), 5000, 100, "Waiting for Copy Project dialog to close");
+    }
+
+    public List<String> getErrors() {
+        return errors.stream().map(WebElement::getText).toList();
     }
 }
