@@ -5,11 +5,6 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import net.datafaker.Faker;
 
-/**
- * Playwright version of ConfigureCommitInfoComponent - handles commit configuration modal
- * This modal appears after project creation and needs to be filled or dismissed
- * Matches original ConfigureCommitInfoComponent functionality exactly
- */
 public class ConfigureCommitInfoComponent extends BaseComponent {
 
     private WebElement emailField;
@@ -31,31 +26,15 @@ public class ConfigureCommitInfoComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        // Email field: ".//input[@id='commit-user-email']"
         emailField = createScopedElement("xpath=.//input[@id='commit-user-email']", "emailField");
-        
-        // First name field: ".//input[@id='commit-user-firstname']"
         firstNameField = createScopedElement("xpath=.//input[@id='commit-user-firstname']", "firstNameField");
-        
-        // Last name field: ".//input[@id='commit-user-lastname']"
         lastNameField = createScopedElement("xpath=.//input[@id='commit-user-lastname']", "lastNameField");
-        
-        // Display name dropdown: ".//select[@name='commit-user-display-name-select-box']"
         displayNameDropdown = createScopedElement("xpath=.//select[@name='commit-user-display-name-select-box']", "displayNameDropdown");
-        
-        // Other display name field: ".//input[@id='commit-user-display-name']"
         otherDisplayNameField = createScopedElement("xpath=.//input[@id='commit-user-display-name']", "otherDisplayNameField");
-        
-        // Save button: ".//input[@id='save-commit-info']"
         saveBtn = createScopedElement("xpath=.//input[@id='save-commit-info']", "saveBtn");
-        
-        // Cancel button: ".//input[@value='Cancel']"
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
-    /**
-     * Fill commit info with random data - matches original functionality exactly
-     */
     public void fillCommitInfoWithRandomData() {
         Faker faker = new Faker();
         emailField.sendKeys(faker.internet().emailAddress());

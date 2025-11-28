@@ -8,5 +8,7 @@
     <test name="TestGitNewBranchCreatedFromMaster"><classes><class name="tests.ui.webstudio.git.TestGitNewBranchCreatedFromMaster"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaRepositoryTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaRepositoryTab"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaEditorTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaEditorTab"/></classes></test>
+    <test name="TestGitSwitchToDeletedBranch"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/></classes></test>
+    <test name="TestGitSwitchDeletedBranchPreset"><classes><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
 
 </suite>

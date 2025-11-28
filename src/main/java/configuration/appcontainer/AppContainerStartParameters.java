@@ -9,6 +9,7 @@ import java.util.Map;
 public enum AppContainerStartParameters {
     EMPTY,
     DEFAULT_STUDIO_PARAMS,
+    STUDIO_GIT,
     SAML_STUDIO_PARAMS,
     OAUTH_STUDIO_PARAMS,
     SERVICE_PARAMS;
@@ -18,6 +19,12 @@ public enum AppContainerStartParameters {
         switch (this) {
             case EMPTY:
                 config.put("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0");
+                break;
+            case STUDIO_GIT:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                config.put("repository.design.login", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_LOGIN));
+                config.put("repository.design.password", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_PASSWORD));
+                config.put("repository.design.uri", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_URL));
                 break;
             case SAML_STUDIO_PARAMS:
                 config.putAll(EMPTY.getParameterMap());

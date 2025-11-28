@@ -17,6 +17,8 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
 
     private TableComponent propertiesTable;
     private TableComponent tagsTable;
+    private WebElement branchSelect;
+    private WebElement branchSelectError;
 
     public RepositoryContentTabPropertiesComponent() {
         super(LocalDriverPool.getPage());
@@ -31,6 +33,8 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     private void initializeElements() {
         propertiesTable = createScopedComponent(TableComponent.class, "xpath=.//span[@id='propertiesContent']//table[@class='formfields']", "propertiesTable");
         tagsTable = createScopedComponent(TableComponent.class, "xpath=.//span[@id='editProjectTagsPanel']//table[@class='formfields']", "tagsTable");
+        branchSelect = createScopedElement("xpath=.//select[@id='branchSelector']", "branchSelect");
+        branchSelectError = createScopedElement("xpath=.//span[@id='branchSelector_error']", "branchSelectError");
     }
 
     @Getter
@@ -152,5 +156,18 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
         return tagsTable.getCell(row, 2).getLocator()
                 .locator("xpath=.//input[contains(@class,'editable-select')]/following-sibling::ul/li[@selected='selected']")
                 .getAttribute("value");
+    }
+
+    public RepositoryContentTabPropertiesComponent selectBranch(String branchName) {
+        branchSelect.selectByVisibleText(branchName);
+        return this;
+    }
+
+    public List<String> getSelectOprions() {
+        return branchSelect.getSelectValues();
+    }
+
+    public String getSelectedBranch() {
+        return branchSelect.getAttribute("title");
     }
 }

@@ -22,7 +22,7 @@ public class TestWebservicesGitRepo extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
             Map.entry("production-repository.base.path", "deploy/")
-            //For local run git.token.ruleservice HERE!!!
+            //For local run git.token.ruleservice HERE!!! Or add it to config.properties
             //Map.entry("production-repository.password", "ghp_token_here")
     ));
 

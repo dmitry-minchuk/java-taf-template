@@ -18,7 +18,10 @@ public enum PropertyNameSpace {
     PLAYWRIGHT_VIDEOS_PATH("playwright_videos_path"),
     GIT_URL_RULESERVICE("git.url.ruleservice"),
     GIT_LOGIN_RULESERVICE("git.login.ruleservice"),
-    GIT_TOKEN_RULESERVICE("git.token.ruleservice");
+    GIT_TOKEN_RULESERVICE("git.token.ruleservice"),
+    GIT_URL("git.url"),
+    GIT_LOGIN("git.login"),
+    GIT_PASSWORD("git.password");
 
     private String value;
 

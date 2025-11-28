@@ -74,3 +74,6 @@ report-output
 src/main/resources/jmeter/htmlReport
 src/main/resources/jmeter/jmeterSuite.jmx
 src/main/resources/jmeter/jmeterReport.jtl
+
+# Configuration files with sensitive data
+src/test/resources/config.properties

@@ -127,10 +127,15 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return currentBranchDisplay.getText();
     }
 
-    public void clickCopyButton() {
+    public void clickCopyButton(boolean waitForDialogToClose) {
         LOGGER.info("Clicking Copy button");
         copyButton.click();
-        waitForDialogToClose();
+        if(waitForDialogToClose)
+            waitForDialogToClose();
+    }
+
+    public void clickCopyButton() {
+        clickCopyButton(true);
     }
 
     public void clickCancelButton() {

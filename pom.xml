@@ -26,6 +26,7 @@
         <java.agent.testng.version>5.4.6</java.agent.testng.version>
         <logger.java.log4j.version>5.2.3</logger.java.log4j.version>
         <jackson.version>2.15.4</jackson.version>
+        <jgit.version>7.4.0.202509020913-r</jgit.version>
 
         <maven.compiler.plugin>3.14.0</maven.compiler.plugin>
         <maven.surefire.plugin>3.5.3</maven.surefire.plugin>
@@ -148,6 +149,11 @@
             <artifactId>h2</artifactId>
             <version>2.2.224</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>${jgit.version}</version>
         </dependency>
     </dependencies>
 
