@@ -39,16 +39,19 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
         showProblemsBtn = createScopedElement("xpath=.//img[@title='Show Problems']", "showProblemsBtn");
     }
 
-    public void clickErrorsTab() {
+    public EditorMainContentProblemsPanelComponent clickErrorsTab() {
         errorsTab.click();
+        return this;
     }
 
-    public void clickWarningsTab() {
+    public EditorMainContentProblemsPanelComponent clickWarningsTab() {
         warningsTab.click();
+        return this;
     }
 
-    public void closePanel() {
+    public EditorMainContentProblemsPanelComponent closePanel() {
         closeBtn.click();
+        return this;
     }
 
     public boolean isProblemsPanelVisible() {
@@ -68,21 +71,28 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
         return this;
     }
 
-    public WebElement getShowProblemsBtn() {
-        return showProblemsBtn;
+    public EditorMainContentProblemsPanelComponent clickShowProblemsBtn() {
+        showProblemsBtn.click();
+        return this;
     }
 
     public EditorMainContentProblemsPanelComponent expandProblemDescription(int elementPosition) {
+        isErrorMessageListPresent();
         errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='stacktrace-hidden']").click();
         return this;
     }
 
     public EditorMainContentProblemsPanelComponent hideProblemDescription(int elementPosition) {
-        errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='stacktrace-showed']").click();
+        isErrorMessageListPresent();
+        errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='arrow-top']//div[@class='stacktrace-showed']").click();
         return this;
     }
 
-    public boolean isErrorMessagePresent() {
+    public boolean isProblemDescriptionVisible(int elementPosition) {
+        return WaitUtil.waitForCondition(() -> errorMessages.get(elementPosition).getLocator().locator("xpath=.//span[@class='stacktrace-panels']").isVisible(), 500, 50, "Waiting for ProblemDescription to be visible...");
+    }
+
+    public boolean isErrorMessageListPresent() {
         return WaitUtil.isListNotEmpty(() -> errorMessages, 5000, 250, "Waiting for error messages to appear in problems panel");
     }
 }

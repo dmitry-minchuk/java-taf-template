@@ -18,12 +18,6 @@ public class ProblemsPanelComponent extends BaseComponent {
     private List<WebElement> errorElements;
     private List<WebElement> warningElements;
 
-    // Stack trace elements
-    private WebElement stackTraceShowBtn;
-    private WebElement stackTraceCloseTopBtn;
-    private WebElement stackTraceCloseBottomBtn;
-    private WebElement stackTracePanel;
-
     public ProblemsPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
@@ -42,12 +36,6 @@ public class ProblemsPanelComponent extends BaseComponent {
         compilationProgressBar = createScopedElement("xpath=.//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
         errorElements = createScopedElementList("xpath=.//div[@id='errors-panel']//a", "errorElements");
         warningElements = createScopedElementList("xpath=.//div[@id='warnings-panel']//a", "warningElements");
-
-        // Stack trace elements initialization
-        stackTraceShowBtn = createScopedElement("xpath=(//div[@class='stacktrace-hidden'])[2]", "stackTraceShowBtn");
-        stackTraceCloseTopBtn = createScopedElement("xpath=//div[@class='arrow-top']//div[@class='stacktrace-showed']", "stackTraceCloseTopBtn");
-        stackTraceCloseBottomBtn = createScopedElement("xpath=//div[@class='arrow-bottom']//div[@class='stacktrace-showed']", "stackTraceCloseBottomBtn");
-        stackTracePanel = createScopedElement("xpath=(//span[@class='stacktrace-panels'])[2]", "stackTracePanel");
     }
 
     public void showProblemsPanel() {
@@ -161,22 +149,5 @@ public class ProblemsPanelComponent extends BaseComponent {
         if (index > 0 && index <= errorElements.size()) {
             errorElements.get(index - 1).click();
         }
-    }
-
-    // Stack trace methods
-    public void showStackTrace() {
-        stackTraceShowBtn.click();
-    }
-
-    public void hideStackTraceTop() {
-        stackTraceCloseTopBtn.click();
-    }
-
-    public void hideStackTraceBottom() {
-        stackTraceCloseBottomBtn.click();
-    }
-
-    public boolean isStackTraceVisible() {
-        return stackTracePanel.isVisible();
     }
 }

@@ -49,33 +49,38 @@ public class TestViewStackTraceFunctionality extends BaseTest {
     }
 
     private void checkStackTraceView(EditorPage editorPage, String catalogName, String tableName) {
+        LOGGER.info("================================ {}/{} =================================", catalogName, tableName);
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree(catalogName)
                 .selectItemInFolder(catalogName, tableName);
 
-        // Show stack trace and verify it's visible
-        editorPage.getProblemsPanelComponent().showStackTrace();
-        assertThat(editorPage.getProblemsPanelComponent().isStackTraceVisible())
-                .as("Stack trace should be visible after clicking show button for %s/%s", catalogName, tableName)
+        // Show problem description (stack trace) and verify it's visible
+        editorPage.getEditorMainContentProblemsPanelComponent()
+                .expandProblemDescription(0);
+        assertThat(editorPage.getEditorMainContentProblemsPanelComponent().isProblemDescriptionVisible(0))
+                .as("Problem description should be visible after expanding for %s/%s", catalogName, tableName)
                 .isTrue();
 
-        // Hide via bottom button and verify it's hidden
-        editorPage.getProblemsPanelComponent().hideStackTraceBottom();
-        assertThat(editorPage.getProblemsPanelComponent().isStackTraceVisible())
-                .as("Stack trace should be hidden after clicking bottom close button for %s/%s", catalogName, tableName)
+        // Hide problem description and verify it's hidden
+        editorPage.getEditorMainContentProblemsPanelComponent()
+                .hideProblemDescription(0);
+        assertThat(editorPage.getEditorMainContentProblemsPanelComponent().isProblemDescriptionVisible(0))
+                .as("Problem description should be hidden after hiding for %s/%s", catalogName, tableName)
                 .isFalse();
 
         // Show again
-        editorPage.getProblemsPanelComponent().showStackTrace();
-        assertThat(editorPage.getProblemsPanelComponent().isStackTraceVisible())
-                .as("Stack trace should be visible again after clicking show button for %s/%s", catalogName, tableName)
+        editorPage.getEditorMainContentProblemsPanelComponent()
+                .expandProblemDescription(0);
+        assertThat(editorPage.getEditorMainContentProblemsPanelComponent().isProblemDescriptionVisible(0))
+                .as("Problem description should be visible again after expanding for %s/%s", catalogName, tableName)
                 .isTrue();
 
-        // Hide via top button and verify it's hidden
-        editorPage.getProblemsPanelComponent().hideStackTraceTop();
-        assertThat(editorPage.getProblemsPanelComponent().isStackTraceVisible())
-                .as("Stack trace should be hidden after clicking top close button for %s/%s", catalogName, tableName)
+        // Hide again and verify it's hidden
+        editorPage.getEditorMainContentProblemsPanelComponent()
+                .hideProblemDescription(0);
+        assertThat(editorPage.getEditorMainContentProblemsPanelComponent().isProblemDescriptionVisible(0))
+                .as("Problem description should be hidden after hiding again for %s/%s", catalogName, tableName)
                 .isFalse();
     }
 }
