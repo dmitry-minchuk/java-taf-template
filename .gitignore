@@ -77,3 +77,10 @@ src/main/resources/jmeter/jmeterReport.jtl
 
 # Configuration files with sensitive data
 src/test/resources/config.properties
+
+# Promptfoo (MCP/AI Testing)
+promptfoo/node_modules/
+promptfoo/.env
+promptfoo/results/
+promptfoo/*.log
+promptfoo/package-lock.json
