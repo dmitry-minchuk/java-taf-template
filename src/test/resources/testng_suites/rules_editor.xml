@@ -7,5 +7,6 @@
     </listeners>
 
     <test name="TestMethodTable"><classes><class name="tests.ui.webstudio.rules_editor.TestMethodTable"/></classes></test>
+    <test name="TestViewStackTraceFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestViewStackTraceFunctionality"/></classes></test>
 
 </suite>

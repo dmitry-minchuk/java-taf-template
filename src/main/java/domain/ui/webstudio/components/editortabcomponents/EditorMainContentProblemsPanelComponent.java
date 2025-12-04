@@ -13,7 +13,10 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     private WebElement errorsTab;
     private WebElement warningsTab;
     private WebElement closeBtn;
+
     private List<WebElement> errorMessages;
+    private WebElement hideProblemsBtn;
+    private WebElement showProblemsBtn;
 
     public EditorMainContentProblemsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -30,7 +33,10 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
         errorsTab = createScopedElement("xpath=.//div[contains(@class,'tab') and contains(text(),'Errors')]", "errorsTab");
         warningsTab = createScopedElement("xpath=.//div[contains(@class,'tab') and contains(text(),'Warnings')]", "warningsTab");
         closeBtn = createScopedElement("xpath=.//button[@title='Close'] | .//span[contains(@class,'close')]", "closeBtn");
+
         errorMessages = createScopedElementList("xpath=.//div[@class='problem-error']", "errorMessages");
+        hideProblemsBtn = createScopedElement("xpath=.//img[@title='Hide Problems']", "hideProblemsBtn");
+        showProblemsBtn = createScopedElement("xpath=.//img[@title='Show Problems']", "showProblemsBtn");
     }
 
     public void clickErrorsTab() {
@@ -55,6 +61,25 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
 
     public boolean isWarningsTabActive() {
         return warningsTab.getAttribute("class").contains("active");
+    }
+
+    public EditorMainContentProblemsPanelComponent clickHideProblemsBtn() {
+        hideProblemsBtn.click();
+        return this;
+    }
+
+    public WebElement getShowProblemsBtn() {
+        return showProblemsBtn;
+    }
+
+    public EditorMainContentProblemsPanelComponent expandProblemDescription(int elementPosition) {
+        errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='stacktrace-hidden']").click();
+        return this;
+    }
+
+    public EditorMainContentProblemsPanelComponent hideProblemDescription(int elementPosition) {
+        errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='stacktrace-showed']").click();
+        return this;
     }
 
     public boolean isErrorMessagePresent() {
