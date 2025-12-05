@@ -19,6 +19,7 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement saveBtn;
     private WebElement verifyBtn;
     private WebElement copyProjectBtn;
+    private WebElement moreBtn;
     // Run Tests Menu elements
     @Getter
     private WebElement testDropdownBtn;
@@ -26,6 +27,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement failuresOnlyCheckbox;
     private WebElement compoundResultCheckbox;
     private WebElement runTestsBtn;
+    // More Menu elements
+    private WebElement changesBtn;
+    private WebElement revisionsBtn;
 
     // SECOND LINE TOOLBAR
     private WebElement runBtn;
@@ -70,12 +74,16 @@ public class TableToolbarPanelComponent extends BaseComponent {
         verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
         saveBtn = new WebElement(page,"//a[./span[text()='saveProjectBtn'] or @type='submit']", "saveBtn");
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
+        moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
         // Run Tests Menu elements initialization
         testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
         testPerPageDropdown = new WebElement(page, "xpath=//select[@name='pp']", "testPerPageDropdown");
         failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
         compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='complexResult']", "compoundResultCheckbox");
         runTestsBtn = new WebElement(page, "xpath=//a[@class='button' and text()='Test']", "runTestsBtn");
+        // More Menu elements initialization
+        changesBtn = new WebElement(page, "xpath=//*[@id='topRevertLink']", "changesBtn");
+        revisionsBtn = new WebElement(page, "xpath=//a[@title='Show project revisions']", "revisionsBtn");
 
         // SECOND LINE TOOLBAR
         // Toolbar elements - scoped to toolbar container
@@ -167,6 +175,13 @@ public class TableToolbarPanelComponent extends BaseComponent {
         return new RunTestsMenu();
     }
 
+    public IMoreMenu clickMore() {
+        WaitUtil.sleep(1000, "Waiting before clicking More dropdown");
+        moreBtn.click();
+        WaitUtil.sleep(500, "Waiting for More dropdown to open");
+        return new MoreMenu();
+    }
+
     // Interface for Playwright Run Menu
     public interface IRunMenu {
         IRunMenu clickCreateItem();
@@ -189,6 +204,12 @@ public class TableToolbarPanelComponent extends BaseComponent {
         String getTestPerPage();
         boolean isFailuresOnlyChecked();
         boolean isCompoundResultChecked();
+    }
+
+    // Interface for More Menu
+    public interface IMoreMenu {
+        ChangesDialogComponent clickChanges();
+        void clickRevisions();
     }
 
     // Implementation for Playwright Run Menu
@@ -288,6 +309,23 @@ public class TableToolbarPanelComponent extends BaseComponent {
         @Override
         public boolean isCompoundResultChecked() {
             return compoundResultCheckbox.isChecked();
+        }
+    }
+
+    // Implementation for More Menu
+    public class MoreMenu implements IMoreMenu {
+
+        @Override
+        public ChangesDialogComponent clickChanges() {
+            changesBtn.click();
+            WaitUtil.sleep(1500, "Waiting for Changes dialog to open");
+            return new ChangesDialogComponent();
+        }
+
+        @Override
+        public void clickRevisions() {
+            revisionsBtn.click();
+            WaitUtil.sleep(500, "Waiting for Revisions dialog to open");
         }
     }
 
