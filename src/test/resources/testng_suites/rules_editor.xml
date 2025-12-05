@@ -8,5 +8,6 @@
 
     <test name="TestMethodTable"><classes><class name="tests.ui.webstudio.rules_editor.TestMethodTable"/></classes></test>
     <test name="TestViewStackTraceFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestViewStackTraceFunctionality"/></classes></test>
+    <test name="TestModuleCategoryInheritedProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestModuleCategoryInheritedProperties"/></classes></test>
 
 </suite>

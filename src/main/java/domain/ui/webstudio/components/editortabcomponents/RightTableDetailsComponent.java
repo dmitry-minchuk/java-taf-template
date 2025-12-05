@@ -17,6 +17,11 @@ public class RightTableDetailsComponent extends BaseComponent {
     private WebElement propertyInputTemplate;
     private WebElement propertyValueTemplate;
 
+    // Property value reading (for inherited properties test)
+    private WebElement propertyValueTextTemplate;
+    private WebElement propertyRowTemplate;
+    private WebElement goToPropertiesTableArrowTemplate;
+
     public RightTableDetailsComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
@@ -35,6 +40,11 @@ public class RightTableDetailsComponent extends BaseComponent {
         saveBtn = createScopedElement("xpath=.//input[@id='savePropsButton']", "saveBtn");
         propertyInputTemplate = createScopedElement("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span/input", "propertyInputField");
         propertyValueTemplate = createScopedElement("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span[1][contains(text(),'%s')]", "propertyValueCell");
+
+        // Property value reading templates
+        propertyValueTextTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueText");
+        propertyRowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[./td[contains(text(),'%s')]]", "propertyRow");
+        goToPropertiesTableArrowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[2]//a", "goToPropertiesTableArrow");
     }
 
     public void clickSaveBtn() {
@@ -62,6 +72,40 @@ public class RightTableDetailsComponent extends BaseComponent {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getPropertyValue(String propertyName) {
+        return propertyValueTextTemplate.format(propertyName).getText().trim();
+    }
+
+    public WebElement getPropertyRow(String propertyName) {
+        return propertyRowTemplate.format(propertyName);
+    }
+
+    public boolean isPropertyInherited(String propertyName) {
+        String bgColor = getPropertyRow(propertyName).getCssValue("background-color");
+        return bgColor.equals("rgba(190, 220, 255, 0.3)");
+    }
+
+    public String getPropertyRowBackgroundColor(String propertyName) {
+        return getPropertyRow(propertyName).getCssValue("background-color");
+    }
+
+    public String getPropertyRowTitle(String propertyName) {
+        return getPropertyRow(propertyName).getAttribute("title");
+    }
+
+    public WebElement getGoToPropertiesTableArrow(String propertyName) {
+        return goToPropertiesTableArrowTemplate.format(propertyName);
+    }
+
+    public void clickGoToPropertiesTableArrow(String propertyName) {
+        getGoToPropertiesTableArrow(propertyName).click();
+        WaitUtil.sleep(500, "Waiting for Properties table to load after clicking arrow");
+    }
+
+    public String getGoToPropertiesTableArrowTitle(String propertyName) {
+        return getGoToPropertiesTableArrow(propertyName).getAttribute("title");
     }
 
     @Getter

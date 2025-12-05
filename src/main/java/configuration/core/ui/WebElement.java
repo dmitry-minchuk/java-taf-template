@@ -284,7 +284,7 @@ public class WebElement {
     
     public String getCssValue(String propertyName) {
         LOGGER.info("Getting CSS property '{}' from {}", propertyName, elementName);
-        return locator.evaluate("el => window.getComputedStyle(el)." + propertyName).toString();
+        return locator.evaluate("el => window.getComputedStyle(el).getPropertyValue('" + propertyName + "')").toString();
     }
 
     public boolean isEnabled() {
