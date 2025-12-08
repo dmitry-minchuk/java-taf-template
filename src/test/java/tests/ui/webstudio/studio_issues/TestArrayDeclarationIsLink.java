@@ -40,7 +40,7 @@ public class TestArrayDeclarationIsLink extends BaseTest {
 
         // Verify that all procedure links have proper styling
         links.forEach(link -> {
-            String borderBottom = link.getCssValue("borderBottom");
+            String borderBottom = link.getCssValue("border-bottom");
             assertThat(borderBottom)
                     .as("Procedure link should have proper border-bottom styling")
                     .satisfiesAnyOf(
