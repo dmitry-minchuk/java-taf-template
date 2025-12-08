@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 
 public class RepositoryTreeFolderComponent extends BaseComponent {
 
@@ -31,9 +32,8 @@ public class RepositoryTreeFolderComponent extends BaseComponent {
     }
 
     public void expandFolder() {
-        if (expanderClosed.isVisible(200)) {
+        if (WaitUtil.waitForCondition(() -> expanderClosed.isVisible(), 500, 100, "Waiting for Folder expander to be visible"))
             expanderClosed.click();
-        }
     }
 
     public void selectItem(String itemName) {
