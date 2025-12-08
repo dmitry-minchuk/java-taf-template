@@ -154,10 +154,15 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void clickDeleteUser(String username) {
+        int usersBefore = usersTable.getRowsCount();
         int row = getUserRow(username);
         usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='delete']").first().click();
         getModalOkBtn().click();
-        WaitUtil.sleep(150, "Waiting for user deletion to complete");
+        WaitUtil.waitForCondition(() -> {
+            int usersAfter = usersTable.getRowsCount();
+            return usersAfter == usersBefore - 1;
+            }, 5000, 100, "Waiting for user deletion to complete");
+
     }
 
     // ========================================
@@ -261,32 +266,5 @@ public class UsersPageComponent extends BaseComponent {
     public void cancelUser() {
         cancelBtn.click();
         drawer.waitForHidden(3000);
-    }
-
-    // ========================================
-    // Legacy Methods (for backward compatibility)
-    // ========================================
-
-    @Deprecated
-    public String getSpecificUserEmail(String username) {
-        return getEmailFromRow(getUserRow(username));
-    }
-
-    @Deprecated
-    public String getSpecificUserElement(String username, String elementType) {
-        int row = getUserRow(username);
-        switch (elementType) {
-            case "users-firstname":
-                String fullName = getFullNameFromRow(row);
-                return fullName.split(" ")[0];
-            case "users-lastname":
-                String fullNameLast = getFullNameFromRow(row);
-                String[] nameParts = fullNameLast.split(" ");
-                return nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
-            case "users-displayname":
-                return getFullNameFromRow(row);
-            default:
-                return "";
-        }
     }
 }
