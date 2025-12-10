@@ -10,5 +10,6 @@
     <test name="TestGitCopyProjectIntoExistingBranchViaEditorTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaEditorTab"/></classes></test>
     <test name="TestGitSwitchToDeletedBranch"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/></classes></test>
     <test name="TestGitSwitchDeletedBranchPreset"><classes><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
+    <test name="TestMergeBranchesNoConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesNoConflicts"/></classes></test>
 
 </suite>

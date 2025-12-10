@@ -29,7 +29,7 @@ public class TestAddElementToCollectionSet extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "mySpr");
 
-        var runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
+        var runMenu = editorPage.getEditorTableToolbarPanelComponent().clickRun();
         runMenu.clickAddElementToCollectionBtn("a =");
         assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong.")).isFalse();
         

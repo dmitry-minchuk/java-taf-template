@@ -12,7 +12,6 @@ import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
-import helpers.utils.WaitUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.testng.annotations.AfterClass;
@@ -73,8 +72,8 @@ public class TestLocalZippedProjects extends BaseTest {
                     LOGGER.info("COMPILATION ERROR DETECTED: {}", problemsPanelComponentErrorsMsg);
                 }
 
-                if (editorPage.getTableToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
-                    editorPage.getTableToolbarPanelComponent()
+                if (editorPage.getEditorTableToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
+                    editorPage.getEditorTableToolbarPanelComponent()
                             .clickTestDropdown()
                             .runTests();
                     editorPage.waitUntilSpinnerLoaded();

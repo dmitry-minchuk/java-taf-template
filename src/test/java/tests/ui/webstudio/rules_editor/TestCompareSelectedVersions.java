@@ -41,7 +41,7 @@ public class TestCompareSelectedVersions extends BaseTest {
         table.editCell(10, 2, "25");
         editorPage.getEditTablePanelComponent().clickSaveChanges();
 
-        ChangesDialogComponent changesDialog = editorPage.getTableToolbarPanelComponent()
+        ChangesDialogComponent changesDialog = editorPage.getEditorTableToolbarPanelComponent()
                 .clickMore()
                 .clickChanges();
 

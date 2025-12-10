@@ -41,7 +41,7 @@ public class TestGitCopyProjectIntoExistingBranchViaEditorTab extends BaseTest {
         // Navigate to Editor and copy project with custom branch
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
-        editorPage.getTableToolbarPanelComponent().clickCopyProjectBtn();
+        editorPage.getEditorTableToolbarPanelComponent().clickCopyProjectBtn();
 
         CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
         copyDialog.waitForDialogToAppear();
@@ -67,7 +67,7 @@ public class TestGitCopyProjectIntoExistingBranchViaEditorTab extends BaseTest {
         // Navigate to Editor and try to copy second project to existing branch
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(SECOND_PROJECT_NAME);
-        editorPage.getTableToolbarPanelComponent().clickCopyProjectBtn();
+        editorPage.getEditorTableToolbarPanelComponent().clickCopyProjectBtn();
 
         copyDialog = repositoryPage.getCopyProjectDialogComponent();
         copyDialog.waitForDialogToAppear();

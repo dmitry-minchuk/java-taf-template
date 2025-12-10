@@ -59,7 +59,7 @@ public class TestMethodTable extends BaseTest {
     }
 
     private void runMethodTest(EditorPage editorPage, String inputParam, List<String> expectedResult) {
-        var runMenu = editorPage.getTableToolbarPanelComponent().clickRun();
+        var runMenu = editorPage.getEditorTableToolbarPanelComponent().clickRun();
         runMenu.setInputTextField("1", inputParam)
                 .clickRunInsideMenu();
         List<String> actualResult = editorPage.getTestResultValidationComponent().getTestResult(1);
@@ -94,7 +94,7 @@ public class TestMethodTable extends BaseTest {
     }
 
     private void testTableCopyAndManagement(EditorPage editorPage) {
-        editorPage.getTableToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
+        editorPage.getEditorTableToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
         
         // Verify both tables exist in rules tree
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
@@ -102,7 +102,7 @@ public class TestMethodTable extends BaseTest {
 
         // Select and remove the copied table
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings2");
-        editorPage.getTableToolbarPanelComponent().removeCurrentTable();
+        editorPage.getEditorTableToolbarPanelComponent().removeCurrentTable();
         
         // Verify tree state after removal
         editorPage.getEditorLeftRulesTreeComponent()

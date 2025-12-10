@@ -20,7 +20,7 @@ public class EditorPage extends BasePage {
     private ProblemsPanelComponent problemsPanelComponent;
     private ProjectDetailsComponent projectDetailsComponent;
     private AddModuleComponent addModulePopupComponent;
-    private TableToolbarPanelComponent tableToolbarPanelComponent;
+    private EditorTableToolbarPanelComponent editorTableToolbarPanelComponent;
     private EditTablePanelComponent editTablePanelComponent;
     private TestResultValidationComponent testResultValidationComponent;
     private EditorMainContentProblemsPanelComponent editorMainContentProblemsPanelComponent;
@@ -37,7 +37,7 @@ public class EditorPage extends BasePage {
         rightTableDetailsComponent = createScopedComponent(RightTableDetailsComponent.class, "xpath=//div[@id='right']", "rightTableDetailsComponent");
         tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         centerTable = createScopedComponent(TableComponent.class, "xpath=//table[@class='te_table']", "centerTable");
-        tableToolbarPanelComponent = createScopedComponent(TableToolbarPanelComponent.class, "xpath=//div[@id='tableToolbarPanel']", "tableToolbarPanelComponent");
+        editorTableToolbarPanelComponent = createScopedComponent(EditorTableToolbarPanelComponent.class, "xpath=//div[@id='tableToolbarPanel']", "editorTableToolbarPanelComponent");
         testResultValidationComponent = createScopedComponent(TestResultValidationComponent.class, "xpath=//div[@id='content' and contains(@class,'ui-layout-center')]", "testResultValidationComponent");
         problemsPanelComponent = createScopedComponent(ProblemsPanelComponent.class, "xpath=//div[@id='bottom']", "problemsPanelComponent");
         projectDetailsComponent = createScopedComponent(ProjectDetailsComponent.class, "xpath=//div[@class='page']", "projectDetailsComponent");
@@ -47,9 +47,9 @@ public class EditorPage extends BasePage {
         projectModuleDetailsComponent = createScopedComponent(ProjectModuleDetailsComponent.class, "xpath=//div[contains(@class, 'ui-layout-center') and @id='content']", "projectModuleDetailsComponent");
     }
 
-    public TableToolbarPanelComponent getTableToolbarPanelComponent() {
+    public EditorTableToolbarPanelComponent getEditorTableToolbarPanelComponent() {
         waitUntilSpinnerLoaded();
-        return tableToolbarPanelComponent;
+        return editorTableToolbarPanelComponent;
     }
 
     public TableComponent getCenterTable() {

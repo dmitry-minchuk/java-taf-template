@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
 
 public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
@@ -17,6 +18,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     private WebElement addFolderBtn;
     private WebElement uploadFileBtn;
     private WebElement exportBtn;
+    private WebElement syncBtn;
 
     public RepositoryContentButtonsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -40,6 +42,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         addFolderBtn = createScopedElement("xpath=.//input[@value='Add Folder']", "addFolderBtn");
         uploadFileBtn = createScopedElement("xpath=.//input[@value='Upload File']", "uploadFileBtn");
         exportBtn = createScopedElement("xpath=.//input[@value='Export']", "exportBtn");
+        syncBtn = createScopedElement("xpath=.//input[@value='Sync']", "syncBtn");
     }
 
     // Legacy methods for compatibility
@@ -85,5 +88,18 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     public void clickExportBtn() {
         exportBtn.click();
+    }
+
+    public void clickSync() {
+        syncBtn.click();
+        WaitUtil.sleep(500, "Waiting for Sync dialog to open");
+    }
+
+    public boolean isSyncButtonVisible() {
+        return syncBtn.isVisible(1000);
+    }
+
+    public String getSyncButtonTitle() {
+        return syncBtn.getAttribute("title");
     }
 }

@@ -12,7 +12,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class TableToolbarPanelComponent extends BaseComponent {
+public class EditorTableToolbarPanelComponent extends BaseComponent {
 
     // TOP LINE TOOLBAR
     private WebElement exportBtn;
@@ -20,6 +20,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement verifyBtn;
     private WebElement copyProjectBtn;
     private WebElement moreBtn;
+    private WebElement syncBtn;
+    private WebElement breadcrumbsModuleBranch;
+    private WebElement breadcrumbsDropdownItemTemplate;
     // Run Tests Menu elements
     @Getter
     private WebElement testDropdownBtn;
@@ -58,12 +61,12 @@ public class TableToolbarPanelComponent extends BaseComponent {
     private WebElement inputTextFieldTemplate;
     private WebElement inputSelectFieldTemplate;
 
-    public TableToolbarPanelComponent() {
+    public EditorTableToolbarPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public TableToolbarPanelComponent(WebElement rootLocator) {
+    public EditorTableToolbarPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -75,6 +78,9 @@ public class TableToolbarPanelComponent extends BaseComponent {
         saveBtn = new WebElement(page,"//a[./span[text()='saveProjectBtn'] or @type='submit']", "saveBtn");
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
         moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
+        syncBtn = new WebElement(page, "xpath=//div//a[text()='Sync']", "syncBtn");
+        breadcrumbsModuleBranch = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-module']/a[contains(@title, 'Branch')]", "breadcrumbsModuleBranch");
+        breadcrumbsDropdownItemTemplate = new WebElement(page, "xpath=//span[@class='dropdown open']/ul[contains(@class, 'dropdown-menu')]//li//a[contains(text(), '%s')]", "breadcrumbsDropdownItemTemplate");
         // Run Tests Menu elements initialization
         testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
         testPerPageDropdown = new WebElement(page, "xpath=//select[@name='pp']", "testPerPageDropdown");
@@ -123,6 +129,34 @@ public class TableToolbarPanelComponent extends BaseComponent {
 
     public void clickCopyProjectBtn() {
         copyProjectBtn.click();
+    }
+
+    public void clickSave() {
+        saveBtn.click();
+    }
+
+    public void clickSync() {
+        syncBtn.click();
+        WaitUtil.sleep(500, "Waiting for Sync dialog to open");
+    }
+
+    public boolean isSyncButtonVisible() {
+        return syncBtn.isVisible(1000);
+    }
+
+    public String getSyncButtonTitle() {
+        return syncBtn.getAttribute("title");
+    }
+
+    public void switchBranch(String branchName) {
+        breadcrumbsModuleBranch.click();
+        WaitUtil.sleep(250, "Waiting for branch dropdown to open");
+        breadcrumbsDropdownItemTemplate.format(branchName).click();
+        WaitUtil.sleep(1000, "Waiting for branch switch to complete");
+    }
+
+    public String getCurrentBranch() {
+        return breadcrumbsModuleBranch.getText();
     }
 
     public IRunMenu clickRun() {

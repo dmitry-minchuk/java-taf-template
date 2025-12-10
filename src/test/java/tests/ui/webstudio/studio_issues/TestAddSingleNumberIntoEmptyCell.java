@@ -4,9 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import domain.ui.webstudio.components.common.TableComponent;
 import domain.serviceclasses.constants.User;
-import domain.ui.webstudio.components.editortabcomponents.EditTablePanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
@@ -30,7 +28,7 @@ public class TestAddSingleNumberIntoEmptyCell extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "BankLimitIndex");
-        editorPage.getTableToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorTableToolbarPanelComponent().getEditBtn().click();
         editorPage.getCenterTable().clickCell(10, 1);
         editorPage.getEditTablePanelComponent().clickInsertRowAfter();
         editorPage.getCenterTable().editCell(11, 1, "13", true);

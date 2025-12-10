@@ -46,7 +46,7 @@ public class TestAllStepsDisplayedInTrace extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "DetermineCoverageFeeOrTax2");
 
-        List<String> visibleItemsFromTree = editorPage.getTableToolbarPanelComponent()
+        List<String> visibleItemsFromTree = editorPage.getEditorTableToolbarPanelComponent()
                 .clickTrace()
                 .setFactorTextField("123")
                 .clickTraceInsideMenu()

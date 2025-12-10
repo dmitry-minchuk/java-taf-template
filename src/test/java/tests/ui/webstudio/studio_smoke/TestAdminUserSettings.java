@@ -12,7 +12,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
-import domain.ui.webstudio.components.editortabcomponents.TableToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.EditorTableToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
@@ -270,7 +270,7 @@ public class TestAdminUserSettings extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTemplate, "Bank Rating");
 
         // Verify test execution settings in dropdown
-        TableToolbarPanelComponent.IRunTestsMenu testSettings = editorPage.getTableToolbarPanelComponent().clickTestDropdown();
+        EditorTableToolbarPanelComponent.IRunTestsMenu testSettings = editorPage.getEditorTableToolbarPanelComponent().clickTestDropdown();
         Assert.assertEquals(testSettings.getTestPerPage(), "20", "Tests per page should be 20");
         Assert.assertTrue(testSettings.isFailuresOnlyChecked(), "Failures Only should be enabled");
         Assert.assertTrue(testSettings.isCompoundResultChecked(), "Compound Result should be enabled");
@@ -306,7 +306,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
         // Scenario 13: Trace without formatting
-        TableToolbarPanelComponent.TraceWindow traceWindow = (TableToolbarPanelComponent.TraceWindow) editorPage.getTableToolbarPanelComponent().clickTraceExpectTraceWindow();
+        EditorTableToolbarPanelComponent.TraceWindow traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent().clickTraceExpectTraceWindow();
         List<String> traceItems = traceWindow.getVisibleItemsFromTree();
         traceWindow.close();
         assertThat(traceItems.getFirst()).contains("SpreadSheet Double TotalAssets4() = 268.59");
@@ -324,7 +324,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
-        traceWindow = (TableToolbarPanelComponent.TraceWindow) editorPage.getTableToolbarPanelComponent().clickTraceExpectTraceWindow();
+        traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent().clickTraceExpectTraceWindow();
         traceItems = traceWindow.getVisibleItemsFromTree();
         traceWindow.close();
         assertThat(traceItems.getFirst()).contains("268.59000000000003"); // Unformatted number
@@ -334,7 +334,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("TBasic")
                 .selectItemInFolder("TBasic", "SetNonZeroValues");
 
-        traceWindow = (TableToolbarPanelComponent.TraceWindow) editorPage.getTableToolbarPanelComponent()
+        traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent()
                 .clickTrace()
                 .clickTraceInsideMenu();
         TableComponent centerTable = traceWindow.expandItemInTree(0).getCenterTable();
@@ -354,7 +354,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("TBasic")
                 .selectItemInFolder("TBasic", "SetNonZeroValues");
 
-        traceWindow = (TableToolbarPanelComponent.TraceWindow) editorPage.getTableToolbarPanelComponent()
+        traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent()
                 .clickTrace()
                 .clickTraceInsideMenu();
         centerTable = traceWindow.expandItemInTree(0).getCenterTable();

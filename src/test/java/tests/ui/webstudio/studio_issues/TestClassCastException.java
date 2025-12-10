@@ -33,7 +33,7 @@ public class TestClassCastException extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "calc");
 
-        editorPage.getTableToolbarPanelComponent().clickRun();
+        editorPage.getEditorTableToolbarPanelComponent().clickRun();
         
         // Check that "Something went wrong" error is NOT visible
         assertThat(editorPage.isStudioMessageDisplayed("Sorry! Something went wrong."))
