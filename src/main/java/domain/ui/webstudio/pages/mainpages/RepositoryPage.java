@@ -2,10 +2,7 @@ package domain.ui.webstudio.pages.mainpages;
 
 import com.microsoft.playwright.Locator;
 import configuration.core.ui.WebElement;
-import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
-import domain.ui.webstudio.components.common.CreateNewProjectComponent;
-import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.common.TableComponent;
+import domain.ui.webstudio.components.common.*;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
@@ -46,6 +43,8 @@ public class RepositoryPage extends BasePage {
     private UploadFileDialogComponent uploadFileDialogComponent;
     private WebElement confirmOpeningDialogBtn;
     private SaveChangesComponent saveChangesComponent;
+    private SyncChangesDialogComponent syncChangesDialogComponent;
+    private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
     private TableComponent projectsTable;
 
     public RepositoryPage() {
@@ -74,6 +73,8 @@ public class RepositoryPage extends BasePage {
         copyProjectDialogComponent = createScopedComponent(CopyProjectDialogComponent.class, "xpath=//div[@id='modalCopyProject_container']", "copyProjectDialogComponent");
         uploadFileDialogComponent = createScopedComponent(UploadFileDialogComponent.class, "xpath=//div[@id='modalNewFile_container']", "uploadFileDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
+        syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@id='modalMergeBranches_container']", "syncChangesDialogComponent");
+        confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
     }

@@ -51,9 +51,9 @@ public class TestAdminSystemSettings extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        editorPage.getEditorTableToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
         editorPage.getCenterTable().editCell(6, 2, "1000", true);
-        editorPage.getEditTablePanelComponent().clickSaveChanges();
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         // Step 3: Test Verify on Edit = false
         systemSettings = editorPage.openUserMenu()
@@ -71,13 +71,13 @@ public class TestAdminSystemSettings extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        editorPage.getEditorTableToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
         editorPage.getCenterTable().editCell(4, 2, "Integer aaa", true);
-        editorPage.getEditTablePanelComponent().clickSaveChanges();
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         editorPage.getProblemsPanelComponent().checkNoProblems();
-        Assert.assertTrue(editorPage.getEditorTableToolbarPanelComponent().isVerifyButtonPresent(), "Verify button should be present when Verify on Edit is disabled");
-        editorPage.getEditorTableToolbarPanelComponent().clickVerify();
+        Assert.assertTrue(editorPage.getEditorToolbarPanelComponent().isVerifyButtonPresent(), "Verify button should be present when Verify on Edit is disabled");
+        editorPage.getEditorToolbarPanelComponent().clickVerify();
         WaitUtil.waitForCondition(() -> editorPage.getProblemsPanelComponent().getErrorsCount() == 1, 5000, 100, "Waiting for errors ti be listed...");
         Assert.assertEquals(editorPage.getProblemsPanelComponent().getErrorsCount(), 1, "Should have 1 error after clicking Verify button");
 
@@ -93,7 +93,7 @@ public class TestAdminSystemSettings extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForDispatch, "TestSystemSettings");
 
-        editorPage.getEditorTableToolbarPanelComponent()
+        editorPage.getEditorToolbarPanelComponent()
                 .clickTestDropdown()
                 .runTests();
 
@@ -110,7 +110,7 @@ public class TestAdminSystemSettings extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectNameForDispatch, "TestSystemSettings");
 
-        editorPage.getEditorTableToolbarPanelComponent()
+        editorPage.getEditorToolbarPanelComponent()
                 .clickTestDropdown()
                 .runTests();
 

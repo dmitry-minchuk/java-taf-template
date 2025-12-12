@@ -5,7 +5,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
-public class EditTablePanelComponent extends BaseComponent {
+public class EditorTableActionsPanelComponent extends BaseComponent {
 
     private WebElement saveChangesBtn;
     private WebElement undoChangesBtn;
@@ -13,12 +13,12 @@ public class EditTablePanelComponent extends BaseComponent {
     private WebElement insertRowAfterBtn;
     private WebElement removeRowBtn;
 
-    public EditTablePanelComponent() {
+    public EditorTableActionsPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public EditTablePanelComponent(WebElement rootLocator) {
+    public EditorTableActionsPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }

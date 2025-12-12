@@ -12,7 +12,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
-import domain.ui.webstudio.components.editortabcomponents.EditorTableToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
@@ -270,7 +270,7 @@ public class TestAdminUserSettings extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTemplate, "Bank Rating");
 
         // Verify test execution settings in dropdown
-        EditorTableToolbarPanelComponent.IRunTestsMenu testSettings = editorPage.getEditorTableToolbarPanelComponent().clickTestDropdown();
+        EditorToolbarPanelComponent.IRunTestsMenu testSettings = editorPage.getEditorToolbarPanelComponent().clickTestDropdown();
         Assert.assertEquals(testSettings.getTestPerPage(), "20", "Tests per page should be 20");
         Assert.assertTrue(testSettings.isFailuresOnlyChecked(), "Failures Only should be enabled");
         Assert.assertTrue(testSettings.isCompoundResultChecked(), "Compound Result should be enabled");
@@ -306,7 +306,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
         // Scenario 13: Trace without formatting
-        EditorTableToolbarPanelComponent.TraceWindow traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent().clickTraceExpectTraceWindow();
+        EditorToolbarPanelComponent.TraceWindow traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
         List<String> traceItems = traceWindow.getVisibleItemsFromTree();
         traceWindow.close();
         assertThat(traceItems.getFirst()).contains("SpreadSheet Double TotalAssets4() = 268.59");
@@ -324,7 +324,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
-        traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent().clickTraceExpectTraceWindow();
+        traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
         traceItems = traceWindow.getVisibleItemsFromTree();
         traceWindow.close();
         assertThat(traceItems.getFirst()).contains("268.59000000000003"); // Unformatted number
@@ -334,7 +334,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("TBasic")
                 .selectItemInFolder("TBasic", "SetNonZeroValues");
 
-        traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent()
+        traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .clickTraceInsideMenu();
         TableComponent centerTable = traceWindow.expandItemInTree(0).getCenterTable();
@@ -354,7 +354,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("TBasic")
                 .selectItemInFolder("TBasic", "SetNonZeroValues");
 
-        traceWindow = (EditorTableToolbarPanelComponent.TraceWindow) editorPage.getEditorTableToolbarPanelComponent()
+        traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .clickTraceInsideMenu();
         centerTable = traceWindow.expandItemInTree(0).getCenterTable();

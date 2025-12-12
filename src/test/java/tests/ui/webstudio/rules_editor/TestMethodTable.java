@@ -59,7 +59,7 @@ public class TestMethodTable extends BaseTest {
     }
 
     private void runMethodTest(EditorPage editorPage, String inputParam, List<String> expectedResult) {
-        var runMenu = editorPage.getEditorTableToolbarPanelComponent().clickRun();
+        var runMenu = editorPage.getEditorToolbarPanelComponent().clickRun();
         runMenu.setInputTextField("1", inputParam)
                 .clickRunInsideMenu();
         List<String> actualResult = editorPage.getTestResultValidationComponent().getTestResult(1);
@@ -71,7 +71,7 @@ public class TestMethodTable extends BaseTest {
                 .selectItemInFolder("Method", "getGreetings");
 
         table.doubleClickCell(2, 1);
-        editorPage.getEditTablePanelComponent()
+        editorPage.getEditorTableActionsPanelComponent()
                 .clickInsertRowAfter();
         table.editCell(3, 1, "return \"Happy Birthday, \"+name;");
         
@@ -83,8 +83,8 @@ public class TestMethodTable extends BaseTest {
 
         // Remove the added row
         table.doubleClickCell(3, 1);
-        editorPage.getEditTablePanelComponent().clickRemoveRow();
-        editorPage.getEditTablePanelComponent().clickSaveChanges();
+        editorPage.getEditorTableActionsPanelComponent().clickRemoveRow();
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.getProblemsPanelComponent().checkNoProblems();
         
         // Verify table is back to original state
@@ -94,7 +94,7 @@ public class TestMethodTable extends BaseTest {
     }
 
     private void testTableCopyAndManagement(EditorPage editorPage) {
-        editorPage.getEditorTableToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
         
         // Verify both tables exist in rules tree
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
@@ -102,7 +102,7 @@ public class TestMethodTable extends BaseTest {
 
         // Select and remove the copied table
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings2");
-        editorPage.getEditorTableToolbarPanelComponent().removeCurrentTable();
+        editorPage.getEditorToolbarPanelComponent().removeCurrentTable();
         
         // Verify tree state after removal
         editorPage.getEditorLeftRulesTreeComponent()

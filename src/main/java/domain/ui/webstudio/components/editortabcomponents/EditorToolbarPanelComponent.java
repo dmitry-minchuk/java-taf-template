@@ -12,7 +12,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class EditorTableToolbarPanelComponent extends BaseComponent {
+public class EditorToolbarPanelComponent extends BaseComponent {
 
     // TOP LINE TOOLBAR
     private WebElement exportBtn;
@@ -61,12 +61,12 @@ public class EditorTableToolbarPanelComponent extends BaseComponent {
     private WebElement inputTextFieldTemplate;
     private WebElement inputSelectFieldTemplate;
 
-    public EditorTableToolbarPanelComponent() {
+    public EditorToolbarPanelComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public EditorTableToolbarPanelComponent(WebElement rootLocator) {
+    public EditorToolbarPanelComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
@@ -75,7 +75,7 @@ public class EditorTableToolbarPanelComponent extends BaseComponent {
         // TOP LINE TOOLBAR
         exportBtn = new WebElement(page, "xpath=//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
         verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
-        saveBtn = new WebElement(page,"//a[./span[text()='saveProjectBtn'] or @type='submit']", "saveBtn");
+        saveBtn = new WebElement(page,"//a[@id='saveProjectButton']", "saveBtn");
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
         moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
         syncBtn = new WebElement(page, "xpath=//div//a[text()='Sync']", "syncBtn");

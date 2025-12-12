@@ -28,7 +28,7 @@ public class TestTraceIntoFileJsonRequest extends BaseTest {
                 .expandFolderInTree("Sheet1")
                 .selectItemInFolder("Sheet1", "mySpreadsheet");
 
-        editorPage.getEditorTableToolbarPanelComponent()
+        editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .selectJSONTrace("{\n  \"myId\": \"string\",\n  \"someArr\": null\n  \"intA\": 0,\n  \"subElement\": null\n  \"someText\": null\n}")
                 .clickTraceIntoFile();

@@ -1,4 +1,4 @@
-package domain.ui.webstudio.components.repositorytabcomponents;
+package domain.ui.webstudio.components.common;
 
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;

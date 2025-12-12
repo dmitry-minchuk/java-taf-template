@@ -44,8 +44,8 @@ public class TestLocalCentralProjects extends BaseTest {
                     LOGGER.info("COMPILATION ERROR DETECTED: {}", problemsPanelComponentErrorsMsg);
                 }
 
-                if (editorPage.getEditorTableToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
-                    editorPage.getEditorTableToolbarPanelComponent()
+                if (editorPage.getEditorToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
+                    editorPage.getEditorToolbarPanelComponent()
                             .clickTestDropdown()
                             .runTests();
                     editorPage.waitUntilSpinnerLoaded();

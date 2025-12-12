@@ -9,7 +9,8 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.editortabcomponents.EditorTableToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentRevisionsTabComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
@@ -76,7 +77,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .isEqualTo("Synchronize updates");
 
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
-        SyncChangesDialogComponent syncDialog = new SyncChangesDialogComponent();
+        SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
         assertThat(syncDialog.getDialogHeader())
                 .as("Sync dialog header should be correct")
@@ -98,6 +99,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectItemInFolder(PROJECT_NAME, "Module4.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
+        repositoryPage.getConfirmDeleteDialogComponent().getDeleteBtn().click();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
 
@@ -115,30 +117,37 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
 
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        EditorTableToolbarPanelComponent editorToolbar = editorPage.getEditorTableToolbarPanelComponent();
+        EditorToolbarPanelComponent editorToolbar = editorPage.getEditorToolbarPanelComponent();
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, "Module2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr2");
         editorPage.getCenterTable().editCell(3, 1, "Step1*");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorToolbar.clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
 
         editorToolbar.switchBranch(MASTER_BRANCH);
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, "Module1");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr1");
         editorPage.getCenterTable().editCell(3, 1, "Step1*");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorToolbar.clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectItemInFolder(PROJECT_NAME, "Module3.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
+        repositoryPage.getConfirmDeleteDialogComponent().getDeleteBtn().click();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
 
@@ -154,6 +163,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
 
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
+        syncDialog = repositoryPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
         assertThat(syncDialog.getCannotImportMessage())
                 .as("Cannot import message should be empty")
@@ -244,6 +254,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .isEqualTo("Step1");
 
         editorToolbar.clickSync();
+        syncDialog = editorPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
         assertThat(syncDialog.isExportButtonEnabled())
                 .as("Export button should be disabled")
@@ -298,6 +309,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .contains("Step1", "*");
 
         editorToolbar.clickSync();
+        syncDialog = editorPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
         assertThat(syncDialog.getCannotExportMessage())
                 .as("Cannot export message should indicate master has all updates")
@@ -315,6 +327,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
 
         editorToolbar.switchBranch(MASTER_BRANCH);
         editorToolbar.clickSync();
+        syncDialog = editorPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
         assertThat(syncDialog.getCannotExportMessage())
                 .as("Cannot export message should indicate MyBranch has all updates")
