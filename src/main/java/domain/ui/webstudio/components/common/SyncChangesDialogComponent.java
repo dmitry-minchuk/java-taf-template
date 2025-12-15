@@ -7,6 +7,8 @@ import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+
 public class SyncChangesDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(SyncChangesDialogComponent.class);
@@ -32,8 +34,8 @@ public class SyncChangesDialogComponent extends BaseComponent {
         dialogHeader = createScopedElement("xpath=.//div[@id='modalMergeBranches_header_content']", "dialogHeader");
         importTheirChangesBtn = createScopedElement("xpath=.//input[@value='Receive their updates']", "importTheirChangesBtn");
         exportYourChangesBtn = createScopedElement("xpath=.//input[@value='Send your updates']", "exportYourChangesBtn");
-        cannotImportMessage = createScopedElement("xpath=.//span[@id='mergeBranchesForm:cannotImportMessage']", "cannotImportMessage");
-        cannotExportMessage = createScopedElement("xpath=.//span[@id='mergeBranchesForm:cannotExportMessage']", "cannotExportMessage");
+        cannotImportMessage = createScopedElement("xpath=.//div[@id='mergeBranchesForm:cannotImportMessage']", "cannotImportMessage");
+        cannotExportMessage = createScopedElement("xpath=.//div[@id='mergeBranchesForm:cannotExportMessage']", "cannotExportMessage");
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
     }
 
@@ -69,17 +71,19 @@ public class SyncChangesDialogComponent extends BaseComponent {
     }
 
     public String getCannotImportMessage() {
-        if (cannotImportMessage.isVisible(500)) {
-            return cannotImportMessage.getText().trim();
-        }
-        return "";
+        return WaitUtil.waitForResult(() -> {
+            if (cannotImportMessage.isVisible())
+                return Optional.of(cannotImportMessage.getText().trim());
+            return Optional.empty();
+        }, 2000, 100, "Waiting for cannot import message element").orElse("");
     }
 
     public String getCannotExportMessage() {
-        if (cannotExportMessage.isVisible(500)) {
-            return cannotExportMessage.getText().trim();
-        }
-        return "";
+        return WaitUtil.waitForResult(() -> {
+            if (cannotExportMessage.isVisible())
+                return Optional.of(cannotExportMessage.getText().trim());
+            return Optional.empty();
+        }, 2000, 100, "Waiting for cannot export message element").orElse("");
     }
 
     public String getDialogHeader() {

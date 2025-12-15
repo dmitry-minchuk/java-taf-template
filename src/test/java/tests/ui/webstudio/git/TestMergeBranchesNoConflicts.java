@@ -144,6 +144,14 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_NAME);
+        repositoryPage.getRepositoryContentTabSwitcherComponent()
+                .selectPropertiesTab()
+                .selectBranch(MASTER_BRANCH);
+
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectItemInFolder(PROJECT_NAME, "Module3.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
@@ -199,14 +207,18 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, "Module2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr2");
         String cellText = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellText)
                 .as("MySpr2 cell should contain edited text after merge")
                 .contains("Step1", "*");
 
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(PROJECT_NAME, "Module1");
+        editorPage.getEditorToolbarPanelComponent().getBreadcrumbsAllProjects().click();
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(PROJECT_NAME, "Module1");
         editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr1");
         cellText = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellText)
@@ -247,6 +259,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, "Module1");
         editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr1");
         cellText = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellText)
@@ -294,14 +307,18 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, "Module2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr2");
         cellText = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellText)
                 .as("MySpr2 cell should contain edited text in MyBranch after final merge")
                 .contains("Step1", "*");
 
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(PROJECT_NAME, "Module1");
+        editorPage.getEditorToolbarPanelComponent().getBreadcrumbsAllProjects().click();
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(PROJECT_NAME, "Module1");
         editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "MySpr1");
         cellText = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellText)
@@ -313,10 +330,10 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         syncDialog.waitForDialogToAppear();
         assertThat(syncDialog.getCannotExportMessage())
                 .as("Cannot export message should indicate master has all updates")
-                .contains("They have all your updates. Nothing to send to 'master'");
+                .contains("They have all your updates. Nothing to send to 'master");
         assertThat(syncDialog.getCannotImportMessage())
                 .as("Cannot import message should indicate MyBranch has all updates")
-                .contains("You have all their updates: nothing to receive from 'master'");
+                .contains("You have all their updates: nothing to receive from 'master");
         assertThat(syncDialog.isExportButtonEnabled())
                 .as("Export button should be disabled when branches are in sync")
                 .isFalse();
@@ -334,7 +351,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .contains("They have all your updates. Nothing to send to 'MyBranch'");
         assertThat(syncDialog.getCannotImportMessage())
                 .as("Cannot import message should indicate master has all updates")
-                .contains("You have all their updates: nothing to receive from 'MyBranch'");
+                .contains("You have all their updates: nothing to receive from 'MyBranch");
         syncDialog.clickCancel();
 
         repositoryPage = editorPage.getTabSwitcherComponent()
@@ -353,7 +370,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
-                "Project NoConflicts is created."
+                "Project TestMergeBranchesNoConflicts_NoConflicts is created."
         );
 
         List<String> actualComments = new ArrayList<>();

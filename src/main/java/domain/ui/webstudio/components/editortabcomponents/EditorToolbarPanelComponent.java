@@ -21,6 +21,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement copyProjectBtn;
     private WebElement moreBtn;
     private WebElement syncBtn;
+    @Getter
+    private WebElement breadcrumbsAllProjects;
     private WebElement breadcrumbsModuleBranch;
     private WebElement breadcrumbsDropdownItemTemplate;
     // Run Tests Menu elements
@@ -79,6 +81,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
         moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
         syncBtn = new WebElement(page, "xpath=//div//a[text()='Sync']", "syncBtn");
+        breadcrumbsAllProjects = new WebElement(page, "//div[@class='breadcrumbs']/a[@href='/']", "breadcrumbsAllProjects");
         breadcrumbsModuleBranch = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-module']/a[contains(@title, 'Branch')]", "breadcrumbsModuleBranch");
         breadcrumbsDropdownItemTemplate = new WebElement(page, "xpath=//span[@class='dropdown open']/ul[contains(@class, 'dropdown-menu')]//li//a[contains(text(), '%s')]", "breadcrumbsDropdownItemTemplate");
         // Run Tests Menu elements initialization
