@@ -6,7 +6,8 @@ import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
-// Playwright version of RightTableDetailsComponent for property management
+import java.util.List;
+
 public class RightTableDetailsComponent extends BaseComponent {
 
     private WebElement addPropertyLink;
@@ -21,6 +22,9 @@ public class RightTableDetailsComponent extends BaseComponent {
     private WebElement propertyValueTextTemplate;
     private WebElement propertyRowTemplate;
     private WebElement goToPropertiesTableArrowTemplate;
+
+    // Property rows list
+    private List<WebElement> propertyRows;
 
     public RightTableDetailsComponent() {
         super(LocalDriverPool.getPage());
@@ -45,6 +49,9 @@ public class RightTableDetailsComponent extends BaseComponent {
         propertyValueTextTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueText");
         propertyRowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[./td[contains(text(),'%s')]]", "propertyRow");
         goToPropertiesTableArrowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[2]//a", "goToPropertiesTableArrow");
+
+        // Property rows list
+        propertyRows = createScopedElementList("xpath=.//div[@id='propsTable']//table[1]//tr[./td[@class='table-data-name']]", "propertyRows");
     }
 
     public void clickSaveBtn() {
@@ -106,6 +113,18 @@ public class RightTableDetailsComponent extends BaseComponent {
 
     public String getGoToPropertiesTableArrowTitle(String propertyName) {
         return getGoToPropertiesTableArrow(propertyName).getAttribute("title");
+    }
+
+    public int getPropertiesRowCount() {
+        WaitUtil.waitForCondition(() -> !propertyRows.isEmpty(), 2000, 100, "Waiting for property rows to load");
+        return propertyRows.size();
+    }
+
+    public String getPropertyNameInRow(int rowIndex) {
+        if (rowIndex < 1) {
+            throw new IllegalArgumentException("Row index must be >= 1, got: " + rowIndex);
+        }
+        return propertyRows.get(rowIndex - 1).getText().trim();
     }
 
     @Getter
