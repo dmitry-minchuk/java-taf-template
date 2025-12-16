@@ -78,6 +78,16 @@ public class TableComponent extends BaseComponent {
         return rows.get(rowIndex - 1);
     }
 
+    public String getCellHintText(int rowIndex, int columnIndex, String variableName) {
+        WebElement cell = getCell(rowIndex, columnIndex);
+        WebElement variableSpan = new WebElement(cell, String.format("xpath=.//span[contains(text(), '%s')]", variableName), "variableSpan");
+        variableSpan.hover();
+        WaitUtil.sleep(200, "Waiting for hint tooltip to appear after hover");
+
+        WebElement hintElement = new WebElement(variableSpan, "xpath=.//em", "hintElement");
+        return hintElement.getText().trim();
+    }
+
     // Inner class for table row operations
     public static class PlaywrightTableRowComponent extends BaseComponent {
         List<WebElement> cells;
