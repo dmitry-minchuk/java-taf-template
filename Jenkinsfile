@@ -40,12 +40,20 @@ class Job {
 }
 
 def jenkinsLabel = new JenkinsLabel()
+
+// Dynamic node selection - Jenkins will pick any available node from the list
+def anyAvailableNode = "${jenkinsLabel.master.nodeLabel} || ${jenkinsLabel.slave1.nodeLabel} || ${jenkinsLabel.slave2SAML.nodeLabel}"
+
 def functionalJobList = [
-                         new Job("studio_issues", image_hub_registry + studio, "", jenkinsLabel.master.nodeLabel),
-                         new Job("studio_smoke", image_hub_registry + studio, "", jenkinsLabel.slave1.nodeLabel),
-                         new Job("rules_editor", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel),
-                         new Job("studio_git", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel),
-                         new Job("service_smoke", image_hub_registry + ws, "", jenkinsLabel.slave1.nodeLabel)
+                         // Regular test suites - run on any available node for optimal load balancing
+                         new Job("studio_issues", image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_smoke", image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("rules_editor", image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_git", image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("service_smoke", image_hub_registry + ws, "", anyAvailableNode)
+
+                         // Example for future SAML tests - pinned to specific configured node:
+                         // new Job("studio_saml", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel),
                          ]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
