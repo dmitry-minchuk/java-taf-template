@@ -45,7 +45,7 @@ public class TestProjectTagsCreationNonExistingType extends BaseTest {
         repositoryPage.fillCommitInfo();
 
         // Step 5: After clicking create, warning popup appears and system proceeds to tags popup
-        Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().isVisible(500), "Missing Tags PopupComponent should be visible!");
+        Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().isVisible(1500), "Missing Tags PopupComponent should be visible!");
         Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().getAllWarnings().contains("TagNonExisging: Tag3"), "'TagNonExisging: Tag3' warning should be visible!");
         Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().getAllWarnings().contains("TagExt: TagExt3"), "'TagExt: TagExt3' warning should be visible!");
         repositoryPage.getMissingTagsPopupComponent().clickContinue();

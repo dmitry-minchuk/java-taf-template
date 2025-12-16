@@ -83,7 +83,7 @@ public class EmailPageComponent extends BaseComponent {
         setEmailPassword(password);
         applyBtn.click();
         getModalOkBtn().click();
-        WaitUtil.waitForCondition(() -> getAllMessages().contains("Email server configuration saved"), 50, 5000, "Waiting for success message");
+        WaitUtil.waitForCondition(() -> getAllMessages().contains("Email server configuration saved"), 5000, 50, "Waiting for success message");
     }
 
     public void enableEmailVerificationWithCredentials(String url, String username, String password) {
