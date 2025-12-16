@@ -11,5 +11,6 @@
     <test name="TestModuleCategoryInheritedProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestModuleCategoryInheritedProperties"/></classes></test>
     <test name="TestCompareSelectedVersions"><classes><class name="tests.ui.webstudio.rules_editor.TestCompareSelectedVersions"/></classes></test>
     <test name="TestDefaultProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestDefaultProperties"/></classes></test>
+    <test name="TestRestrictionsErrorMessagesForProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestRestrictionsErrorMessagesForProperties"/></classes></test>
 
 </suite>

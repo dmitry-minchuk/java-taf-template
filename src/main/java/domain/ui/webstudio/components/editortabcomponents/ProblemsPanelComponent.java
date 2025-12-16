@@ -150,4 +150,20 @@ public class ProblemsPanelComponent extends BaseComponent {
             errorElements.get(index - 1).click();
         }
     }
+
+    public boolean isErrorPresent(String errorMessage) {
+        showProblemsPanel();
+        waitForCompilationToComplete();
+        return errorElements.stream()
+                .map(WebElement::getText)
+                .anyMatch(error -> error.contains(errorMessage));
+    }
+
+    public boolean isWarningPresent(String warningMessage) {
+        showProblemsPanel();
+        waitForCompilationToComplete();
+        return warningElements.stream()
+                .map(WebElement::getText)
+                .anyMatch(warning -> warning.contains(warningMessage));
+    }
 }
