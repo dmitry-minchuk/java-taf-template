@@ -89,7 +89,7 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     }
 
     public boolean isProblemDescriptionVisible(int elementPosition) {
-        return WaitUtil.waitForCondition(() -> errorMessages.get(elementPosition).getLocator().locator("xpath=.//span[@class='stacktrace-panels']").isVisible(), 500, 50, "Waiting for ProblemDescription to be visible...");
+        return WaitUtil.waitForCondition(() -> errorMessages.get(elementPosition).getLocator().locator("xpath=.//span[@class='stacktrace-panels']").isVisible(), 1000, 100, "Waiting for ProblemDescription to be visible...");
     }
 
     public boolean isErrorMessageListPresent() {
