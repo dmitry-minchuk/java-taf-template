@@ -14,6 +14,7 @@ import helpers.service.UserService;
 import helpers.utils.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 public class TestLocalZippedProjects extends BaseTest {
 
     SoftAssert softAssert;
-    private static final String ROOT_DIR_PATH = "/Users/dmitryminchuk/Projects/eis/client_projects_gdrive";
+    private static final String ROOT_DIR_PATH = "/Users/dmitryminchuk/Projects/eis/client_projects_gdrive/Glic/GLIC LTD";
     private static final String EXT = ".zip";
 
     @Test(dataProvider = "Projects")
@@ -68,7 +69,7 @@ public class TestLocalZippedProjects extends BaseTest {
 
                 if(editorPage.getProblemsPanelComponent().hasErrors()) {
                     String problemsPanelComponentErrorsMsg = String.format("\nCompilation errors detected in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths));
-                    softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), problemsPanelComponentErrorsMsg);
+                    Assert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), problemsPanelComponentErrorsMsg);
                     LOGGER.info("COMPILATION ERROR DETECTED: {}", problemsPanelComponentErrorsMsg);
                 }
 
@@ -79,7 +80,7 @@ public class TestLocalZippedProjects extends BaseTest {
                     editorPage.waitUntilSpinnerLoaded();
                     if(!editorPage.getTestResultValidationComponent().isTestTablePassed()) {
                         String testTableResults = String.format("\nThere are test failures in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths));
-                        softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
+                        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
                         LOGGER.info("TEST ERROR DETECTED: {}", testTableResults);
                     }
                 }
@@ -113,12 +114,13 @@ public class TestLocalZippedProjects extends BaseTest {
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getCreateProjectLink().click();
-        String projectName = getPureName(absoluteFilePath);
+        //String projectName = getPureName(absoluteFilePath); - not setting custom names anymore
 
         CreateNewProjectComponent createNewProjectComponent = repositoryPage.getCreateNewProjectComponent();
         ZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.ZIP_ARCHIVE);
         zipComponent.getFileInputField().sendKeys(absoluteFilePath);
-        zipComponent.getProjectNameField().sleep(1000).fill(projectName);
+        //zipComponent.getProjectNameField().sleep(1000).fill(projectName); - not setting custom names anymore
+        String projectName = zipComponent.getProjectNameField().sleep(1000).getLocator().inputValue();
         zipComponent.getCreateProjectBtn().click();
 
         if(repositoryPage.getConfigureCommitInfoComponentShade().isVisible(3000))
