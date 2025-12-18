@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class TestLocalZippedProjects extends BaseTest {
 
     SoftAssert softAssert;
-    private static final String ROOT_DIR_PATH = "/Users/dmitryminchuk/Projects/eis/client_projects_gdrive/Glic/GLIC LTD";
+    private static final String ROOT_DIR_PATH = "/Users/dmitryminchuk/Projects/eis/client_projects_gdrive";
     private static final String EXT = ".zip";
 
     @Test(dataProvider = "Projects")
