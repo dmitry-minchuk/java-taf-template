@@ -69,7 +69,7 @@ public class TestLocalZippedProjects extends BaseTest {
 
                 if(editorPage.getProblemsPanelComponent().hasErrors()) {
                     String problemsPanelComponentErrorsMsg = String.format("\nCompilation errors detected in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths));
-                    Assert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), problemsPanelComponentErrorsMsg);
+                    softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), problemsPanelComponentErrorsMsg);
                     LOGGER.info("COMPILATION ERROR DETECTED: {}", problemsPanelComponentErrorsMsg);
                 }
 
@@ -80,7 +80,7 @@ public class TestLocalZippedProjects extends BaseTest {
                     editorPage.waitUntilSpinnerLoaded();
                     if(!editorPage.getTestResultValidationComponent().isTestTablePassed()) {
                         String testTableResults = String.format("\nThere are test failures in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths));
-                        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
+                        softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
                         LOGGER.info("TEST ERROR DETECTED: {}", testTableResults);
                     }
                 }
