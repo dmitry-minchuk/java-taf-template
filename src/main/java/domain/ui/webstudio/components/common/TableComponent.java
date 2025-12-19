@@ -11,6 +11,7 @@ public class TableComponent extends BaseComponent {
 
     private WebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
+    private WebElement propertyValueTemplate;
 
     public TableComponent() {
         super(LocalDriverPool.getPage());
@@ -25,6 +26,7 @@ public class TableComponent extends BaseComponent {
     private void initializeElements() {
         inputLocator = new WebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
         rows = createScopedComponentList(PlaywrightTableRowComponent.class, "xpath=.//tbody/tr", "rowSelectorTemplate");
+        propertyValueTemplate = createScopedElement("xpath=//tr/td[text()='%s']/following-sibling::td[1]", "propertyValue");
     }
 
     public void clickCell(int rowIndex, int columnIndex) {
@@ -86,6 +88,14 @@ public class TableComponent extends BaseComponent {
 
         WebElement hintElement = new WebElement(variableSpan, "xpath=.//em", "hintElement");
         return hintElement.getText().trim();
+    }
+
+    public String getPropertyValue(String propertyName) {
+        return propertyValueTemplate.format(propertyName).getText().trim();
+    }
+
+    public boolean isPropertyPresent(String propertyName) {
+        return propertyValueTemplate.format(propertyName).isVisible();
     }
 
     // Inner class for table row operations

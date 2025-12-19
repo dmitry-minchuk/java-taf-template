@@ -14,5 +14,6 @@
     <test name="TestRestrictionsErrorMessagesForProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestRestrictionsErrorMessagesForProperties"/></classes></test>
     <test name="TestReturnCellsMarksWithStar"><classes><class name="tests.ui.webstudio.rules_editor.TestReturnCellsMarksWithStar"/></classes></test>
     <test name="TestDetermineSpreadsheetResultCellType"><classes><class name="tests.ui.webstudio.rules_editor.TestDetermineSpreadsheetResultCellType"/></classes></test>
+    <test name="TestAddDeleteEditProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestAddDeleteEditProperties"/></classes></test>
 
 </suite>

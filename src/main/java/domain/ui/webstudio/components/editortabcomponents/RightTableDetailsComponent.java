@@ -36,6 +36,25 @@ public class RightTableDetailsComponent extends BaseComponent {
         initializeElements();
     }
 
+    // Editing properties templates
+    private WebElement propertyValueLinkTemplate;
+    private WebElement propertyTextInputTemplate;
+    private WebElement propertyCheckboxInputTemplate;
+    private WebElement propertyDropdownTemplate;
+    private WebElement deletePropertyLinkTemplate;
+
+    // Multi-select popup
+    private WebElement selectAllCheckbox;
+    private WebElement multiselectCheckboxTemplate;
+
+    // Date picker calendar
+    private WebElement calendarButtonTemplate;
+    private WebElement calendarHeader;
+    private WebElement calendarMonthTemplate;
+    private WebElement calendarYearTemplate;
+    private WebElement calendarOkButton;
+    private WebElement calendarDayTemplate;
+
     private void initializeElements() {
         addPropertyLink = createScopedElement("xpath=.//a[@id='addPropBtn']", "addPropertyLink");
         propertyTypeSelector = createScopedElement("xpath=.//div[@id='addPropsPanel']//select", "propertyTypeSelector");
@@ -47,11 +66,30 @@ public class RightTableDetailsComponent extends BaseComponent {
 
         // Property value reading templates
         propertyValueTextTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueText");
-        propertyRowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[./td[contains(text(),'%s')]]", "propertyRow");
+        propertyRowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[./td[normalize-space(text())='%s']]", "propertyRow");
         goToPropertiesTableArrowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[2]//a", "goToPropertiesTableArrow");
 
         // Property rows list
         propertyRows = createScopedElementList("xpath=.//div[@id='propsTable']//table[1]//tr[./td[@class='table-data-name']]", "propertyRows");
+
+        // New templates for editing
+        propertyValueLinkTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueLink");
+        propertyTextInputTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]//input[@type='text']", "propertyTextInput");
+        propertyCheckboxInputTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]//input[@type='checkbox']", "propertyCheckboxInput");
+        propertyDropdownTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]//select", "propertyDropdown");
+        deletePropertyLinkTemplate = createScopedElement("xpath=.//div[@id='propsTable']//td[normalize-space(text())='%s']//..//td/a", "deletePropertyLink");
+
+        // Multi-select popup
+        selectAllCheckbox = createScopedElement("xpath=//div[@class='jquery-multiselect-popup jquery-popup']//label[text()='Select All']//..//input", "selectAllCheckbox");
+        multiselectCheckboxTemplate = createScopedElement("xpath=//div[@class='jquery-multiselect-popup jquery-popup']//div[@class='jquery-multiselect-popup-data']//input[@value='%s']", "multiselectCheckbox");
+
+        // Date picker calendar
+        calendarButtonTemplate = createScopedElement("xpath=.//div[@id='propsTable']//tr/td[@class='propName' and contains(text(),'%s')]//..//img[@class='rf-cal-btn ']", "calendarButton");
+        calendarHeader = createScopedElement("xpath=//div[@id='propsTable']//tr/td[@class='propName']//..//table[contains(@id,'dateContent')]//tr[1]/td[3]/div[contains(@onclick,'showDateEditor')]", "calendarHeader");
+        calendarMonthTemplate = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div[contains(text(),'%s')]", "calendarMonth");
+        calendarYearTemplate = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div[contains(text(),'%s')]", "calendarYear");
+        calendarOkButton = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div//span[contains(text(),'OK')]", "calendarOk");
+        calendarDayTemplate = createScopedElement("xpath=//div[@id='propsTable']//td[contains(text(),'%s')]//..//..//table[contains(@id,'dateContent')]//tr/td[text()='%s']", "calendarDay");
     }
 
     public void clickSaveBtn() {
@@ -125,6 +163,92 @@ public class RightTableDetailsComponent extends BaseComponent {
             throw new IllegalArgumentException("Row index must be >= 1, got: " + rowIndex);
         }
         return propertyRows.get(rowIndex - 1).getText().trim();
+    }
+
+    public void clickPropertyValue(String propertyName) {
+        WaitUtil.sleep(300, "Waiting before clicking property value");
+        propertyValueLinkTemplate.format(propertyName).click();
+    }
+
+    public void editTextProperty(String propertyName, String newValue) {
+        clickPropertyValue(propertyName);
+        WebElement input = propertyTextInputTemplate.format(propertyName);
+        input.fill(newValue);
+        WaitUtil.sleep(200, "Waiting after entering property value");
+    }
+
+    public void editBooleanProperty(String propertyName, boolean value) {
+        clickPropertyValue(propertyName);
+        WebElement checkbox = propertyCheckboxInputTemplate.format(propertyName);
+        if (value) {
+            checkbox.check();
+        } else {
+            checkbox.uncheck();
+        }
+    }
+
+    public void editDropdownProperty(String propertyName, String value) {
+        clickPropertyValue(propertyName);
+        WebElement dropdown = propertyDropdownTemplate.format(propertyName);
+        dropdown.selectByVisibleText(value);
+    }
+
+    public void editCheckboxProperty(String propertyName, String... values) {
+        clickPropertyValue(propertyName);
+        clickPropertyValue(propertyName);
+
+        selectAllCheckbox.check();
+        selectAllCheckbox.uncheck();
+
+        for (String value : values) {
+            WebElement checkbox = multiselectCheckboxTemplate.format(value);
+            checkbox.check();
+        }
+    }
+
+    public void editDateProperty(String propertyName, String dateValue) {
+        clickPropertyValue(propertyName);
+        openCalendarIfNeeded(propertyName);
+
+        String[] dateParts = dateValue.split("/");
+        int month = Integer.parseInt(dateParts[0]);
+        String day = dateParts[1].replaceFirst("^0+(?!$)", "");
+        String year = dateParts[2];
+
+        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        String monthName = months[month - 1];
+
+        selectMonthYearIfNeeded(monthName, year);
+        selectDay(propertyName, day);
+    }
+
+    private void openCalendarIfNeeded(String propertyName) {
+        WebElement input = propertyTextInputTemplate.format(propertyName);
+        String value = input.getAttribute("value");
+        if (value != null && !value.isEmpty()) {
+            calendarButtonTemplate.format(propertyName).click();
+            WaitUtil.sleep(200, "Waiting for calendar");
+        }
+    }
+
+    private void selectMonthYearIfNeeded(String monthName, String year) {
+        if (!calendarHeader.getText().trim().equals(monthName + ", " + year)) {
+            calendarHeader.click();
+            calendarMonthTemplate.format(monthName.substring(0, 3)).click();
+            calendarYearTemplate.format(year).click();
+            calendarOkButton.click();
+        }
+    }
+
+    private void selectDay(String propertyName, String day) {
+        calendarDayTemplate.format(propertyName, day).click();
+    }
+
+    public void deleteProperty(String propertyName) {
+        WebElement propertyRow = propertyRowTemplate.format(propertyName);
+        propertyRow.hover();
+        deletePropertyLinkTemplate.format(propertyName).click();
+        WaitUtil.sleep(300, "Waiting after deleting property");
     }
 
     @Getter
