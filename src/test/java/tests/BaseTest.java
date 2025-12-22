@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.Network;
+import org.testng.ITest;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -26,8 +27,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BaseTest {
+public abstract class BaseTest implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
+
+    // Thread-safe test name storage for DataProvider support
+    private final ThreadLocal<String> testName = new ThreadLocal<>();
+
     // Support multiple Playwright execution modes
     private static final ExecutionMode EXECUTION_MODE = getExecutionMode();
 
@@ -52,6 +57,9 @@ public abstract class BaseTest {
 
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
+        // Set unique test name for DataProvider iterations (for ReportPortal)
+        setUniqueTestName(result);
+
         switch (EXECUTION_MODE) {
             case PLAYWRIGHT_LOCAL -> {
                 // PLAYWRIGHT PHASE 1: Local Playwright execution (no Docker)
@@ -217,5 +225,81 @@ public abstract class BaseTest {
         NetworkPool.closeNetwork();
     }
 
+    // ========== DataProvider Support for Unique Test Names in ReportPortal ==========
+
+    /**
+     * Sets unique test name for DataProvider iterations to ensure they appear with different names in ReportPortal.
+     * For tests with DataProvider: testName[param1, param2, ...]
+     * For tests without DataProvider: testName (unchanged)
+     */
+    private void setUniqueTestName(ITestResult result) {
+        Object[] parameters = result.getParameters();
+        String methodName = result.getMethod().getMethodName();
+
+        if (parameters != null && parameters.length > 0) {
+            // Test has DataProvider parameters - generate unique name
+            String uniqueName = generateTestNameWithParameters(methodName, parameters);
+            testName.set(uniqueName);
+            LOGGER.debug("Set unique test name for DataProvider: {}", uniqueName);
+        } else {
+            // Test without parameters - use standard method name
+            testName.set(methodName);
+        }
+    }
+
+    @Override
+    public String getTestName() {
+        return testName.get() != null ? testName.get() : "unknown-test";
+    }
+
+    /**
+     * Generates unique test name by appending sanitized parameters.
+     * Format: methodName[param1, param2, param3]
+     */
+    private String generateTestNameWithParameters(String methodName, Object[] params) {
+        StringBuilder name = new StringBuilder(methodName).append("[");
+
+        for (int i = 0; i < params.length; i++) {
+            if (i > 0) {
+                name.append(", ");
+            }
+
+            if (params[i] != null) {
+                name.append(sanitizeParameter(params[i].toString()));
+            } else {
+                name.append("null");
+            }
+        }
+
+        return name.append("]").toString();
+    }
+
+    /**
+     * Sanitizes parameter value for display in test name.
+     * - Extracts filename from file paths
+     * - Removes .zip extension
+     * - Truncates long strings
+     */
+    private String sanitizeParameter(String paramValue) {
+        String sanitized = paramValue;
+
+        // Extract filename from file paths
+        if (sanitized.contains("/") || sanitized.contains("\\")) {
+            String[] parts = sanitized.split("[/\\\\]");
+            sanitized = parts[parts.length - 1];
+        }
+
+        // Remove .zip extension for cleaner display
+        if (sanitized.endsWith(".zip")) {
+            sanitized = sanitized.substring(0, sanitized.length() - 4);
+        }
+
+        // Truncate long strings (max 50 characters)
+        if (sanitized.length() > 50) {
+            sanitized = sanitized.substring(0, 47) + "...";
+        }
+
+        return sanitized;
+    }
 
 }

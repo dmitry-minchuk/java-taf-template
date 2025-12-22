@@ -259,10 +259,77 @@ private static final Map<String, String> additionalContainerConfig = new HashMap
 String testDataPath = TestDataUtil.getTestDataPath("project-template.zip");
 zipComponent.selectFile(testDataPath);
 
-// File download (mode-aware)  
+// File download (mode-aware)
 File downloadedFile = LocalDriverPool.downloadFile(downloadButton);
 assertThat(downloadedFile).exists();
 ```
+
+### DataProvider Tests with Unique Names
+
+The framework automatically generates **unique test names** for DataProvider iterations in ReportPortal reports. This ensures each data set appears as a separate test instead of having identical names.
+
+#### Problem Solved
+
+**Before:** All DataProvider iterations appeared with the same name in ReportPortal
+```
+ReportPortal shows:
+- testLocalZippedProjects
+- testLocalZippedProjects
+- testLocalZippedProjects
+```
+
+**After:** Each iteration has a unique, descriptive name
+```
+ReportPortal shows:
+- testLocalZippedProjects[project1, project2]
+- testLocalZippedProjects[claims-home, auto-policy]
+- testLocalZippedProjects[commercial-underwriting]
+```
+
+#### How It Works
+
+1. **BaseTest** implements `ITest` interface for custom test names
+2. Names are generated **before** test execution in `@BeforeMethod`
+3. Parameters are sanitized (filenames extracted, extensions removed, long values truncated)
+4. Thread-safe for parallel execution using `ThreadLocal`
+
+#### Usage Example
+
+Simply extend `BaseTest` - no additional code needed:
+
+```java
+public class TestWithDataProvider extends BaseTest {
+
+    @Test(dataProvider = "ProjectData")
+    public void testMultipleProjects(String path1, String path2, String path3) {
+        // ReportPortal will show: testMultipleProjects[project1, project2, project3]
+        // Test logic here
+    }
+
+    @DataProvider(name = "ProjectData")
+    public Object[][] getData() {
+        return new Object[][] {
+            {"/path/to/project1.zip", "/path/to/project2.zip", null},
+            {"project-A.zip", "project-B.zip", "project-C.zip"}
+        };
+    }
+}
+```
+
+#### Parameter Sanitization
+
+| Original Parameter | ReportPortal Display |
+|-------------------|---------------------|
+| `/Users/user/Projects/file.zip` | `file` |
+| `very-long-parameter-name-exceeding-50-chars...` | `very-long-parameter-name-exceeding-50-cha...` |
+| `null` | `null` |
+
+#### Compatibility
+
+- ✅ Works with **all tests** extending BaseTest
+- ✅ Tests **without DataProvider** work unchanged (standard method names)
+- ✅ Thread-safe for **parallel execution**
+- ✅ Compatible with ReportPortal agent-java-testng **5.3.2+**
 
 ## 🔧 Driver Management
 
