@@ -19,7 +19,7 @@ import java.util.List;
 public class TestLocalCentralProjects extends BaseTest {
     SoftAssert softAssert = new SoftAssert();
 
-    private static final String APP_URL = "http://localhost:8090";
+    private static final String APP_URL = "http://192.168.50.5:8090";
 
     @Test
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

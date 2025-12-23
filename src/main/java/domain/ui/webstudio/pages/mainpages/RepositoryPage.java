@@ -9,6 +9,7 @@ import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.*;
 import domain.ui.webstudio.pages.BasePage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -140,16 +141,53 @@ public class RepositoryPage extends BasePage {
     }
 
     public void unlockAllProjects() {
-        for (int i = 1; i <= projectsTable.getRowsCount(); i++) {
-            List<WebElement> cells = projectsTable.getRow(i).getCells();
-            if (projectsTable.getRow(i).getCells().size() == 6) {
-                WebElement lastCell = cells.get(5);
-                Locator openOrCloseBtn = lastCell.sleep(750).getLocator().locator("xpath=.//a/img[@class='actionImage' and contains(@src,'repository')]");
-                if (openOrCloseBtn.isVisible() && openOrCloseBtn.getAttribute("alt").equalsIgnoreCase("Open")) {
-                    openOrCloseBtn.click();
-                    if (confirmOpeningDialogBtn.isVisible(200))
-                        confirmOpeningDialogBtn.click();
+        WaitUtil.waitForCondition(() -> projectsTable.isVisible() && projectsTable.getRowsCount() > 0, 1000, 250, "Waiting for projects to load");
+
+        int unlockCount = 0;
+        while (true) {
+            List<TableComponent.PlaywrightTableRowComponent> allRows = projectsTable.getRows();
+            LOGGER.info("Checking table: {} rows", allRows.size());
+
+            if (allRows.isEmpty()) {
+                break;
+            }
+
+            boolean foundLockedProject = false;
+            int rowNum = 0;
+            for (TableComponent.PlaywrightTableRowComponent row : allRows) {
+                rowNum++;
+                List<WebElement> cells = row.getCells();
+
+                if (cells.size() == 6) {
+                    WebElement lastCell = cells.get(5);
+                    Locator openOrCloseBtn = lastCell.getLocator().locator("xpath=.//a/img[@class='actionImage' and contains(@src,'repository')]");
+
+                    int buttonCount = openOrCloseBtn.count();
+                    LOGGER.debug("Row {}: button count = {}", rowNum, buttonCount);
+
+                    if (buttonCount > 0) {
+                        String altText = openOrCloseBtn.getAttribute("alt");
+                        LOGGER.debug("Row {}: alt = '{}'", rowNum, altText);
+
+                        if (altText != null && altText.equalsIgnoreCase("Open")) {
+                            LOGGER.info("Unlocking project at row {}", rowNum);
+                            openOrCloseBtn.click();
+
+                            if (WaitUtil.waitForCondition(() -> confirmOpeningDialogBtn.isVisible(), 500, 100, "Waiting for Confirmation Popup"))
+                                confirmOpeningDialogBtn.click();
+
+                            unlockCount++;
+                            foundLockedProject = true;
+                            WaitUtil.sleep(500, "Wait for table to refresh after unlock");
+                            break;
+                        }
+                    }
                 }
+            }
+
+            if (!foundLockedProject) {
+                LOGGER.info("No more locked projects found. Total unlocked: {}", unlockCount);
+                break;
             }
         }
     }
