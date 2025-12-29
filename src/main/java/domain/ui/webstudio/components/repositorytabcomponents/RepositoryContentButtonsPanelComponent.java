@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
+import com.microsoft.playwright.Page;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
@@ -101,5 +102,13 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     public String getSyncButtonTitle() {
         return syncBtn.getAttribute("title");
+    }
+
+    public CompareDialogComponent clickCompareBtn() {
+        Page comparePopup = page.waitForPopup(() -> {
+            compareBtn.click();
+        });
+        comparePopup.waitForLoadState();
+        return new CompareDialogComponent(comparePopup);
     }
 }

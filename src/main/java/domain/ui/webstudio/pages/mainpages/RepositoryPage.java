@@ -42,6 +42,7 @@ public class RepositoryPage extends BasePage {
     private MissingTagsPopupComponent missingTagsPopupComponent;
     private CopyProjectDialogComponent copyProjectDialogComponent;
     private UploadFileDialogComponent uploadFileDialogComponent;
+    private CompareDialogComponent compareDialogComponent;
     private WebElement confirmOpeningDialogBtn;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
