@@ -98,6 +98,11 @@ public class TableComponent extends BaseComponent {
         return propertyValueTemplate.format(propertyName).isVisible();
     }
 
+    public List<String> getHeaders() {
+        WebElement headerRow = createScopedElement("xpath=.//thead/tr", "headerRow");
+        return headerRow.getLocator().locator("xpath=./th").allTextContents();
+    }
+
     // Inner class for table row operations
     public static class PlaywrightTableRowComponent extends BaseComponent {
         List<WebElement> cells;

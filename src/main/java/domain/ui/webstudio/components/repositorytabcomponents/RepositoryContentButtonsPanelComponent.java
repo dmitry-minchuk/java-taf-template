@@ -111,4 +111,9 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         comparePopup.waitForLoadState();
         return new CompareDialogComponent(comparePopup);
     }
+
+    public void clickCloseBtn() {
+        closeBtn.click();
+        WaitUtil.sleep(500, "Waiting after clicking Close button");
+    }
 }

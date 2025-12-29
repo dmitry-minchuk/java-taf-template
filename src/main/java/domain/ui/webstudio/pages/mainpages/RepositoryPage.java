@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class RepositoryPage extends BasePage {
@@ -201,5 +202,53 @@ public class RepositoryPage extends BasePage {
                 projectNames.add(rowValues.getFirst().trim());
         }
         return projectNames;
+    }
+
+    public CopyProjectDialogComponent clickCopyProjectInTable(String projectName) {
+        LOGGER.info("Clicking Copy button for project '{}' in table", projectName);
+        int rowIndex = findProjectRowIndex(projectName);
+        if (rowIndex == -1) {
+            throw new RuntimeException("Project '" + projectName + "' not found in projects table");
+        }
+
+        TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(rowIndex);
+        List<WebElement> cells = row.getCells();
+        WebElement lastCell = cells.get(cells.size() - 1);
+        lastCell.getLocator().locator("xpath=.//a/img[@alt='Copy']").click();
+
+        copyProjectDialogComponent.waitForDialogToAppear();
+        return copyProjectDialogComponent;
+    }
+
+    public Map<String, String> getProjectInfoFromTable(String projectName) {
+        LOGGER.info("Getting project info for '{}' from table", projectName);
+        Map<String, String> projectInfo = new java.util.HashMap<>();
+
+        int rowIndex = findProjectRowIndex(projectName);
+        if (rowIndex == -1) {
+            throw new RuntimeException("Project '" + projectName + "' not found in projects table");
+        }
+
+        List<String> headers = projectsTable.getHeaders();
+        List<String> rowValues = projectsTable.getRow(rowIndex).getValue();
+
+        for (int i = 0; i < headers.size() && i < rowValues.size(); i++) {
+            String headerText = headers.get(i).trim();
+            String cellValue = rowValues.get(i);
+            projectInfo.put(headerText, cellValue);
+        }
+
+        return projectInfo;
+    }
+
+    private int findProjectRowIndex(String projectName) {
+        List<TableComponent.PlaywrightTableRowComponent> rows = projectsTable.getRows();
+        for (int i = 0; i < rows.size(); i++) {
+            List<String> rowValues = rows.get(i).getValue();
+            if (!rowValues.isEmpty() && rowValues.getFirst().trim().equals(projectName)) {
+                return i + 1;
+            }
+        }
+        return -1;
     }
 }
