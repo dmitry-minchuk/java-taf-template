@@ -1,5 +1,6 @@
 package domain.ui.webstudio.pages.mainpages;
 
+import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.SaveChangesComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TableComponent;
@@ -29,6 +30,9 @@ public class EditorPage extends BasePage {
     private ProjectModuleDetailsComponent projectModuleDetailsComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private SaveChangesComponent saveChangesComponent;
+    private EditProjectDialogComponent editProjectDialogComponent;
+    private WebElement editProjectIconTemplate;
+    private WebElement projectHeaderTemplate;
 
     public EditorPage() {
         super();
@@ -51,6 +55,9 @@ public class EditorPage extends BasePage {
         projectModuleDetailsComponent = createScopedComponent(ProjectModuleDetailsComponent.class, "xpath=//div[contains(@class, 'ui-layout-center') and @id='content']", "projectModuleDetailsComponent");
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@id='modalMergeBranches_container']", "syncChangesDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
+        editProjectDialogComponent = createScopedComponent(EditProjectDialogComponent.class, "xpath=//div[@id='editProjectPopup_content']", "editProjectDialogComponent");
+        projectHeaderTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..", "projectHeaderTemplate");
+        editProjectIconTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..//img", "editProjectIconTemplate");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {
@@ -62,5 +69,12 @@ public class EditorPage extends BasePage {
         centerTable.isVisible();
         WaitUtil.sleep(500, "Waiting for center table to fully load");
         return centerTable;
+    }
+
+    public EditProjectDialogComponent openEditProjectDialog(String projectName) {
+        projectHeaderTemplate.format(projectName).hover();
+        editProjectIconTemplate.format(projectName).click();
+        editProjectDialogComponent.waitForDialogToAppear();
+        return editProjectDialogComponent;
     }
 }
