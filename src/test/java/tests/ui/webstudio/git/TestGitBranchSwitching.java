@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestGitBranchSwitching extends BaseTest {
 
-    private static final String PROJECT_NAME = TestGitBranchSwitching.class.getSimpleName();
+    private static final String PROJECT_NAME = "TestGitBranchSwitching";
     private static final String TEMPLATE_NAME = "Sample Project";
     private static final String COPY_BRANCH_NAME = "my_branch";
     private static final String MASTER_BRANCH_NAME = "master";

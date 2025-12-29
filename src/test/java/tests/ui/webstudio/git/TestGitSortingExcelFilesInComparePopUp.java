@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestGitSortingExcelFilesInComparePopUp extends BaseTest {
 
-    private static final String PROJECT_NAME = TestGitSortingExcelFilesInComparePopUp.class.getSimpleName();
+    private static final String PROJECT_NAME = "TestGitSortingExcelFilesInComparePopUp";
     private static final String ZIP_FILE_NAME = "Repository.TestGitSortingExcelFilesInComparePopUp.zip";
     private static final List<String> EXPECTED_ORDER = Arrays.asList(
             "AB_CD.xlsx",

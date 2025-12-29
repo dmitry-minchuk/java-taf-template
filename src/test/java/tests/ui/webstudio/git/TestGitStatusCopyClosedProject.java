@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestGitStatusCopyClosedProject extends BaseTest {
 
-    private static final String PROJECT_NAME = TestGitStatusCopyClosedProject.class.getSimpleName();
+    private static final String PROJECT_NAME = "TestGitStatusCopyClosedProject";
     private static final String TEMPLATE_NAME = "Sample Project";
 
     @Test
