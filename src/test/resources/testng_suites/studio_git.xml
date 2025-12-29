@@ -5,6 +5,7 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
+    <test name="TestGitBranchSwitching"><classes><class name="tests.ui.webstudio.git.TestGitBranchSwitching"/></classes></test>
     <test name="TestGitNewBranchCreatedFromMaster"><classes><class name="tests.ui.webstudio.git.TestGitNewBranchCreatedFromMaster"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaRepositoryTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaRepositoryTab"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaEditorTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaEditorTab"/></classes></test>
