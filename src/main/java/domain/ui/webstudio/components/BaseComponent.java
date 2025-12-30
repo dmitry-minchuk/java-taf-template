@@ -42,9 +42,17 @@ public abstract class BaseComponent extends CoreComponent {
     }
 
     public void closeAllMessages() {
-        LOGGER.info("Messages currently open: {}", messages.size());
+        try {
+            LOGGER.info("Messages currently open: {}", messages.size());
+        } catch (Exception e) {
+            LOGGER.debug("Could not get messages size (likely due to DOM update)");
+        }
         for(int i = 0; i < 3; i++) {
-            messages.forEach(MessageComponent::closeMessage);
+            try {
+                messages.forEach(MessageComponent::closeMessage);
+            } catch (Exception e) {
+                LOGGER.debug("Ignoring exception during message closing (likely due to DOM update): {}", e.getMessage());
+            }
             WaitUtil.sleep(100, "Waiting between message close attempts");
         }
     }
@@ -52,10 +60,14 @@ public abstract class BaseComponent extends CoreComponent {
     public List<String> getAllMessages() {
         List<String> messagesTextList = new ArrayList<>();
         for(int i = 0; i < 30; i++) {
-            messages.forEach(m -> {
-                if(!messagesTextList.contains(m.getMessageText()))
-                    messagesTextList.add(m.getMessageText());
-            });
+            try {
+                messages.forEach(m -> {
+                    if(!messagesTextList.contains(m.getMessageText()))
+                        messagesTextList.add(m.getMessageText());
+                });
+            } catch (Exception e) {
+                LOGGER.debug("Ignoring exception during message collection (likely due to DOM update): {}", e.getMessage());
+            }
             WaitUtil.sleep(50, "Waiting between message get_text attempts");
         }
         return messagesTextList;

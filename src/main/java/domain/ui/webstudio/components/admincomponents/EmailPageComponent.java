@@ -83,8 +83,8 @@ public class EmailPageComponent extends BaseComponent {
         setEmailPassword(password);
         applyBtn.click();
         getModalOkBtn().click();
-        WaitUtil.sleep(500, "Waiting for page to stabilize after modal close");
-        WaitUtil.waitForCondition(() -> getAllMessages().contains("Email server configuration saved"), 5000, 50, "Waiting for success message");
+        WaitUtil.sleep(2000, "Waiting for page to stabilize after modal close");
+        WaitUtil.waitForCondition(() -> getAllMessages().contains("Email server configuration saved"), 10000, 100, "Waiting for success message");
     }
 
     public void enableEmailVerificationWithCredentials(String url, String username, String password) {

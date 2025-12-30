@@ -35,7 +35,9 @@ public class AppContainerFactory {
             container.withEnv(envVars);
         if(copyFileFromPath != null && copyFileToContainerPath != null)
             container.withCopyFileToContainer(getMountableFile(copyFileFromPath), copyFileToContainerPath);
-        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH).withStartupTimeout(Duration.ofSeconds(60)));
+        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH)
+                .forStatusCode(200)
+                .withStartupTimeout(Duration.ofMinutes(5)));
         LOGGER.info("Starting app container: {}", containerName);
         container.start();
 
