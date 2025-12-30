@@ -57,13 +57,37 @@ public class TestLocalCentralProjectsDataProvider extends BaseTest {
                 editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameProject, modules.get(0));
                 editorPage.getProjectModuleDetailsComponent().isVisible();
 
-                softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(),
-                    "Compilation errors detected in <" + nameProject + ">");
+                if(editorPage.getProblemsPanelComponent().hasErrors()) {
+                    List<String> allErrors = editorPage.getProblemsPanelComponent().getAllErrors();
 
-                if (editorPage.getTestResultValidationComponent().isTestTablePassed()) {
-                    editorPage.getTestResultValidationComponent().getResultTable().clickCell(0, 0);
-                    softAssert.assertEquals(editorPage.getTestResultValidationComponent().getFailedTestCount(), 0,
-                        "Failed tests in <" + nameProject + ">");
+                    StringBuilder errorDetails = new StringBuilder();
+                    errorDetails.append(String.format("\nCompilation errors detected in project: %s", nameProject));
+                    errorDetails.append(String.format("\nERRORS (%d):\n", allErrors.size()));
+                    for (int i = 0; i < allErrors.size(); i++) {
+                        errorDetails.append(String.format("  %d. %s\n", i + 1, allErrors.get(i)));
+                    }
+
+                    softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), errorDetails.toString());
+                }
+
+                if (editorPage.getEditorToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
+                    editorPage.getEditorToolbarPanelComponent()
+                            .clickTestDropdown()
+                            .runTests();
+                    editorPage.waitUntilSpinnerLoaded();
+
+                    if(!editorPage.getTestResultValidationComponent().isTestTablePassed()) {
+                        List<String> failedTests = editorPage.getTestResultValidationComponent().getAllFailedTests();
+
+                        StringBuilder testFailureDetails = new StringBuilder();
+                        testFailureDetails.append(String.format("\nTest failures detected in project: %s", nameProject));
+                        testFailureDetails.append(String.format("\nFAILED TESTS (%d):\n", failedTests.size()));
+                        for (int i = 0; i < failedTests.size(); i++) {
+                            testFailureDetails.append(String.format("  %d. %s\n", i + 1, failedTests.get(i)));
+                        }
+
+                        softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testFailureDetails.toString());
+                    }
                 }
             }
         }
