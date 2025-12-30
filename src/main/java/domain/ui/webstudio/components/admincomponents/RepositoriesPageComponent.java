@@ -78,19 +78,18 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     public void createDesignRepository(String repositoryUrl, String login, String password, String branch, User user) {
         addDesignRepository();
-        remoteRepositoryCheckBox.sleep(500).hover().check();
+        remoteRepositoryPathField.waitForVisible(1000).sleep(500).clear();
         remoteRepositoryPathField.fillSequentially(repositoryUrl);
         remoteRepositoryLoginField.fillSequentially(login);
         remoteRepositoryPasswordField.fillSequentially(password);
         remoteRepositoryBranchField.fillSequentially(branch);
-        flatFolderStructureCheckBox.hover().uncheck();
         applyChangesAndRelogin(user);
     }
 
     public void applyChangesAndRelogin(User user) {
         applyChangesBtn.click();
         getModalOkBtn().click();
-        new LoginPage().login(UserService.getUser(user), DEFAULT_TIMEOUT_MS * 100L);
+        new LoginPage().login(UserService.getUser(user), DEFAULT_TIMEOUT_MS * 1000L);
     }
 
     public void clickDeploymentRepositoriesTab() {

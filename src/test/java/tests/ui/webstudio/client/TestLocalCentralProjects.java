@@ -58,6 +58,7 @@ public class TestLocalCentralProjects extends BaseTest {
                             .clickTestDropdown()
                             .runTests();
                     editorPage.waitUntilSpinnerLoaded();
+
                     if(!editorPage.getTestResultValidationComponent().isTestTablePassed()) {
                         List<String> failedTests = editorPage.getTestResultValidationComponent().getAllFailedTests();
 

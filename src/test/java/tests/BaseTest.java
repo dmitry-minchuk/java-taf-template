@@ -223,6 +223,9 @@ public abstract class BaseTest implements ITest {
         // Close app container and network
         AppContainerPool.closeAppContainer();
         NetworkPool.closeNetwork();
+
+        // Wait for Docker daemon to complete resource cleanup before next test starts
+        WaitUtil.sleep(2000, "Waiting for Docker daemon to complete resource cleanup");
     }
 
     // ========== DataProvider Support for Unique Test Names in ReportPortal ==========

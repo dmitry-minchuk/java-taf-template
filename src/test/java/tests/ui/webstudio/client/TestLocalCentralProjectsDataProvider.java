@@ -50,6 +50,7 @@ public class TestLocalCentralProjectsDataProvider extends BaseTest {
         List<String> projectNames = repositoryPage.getAllVisibleProjectsInTable();
 
         for (String nameProject : projectNames) {
+            editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
             editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
             List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(nameProject);
 
