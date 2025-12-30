@@ -115,11 +115,11 @@ public class ProblemsPanelComponent extends BaseComponent {
         return warnings;
     }
 
-    private void waitForCompilationToComplete() {
+    public void waitForCompilationToComplete() {
         waitForCompilationToComplete(30000, 250);
     }
     
-    private void waitForCompilationToComplete(long timeoutMillis, long pollIntervalMillis) {
+    public void waitForCompilationToComplete(long timeoutMillis, long pollIntervalMillis) {
         long maxAttempts = timeoutMillis / pollIntervalMillis;
         for (int attempt = 1; attempt <= maxAttempts && isCompilationInProgress(); attempt++) {
             LOGGER.info("Compilation in progress, waiting... ({}/{})", attempt, maxAttempts);
