@@ -18,6 +18,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     private WebElement viewFilterLink;
     private WebElement selectedTreeItem;
     private WebElement filterOptionTemplate;
+    private WebElement tableIconTemplate;
     private List<EditorTreeFolderComponent> folders;
 
     public EditorLeftRulesTreeComponent() {
@@ -34,6 +35,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         viewFilterLink = createScopedElement("xpath=.//div[@class='filter-view']/span/a", "viewFilterLink");
         selectedTreeItem = createScopedElement("xpath=.//div[@id='rulesTree']//div[contains(@class,'rf-trn') and contains(@class,'sel')]//a", "selectedTreeItem");
         filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
+        tableIconTemplate = createScopedElement("xpath=.//div//a//span[text()='%s']/parent::*/parent::*/parent::*//img", "tableIconTemplate");
         folders = createScopedComponentList(EditorTreeFolderComponent.class, "xpath=(.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]) | (.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]) | (.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')])", "treeFolders");
     }
 
@@ -137,6 +139,10 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     private List<EditorTreeFolderComponent> findTreeFolders() {
         WaitUtil.waitForListNotEmpty(() -> folders, DEFAULT_TIMEOUT_MS, 100, "Waiting for editor tree folders to load");
         return folders;
+    }
+
+    public WebElement getTableIcon(String tableName) {
+        return tableIconTemplate.format(tableName);
     }
 
     @Getter

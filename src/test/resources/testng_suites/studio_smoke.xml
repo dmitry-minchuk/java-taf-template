@@ -15,5 +15,6 @@
     <test name="TestProjectTagsCreationNonExistingValue"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingValue"/></classes></test>
     <test name="TestProjectTagsCreationNonExistingType"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingType"/></classes></test>
     <test name="TestProjectTagsCreationFromWorkspace"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationFromWorkspace"/></classes></test>
+    <test name="TestTableIcons"><classes><class name="tests.ui.webstudio.studio_smoke.TestTableIcons"/></classes></test>
 
 </suite>
