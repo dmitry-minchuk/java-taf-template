@@ -7,6 +7,7 @@ import domain.ui.webstudio.components.common.TableComponent;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestResultValidationComponent extends BaseComponent {
@@ -20,6 +21,7 @@ public class TestResultValidationComponent extends BaseComponent {
     private List<WebElement> caseErrorElementsList;
     private List<WebElement> caseSuccessElementsList;
     private List<WebElement> testResultRowElementsList;
+    private List<WebElement> testResultRowElementsLinksList;
     private List<WebElement> testResultBadgeErrors;
 
     public TestResultValidationComponent() {
@@ -41,6 +43,7 @@ public class TestResultValidationComponent extends BaseComponent {
         caseErrorElementsList = createScopedElementList("xpath=.//tr//span[@class='case-error']", "caseErrorElements");
         caseSuccessElementsList = createScopedElementList("xpath=.//tr//span[@class='case-success']", "caseSuccessElements");
         testResultRowElementsList = createScopedElementList("xpath=.//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]", "testResultRowElements");
+        testResultRowElementsLinksList = createScopedElementList("xpath=.//a[@class='testError']", "testResultRowElementsLinksList");
         testResultBadgeErrors = createScopedElementList("xpath=.//span[@class='badge badge-error']", "testResultBadgeError");
     }
 
@@ -84,5 +87,35 @@ public class TestResultValidationComponent extends BaseComponent {
 
     public List<String> getTestResult(int rowIndex) {
         return getResultTable().getRow(rowIndex).getValue();
+    }
+
+    public List<String> getAllFailedTests() {
+        WaitUtil.waitForCondition(() -> !testResultRowElementsList.isEmpty(), 3000, 100, "Waiting for test result rows");
+        List<String> failedTests = new ArrayList<>();
+        if(!testResultRowElementsLinksList.isEmpty())
+            failedTests.addAll(testResultRowElementsLinksList.stream().map(e -> e.getText().trim()).toList());
+
+        if(!testResultRowElementsList.isEmpty()) {
+            for (int i = 1; i <= getTotalTestCount(); i++) {
+                List<String> rowData = getResultTable().getRow(i).getValue();
+                if (!rowData.isEmpty()) {
+                    // Check if this row has error badge using the badge list
+                    String rowXpath = String.format(".//table[@class='table']//tr[contains(@class, 'test-result-row')][%d]//span[@class='badge badge-error']", i);
+                    WebElement errorBadge = createScopedElement("xpath=" + rowXpath, "errorBadge");
+
+                    try {
+                        if (errorBadge.isVisible(500)) {
+                            // This row has failed tests - get all details from the row
+                            String failureDetails = String.join(" | ", rowData);
+                            failedTests.add(failureDetails);
+                        }
+                    } catch (Exception e) {
+                        // No error badge in this row, skip it
+                    }
+                }
+            }
+        }
+
+        return failedTests;
     }
 }

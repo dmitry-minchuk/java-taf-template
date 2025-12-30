@@ -65,10 +65,20 @@ public class TestLocalZippedProjects extends BaseTest {
                 editorPage.getProjectModuleDetailsComponent().isVisible();
 
                 if(editorPage.getProblemsPanelComponent().hasErrors()) {
-                    String problemsPanelComponentErrorsMsg = String.format("\nCompilation errors detected in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths));
+                    List<String> allErrors = editorPage.getProblemsPanelComponent().getAllErrors();
+
+                    StringBuilder errorDetails = new StringBuilder();
+                    errorDetails.append(String.format("\nCompilation errors detected in project: %s", nameProject));
+                    errorDetails.append(String.format("\nProjects location:\n%s\n", StringUtil.prettyPrintObjectList.apply(projectPaths)));
+                    errorDetails.append(String.format("\nERRORS (%d):\n", allErrors.size()));
+                    for (int i = 0; i < allErrors.size(); i++) {
+                        errorDetails.append(String.format("  %d. %s\n", i + 1, allErrors.get(i)));
+                    }
+
+                    String problemsPanelComponentErrorsMsg = errorDetails.toString();
                     softAssert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), problemsPanelComponentErrorsMsg);
                     Assert.assertFalse(editorPage.getProblemsPanelComponent().hasErrors(), problemsPanelComponentErrorsMsg);
-                    LOGGER.info("COMPILATION ERROR DETECTED: {}", problemsPanelComponentErrorsMsg);
+                    LOGGER.error("COMPILATION ERROR DETECTED: {}", problemsPanelComponentErrorsMsg);
                 }
 
                 if (editorPage.getEditorToolbarPanelComponent().getTestDropdownBtn().isVisible()) {
@@ -77,10 +87,20 @@ public class TestLocalZippedProjects extends BaseTest {
                             .runTests();
                     editorPage.waitUntilSpinnerLoaded();
                     if(!editorPage.getTestResultValidationComponent().isTestTablePassed()) {
-                        String testTableResults = String.format("\nThere are test failures in project: %s\n Projects location:\n%s", nameProject, StringUtil.prettyPrintObjectList.apply(projectPaths));
+                        List<String> failedTests = editorPage.getTestResultValidationComponent().getAllFailedTests();
+
+                        StringBuilder testFailureDetails = new StringBuilder();
+                        testFailureDetails.append(String.format("\nTest failures detected in project: %s", nameProject));
+                        testFailureDetails.append(String.format("\nProjects location:\n%s\n", StringUtil.prettyPrintObjectList.apply(projectPaths)));
+                        testFailureDetails.append(String.format("\nFAILED TESTS (%d):\n", failedTests.size()));
+                        for (int i = 0; i < failedTests.size(); i++) {
+                            testFailureDetails.append(String.format("  %d. %s\n", i + 1, failedTests.get(i)));
+                        }
+
+                        String testTableResults = testFailureDetails.toString();
                         softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
                         Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
-                        LOGGER.info("TEST ERROR DETECTED: {}", testTableResults);
+                        LOGGER.error("TEST FAILURES DETECTED: {}", testTableResults);
                     }
                 }
             }
