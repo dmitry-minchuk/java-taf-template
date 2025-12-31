@@ -6,6 +6,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="TestLocalCentralProjects"><classes><class name="tests.ui.webstudio.client.TestLocalCentralProjects"/></classes></test>
+    <test name="TestLocalCentralProjects"><classes><class name="tests.ui.webstudio.client.TestLocalCentralProjectsUpdated"/></classes></test>
 
 </suite>
