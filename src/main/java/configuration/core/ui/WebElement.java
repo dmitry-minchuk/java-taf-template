@@ -118,7 +118,19 @@ public class WebElement {
         WaitUtil.sleep(timeoutInMillis, "Sleeping before getting text from " + elementName);
         return getText();
     }
-    
+
+    public String getInnerText() {
+        isVisible();
+        String text = locator.innerText();
+        LOGGER.info("Getting inner text from {}: '{}'", elementName, text);
+        return text;
+    }
+
+    public String getInnerText(int timeoutInMillis) {
+        WaitUtil.sleep(timeoutInMillis, "Sleeping before getting inner text from " + elementName);
+        return getInnerText();
+    }
+
     public String getAttribute(String name) {
         isVisible();
         String value = locator.getAttribute(name);

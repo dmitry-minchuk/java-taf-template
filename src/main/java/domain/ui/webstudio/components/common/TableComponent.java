@@ -127,7 +127,7 @@ public class TableComponent extends BaseComponent {
         }
 
         public List<String> getValue() {
-            return cells.stream().map(e -> e.getText().trim()).toList();
+            return cells.stream().map(e -> e.getInnerText().trim()).toList();
         }
     }
 }
