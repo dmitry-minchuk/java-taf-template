@@ -77,13 +77,15 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     }
 
     public EditorMainContentProblemsPanelComponent expandProblemDescription(int elementPosition) {
-        isErrorMessageListPresent();
+        WaitUtil.waitForListNotEmpty(() -> errorMessages, 10000, 250, "Waiting for error messages before expanding");
+        WaitUtil.sleep(200, "Waiting for error messages panel to stabilize");
         errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='stacktrace-hidden']").click();
         return this;
     }
 
     public EditorMainContentProblemsPanelComponent hideProblemDescription(int elementPosition) {
-        isErrorMessageListPresent();
+        WaitUtil.waitForListNotEmpty(() -> errorMessages, 10000, 250, "Waiting for error messages before hiding");
+        WaitUtil.sleep(200, "Waiting for error messages panel to stabilize");
         errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='arrow-top']//div[@class='stacktrace-showed']").click();
         return this;
     }
@@ -93,6 +95,6 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     }
 
     public boolean isErrorMessageListPresent() {
-        return WaitUtil.isListNotEmpty(() -> errorMessages, 5000, 250, "Waiting for error messages to appear in problems panel");
+        return WaitUtil.isListNotEmpty(() -> errorMessages, 10000, 250, "Waiting for error messages to appear in problems panel");
     }
 }
