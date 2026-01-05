@@ -12,9 +12,7 @@ import java.util.List;
 
 public class TestResultValidationComponent extends BaseComponent {
 
-    private WebElement resultTableElement;
     private WebElement resultTableHeader;
-    @Getter
     private TableComponent resultTable;
     
     // Test result status element lists
@@ -35,7 +33,6 @@ public class TestResultValidationComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        resultTableElement = createScopedElement("xpath=.//table[@class='table']", "resultTableElement");
         resultTableHeader = createScopedElement("xpath=.//table[@class='table']/thead//tr", "resultTableHeader");
         resultTable = createScopedComponent(TableComponent.class, "xpath=.//table[@class='table']", "resultTable");
         
@@ -45,6 +42,11 @@ public class TestResultValidationComponent extends BaseComponent {
         testResultRowElementsList = createScopedElementList("xpath=.//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]", "testResultRowElements");
         testResultRowElementsLinksList = createScopedElementList("xpath=.//a[@class='testError']", "testResultRowElementsLinksList");
         testResultBadgeErrors = createScopedElementList("xpath=.//span[@class='badge badge-error']", "testResultBadgeError");
+    }
+
+    public TableComponent getResultTable() {
+        WaitUtil.waitForCondition(() -> resultTable.isVisible() && !resultTable.getRows().isEmpty(), 5000, 50, "Waiting for resultTable to be visible");
+        return resultTable;
     }
 
     public boolean isTestTableFailed() {
