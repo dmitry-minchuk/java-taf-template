@@ -83,6 +83,11 @@ public class WebElement {
         locator.click();
     }
 
+    public void clickForce() {
+        LOGGER.info("Force clicking {} (bypassing visibility checks)", elementName);
+        locator.click(new Locator.ClickOptions().setForce(true));
+    }
+
     public void doubleClick() {
         isVisible();
         LOGGER.info("Double clicking {} ", elementName);

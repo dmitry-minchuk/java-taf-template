@@ -241,7 +241,7 @@ public class RightTableDetailsComponent extends BaseComponent {
     }
 
     private void selectDay(String propertyName, String day) {
-        calendarDayTemplate.format(propertyName, day).click();
+        calendarDayTemplate.format(propertyName, day).clickForce();
     }
 
     public void deleteProperty(String propertyName) {
