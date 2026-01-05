@@ -45,6 +45,7 @@ public class RepositoryPage extends BasePage {
     private UploadFileDialogComponent uploadFileDialogComponent;
     private CompareDialogComponent compareDialogComponent;
     private WebElement confirmOpeningDialogBtn;
+    private WebElement confirmOpeningDialogShade;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
@@ -80,6 +81,7 @@ public class RepositoryPage extends BasePage {
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
+        confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -161,22 +163,27 @@ public class RepositoryPage extends BasePage {
                 List<WebElement> cells = row.getCells();
 
                 if (cells.size() == 6) {
+                    // Get project name from first cell for logging
+                    String projectName = cells.get(0).getLocator().textContent();
+
                     WebElement lastCell = cells.get(5);
                     Locator openOrCloseBtn = lastCell.getLocator().locator("xpath=.//a/img[@class='actionImage' and contains(@src,'repository')]");
 
                     int buttonCount = openOrCloseBtn.count();
-                    LOGGER.debug("Row {}: button count = {}", rowNum, buttonCount);
+                    LOGGER.debug("Row {}: '{}' button count = {}", rowNum, projectName, buttonCount);
 
                     if (buttonCount > 0) {
                         String altText = openOrCloseBtn.getAttribute("alt");
-                        LOGGER.debug("Row {}: alt = '{}'", rowNum, altText);
+                        LOGGER.debug("Row {}: '{}' alt = '{}'", rowNum, projectName, altText);
 
                         if (altText != null && altText.equalsIgnoreCase("Open")) {
-                            LOGGER.info("Unlocking project at row {}", rowNum);
+                            LOGGER.info("Unlocking project '{}' at row {}", projectName, rowNum);
                             openOrCloseBtn.click();
 
-                            if (WaitUtil.waitForCondition(() -> confirmOpeningDialogBtn.isVisible(), 500, 100, "Waiting for Confirmation Popup"))
+                            if (WaitUtil.waitForCondition(() -> confirmOpeningDialogBtn.isVisible(), 500, 100, "Waiting for Confirmation Popup")) {
                                 confirmOpeningDialogBtn.click();
+                                confirmOpeningDialogShade.waitForHidden(3000);
+                            }
 
                             unlockCount++;
                             foundLockedProject = true;
@@ -198,8 +205,13 @@ public class RepositoryPage extends BasePage {
         List<String> projectNames = new ArrayList<>();
         for (int i = 1; i <= projectsTable.getRows().size(); i++) {
             List<String> rowValues = projectsTable.getRow(i).getValue();
-            if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty())
-                projectNames.add(rowValues.getFirst().trim());
+            if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty()) {
+                String projectName = rowValues.getFirst().trim();
+                // Filter out JavaScript initialization code from RichFaces components
+                if (!projectName.startsWith("new RichFaces") && !projectName.contains("function(")) {
+                    projectNames.add(projectName);
+                }
+            }
         }
         return projectNames;
     }
