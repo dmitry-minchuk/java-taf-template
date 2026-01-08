@@ -31,7 +31,7 @@ public class StringUtil {
 
     public static String getPathWithoutFileName(String path) {
         String fileName = splitStringAndGetNthElement(path, File.separator, 1);
-        return path.replaceAll(File.separator + fileName, "");
+        return path.replace(File.separator + fileName, "");
     }
 
 
