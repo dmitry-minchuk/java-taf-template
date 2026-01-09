@@ -3,11 +3,11 @@
 set -e  # Exit on error
 set -u  # Exit on undefined variable
 
-REMOTE_SERVER="${REMOTE_SERVER:-your-reportportal-server}"
-REMOTE_USER="${REMOTE_USER:-root}"
-REMOTE_BACKUP_DIR="${REMOTE_BACKUP_DIR:-/opt/reportportal-backups}"
+REMOTE_SERVER="10.23.172.185"
+REMOTE_USER="dminchuk"
+REMOTE_BACKUP_DIR="/home/dminchuk/report-portal-backups"
 
-LOCAL_BACKUP_DIR="${LOCAL_BACKUP_DIR:-$HOME/reportportal-backups}"
+LOCAL_BACKUP_DIR="/Users/dmitryminchuk/Documents/ReportPortalBackups"
 
 RECENT_DAYS="${RECENT_DAYS:-7}"
 

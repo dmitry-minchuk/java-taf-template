@@ -70,7 +70,7 @@ create_backup_directory() {
     CURRENT_BACKUP_DIR="$BACKUP_DIR/backup_$timestamp"
 
     log_info "Creating backup directory: $CURRENT_BACKUP_DIR"
-    mkdir -p "$CURRENT_BACKUP_DIR"/{postgres,minio,config,elasticsearch}
+    mkdir -p "$CURRENT_BACKUP_DIR"/{postgres,storage,minio,config,elasticsearch}
 }
 
 backup_postgres() {
@@ -78,7 +78,7 @@ backup_postgres() {
 
     local dump_file="$CURRENT_BACKUP_DIR/postgres/reportportal_db.sql"
 
-    docker exec "$POSTGRES_CONTAINER" pg_dump \
+    docker exec -e PGPASSWORD="$POSTGRES_PASSWORD" "$POSTGRES_CONTAINER" pg_dump \
         -U "$POSTGRES_USER" \
         -d "$POSTGRES_DB" \
         --verbose \
@@ -90,7 +90,7 @@ backup_postgres() {
     log_success "PostgreSQL backup completed: $dump_file ($dump_size)"
 
     log_info "Collecting database statistics..."
-    docker exec "$POSTGRES_CONTAINER" psql \
+    docker exec -e PGPASSWORD="$POSTGRES_PASSWORD" "$POSTGRES_CONTAINER" psql \
         -U "$POSTGRES_USER" \
         -d "$POSTGRES_DB" \
         -c "SELECT
@@ -103,11 +103,58 @@ backup_postgres() {
     log_success "Database statistics saved"
 }
 
+backup_storage() {
+    log_info "Starting storage backup (screenshots, logs, attachments)..."
+
+    # Find storage volume
+    local storage_volume=$(docker volume inspect storage --format '{{ .Mountpoint }}' 2>/dev/null)
+
+    if [ -z "$storage_volume" ]; then
+        log_warning "Storage volume not found, trying alternative method..."
+
+        # Try to find volume by listing all volumes
+        storage_volume=$(docker volume ls --format '{{.Name}}' | grep -E '^storage$|reportportal.*storage' | head -1)
+
+        if [ -n "$storage_volume" ]; then
+            storage_volume=$(docker volume inspect "$storage_volume" --format '{{ .Mountpoint }}')
+        fi
+    fi
+
+    if [ -z "$storage_volume" ]; then
+        log_warning "Could not find storage volume, skipping storage backup"
+        log_info "Available volumes:"
+        docker volume ls
+        return
+    fi
+
+    local storage_data_dir="$CURRENT_BACKUP_DIR/storage/data"
+    mkdir -p "$storage_data_dir"
+
+    log_info "Copying storage data from: $storage_volume"
+    log_info "This may take a while depending on the size of attachments..."
+
+    # Copy storage data using docker to avoid permission issues
+    # This method works without sudo by using a temporary container
+    docker run --rm \
+        -v storage:/source:ro \
+        -v "$storage_data_dir":/backup \
+        alpine \
+        sh -c 'cd /source && tar cf - . | (cd /backup && tar xf -)'
+
+    local storage_size=$(du -sh "$storage_data_dir" | cut -f1)
+    log_success "Storage backup completed: $storage_data_dir ($storage_size)"
+
+    # Save storage info
+    echo "Storage volume path: $storage_volume" > "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
+    echo "Backup size: $storage_size" >> "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
+    echo "File count: $(find "$storage_data_dir" -type f | wc -l)" >> "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
+}
+
 backup_minio() {
-    log_info "Starting MinIO backup..."
+    log_info "Checking for MinIO backup..."
 
     if ! docker ps --format '{{.Names}}' | grep -q "$MINIO_CONTAINER"; then
-        log_error "MinIO container is not running, skipping MinIO backup"
+        log_info "MinIO container is not running, skipping MinIO backup"
         return
     fi
 
@@ -211,6 +258,7 @@ Compose Project Name: $COMPOSE_PROJECT_NAME
 
 Components Backed Up:
 - PostgreSQL Database: $([ -f "$CURRENT_BACKUP_DIR/postgres/reportportal_db.sql" ] && echo "YES" || echo "NO")
+- Storage (Screenshots/Logs): $([ -d "$CURRENT_BACKUP_DIR/storage/data" ] && echo "YES" || echo "NO")
 - MinIO Storage: $([ -d "$CURRENT_BACKUP_DIR/minio/data" ] && echo "YES" || echo "NO")
 - Elasticsearch: $([ -d "$CURRENT_BACKUP_DIR/elasticsearch/data" ] && echo "YES" || echo "NO")
 - Configuration: $([ -f "$CURRENT_BACKUP_DIR/config/docker-compose.yml" ] && echo "YES" || echo "NO")
@@ -303,6 +351,7 @@ main() {
     create_backup_directory
 
     backup_postgres
+    backup_storage
     backup_minio
     backup_elasticsearch
     backup_config
