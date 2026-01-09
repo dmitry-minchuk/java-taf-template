@@ -38,6 +38,10 @@ log_success() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $*"
 }
 
+log_warning() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: $*"
+}
+
 check_prerequisites() {
     log_info "Checking prerequisites..."
 
@@ -106,19 +110,19 @@ backup_postgres() {
 backup_storage() {
     log_info "Starting storage backup (screenshots, logs, attachments)..."
 
-    # Find storage volume
-    local storage_volume=$(docker volume inspect storage --format '{{ .Mountpoint }}' 2>/dev/null)
+    # Find storage volume - try reportportal_storage first, then storage
+    local storage_volume_name=$(docker volume ls --format '{{.Name}}' | grep -E 'reportportal.*storage|^storage$' | head -1)
 
-    if [ -z "$storage_volume" ]; then
-        log_warning "Storage volume not found, trying alternative method..."
-
-        # Try to find volume by listing all volumes
-        storage_volume=$(docker volume ls --format '{{.Name}}' | grep -E '^storage$|reportportal.*storage' | head -1)
-
-        if [ -n "$storage_volume" ]; then
-            storage_volume=$(docker volume inspect "$storage_volume" --format '{{ .Mountpoint }}')
-        fi
+    if [ -z "$storage_volume_name" ]; then
+        log_warning "Storage volume not found, skipping storage backup"
+        log_info "Available volumes:"
+        docker volume ls
+        return
     fi
+
+    log_info "Found storage volume: $storage_volume_name"
+
+    local storage_volume=$(docker volume inspect "$storage_volume_name" --format '{{ .Mountpoint }}' 2>/dev/null)
 
     if [ -z "$storage_volume" ]; then
         log_warning "Could not find storage volume, skipping storage backup"
@@ -130,24 +134,29 @@ backup_storage() {
     local storage_data_dir="$CURRENT_BACKUP_DIR/storage/data"
     mkdir -p "$storage_data_dir"
 
-    log_info "Copying storage data from: $storage_volume"
+    log_info "Copying storage data from volume: $storage_volume_name"
     log_info "This may take a while depending on the size of attachments..."
 
     # Copy storage data using docker to avoid permission issues
     # This method works without sudo by using a temporary container
     docker run --rm \
-        -v storage:/source:ro \
+        -v "$storage_volume_name":/source:ro \
         -v "$storage_data_dir":/backup \
         alpine \
         sh -c 'cd /source && tar cf - . | (cd /backup && tar xf -)'
 
-    local storage_size=$(du -sh "$storage_data_dir" | cut -f1)
+    # Calculate size using Docker to avoid permission issues
+    local storage_size=$(docker run --rm -v "$storage_data_dir":/data alpine du -sh /data 2>/dev/null | cut -f1)
     log_success "Storage backup completed: $storage_data_dir ($storage_size)"
 
-    # Save storage info
-    echo "Storage volume path: $storage_volume" > "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
+    # Save storage info using Docker
+    local file_count=$(docker run --rm -v "$storage_data_dir":/data alpine find /data -type f 2>/dev/null | wc -l)
+    echo "Storage volume name: $storage_volume_name" > "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
     echo "Backup size: $storage_size" >> "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
-    echo "File count: $(find "$storage_data_dir" -type f | wc -l)" >> "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
+    echo "File count: $file_count" >> "$CURRENT_BACKUP_DIR/storage/storage_info.txt"
+
+    # Fix permissions so user can access the files
+    docker run --rm -v "$storage_data_dir":/data alpine chmod -R a+r /data 2>/dev/null || true
 }
 
 backup_minio() {
@@ -264,7 +273,7 @@ Components Backed Up:
 - Configuration: $([ -f "$CURRENT_BACKUP_DIR/config/docker-compose.yml" ] && echo "YES" || echo "NO")
 
 File Sizes:
-$(du -sh "$CURRENT_BACKUP_DIR"/* 2>/dev/null || echo "N/A")
+$(docker run --rm -v "$CURRENT_BACKUP_DIR":/backup alpine du -sh /backup/* 2>/dev/null | sed 's|/backup/||' || echo "N/A")
 
 Database Statistics:
 $(cat "$CURRENT_BACKUP_DIR/postgres/db_stats.txt" 2>/dev/null || echo "N/A")
@@ -284,18 +293,24 @@ compress_backup() {
 
     log_info "Compressing backup..."
 
+    # Fix permissions on storage files before archiving
+    if [ -d "$CURRENT_BACKUP_DIR/storage/data" ]; then
+        log_info "Fixing permissions on storage files..."
+        docker run --rm -v "$CURRENT_BACKUP_DIR/storage/data":/data alpine chmod -R a+rX /data 2>/dev/null || true
+    fi
+
     local backup_name=$(basename "$CURRENT_BACKUP_DIR")
     local archive_path="$BACKUP_DIR/${backup_name}.tar.gz"
 
     cd "$BACKUP_DIR"
-    tar -czf "$archive_path" "$backup_name"
+    tar -czf "$archive_path" "$backup_name" 2>/dev/null || tar --warning=no-file-changed -czf "$archive_path" "$backup_name"
 
     local archive_size=$(du -h "$archive_path" | cut -f1)
     log_success "Backup compressed: $archive_path ($archive_size)"
 
-    # Remove uncompressed directory
+    # Remove uncompressed directory (use Docker to avoid permission issues)
     log_info "Removing uncompressed backup directory..."
-    rm -rf "$CURRENT_BACKUP_DIR"
+    docker run --rm -v "$BACKUP_DIR":/backups alpine rm -rf "/backups/$backup_name"
 
     CURRENT_BACKUP_PATH="$archive_path"
 }
@@ -308,8 +323,16 @@ cleanup_old_backups() {
 
     log_info "Cleaning up backups older than $BACKUP_RETENTION_DAYS days..."
 
+    # Delete old archive files
     find "$BACKUP_DIR" -name "backup_*.tar.gz" -mtime +$BACKUP_RETENTION_DAYS -delete
-    find "$BACKUP_DIR" -name "backup_*" -type d -mtime +$BACKUP_RETENTION_DAYS -exec rm -rf {} +
+
+    # Delete old backup directories (use Docker for directories with root-owned files)
+    find "$BACKUP_DIR" -name "backup_*" -type d -mtime +$BACKUP_RETENTION_DAYS | while read old_dir; do
+        if [ -d "$old_dir" ]; then
+            local dir_name=$(basename "$old_dir")
+            docker run --rm -v "$BACKUP_DIR":/backups alpine rm -rf "/backups/$dir_name" 2>/dev/null || rm -rf "$old_dir"
+        fi
+    done
 
     log_success "Old backups cleaned up"
 }
