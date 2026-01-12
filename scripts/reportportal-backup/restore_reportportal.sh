@@ -135,9 +135,9 @@ start_reportportal_containers() {
 
     cd "$REPORTPORTAL_DIR"
 
-    # Start only database and storage containers first
-    log_info "Starting PostgreSQL and MinIO containers..."
-    docker-compose up -d postgres minio
+    # Start only PostgreSQL first
+    log_info "Starting PostgreSQL container..."
+    docker-compose up -d postgres
 
     # Wait for PostgreSQL to be ready
     log_info "Waiting for PostgreSQL to be ready..."
@@ -161,10 +161,6 @@ start_reportportal_containers() {
         log_error "PostgreSQL did not start in time"
         exit 1
     fi
-
-    # Wait for MinIO to be ready
-    log_info "Waiting for MinIO to be ready..."
-    sleep 5
 }
 
 restore_postgres() {
@@ -202,6 +198,54 @@ restore_postgres() {
     if [ -f "$BACKUP_DIR/postgres/db_stats.txt" ]; then
         log_info "Database statistics after restore:"
         cat "$BACKUP_DIR/postgres/db_stats.txt"
+    fi
+}
+
+restore_storage() {
+    log_info "Restoring storage volume (screenshots, logs, attachments)..."
+
+    local storage_backup_dir="$BACKUP_DIR/storage/data"
+
+    if [ ! -d "$storage_backup_dir" ]; then
+        log_warning "Storage backup directory not found, skipping storage restore"
+        return
+    fi
+
+    # Check if storage is empty (nothing to restore)
+    if [ -z "$(ls -A "$storage_backup_dir" 2>/dev/null)" ]; then
+        log_info "Storage backup is empty, skipping restore"
+        return
+    fi
+
+    cd "$REPORTPORTAL_DIR"
+
+    # Find or create storage volume
+    local storage_volume_name=$(docker volume ls --format '{{.Name}}' | grep -E 'reportportal.*storage|^storage$' | head -1)
+
+    if [ -z "$storage_volume_name" ]; then
+        log_info "Storage volume not found, creating reportportal_storage..."
+        docker volume create reportportal_storage
+        storage_volume_name="reportportal_storage"
+    fi
+
+    log_info "Using storage volume: $storage_volume_name"
+
+    # Restore storage data using Docker to avoid permission issues
+    log_info "Copying storage data (this may take a while)..."
+    docker run --rm \
+        -v "$storage_backup_dir":/source:ro \
+        -v "$storage_volume_name":/target \
+        alpine \
+        sh -c 'cd /source && cp -a . /target/'
+
+    # Verify restore
+    local restored_size=$(docker run --rm -v "$storage_volume_name":/data alpine du -sh /data 2>/dev/null | cut -f1)
+    log_success "Storage restored successfully: $restored_size"
+
+    # Display storage info if available
+    if [ -f "$BACKUP_DIR/storage/storage_info.txt" ]; then
+        log_info "Storage information:"
+        cat "$BACKUP_DIR/storage/storage_info.txt"
     fi
 }
 
@@ -390,8 +434,7 @@ main() {
     start_reportportal_containers
 
     restore_postgres
-    restore_minio
-    restore_elasticsearch
+    restore_storage
 
     start_all_services
     verify_restore
