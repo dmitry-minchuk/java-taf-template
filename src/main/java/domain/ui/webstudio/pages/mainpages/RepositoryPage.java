@@ -77,7 +77,7 @@ public class RepositoryPage extends BasePage {
         copyProjectDialogComponent = createScopedComponent(CopyProjectDialogComponent.class, "xpath=//div[@id='modalCopyProject_container']", "copyProjectDialogComponent");
         uploadFileDialogComponent = createScopedComponent(UploadFileDialogComponent.class, "xpath=//div[@id='modalNewFile_container']", "uploadFileDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
-        syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@id='modalMergeBranches_container']", "syncChangesDialogComponent");
+        syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");

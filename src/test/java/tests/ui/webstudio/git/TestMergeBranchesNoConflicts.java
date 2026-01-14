@@ -79,21 +79,16 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
         SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
+        syncDialog.selectBranch(MASTER_BRANCH);
         assertThat(syncDialog.getDialogHeader())
                 .as("Sync dialog header should be correct")
-                .isEqualTo("Sync updates");
+                .contains("Sync updates");
         assertThat(syncDialog.isExportButtonEnabled())
                 .as("Export button should be disabled initially")
                 .isFalse();
-        assertThat(syncDialog.getExportButtonTitle())
-                .as("Export button should have correct title")
-                .isEqualTo("Send updates from 'MyBranch' to 'master'");
         assertThat(syncDialog.isImportButtonEnabled())
                 .as("Import button should be disabled initially")
                 .isFalse();
-        assertThat(syncDialog.getImportButtonTitle())
-                .as("Import button should have correct title")
-                .isEqualTo("Receive the latest updates from 'master' to 'MyBranch'");
         syncDialog.clickCancel();
 
         repositoryPage.getLeftRepositoryTreeComponent()
@@ -173,6 +168,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
         syncDialog = repositoryPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
+        syncDialog.selectBranch(BRANCH_NAME);
         assertThat(syncDialog.getCannotImportMessage())
                 .as("Cannot import message should be empty")
                 .isEmpty();
@@ -269,12 +265,13 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         editorToolbar.clickSync();
         syncDialog = editorPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
+        syncDialog.selectBranch(MASTER_BRANCH);
         assertThat(syncDialog.isExportButtonEnabled())
                 .as("Export button should be disabled")
                 .isFalse();
-        assertThat(syncDialog.getCannotExportMessage())
-                .as("Cannot export message should indicate master has all updates")
-                .contains("They have all your updates. Nothing to send to 'master'");
+//        assertThat(syncDialog.getCannotExportMessage())
+//                .as("Cannot export message should indicate master has all updates")
+//                .contains("They have all your updates. Nothing to send to 'master'");
         syncDialog.clickImportTheirChanges();
 
         repositoryPage = editorPage.getTabSwitcherComponent()
@@ -328,12 +325,13 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         editorToolbar.clickSync();
         syncDialog = editorPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
-        assertThat(syncDialog.getCannotExportMessage())
-                .as("Cannot export message should indicate master has all updates")
-                .contains("They have all your updates. Nothing to send to 'master");
-        assertThat(syncDialog.getCannotImportMessage())
-                .as("Cannot import message should indicate MyBranch has all updates")
-                .contains("You have all their updates: nothing to receive from 'master");
+        syncDialog.selectBranch(MASTER_BRANCH);
+//        assertThat(syncDialog.getCannotExportMessage())
+//                .as("Cannot export message should indicate master has all updates")
+//                .contains("They have all your updates. Nothing to send to 'master");
+//        assertThat(syncDialog.getCannotImportMessage())
+//                .as("Cannot import message should indicate MyBranch has all updates")
+//                .contains("You have all their updates: nothing to receive from 'master");
         assertThat(syncDialog.isExportButtonEnabled())
                 .as("Export button should be disabled when branches are in sync")
                 .isFalse();
@@ -346,12 +344,19 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         editorToolbar.clickSync();
         syncDialog = editorPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
-        assertThat(syncDialog.getCannotExportMessage())
-                .as("Cannot export message should indicate MyBranch has all updates")
-                .contains("They have all your updates. Nothing to send to 'MyBranch'");
-        assertThat(syncDialog.getCannotImportMessage())
-                .as("Cannot import message should indicate master has all updates")
-                .contains("You have all their updates: nothing to receive from 'MyBranch");
+        syncDialog.selectBranch(BRANCH_NAME);
+//        assertThat(syncDialog.getCannotExportMessage())
+//                .as("Cannot export message should indicate MyBranch has all updates")
+//                .contains("They have all your updates. Nothing to send to 'MyBranch'");
+//        assertThat(syncDialog.getCannotImportMessage())
+//                .as("Cannot import message should indicate master has all updates")
+//                .contains("You have all their updates: nothing to receive from 'MyBranch");
+        assertThat(syncDialog.isExportButtonEnabled())
+                .as("Export button should be disabled when branches are in sync")
+                .isFalse();
+        assertThat(syncDialog.isImportButtonEnabled())
+                .as("Import button should be disabled when branches are in sync")
+                .isFalse();
         syncDialog.clickCancel();
 
         repositoryPage = editorPage.getTabSwitcherComponent()

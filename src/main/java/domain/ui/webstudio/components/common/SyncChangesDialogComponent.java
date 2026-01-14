@@ -7,6 +7,7 @@ import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Optional;
 
 public class SyncChangesDialogComponent extends BaseComponent {
@@ -19,6 +20,8 @@ public class SyncChangesDialogComponent extends BaseComponent {
     private WebElement cannotImportMessage;
     private WebElement cannotExportMessage;
     private WebElement cancelBtn;
+    private WebElement branchSelector;
+    private List<WebElement> selectorOptions;
 
     public SyncChangesDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -31,12 +34,15 @@ public class SyncChangesDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        dialogHeader = createScopedElement("xpath=.//div[@id='modalMergeBranches_header_content']", "dialogHeader");
-        importTheirChangesBtn = createScopedElement("xpath=.//input[@value='Receive their updates']", "importTheirChangesBtn");
-        exportYourChangesBtn = createScopedElement("xpath=.//input[@value='Send your updates']", "exportYourChangesBtn");
+        dialogHeader = createScopedElement("xpath=.//div[@class='ant-modal-header']", "dialogHeader");
+        importTheirChangesBtn = createScopedElement("xpath=.//button[.//span[text()='Receive their updates']]", "importTheirChangesBtn");
+        exportYourChangesBtn = createScopedElement("xpath=.//button[.//span[text()='Send your updates']]", "exportYourChangesBtn");
         cannotImportMessage = createScopedElement("xpath=.//div[@id='mergeBranchesForm:cannotImportMessage']", "cannotImportMessage");
         cannotExportMessage = createScopedElement("xpath=.//div[@id='mergeBranchesForm:cannotExportMessage']", "cannotExportMessage");
-        cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
+        cancelBtn = createScopedElement("xpath=.//span[@aria-label='close']", "cancelBtn");
+
+        branchSelector = createScopedElement("xpath=.//input[@id='merge_branches_form_targetBranch']", "branchSelector");
+        selectorOptions = createElementList("xpath=.//div[@class='ant-select-item-option-content']", "branchSelector");
     }
 
     public void waitForDialogToAppear() {
@@ -85,6 +91,20 @@ public class SyncChangesDialogComponent extends BaseComponent {
             return Optional.empty();
         }, 2000, 100, "Waiting for cannot export message element").orElse("");
     }
+
+    public SyncChangesDialogComponent selectBranch(String branchName) {
+        LOGGER.info("Selecting branch: {}", branchName);
+        branchSelector.click();  // Click on parent div, safer than input
+        WaitUtil.waitForCondition(() -> !selectorOptions.isEmpty(), 2000, 100, "Waiting for selector options to appear");
+        for (WebElement option : selectorOptions) {
+            if (option.getText().trim().equals(branchName)) {
+                option.click();
+                return this;
+            }
+        }
+        throw new RuntimeException("Branch '" + branchName + "' not found in selector options");
+    }
+
 
     public String getDialogHeader() {
         return dialogHeader.getText().trim();

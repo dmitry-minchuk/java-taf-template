@@ -53,7 +53,7 @@ public class EditorPage extends BasePage {
         editorTableActionsPanelComponent = createScopedComponent(EditorTableActionsPanelComponent.class, "xpath=//div[@class='te_toolbar']", "editorTableActionsPanelComponent");
         editorMainContentProblemsPanelComponent = createScopedComponent(EditorMainContentProblemsPanelComponent.class, "xpath=//div[@id='content']", "editorMainContentProblemsPanelComponent");
         projectModuleDetailsComponent = createScopedComponent(ProjectModuleDetailsComponent.class, "xpath=//div[contains(@class, 'ui-layout-center') and @id='content']", "projectModuleDetailsComponent");
-        syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@id='modalMergeBranches_container']", "syncChangesDialogComponent");
+        syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
         editProjectDialogComponent = createScopedComponent(EditProjectDialogComponent.class, "xpath=//div[@id='editProjectPopup_content']", "editProjectDialogComponent");
         projectHeaderTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..", "projectHeaderTemplate");
