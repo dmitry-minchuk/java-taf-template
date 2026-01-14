@@ -33,7 +33,7 @@ public abstract class BaseComponent extends CoreComponent {
     private void initializeElements() {
         contentLoadingSpinner = new WebElement(page, "xpath=//div[@id='loadingPanel']", "contentLoadingSpinner");
         messages = createComponentList(MessageComponent.class, "xpath=//div[contains(@class,'ant-notification-notice-wrapper')]", "Studio Messages");
-        modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-content']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
+        modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-container']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
         notificationPanel = new WebElement(page, "xpath=//div[@data-show='true' and contains(@class, 'ant-alert-banner')]", "Notification Panel");
     }
 

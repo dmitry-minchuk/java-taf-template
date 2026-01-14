@@ -43,7 +43,7 @@ public class MyProfilePageComponent extends BaseComponent {
         saveBtn = createScopedElement("xpath=.//button[./span[text()='Save'] or @type='submit']", "saveBtn");
         successNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'success-message')]", "successNotification");
         errorNotification = createScopedElement("xpath=.//div[contains(@class,'ant-notification') or contains(@class,'error-message')]", "errorNotification");
-        displayNamePatternDropdown = createScopedElement("xpath=.//div[//label[@title='Display Name']]/following-sibling::div//span[@class='ant-select-selection-item']", "displayNamePatternDropdown");
+        displayNamePatternDropdown = createScopedElement("xpath=.//div[//label[@title='Display Name']]/following-sibling::div//input[@id='displayNameSelect']", "displayNamePatternDropdown");
     }
 
     public String getUsername() {

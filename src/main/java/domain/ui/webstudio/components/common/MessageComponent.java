@@ -24,7 +24,7 @@ public class MessageComponent extends BaseComponent {
 
     private void initializeComponents() {
         message = createScopedElementList("xpath=.//div[contains(@class,'ant-notification-notice-message')]", "Message Content List");
-        closeBtn = createScopedElement("xpath=.//a[@aria-label='Close']", "Close Message Button");
+        closeBtn = createScopedElement("xpath=.//a[@aria-label='Close'] | .//button[@class='ant-notification-notice-close']", "Close Message Button");
     }
 
     public String getMessageText() {

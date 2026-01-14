@@ -32,12 +32,12 @@ public class MySettingsPageComponent extends BaseComponent {
         showHeaderCheckbox = createScopedElement("xpath=.//input[@id='showHeader']", "showHeaderCheckbox");
         showFormulasCheckbox = createScopedElement("xpath=.//input[@id='showFormulas']", "showFormulasCheckbox");
 
-        defaultOrderDropdown = createScopedElement("xpath=.//div[./label[@title='Default Order']]/following-sibling::div//div[@class='ant-select-selector']", "defaultOrderDropdown");
+        defaultOrderDropdown = createScopedElement("xpath=.//div[./label[@title='Default Order']]/following-sibling::div//div[@class='ant-select-content']", "defaultOrderDropdown");
         defaultOrderSelectedItem = createScopedElement("xpath=.//input[@id='treeView']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "defaultOrderSelectedItem");
 
-        testsPerPageDropdown = createScopedElement("xpath=.//div[./label[@title='Tests Per Page']]/following-sibling::div//div[@class='ant-select-selector']", "testsPerPageDropdown");
+        testsPerPageDropdown = createScopedElement("xpath=.//div[./label[@title='Tests Per Page']]/following-sibling::div//div[@class='ant-select-content']", "testsPerPageDropdown");
         selectOptionTemplate =  new WebElement(page,"xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
-        testsPerPageSelectedItem = createScopedElement("xpath=.//input[@id='testsPerPage']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "testsPerPageSelectedItem");
+        testsPerPageSelectedItem = createScopedElement("xpath=.//input[@id='testsPerPage']/ancestor::div[contains(@class,'ant-select')]//div[@class='ant-select-content']", "testsPerPageSelectedItem");
 
         failuresOnlyCheckbox = createScopedElement("xpath=.//input[@id='testsFailuresOnly']", "failuresOnlyCheckbox");
         compoundResultCheckbox = createScopedElement("xpath=.//input[@id='showComplexResult']", "compoundResultCheckbox");
@@ -83,7 +83,7 @@ public class MySettingsPageComponent extends BaseComponent {
     }
 
     public int getTestsPerPage() {
-        String value = testsPerPageSelectedItem.getAttribute("title");
+        String value = testsPerPageSelectedItem.getLocator().locator("xpath=/div").getAttribute("title");
         return value != null && !value.isEmpty() ? Integer.parseInt(value) : 5;
     }
 
