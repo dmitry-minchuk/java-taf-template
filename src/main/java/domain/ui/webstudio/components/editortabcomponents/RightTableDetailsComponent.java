@@ -88,7 +88,7 @@ public class RightTableDetailsComponent extends BaseComponent {
         calendarHeader = createScopedElement("xpath=//div[@id='propsTable']//tr/td[@class='propName']//..//table[contains(@id,'dateContent')]//tr[1]/td[3]/div[contains(@onclick,'showDateEditor')]", "calendarHeader");
         calendarMonthTemplate = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div[contains(text(),'%s')]", "calendarMonth");
         calendarYearTemplate = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div[contains(text(),'%s')]", "calendarYear");
-        calendarOkButton = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div//span[contains(text(),'OK')]", "calendarOk");
+        calendarOkButton = createScopedElement("xpath=//div//table[@class='rf-cal-monthpicker-cnt']//td//div//span[contains(text(),'OK')]", "calendarOkButton");
         calendarDayTemplate = createScopedElement("xpath=//div[@id='propsTable']//td[contains(text(),'%s')]//..//..//table[contains(@id,'dateContent')]//tr/td[text()='%s']", "calendarDay");
     }
 
@@ -243,7 +243,7 @@ public class RightTableDetailsComponent extends BaseComponent {
     }
 
     private void selectDay(String propertyName, String day) {
-        calendarDayTemplate.format(propertyName, day).clickForce();
+        calendarDayTemplate.format(propertyName, day).click();
     }
 
     public void deleteProperty(String propertyName) {
