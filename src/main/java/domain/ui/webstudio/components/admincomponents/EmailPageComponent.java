@@ -5,6 +5,8 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
 
+import java.util.Objects;
+
 public class EmailPageComponent extends BaseComponent {
     
     private WebElement emailVerificationCheckbox;
@@ -74,7 +76,7 @@ public class EmailPageComponent extends BaseComponent {
     }
 
     public String getEmailPassword() {
-        return emailPasswordField.getAttribute("value");
+        return Objects.requireNonNullElse(emailPasswordField.getAttribute("value"), "");
     }
 
     public void setEmailCredentials(String url, String username, String password) {
