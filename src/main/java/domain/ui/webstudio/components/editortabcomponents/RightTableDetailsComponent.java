@@ -168,6 +168,7 @@ public class RightTableDetailsComponent extends BaseComponent {
     public void clickPropertyValue(String propertyName) {
         WaitUtil.sleep(300, "Waiting before clicking property value");
         propertyValueLinkTemplate.format(propertyName).click();
+        WaitUtil.sleep(150, "Waiting after clicking property value");
     }
 
     public void editTextProperty(String propertyName, String newValue) {
@@ -226,7 +227,7 @@ public class RightTableDetailsComponent extends BaseComponent {
     private void openCalendarIfNeeded(String propertyName) {
         WebElement input = propertyTextInputTemplate.format(propertyName);
         String value = input.getAttribute("value");
-        if (value != null && !value.isEmpty()) {
+        if (value != null && !value.isEmpty() && !calendarHeader.isVisible()) {
             calendarButtonTemplate.format(propertyName).click();
             WaitUtil.sleep(200, "Waiting for calendar");
         }
