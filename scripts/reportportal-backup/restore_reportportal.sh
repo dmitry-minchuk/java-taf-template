@@ -2,6 +2,7 @@
 
 ################################################################################
 # Report Portal Restore Script
+# Compatible with ReportPortal 5.15.0+ (OpenSearch, profiles support)
 ################################################################################
 
 set -e  # Exit on error
@@ -10,6 +11,9 @@ set -u  # Exit on undefined variable
 BACKUP_PATH="${1:-}"
 REPORTPORTAL_DIR="${2:-/opt/reportportal}"
 TEMP_RESTORE_DIR="/tmp/reportportal_restore_$$"
+
+# Docker Compose profiles for ReportPortal 5.15.0+
+COMPOSE_PROFILES="--profile core --profile infra"
 
 log_info() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] INFO: $*"
@@ -25,6 +29,16 @@ log_success() {
 
 log_warning() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: $*"
+}
+
+# Wrapper for docker-compose commands with profile support
+dc() {
+    docker-compose $COMPOSE_PROFILES "$@"
+}
+
+# Wrapper for docker-compose commands without profiles (for queries)
+dc_no_profile() {
+    docker-compose "$@"
 }
 
 show_usage() {
@@ -111,33 +125,40 @@ install_reportportal() {
 
     mkdir -p "$REPORTPORTAL_DIR"
 
-    # Copy configuration files
-    if [ -d "$BACKUP_DIR/config" ]; then
-        log_info "Restoring configuration files..."
-        cp -v "$BACKUP_DIR/config/docker-compose.yml" "$REPORTPORTAL_DIR/" 2>/dev/null || \
-            log_warning "docker-compose.yml not found in backup"
-        cp -v "$BACKUP_DIR/config/.env" "$REPORTPORTAL_DIR/" 2>/dev/null || \
-            log_info ".env file not found in backup (this is optional)"
-    fi
-
-    # If docker-compose.yml is missing, download the default one
-    if [ ! -f "$REPORTPORTAL_DIR/docker-compose.yml" ]; then
+    # Handle docker-compose.yml
+    if [ -f "$REPORTPORTAL_DIR/docker-compose.yml" ]; then
+        log_info "Existing docker-compose.yml found, keeping it (not overwriting)"
+    elif [ -d "$BACKUP_DIR/config" ] && [ -f "$BACKUP_DIR/config/docker-compose.yml" ]; then
+        log_info "Restoring docker-compose.yml from backup..."
+        cp -v "$BACKUP_DIR/config/docker-compose.yml" "$REPORTPORTAL_DIR/"
+    else
         log_warning "docker-compose.yml not found, downloading the default configuration..."
         curl -LO https://raw.githubusercontent.com/reportportal/reportportal/master/docker-compose.yml
         mv docker-compose.yml "$REPORTPORTAL_DIR/"
+    fi
+
+    # Copy .env if exists in backup
+    if [ -d "$BACKUP_DIR/config" ]; then
+        cp -v "$BACKUP_DIR/config/.env" "$REPORTPORTAL_DIR/" 2>/dev/null || \
+            log_info ".env file not found in backup (this is optional)"
     fi
 
     cd "$REPORTPORTAL_DIR"
 }
 
 start_reportportal_containers() {
-    log_info "Starting Report Portal containers..."
+    log_info "Preparing Report Portal containers..."
 
     cd "$REPORTPORTAL_DIR"
 
-    # Start only PostgreSQL first
+    # Stop all containers first to free database connections
+    log_info "Stopping all containers..."
+    dc down 2>/dev/null || true
+    sleep 3
+
+    # Start only PostgreSQL first (with profiles)
     log_info "Starting PostgreSQL container..."
-    docker-compose up -d postgres
+    dc up -d postgres
 
     # Wait for PostgreSQL to be ready
     log_info "Waiting for PostgreSQL to be ready..."
@@ -146,8 +167,10 @@ start_reportportal_containers() {
     local max_attempts=30
     local attempt=1
 
+    local postgres_container=$(dc ps -q postgres)
+
     while [ $attempt -le $max_attempts ]; do
-        if docker-compose exec -T postgres pg_isready -U rpuser &>/dev/null; then
+        if docker exec "$postgres_container" pg_isready -U rpuser &>/dev/null; then
             log_success "PostgreSQL is ready"
             break
         fi
@@ -176,21 +199,29 @@ restore_postgres() {
     cd "$REPORTPORTAL_DIR"
 
     # Get PostgreSQL container name
-    local postgres_container=$(docker-compose ps -q postgres)
+    local postgres_container=$(dc ps -q postgres)
 
     if [ -z "$postgres_container" ]; then
         log_error "PostgreSQL container is not running"
         exit 1
     fi
 
+    # PostgreSQL credentials (from docker-compose defaults)
+    local pg_user="${POSTGRES_USER:-rpuser}"
+    local pg_pass="${POSTGRES_PASSWORD:-rppass}"
+    local pg_db="${POSTGRES_DB:-reportportal}"
+
     # Drop existing database (if exists) and create new one
     log_info "Preparing database..."
-    docker-compose exec -T postgres psql -U rpuser -d postgres -c "DROP DATABASE IF EXISTS reportportal;" || true
-    docker-compose exec -T postgres psql -U rpuser -d postgres -c "CREATE DATABASE reportportal OWNER rpuser;"
+    docker exec -e PGPASSWORD="$pg_pass" "$postgres_container" \
+        psql -U "$pg_user" -d postgres -c "DROP DATABASE IF EXISTS $pg_db;" || true
+    docker exec -e PGPASSWORD="$pg_pass" "$postgres_container" \
+        psql -U "$pg_user" -d postgres -c "CREATE DATABASE $pg_db OWNER $pg_user;"
 
     # Restore database
     log_info "Restoring database from dump (this may take a while)..."
-    docker exec -i "$postgres_container" psql -U rpuser -d reportportal < "$dump_file"
+    docker exec -i -e PGPASSWORD="$pg_pass" "$postgres_container" \
+        psql -U "$pg_user" -d "$pg_db" < "$dump_file"
 
     log_success "PostgreSQL database restored successfully"
 
@@ -250,23 +281,34 @@ restore_storage() {
 }
 
 restore_minio() {
-    log_info "Restoring MinIO storage..."
+    log_info "Checking MinIO storage..."
 
     local minio_backup_dir="$BACKUP_DIR/minio/data"
 
     if [ ! -d "$minio_backup_dir" ]; then
-        log_warning "MinIO backup directory not found, skipping MinIO restore"
+        log_info "MinIO backup directory not found, skipping MinIO restore"
         return
     fi
 
     cd "$REPORTPORTAL_DIR"
 
+    # Check if MinIO is configured
+    if ! dc_no_profile config --services 2>/dev/null | grep -q minio; then
+        log_info "MinIO is not configured in docker-compose, skipping..."
+        return
+    fi
+
     # Stop MinIO container
     log_info "Stopping MinIO container..."
-    docker-compose stop minio
+    dc stop minio || true
 
     # Get MinIO data volume path
-    local minio_container=$(docker-compose ps -aq minio)
+    local minio_container=$(dc ps -aq minio)
+    if [ -z "$minio_container" ]; then
+        log_warning "MinIO container not found"
+        return
+    fi
+
     local minio_volume=$(docker inspect "$minio_container" \
         | grep -A 5 '"Mounts"' \
         | grep '"Source"' \
@@ -290,73 +332,89 @@ restore_minio() {
 
     # Start MinIO container
     log_info "Starting MinIO container..."
-    docker-compose start minio
+    dc start minio
 
     sleep 5
 
     log_success "MinIO storage restored successfully"
 }
 
-restore_elasticsearch() {
+restore_opensearch() {
+    # Support both opensearch and elasticsearch backup directories
+    local os_backup_dir="$BACKUP_DIR/opensearch/data"
     local es_backup_dir="$BACKUP_DIR/elasticsearch/data"
+    local backup_dir=""
 
-    if [ ! -d "$es_backup_dir" ]; then
-        log_info "Elasticsearch backup not found, skipping..."
+    if [ -d "$os_backup_dir" ]; then
+        backup_dir="$os_backup_dir"
+        log_info "Found OpenSearch backup directory"
+    elif [ -d "$es_backup_dir" ]; then
+        backup_dir="$es_backup_dir"
+        log_info "Found Elasticsearch backup directory (legacy)"
+    else
+        log_info "OpenSearch/Elasticsearch backup not found, skipping..."
         return
     fi
-
-    log_info "Restoring Elasticsearch..."
 
     cd "$REPORTPORTAL_DIR"
 
-    # Check if Elasticsearch is in docker-compose
-    if ! docker-compose config --services | grep -q elasticsearch; then
-        log_info "Elasticsearch is not configured in docker-compose, skipping..."
+    # Check if OpenSearch or Elasticsearch is configured
+    local search_service=""
+    if dc_no_profile config --services 2>/dev/null | grep -q opensearch; then
+        search_service="opensearch"
+    elif dc_no_profile config --services 2>/dev/null | grep -q elasticsearch; then
+        search_service="elasticsearch"
+    else
+        log_info "OpenSearch/Elasticsearch is not configured in docker-compose, skipping..."
         return
     fi
 
-    # Stop Elasticsearch container
-    docker-compose stop elasticsearch || true
+    log_info "Restoring $search_service..."
 
-    # Get Elasticsearch data volume
-    local es_container=$(docker-compose ps -aq elasticsearch)
-    if [ -z "$es_container" ]; then
-        log_warning "Elasticsearch container not found"
+    # Stop search container
+    dc stop "$search_service" || true
+
+    # Get search data volume
+    local search_container=$(dc ps -aq "$search_service")
+    if [ -z "$search_container" ]; then
+        log_warning "$search_service container not found"
         return
     fi
 
-    local es_volume=$(docker inspect "$es_container" \
+    local search_volume=$(docker inspect "$search_container" \
         | grep -A 5 '"Mounts"' \
         | grep '"Source"' \
         | head -n 1 \
         | cut -d'"' -f4)
 
-    if [ -z "$es_volume" ]; then
-        log_error "Could not find Elasticsearch data volume"
+    if [ -z "$search_volume" ]; then
+        log_error "Could not find $search_service data volume"
         return
     fi
 
-    log_info "Elasticsearch data volume: $es_volume"
+    log_info "$search_service data volume: $search_volume"
 
-    # Restore Elasticsearch data
-    log_info "Restoring Elasticsearch data..."
-    rm -rf "${es_volume:?}"/*
-    rsync -av --progress "$es_backup_dir/" "$es_volume/"
+    # Restore search data
+    log_info "Restoring $search_service data..."
+    rm -rf "${search_volume:?}"/*
+    rsync -av --progress "$backup_dir/" "$search_volume/"
 
-    # Start Elasticsearch
-    docker-compose start elasticsearch
+    # Start search service
+    dc start "$search_service"
 
-    log_success "Elasticsearch restored successfully"
+    log_success "$search_service restored successfully"
 }
 
 start_all_services() {
     log_info "Starting all Report Portal services..."
 
     cd "$REPORTPORTAL_DIR"
-    docker-compose up -d
+
+    # Start all services with profiles
+    dc up -d
 
     log_info "Waiting for all services to be healthy..."
-    sleep 15
+    sleep 30
 
     log_success "All services started"
 }
@@ -366,18 +424,38 @@ verify_restore() {
 
     cd "$REPORTPORTAL_DIR"
 
-    # Check if all containers are running
-    local running_containers=$(docker-compose ps --services --filter "status=running" | wc -l)
-    local total_containers=$(docker-compose ps --services | wc -l)
+    # Check running containers (without profile filter for accurate count)
+    log_info "Checking container status..."
+    dc ps
 
-    log_info "Running containers: $running_containers / $total_containers"
+    # Get Report Portal UI URL via gateway (port 8080)
+    local gateway_port=$(dc_no_profile port gateway 8080 2>/dev/null | cut -d':' -f2 || echo "8080")
 
-    # Get Report Portal UI URL
-    local ui_port=$(docker-compose port ui 8080 2>/dev/null | cut -d':' -f2)
+    if [ -n "$gateway_port" ]; then
+        log_success "Report Portal UI should be available at: http://localhost:$gateway_port"
+    else
+        log_info "Report Portal UI default URL: http://localhost:8080"
+    fi
 
-    if [ -n "$ui_port" ]; then
-        log_success "Report Portal UI should be available at: http://localhost:$ui_port"
-        log_info "Default credentials: default / 1q2w3e"
+    # Wait and check if API is responding
+    log_info "Checking API health..."
+    sleep 10
+
+    local max_health_attempts=12
+    local health_attempt=1
+
+    while [ $health_attempt -le $max_health_attempts ]; do
+        if curl -sf "http://localhost:${gateway_port:-8080}/api/health" &>/dev/null; then
+            log_success "API is healthy and responding"
+            break
+        fi
+        log_info "Waiting for API to be ready (attempt $health_attempt/$max_health_attempts)..."
+        sleep 10
+        health_attempt=$((health_attempt + 1))
+    done
+
+    if [ $health_attempt -gt $max_health_attempts ]; then
+        log_warning "API health check timed out. Services may still be starting."
     fi
 }
 
@@ -401,20 +479,20 @@ print_summary() {
     echo ""
     echo "Next steps:"
     echo "  1. Check if all containers are running:"
-    echo "     cd $REPORTPORTAL_DIR && docker-compose ps"
+    echo "     cd $REPORTPORTAL_DIR && docker-compose $COMPOSE_PROFILES ps"
     echo ""
     echo "  2. View logs if needed:"
-    echo "     cd $REPORTPORTAL_DIR && docker-compose logs -f"
+    echo "     cd $REPORTPORTAL_DIR && docker-compose $COMPOSE_PROFILES logs -f"
     echo ""
     echo "  3. Access Report Portal UI:"
-    echo "     Check the port with: docker-compose port ui 8080"
-    echo "     Default URL: http://localhost:8080"
-    echo "     Default login: default / 1q2w3e"
+    echo "     URL: http://localhost:8080"
+    echo "     Default superadmin: superadmin / erebus"
+    echo "     Default user: default / 1q2w3e"
     echo ""
     echo "  4. Verify your data:"
     echo "     - Login and check if your projects are visible"
     echo "     - Check if launch history is present"
-    echo "     - Verify defect types and reasons are restored"
+    echo "     - Verify dashboards and widgets are restored"
     echo ""
     echo "================================================================================"
 }
@@ -427,6 +505,7 @@ main() {
     log_info "Starting Report Portal restore process..."
     log_info "Backup path: $BACKUP_PATH"
     log_info "Installation directory: $REPORTPORTAL_DIR"
+    log_info "Using Docker Compose profiles: $COMPOSE_PROFILES"
 
     check_prerequisites
     extract_backup
@@ -435,6 +514,7 @@ main() {
 
     restore_postgres
     restore_storage
+    restore_opensearch
 
     start_all_services
     verify_restore
