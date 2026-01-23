@@ -419,6 +419,15 @@ target/logs/app-container-<timestamp>.log
    - Docker mode creates separate containers per thread
    - Check thread-count in TestNG suite configuration
 
+5. **IPv6/IPv4 connection issues (ECONNREFUSED ::1:port)**
+   - **Symptom**: `WebSocket error: connect ECONNREFUSED ::1:32848` when running in Docker mode
+   - **Cause**: System resolves `localhost` to IPv6 (`::1`) but Docker port mappings are bound to IPv4 only
+   - **Solution**: The project includes `.mvn/jvm.config` with `-Djava.net.preferIPv4Stack=true`
+   - **Manual fix**: Add `-Djava.net.preferIPv4Stack=true` to Maven command:
+     ```bash
+     mvn test -Djava.net.preferIPv4Stack=true -Dexecution.mode=PLAYWRIGHT_DOCKER
+     ```
+
 ### Debug Mode
 
 Run with increased logging:
