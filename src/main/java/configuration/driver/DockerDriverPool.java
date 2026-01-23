@@ -193,6 +193,12 @@ public class DockerDriverPool {
             return browser;
 
         } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage != null && errorMessage.contains("ECONNREFUSED") && errorMessage.contains("::1")) {
+                LOGGER.error("IPv6/IPv4 connectivity issue detected. The system is trying to connect via IPv6 (::1) " +
+                        "but Docker port mapping is only available on IPv4 (127.0.0.1). " +
+                        "Solution: Add JVM parameter -Djava.net.preferIPv4Stack=true to Maven command or .mvn/jvm.config");
+            }
             LOGGER.error("Failed to connect to Playwright Server browser: {}", e.getMessage(), e);
             throw new RuntimeException("Playwright Server browser connection failed", e);
         }
