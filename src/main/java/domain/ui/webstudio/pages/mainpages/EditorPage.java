@@ -66,7 +66,11 @@ public class EditorPage extends BasePage {
     }
 
     public TableComponent getCenterTable() {
-        centerTable.isVisible();
+        WaitUtil.waitForCondition(
+                () -> centerTable.isVisible(),
+                5000, 250,
+                "Waiting for center table to become visible"
+        );
         WaitUtil.sleep(500, "Waiting for center table to fully load");
         return centerTable;
     }

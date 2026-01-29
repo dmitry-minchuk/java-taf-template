@@ -7,7 +7,6 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -166,7 +165,6 @@ public class TestAddDeleteEditProperties extends BaseTest {
             tableDetails.clickSaveBtn();
         }
 
-        ensurePropertiesTableVisible(editorPage);
         assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
                 .as("Property '%s' should have value '%s'", propertyTableName, newValue)
                 .isEqualTo(newValue);
@@ -236,15 +234,6 @@ public class TestAddDeleteEditProperties extends BaseTest {
         assertThat(editorPage.getCenterTable().isPropertyPresent(propertyTableName))
                 .as("Property '%s' should not be present", propertyTableName)
                 .isFalse();
-    }
-
-    private void ensurePropertiesTableVisible(EditorPage editorPage) {
-        TableComponent centerTable = editorPage.getCenterTable();
-        if (!centerTable.isVisible()) {
-            editorPage.getEditorLeftRulesTreeComponent()
-                    .expandFolderInTree("Decision")
-                    .selectItemInFolder("Decision", "MyRules2");
-        }
     }
 
     private String formatDate(String dateValue) {
