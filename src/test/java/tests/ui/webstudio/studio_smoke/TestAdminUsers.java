@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -97,6 +98,9 @@ public class TestAdminUsers extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         List<String> visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects).isEmpty();
+        assertThat(repositoryPage.getCreateProjectLink().isVisible())
+                .as("Create Project link should not be visible for user without roles")
+                .isFalse();
         editorPage.openUserMenu().signOut();
 
         // ============ Step 11: Admin adds Manager role for Project 1 to 'test' user ============
@@ -124,6 +128,17 @@ public class TestAdminUsers extends BaseTest {
 
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects).as("User 'test' should see the project with Manager role").isNotEmpty().contains(projectName);
+
+        // Verify Manager-specific options are available
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+        RepositoryContentButtonsPanelComponent managerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
+        assertThat(managerButtonsPanel.isCopyBtnVisible()).as("Manager should see Copy button").isTrue();
+        assertThat(managerButtonsPanel.isDeleteBtnVisible()).as("Manager should see Delete button").isTrue();
+        assertThat(!managerButtonsPanel.isDeployBtnVisible()).as("Manager should NOT see Deploy button").isTrue();
+        assertThat(managerButtonsPanel.isExportBtnVisible()).as("Manager should see Export button").isTrue();
+
         editorPage.openUserMenu().signOut();
 
         // ============ Step 13: Admin changes 'test' role to Viewer ============
@@ -148,5 +163,17 @@ public class TestAdminUsers extends BaseTest {
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects).as("User 'test' should still see the project with Viewer role").isNotEmpty().contains(projectName);
+
+        // Verify Viewer-restricted options are NOT available
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+        RepositoryContentButtonsPanelComponent viewerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
+        assertThat(viewerButtonsPanel.isCopyBtnVisible()).as("Viewer should NOT see Copy button").isFalse();
+        assertThat(viewerButtonsPanel.isDeleteBtnVisible()).as("Viewer should NOT see Delete button").isFalse();
+        assertThat(viewerButtonsPanel.isDeployBtnVisible()).as("Viewer should NOT see Deploy button").isFalse();
+        assertThat(viewerButtonsPanel.isSaveBtnVisible()).as("Viewer should NOT see Save button").isFalse();
+        // Viewer should still have read-only access
+        assertThat(viewerButtonsPanel.isExportBtnVisible()).as("Viewer should still see Export button").isTrue();
     }
 }

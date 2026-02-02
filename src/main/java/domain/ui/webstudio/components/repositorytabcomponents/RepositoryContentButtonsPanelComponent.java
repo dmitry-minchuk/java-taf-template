@@ -116,4 +116,32 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         closeBtn.click();
         WaitUtil.sleep(500, "Waiting after clicking Close button");
     }
+
+    public boolean isSaveBtnVisible() {
+        return saveBtn.isVisible();
+    }
+
+    public boolean isCopyBtnVisible() {
+        return copyBtn.isVisible();
+    }
+
+    public boolean isDeleteBtnVisible() {
+        return deleteBtn.isVisible();
+    }
+
+    public boolean isDeployBtnVisible() {
+        return deployBtn.isVisible();
+    }
+
+    public boolean isAddFolderBtnVisible() {
+        return addFolderBtn.isVisible();
+    }
+
+    public boolean isUploadFileBtnVisible() {
+        return uploadFileBtn.isVisible();
+    }
+
+    public boolean isExportBtnVisible() {
+        return exportBtn.isVisible();
+    }
 }
