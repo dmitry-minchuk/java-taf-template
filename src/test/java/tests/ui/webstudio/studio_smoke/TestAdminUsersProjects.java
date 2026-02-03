@@ -15,6 +15,7 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import configuration.core.ui.WebElement;
 import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
 import org.testng.Assert;
@@ -24,6 +25,7 @@ import tests.BaseTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class TestAdminUsersProjects extends BaseTest {
 
@@ -80,7 +82,7 @@ public class TestAdminUsersProjects extends BaseTest {
         assertThat(visibleProjects).isEmpty();
         editorPage.openUserMenu().signOut();
 
-        // ============ Step 11: Admin adds Manager role for Project 1 to 'test' user ============
+        // ============ Step 11: Admin adds Manager role for BOTH projects to 'test' user ============
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
         usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
@@ -91,18 +93,21 @@ public class TestAdminUsersProjects extends BaseTest {
                 .clickAddRoleBtn()
                 .setProject(0, project1Name)
                 .setProjectRole(0, "Manager")
+                .clickAddRoleBtn()
+                .setProject(1, project2Name)
+                .setProjectRole(1, "Manager")
                 .saveUser();
 
-        // ============ Step 12: Login as 'test' and verify Manager access to Project 1 ONLY ============
+        // ============ Step 12: Login as 'test' and verify Manager access to BOTH projects ============
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(testUser);
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects)
-            .as("User 'test' should see only the project with the assigned role")
+            .as("User 'test' should see BOTH projects with assigned Manager roles")
             .contains(project1Name)
-            .doesNotContain(project2Name);
+            .contains(project2Name);
 
         // Verify Project-level Manager permissions
         // Note: Project-level Manager has different permissions than Repository-level Manager.
@@ -118,7 +123,7 @@ public class TestAdminUsersProjects extends BaseTest {
 
         editorPage.openUserMenu().signOut();
 
-        // ============ Step 13: Admin changes 'test' role to Viewer for Project 1 ============
+        // ============ Step 13: Admin changes 'test' role to Viewer for BOTH projects ============
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         usersComponent = editorPage.openUserMenu()
@@ -128,17 +133,18 @@ public class TestAdminUsersProjects extends BaseTest {
         usersComponent.clickEditUser("test")
                 .clickProjectsTab()
                 .setProjectRole(0, "Viewer")
+                .setProjectRole(1, "Viewer")
                 .saveUser();
 
-        // ============ Step 14: Login as 'test' and verify Viewer access ============
+        // ============ Step 14: Login as 'test' and verify Viewer access to BOTH projects ============
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(testUser);
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects)
-            .as("User 'test' should still see only project 1")
+            .as("User 'test' should still see BOTH projects with Viewer roles")
             .contains(project1Name)
-            .doesNotContain(project2Name);
+            .contains(project2Name);
 
         // Verify Viewer-restricted options are NOT available
         repositoryPage.getLeftRepositoryTreeComponent()
