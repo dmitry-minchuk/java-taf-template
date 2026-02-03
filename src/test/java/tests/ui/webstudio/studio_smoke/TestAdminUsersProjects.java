@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.fail;
 public class TestAdminUsersProjects extends BaseTest {
 
     @Test
-    @TestCaseId("IPBQA-32785") // New ID
+    @TestCaseId("IPBQA-32784") // New ID
     @Description("Users management for project roles: create user, assign project-specific roles and verify permissions.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testProjectRolesManagement() {
@@ -121,6 +121,20 @@ public class TestAdminUsersProjects extends BaseTest {
         assertThat(managerButtonsPanel.isDeleteBtnVisible()).as("Project Manager should NOT see Delete button (unlike Repository Manager)").isFalse();
         assertThat(managerButtonsPanel.isDeployBtnVisible()).as("Project Manager should NOT see Deploy button").isFalse();
         assertThat(managerButtonsPanel.isExportBtnVisible()).as("Project Manager should see Export button").isTrue();
+
+        // Verify Project Manager CAN edit tables in Editor tab
+        repositoryPage.refresh();
+        repositoryPage.unlockAllProjects();
+        editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(project1Name, "Bank Rating");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Rating Algorithm")
+                .selectItemInFolder("Rating Algorithm", "BankRatingCalculation");
+        EditorToolbarPanelComponent managerToolbar = editorPage.getEditorToolbarPanelComponent();
+        assertThat(managerToolbar.getEditBtn().isVisible(2000))
+                .as("Project Manager should see Edit button for tables in Editor")
+                .isTrue();
 
         editorPage.openUserMenu().signOut();
 

@@ -135,10 +135,24 @@ public class TestAdminUsers extends BaseTest {
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", projectName);
         RepositoryContentButtonsPanelComponent managerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-        assertThat(managerButtonsPanel.isCopyBtnVisible()).as("Manager should see Copy button").isTrue();
+        assertThat(managerButtonsPanel.isCopyBtnVisible(1000)).as("Manager should see Copy button").isTrue();
         assertThat(managerButtonsPanel.isDeleteBtnVisible()).as("Manager should see Delete button").isTrue();
         assertThat(!managerButtonsPanel.isDeployBtnVisible()).as("Manager should NOT see Deploy button").isTrue();
         assertThat(managerButtonsPanel.isExportBtnVisible()).as("Manager should see Export button").isTrue();
+
+        // Verify Manager CAN edit tables in Editor tab
+        repositoryPage.refresh();
+        repositoryPage.unlockAllProjects();
+        editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(projectName, "Bank Rating");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Rating Algorithm")
+                .selectItemInFolder("Rating Algorithm", "BankRatingCalculation");
+        EditorToolbarPanelComponent managerToolbar = editorPage.getEditorToolbarPanelComponent();
+        assertThat(managerToolbar.getEditBtn().isVisible(2000))
+                .as("Manager should see Edit button for tables in Editor")
+                .isTrue();
 
         editorPage.openUserMenu().signOut();
 
