@@ -30,7 +30,7 @@ public class TestAdminUsers extends BaseTest {
     @TestCaseId("IPBQA-32784")
     @Description("Users management without external authentication system: create, edit, delete users and manage roles")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testUsersManagementWithoutExternalAuth() {
+    public void testAdminUsersOnRepositoriesLevel() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
 
         // ============ Steps 1-3: Admin login and verify users page ============

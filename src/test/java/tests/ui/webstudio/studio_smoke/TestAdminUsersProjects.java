@@ -34,7 +34,7 @@ public class TestAdminUsersProjects extends BaseTest {
     @TestCaseId("IPBQA-32784") // New ID
     @Description("Users management for project roles: create user, assign project-specific roles and verify permissions.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testProjectRolesManagement() {
+    public void testAdminUsersOnProjectsLevel() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
 
         // ============ Admin Setup: Log in and create two projects ============
