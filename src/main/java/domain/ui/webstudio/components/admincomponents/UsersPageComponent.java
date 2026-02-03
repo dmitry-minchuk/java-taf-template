@@ -37,9 +37,12 @@ public class UsersPageComponent extends BaseComponent {
     private WebElement cancelBtn;
 
     // ==== Role Management Section ====
+    private WebElement projectsTab;
     private WebElement addRoleBtn;
     private WebElement roleRepositoryTemplate;
     private WebElement roleNameTemplate;
+    private WebElement projectSelectorTemplate;
+    private WebElement projectRoleSelectorTemplate;
     private WebElement removeRoleBtn;
     private WebElement selectOptionTemplate;
 
@@ -81,9 +84,12 @@ public class UsersPageComponent extends BaseComponent {
         cancelBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Cancel']]", "cancelBtn");
 
         // Role management
+        projectsTab = new WebElement(page, "xpath=//div[@data-node-key='projects']", "projectsTab");
         addRoleBtn = new WebElement(page, "xpath=//div[@role='tabpanel' and @aria-hidden='false']//button[./span[contains(text(),'Add Role')]]", "addRoleBtn");
         roleRepositoryTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_id']", "designRepoSelectorTemplate");
         roleNameTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_role']", "roleSelectorTemplate");
+        projectSelectorTemplate = new WebElement(page, "xpath=//input[@id='projects_%s_id']", "projectSelectorTemplate");
+        projectRoleSelectorTemplate = new WebElement(page, "xpath=//input[@id='projects_%s_role']", "projectRoleSelectorTemplate");
         removeRoleBtn = new WebElement(page, "xpath=//button[./span[contains(@aria-label,'delete')] and ancestor::div[contains(@class,'ant-form-item')]]", "removeRoleBtn");
         selectOptionTemplate = new WebElement(page, "xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
 
@@ -230,6 +236,23 @@ public class UsersPageComponent extends BaseComponent {
     public UsersPageComponent setRole(int row, String role) {
         roleNameTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
         selectOptionTemplate.format(role).waitForVisible().click();
+        return this;
+    }
+
+    public UsersPageComponent clickProjectsTab() {
+        projectsTab.click();
+        return this;
+    }
+
+    public UsersPageComponent setProject(int row, String projectName) {
+        projectSelectorTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
+        selectOptionTemplate.format(projectName).waitForVisible().click();
+        return this;
+    }
+
+    public UsersPageComponent setProjectRole(int row, String roleName) {
+        projectRoleSelectorTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
+        selectOptionTemplate.format(roleName).waitForVisible().click();
         return this;
     }
 

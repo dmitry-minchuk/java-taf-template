@@ -125,6 +125,10 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         return copyBtn.isVisible();
     }
 
+    public boolean isCopyBtnVisible(int millis) {
+        return copyBtn.isVisible(millis);
+    }
+
     public boolean isDeleteBtnVisible() {
         return deleteBtn.isVisible();
     }
