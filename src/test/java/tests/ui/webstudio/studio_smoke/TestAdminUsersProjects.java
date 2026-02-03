@@ -10,6 +10,7 @@ import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
@@ -156,5 +157,25 @@ public class TestAdminUsersProjects extends BaseTest {
         assertThat(viewerButtonsPanel.isDeployBtnVisible()).as("Viewer should NOT see Deploy button").isFalse();
         assertThat(viewerButtonsPanel.isSaveBtnVisible()).as("Viewer should NOT see Save button").isFalse();
         assertThat(viewerButtonsPanel.isExportBtnVisible()).as("Viewer should still see Export button").isTrue();
+
+        // ============ Step 15: Verify Viewer cannot edit tables in Editor tab ============
+        repositoryPage.refresh();
+        repositoryPage.unlockAllProjects();
+        editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+
+        // Open project and select a module (Example 1 - Bank Rating has "Bank Rating" module)
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(project1Name, "Bank Rating");
+
+        // Expand rules tree and select a table to verify Edit button visibility
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Rating Algorithm")
+                .selectItemInFolder("Rating Algorithm", "BankRatingCalculation");
+
+        // Verify Viewer cannot edit tables - Edit button should NOT be visible
+        EditorToolbarPanelComponent toolbarPanel = editorPage.getEditorToolbarPanelComponent();
+        assertThat(toolbarPanel.getEditBtn().isVisible(2000))
+                .as("Viewer should NOT see Edit button for tables in Editor")
+                .isFalse();
     }
 }
