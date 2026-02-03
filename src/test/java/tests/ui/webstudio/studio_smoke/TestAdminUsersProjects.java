@@ -99,6 +99,8 @@ public class TestAdminUsersProjects extends BaseTest {
                 .setProjectRole(1, "Manager")
                 .saveUser();
 
+        assertThat(usersComponent.isUserInList("test")).isTrue();
+
         // ============ Step 12: Login as 'test' and verify Manager access to BOTH projects ============
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(testUser);
