@@ -15,5 +15,6 @@
     <test name="TestGitSwitchToDeletedBranch"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/></classes></test>
     <test name="TestGitSwitchDeletedBranchPreset"><classes><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
     <test name="TestMergeBranchesNoConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesNoConflicts"/></classes></test>
+    <test name="TestMergeBranchesWithConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesWithConflicts"/></classes></test>
 
 </suite>
