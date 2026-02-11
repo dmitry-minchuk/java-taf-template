@@ -13,14 +13,14 @@
         <!-- Playwright version -->
         <playwright.version>1.52.0</playwright.version>
         <testng.version>7.11.0</testng.version>
-        <log4j.version>2.24.3</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <rest.assured.version>5.5.1</rest.assured.version>
         <json.version>20250107</json.version>
         <apache.commons.version>2.18.0</apache.commons.version>
         <lombok.version>1.18.30</lombok.version>
         <testcontainers.version>2.0.3</testcontainers.version>
         <javafaker.version>2.4.3</javafaker.version>
-        <assertj.version>3.27.3</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <reportportal.version>5.4.6</reportportal.version>
         <reportportal.listeners.version>5.4.6</reportportal.listeners.version>
         <java.agent.testng.version>5.4.6</java.agent.testng.version>
