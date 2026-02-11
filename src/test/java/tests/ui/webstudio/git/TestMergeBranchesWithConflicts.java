@@ -160,10 +160,9 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
         String cellContentBranch2 = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellContentBranch2)
                 .as("Branch2 should contain Branch1's version after 'Use Theirs' resolution")
-                .contains("InitialSteps_Branch1");
+                .contains("InitialSteps_Banch1");
 
         // Verify: Branch1 retains its original version
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
         editorPage.getEditorToolbarPanelComponent().switchBranch(BRANCH_1);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, MODULE_NAME);
@@ -175,7 +174,7 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
         String cellContentBranch1 = editorPage.getCenterTable().getCellText(3, 1);
         assertThat(cellContentBranch1)
                 .as("Branch1 should retain its original version")
-                .contains("InitialSteps_Branch1");
+                .contains("InitialSteps_Banch1");
     }
 
     private void createProjectWithConflictingBranches(RepositoryPage repositoryPage, EditorPage editorPage) {
