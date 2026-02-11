@@ -27,7 +27,7 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
     private static final String BRANCH_1 = "Branch1";
     private static final String BRANCH_2 = "Branch2";
     private static final String MASTER_BRANCH = "master";
-    private static final String MODULE_NAME = "myFile";
+    private static final String MODULE_NAME = "TestMergeBranchesWithConflicts_Initial";
     private static final String TABLE_NAME = "mySpr";
     private static final String SPREADSHEET_TYPE = "Spreadsheet";
 
@@ -75,6 +75,7 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
         // Verify: Branch1 now contains Branch2's version
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
         editorPage.getEditorToolbarPanelComponent().switchBranch(BRANCH_1);
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
@@ -148,6 +149,7 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
         // Verify: Branch2 now contains Branch1's version
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, MODULE_NAME);
         editorPage.getEditorLeftRulesTreeComponent()
@@ -161,6 +163,7 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
                 .contains("InitialSteps_Branch1");
 
         // Verify: Branch1 retains its original version
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
         editorPage.getEditorToolbarPanelComponent().switchBranch(BRANCH_1);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(PROJECT_NAME, MODULE_NAME);
