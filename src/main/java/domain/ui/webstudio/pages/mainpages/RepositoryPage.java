@@ -43,12 +43,15 @@ public class RepositoryPage extends BasePage {
     private MissingTagsPopupComponent missingTagsPopupComponent;
     private CopyProjectDialogComponent copyProjectDialogComponent;
     private UploadFileDialogComponent uploadFileDialogComponent;
+    private UpdateFileDialogComponent updateFileDialogComponent;
     private CompareDialogComponent compareDialogComponent;
     private WebElement confirmOpeningDialogBtn;
     private WebElement confirmOpeningDialogShade;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
+    private ResolveConflictsDialogComponent resolveConflictsDialogComponent;
     private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
+    private FileChangedWarningComponent fileChangedWarningComponent;
     private TableComponent projectsTable;
 
     public RepositoryPage() {
@@ -76,9 +79,12 @@ public class RepositoryPage extends BasePage {
         projectsTable = createScopedComponent(TableComponent.class, "xpath=//table[contains(@class,'rf-dt table filtered-table')]", "projectsTable");
         copyProjectDialogComponent = createScopedComponent(CopyProjectDialogComponent.class, "xpath=//div[@id='modalCopyProject_container']", "copyProjectDialogComponent");
         uploadFileDialogComponent = createScopedComponent(UploadFileDialogComponent.class, "xpath=//div[@id='modalNewFile_container']", "uploadFileDialogComponent");
+        updateFileDialogComponent = createScopedComponent(UpdateFileDialogComponent.class, "xpath=//div[@id='modalUpdateFile_container']", "updateFileDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
+        resolveConflictsDialogComponent = createScopedComponent(ResolveConflictsDialogComponent.class, "xpath=//div[@role='dialog' and .//div[contains(text(), 'Resolve Conflicts')]]", "resolveConflictsDialogComponent");
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
+        fileChangedWarningComponent = createScopedComponent(FileChangedWarningComponent.class, "xpath=//div[@id='fileChanged_content']", "fileChangedWarningComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");

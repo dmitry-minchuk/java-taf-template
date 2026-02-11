@@ -24,7 +24,9 @@ public class RepositoryTreeFolderComponent extends BaseComponent {
     private void initializeElements() {
         expanderClosed = createScopedElement("xpath=.//span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
         folderName = createScopedElement("xpath=./div/span/span[text() or ./span[text()]]", "folderName");
-        itemTemplate = createScopedElement("xpath=.//span[text()='%s']", "itemTemplate");
+        // Target the inner span with id that contains the actual text node
+        // This avoids matching parent containers and handles both plain text and nested spans
+        itemTemplate = createScopedElement("xpath=.//span[@class='rf-trn-lbl']/span[starts-with(@id, 'projectTree:') and normalize-space(.)='%s']", "itemTemplate");
     }
 
     public WebElement getItem(String itemName) {

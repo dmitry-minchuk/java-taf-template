@@ -18,6 +18,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     private WebElement compareBtn;
     private WebElement addFolderBtn;
     private WebElement uploadFileBtn;
+    private WebElement updateFileBtn;
     private WebElement exportBtn;
     private WebElement syncBtn;
 
@@ -42,6 +43,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         compareBtn = createScopedElement("xpath=.//input[@value='Compare']", "compareBtn");
         addFolderBtn = createScopedElement("xpath=.//input[@value='Add Folder']", "addFolderBtn");
         uploadFileBtn = createScopedElement("xpath=.//input[@value='Upload File']", "uploadFileBtn");
+        updateFileBtn = createScopedElement("xpath=.//input[@value='Update file']", "updateFileBtn");
         exportBtn = createScopedElement("xpath=.//input[@value='Export']", "exportBtn");
         syncBtn = createScopedElement("xpath=.//input[@value='Sync']", "syncBtn");
     }
@@ -69,6 +71,10 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     public void clickUploadFileBtn() {
         uploadFileBtn.click();
+    }
+
+    public void clickUpdateFileBtn() {
+        updateFileBtn.click();
     }
 
     public void clickSaveBtn() {
