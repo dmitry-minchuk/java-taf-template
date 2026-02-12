@@ -15,5 +15,6 @@
     <test name="TestReturnCellsMarksWithStar"><classes><class name="tests.ui.webstudio.rules_editor.TestReturnCellsMarksWithStar"/></classes></test>
     <test name="TestDetermineSpreadsheetResultCellType"><classes><class name="tests.ui.webstudio.rules_editor.TestDetermineSpreadsheetResultCellType"/></classes></test>
     <test name="TestAddDeleteEditProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestAddDeleteEditProperties"/></classes></test>
+    <test name="TestExportProjectFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestExportProjectFunctionality"/></classes></test>
 
 </suite>

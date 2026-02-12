@@ -7,6 +7,7 @@ import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
+import domain.ui.webstudio.components.editortabcomponents.ExportProjectDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.*;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
@@ -53,6 +54,7 @@ public class RepositoryPage extends BasePage {
     private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
     private FileChangedWarningComponent fileChangedWarningComponent;
     private TableComponent projectsTable;
+    private ExportProjectDialogComponent exportProjectDialogComponent;
 
     public RepositoryPage() {
         super();
@@ -85,6 +87,7 @@ public class RepositoryPage extends BasePage {
         resolveConflictsDialogComponent = createScopedComponent(ResolveConflictsDialogComponent.class, "xpath=//div[@role='dialog' and .//div[contains(text(), 'Resolve Conflicts')]]", "resolveConflictsDialogComponent");
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
         fileChangedWarningComponent = createScopedComponent(FileChangedWarningComponent.class, "xpath=//div[@id='fileChanged_content']", "fileChangedWarningComponent");
+        exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");

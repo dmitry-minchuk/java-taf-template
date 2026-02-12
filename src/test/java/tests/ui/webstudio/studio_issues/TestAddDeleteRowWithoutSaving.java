@@ -32,7 +32,7 @@ public class TestAddDeleteRowWithoutSaving extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "LossFreeDiscount");
 
-        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         TableComponent table = editorPage.getCenterTable();
         table.clickCell(5, 2);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();

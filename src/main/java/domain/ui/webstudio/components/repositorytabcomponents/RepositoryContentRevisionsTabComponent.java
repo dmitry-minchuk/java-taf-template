@@ -65,4 +65,13 @@ public class RepositoryContentRevisionsTabComponent extends BaseComponent {
         }
         return visibleRows.get(rowIndex - 1).getLocator().locator("xpath=.//div[@attr='revision-id']").textContent().trim();
     }
+
+    public void openRevision(int rowIndex) {
+        if (rowIndex < 1) {
+            throw new IllegalArgumentException("Row index must be >= 1, got: " + rowIndex);
+        }
+        LOGGER.info("Opening revision at row {}", rowIndex);
+        visibleRows.get(rowIndex - 1).click();
+        WaitUtil.sleep(1000, "Waiting for revision to open");
+    }
 }

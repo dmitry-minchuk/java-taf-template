@@ -28,7 +28,7 @@ public class TestAddSingleNumberIntoEmptyCell extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "BankLimitIndex");
-        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().clickCell(10, 1);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
         editorPage.getCenterTable().editCell(11, 1, "13", true);

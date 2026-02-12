@@ -150,7 +150,7 @@ public class TestAdminUsers extends BaseTest {
                 .expandFolderInTree("Rating Algorithm")
                 .selectItemInFolder("Rating Algorithm", "BankRatingCalculation");
         EditorToolbarPanelComponent managerToolbar = editorPage.getEditorToolbarPanelComponent();
-        assertThat(managerToolbar.getEditBtn().isVisible(2000))
+        assertThat(managerToolbar.getEditTableBtn().isVisible(2000))
                 .as("Manager should see Edit button for tables in Editor")
                 .isTrue();
 
@@ -207,7 +207,7 @@ public class TestAdminUsers extends BaseTest {
 
         // Verify Viewer cannot edit tables - Edit button should NOT be visible
         EditorToolbarPanelComponent toolbarPanel = editorPage.getEditorToolbarPanelComponent();
-        assertThat(toolbarPanel.getEditBtn().isVisible(2000))
+        assertThat(toolbarPanel.getEditTableBtn().isVisible(2000))
                 .as("Viewer should NOT see Edit button for tables in Editor")
                 .isFalse();
     }

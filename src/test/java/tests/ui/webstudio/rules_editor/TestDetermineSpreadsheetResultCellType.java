@@ -52,7 +52,7 @@ public class TestDetermineSpreadsheetResultCellType extends BaseTest {
                 .selectItemInFolder("Spreadsheet", "mainSpr");
 
         // Enter table edit mode to see hints
-        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
 
         TableComponent table = editorPage.getCenterTable();
 

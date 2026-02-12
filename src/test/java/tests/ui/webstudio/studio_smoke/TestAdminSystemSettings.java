@@ -51,7 +51,7 @@ public class TestAdminSystemSettings extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(6, 2, "1000", true);
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
@@ -71,7 +71,7 @@ public class TestAdminSystemSettings extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        editorPage.getEditorToolbarPanelComponent().getEditBtn().click();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(4, 2, "Integer aaa", true);
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 

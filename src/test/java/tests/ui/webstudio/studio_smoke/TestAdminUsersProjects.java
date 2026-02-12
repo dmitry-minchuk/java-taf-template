@@ -16,7 +16,6 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import configuration.core.ui.WebElement;
 import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
 import org.testng.Assert;
@@ -134,7 +133,7 @@ public class TestAdminUsersProjects extends BaseTest {
                 .expandFolderInTree("Rating Algorithm")
                 .selectItemInFolder("Rating Algorithm", "BankRatingCalculation");
         EditorToolbarPanelComponent managerToolbar = editorPage.getEditorToolbarPanelComponent();
-        assertThat(managerToolbar.getEditBtn().isVisible(2000))
+        assertThat(managerToolbar.getEditTableBtn().isVisible(2000))
                 .as("Project Manager should see Edit button for tables in Editor")
                 .isTrue();
 
@@ -190,7 +189,7 @@ public class TestAdminUsersProjects extends BaseTest {
 
         // Verify Viewer cannot edit tables - Edit button should NOT be visible
         EditorToolbarPanelComponent toolbarPanel = editorPage.getEditorToolbarPanelComponent();
-        assertThat(toolbarPanel.getEditBtn().isVisible(2000))
+        assertThat(toolbarPanel.getEditTableBtn().isVisible(2000))
                 .as("Viewer should NOT see Edit button for tables in Editor")
                 .isFalse();
     }

@@ -41,8 +41,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement traceBtn;
     private WebElement benchmarkBtn;
     @Getter
-    private WebElement editBtn;
-    private WebElement copyBtn;
+    private WebElement editTableBtn;
+    private WebElement copyTableBtn;
     private WebElement removeBtn;
     private WebElement factorTextField;
     private WebElement traceDropdownBtn;
@@ -75,7 +75,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     private void initializeElements() {
         // TOP LINE TOOLBAR
-        exportBtn = new WebElement(page, "xpath=//a[@class='toolbarButton' and @title='Export the table']", "exportBtn");
+        exportBtn = new WebElement(page, "xpath=//a[@id='exportProjectButton']", "exportBtn");
         verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
         saveBtn = new WebElement(page,"//a[@id='saveProjectButton']", "saveBtn");
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
@@ -99,8 +99,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         runBtn = createScopedElement("xpath=.//img[contains(@src, 'run')]", "runBtn");
         traceBtn = createScopedElement("xpath=.//img[contains(@src, 'trace')]", "traceBtn");
         benchmarkBtn = createScopedElement("xpath=.//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
-        editBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'editTable')]]", "editBtn");
-        copyBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
+        editTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'editTable')]]", "editBtn");
+        copyTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
         removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
@@ -190,10 +190,11 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void clickExport() {
         exportBtn.click();
+        WaitUtil.sleep(500, "Waiting for export dialog to open");
     }
     
     public CopyTableDialogComponent clickCopy() {
-        copyBtn.click();
+        copyTableBtn.click();
         return new CopyTableDialogComponent();
     }
     

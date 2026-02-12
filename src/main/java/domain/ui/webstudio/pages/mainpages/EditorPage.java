@@ -31,8 +31,13 @@ public class EditorPage extends BasePage {
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private SaveChangesComponent saveChangesComponent;
     private EditProjectDialogComponent editProjectDialogComponent;
+    private ExportProjectDialogComponent exportProjectDialogComponent;
+    private CopyModuleDialogComponent copyModuleDialogComponent;
+    private WebElement exportProjectBtn;
     private WebElement editProjectIconTemplate;
     private WebElement projectHeaderTemplate;
+    private WebElement moduleHeader;
+    private WebElement copyModuleBtn;
 
     public EditorPage() {
         super();
@@ -56,8 +61,12 @@ public class EditorPage extends BasePage {
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
         editProjectDialogComponent = createScopedComponent(EditProjectDialogComponent.class, "xpath=//div[@id='editProjectPopup_content']", "editProjectDialogComponent");
+        exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
+        copyModuleDialogComponent = createScopedComponent(CopyModuleDialogComponent.class, "xpath=//div[@id='copyModulePopup_container']", "copyModuleDialogComponent");
         projectHeaderTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..", "projectHeaderTemplate");
         editProjectIconTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..//img", "editProjectIconTemplate");
+        moduleHeader = new WebElement(getPage(), "xpath=//div[@id='content']//div[@class='page editable']/h1", "moduleHeader");
+        copyModuleBtn = new WebElement(getPage(), "xpath=//div[@id='content']//div[@class='page editable']/h1//a[@title='Copy']", "copyModuleBtn");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {
@@ -80,5 +89,12 @@ public class EditorPage extends BasePage {
         editProjectIconTemplate.format(projectName).click();
         editProjectDialogComponent.waitForDialogToAppear();
         return editProjectDialogComponent;
+    }
+
+    public CopyModuleDialogComponent openCopyModuleDialog() {
+        moduleHeader.hover();
+        copyModuleBtn.click();
+        copyModuleDialogComponent.waitForDialogToAppear();
+        return copyModuleDialogComponent;
     }
 }
