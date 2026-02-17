@@ -20,10 +20,12 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import helpers.utils.DownloadUtil;
 import helpers.utils.WaitUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +39,17 @@ public class TestExportProjectFunctionality extends BaseTest {
     private static final String SAMPLE_PROJECT = "SampleProject";
     private static final String BRANCH_NAME = "branch1";
     private static final String SECOND_USER_USERNAME = "test_analyst_user";
+
+    private void exportAndVerifyDownload(ExportProjectDialogComponent exportDialog, String contextMessage) {
+        File exportedFile = exportDialog.clickExportAndDownload();
+        assertThat(exportedFile.exists())
+                .as("Downloaded file should exist - " + contextMessage)
+                .isTrue();
+        assertThat(exportedFile.length())
+                .as("Downloaded file should not be empty - " + contextMessage)
+                .isGreaterThan(0);
+        DownloadUtil.cleanupDownloadFile(exportedFile);
+    }
 
     @Test
     @TestCaseId("IPBQA-25697")
@@ -92,7 +105,7 @@ public class TestExportProjectFunctionality extends BaseTest {
         // Step 6-7: Export project (first export)
         editorPage.getEditorToolbarPanelComponent().clickExport();
         exportDialog.waitForDialogToAppear();
-        exportDialog.clickExport();
+        exportAndVerifyDownload(exportDialog, "first export");
 
         // Step 8-9: Export specific revision
         editorPage.getEditorToolbarPanelComponent().clickExport();
@@ -117,7 +130,7 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .as("Should show 'In Editing' after module copy")
                 .containsExactlyInAnyOrder("In Editing", revision);
 
-        exportDialog.clickExport();
+        exportAndVerifyDownload(exportDialog, "In Editing export");
 
         // Step 12: Export old revision while in "In Editing"
         editorPage.getEditorToolbarPanelComponent().clickExport();
@@ -276,7 +289,8 @@ public class TestExportProjectFunctionality extends BaseTest {
         assertThat(revisions)
                 .as("Should show Viewing and both revisions in branch")
                 .containsExactlyInAnyOrder("Viewing", revision, secondRevision);
-        exportDialog.clickExport();
+
+        exportAndVerifyDownload(exportDialog, "branch export");
 
         // Step 25: Copy another module and export in "In Editing"
         editorPage = repositoryPage.getTabSwitcherComponent()
@@ -406,7 +420,8 @@ public class TestExportProjectFunctionality extends BaseTest {
         assertThat(revisions)
                 .as("Should show In Editing after project edit")
                 .containsExactlyInAnyOrder("In Editing", revisionSampleProject);
-        exportDialog.clickExport();
+
+        exportAndVerifyDownload(exportDialog, "edited Sample Project export");
 
         // Step 36: Logout second user, login as admin, verify locked status
         editorPage.openUserMenu().signOut();
