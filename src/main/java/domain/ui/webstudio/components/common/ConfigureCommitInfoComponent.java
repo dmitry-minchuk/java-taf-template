@@ -37,7 +37,8 @@ public class ConfigureCommitInfoComponent extends BaseComponent {
 
     public void fillCommitInfoWithRandomData() {
         Faker faker = new Faker();
-        emailField.sendKeys(faker.internet().emailAddress());
+        if(emailField.isVisible(500))
+            emailField.sendKeys(faker.internet().emailAddress());
         firstNameField.sendKeys(faker.name().firstName());
         lastNameField.sendKeys(faker.name().lastName());
         saveBtn.click();

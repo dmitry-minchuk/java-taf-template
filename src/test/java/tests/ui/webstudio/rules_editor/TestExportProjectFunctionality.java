@@ -128,7 +128,6 @@ public class TestExportProjectFunctionality extends BaseTest {
         // Step 13: Save project to create second revision
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
-        WaitUtil.sleep(2000, "Waiting for save to complete");
 
         // Get second revision
         repositoryPage = editorPage.getTabSwitcherComponent()
@@ -174,7 +173,6 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 17: Open Revisions tab and export from history
         editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
-        WaitUtil.sleep(1500, "Waiting for Revisions tab to load");
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
@@ -182,11 +180,13 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .getRepositoryContentTabSwitcherComponent()
                 .selectRevisionsTab();
 
+        WaitUtil.waitForCondition(() -> revisionsTab.getRevisionsCount() > 0, 500, 100, "Waiting for revisions to load in Revisions tab");
         revisionsTab.openRevision(2);
         WaitUtil.sleep(1000, "Waiting for revision to open");
 
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
 
         editorPage.getEditorToolbarPanelComponent().clickExport();
         exportDialog.waitForDialogToAppear();
@@ -197,7 +197,7 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // ========== PART 2: Second user workflow ==========
 
-        // Step 18: Create second user via Admin
+        // Step 18: Create second user via Admin with access to Design repository
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         adminPage.navigateToUsersPage()
                 .clickAddUser()
@@ -206,21 +206,23 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .setPassword("Test123!")
                 .setFirstName("Test")
                 .setLastName("Analyst")
-                .saveUser();
+                .clickAddRoleBtn()
+                .setRoleRepository(0, "Design")
+                .setRole(0, "Contributor")
+                .inviteUser();
 
         UserData secondUser = new UserData(SECOND_USER_USERNAME, "Test123!");
 
         // Step 19: Logout admin, login as second user
         editorPage = new EditorPage();
         editorPage.openUserMenu().signOut();
-        WaitUtil.sleep(1000, "Waiting after logout");
-
         editorPage = loginService.login(secondUser);
 
         // Step 20: Verify project is closed for second user
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", PROJECT_NAME);
 
         propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
@@ -232,7 +234,6 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 21: Export closed project from Repository tab
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickExportBtn();
-        WaitUtil.sleep(500, "Waiting for export dialog");
 
         exportDialog = repositoryPage.getExportProjectDialogComponent();
         exportDialog.waitForDialogToAppear();
@@ -254,6 +255,7 @@ public class TestExportProjectFunctionality extends BaseTest {
         copyProjectDialog.waitForDialogToAppear();
         copyProjectDialog.setNewBranchName(BRANCH_NAME);
         copyProjectDialog.clickCopyButton();
+        repositoryPage.fillCommitInfo();
         repositoryPage.refresh();
 
         // Step 23: Verify project status in branch
@@ -297,7 +299,6 @@ public class TestExportProjectFunctionality extends BaseTest {
         // Step 26: Save and verify third revision
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
-        WaitUtil.sleep(2000, "Waiting for save");
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
@@ -326,7 +327,6 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 27: Logout second user, login as admin
         editorPage.openUserMenu().signOut();
-        WaitUtil.sleep(1000, "Waiting after logout");
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // Step 28: Create project from template
@@ -340,6 +340,7 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 29: Get sample project revision
         repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", SAMPLE_PROJECT);
         propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
                 .selectPropertiesTab();
@@ -349,8 +350,7 @@ public class TestExportProjectFunctionality extends BaseTest {
         String revisionSampleProject = sampleModifiedBy + ": " + sampleModifiedAt;
 
         // Step 30: Verify export for template project
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(SAMPLE_PROJECT);
 
         editorPage.getEditorToolbarPanelComponent().clickExport();
@@ -373,20 +373,18 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 32: Logout admin, login as second user
         editorPage.openUserMenu().signOut();
-        WaitUtil.sleep(1000, "Waiting after logout");
         editorPage = loginService.login(secondUser);
 
         // Step 33: Open sample project
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", SAMPLE_PROJECT);
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        WaitUtil.sleep(1000, "Waiting for project to open");
 
         // Step 34: Verify export for opened project
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(SAMPLE_PROJECT);
 
         editorPage.getEditorToolbarPanelComponent().clickExport();
@@ -401,7 +399,6 @@ public class TestExportProjectFunctionality extends BaseTest {
         EditProjectDialogComponent editDialog = editorPage.openEditProjectDialog(SAMPLE_PROJECT);
         editDialog.setDescription("Updated description");
         editDialog.clickUpdateButton();
-        WaitUtil.sleep(1000, "Waiting after project update");
 
         editorPage.getEditorToolbarPanelComponent().clickExport();
         exportDialog.waitForDialogToAppear();
@@ -413,11 +410,9 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 36: Logout second user, login as admin, verify locked status
         editorPage.openUserMenu().signOut();
-        WaitUtil.sleep(1000, "Waiting after logout");
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        editorPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(SAMPLE_PROJECT);
 
         // Project should be locked by second user - admin can still export Viewing
@@ -427,8 +422,5 @@ public class TestExportProjectFunctionality extends BaseTest {
         assertThat(revisions)
                 .as("Admin should see Viewing for locked project")
                 .containsExactlyInAnyOrder("Viewing", revisionSampleProject);
-        exportDialog.clickExport();
-
-        LOGGER.info("TestExportProjectFunctionality completed successfully - all scenarios verified");
     }
 }

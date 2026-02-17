@@ -33,7 +33,6 @@ public class ExportProjectDialogComponent extends BaseComponent {
 
     public void waitForDialogToAppear() {
         revisionDropdown.waitForVisible(5000);
-        WaitUtil.sleep(300, "Waiting for export dialog to fully load");
     }
 
     public boolean isDialogVisible() {
@@ -50,16 +49,13 @@ public class ExportProjectDialogComponent extends BaseComponent {
 
     public void selectRevision(String revision) {
         revisionDropdown.selectByVisibleText(revision);
-        WaitUtil.sleep(100, "Waiting after revision selection");
     }
 
     public void clickExport() {
         exportBtn.click();
-        WaitUtil.sleep(500, "Waiting for export to start");
     }
 
     public void clickCancel() {
         cancelBtn.click();
-        WaitUtil.sleep(300, "Waiting for dialog to close");
     }
 }

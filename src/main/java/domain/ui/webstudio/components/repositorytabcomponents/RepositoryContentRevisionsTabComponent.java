@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
+import com.microsoft.playwright.Dialog;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
@@ -71,7 +72,8 @@ public class RepositoryContentRevisionsTabComponent extends BaseComponent {
             throw new IllegalArgumentException("Row index must be >= 1, got: " + rowIndex);
         }
         LOGGER.info("Opening revision at row {}", rowIndex);
-        visibleRows.get(rowIndex - 1).click();
+        LocalDriverPool.getPage().onDialog(Dialog::accept);
+        visibleRows.get(rowIndex - 1).getLocator().locator("xpath=.//a[@attr='open-revision']").click();
         WaitUtil.sleep(1000, "Waiting for revision to open");
     }
 }

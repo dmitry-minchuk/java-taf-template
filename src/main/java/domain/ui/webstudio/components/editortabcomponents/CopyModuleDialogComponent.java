@@ -13,7 +13,6 @@ public class CopyModuleDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyModuleDialogComponent.class);
 
-    private WebElement dialogContainer;
     private WebElement moduleNameInput;
     private WebElement newFileNameInput;
     private WebElement copyButton;
@@ -30,7 +29,6 @@ public class CopyModuleDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        dialogContainer = createScopedElement("xpath=//div[@id='copyModulePopup_container']", "dialogContainer");
         moduleNameInput = createScopedElement("xpath=.//input[@id='copyModuleForm:moduleName']", "moduleNameInput");
         newFileNameInput = createScopedElement("xpath=.//input[@id='copyModuleForm:newFileName']", "newFileNameInput");
         copyButton = createScopedElement("xpath=.//input[@id='copyModuleForm:copyModuleBtn']", "copyButton");
@@ -38,18 +36,13 @@ public class CopyModuleDialogComponent extends BaseComponent {
     }
 
     public void waitForDialogToAppear() {
-        WaitUtil.waitForCondition(() -> dialogContainer.isVisible(), 5000, 100, "Waiting for Copy Module dialog to appear");
-    }
-
-    public boolean isDialogVisible() {
-        return dialogContainer.isVisible(2000);
+        WaitUtil.waitForCondition(() -> moduleNameInput.isVisible(), 1000, 100, "Waiting for Copy Module dialog to appear");
     }
 
     public CopyModuleDialogComponent setModuleName(String moduleName) {
-        LOGGER.info("Setting module name: {}", moduleName);
         moduleNameInput.clear();
-        moduleNameInput.fill(moduleName);
-        WaitUtil.sleep(300, "Waiting after module name input");
+        WaitUtil.sleep(500, "Waiting before module name input");
+        moduleNameInput.fillSequentially(moduleName);
         return this;
     }
 
@@ -62,14 +55,17 @@ public class CopyModuleDialogComponent extends BaseComponent {
     }
 
     public void clickCopy() {
-        LOGGER.info("Clicking Copy button");
-        copyButton.click();
-        WaitUtil.sleep(500, "Waiting for copy operation to complete");
+        WaitUtil.waitForCondition(() -> {
+            try {
+                copyButton.click();
+            } catch (Exception e) {
+                LOGGER.info("Failed to click Copy button, retrying...");
+            }
+            return !copyButton.isVisible();
+        }, 1000, 200, "Clicking Copy button in Copy Module dialog");
     }
 
     public void clickCancel() {
-        LOGGER.info("Clicking Cancel button");
         cancelButton.click();
-        WaitUtil.sleep(300, "Waiting for dialog to close");
     }
 }
