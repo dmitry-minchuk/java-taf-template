@@ -22,6 +22,7 @@ import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.DownloadUtil;
 import helpers.utils.WaitUtil;
+import helpers.utils.ZipUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -40,7 +41,7 @@ public class TestExportProjectFunctionality extends BaseTest {
     private static final String BRANCH_NAME = "branch1";
     private static final String SECOND_USER_USERNAME = "test_analyst_user";
 
-    private void exportAndVerifyDownload(ExportProjectDialogComponent exportDialog, String contextMessage) {
+    private void exportAndVerifyDownload(ExportProjectDialogComponent exportDialog, String contextMessage, String... expectedFiles) {
         File exportedFile = exportDialog.clickExportAndDownload();
         assertThat(exportedFile.exists())
                 .as("Downloaded file should exist - " + contextMessage)
@@ -48,6 +49,14 @@ public class TestExportProjectFunctionality extends BaseTest {
         assertThat(exportedFile.length())
                 .as("Downloaded file should not be empty - " + contextMessage)
                 .isGreaterThan(0);
+
+        if (expectedFiles.length > 0) {
+            List<String> actualFiles = ZipUtil.listFiles(exportedFile);
+            assertThat(actualFiles)
+                    .as("Archive content - " + contextMessage)
+                    .containsExactlyInAnyOrder(expectedFiles);
+        }
+
         DownloadUtil.cleanupDownloadFile(exportedFile);
     }
 
@@ -105,13 +114,15 @@ public class TestExportProjectFunctionality extends BaseTest {
         // Step 6-7: Export project (first export)
         editorPage.getEditorToolbarPanelComponent().clickExport();
         exportDialog.waitForDialogToAppear();
-        exportAndVerifyDownload(exportDialog, "first export");
+        exportAndVerifyDownload(exportDialog, "first export",
+                "file1.xls", "file2.xlsx", "pic.png", "dir1/file3.xlsx");
 
         // Step 8-9: Export specific revision
         editorPage.getEditorToolbarPanelComponent().clickExport();
         exportDialog.waitForDialogToAppear();
         exportDialog.selectRevision(revision);
-        exportDialog.clickExport();
+        exportAndVerifyDownload(exportDialog, "specific revision export",
+                "file1.xls", "file2.xlsx", "pic.png", "dir1/file3.xlsx");
 
         // Step 10: Copy module file1 to file4
         editorPage.getEditorLeftProjectModuleSelectorComponent()
@@ -130,13 +141,15 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .as("Should show 'In Editing' after module copy")
                 .containsExactlyInAnyOrder("In Editing", revision);
 
-        exportAndVerifyDownload(exportDialog, "In Editing export");
+        exportAndVerifyDownload(exportDialog, "In Editing export",
+                "file1.xls", "file2.xlsx", "file4.xls", "pic.png", "rules.xml", "dir1/file3.xlsx");
 
         // Step 12: Export old revision while in "In Editing"
         editorPage.getEditorToolbarPanelComponent().clickExport();
         exportDialog.waitForDialogToAppear();
         exportDialog.selectRevision(revision);
-        exportDialog.clickExport();
+        exportAndVerifyDownload(exportDialog, "old revision while In Editing",
+                "file1.xls", "file2.xlsx", "pic.png", "dir1/file3.xlsx");
 
         // Step 13: Save project to create second revision
         editorPage.getEditorToolbarPanelComponent().clickSave();
@@ -290,7 +303,8 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .as("Should show Viewing and both revisions in branch")
                 .containsExactlyInAnyOrder("Viewing", revision, secondRevision);
 
-        exportAndVerifyDownload(exportDialog, "branch export");
+        exportAndVerifyDownload(exportDialog, "branch export",
+                "file1.xls", "file2.xlsx", "file4.xls", "pic.png", "rules.xml", "dir1/file3.xlsx");
 
         // Step 25: Copy another module and export in "In Editing"
         editorPage = repositoryPage.getTabSwitcherComponent()
@@ -308,7 +322,9 @@ public class TestExportProjectFunctionality extends BaseTest {
         assertThat(revisions)
                 .as("Should show In Editing after second module copy")
                 .containsExactlyInAnyOrder("In Editing", revision, secondRevision);
-        exportDialog.clickExport();
+
+        exportAndVerifyDownload(exportDialog, "In Editing with file5",
+                "file1.xls", "file2.xlsx", "file4.xls", "file5.xls", "pic.png", "rules.xml", "dir1/file3.xlsx");
 
         // Step 26: Save and verify third revision
         editorPage.getEditorToolbarPanelComponent().clickSave();
@@ -421,7 +437,8 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .as("Should show In Editing after project edit")
                 .containsExactlyInAnyOrder("In Editing", revisionSampleProject);
 
-        exportAndVerifyDownload(exportDialog, "edited Sample Project export");
+        exportAndVerifyDownload(exportDialog, "edited Sample Project export",
+                "Main.xlsx", "rules.xml");
 
         // Step 36: Logout second user, login as admin, verify locked status
         editorPage.openUserMenu().signOut();
