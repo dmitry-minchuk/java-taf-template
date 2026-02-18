@@ -83,6 +83,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     public void clickDeleteBtn() {
         deleteBtn.click();
+        WaitUtil.sleep(1000, "Waiting for confirmation dialog to open");
     }
 
     public void clickEraseBtn() {

@@ -94,7 +94,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectItemInFolder(PROJECT_NAME, "Module4.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().getDeleteBtn().click();
+        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
 
@@ -150,7 +150,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectItemInFolder(PROJECT_NAME, "Module3.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().getDeleteBtn().click();
+        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
 

@@ -43,7 +43,7 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
 
     public boolean isItemExistsInTree(String itemName) {
         return findTreeFolders().stream()
-                .anyMatch(folder -> folder.getItem(itemName).isVisible(100));
+                .anyMatch(folder -> folder.getItem(itemName).isVisible(250));
     }
 
     public boolean isFolderExistsInTree(String folderName) {
