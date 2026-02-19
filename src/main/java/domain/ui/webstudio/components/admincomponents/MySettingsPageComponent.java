@@ -3,6 +3,9 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
+import helpers.utils.WaitUtil;
+
+import java.util.Optional;
 
 public class MySettingsPageComponent extends BaseComponent {
 
@@ -83,8 +86,18 @@ public class MySettingsPageComponent extends BaseComponent {
     }
 
     public int getTestsPerPage() {
-        String value = testsPerPageSelectedItem.getLocator().locator("xpath=/div").getAttribute("title");
-        return value != null && !value.isEmpty() ? Integer.parseInt(value) : 5;
+        return WaitUtil.waitForResult(
+                () -> {
+                    try {
+                        String value = testsPerPageSelectedItem.getLocator().locator("xpath=/div").getAttribute("title");
+                        return value != null && !value.isEmpty() ? Optional.of(Integer.parseInt(value)) : Optional.empty();
+                    } catch (Exception e) {
+                        return Optional.empty();
+                    }
+                },
+                5000, 300,
+                "Getting tests per page value"
+        ).orElseThrow(() -> new RuntimeException("Could not read tests per page value"));
     }
 
     public MySettingsPageComponent setFailuresOnly(boolean failuresOnly) {

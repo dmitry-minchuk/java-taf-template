@@ -67,7 +67,7 @@ public class AdminPage extends BasePage {
 
     public UsersPageComponent navigateToUsersPage() {
         adminNavigationComponent.clickUsers();
-        WaitUtil.sleep(1000, "Wait for users list to load");
+        WaitUtil.sleep(500, "Wait for users list to load");
         return usersPageComponent;
     }
 
