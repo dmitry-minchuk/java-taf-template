@@ -255,11 +255,11 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public String getRoleRepository(int row) {
-        return roleRepositoryTemplate.format(row).child("xpath=/preceding-sibling::div").getAttribute("title");
+        return roleRepositoryTemplate.format(row).child("xpath=/..").getAttribute("title");
     }
 
     public String getRole(int row) {
-        return roleNameTemplate.format(row).child("xpath=/preceding-sibling::div").getAttribute("title");
+        return roleNameTemplate.format(row).child("xpath=/..").getAttribute("title");
     }
 
     public UsersPageComponent clearAllRoles() {
