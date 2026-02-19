@@ -12,6 +12,7 @@ import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponen
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.pages.BasePage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 public class AdminPage extends BasePage {
@@ -66,6 +67,7 @@ public class AdminPage extends BasePage {
 
     public UsersPageComponent navigateToUsersPage() {
         adminNavigationComponent.clickUsers();
+        WaitUtil.sleep(1000, "Wait for users list to load");
         return usersPageComponent;
     }
 
