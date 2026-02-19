@@ -226,13 +226,13 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public UsersPageComponent setRoleRepository(int row, String repositoryName) {
-        roleRepositoryTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
+        roleRepositoryTemplate.format(row).child("xpath=/ancestor::div[contains(@class,'ant-select-content')]").click();
         selectOptionTemplate.format(repositoryName).waitForVisible().click();
         return this;
     }
 
     public UsersPageComponent setRole(int row, String role) {
-        roleNameTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
+        roleNameTemplate.format(row).child("xpath=/ancestor::div[contains(@class,'ant-select-content')]").click();
         selectOptionTemplate.format(role).waitForVisible().click();
         return this;
     }
@@ -243,13 +243,13 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public UsersPageComponent setProject(int row, String projectName) {
-        projectSelectorTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
+        projectSelectorTemplate.format(row).child("xpath=/ancestor::div[contains(@class,'ant-select-content')]").click();
         selectOptionTemplate.format(projectName).waitForVisible().click();
         return this;
     }
 
     public UsersPageComponent setProjectRole(int row, String roleName) {
-        projectRoleSelectorTemplate.format(row).getLocator().locator("xpath=/ancestor::div[@class='ant-select-content']").click();
+        projectRoleSelectorTemplate.format(row).child("xpath=/ancestor::div[contains(@class,'ant-select-content')]").click();
         selectOptionTemplate.format(roleName).waitForVisible().click();
         return this;
     }
