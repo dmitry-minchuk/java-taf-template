@@ -19,6 +19,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement saveBtn;
     private WebElement verifyBtn;
     private WebElement copyProjectBtn;
+    private WebElement createTableBtn;
     private WebElement moreBtn;
     private WebElement syncBtn;
     @Getter
@@ -79,6 +80,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
         saveBtn = new WebElement(page,"//a[@id='saveProjectButton']", "saveBtn");
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
+        createTableBtn = new WebElement(page, "xpath=//a[@title='Create new table']", "createTableBtn");
         moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
         syncBtn = new WebElement(page, "xpath=//div//a[text()='Sync']", "syncBtn");
         breadcrumbsAllProjects = new WebElement(page, "//div[@class='breadcrumbs']/a[@href='/']", "breadcrumbsAllProjects");
@@ -132,6 +134,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void clickCopyProjectBtn() {
         copyProjectBtn.click();
+    }
+
+    public void clickCreateTable() {
+        createTableBtn.click();
     }
 
     public void clickSave() {

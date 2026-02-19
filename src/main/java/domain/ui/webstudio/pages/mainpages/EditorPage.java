@@ -33,6 +33,7 @@ public class EditorPage extends BasePage {
     private EditProjectDialogComponent editProjectDialogComponent;
     private ExportProjectDialogComponent exportProjectDialogComponent;
     private CopyModuleDialogComponent copyModuleDialogComponent;
+    private CreateTableDialogComponent createTableDialogComponent;
     private WebElement exportProjectBtn;
     private WebElement editProjectIconTemplate;
     private WebElement projectHeaderTemplate;
@@ -63,6 +64,7 @@ public class EditorPage extends BasePage {
         editProjectDialogComponent = createScopedComponent(EditProjectDialogComponent.class, "xpath=//div[@id='editProjectPopup_content']", "editProjectDialogComponent");
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
         copyModuleDialogComponent = createScopedComponent(CopyModuleDialogComponent.class, "xpath=//div[@id='copyModulePopup_container']", "copyModuleDialogComponent");
+        createTableDialogComponent = createScopedComponent(CreateTableDialogComponent.class, "xpath=//span[@id='wizardData']", "createTableDialogComponent");
         projectHeaderTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..", "projectHeaderTemplate");
         editProjectIconTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..//img", "editProjectIconTemplate");
         moduleHeader = new WebElement(getPage(), "xpath=//div[@id='content']//div[@class='page editable']/h1", "moduleHeader");
@@ -96,5 +98,9 @@ public class EditorPage extends BasePage {
         copyModuleBtn.click();
         copyModuleDialogComponent.waitForDialogToAppear();
         return copyModuleDialogComponent;
+    }
+
+    public CreateTableDialogComponent getCreateTableDialogComponent() {
+        return createTableDialogComponent;
     }
 }
