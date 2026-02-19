@@ -137,8 +137,11 @@ public class WebElement {
     }
 
     public String getAttribute(String name) {
-        isVisible();
-        String value = locator.getAttribute(name);
+        String value = WaitUtil.retryOnException(
+                () -> locator.getAttribute(name, new Locator.GetAttributeOptions().setTimeout(500)),
+                DEFAULT_TIMEOUT_MS, 300,
+                "Getting attribute '" + name + "' from " + elementName
+        );
         LOGGER.info("Getting attribute '{}' from {}: '{}'", name, elementName, value);
         return value;
     }
@@ -199,6 +202,10 @@ public class WebElement {
         return locator.locator("option").allTextContents();
     }
     
+    public WebElement child(String subSelector) {
+        return new WebElement(this, subSelector, elementName + " > " + subSelector);
+    }
+
     // Dynamic locator formatting - Builder pattern implementation
     public WebElement format(Object... args) {
         String formattedSelector = String.format(this.selector, args);

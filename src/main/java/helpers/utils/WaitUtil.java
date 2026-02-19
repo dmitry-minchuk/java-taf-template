@@ -104,6 +104,21 @@ public class WaitUtil {
         return false;
     }
 
+    public static <T> T retryOnException(Supplier<T> supplier, long timeoutMs, long pollingMs, String description) {
+        long endTime = System.currentTimeMillis() + timeoutMs;
+        Exception lastException = null;
+        while (System.currentTimeMillis() < endTime) {
+            try {
+                return supplier.get();
+            } catch (Exception e) {
+                lastException = e;
+                LOGGER.debug("Attempt failed (will retry): {} - {}", description, e.getMessage());
+                sleep(pollingMs, "Retrying: " + description);
+            }
+        }
+        throw new RuntimeException("Failed after " + timeoutMs + "ms: " + description, lastException);
+    }
+
     @FunctionalInterface
     public interface CheckedRunnable {
         void run() throws Exception;
