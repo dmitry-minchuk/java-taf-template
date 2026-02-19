@@ -78,7 +78,7 @@ public class UsersPageComponent extends BaseComponent {
         displayNameField = new WebElement(page, "xpath=//input[@id='displayName']", "displayNameField");
 
         // Form buttons
-        drawerSubmitBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Save' or text()='Invite']]", "drawerSubmitBtn");
+        drawerSubmitBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Save']]", "drawerSubmitBtn");
         cancelBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Cancel']]", "cancelBtn");
 
         // Role management
@@ -89,7 +89,7 @@ public class UsersPageComponent extends BaseComponent {
         projectSelectorTemplate = new WebElement(page, "xpath=//input[@id='projects_%s_id']", "projectSelectorTemplate");
         projectRoleSelectorTemplate = new WebElement(page, "xpath=//input[@id='projects_%s_role']", "projectRoleSelectorTemplate");
         removeRoleBtn = new WebElement(page, "xpath=//button[./span[contains(@aria-label,'delete')] and ancestor::div[contains(@class,'ant-form-item')]]", "removeRoleBtn");
-        selectOptionTemplate = new WebElement(page, "xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
+        selectOptionTemplate = new WebElement(page, "xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s' and not(contains(@class,'ant-select-item-option-selected'))]", "selectOptionTemplate");
 
         // Error handling
         errorNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]", "errorNotification");
@@ -270,18 +270,13 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void saveUser() {
-        drawerSubmitBtn.click();
-        drawer.waitForHidden(3000);
+        saveUser(true);
     }
 
-    public void inviteUser(boolean waitForDrawerToGetHidden) {
+    public void saveUser(boolean waitForDrawerToGetHidden) {
         drawerSubmitBtn.click();
-        if(waitForDrawerToGetHidden)
+        if (waitForDrawerToGetHidden)
             drawer.waitForHidden(3000);
-    }
-
-    public void inviteUser() {
-        inviteUser(true);
     }
 
     public void cancelUser() {

@@ -235,7 +235,7 @@ public class TestExportProjectFunctionality extends BaseTest {
                 .clickAddRoleBtn()
                 .setRoleRepository(0, "Design")
                 .setRole(0, "Contributor")
-                .inviteUser();
+                .saveUser();
 
         UserData secondUser = new UserData(SECOND_USER_USERNAME, "Test123!");
 

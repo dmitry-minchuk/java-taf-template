@@ -83,7 +83,7 @@ public class TestAdminSystemSettingsDBValidation extends BaseTest {
                 .setEmail(TEST_EMAIL)
                 .setFirstName(TEST_FIRSTNAME)
                 .setLastName(TEST_LASTNAME)
-                .inviteUser();
+                .saveUser();
 
         LOGGER.info("Created user via UI: {}", TEST_USER);
 

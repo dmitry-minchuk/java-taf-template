@@ -38,7 +38,7 @@ public class TestAdminNotifications extends BaseTest {
                 .clickAddUser()
                 .setUsername(newUser.getLogin())
                 .setPassword(newUser.getPassword())
-                .inviteUser();
+                .saveUser();
         NotificationPageComponent notificationComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToNotificationPage();

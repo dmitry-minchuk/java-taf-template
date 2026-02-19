@@ -68,7 +68,7 @@ public class TestAdminUsersProjects extends BaseTest {
         usersComponent.clickAddUser()
                 .setUsername("test")
                 .setPassword("test")
-                .inviteUser();
+                .saveUser();
 
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1, "User count should increase by 1");

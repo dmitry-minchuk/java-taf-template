@@ -48,7 +48,7 @@ public class TestAdminUsers extends BaseTest {
         usersComponent.clickAddUser()
                 .setUsername("test")
                 .setPassword("test")
-                .inviteUser();
+                .saveUser();
 
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1,
@@ -77,7 +77,7 @@ public class TestAdminUsers extends BaseTest {
         usersComponent.clickAddUser()
                 .setUsername("admin")
                 .setPassword("admin123")
-                .inviteUser(false);
+                .saveUser(false);
 
         usersComponent.closeAllMessages();
         Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should be equal to previous value");
@@ -87,7 +87,7 @@ public class TestAdminUsers extends BaseTest {
         usersComponent.clickAddUser()
                 .setUsername("test")
                 .setPassword("test")
-                .inviteUser();
+                .saveUser();
 
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be created successfully");
 
