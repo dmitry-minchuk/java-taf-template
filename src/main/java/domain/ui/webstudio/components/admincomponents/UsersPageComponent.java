@@ -32,8 +32,7 @@ public class UsersPageComponent extends BaseComponent {
     private WebElement lastNameField;
     private WebElement displayNamePatternDropdown;
     private WebElement displayNameField;
-    private WebElement saveBtn;
-    private WebElement inviteBtn;
+    private WebElement drawerSubmitBtn;
     private WebElement cancelBtn;
 
     // ==== Role Management Section ====
@@ -79,8 +78,7 @@ public class UsersPageComponent extends BaseComponent {
         displayNameField = new WebElement(page, "xpath=//input[@id='displayName']", "displayNameField");
 
         // Form buttons
-        saveBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Save']]", "saveBtn");
-        inviteBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Invite']]", "inviteBtn");
+        drawerSubmitBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Save' or text()='Invite']]", "drawerSubmitBtn");
         cancelBtn = new WebElement(page, "xpath=//div[contains(@class,'ant-drawer-open')]//button[./span[text()='Cancel']]", "cancelBtn");
 
         // Role management
@@ -280,12 +278,12 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void saveUser() {
-        saveBtn.click();
+        drawerSubmitBtn.click();
         drawer.waitForHidden(3000);
     }
 
     public void inviteUser(boolean waitForDrawerToGetHidden) {
-        inviteBtn.click();
+        drawerSubmitBtn.click();
         if(waitForDrawerToGetHidden)
             drawer.waitForHidden(3000);
     }
