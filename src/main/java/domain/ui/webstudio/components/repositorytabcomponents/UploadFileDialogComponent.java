@@ -54,6 +54,7 @@ public class UploadFileDialogComponent extends BaseComponent {
         LOGGER.info("Clicking Upload button");
         uploadButton.click();
         waitForDialogToClose();
+        WaitUtil.sleep(500, "Waiting for Upload to finish processing");
     }
 
     public void clickCancelButton() {
