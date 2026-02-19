@@ -105,18 +105,23 @@ public class WaitUtil {
     }
 
     public static <T> T retryOnException(Supplier<T> supplier, long timeoutMs, long pollingMs, String description) {
-        long endTime = System.currentTimeMillis() + timeoutMs;
-        Exception lastException = null;
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + timeoutMs;
+        RuntimeException lastException = null;
+        int attempts = 0;
         while (System.currentTimeMillis() < endTime) {
             try {
                 return supplier.get();
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 lastException = e;
-                LOGGER.debug("Attempt failed (will retry): {} - {}", description, e.getMessage());
+                attempts++;
+                LOGGER.debug("Attempt {} failed (will retry): {} - {}", attempts, description, e.getMessage());
                 sleep(pollingMs, "Retrying: " + description);
             }
         }
-        throw new RuntimeException("Failed after " + timeoutMs + "ms: " + description, lastException);
+        LOGGER.warn("All retries exhausted: {} attempt(s), {}ms interval, {}ms total elapsed - {}",
+                attempts, pollingMs, System.currentTimeMillis() - startTime, description);
+        throw lastException;
     }
 
     @FunctionalInterface
