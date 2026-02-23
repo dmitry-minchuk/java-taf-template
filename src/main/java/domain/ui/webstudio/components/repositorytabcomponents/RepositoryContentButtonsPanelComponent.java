@@ -21,6 +21,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     private WebElement updateFileBtn;
     private WebElement exportBtn;
     private WebElement syncBtn;
+    private WebElement undeleteBtn;
 
     public RepositoryContentButtonsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -46,6 +47,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         updateFileBtn = createScopedElement("xpath=.//input[@value='Update file']", "updateFileBtn");
         exportBtn = createScopedElement("xpath=.//input[@value='Export']", "exportBtn");
         syncBtn = createScopedElement("xpath=.//input[@value='Sync']", "syncBtn");
+        undeleteBtn = createScopedElement("xpath=.//input[@value='Undelete']", "undeleteBtn");
     }
 
     // Legacy methods for compatibility
@@ -154,5 +156,22 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     public boolean isExportBtnVisible() {
         return exportBtn.isVisible();
+    }
+
+    public void clickUndeleteBtn() {
+        undeleteBtn.click();
+        WaitUtil.sleep(500, "Waiting after clicking Undelete button");
+    }
+
+    public boolean isUndeleteBtnVisible() {
+        return undeleteBtn.isVisible();
+    }
+
+    public boolean isOpenBtnVisible() {
+        return openBtn.isVisible();
+    }
+
+    public boolean isCloseBtnVisible() {
+        return closeBtn.isVisible();
     }
 }

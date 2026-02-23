@@ -28,6 +28,11 @@ public class RepositoryPage extends BasePage {
     // top menu elements:
     private WebElement refreshBtn;
     private WebElement createProjectLink;
+    private WebElement filterByNameInput;
+    private WebElement clearFilterBtn;
+    private WebElement advancedFilterBtn;
+    private WebElement hideDeletedCheckbox;
+    private WebElement applyFilterBtn;
     private WebElement createDeployConfigBtn;
     // createDeployConfigBtn-related elements (I did not create a component for that):
     private WebElement configNameField;
@@ -52,6 +57,7 @@ public class RepositoryPage extends BasePage {
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private ResolveConflictsDialogComponent resolveConflictsDialogComponent;
     private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
+    private ConfirmUndeleteDialogComponent confirmUndeleteDialogComponent;
     private FileChangedWarningComponent fileChangedWarningComponent;
     private TableComponent projectsTable;
     private ExportProjectDialogComponent exportProjectDialogComponent;
@@ -67,6 +73,12 @@ public class RepositoryPage extends BasePage {
         createDeployConfigBtn = new WebElement(page, "xpath=//a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
         configNameField = new WebElement(page, "xpath=//input[@id='newDProjectForm:projectName']", "configNameFieldLocator");
         createBtn = new WebElement(page, "xpath=//input[@id='newDProjectForm:createBtn']", "createBtnLocator");
+
+        filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
+        clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
+        advancedFilterBtn = new WebElement(page, "xpath=//a[@id='filterButton']", "advancedFilterBtn");
+        hideDeletedCheckbox = new WebElement(page, "xpath=//input[@id='filterForm:hideDeleted']", "hideDeletedCheckbox");
+        applyFilterBtn = new WebElement(page, "xpath=//form[@id='filterForm']//input[@value='Apply']", "applyFilterBtn");
 
         createNewProjectComponent = createScopedComponent(CreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
         tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
@@ -86,6 +98,7 @@ public class RepositoryPage extends BasePage {
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
         resolveConflictsDialogComponent = createScopedComponent(ResolveConflictsDialogComponent.class, "xpath=//div[@role='dialog' and .//div[contains(text(), 'Resolve Conflicts')]]", "resolveConflictsDialogComponent");
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
+        confirmUndeleteDialogComponent = createScopedComponent(ConfirmUndeleteDialogComponent.class, "xpath=//div[@id='modalUndeleteProject_container']", "confirmUndeleteDialogComponent");
         fileChangedWarningComponent = createScopedComponent(FileChangedWarningComponent.class, "xpath=//div[@id='fileChanged_content']", "fileChangedWarningComponent");
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
 
@@ -213,7 +226,9 @@ public class RepositoryPage extends BasePage {
     public List<String> getAllVisibleProjectsInTable() {
         List<String> projectNames = new ArrayList<>();
         for (int i = 1; i <= projectsTable.getRows().size(); i++) {
-            List<String> rowValues = projectsTable.getRow(i).getValue();
+            TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(i);
+            if (!row.isVisible(100)) continue;
+            List<String> rowValues = row.getValue();
             if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty()) {
                 String projectName = rowValues.getFirst().trim();
                 // Filter out JavaScript initialization code from RichFaces components
@@ -260,6 +275,34 @@ public class RepositoryPage extends BasePage {
         }
 
         return projectInfo;
+    }
+
+    public void filterByName(String name) {
+        filterByNameInput.fillSequentially(name);
+        WaitUtil.sleep(300, "Waiting for client-side filter to apply");
+    }
+
+    public void clearNameFilter() {
+        clearFilterBtn.click();
+        WaitUtil.sleep(300, "Waiting for filter to clear");
+    }
+
+    public void setShowDeletedProjects(boolean showDeleted) {
+        advancedFilterBtn.click();
+        boolean currentlyHidden = hideDeletedCheckbox.isChecked();
+        // currentlyHidden=true means deleted are hidden; we want showDeleted → need unchecked
+        if (showDeleted && currentlyHidden) {
+            hideDeletedCheckbox.click();
+        } else if (!showDeleted && !currentlyHidden) {
+            hideDeletedCheckbox.click();
+        }
+        applyFilterBtn.click();
+        waitUntilSpinnerLoaded();
+        refreshBtn.click(DEFAULT_TIMEOUT_MS);
+    }
+
+    public int countVisibleProjectsInTable() {
+        return getAllVisibleProjectsInTable().size();
     }
 
     private int findProjectRowIndex(String projectName) {

@@ -20,8 +20,8 @@
 
 | ID | Test to Create | Legacy class | Atomic features covered | Priority |
 |----|----------------|--------------|-------------------------|----------|
-| **C1** | TestRepositoryBrowsingFilterStatus | TestBrowsingFilterStatusInRepositories | Project pictures by status (2.2.1, 2.2.4), Filter by name (2.2.2, 2.2.5), Advanced filter (2.2.3), Saving/Closing a project (2.2.12, 2.2.14), Multi-user locking | 🔴 HIGH |
-| **C2** | TestRepositoryExportAndRevisions | TestExportProjectFunctionality | Export project/file (2.2.29), Comparing project revisions (2.2.28), Opening project revision via Revisions tab (2.2.11), Revision selection | 🔴 HIGH |
+| **C1** | **`TestRepositoryBrowsingFilterStatus`** ✅ PARTIAL | TestBrowsingFilterStatusInRepositories | ✅ Status lifecycle (2.2.1), ✅ Filter by name (2.2.2), ✅ Advanced filter show/hide deleted (2.2.3), ✅ Closing a project (2.2.12), ✅ Saving a project (2.2.14), ✅ Multi-user locking; ⛔ Deploy-blocked: Deployment repo status (2.2.4), Deployment filter (2.2.5), Production repo browsing | `repository.xml` (deploy steps blocked) |
+| **C2** | ~~TestRepositoryExportAndRevisions~~ → **`TestExportProjectFunctionality`** ✅ DONE | TestExportProjectFunctionality | Export project/file (2.2.29), Opening project revision via Revisions tab (2.2.11), Revision selection, Multi-user export | ✅ `rules_editor.xml` |
 | **C3** | TestOpenApiImportAndReconciliation | TestOpenApiImport | Import OpenAPI for scaffolding (2.8.2), Reconciliation mode (2.8.4), Auto-add/update OpenAPI in reconciliation (2.8.7), OpenAPI file operations (2.8.6) | 🔴 HIGH |
 | **C4** | TestOpenApiReconciliationEdgeCases | OpenApiReconciliationFeature | OpenAPI reconciliation with multiple merged files (2.8.5), Circular datatype validation, Datatype error validation, Spreadsheet reconciliation errors | 🔴 HIGH |
 | **C5** | TestCreateProjectFromOpenApi | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | Create project from OpenAPI (2.8.1), Create Data tables from GET methods (2.8.3) | 🔴 HIGH |

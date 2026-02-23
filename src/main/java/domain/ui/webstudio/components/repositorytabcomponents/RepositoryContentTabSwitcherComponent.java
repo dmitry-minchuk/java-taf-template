@@ -4,6 +4,8 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
+import java.util.List;
+
 public class RepositoryContentTabSwitcherComponent extends BaseComponent {
 
     private WebElement propertiesTab;
@@ -56,5 +58,14 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
     public DeployConfigurationTabsComponent selectDeployConfigTab() {
         deployConfigTab.click();
         return deployConfigTabComponent;
+    }
+
+    public List<String> getAvailableTabNames() {
+        return rootLocator.getLocator().locator("xpath=.//td[@data-tabname]")
+                .allTextContents()
+                .stream()
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
     }
 }
