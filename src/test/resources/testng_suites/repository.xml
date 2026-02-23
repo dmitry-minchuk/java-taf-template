@@ -6,10 +6,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="TestRepositoryBrowsingFilterStatus">
-        <classes>
-            <class name="tests.ui.webstudio.repository.TestRepositoryBrowsingFilterStatus"/>
-        </classes>
-    </test>
+    <test name="TestRepositoryBrowsingFilterStatus"><classes><class name="tests.ui.webstudio.repository.TestRepositoryBrowsingFilterStatus"/></classes></test>
 
 </suite>
