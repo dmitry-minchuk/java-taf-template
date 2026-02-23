@@ -17,5 +17,6 @@
     <test name="TestAddDeleteEditProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestAddDeleteEditProperties"/></classes></test>
     <test name="TestExportProjectFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestExportProjectFunctionality"/></classes></test>
     <test name="TestOpenApiImportAndReconciliation"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiImportAndReconciliation"/></classes></test>
+    <test name="TestOpenApiReconciliationEdgeCases"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationEdgeCases"/></classes></test>
 
 </suite>

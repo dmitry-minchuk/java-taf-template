@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
+import com.microsoft.playwright.Locator;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
@@ -112,5 +113,13 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
 
     public boolean isErrorMessageListPresent() {
         return WaitUtil.isListNotEmpty(() -> errorMessages, 10000, 250, "Waiting for error messages to appear in problems panel");
+    }
+
+    public List<String> getErrorMessages() {
+        WaitUtil.sleep(500, "Waiting for inline error panel to fully render");
+        WaitUtil.waitForListNotEmpty(() -> errorMessages, 20000, 1000, "Waiting for error messages to load");
+        return errorMessages.stream()
+                .map(e -> e.getText().trim())
+                .toList();
     }
 }

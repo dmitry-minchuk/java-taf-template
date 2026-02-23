@@ -48,6 +48,10 @@ public class EditorPage extends BasePage {
     private WebElement openApiSectionHeader;
     private WebElement importOpenApiImg;
     private WebElement openApiPropertyValueTemplate;
+    private ManageDependenciesDialogComponent manageDependenciesDialogComponent;
+    private WebElement dependenciesHeader;
+    private WebElement addDependenciesLink;
+    private WebElement manageDependenciesBtn;
 
     public EditorPage() {
         super();
@@ -83,6 +87,10 @@ public class EditorPage extends BasePage {
         openApiSectionHeader = new WebElement(getPage(), "xpath=//div[@class='block editable']//h3[./span[text()='OpenAPI']]", "openApiSectionHeader");
         importOpenApiImg = new WebElement(getPage(), "xpath=//a[@title='Import OpenAPI']/img", "importOpenApiImg");
         openApiPropertyValueTemplate = new WebElement(getPage(), "xpath=//div[@class='block editable']//table[@class='properties']//tr[normalize-space(./td[1]/text())='%s']/td[2]", "openApiPropertyValueTemplate");
+        manageDependenciesDialogComponent = createScopedComponent(ManageDependenciesDialogComponent.class, "xpath=//div[@id='manageDependenciesPopup_container']", "manageDependenciesDialogComponent");
+        dependenciesHeader = new WebElement(getPage(), "xpath=//div[@id='content']//span[text()='Dependencies']", "dependenciesHeader");
+        addDependenciesLink = new WebElement(getPage(), "xpath=//div[@id='content']//a[contains(text(),'Click to add dependencies')]", "addDependenciesLink");
+        manageDependenciesBtn = new WebElement(getPage(), "xpath=//div[@id='content']//a[@title='Manage Dependencies']//img", "manageDependenciesBtn");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {
@@ -127,5 +135,16 @@ public class EditorPage extends BasePage {
 
     public String getOpenApiPropertyValue(String propertyName) {
         return openApiPropertyValueTemplate.format(propertyName).getText().trim();
+    }
+
+    public ManageDependenciesDialogComponent openManageDependenciesDialog() {
+        if (addDependenciesLink.isVisible(2000)) {
+            addDependenciesLink.click();
+        } else {
+            dependenciesHeader.hover();
+            manageDependenciesBtn.click();
+        }
+        manageDependenciesDialogComponent.waitForDialogToAppear();
+        return manageDependenciesDialogComponent;
     }
 }
