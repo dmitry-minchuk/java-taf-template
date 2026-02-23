@@ -10,7 +10,8 @@
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
 | Migrated to new framework | ~68 test classes |
-| **New framework overall coverage** | **~35% of legacy** |
+| ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
+| **New framework overall coverage** | **~38% of legacy** |
 
 ---
 
@@ -25,7 +26,7 @@
 | **C3** | **`TestOpenApiImportAndReconciliation`** ✅ DONE | TestOpenApiImport + TestOpenApiImportLocalChanges | ✅ Reconciliation mode (2.8.4), ✅ Tables Generation mode (2.8.2), ✅ Module settings warning dialog (2.8.6), ✅ Same module names validation (2.8.6) | ✅ `rules_editor.xml` |
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
 | **C5** | TestCreateProjectFromOpenApi | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | Create project from OpenAPI (2.8.1), Create Data tables from GET methods (2.8.3) | 🔴 HIGH |
-| **C6** | TestAclPermissions | ACLTest | All 10 ACL permission scenarios (read / create / edit / run benchmark / add / delete / erase), user+group creation, repo-level and module-level verification | 🔴 HIGH |
+| **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
 | **C7** | TestProjectCompilationAndModuleMode | TestProjectCompilation + TestCompileThisModuleOnly | Project compilation main scenarios (2.11.2), Progress bar behavior (2.11.1), Run/Trace/Test in opened module (2.11.3), Duplicate tables errors (2.11.6), Breadcrumb navigation (2.11.7) | 🔴 HIGH |
 | **C8** | TestCompareExcelFilesAndChanges | TestCompareExcelFiles + TestDisplayChangedRows | Compare Excel files (2.1.55), Display Changed Rows Only (EPBDS-10790), Identical files info message (EPBDS-10162), Comparing project revisions (2.2.28) | 🟡 MEDIUM |
 | **C9** | TestEditorDeployAndRevisions | TestDeployButton + TestTabRevisionsOnEditorTab | Deploy button in Editor (EPBDS-9423), Revision page in Editor (EPBDS-9815), Local Changes page: Restore/Compare (EPBDS-10399) | 🟡 MEDIUM |
@@ -64,22 +65,6 @@
 | Compile This Module Only redesign | EPBDS-11799, IPBQA-31895 | TestCompileThisModuleOnly | → **C7** |
 | Errors and Run/Trace/Test buttons for duplicate tables | EPBDS-11791, IPBQA-31790 | TestWorkWithDuplicateTables | → **C7** |
 | No errors on switching projects via breadcrumb | EPBDS-11827, IPBQA-31804 | TestSwitchModuleViaBreadcrumbsNavigation | → **C7** |
-
-### 3. ACL Functionality (2.3.1) — 0%
-**Legacy tests:** 10 | **New framework:** 0 tests
-
-| Feature | Ticket | Legacy test | Covered by |
-|---------|--------|-------------|------------|
-| ACL: adding permissions to design repo | EPBDS-13876, IPBQA-32455 | ACLTest | → **C6** |
-| ACL: permissions to deployConfig when user has no default access | EPBDS-13875, IPBQA-32465 | ACLTest | → **C6** |
-| ACL: permissions to deployConfig repo | EPBDS-13874, IPBQA-32466 | ACLTest | → **C6** |
-| ACL: permissions to users and different repos | EPBDS-13873, IPBQA-32470 | ACLTest | → **C6** |
-| ACL: permissions to users and different productions | EPBDS-13872, IPBQA-32474 | ACLTest | → **C6** |
-| ACL: add/remove permissions to module | EPBDS-13871, IPBQA-32492 | ACLTest | → **C6** |
-| ACL: add/remove permissions in design repo (no default access) | EPBDS-13870, IPBQA-32493 | ACLTest | → **C6** |
-| ACL: permissions in git non-flat design repo | EPBDS-13869, IPBQA-32517 | ACLTest | → **C6** |
-| ACL: add/remove permissions to Deploy Configuration | EPBDS-13868, IPBQA-32530 | ACLTest | → **C6** |
-| ACL: permissions to different Deploy Configurations | EPBDS-13867, IPBQA-32532 | ACLTest | → **C6** |
 
 ---
 
@@ -235,7 +220,7 @@
 |---------|----------|--------------|
 | Admin: System Settings (dispatch/verify/threads) | ~80% | TestAdminSystemSettings ✅ |
 | Admin: Notifications | ~90% | TestAdminNotifications ✅ |
-| Admin: User management (basic) | ~60% | TestAdminUsers, TestAdminUsersProjects ✅ |
+| Admin: User management + ACL | ~70% | TestAdminUsers, TestAdminUsersProjects, TestAdminUserSettings ✅ |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + filtering + grouping) | ~70% | TestProjectTags* ✅ (9 tests) |
 | Rules Editor (core) | ~55% | 12 rules_editor tests ✅ |
@@ -250,16 +235,15 @@
 
 | Priority | Composite Test | Atomic features consolidated | Effort |
 |----------|----------------|------------------------------|--------|
-| 🔴 1 | **C6** TestAclPermissions | 10 ACL scenarios → 1 test | High |
-| 🔴 2 | **C7** TestProjectCompilationAndModuleMode | 7 Single/Multi Mode features → 1 test | Medium |
-| 🔴 3 | **C5** TestCreateProjectFromOpenApi | 2 remaining OpenAPI features → 1 test | Low |
-| 🟡 4 | **C8** TestCompareExcelFilesAndChanges | 4 compare features → 1 test | Medium |
-| 🟡 5 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
-| 🟡 6 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
-| 🟡 7 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
-| 🟡 8 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |
-| 🟢 9 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
-| 🟢 10 | **C14** TestGitCommentAndCommitter | 3 git comment features → 1 test | Low |
+| 🔴 1 | **C7** TestProjectCompilationAndModuleMode | 7 Single/Multi Mode features → 1 test | Medium |
+| 🔴 2 | **C5** TestCreateProjectFromOpenApi | 2 remaining OpenAPI features → 1 test | Low |
+| 🟡 3 | **C8** TestCompareExcelFilesAndChanges | 4 compare features → 1 test | Medium |
+| 🟡 4 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
+| 🟡 5 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
+| 🟡 6 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
+| 🟡 7 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |
+| 🟢 8 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
+| 🟢 9 | **C14** TestGitCommentAndCommitter | 3 git comment features → 1 test | Low |
 
 ---
 
