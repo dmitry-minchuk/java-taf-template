@@ -11,9 +11,13 @@ import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRul
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Getter
 public class EditorPage extends BasePage {
+
+    private static final Logger LOGGER = LogManager.getLogger(EditorPage.class);
 
     private EditorLeftProjectModuleSelectorComponent editorLeftProjectModuleSelectorComponent;
     private EditorLeftRulesTreeComponent editorLeftRulesTreeComponent;
@@ -39,6 +43,11 @@ public class EditorPage extends BasePage {
     private WebElement projectHeaderTemplate;
     private WebElement moduleHeader;
     private WebElement copyModuleBtn;
+    private ImportOpenApiDialogComponent importOpenApiDialogComponent;
+    private OpenApiModuleSettingsDialogComponent openApiModuleSettingsDialogComponent;
+    private WebElement openApiSectionHeader;
+    private WebElement importOpenApiImg;
+    private WebElement openApiPropertyValueTemplate;
 
     public EditorPage() {
         super();
@@ -69,6 +78,11 @@ public class EditorPage extends BasePage {
         editProjectIconTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..//img", "editProjectIconTemplate");
         moduleHeader = new WebElement(getPage(), "xpath=//div[@id='content']//div[@class='page editable']/h1", "moduleHeader");
         copyModuleBtn = new WebElement(getPage(), "xpath=//div[@id='content']//div[@class='page editable']/h1//a[@title='Copy']", "copyModuleBtn");
+        importOpenApiDialogComponent = createScopedComponent(ImportOpenApiDialogComponent.class, "xpath=//div[@id='importOpenAPIPopup_container']", "importOpenApiDialogComponent");
+        openApiModuleSettingsDialogComponent = createScopedComponent(OpenApiModuleSettingsDialogComponent.class, "xpath=//form[@id='generateOpenAPIForm']", "openApiModuleSettingsDialogComponent");
+        openApiSectionHeader = new WebElement(getPage(), "xpath=//div[@class='block editable']//h3[./span[text()='OpenAPI']]", "openApiSectionHeader");
+        importOpenApiImg = new WebElement(getPage(), "xpath=//a[@title='Import OpenAPI']/img", "importOpenApiImg");
+        openApiPropertyValueTemplate = new WebElement(getPage(), "xpath=//div[@class='block editable']//table[@class='properties']//tr[normalize-space(./td[1]/text())='%s']/td[2]", "openApiPropertyValueTemplate");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {
@@ -102,5 +116,16 @@ public class EditorPage extends BasePage {
 
     public CreateTableDialogComponent getCreateTableDialogComponent() {
         return createTableDialogComponent;
+    }
+
+    public ImportOpenApiDialogComponent openImportOpenApiDialog() {
+        openApiSectionHeader.hover();
+        importOpenApiImg.click();
+        importOpenApiDialogComponent.waitForVisible();
+        return importOpenApiDialogComponent;
+    }
+
+    public String getOpenApiPropertyValue(String propertyName) {
+        return openApiPropertyValueTemplate.format(propertyName).getText().trim();
     }
 }
