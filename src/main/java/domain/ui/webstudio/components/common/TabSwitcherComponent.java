@@ -6,6 +6,7 @@ import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.BasePage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 public class TabSwitcherComponent extends BaseComponent {
@@ -28,7 +29,13 @@ public class TabSwitcherComponent extends BaseComponent {
 
     @SuppressWarnings("unchecked")
     public <T extends BasePage> T selectTab(TabName tabName) {
-        tabTemplate.format(tabName.getValue()).click();
+        WebElement tab = tabTemplate.format(tabName.getValue());
+        WaitUtil.waitForCondition(() -> {
+            if (!tab.getAttribute("class").contains("ant-menu-item-selected")) {
+                tab.click();
+            }
+            return tab.getAttribute("class").contains("ant-menu-item-selected");
+        }, 10000, 1000, "Waiting for tab '" + tabName.getValue() + "' to become active");
 
         return switch (tabName) {
             case EDITOR -> (T) new EditorPage();
