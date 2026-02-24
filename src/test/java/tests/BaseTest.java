@@ -122,7 +122,7 @@ public abstract class BaseTest implements ITest {
             LOGGER.warn("No app container found, skipping network connectivity check");
             return;
         }
-        WaitUtil.sleep(1000, "Initial wait for DNS propagation");
+        WaitUtil.sleep(3000, "Waiting for Docker DNS to propagate container hostname across the network");
     }
 
     private void setupAppContainer(ITestResult result, Network network) {

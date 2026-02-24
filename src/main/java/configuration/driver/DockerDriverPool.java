@@ -180,28 +180,37 @@ public class DockerDriverPool {
 
     // Connect to browser running in the containerized environment
     private static Browser launchContainerizedBrowser(Playwright playwright, String browserName, GenericContainer<?> container) {
-        try {
-            // Get WebSocket endpoint from Playwright Server container
-            String playwrightHost = container.getHost();
-            int playwrightPort = container.getMappedPort(3000);
-            String wsEndpoint = String.format("ws://%s:%d/", playwrightHost, playwrightPort);
+        String playwrightHost = container.getHost();
+        int playwrightPort = container.getMappedPort(3000);
+        String wsEndpoint = String.format("ws://%s:%d/", playwrightHost, playwrightPort);
+        BrowserType browserType = playwright.chromium();
 
-            // Connect to browser via WebSocket to Playwright Server
-            BrowserType browserType = playwright.chromium(); // Support for other browsers can be added
-            Browser browser = browserType.connect(wsEndpoint);
-            LOGGER.info("Connected to browser in Playwright Server via WebSocket: {}", wsEndpoint);
-            return browser;
+        int maxAttempts = 5;
+        int delayMs = 1000;
+        Exception lastException = null;
 
-        } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            if (errorMessage != null && errorMessage.contains("ECONNREFUSED") && errorMessage.contains("::1")) {
-                LOGGER.error("IPv6/IPv4 connectivity issue detected. The system is trying to connect via IPv6 (::1) " +
-                        "but Docker port mapping is only available on IPv4 (127.0.0.1). " +
-                        "Solution: Add JVM parameter -Djava.net.preferIPv4Stack=true to Maven command or .mvn/jvm.config");
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                Browser browser = browserType.connect(wsEndpoint);
+                LOGGER.info("Connected to Playwright Server via WebSocket on attempt {}: {}", attempt, wsEndpoint);
+                return browser;
+            } catch (Exception e) {
+                lastException = e;
+                LOGGER.warn("WebSocket connection attempt {}/{} failed: {}. Retrying in {}ms...",
+                        attempt, maxAttempts, e.getMessage(), delayMs);
+                if (attempt < maxAttempts) {
+                    WaitUtil.sleep(delayMs, "Waiting for Playwright Server to be ready");
+                }
             }
-            LOGGER.error("Failed to connect to Playwright Server browser: {}", e.getMessage(), e);
-            throw new RuntimeException("Playwright Server browser connection failed", e);
         }
+
+        if (lastException != null && lastException.getMessage() != null
+                && lastException.getMessage().contains("ECONNREFUSED")
+                && lastException.getMessage().contains("::1")) {
+            LOGGER.error("IPv6/IPv4 connectivity issue detected. Add -Djava.net.preferIPv4Stack=true to JVM args.");
+        }
+        LOGGER.error("Failed to connect to Playwright Server after {} attempts", maxAttempts);
+        throw new RuntimeException("Playwright Server browser connection failed", lastException);
     }
 
     // Create browser context with container-specific settings including video recording
