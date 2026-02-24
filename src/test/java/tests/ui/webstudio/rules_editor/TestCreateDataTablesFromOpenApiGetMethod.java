@@ -66,6 +66,7 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
 
         // Verify Spreadsheet items: non-data tables generated from API methods
         editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
+        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Spreadsheet");
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isItemExistsInFolder("Spreadsheet", "MyNotDataTable1"))
                 .as("MyNotDataTable1 should be present in Spreadsheet folder")
                 .isTrue();
@@ -77,6 +78,7 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Data"))
                 .as("Data folder should be present for tables generated from GET methods")
                 .isTrue();
+        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Data");
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isItemExistsInFolder("Data", "MyDatatypeData"))
                 .as("MyDatatypeData table should be present in Data folder")
                 .isTrue();
@@ -92,7 +94,6 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
 
         // Verify MyDatatypeData table is editable
         editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Data")
                 .selectItemInFolder("Data", "MyDatatypeData");
 
         TableComponent table = editorPage.getCenterTable();
