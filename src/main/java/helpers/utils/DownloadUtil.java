@@ -39,8 +39,9 @@ public class DownloadUtil {
     
     private static File downloadFileLocal(Locator trigger, int timeoutMs) {
         Page page = LocalDriverPool.getPage();
-        
-        Download download = page.waitForDownload(trigger::click);
+
+        Download download = page.waitForDownload(
+                new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);
         
         LOGGER.info("Download started: {}", download.suggestedFilename());
         
@@ -74,9 +75,8 @@ public class DownloadUtil {
         Page page = DockerDriverPool.getPage();
 
         try {
-            Download download = page.waitForDownload(() -> {
-                trigger.click();
-            });
+            Download download = page.waitForDownload(
+                    new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);
 
             LOGGER.info("Download started in container: {}", download.suggestedFilename());
 
