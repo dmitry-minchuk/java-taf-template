@@ -32,6 +32,7 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
     public LeftRepositoryTreeComponent selectItemInFolder(String folderName, String itemName) {
         RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.selectItem(itemName);
+        WaitUtil.sleep(500, "Waiter for selected item details to load");
         return this;
     }
 
