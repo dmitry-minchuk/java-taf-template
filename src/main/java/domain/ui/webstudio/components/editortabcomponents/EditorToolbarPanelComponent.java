@@ -24,6 +24,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement syncBtn;
     @Getter
     private WebElement breadcrumbsAllProjects;
+    private WebElement breadcrumbsProjectToggle;
     private WebElement breadcrumbsModuleBranch;
     private WebElement breadcrumbsDropdownItemTemplate;
     // Run Tests Menu elements
@@ -84,6 +85,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
         syncBtn = new WebElement(page, "xpath=//div//a[text()='Sync']", "syncBtn");
         breadcrumbsAllProjects = new WebElement(page, "//div[@class='breadcrumbs']/a[@href='/']", "breadcrumbsAllProjects");
+        breadcrumbsProjectToggle = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-project']/a", "breadcrumbsProjectToggle");
         breadcrumbsModuleBranch = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-module']/a[starts-with(@title, 'Branch:')]", "breadcrumbsModuleBranch");
         breadcrumbsDropdownItemTemplate = new WebElement(page, "xpath=//span[@class='dropdown open']/ul[contains(@class, 'dropdown-menu')]//li//a[contains(text(), '%s')]", "breadcrumbsDropdownItemTemplate");
         // Run Tests Menu elements initialization
@@ -155,6 +157,13 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public String getSyncButtonTitle() {
         return syncBtn.getAttribute("title");
+    }
+
+    public void navigateToProjectRoot(String projectName) {
+        breadcrumbsProjectToggle.click();
+        WaitUtil.sleep(250, "Waiting for project dropdown to open");
+        breadcrumbsDropdownItemTemplate.format(projectName).click();
+        WaitUtil.sleep(500, "Waiting for project view to load");
     }
 
     public void switchBranch(String branchName) {

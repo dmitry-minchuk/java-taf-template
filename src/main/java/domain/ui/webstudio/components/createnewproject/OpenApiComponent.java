@@ -38,9 +38,9 @@ public class OpenApiComponent extends BaseComponent {
         fileInputField = createScopedElement("xpath=.//div[contains(@id,'openAPIProjectForm:file')]//input[@type='file']", "fileInputField");
         projectNameField = createScopedElement("xpath=.//input[@id='openAPIProjectForm:projectName']", "projectNameField");
         dataModuleNameField = createScopedElement("xpath=.//input[@id='openAPIProjectForm:modelsModuleName']", "dataModuleNameField");
-        dataModulePathDisplay = createScopedElement("xpath=.//a[@id='openAPIProjectForm:modelsFileDisplayPath']", "dataModulePathDisplay");
+        dataModulePathDisplay = createScopedElement("xpath=.//span[@id='openAPIProjectForm:modelsFileDisplayPath']", "dataModulePathDisplay");
         rulesModuleNameField = createScopedElement("xpath=.//input[@id='openAPIProjectForm:algorithmsModuleName']", "rulesModuleNameField");
-        rulesModulePathDisplay = createScopedElement("xpath=.//a[@id='openAPIProjectForm:algorithmsFileDisplayPath']", "rulesModulePathDisplay");
+        rulesModulePathDisplay = createScopedElement("xpath=.//span[@id='openAPIProjectForm:algorithmsFileDisplayPath']", "rulesModulePathDisplay");
         editDataPathLink = createScopedElement("xpath=.//a[@id='openAPIProjectForm:editDataPath']", "editDataPathLink");
         dataModulePathInput = createScopedElement("xpath=.//input[@id='openAPIProjectForm:modelsFilePath']", "dataModulePathInput");
         editRulesPathLink = createScopedElement("xpath=.//a[@id='openAPIProjectForm:editAlgoPath']", "editRulesPathLink");
@@ -103,7 +103,7 @@ public class OpenApiComponent extends BaseComponent {
     }
 
     public String getDataModulePathInputValue() {
-        return dataModulePathInput.getAttribute("value");
+        return dataModulePathInput.getCurrentInputValue();
     }
 
     public void clickEditRulesPath() {

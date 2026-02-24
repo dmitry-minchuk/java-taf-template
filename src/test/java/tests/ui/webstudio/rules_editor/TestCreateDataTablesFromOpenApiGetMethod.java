@@ -8,6 +8,7 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -64,6 +65,7 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms");
 
         // Verify Spreadsheet items: non-data tables generated from API methods
+        editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isItemExistsInFolder("Spreadsheet", "MyNotDataTable1"))
                 .as("MyNotDataTable1 should be present in Spreadsheet folder")
                 .isTrue();

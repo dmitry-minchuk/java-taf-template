@@ -7,6 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -35,7 +36,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30678")
-    @Description("Verify default values in the Create Project from OpenAPI form")
+    @Description("Verify default values in the Create Project from OpenAPI form: empty name fields, pre-filled path defaults")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromOpenApiDefaultFormValues() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
@@ -52,14 +53,14 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
                 .as("Project name should be empty by default")
                 .isEmpty();
         assertThat(openApiComponent.getDataModuleName())
-                .as("Data module name should default to 'Models'")
-                .isEqualTo("Models");
+                .as("Data module name should be empty by default")
+                .isEmpty();
         assertThat(openApiComponent.getDataModulePathDisplay())
                 .as("Data module path should default to 'rules/Models.xlsx'")
                 .isEqualTo("rules/Models.xlsx");
         assertThat(openApiComponent.getRulesModuleName())
-                .as("Rules module name should default to 'Algorithms'")
-                .isEqualTo("Algorithms");
+                .as("Rules module name should be empty by default")
+                .isEmpty();
         assertThat(openApiComponent.getRulesModulePathDisplay())
                 .as("Rules module path should default to 'rules/Algorithms.xlsx'")
                 .isEqualTo("rules/Algorithms.xlsx");
@@ -124,6 +125,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
 
         // Verify Algorithms module folder types
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms");
+        editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Spreadsheet"))
                 .as("Algorithms module should have Spreadsheet folder")
                 .isTrue();
@@ -136,7 +138,9 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getProblemsPanelComponent().checkNoProblems();
 
         // Verify Models module folder types
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Models");
+        editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Datatype"))
                 .as("Models module should have Datatype folder")
                 .isTrue();
@@ -237,6 +241,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
 
         // Verify Spreadsheets module folder types
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Spreadsheets");
+        editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Spreadsheet"))
                 .as("Spreadsheets module should have Spreadsheet folder")
                 .isTrue();
@@ -246,7 +251,9 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getProblemsPanelComponent().checkNoProblems();
 
         // Verify Data_Types module folder types
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Data_Types");
+        editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Datatype"))
                 .as("Data_Types module should have Datatype folder")
                 .isTrue();
@@ -275,8 +282,9 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         openApiComponent.setProjectName("bla_" + System.currentTimeMillis());
         openApiComponent.setRulesModuleName("Models");
         openApiComponent.clickCreate();
+        repositoryPage.fillCommitInfo();
 
-        assertThat(openApiComponent.getErrorMessage())
+        assertThat(repositoryPage.getInlineMessage())
                 .as("Error should appear when module names are the same")
                 .contains("Module names cannot be the same");
 
@@ -287,14 +295,12 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         openApiComponent.uploadOpenApiFile(JSON_FILE);
         openApiComponent.setProjectName("bla2_" + System.currentTimeMillis());
         openApiComponent.clickEditDataPath();
-        openApiComponent.setDataModulePath("rules/Models.xlsx");
+        openApiComponent.setDataModulePath("rules/Algorithms.xlsx");
         openApiComponent.clickCreate();
 
-        assertThat(openApiComponent.getErrorMessage())
+        assertThat(repositoryPage.getInlineMessage())
                 .as("Error should appear when module paths are the same")
                 .contains("Path for Modules cannot be the same");
-
-        repositoryPage.getCreateNewProjectComponent().closeDialog();
     }
 
     @Test
@@ -313,12 +319,11 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         // Create project from .yml file
         repositoryPage.createProjectFromOpenApi(YML_FILE, projectName);
 
-        // Expand tree and delete openapi.yml
+        // Expand tree and delete openapi.yml (file lives at project root, not inside rules/)
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .expandFolderInTree(projectName)
-                .expandFolderInTree("rules")
-                .selectItemInFolder("rules", "openapi.yml");
+                .selectItemInFolder(projectName, "openapi.yml");
 
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();

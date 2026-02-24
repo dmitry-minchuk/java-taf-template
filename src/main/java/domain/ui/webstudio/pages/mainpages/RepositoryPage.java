@@ -56,6 +56,7 @@ public class RepositoryPage extends BasePage {
     private WebElement confirmOpeningDialogShade;
     private WebElement messagePopupText;
     private WebElement messagePopupOkBtn;
+    private WebElement inlineMessage;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private ResolveConflictsDialogComponent resolveConflictsDialogComponent;
@@ -107,8 +108,9 @@ public class RepositoryPage extends BasePage {
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
-        messagePopupText = new WebElement(page, "xpath=//div[@id='messagePopup_container']//span[contains(@class,'rf-msgs-sum')]", "messagePopupText");
+        messagePopupText = new WebElement(page, "xpath=//div[@id='messagePopup_container']//span[@id='messagePopupText']", "messagePopupText");
         messagePopupOkBtn = new WebElement(page, "xpath=//div[@id='messagePopup_container']//input[@value='OK']", "messagePopupOkBtn");
+        inlineMessage = new WebElement(page, "xpath=//div[@id='top']//div[@class='messages']", "inlineMessage");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -129,6 +131,12 @@ public class RepositoryPage extends BasePage {
             case TEMPLATE:
                 TemplateTabComponent templateComponent = createNewProjectComponent.selectTab(projectType);
                 templateComponent.createProjectFromTemplate(projectName, sourceName);
+                break;
+            case OPEN_API:
+                OpenApiComponent openApiComponent = createNewProjectComponent.selectTab(projectType);
+                openApiComponent.uploadOpenApiFile(sourceName);
+                openApiComponent.setProjectName(projectName);
+                openApiComponent.clickCreate();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported project type: " + projectType);
@@ -322,14 +330,20 @@ public class RepositoryPage extends BasePage {
     }
 
     public void createProjectFromOpenApi(String fileName, String projectName) {
+        createProjectFromOpenApi(fileName, projectName, true);
+    }
+
+    public void createProjectFromOpenApi(String fileName, String projectName, boolean finalize) {
         createProjectLink.click();
         OpenApiComponent openApiComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiFile(fileName);
         openApiComponent.setProjectName(projectName);
         openApiComponent.clickCreate();
-        fillCommitInfo();
-        waitUntilSpinnerLoaded();
-        refreshBtn.click(DEFAULT_TIMEOUT_MS);
+        if (finalize) {
+            fillCommitInfo();
+            waitUntilSpinnerLoaded();
+            refreshBtn.click(DEFAULT_TIMEOUT_MS);
+        }
     }
 
     public String getMessagePopupText() {
@@ -339,5 +353,10 @@ public class RepositoryPage extends BasePage {
 
     public void closeMessagePopup() {
         messagePopupOkBtn.click();
+    }
+
+    public String getInlineMessage() {
+        inlineMessage.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return inlineMessage.getText().trim();
     }
 }

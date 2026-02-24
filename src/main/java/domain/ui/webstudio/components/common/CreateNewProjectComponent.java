@@ -38,7 +38,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         templateTabComponent = createScopedComponent(TemplateTabComponent.class, "xpath=.//form[@name='createProjectFormTempl']", "templateTabComponent");
         workspaceTabComponent = createScopedComponent(WorkspaceComponent.class, "xpath=.//form[@name='uploadWorkspaceProjectForm']", "workspaceTabComponent");
         openApiComponent = createScopedComponent(OpenApiComponent.class, "xpath=.//form[@name='openAPIProjectForm']", "openApiComponent");
-        closeDialogBtn = createScopedElement("xpath=.//a[contains(@class,'rf-pp-hdr-cls')]", "closeDialogBtn");
+        closeDialogBtn = createScopedElement("xpath=.//img[@class='close']", "closeDialogBtn");
     }
 
     @SuppressWarnings("unchecked")

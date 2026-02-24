@@ -145,6 +145,12 @@ public class WebElement {
         LOGGER.info("Getting attribute '{}' from {}: '{}'", name, elementName, value);
         return value;
     }
+
+    public String getCurrentInputValue() {
+        String value = locator.inputValue();
+        LOGGER.info("Getting current input value from {}: '{}'", elementName, value);
+        return value;
+    }
     
     // Visibility and State Checks
     
