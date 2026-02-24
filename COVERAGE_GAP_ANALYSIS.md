@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-02-23
+> Updated: 2026-02-24
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,9 +9,9 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | ~68 test classes |
+| Migrated to new framework | ~70 test classes |
 | ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~38% of legacy** |
+| **New framework overall coverage** | **~40% of legacy** |
 
 ---
 
@@ -25,7 +25,7 @@
 | **C2** | ~~TestRepositoryExportAndRevisions~~ → **`TestExportProjectFunctionality`** ✅ DONE | TestExportProjectFunctionality | Export project/file (2.2.29), Opening project revision via Revisions tab (2.2.11), Revision selection, Multi-user export | ✅ `rules_editor.xml` |
 | **C3** | **`TestOpenApiImportAndReconciliation`** ✅ DONE | TestOpenApiImport + TestOpenApiImportLocalChanges | ✅ Reconciliation mode (2.8.4), ✅ Tables Generation mode (2.8.2), ✅ Module settings warning dialog (2.8.6), ✅ Same module names validation (2.8.6) | ✅ `rules_editor.xml` |
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
-| **C5** | TestCreateProjectFromOpenApi | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | Create project from OpenAPI (2.8.1), Create Data tables from GET methods (2.8.3) | 🔴 HIGH |
+| **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
 | **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
 | **C7** | TestProjectCompilationAndModuleMode | TestProjectCompilation + TestCompileThisModuleOnly | Project compilation main scenarios (2.11.2), Progress bar behavior (2.11.1), Run/Trace/Test in opened module (2.11.3), Duplicate tables errors (2.11.6), Breadcrumb navigation (2.11.7) | 🔴 HIGH |
 | **C8** | TestCompareExcelFilesAndChanges | TestCompareExcelFiles + TestDisplayChangedRows | Compare Excel files (2.1.55), Display Changed Rows Only (EPBDS-10790), Identical files info message (EPBDS-10162), Comparing project revisions (2.2.28) | 🟡 MEDIUM |
@@ -40,14 +40,14 @@
 
 ## 🔴 CRITICAL GAPS (0–10% coverage)
 
-### 1. OpenAPI (2.8) — ~85%
-**Legacy tests:** 7 | **New framework:** C3 + C4 done, only C5 remaining
+### 1. OpenAPI (2.8) — ~100%
+**Legacy tests:** 7 | **New framework:** C3 + C4 + C5 done ✅
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
-| Create Project from OpenAPI | EPBDS-10846, IPBQA-30678 | TestCreateProjectFromOpenApiFile | → **C5** (pending) |
+| Create Project from OpenAPI | EPBDS-10846, IPBQA-30678 | TestCreateProjectFromOpenApiFile | ✅ **C5** |
 | Import OpenAPI file for scaffolding in existing project | EPBDS-10812, IPBQA-31035 | TestOpenApiImport | ✅ **C3** |
-| Create Data tables from OpenAPI GET methods | EPBDS-10770, IPBQA-31073 | TestCreateDataTablesFromOpenApiGetMethod | → **C5** (pending) |
+| Create Data tables from OpenAPI GET methods | EPBDS-10770, IPBQA-31073 | TestCreateDataTablesFromOpenApiGetMethod | ✅ **C5** |
 | OpenAPI reconciliation feature | IPBQA-30902 | OpenApiReconciliationFeature | ✅ **C4** |
 | OpenAPI reconciliation with multiple merged files | EPBDS-10620, IPBQA-30970 | TestOpenApiReconciliationWithMultipleMergedFiles | ✅ **C4** |
 | OpenAPI file operations | EPBDS-10543, IPBQA-30922 | — | ✅ **C3** (partial) |

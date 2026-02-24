@@ -137,6 +137,17 @@ public class EditorPage extends BasePage {
         return openApiPropertyValueTemplate.format(propertyName).getText().trim();
     }
 
+    public boolean isOpenApiPropertiesSectionEmpty() {
+        if (!openApiSectionHeader.isVisible(2000)) {
+            return true;
+        }
+        WebElement propsTable = new WebElement(page, "xpath=//div[@class='block editable']//table[@class='properties']", "openApiPropsTable");
+        if (!propsTable.isVisible(1000)) {
+            return true;
+        }
+        return propsTable.getLocator().locator("xpath=.//tr").count() == 0;
+    }
+
     public ManageDependenciesDialogComponent openManageDependenciesDialog() {
         if (addDependenciesLink.isVisible(2000)) {
             addDependenciesLink.click();

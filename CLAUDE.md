@@ -108,3 +108,17 @@ mvn clean test -Dtest=TestAddProperty#testPlaywrightAddProperty -Dexecution.mode
 # Run multiple test classes
 mvn clean test -Dtest=TestAdminEmail,TestPlaywrightAddProperty -Dexecution.mode=PLAYWRIGHT_LOCAL
 ```
+
+## Migration Progress Log
+
+### C1 ✅ TestRepositoryBrowsingFilterStatus — done
+### C2 ✅ TestExportProjectFunctionality — done
+### C3 ✅ TestOpenApiImportAndReconciliation — done
+### C4 ✅ TestOpenApiReconciliationEdgeCases — done
+### C5 ✅ TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod — done (2026-02-24)
+- Rewrote OpenApiComponent with file-upload locators (replaces wrong URL-based version)
+- Added OpenApiComponent to CreateNewProjectComponent.selectTab(OPEN_API)
+- Added createProjectFromOpenApi(), getMessagePopupText(), closeMessagePopup() to RepositoryPage
+- Added isOpenApiPropertiesSectionEmpty() to EditorPage
+- Test data: TestCreateProjectFromOpenApiFile/, TestCreateDataTablesFromOpenApiGetMethod/ in test_data/
+- 4 test methods in TestCreateProjectFromOpenApiFile + 2 in TestCreateDataTablesFromOpenApiGetMethod

@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.*;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
+import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
@@ -53,6 +54,8 @@ public class RepositoryPage extends BasePage {
     private CompareDialogComponent compareDialogComponent;
     private WebElement confirmOpeningDialogBtn;
     private WebElement confirmOpeningDialogShade;
+    private WebElement messagePopupText;
+    private WebElement messagePopupOkBtn;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private ResolveConflictsDialogComponent resolveConflictsDialogComponent;
@@ -104,6 +107,8 @@ public class RepositoryPage extends BasePage {
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
+        messagePopupText = new WebElement(page, "xpath=//div[@id='messagePopup_container']//span[contains(@class,'rf-msgs-sum')]", "messagePopupText");
+        messagePopupOkBtn = new WebElement(page, "xpath=//div[@id='messagePopup_container']//input[@value='OK']", "messagePopupOkBtn");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -314,5 +319,25 @@ public class RepositoryPage extends BasePage {
             }
         }
         return -1;
+    }
+
+    public void createProjectFromOpenApi(String fileName, String projectName) {
+        createProjectLink.click();
+        OpenApiComponent openApiComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiFile(fileName);
+        openApiComponent.setProjectName(projectName);
+        openApiComponent.clickCreate();
+        fillCommitInfo();
+        waitUntilSpinnerLoaded();
+        refreshBtn.click(DEFAULT_TIMEOUT_MS);
+    }
+
+    public String getMessagePopupText() {
+        messagePopupText.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return messagePopupText.getText();
+    }
+
+    public void closeMessagePopup() {
+        messagePopupOkBtn.click();
     }
 }

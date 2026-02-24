@@ -1,0 +1,832 @@
+openapi: 3.0.1
+info:
+  title: null_null
+  version: 1.0.0
+servers:
+  - url: /webservice-all/REST/null/null
+    variables: {}
+paths:
+  /AssetsCompare:
+    post:
+      summary: AssetsCompare AssetsCompare(IRulesRuntimeContext)
+      description: "Method: org.openl.generated.spreadsheetresults.AssetsCompare AssetsCompare(org.openl.rules.context.IRulesRuntimeContext)"
+      operationId: AssetsCompare
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefaultRulesRuntimeContext'
+      responses:
+        "422":
+          description: Custom user errors in rules or validation errors in input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Some message
+                type: USER_ERROR
+        "400":
+          description: "Invalid request format e.g. missing required field, unparseable\
+            \ JSON value, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Cannot parse 'bar' to JSON
+                type: BAD_REQUEST
+        "500":
+          description: "Internal server errors e.g. compilation or parsing errors,\
+            \ runtime exceptions, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Failed to load lazy method.
+                type: COMPILATION
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetsCompare'
+  /LossFreeDiscount:
+    post:
+      summary: "Double LossFreeDiscount(IRulesRuntimeContext, Double)"
+      description: "Method: java.lang.Double LossFreeDiscount(org.openl.rules.context.IRulesRuntimeContext,\
+        \ java.lang.Double)"
+      operationId: LossFreeDiscount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LossFreeDiscountRequest'
+      responses:
+        "422":
+          description: Custom user errors in rules or validation errors in input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Some message
+                type: USER_ERROR
+        "400":
+          description: "Invalid request format e.g. missing required field, unparseable\
+            \ JSON value, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Cannot parse 'bar' to JSON
+                type: BAD_REQUEST
+        "500":
+          description: "Internal server errors e.g. compilation or parsing errors,\
+            \ runtime exceptions, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Failed to load lazy method.
+                type: COMPILATION
+        "200":
+          content:
+            text/plain;charset=UTF-8:
+              schema:
+                type: number
+                format: double
+  /IncomeForecast:
+    post:
+      summary: "IncomeForecast IncomeForecast(IRulesRuntimeContext, Double, Double)"
+      description: "Method: org.openl.generated.spreadsheetresults.IncomeForecast\
+        \ IncomeForecast(org.openl.rules.context.IRulesRuntimeContext, java.lang.Double,\
+        \ java.lang.Double)"
+      operationId: IncomeForecast
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeForecastRequest'
+      responses:
+        "422":
+          description: Custom user errors in rules or validation errors in input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Some message
+                type: USER_ERROR
+        "400":
+          description: "Invalid request format e.g. missing required field, unparseable\
+            \ JSON value, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Cannot parse 'bar' to JSON
+                type: BAD_REQUEST
+        "500":
+          description: "Internal server errors e.g. compilation or parsing errors,\
+            \ runtime exceptions, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Failed to load lazy method.
+                type: COMPILATION
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeForecast'
+  /getLossData:
+    post:
+      summary: "Loss[] getLossData(IRulesRuntimeContext)"
+      description: "Method: org.openl.generated.beans.Loss[] getLossData(org.openl.rules.context.IRulesRuntimeContext)"
+      operationId: getLossData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefaultRulesRuntimeContext'
+      responses:
+        "422":
+          description: Custom user errors in rules or validation errors in input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Some message
+                type: USER_ERROR
+        "400":
+          description: "Invalid request format e.g. missing required field, unparseable\
+            \ JSON value, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Cannot parse 'bar' to JSON
+                type: BAD_REQUEST
+        "500":
+          description: "Internal server errors e.g. compilation or parsing errors,\
+            \ runtime exceptions, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Failed to load lazy method.
+                type: COMPILATION
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loss'
+  /TotalAssets:
+    post:
+      summary: TotalAssets TotalAssets(IRulesRuntimeContext)
+      description: "Method: org.openl.generated.spreadsheetresults.TotalAssets TotalAssets(org.openl.rules.context.IRulesRuntimeContext)"
+      operationId: TotalAssets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefaultRulesRuntimeContext'
+      responses:
+        "422":
+          description: Custom user errors in rules or validation errors in input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Some message
+                type: USER_ERROR
+        "400":
+          description: "Invalid request format e.g. missing required field, unparseable\
+            \ JSON value, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Cannot parse 'bar' to JSON
+                type: BAD_REQUEST
+        "500":
+          description: "Internal server errors e.g. compilation or parsing errors,\
+            \ runtime exceptions, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Failed to load lazy method.
+                type: COMPILATION
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalAssets'
+  /LossFreeDiscountCalc:
+    post:
+      summary: "Double LossFreeDiscountCalc(IRulesRuntimeContext, Loss[], Date)"
+      description: "Method: java.lang.Double LossFreeDiscountCalc(org.openl.rules.context.IRulesRuntimeContext,\
+        \ org.openl.generated.beans.Loss[], java.util.Date)"
+      operationId: LossFreeDiscountCalc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LossFreeDiscountCalcRequest'
+      responses:
+        "422":
+          description: Custom user errors in rules or validation errors in input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Some message
+                type: USER_ERROR
+        "400":
+          description: "Invalid request format e.g. missing required field, unparseable\
+            \ JSON value, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Cannot parse 'bar' to JSON
+                type: BAD_REQUEST
+        "500":
+          description: "Internal server errors e.g. compilation or parsing errors,\
+            \ runtime exceptions, etc."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JAXRSErrorResponse'
+              example:
+                message: Failed to load lazy method.
+                type: COMPILATION
+        "200":
+          content:
+            text/plain;charset=UTF-8:
+              schema:
+                type: number
+                format: double
+components:
+  schemas:
+    JAXRSErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+          enum:
+            - USER_ERROR
+            - RULES_RUNTIME
+            - COMPILATION
+            - SYSTEM
+            - BAD_REQUEST
+            - VALIDATION
+        details:
+          type: array
+          items:
+            type: string
+    AssetsCompare:
+      type: object
+      properties:
+        AssetsCalc2012:
+          $ref: '#/components/schemas/TotalAssets'
+        TotalAssets2012:
+          type: integer
+          format: int64
+        TotalAssets2011:
+          type: number
+          format: double
+        Change_in_:
+          type: number
+          format: double
+      xml:
+        name: AssetsCompare
+        namespace: http://spreadsheetresults.generated.openl.org
+    TotalAssets:
+      type: object
+      properties:
+        Exchange_Rate_USD:
+          type: number
+          format: double
+        Amount_USD:
+          type: number
+          format: double
+        USDValue_USD:
+          type: integer
+          format: int64
+        Exchange_Rate_EUR:
+          type: number
+          format: double
+        Amount_EUR:
+          type: number
+          format: double
+        USDValue_EUR:
+          type: integer
+          format: int64
+        Exchange_Rate_GBP:
+          type: number
+          format: double
+        Amount_GBP:
+          type: number
+          format: double
+        USDValue_GBP:
+          type: integer
+          format: int64
+        Exchange_Rate_JPY:
+          type: number
+          format: double
+        Amount_JPY:
+          type: number
+          format: double
+        USDValue_JPY:
+          type: integer
+          format: int64
+        Exchange_Rate_GLD:
+          type: number
+          format: double
+        Amount_GLD:
+          type: number
+          format: double
+        USDValue_GLD:
+          type: integer
+          format: int64
+        USDValue_Total:
+          type: integer
+          format: int64
+      xml:
+        name: TotalAssets
+        namespace: http://spreadsheetresults.generated.openl.org
+    DefaultRulesRuntimeContext:
+      type: object
+      properties:
+        currentDate:
+          type: string
+          format: date-time
+        requestDate:
+          type: string
+          format: date-time
+        lob:
+          type: string
+        nature:
+          type: string
+        usState:
+          type: string
+          enum:
+            - AL
+            - AK
+            - AZ
+            - AR
+            - CA
+            - CO
+            - CT
+            - DC
+            - DE
+            - FL
+            - GA
+            - HI
+            - ID
+            - IL
+            - IN
+            - IA
+            - KS
+            - KY
+            - LA
+            - ME
+            - MD
+            - MA
+            - MI
+            - MN
+            - MS
+            - MO
+            - MT
+            - NE
+            - NV
+            - NH
+            - NJ
+            - NM
+            - NY
+            - NC
+            - ND
+            - OH
+            - OK
+            - OR
+            - PA
+            - PR
+            - RI
+            - SC
+            - SD
+            - TN
+            - TX
+            - UT
+            - VT
+            - VA
+            - WA
+            - WV
+            - WI
+            - WY
+        country:
+          type: string
+          enum:
+            - AL
+            - DZ
+            - AR
+            - AU
+            - AT
+            - BH
+            - BY
+            - BE
+            - BO
+            - BA
+            - BR
+            - BG
+            - CA
+            - CL
+            - CN
+            - CO
+            - CR
+            - HR
+            - CY
+            - CZ
+            - DK
+            - DO
+            - EC
+            - EG
+            - SV
+            - EE
+            - FI
+            - FR
+            - DE
+            - GR
+            - GT
+            - HN
+            - HK
+            - HU
+            - IS
+            - IN
+            - ID
+            - IQ
+            - IE
+            - IL
+            - IT
+            - JP
+            - JO
+            - KW
+            - LV
+            - LB
+            - LT
+            - LU
+            - MK
+            - MY
+            - MT
+            - MX
+            - MA
+            - NL
+            - NZ
+            - NI
+            - "NO"
+            - OM
+            - PA
+            - PY
+            - PE
+            - PH
+            - PL
+            - PT
+            - PR
+            - QA
+            - RO
+            - RU
+            - SA
+            - CS
+            - SG
+            - SK
+            - SI
+            - ZA
+            - ES
+            - SD
+            - SE
+            - CH
+            - SY
+            - TW
+            - TH
+            - TN
+            - TR
+            - UA
+            - AE
+            - GB
+            - US
+            - UY
+            - VE
+            - VN
+            - YE
+        usRegion:
+          type: string
+          enum:
+            - MW
+            - NE
+            - SE
+            - SW
+            - W
+        currency:
+          type: string
+          enum:
+            - ALL
+            - DZD
+            - ARS
+            - AUD
+            - BHD
+            - BYR
+            - BOB
+            - BAM
+            - BRL
+            - CAD
+            - CLP
+            - CNY
+            - COP
+            - CRC
+            - HRK
+            - CZK
+            - DKK
+            - DOP
+            - EGP
+            - EUR
+            - GTQ
+            - HNL
+            - HKD
+            - HUF
+            - ISK
+            - INR
+            - IDR
+            - IQD
+            - ILS
+            - JPY
+            - JOD
+            - KWD
+            - LVL
+            - LBP
+            - LTL
+            - MKD
+            - MYR
+            - MXN
+            - MAD
+            - NZD
+            - NIO
+            - NOK
+            - OMR
+            - PAB
+            - PYG
+            - PEN
+            - PHP
+            - PLN
+            - QAR
+            - RON
+            - RUB
+            - SAR
+            - RSD
+            - SGD
+            - ZAR
+            - SDG
+            - SEK
+            - CHF
+            - SYP
+            - TWD
+            - TND
+            - TRY
+            - UAH
+            - AED
+            - GBP
+            - USD
+            - UYU
+            - VEF
+            - VND
+            - YER
+        lang:
+          type: string
+          enum:
+            - ALB
+            - ARA
+            - BEL
+            - BUL
+            - CAT
+            - CHI
+            - SCR
+            - CZE
+            - DAN
+            - DUT
+            - ENG
+            - FIN
+            - FRE
+            - GER
+            - GRE
+            - HEB
+            - HIN
+            - HUN
+            - IND
+            - GLE
+            - ITA
+            - JPN
+            - LAV
+            - LIT
+            - MAC
+            - MAY
+            - MLT
+            - NOR
+            - POL
+            - POR
+            - RUM
+            - RUS
+            - SCC
+            - SLO
+            - SPA
+            - THA
+            - TUR
+            - UKR
+            - VIE
+        region:
+          type: string
+          enum:
+            - NCSA
+            - EU
+            - EMEA
+            - APJ
+        caProvince:
+          type: string
+          enum:
+            - AB
+            - BC
+            - PE
+            - MB
+            - NB
+            - NS
+            - NU
+            - "ON"
+            - QC
+            - SK
+            - NL
+            - YT
+            - NT
+        caRegion:
+          type: string
+          enum:
+            - QC
+            - HQ
+        locale:
+          type: string
+    LossFreeDiscountRequest:
+      type: object
+      properties:
+        runtimeContext:
+          $ref: '#/components/schemas/DefaultRulesRuntimeContext'
+        liabLosses:
+          type: number
+          format: double
+      xml:
+        name: LossFreeDiscountRequest
+        namespace: http://jaxrs.openl.org
+    IncomeForecast:
+      type: object
+      properties:
+        Year1_Salary:
+          type: number
+          format: double
+        Year2_Salary:
+          type: integer
+          format: int64
+        Year3_Salary:
+          type: integer
+          format: int64
+        TotalAmount_Salary:
+          type: number
+          format: double
+        Year1_Shares:
+          type: number
+          format: double
+        Year2_Shares:
+          type: number
+          format: double
+        Year3_Shares:
+          type: number
+          format: double
+        TotalAmount_Shares:
+          type: number
+          format: double
+        Year1_Bonus:
+          type: number
+          format: double
+        Year2_Bonus:
+          type: number
+          format: double
+        Year3_Bonus:
+          type: number
+          format: double
+        TotalAmount_Bonus:
+          type: number
+          format: double
+        Year1_bonusRate:
+          type: number
+          format: double
+        Year2_bonusRate:
+          type: number
+          format: double
+        Year3_bonusRate:
+          type: number
+          format: double
+        Year1_sharePrice:
+          type: number
+          format: double
+        Year2_sharePrice:
+          type: number
+          format: double
+        Year3_sharePrice:
+          type: number
+          format: double
+        Year1_MinSalary:
+          type: number
+          format: double
+        Year2_MinSalary:
+          type: integer
+          format: int64
+        Year3_MinSalary:
+          type: integer
+          format: int64
+        TotalAmount_MinSalary:
+          type: number
+          format: double
+        Year1_MaxSalary:
+          type: number
+          format: double
+        Year2_MaxSalary:
+          type: number
+          format: double
+        Year3_MaxSalary:
+          type: number
+          format: double
+        TotalAmount_MaxSalary:
+          type: number
+          format: double
+      xml:
+        name: IncomeForecast
+        namespace: http://spreadsheetresults.generated.openl.org
+    IncomeForecastRequest:
+      type: object
+      properties:
+        runtimeContext:
+          $ref: '#/components/schemas/DefaultRulesRuntimeContext'
+        bonusRate:
+          type: number
+          format: double
+        sharePrice:
+          type: number
+          format: double
+      xml:
+        name: IncomeForecastRequest
+        namespace: http://jaxrs.openl.org
+    Loss:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        amount:
+          type: number
+          format: double
+          default: 0
+        type:
+          type: string
+          default: Other
+      xml:
+        name: Loss
+        namespace: http://beans.generated.openl.org
+    LossFreeDiscountCalcRequest:
+      type: object
+      properties:
+        runtimeContext:
+          $ref: '#/components/schemas/DefaultRulesRuntimeContext'
+        losses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Loss'
+        currentDate:
+          type: string
+          format: date-time
+      xml:
+        name: LossFreeDiscountCalcRequest
+        namespace: http://jaxrs.openl.org

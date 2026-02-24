@@ -18,5 +18,7 @@
     <test name="TestExportProjectFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestExportProjectFunctionality"/></classes></test>
     <test name="TestOpenApiImportAndReconciliation"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiImportAndReconciliation"/></classes></test>
     <test name="TestOpenApiReconciliationEdgeCases"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationEdgeCases"/></classes></test>
+    <test name="TestCreateProjectFromOpenApiFile"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiFile"/></classes></test>
+    <test name="TestCreateDataTablesFromOpenApiGetMethod"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethod"/></classes></test>
 
 </suite>
