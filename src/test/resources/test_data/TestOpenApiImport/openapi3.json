@@ -1,0 +1,81 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "algonly_algonly",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/webservice/REST/algonly/algonly",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/MySpr": {
+      "post": {
+        "summary": "MySpr MySpr(Integer)",
+        "description": "Rules method: SpreadsheetResultMySpr MySpr(java.lang.Integer a)",
+        "operationId": "MySpr",
+        "requestBody": {
+          "content": {
+            "text/plain;charset=UTF-8": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MySpr"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MySpr": {
+        "type": "object",
+        "properties": {
+          "Step1": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Step2": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Step3": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Step4": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Step5": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Step6": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Step7": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  }
+}

@@ -5,12 +5,17 @@ import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
 
     private WebElement contentDiv;
     private WebElement importAndOverrideBtn;
     private WebElement cancelBtn;
     private WebElement errorMsg;
+    private List<WebElement> errorMsgs;
     private WebElement editRulesPathLink;
     private WebElement newRulesPathInput;
     private WebElement resetRulesPathLink;
@@ -31,12 +36,13 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        contentDiv = createScopedElement("xpath=.//div[@id='openAPIModulesSettings_content']", "contentDiv");
+        contentDiv = new WebElement(page,"xpath=//div[@id='openAPIModulesSettings_content']", "contentDiv");
         // These buttons are inside generateOpenAPIForm but may be outside the content div,
         // so they use page-level locators
         importAndOverrideBtn = new WebElement(page, "xpath=//input[@id='generateOpenAPIForm:generateOpenAPIBtn']", "importAndOverrideBtn");
         cancelBtn = new WebElement(page, "xpath=//div[@id='openAPIModulesSettings_content']//input[@value='Cancel']", "cancelBtn");
         errorMsg = new WebElement(page, "xpath=//form[@id='generateOpenAPIForm']//span[@class='error']", "errorMsg");
+        errorMsgs = createElementList("xpath=//form[@id='generateOpenAPIForm']//span[@class='error']", "errorMsgs");
         editRulesPathLink = new WebElement(page, "xpath=//a[@id='editAlgoPath']", "editRulesPathLink");
         newRulesPathInput = new WebElement(page, "xpath=//input[@id='generateOpenAPIForm:newAlgoPath']", "newRulesPathInput");
         resetRulesPathLink = new WebElement(page, "xpath=//a[@id='resetAlgoPath']", "resetRulesPathLink");
@@ -48,7 +54,11 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     }
 
     public String getContentText() {
-        return contentDiv.getText(5000);
+        String raw = contentDiv.getInnerText(5000);
+        return Arrays.stream(raw.split("\n"))
+                .map(line -> line.replaceAll("\\s+", " ").trim())
+                .filter(line -> !line.isEmpty())
+                .collect(Collectors.joining("\n"));
     }
 
     public String getImportButtonText() {
@@ -66,6 +76,13 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
 
     public String getErrorMessage() {
         return errorMsg.getText(3000);
+    }
+
+    public List<String> getErrorMessages() {
+        WaitUtil.waitForListNotEmpty(() -> errorMsgs, 5000, 250, "Waiting for error messages to appear");
+        return errorMsgs.stream()
+                .map(e -> e.getText().trim())
+                .toList();
     }
 
     public void clickEditRulesPath() {

@@ -5,6 +5,8 @@ import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
+import java.util.List;
+
 public class ImportOpenApiDialogComponent extends BaseComponent {
 
     private WebElement openApiFilePathInput;
@@ -19,6 +21,8 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     private WebElement createOrUpdateSchemaBtn;
     private WebElement cancelBtn;
     private WebElement errorMsg;
+    private WebElement anyErrorMsg;
+    private List<WebElement> errorMsgs;
 
     public ImportOpenApiDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -43,6 +47,8 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
         createOrUpdateSchemaBtn = createScopedElement("xpath=.//input[@id='importOpenAPIForm:createOrUpdateOpenAPISchemaBtn']", "createOrUpdateSchemaBtn");
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
         errorMsg = createScopedElement("xpath=.//input[@id='importOpenAPIForm:algorithmModuleName']/following-sibling::span//span[@class='error']", "errorMsg");
+        anyErrorMsg = createScopedElement("xpath=.//span[@class='error']", "anyErrorMsg");
+        errorMsgs = createScopedElementList("xpath=.//span[@class='error']", "errorMsgs");
     }
 
     public void selectUploadInRepository() {
@@ -54,6 +60,7 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     }
 
     public void setOpenApiFilePath(String path) {
+        openApiFilePathInput.clear();
         openApiFilePathInput.fillSequentially(path);
         openApiFilePathInput.press("Tab");
     }
@@ -72,7 +79,7 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     }
 
     public String getRulesModuleName() {
-        return rulesModuleInput.getAttribute("value");
+        return rulesModuleInput.getCurrentInputValue();
     }
 
     public void setDataModuleName(String name) {
@@ -81,10 +88,11 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     }
 
     public String getDataModuleName() {
-        return dataModuleInput.getAttribute("value");
+        return dataModuleInput.getCurrentInputValue();
     }
 
     public void clickImportReconciliation() {
+        importReconciliationBtn.press("Tab");
         importReconciliationBtn.click();
         WaitUtil.sleep(500, "Waiting for reconciliation import to process");
     }
@@ -105,6 +113,21 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
 
     public String getErrorMessage() {
         return errorMsg.getText(3000);
+    }
+
+    public List<String> getErrorMessages() {
+        WaitUtil.waitForListNotEmpty(() -> errorMsgs, 5000, 250, "Waiting for error messages to appear");
+        return errorMsgs.stream()
+                .map(e -> e.getText().trim())
+                .toList();
+    }
+
+    public String getAnyErrorMessage() {
+        return anyErrorMsg.getText(3000);
+    }
+
+    public boolean isReconciliationModeSelected() {
+        return reconciliationRadio.isChecked();
     }
 
     public boolean isVisible() {

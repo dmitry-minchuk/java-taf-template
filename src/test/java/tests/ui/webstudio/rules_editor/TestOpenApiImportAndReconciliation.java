@@ -8,7 +8,9 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.editortabcomponents.ImportOpenApiDialogComponent;
+import domain.ui.webstudio.components.editortabcomponents.OpenApiModuleSettingsDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -17,6 +19,8 @@ import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /*
@@ -24,10 +28,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   2.8.2  - Import OpenAPI for scaffolding in existing project (Tables Generation mode)
  *   2.8.4  - Reconciliation mode import: verify properties after import
  *   2.8.6  - OpenAPI file operations: module names same validation error
+ *   1.1    - Module name retention when switching Reconciliation/Generation modes
+ *   3-3.2  - Tables Generation with overwrite warning for existing modules
+ *   8-8.2  - Dialog default state for non-OpenAPI project + file not found error
+ *   10-10.1- Tables Generation overwrite for existing module (Bank Rating)
+ *   12-13  - Duplicate path and same paths validation errors
  */
 public class TestOpenApiImportAndReconciliation extends BaseTest {
 
     private static final String OPENAPI_FILE = "openapi2.json";
+    private static final String OPENAPI_FILE_1 = "openapi1.json";
     private static final String TEMPLATE_NAME = "Example 1 - Bank Rating";
 
     @Test
@@ -46,28 +56,14 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
 
         // Step 2: Select project in tree and upload openapi2.json
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
+        uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
 
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE))
-                .setFileName(OPENAPI_FILE)
-                .clickUploadButton();
-
-        // Step 3: Save changes in repository
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        // Step 4: Navigate to Editor tab and select project
+        // Step 3: Navigate to Editor tab and select project
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
-        // Step 5: Open dialog, select "Uploaded in the Repository", enter path, import in Reconciliation mode
+        // Step 4: Open dialog, select "Uploaded in the Repository", enter path, import in Reconciliation mode
         ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
         assertThat(importDialog.isVisible())
                 .as("Import OpenAPI dialog should be visible")
@@ -77,7 +73,7 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
         importDialog.setOpenApiFilePath(OPENAPI_FILE);
         importDialog.clickImportReconciliation();
 
-        // Step 6: Verify OpenAPI properties after Reconciliation import
+        // Step 5: Verify OpenAPI properties after Reconciliation import
         assertThat(editorPage.getOpenApiPropertyValue("Mode:"))
                 .as("Mode should be Reconciliation after reconciliation import")
                 .isEqualTo("Reconciliation");
@@ -85,7 +81,7 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
                 .as("OpenAPI File property should reflect the uploaded file name")
                 .isEqualTo(OPENAPI_FILE);
 
-        // Step 7: Save project
+        // Step 6: Save project
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
@@ -105,21 +101,7 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE))
-                .setFileName(OPENAPI_FILE)
-                .clickUploadButton();
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
+        uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
 
         // Step 2: Navigate to Editor and open Import OpenAPI dialog
         editorPage = repositoryPage.getTabSwitcherComponent()
@@ -137,10 +119,399 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
         importDialog.clickImportTablesGeneration();
 
         // Step 4: Verify validation error for same module names
-        assertThat(importDialog.getErrorMessage())
+        assertThat(importDialog.getErrorMessages())
                 .as("Error message should appear when Rules and Data module names are the same")
-                .isEqualTo("Module names cannot be the same.");
+                .contains("Module names cannot be the same.");
 
         importDialog.clickCancel();
+    }
+
+    @Test
+    @TestCaseId("IPBQA-31035")
+    @Description("Verify module names are retained when switching between Reconciliation and Tables Generation modes in Import OpenAPI dialog")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testImportModuleNamesRetentionOnModeSwitching() {
+        String projectName = "TestModulesRetention_" + System.currentTimeMillis();
+
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        // Create project from openapi1.json with custom module names and custom paths
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.getCreateProjectLink().click();
+        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
+                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiFile(OPENAPI_FILE_1);
+        openApiComponent.setDataModuleName("Models_test");
+        openApiComponent.clickEditDataPath();
+        openApiComponent.setDataModulePath("rules2/Models_test2.xlsx");
+        openApiComponent.setRulesModuleName("Algorithms_test");
+        openApiComponent.clickEditRulesPath();
+        openApiComponent.setRulesModulePath("rules1/Algorithms_test1.xlsx");
+        openApiComponent.setProjectName(projectName);
+        openApiComponent.clickCreate();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.getRefreshBtn().click(10000);
+
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
+
+        // Step 1.1: Open dialog, switch to Tables Generation mode, verify pre-populated names
+        ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectTablesGenerationMode();
+
+        assertThat(importDialog.getRulesModuleName())
+                .as("Rules module name should be pre-populated with 'Algorithms_test' from project creation")
+                .isEqualTo("Algorithms_test");
+        assertThat(importDialog.getDataModuleName())
+                .as("Data module name should be pre-populated with 'Models_test' from project creation")
+                .isEqualTo("Models_test");
+
+        // Change module names, then switch modes and verify names are retained
+        importDialog.setRulesModuleName("Algorithms_test_1");
+        importDialog.setDataModuleName("Models_test_1");
+        importDialog.selectReconciliationMode();
+        importDialog.selectTablesGenerationMode();
+
+        assertThat(importDialog.getRulesModuleName())
+                .as("Rules module name should be retained as 'Algorithms_test_1' after Reconciliation/Generation mode switch")
+                .isEqualTo("Algorithms_test_1");
+        assertThat(importDialog.getDataModuleName())
+                .as("Data module name should be retained as 'Models_test_1' after Reconciliation/Generation mode switch")
+                .isEqualTo("Models_test_1");
+
+        importDialog.clickCancel();
+    }
+
+    @Test
+    @TestCaseId("IPBQA-31035")
+    @Description("Tables Generation import shows overwrite warning for existing modules; verify warning text, button label, and properties after import")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testImportTablesGenerationOverwriteWarning() {
+        String projectName = "TestOpenApiOverwrite_" + System.currentTimeMillis();
+
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        // Create project from openapi1.json with custom module names and paths
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.getCreateProjectLink().click();
+        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
+                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiFile(OPENAPI_FILE_1);
+        openApiComponent.setDataModuleName("Models_test");
+        openApiComponent.clickEditDataPath();
+        openApiComponent.setDataModulePath("rules2/Models_test2.xlsx");
+        openApiComponent.setRulesModuleName("Algorithms_test");
+        openApiComponent.clickEditRulesPath();
+        openApiComponent.setRulesModulePath("rules1/Algorithms_test1.xlsx");
+        openApiComponent.setProjectName(projectName);
+        openApiComponent.clickCreate();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.getRefreshBtn().click(10000);
+
+        // Step 2: Upload openapi2.json and do Reconciliation import
+        uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
+
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
+        ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectUploadInRepository();
+        importDialog.setOpenApiFilePath(OPENAPI_FILE);
+        importDialog.clickImportReconciliation();
+        editorPage.waitUntilSpinnerLoaded();
+
+        // Navigate to Algorithms_test module to allow compilation to complete
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms_test");
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+
+        // Step 3: Navigate back to project, open dialog in Tables Generation mode, trigger overwrite warning
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectTablesGenerationMode();
+        importDialog.clickImportTablesGeneration();
+
+        OpenApiModuleSettingsDialogComponent settingsDialog = editorPage.getOpenApiModuleSettingsDialogComponent();
+        settingsDialog.waitForVisible();
+
+        assertThat(settingsDialog.getContentText())
+                .as("Warning dialog should list both Algorithms_test and Models_test as modules to overwrite")
+                .contains("Warning! The following module already exists and all of its content is going to be overwritten.\n" +
+                        "Rules Module: Algorithms_test\n" +
+                        "rules1/Algorithms_test1.xlsx\n" +
+                        "Warning! The following module already exists and all of its content is going to be overwritten.\n" +
+                        "Data Module: Models_test\n" +
+                        "rules2/Models_test2.xlsx");
+        assertThat(settingsDialog.getImportButtonText())
+                .as("Import button should say 'Import and overwrite' when existing modules would be overwritten")
+                .isEqualTo("Import and overwrite");
+        assertThat(settingsDialog.isVisible())
+                .as("Settings dialog with Cancel button should be visible")
+                .isTrue();
+
+        // Step 3.1: Cancel, re-open settings dialog, confirm import with overwrite
+        settingsDialog.clickCancel();
+        importDialog.selectTablesGenerationMode();
+        importDialog.clickImportTablesGeneration();
+        editorPage.getOpenApiModuleSettingsDialogComponent().waitForVisible();
+        editorPage.getOpenApiModuleSettingsDialogComponent().clickImportAndOverride();
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
+
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms_test");
+        editorPage.getProblemsPanelComponent().checkNoProblems();
+
+        // Step 3.2: Verify OpenAPI properties after Tables Generation import
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        assertThat(editorPage.getOpenApiPropertyValue("Mode:"))
+                .as("Mode should be 'Tables generation' after Tables Generation import with overwrite")
+                .isEqualTo("Tables generation");
+        assertThat(editorPage.getOpenApiPropertyValue("OpenAPI File:"))
+                .as("OpenAPI File should be 'openapi2.json'")
+                .isEqualTo(OPENAPI_FILE);
+        assertThat(editorPage.getOpenApiPropertyValue("Rules Module:"))
+                .as("Rules Module should remain 'Algorithms_test'")
+                .isEqualTo("Algorithms_test");
+        assertThat(editorPage.getOpenApiPropertyValue("Data Module:"))
+                .as("Data Module should remain 'Models_test'")
+                .isEqualTo("Models_test");
+    }
+
+    @Test
+    @TestCaseId("IPBQA-31035")
+    @Description("Import OpenAPI dialog default state for non-OpenAPI project: Reconciliation is default, file-not-found error shown on import")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testImportOpenApiDialogDefaultStateForNonOpenApiProject() {
+        String projectName = "TestNonOpenApi_" + System.currentTimeMillis();
+
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
+
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
+
+        // Step 8: Open dialog and immediately cancel
+        ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.clickCancel();
+
+        // Step 8.1: Reopen dialog, verify Reconciliation mode is selected by default
+        importDialog = editorPage.openImportOpenApiDialog();
+        assertThat(importDialog.isVisible())
+                .as("Import OpenAPI dialog should be visible")
+                .isTrue();
+        assertThat(importDialog.isReconciliationModeSelected())
+                .as("Reconciliation mode should be selected by default for a non-OpenAPI project")
+                .isTrue();
+        importDialog.selectUploadInRepository();
+        importDialog.selectTablesGenerationMode();
+
+        // Step 8.2: Enter non-existent file path and verify file-not-found error
+        importDialog.setOpenApiFilePath("openapi_ex3_auto_r.json");
+        importDialog.clickImportTablesGeneration();
+
+        assertThat(importDialog.getAnyErrorMessage())
+                .as("Error should indicate the OpenAPI file was not found in the repository")
+                .isEqualTo("OpenAPI file with path: openapi_ex3_auto_r.json was not found.");
+
+        importDialog.clickCancel();
+    }
+
+    @Test
+    @TestCaseId("IPBQA-31035")
+    @Description("Tables Generation import for non-OpenAPI project: overwrite existing module and create new Data module; verify module list and properties")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testImportTablesGenerationForNonOpenApiProject() {
+        String projectName = "TestNonOpenApiGen_" + System.currentTimeMillis();
+
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        // Setup: Create Bank Rating template project and upload openapi2.json
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
+        uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
+
+        // Step 9: Reconciliation import of openapi2.json
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
+        ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectUploadInRepository();
+        importDialog.setOpenApiFilePath(OPENAPI_FILE);
+        importDialog.clickImportReconciliation();
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
+
+        assertThat(editorPage.getOpenApiPropertyValue("Mode:"))
+                .as("Mode should be 'Reconciliation' after reconciliation import")
+                .isEqualTo("Reconciliation");
+        assertThat(editorPage.getOpenApiPropertyValue("OpenAPI File:"))
+                .as("OpenAPI File should be 'openapi2.json'")
+                .isEqualTo(OPENAPI_FILE);
+
+        // Navigate to Bank Rating module to allow compilation to complete before step 10
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+
+        // Step 10: Navigate back to project, Tables Generation import with Bank Rating as Rules module
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectTablesGenerationMode();
+        importDialog.setRulesModuleName("Bank Rating");
+        importDialog.clickImportTablesGeneration();
+
+        OpenApiModuleSettingsDialogComponent settingsDialog = editorPage.getOpenApiModuleSettingsDialogComponent();
+        settingsDialog.waitForVisible();
+        assertThat(settingsDialog.getContentText())
+                .as("Warning should show Bank Rating overwrite and Models creation")
+                .contains("Warning! The following module already exists and all of its content is going to be overwritten.\n" +
+                        "Rules Module: Bank Rating\n" +
+                        "Bank Rating.xlsx")
+                .contains("The following module doesn't exist and is going to be created:\n" +
+                        "Data Module: Models\n" +
+                        "rules/Models.xlsx");
+        settingsDialog.clickImportAndOverride();
+
+        // Verify module list: Models and Bank Rating present, Algorithms absent
+        List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
+        assertThat(modules)
+                .as("Models module should be present after Tables Generation import")
+                .contains("Models");
+        assertThat(modules)
+                .as("Bank Rating module should be present after overwrite import")
+                .contains("Bank Rating");
+        assertThat(modules)
+                .as("Algorithms module should not be present (was never created in this project)")
+                .doesNotContain("Algorithms");
+
+        assertThat(editorPage.getOpenApiPropertyValue("Mode:"))
+                .as("Mode should be 'Tables generation'")
+                .isEqualTo("Tables generation");
+        assertThat(editorPage.getOpenApiPropertyValue("OpenAPI File:"))
+                .as("OpenAPI File should be 'openapi2.json'")
+                .isEqualTo(OPENAPI_FILE);
+        assertThat(editorPage.getOpenApiPropertyValue("Rules Module:"))
+                .as("Rules Module should be 'Bank Rating'")
+                .isEqualTo("Bank Rating");
+        assertThat(editorPage.getOpenApiPropertyValue("Data Module:"))
+                .as("Data Module should be 'Models'")
+                .isEqualTo("Models");
+
+        // Step 10.1: Save project and verify no problems in each new module
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
+
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
+        editorPage.getProblemsPanelComponent().checkNoProblems();
+
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Models");
+        editorPage.getProblemsPanelComponent().checkNoProblems();
+    }
+
+    @Test
+    @TestCaseId("IPBQA-31035")
+    @Description("Path validation in OpenAPI Module Settings dialog: duplicate path error and same-paths error")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testImportPathValidationErrors() {
+        String projectName = "TestPathValidation_" + System.currentTimeMillis();
+
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        // Setup: Create Bank Rating project, upload openapi2.json, do Reconciliation import
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
+        uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
+
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
+        ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectUploadInRepository();
+        importDialog.setOpenApiFilePath(OPENAPI_FILE);
+        importDialog.clickImportReconciliation();
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
+
+        // Setup: Tables Generation import with Bank Rating rules module to create Models module (needed for path validation)
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectTablesGenerationMode();
+        importDialog.setRulesModuleName("Bank Rating");
+        importDialog.clickImportTablesGeneration();
+        editorPage.getOpenApiModuleSettingsDialogComponent().waitForVisible();
+        editorPage.getOpenApiModuleSettingsDialogComponent().clickImportAndOverride();
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
+
+        // Now: Bank Rating.xlsx and rules/Models.xlsx both exist in the project
+
+        // Step 12: Try to import with paths pointing to already-existing files
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        importDialog = editorPage.openImportOpenApiDialog();
+        importDialog.selectTablesGenerationMode();
+        importDialog.setRulesModuleName("Alg");
+        importDialog.setDataModuleName("Mod");
+        importDialog.clickImportTablesGeneration();
+
+        OpenApiModuleSettingsDialogComponent settingsDialog = editorPage.getOpenApiModuleSettingsDialogComponent();
+        settingsDialog.waitForVisible();
+        settingsDialog.clickEditRulesPath();
+        settingsDialog.setNewRulesPath("Bank Rating.xlsx");
+        settingsDialog.clickEditDataPath();
+        settingsDialog.setNewDataPath("rules/Models.xlsx");
+        settingsDialog.clickImportAndOverride();
+
+        assertThat(settingsDialog.getErrorMessages())
+                .as("Error should indicate a file with this name already exists in the project")
+                .contains("File with such name already exists.");
+
+        // Step 13: Change both paths to the same value and verify same-paths error
+        settingsDialog.setNewRulesPath("aaa.xlsx");
+        settingsDialog.setNewDataPath("aaa.xlsx");
+        settingsDialog.clickImportAndOverride();
+
+        assertThat(settingsDialog.getErrorMessages())
+                .as("Error should indicate module paths cannot be the same")
+                .contains("Module paths cannot be the same");
+
+        settingsDialog.clickCancel();
+        importDialog.clickCancel();
+    }
+
+    private void uploadFileToProject(RepositoryPage repositoryPage, String projectName, String fileName) {
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
+        repositoryPage.getUploadFileDialogComponent().waitForDialogToAppear();
+        repositoryPage.getUploadFileDialogComponent()
+                .uploadFile(TestDataUtil.getFilePathFromResources(fileName))
+                .setFileName(fileName)
+                .clickUploadButton();
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
+        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
+        repositoryPage.waitUntilSpinnerLoaded();
     }
 }
