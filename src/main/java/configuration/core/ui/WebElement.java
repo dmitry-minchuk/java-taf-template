@@ -80,12 +80,17 @@ public class WebElement {
     public void click(int timeoutInMillis) {
         isVisible(timeoutInMillis);
         LOGGER.info("Clicking with increased timeout {} ", elementName);
-        locator.click();
+        locator.click(new Locator.ClickOptions().setTimeout(timeoutInMillis));
     }
 
     public void clickForce() {
         LOGGER.info("Force clicking {} (bypassing visibility checks)", elementName);
         locator.click(new Locator.ClickOptions().setForce(true));
+    }
+
+    public void clickForce(int timeoutInMillis) {
+        LOGGER.info("Force clicking {} with timeout (bypassing visibility checks)", elementName);
+        locator.click(new Locator.ClickOptions().setForce(true).setTimeout(timeoutInMillis));
     }
 
     public void doubleClick() {

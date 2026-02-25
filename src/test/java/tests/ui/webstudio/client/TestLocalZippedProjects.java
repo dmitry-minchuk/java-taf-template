@@ -12,6 +12,7 @@ import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
+import helpers.utils.WaitUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.testng.Assert;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 public class TestLocalZippedProjects extends BaseTest {
 
     SoftAssert softAssert;
-    private static final String ROOT_DIR_PATH = "/Users/dmitryminchuk/Projects/eis/сustomers_projects_test_automation_6.x";
+    private static final String ROOT_DIR_PATH = "/Users/dmitryminchuk/Projects/eis/client_projects/сustomers_projects_test_automation_6.x/Glic/GLIC LTD/Current Version - deployment";
     private static final String EXT = ".zip";
 
     @Test(dataProvider = "Projects")
@@ -57,6 +58,7 @@ public class TestLocalZippedProjects extends BaseTest {
 
         for (String nameProject : projectNames) {
             editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+            WaitUtil.sleep(500, "Waiter for project tree to load");
             editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
             List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(nameProject);
 
