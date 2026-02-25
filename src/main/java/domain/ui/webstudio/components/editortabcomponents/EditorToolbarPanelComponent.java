@@ -159,6 +159,14 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         return syncBtn.getAttribute("title");
     }
 
+    public void navigateToProjectsInBreadcrumbs() {
+        if (breadcrumbsAllProjects.isVisible(1000)) {
+            LOGGER.info("Navigating back to projects list via breadcrumb...");
+            breadcrumbsAllProjects.click();
+            WaitUtil.sleep(500, "Waiting for projects list to load");
+        }
+    }
+
     public void navigateToProjectRoot(String projectName) {
         breadcrumbsProjectToggle.click();
         WaitUtil.sleep(250, "Waiting for project dropdown to open");

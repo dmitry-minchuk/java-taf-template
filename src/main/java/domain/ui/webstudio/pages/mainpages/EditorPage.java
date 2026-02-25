@@ -100,6 +100,10 @@ public class EditorPage extends BasePage {
         return editorToolbarPanelComponent;
     }
 
+    public void navigateToProjectsInBreadcrumbs() {
+        getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
+    }
+
     public TableComponent getCenterTable() {
         WaitUtil.waitForCondition(
                 () -> centerTable.isVisible(),

@@ -33,10 +33,9 @@ public class EditorLeftProjectModuleSelectorComponent extends BaseComponent {
     }
 
     public void selectProject(String projectName) {
-        WaitUtil.retryOnException(() -> {
-            projectNameTemplate.format(projectName).click(50);
-            return true;
-        }, 5000, 250, "Trying to select " + projectName + " project...");
+        WebElement projectLink = projectNameTemplate.format(projectName);
+        projectLink.waitForVisible();
+        projectLink.click();
     }
 
     public void selectModule(String projectName, String projectModuleName) {
