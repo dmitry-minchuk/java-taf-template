@@ -135,6 +135,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public void clickCopyButton() {
+        copyButton.press("Tab");
         clickCopyButton(true);
     }
 

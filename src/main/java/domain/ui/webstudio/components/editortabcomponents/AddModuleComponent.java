@@ -49,6 +49,7 @@ public class AddModuleComponent extends BaseComponent {
     }
 
     public void saveModule() {
+        moduleSaveBtn.press("Tab");
         moduleSaveBtn.click();
     }
 

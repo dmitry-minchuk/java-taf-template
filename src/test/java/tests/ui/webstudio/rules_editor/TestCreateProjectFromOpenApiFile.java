@@ -203,7 +203,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Datatype", "JAXRSErrorResponse");
         TableComponent datatypeTable = editorPage.getCenterTable();
         datatypeTable.editCell(3, 1, "String[]");
-        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilSpinnerLoaded();
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         editorPage.getProblemsPanelComponent().checkNoProblems();
@@ -249,6 +249,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getAddModulePopupComponent().setModuleName("Models_test");
         editorPage.getAddModulePopupComponent().saveModule();
         editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
 
         // Step 9: Verify rules.xml reflects renamed modules
@@ -272,6 +273,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getCopyModuleDialogComponent().setModuleName("Algorithms2");
         editorPage.getCopyModuleDialogComponent().clickCopy();
         editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         List<String> modulesAfterCopy = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
@@ -458,6 +460,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getAddModulePopupComponent().setModuleName("Data_Type_test");
         editorPage.getAddModulePopupComponent().saveModule();
         editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
 
         // Verify OpenAPI properties updated with new module names
@@ -490,6 +493,7 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         editorPage.getRemoveModulePopupComponent().setLeaveFile(false);
         editorPage.getRemoveModulePopupComponent().clickRemove();
         editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
 
         List<String> modulesAfterDelete = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
@@ -531,9 +535,10 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
         openApiComponent.uploadOpenApiFile(INVALID_FILENAME_YAML);
         openApiComponent.setProjectName("bla");
         openApiComponent.clickCreate();
+        repositoryPage.fillCommitInfo();
         assertThat(repositoryPage.getInlineMessage())
                 .as("Error should appear when OpenAPI filename contains forbidden characters")
-                .contains("OpenAPI File Name cannot contain forbidden");
+                .contains("Error creating the project, OpenAPI File Name cannot contain forbidden characters (\\, /, :, ;, <, >, ?, *, %, ', [, ], |, \"), start with space, end with space or dot.");
 
         // Step 26.2: Non-OpenAPI file type (xlsx) - popup appears immediately after upload
         repositoryPage.getCreateProjectLink().click();
@@ -577,7 +582,6 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiFile(JSON_FILE);
         openApiComponent.setProjectName("bla");
-        openApiComponent.clickEditDataPath();
         openApiComponent.setDataModulePath("rules/Models?*test.xlsx");
         openApiComponent.clickCreate();
         assertThat(repositoryPage.getInlineMessage())
@@ -604,7 +608,6 @@ public class TestCreateProjectFromOpenApiFile extends BaseTest {
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiFile(JSON_FILE);
         openApiComponent.setProjectName("bla2_" + System.currentTimeMillis());
-        openApiComponent.clickEditDataPath();
         openApiComponent.setDataModulePath("rules/Algorithms.xlsx");
         openApiComponent.clickCreate();
 

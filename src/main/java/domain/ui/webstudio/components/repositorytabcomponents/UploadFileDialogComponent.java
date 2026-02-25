@@ -35,6 +35,7 @@ public class UploadFileDialogComponent extends BaseComponent {
 
     public UploadFileDialogComponent uploadFile(String filePath) {
         LOGGER.info("Uploading file: {}", filePath);
+        WaitUtil.sleep(500, "Waiting for previous operations to finish");
         fileInput.setInputFiles(filePath);
         WaitUtil.sleep(500, "Waiting for file to be selected");
         return this;
