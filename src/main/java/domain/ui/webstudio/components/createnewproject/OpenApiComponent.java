@@ -47,8 +47,8 @@ public class OpenApiComponent extends BaseComponent {
         rulesModulePathInput = createScopedElement("xpath=.//input[@id='openAPIProjectForm:algorithmsFilePath']", "rulesModulePathInput");
         resetRulesPathLink = createScopedElement("xpath=.//a[@id='openAPIProjectForm:resetAlgoPath']", "resetRulesPathLink");
         createProjectBtn = createScopedElement("xpath=.//input[@id='openAPIProjectForm:submitOpenAPIFileBtn']", "createProjectBtn");
-        clearFirstFileBtn = createScopedElement("xpath=.//div[contains(@id,'openAPIProjectForm:file')]//input[@type='button' and @value='Clear']", "clearFirstFileBtn");
-        clearAllBtn = createScopedElement("xpath=.//div[contains(@id,'openAPIProjectForm:file')]//span[text()='Clear All']", "clearAllBtn");
+        clearFirstFileBtn = createScopedElement("xpath=.//div[contains(@id,'openAPIProjectForm:file')]//a[contains(@class,'rf-fu-itm-lnk')]", "clearFirstFileBtn");
+        clearAllBtn = createScopedElement("xpath=.//div[contains(@id,'openAPIProjectForm:file')]//span[contains(@class,'rf-fu-btn-clr')]", "clearAllBtn");
         errorMessage = createScopedElement("xpath=.//span[contains(@class,'generalError')]", "errorMessage");
     }
 
