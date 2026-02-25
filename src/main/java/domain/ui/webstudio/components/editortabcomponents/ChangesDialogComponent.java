@@ -2,7 +2,6 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Page;
 import domain.ui.webstudio.components.BaseComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CompareDialogComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
@@ -13,7 +12,8 @@ public class ChangesDialogComponent extends BaseComponent {
 
     private WebElement changesSection;
     private WebElement compareCheckboxTemplate;
-    private WebElement restoreBtn;
+    private WebElement restoreRowLinkTemplate;
+    private WebElement confirmRestoreBtn;
     private WebElement compareBtn;
     private WebElement noChangesMsg;
     private WebElement changesTitle;
@@ -31,12 +31,13 @@ public class ChangesDialogComponent extends BaseComponent {
 
     private void initializeElements() {
         changesSection = createScopedElement("xpath=.//section[@id='changes']", "changesSection");
-        compareCheckboxTemplate = new WebElement(page, "xpath=(//section[@id='changes']//div[contains(@class,'row')]//input)[%s]", "compareCheckboxTemplate");
-        restoreBtn = new WebElement(page, "xpath=//input[@value='Restore']", "restoreBtn");
+        compareCheckboxTemplate = new WebElement(page, "xpath=(//section[@id='changes']//div[contains(@class,'row') and not(contains(@class,'{'))]//input)[%s]", "compareCheckboxTemplate");
+        restoreRowLinkTemplate = new WebElement(page, "xpath=(//section[@id='changes']//div[contains(@class,'row') and not(contains(@class,'{'))]//a[text()='Restore'])[%s]", "restoreRowLinkTemplate");
+        confirmRestoreBtn = new WebElement(page, "xpath=//div[@id='confirmRestore_container']//input[@value='Restore']", "confirmRestoreBtn");
         compareBtn = new WebElement(page, "xpath=//div[@id='content']//input[contains(@id, 'compareBtn')]", "compareBtn");
         noChangesMsg = new WebElement(page, "xpath=//span[@class='problem-info noChanges']", "noChangesMsg");
-        changesTitle = new WebElement(page, "xpath=//span[@id='localChanges']", "changesTitle");
-        changeRowCheckboxes = createElementList("xpath=//section[@id='changes']//div[contains(@class,'row')]//input[@type='checkbox']", "changeRowCheckboxes");
+        changesTitle = new WebElement(page, "xpath=//h1[@class='page-header']", "changesTitle");
+        changeRowCheckboxes = createElementList("xpath=//section[@id='changes']//div[contains(@class,'row') and not(contains(@class,'{'))]//input[@type='checkbox']", "changeRowCheckboxes");
     }
 
     public void setCompareCheckbox(int index, boolean value) {
@@ -52,17 +53,12 @@ public class ChangesDialogComponent extends BaseComponent {
         return checkbox.isChecked();
     }
 
-    public void clickRestore() {
-        restoreBtn.click();
-        WaitUtil.sleep(500, "Waiting after Restore button click");
-    }
-
-    public CompareDialogComponent clickCompare() {
+    public CompareLocalChangesDialogComponent clickCompare() {
         Page comparePopup = page.waitForPopup(() -> {
             compareBtn.click();
         });
         comparePopup.waitForLoadState();
-        return new CompareDialogComponent(comparePopup);
+        return new CompareLocalChangesDialogComponent(comparePopup);
     }
 
     public String getNoChangesMessage() {
@@ -79,8 +75,9 @@ public class ChangesDialogComponent extends BaseComponent {
     }
 
     public void clickRestoreAtRow(int rowIndex) {
-        setCompareCheckbox(rowIndex, true);
-        clickRestore();
+        WebElement restoreLink = restoreRowLinkTemplate.format(String.valueOf(rowIndex));
+        restoreLink.click();
+        confirmRestoreBtn.click();
     }
 
     public boolean isDialogVisible() {

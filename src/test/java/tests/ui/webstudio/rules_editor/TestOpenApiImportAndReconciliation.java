@@ -11,6 +11,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.editortabcomponents.ImportOpenApiDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.OpenApiModuleSettingsDialogComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -811,8 +812,12 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
         editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
 
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms");
-        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(projectName, "Algorithms");
+        editorPage.getProblemsPanelComponent()
+                .waitForCompilationToComplete();
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
 
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Spreadsheet"))
                 .as("Algorithms should contain Spreadsheet tables after openapi3.json import")
@@ -923,6 +928,7 @@ public class TestOpenApiImportAndReconciliation extends BaseTest {
         // Verify Algorithms module content and compilation
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms");
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+        editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
 
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Spreadsheet"))
                 .as("Algorithms should contain Spreadsheet tables").isTrue();

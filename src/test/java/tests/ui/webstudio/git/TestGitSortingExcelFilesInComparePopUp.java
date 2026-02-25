@@ -8,12 +8,11 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CompareDialogComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevisionsDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -60,7 +59,7 @@ public class TestGitSortingExcelFilesInComparePopUp extends BaseTest {
                 .selectItemInFolder("Projects", PROJECT_NAME);
 
         // Open Compare dialog
-        CompareDialogComponent compareDialog = repositoryPage.getRepositoryContentButtonsPanelComponent()
+        CompareGitRevisionsDialogComponent compareDialog = repositoryPage.getRepositoryContentButtonsPanelComponent()
                 .clickCompareBtn();
         compareDialog.waitForDialogToAppear();
 

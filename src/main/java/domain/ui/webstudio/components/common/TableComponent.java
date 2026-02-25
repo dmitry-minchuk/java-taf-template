@@ -41,7 +41,7 @@ public class TableComponent extends BaseComponent {
     }
 
     public String getCellText(int rowIndex, int columnIndex) {
-        return getCell(rowIndex, columnIndex).getText().trim();
+        return getCell(rowIndex, columnIndex).getInnerText().trim();
     }
 
     public void doubleClickCell(int rowIndex, int columnIndex) {

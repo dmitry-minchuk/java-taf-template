@@ -9,6 +9,7 @@ import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.List;
 
@@ -168,8 +169,11 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void navigateToProjectRoot(String projectName) {
-        breadcrumbsProjectToggle.click();
-        WaitUtil.sleep(250, "Waiting for project dropdown to open");
+        WaitUtil.retryOnException(() -> {
+            breadcrumbsProjectToggle.click();
+            WaitUtil.sleep(250, "Waiting for project dropdown to open");
+            return breadcrumbsDropdownItemTemplate.format(projectName).isVisible();
+        }, 5000, 500, "Trying to navigate to project root" + projectName);
         breadcrumbsDropdownItemTemplate.format(projectName).click();
         WaitUtil.sleep(500, "Waiting for project view to load");
     }

@@ -10,7 +10,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.ChangesDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.ImportOpenApiDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.OpenApiModuleSettingsDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CompareDialogComponent;
+import domain.ui.webstudio.components.editortabcomponents.CompareLocalChangesDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -224,9 +224,11 @@ public class TestOpenApiImportLocalChanges extends BaseTest {
                 .as("AutoPolicyCalculation should have OpenAPI reconciliation warning after restore")
                 .contains(OPENAPI_RECONCILIATION_WARNING);
 
-        // Step 2.2: Open Changes → click Compare → verify compare popup shows specific table items → close
+        // Step 2.2: Open Changes → select both rows → click Compare → verify compare popup shows specific table items → close
         changesDialog = editorPage.getEditorToolbarPanelComponent().clickMore().clickChanges();
-        CompareDialogComponent compareDialog = changesDialog.clickCompare();
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
+        CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 
         assertThat(compareDialog.getLeftModulesList())
