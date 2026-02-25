@@ -13,6 +13,7 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
     private WebElement uploadMergedRadio;
     private WebElement saveButton;
     private WebElement cancelButton;
+    private WebElement compareLink;
 
     public ResolveConflictsDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -31,6 +32,7 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
         uploadMergedRadio = createScopedElement("xpath=.//input[@type='radio' and @value='CUSTOM']", "uploadMergedRadio");
         saveButton = createScopedElement("xpath=.//button[contains(@class, 'ant-btn-primary') and contains(., 'Save and Resolve')]", "saveButton");
         cancelButton = createScopedElement("xpath=.//button[contains(@class, 'ant-btn-default') and contains(., 'Cancel')]", "cancelButton");
+        compareLink = new WebElement(page, "xpath=//div[@class='compare-link']//a", "compareLink");
     }
 
     public void waitForDialogToAppear() {
@@ -75,5 +77,10 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
     public void clickCancel() {
         cancelButton.click();
         WaitUtil.sleep(1000, "Wait for dialog to close");
+    }
+
+    public void clickCompareLink() {
+        compareLink.click();
+        WaitUtil.sleep(500, "Wait for compare screen to load");
     }
 }

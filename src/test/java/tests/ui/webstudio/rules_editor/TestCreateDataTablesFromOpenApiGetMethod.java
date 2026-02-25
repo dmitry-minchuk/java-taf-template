@@ -110,6 +110,80 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
                 .as("Second column of inserted row should contain '100'")
                 .isEqualTo("100");
 
+        // Verify MystrData table: 1 column, insert row with single value
+        editorPage.getEditorLeftRulesTreeComponent()
+                .selectItemInFolder("Data", "MystrData");
+
+        table = editorPage.getCenterTable();
+        table.doubleClickCell(3, 1);
+        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
+        table.editCell(4, 1, "test1");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+
+        assertThat(table.getCellText(4, 1))
+                .as("Single column of inserted row should contain 'test1'")
+                .isEqualTo("test1");
+
+        // Verify SuperDatatypeData table: insert two rows — one with reference, one with data
+        editorPage.getEditorLeftRulesTreeComponent()
+                .selectItemInFolder("Data", "SuperDatatypeData");
+
+        table = editorPage.getCenterTable();
+        table.doubleClickCell(2, 1);
+        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
+        table.editCell(3, 1, ">MyDatatypeData");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+
+        table.doubleClickCell(4, 1);
+        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
+        table.editCell(5, 1, "test1");
+        table.editCell(5, 2, "someValue");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+
+        assertThat(table.getCellText(3, 1))
+                .as("Reference row should contain '>MyDatatypeData'")
+                .isEqualTo(">MyDatatypeData");
+        assertThat(table.getCellText(5, 1))
+                .as("Data row first column should contain 'test1'")
+                .isEqualTo("test1");
+        assertThat(table.getCellText(5, 2))
+                .as("Data row second column should contain 'someValue'")
+                .isEqualTo("someValue");
+
+        // Verify NewDatatypeData table: 3 columns, insert two rows — one with references, one with data
+        editorPage.getEditorLeftRulesTreeComponent()
+                .selectItemInFolder("Data", "NewDatatypeData");
+
+        table = editorPage.getCenterTable();
+        table.doubleClickCell(2, 1);
+        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
+        table.editCell(3, 1, ">MyDatatypeData");
+        table.editCell(3, 2, ">MyDatatypeData");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+
+        table.doubleClickCell(4, 1);
+        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
+        table.editCell(5, 1, "test1");
+        table.editCell(5, 2, "test1");
+        table.editCell(5, 3, "someValue");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+
+        assertThat(table.getCellText(3, 1))
+                .as("Reference row col 1 should contain '>MyDatatypeData'")
+                .isEqualTo(">MyDatatypeData");
+        assertThat(table.getCellText(3, 2))
+                .as("Reference row col 2 should contain '>MyDatatypeData'")
+                .isEqualTo(">MyDatatypeData");
+        assertThat(table.getCellText(5, 1))
+                .as("Data row col 1 should contain 'test1'")
+                .isEqualTo("test1");
+        assertThat(table.getCellText(5, 2))
+                .as("Data row col 2 should contain 'test1'")
+                .isEqualTo("test1");
+        assertThat(table.getCellText(5, 3))
+                .as("Data row col 3 should contain 'someValue'")
+                .isEqualTo("someValue");
+
         editorPage.getProblemsPanelComponent().checkNoProblems();
     }
 }

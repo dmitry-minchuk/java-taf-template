@@ -51,7 +51,7 @@ public class RepositoryPage extends BasePage {
     private CopyProjectDialogComponent copyProjectDialogComponent;
     private UploadFileDialogComponent uploadFileDialogComponent;
     private UpdateFileDialogComponent updateFileDialogComponent;
-    private CompareDialogComponent compareDialogComponent;
+    private CompareGitRevisionsDialogComponent compareGitRevisionsDialogComponent;
     private WebElement confirmOpeningDialogBtn;
     private WebElement confirmOpeningDialogShade;
     private WebElement messagePopupText;

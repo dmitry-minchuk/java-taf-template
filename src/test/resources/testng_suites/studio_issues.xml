@@ -26,4 +26,7 @@
     <test name="TestClickOnOpenApiError"><classes><class name="tests.ui.webstudio.studio_issues.TestClickOnOpenApiError"/></classes></test>
     <test name="TestSpecialSymbolsWarningMessages"><classes><class name="tests.ui.webstudio.studio_issues.TestSpecialSymbolsWarningMessages"/></classes></test>
     <test name="TestNullPointerExceptionDataTableBugFix"><classes><class name="tests.ui.webstudio.studio_issues.TestNullPointerExceptionDataTableBugFix"/></classes></test>
+    <test name="TestOpenApiErrorMessages"><classes><class name="tests.ui.webstudio.studio_issues.TestOpenApiErrorMessages"/></classes></test>
+    <test name="TestGenerateOpenApiDefaultDate"><classes><class name="tests.ui.webstudio.studio_issues.TestGenerateOpenApiDefaultDate"/></classes></test>
+    <test name="TestCompareScreenForOpenApiFiles"><classes><class name="tests.ui.webstudio.studio_issues.TestCompareScreenForOpenApiFiles"/></classes></test>
 </suite>

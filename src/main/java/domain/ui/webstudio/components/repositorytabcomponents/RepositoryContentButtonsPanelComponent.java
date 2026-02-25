@@ -113,12 +113,12 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         return syncBtn.getAttribute("title");
     }
 
-    public CompareDialogComponent clickCompareBtn() {
+    public CompareGitRevisionsDialogComponent clickCompareBtn() {
         Page comparePopup = page.waitForPopup(() -> {
             compareBtn.click();
         });
         comparePopup.waitForLoadState();
-        return new CompareDialogComponent(comparePopup);
+        return new CompareGitRevisionsDialogComponent(comparePopup);
     }
 
     public void clickCloseBtn() {

@@ -8,24 +8,24 @@ import helpers.utils.WaitUtil;
 
 import java.util.List;
 
-public class CompareDialogComponent extends BaseComponent {
+public class CompareGitRevisionsDialogComponent extends BaseComponent {
 
     private WebElement leftModulesSelect;
     private WebElement rightModulesSelect;
     private WebElement closeBtn;
     private Page comparePopup;
 
-    public CompareDialogComponent() {
+    public CompareGitRevisionsDialogComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
     }
 
-    public CompareDialogComponent(WebElement rootLocator) {
+    public CompareGitRevisionsDialogComponent(WebElement rootLocator) {
         super(rootLocator);
         initializeElements();
     }
 
-    public CompareDialogComponent(Page comparePopup) {
+    public CompareGitRevisionsDialogComponent(Page comparePopup) {
         super(comparePopup);
         this.comparePopup = comparePopup;
         initializeElements();
@@ -37,7 +37,7 @@ public class CompareDialogComponent extends BaseComponent {
         closeBtn = new WebElement(getPage(), "xpath=//input[@value='Close']", "closeBtn");
     }
 
-    public CompareDialogComponent waitForDialogToAppear() {
+    public CompareGitRevisionsDialogComponent waitForDialogToAppear() {
         WaitUtil.sleep(1500, "Waiting for Compare dialog to appear");
         leftModulesSelect.waitForVisible(5000);
         return this;

@@ -128,12 +128,8 @@ public class EditorPage extends BasePage {
         return copyModuleDialogComponent;
     }
 
-    public CreateTableDialogComponent getCreateTableDialogComponent() {
-        return createTableDialogComponent;
-    }
-
     public ImportOpenApiDialogComponent openImportOpenApiDialog() {
-        openApiSectionHeader.hover();
+        openApiSectionHeader.waitForVisible().hover();
         importOpenApiImg.click();
         importOpenApiDialogComponent.waitForVisible();
         return importOpenApiDialogComponent;
