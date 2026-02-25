@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-02-24
+> Updated: 2026-02-25
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,9 +9,9 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | ~70 test classes |
+| Migrated to new framework | 70 test classes (69 `Test*.java` + `CreateDataTypeTableTest`) |
 | ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~40% of legacy** |
+| **New framework overall coverage** | **~43% of legacy** (up from ~40%; OpenAPI section now fully migrated) |
 
 ---
 
@@ -23,7 +23,8 @@
 |----|----------------|--------------|-------------------------|----------|
 | **C1** | **`TestRepositoryBrowsingFilterStatus`** ✅ DONE | TestBrowsingFilterStatusInRepositories | ✅ Status lifecycle (2.2.1), ✅ Filter by name (2.2.2), ✅ Advanced filter show/hide deleted (2.2.3), ✅ Closing a project (2.2.12), ✅ Saving a project (2.2.14), ✅ Multi-user locking; ⛔ Deploy-blocked: Deployment repo status (2.2.4), Deployment filter (2.2.5), Production repo browsing | `repository.xml` (deploy steps blocked) |
 | **C2** | ~~TestRepositoryExportAndRevisions~~ → **`TestExportProjectFunctionality`** ✅ DONE | TestExportProjectFunctionality | Export project/file (2.2.29), Opening project revision via Revisions tab (2.2.11), Revision selection, Multi-user export | ✅ `rules_editor.xml` |
-| **C3** | **`TestOpenApiImportAndReconciliation`** ✅ DONE | TestOpenApiImport + TestOpenApiImportLocalChanges | ✅ Reconciliation mode (2.8.4), ✅ Tables Generation mode (2.8.2), ✅ Module settings warning dialog (2.8.6), ✅ Same module names validation (2.8.6) | ✅ `rules_editor.xml` |
+| **C3** | **`TestOpenApiImportAndReconciliation`** ✅ DONE | TestOpenApiImport | ✅ Reconciliation mode (2.8.4), ✅ Tables Generation mode (2.8.2), ✅ Module settings warning dialog (2.8.6), ✅ Same module names validation (2.8.6), ✅ Module name retention on mode switch (1.1), ✅ Overwrite warning (3-3.2), ✅ Non-OpenAPI project defaults (8-8.2), ✅ Tables generation for non-OpenAPI project (10-10.1), ✅ Path validation errors (12-13), ✅ New modules + path editing (4-5.2), ✅ Mode cycling (6-6.3), ✅ Two-file project (7), ✅ Corporate Rating template (14) | ✅ `rules_editor.xml` |
+| **C3b** | **`TestOpenApiImportLocalChanges`** ✅ DONE | TestOpenApiImportLocalChanges | ✅ Local Changes history after re-generation (Step 1), ✅ Template project + Compare window (Step 2-2.2), ✅ No Local Changes after Reconciliation mode import (Step 3), ✅ No new record for same file content (Step 4), ✅ New record for different file (Step 5) | ✅ `rules_editor.xml` |
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
 | **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
 | **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
@@ -40,18 +41,18 @@
 
 ## 🔴 CRITICAL GAPS (0–10% coverage)
 
-### 1. OpenAPI (2.8) — ~100%
-**Legacy tests:** 7 | **New framework:** C3 + C4 + C5 done ✅
+### 1. OpenAPI (2.8) — ~95%
+**Legacy tests:** 7 | **New framework:** C3 + C3b + C4 + C5 + studio_issues all done ✅
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
 | Create Project from OpenAPI | EPBDS-10846, IPBQA-30678 | TestCreateProjectFromOpenApiFile | ✅ **C5** |
 | Import OpenAPI file for scaffolding in existing project | EPBDS-10812, IPBQA-31035 | TestOpenApiImport | ✅ **C3** |
-| Create Data tables from OpenAPI GET methods | EPBDS-10770, IPBQA-31073 | TestCreateDataTablesFromOpenApiGetMethod | ✅ **C5** |
+| Create Data tables from OpenAPI GET methods | EPBDS-10770, IPBQA-31073 | TestCreateDataTablesFromOpenApiGetMethod | ✅ **C5** (~95%: minor empty-cell assertions in reference rows not migrated) |
 | OpenAPI reconciliation feature | IPBQA-30902 | OpenApiReconciliationFeature | ✅ **C4** |
 | OpenAPI reconciliation with multiple merged files | EPBDS-10620, IPBQA-30970 | TestOpenApiReconciliationWithMultipleMergedFiles | ✅ **C4** |
-| OpenAPI file operations | EPBDS-10543, IPBQA-30922 | — | ✅ **C3** (partial) |
-| Auto-add/update OpenAPI file in reconciliation mode | EPBDS-12260, IPBQA-32071 | TestOpenApiImportLocalChanges | ✅ **C3** |
+| OpenAPI file operations (Compare screen, error messages, default date) | EPBDS-10543, EPBDS-10789, EPBDS-10548 | TestOpenApiErrorMessages + TestGenerateOpenApiDefaultDate + TestCompareScreenForOpenApiFiles | ✅ **studio_issues** (~93% avg: `.contains()` vs exact match in error messages; compare locator uncertainty) |
+| Auto-add/update OpenAPI file in reconciliation mode | EPBDS-12260, IPBQA-32071 | TestOpenApiImportLocalChanges | ✅ **C3b** |
 
 ### 2. Single/Multi Mode (2.11) — 0%
 **Legacy tests:** 6 | **New framework:** 0 tests
@@ -111,7 +112,7 @@
 | Change validation pattern for Repository Name | EPBDS-11533, IPBQA-31641 | TestRepositoryNameValidation | → **C12** |
 
 ### 5. Editor – Advanced Features (2.1.x) — ~25%
-**Legacy tests:** 65+ | **New framework:** ~12 (rules_editor) + partial studio_issues
+**Legacy tests:** 65+ | **New framework:** 15 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -222,12 +223,12 @@
 | Admin: Notifications | ~90% | TestAdminNotifications ✅ |
 | Admin: User management + ACL | ~70% | TestAdminUsers, TestAdminUsersProjects, TestAdminUserSettings ✅ |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
-| Tags (basic creation + filtering + grouping) | ~70% | TestProjectTags* ✅ (9 tests) |
-| Rules Editor (core) | ~55% | 12 rules_editor tests ✅ |
+| Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
+| Rules Editor (core) | ~55% | 15 rules_editor tests ✅ |
 | Git (core operations) | ~44% | 11 git tests ✅ |
-| Studio Issues (bug regression) | ~40% | 21 studio_issues tests ✅ |
+| Studio Issues (bug regression) | ~43% | 24 studio_issues tests ✅ |
 | Repository (basic operations) | ~55% | C1 + C2 + basic ops across suites ✅ |
-| OpenAPI | ~85% | C3 + C4 ✅, C5 pending |
+| OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
 
 ---
 
@@ -235,15 +236,15 @@
 
 | Priority | Composite Test | Atomic features consolidated | Effort |
 |----------|----------------|------------------------------|--------|
+| ~~🔴~~ | ~~**C5** TestCreateProjectFromOpenApi~~ | ~~2 remaining OpenAPI features~~ | ✅ DONE |
 | 🔴 1 | **C7** TestProjectCompilationAndModuleMode | 7 Single/Multi Mode features → 1 test | Medium |
-| 🔴 2 | **C5** TestCreateProjectFromOpenApi | 2 remaining OpenAPI features → 1 test | Low |
-| 🟡 3 | **C8** TestCompareExcelFilesAndChanges | 4 compare features → 1 test | Medium |
-| 🟡 4 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
-| 🟡 5 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
-| 🟡 6 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
-| 🟡 7 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |
-| 🟢 8 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
-| 🟢 9 | **C14** TestGitCommentAndCommitter | 3 git comment features → 1 test | Low |
+| 🟡 2 | **C8** TestCompareExcelFilesAndChanges | 4 compare features → 1 test | Medium |
+| 🟡 3 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
+| 🟡 4 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
+| 🟡 5 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
+| 🟡 6 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |
+| 🟢 7 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
+| 🟢 8 | **C14** TestGitCommentAndCommitter | 3 git comment features → 1 test | Low |
 
 ---
 

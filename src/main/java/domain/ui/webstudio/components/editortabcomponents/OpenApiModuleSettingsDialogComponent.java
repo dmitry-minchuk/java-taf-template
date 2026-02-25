@@ -119,6 +119,14 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
         return dataPathDisplay.getText();
     }
 
+    public boolean isNewRulesPathInputVisible() {
+        return newRulesPathInput.isVisible(1000);
+    }
+
+    public boolean isNewDataPathInputVisible() {
+        return newDataPathInput.isVisible(1000);
+    }
+
     public boolean isVisible() {
         return importAndOverrideBtn.isVisible(3000);
     }
