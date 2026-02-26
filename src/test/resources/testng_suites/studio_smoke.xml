@@ -19,5 +19,6 @@
     <test name="TestTableIcons"><classes><class name="tests.ui.webstudio.studio_smoke.TestTableIcons"/></classes></test>
     <test name="TestFileAddDelete"><classes><class name="tests.ui.webstudio.studio_smoke.TestFileAddDelete"/></classes></test>
     <test name="CreateDataTypeTableTest"><classes><class name="tests.ui.webstudio.studio_smoke.CreateDataTypeTableTest"/></classes></test>
+    <test name="TestRepositoryBrowsingFilterStatus"><classes><class name="tests.ui.webstudio.repository.TestRepositoryBrowsingFilterStatus"/></classes></test>
 
 </suite>

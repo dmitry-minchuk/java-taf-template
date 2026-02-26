@@ -50,7 +50,6 @@ def functionalJobList = [
                          new Job("studio_smoke", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("rules_editor", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_git", image_hub_registry + studio, "", anyAvailableNode),
-                         new Job("repository", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("service_smoke", image_hub_registry + ws, "", anyAvailableNode)
 
                          // Example for future SAML tests - pinned to specific configured node:
