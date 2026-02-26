@@ -172,9 +172,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         WaitUtil.retryOnException(() -> {
             breadcrumbsProjectToggle.click();
             WaitUtil.sleep(250, "Waiting for project dropdown to open");
-            return breadcrumbsDropdownItemTemplate.format(projectName).isVisible();
+            breadcrumbsDropdownItemTemplate.format(projectName).click(100);
+            return true;
         }, 5000, 500, "Trying to navigate to project root" + projectName);
-        breadcrumbsDropdownItemTemplate.format(projectName).click();
         WaitUtil.sleep(500, "Waiting for project view to load");
     }
 
