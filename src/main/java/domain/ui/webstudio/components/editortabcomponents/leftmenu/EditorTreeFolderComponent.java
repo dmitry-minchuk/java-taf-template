@@ -57,4 +57,9 @@ public class EditorTreeFolderComponent extends BaseComponent {
         return itemTemplate.format(itemName);
     }
 
+    public void selectSecondItem(String itemName) {  //TODO: ?????
+        WebElement secondItem = createScopedElement(
+                "xpath=(.//a[span[text()='" + itemName + "']])[2]", "secondTreeItem");
+        secondItem.click();
+    }
 }

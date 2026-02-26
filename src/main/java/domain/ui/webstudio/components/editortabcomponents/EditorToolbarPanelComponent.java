@@ -6,6 +6,7 @@ import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.common.TableComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftProjectModuleSelectorComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -27,7 +28,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement breadcrumbsAllProjects;
     private WebElement breadcrumbsProjectToggle;
     private WebElement breadcrumbsModuleBranch;
+    private WebElement breadcrumbsModuleToggle;
     private WebElement breadcrumbsDropdownItemTemplate;
+    private WebElement breadcrumbsCategoryLink;
     // Run Tests Menu elements
     @Getter
     private WebElement testDropdownBtn;
@@ -35,14 +38,28 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement failuresOnlyCheckbox;
     private WebElement compoundResultCheckbox;
     private WebElement runTestsBtn;
+    private WebElement topPanelTestBtn;
+    private WebElement topPanelRunTestBtn;
     // More Menu elements
     private WebElement changesBtn;
     private WebElement revisionsBtn;
+    // Within Current Module Only checkboxes
+    private WebElement withinCurrentModuleOnlyInputArgs;
+    private WebElement withinCurrentModuleOnlyTestTables;
+    private WebElement topPanelWithinCurrentModuleOnly;
+    // Target Table and Test Runs
+    private WebElement targetTableLink;
+    private WebElement availableTestRunsLink;
+    private WebElement tableActionsTestBtn;
+    private WebElement tableActionsTestDropdownBtn;
 
     // SECOND LINE TOOLBAR
     private WebElement runBtn;
+    private WebElement runDropdownBtn;
     private WebElement traceBtn;
     private WebElement benchmarkBtn;
+    private WebElement benchmarkDropdownBtn;
+    private WebElement runStartBtn; //TODO: ?????
     @Getter
     private WebElement editTableBtn;
     private WebElement copyTableBtn;
@@ -88,22 +105,38 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         breadcrumbsAllProjects = new WebElement(page, "//div[@class='breadcrumbs']/a[@href='/']", "breadcrumbsAllProjects");
         breadcrumbsProjectToggle = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-project']/a", "breadcrumbsProjectToggle");
         breadcrumbsModuleBranch = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-module']/a[starts-with(@title, 'Branch:')]", "breadcrumbsModuleBranch");
+        breadcrumbsModuleToggle = new WebElement(page, "xpath=//div[@class='breadcrumbs']/span[@id='breadcrumbs-module']/a[not(contains(@title, 'Branch'))]", "breadcrumbsModuleToggle");
         breadcrumbsDropdownItemTemplate = new WebElement(page, "xpath=//span[@class='dropdown open']/ul[contains(@class, 'dropdown-menu')]//li//a[contains(text(), '%s')]", "breadcrumbsDropdownItemTemplate");
+        breadcrumbsCategoryLink = new WebElement(page, "xpath=//div[@class='breadcrumbs']/a[@class='changes-listener-added']", "breadcrumbsCategoryLink");
         // Run Tests Menu elements initialization
         testDropdownBtn = new WebElement(page, "xpath=//a[@title='Run Tests']/following-sibling::span[1]", "testDropdownBtn");
         testPerPageDropdown = new WebElement(page, "xpath=//select[@name='pp']", "testPerPageDropdown");
         failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
         compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='complexResult']", "compoundResultCheckbox");
         runTestsBtn = new WebElement(page, "xpath=//a[@class='button' and text()='Test']", "runTestsBtn");
+        topPanelTestBtn = new WebElement(page, "xpath=//a[@title='Run Tests']", "topPanelTestBtn");
+        topPanelRunTestBtn = new WebElement(page, "xpath=//input[@value='Test' and @type='submit']", "topPanelRunTestBtn");
         // More Menu elements initialization
         changesBtn = new WebElement(page, "xpath=//*[@id='topRevertLink']", "changesBtn");
         revisionsBtn = new WebElement(page, "xpath=//a[@title='Show project revisions']", "revisionsBtn");
+        // Within Current Module Only checkboxes
+        withinCurrentModuleOnlyInputArgs = new WebElement(page, "xpath=//input[@id='runTestModuleOnlyInputArgs']", "withinCurrentModuleOnlyInputArgs");
+        withinCurrentModuleOnlyTestTables = new WebElement(page, "xpath=//input[@id='runTestModuleOnly']", "withinCurrentModuleOnlyTestTables");
+        topPanelWithinCurrentModuleOnly = new WebElement(page, "xpath=//input[@id='testModuleOnlyField']", "topPanelWithinCurrentModuleOnly");
+        // Target Table and Test Runs
+        targetTableLink = new WebElement(page, "xpath=//section[@id='targetTablesSection']//a", "targetTableLink");
+        availableTestRunsLink = new WebElement(page, "xpath=//a[@class='testRunLink']", "availableTestRunsLink");
+        tableActionsTestBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']", "tableActionsTestBtn");
+        tableActionsTestDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']/parent::*//td[@class='arrow']", "tableActionsTestDropdownBtn");
 
         // SECOND LINE TOOLBAR
         // Toolbar elements - scoped to toolbar container
         runBtn = createScopedElement("xpath=.//img[contains(@src, 'run')]", "runBtn");
+        runDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//a[@id='runLink']//td[@class='arrow']", "runDropdownBtn");
         traceBtn = createScopedElement("xpath=.//img[contains(@src, 'trace')]", "traceBtn");
         benchmarkBtn = createScopedElement("xpath=.//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
+        benchmarkDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//a[@id='benchmarkLink']//td[@class='arrow']", "benchmarkDropdownBtn");
+        runStartBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runStartBtn");
         editTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'editTable')]]", "editBtn");
         copyTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
         removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
@@ -496,6 +529,196 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         }
     }
 
+
+    // ========== Breadcrumb Module Navigation ==========
+
+    public void selectBreadcrumbModule(String projectName, String moduleName) {
+        String actualProject = breadcrumbsProjectToggle.isVisible(1000) ? breadcrumbsProjectToggle.getText() : "";
+        String actualModule = breadcrumbsModuleToggle.isVisible(1000) ? breadcrumbsModuleToggle.getText() : "";
+
+        if (actualProject.equals(projectName) && !actualModule.equals(moduleName)) {
+            WaitUtil.retryOnException(() -> {
+                breadcrumbsModuleToggle.click();
+                WaitUtil.sleep(250, "Waiting for module dropdown to open");
+                breadcrumbsDropdownItemTemplate.format(moduleName).click(100);
+                return true;
+            }, 5000, 500, "Selecting module " + moduleName + " from breadcrumb");
+        } else if (!actualProject.equals(projectName)) {
+            navigateToProjectRoot(projectName);
+            new EditorLeftProjectModuleSelectorComponent(
+                    new WebElement(page, "xpath=//div[@id='projects']")).selectModule(projectName, moduleName);
+        }
+        WaitUtil.sleep(500, "Waiting for module view to load after breadcrumb navigation");
+    }
+
+    public void selectProjectBreadcrumbs(String projectName) {
+        WaitUtil.retryOnException(() -> {
+            breadcrumbsProjectToggle.click();
+            WaitUtil.sleep(250, "Waiting for project dropdown to open");
+            breadcrumbsDropdownItemTemplate.format(projectName).click(100);
+            return true;
+        }, 5000, 500, "Selecting project " + projectName + " from breadcrumb");
+        WaitUtil.sleep(500, "Waiting for project view to load");
+    }
+
+    public String getBreadcrumbsProjectName() {
+        return breadcrumbsProjectToggle.isVisible(1000) ? breadcrumbsProjectToggle.getText() : "";
+    }
+
+    public String getBreadcrumbsModuleName() {
+        return breadcrumbsModuleToggle.isVisible(1000) ? breadcrumbsModuleToggle.getText() : "";
+    }
+
+    public void clickBreadcrumbsCategory() {
+        breadcrumbsCategoryLink.click();
+    }
+
+    public void checkBreadcrumbs(String category, String project, String module) {
+        if (!category.isEmpty()) {
+            WaitUtil.waitForCondition(() -> breadcrumbsCategoryLink.isVisible(500)
+                            && breadcrumbsCategoryLink.getText().contains(category),
+                    5000, 250, "Waiting for breadcrumb category to be: " + category);
+        }
+        if (!project.isEmpty()) {
+            WaitUtil.waitForCondition(() -> breadcrumbsProjectToggle.isVisible(500)
+                            && breadcrumbsProjectToggle.getText().equals(project),
+                    5000, 250, "Waiting for breadcrumb project to be: " + project);
+        }
+        if (!module.isEmpty()) {
+            WaitUtil.waitForCondition(() -> breadcrumbsModuleToggle.isVisible(500)
+                            && breadcrumbsModuleToggle.getText().equals(module),
+                    5000, 250, "Waiting for breadcrumb module to be: " + module);
+        }
+    }
+
+    // ========== Top Panel Test Button ==========
+
+    public String getTestButtonText() {
+        if (topPanelTestBtn.isVisible(2000)) {
+            return topPanelTestBtn.getText().trim();
+        }
+        return "";
+    }
+
+    public boolean isTestButtonVisible() {
+        return topPanelTestBtn.isVisible(2000);
+    }
+
+    public void clickTestButton() {
+        topPanelTestBtn.click();
+    }
+
+    public void runAllTests() {
+        topPanelTestBtn.waitForVisible();
+        topPanelTestBtn.click();
+    }
+
+    public void clickTopPanelTestDropdown() {
+        testDropdownBtn.click();
+    }
+
+    public void clickTopPanelRunTestBtn() {
+        topPanelRunTestBtn.click();
+    }
+
+    // ========== Within Current Module Only ==========
+
+    public boolean isWithinCurrentModuleOnlyInputArgsChecked() {
+        return withinCurrentModuleOnlyInputArgs.isChecked();
+    }
+
+    public boolean isWithinCurrentModuleOnlyInputArgsEnabled() {
+        return withinCurrentModuleOnlyInputArgs.isEnabled();
+    }
+
+    public boolean isWithinCurrentModuleOnlyTestTablesChecked() {
+        return withinCurrentModuleOnlyTestTables.isChecked();
+    }
+
+    public boolean isWithinCurrentModuleOnlyTestTablesEnabled() {
+        return withinCurrentModuleOnlyTestTables.isEnabled();
+    }
+
+    public boolean isTopPanelWithinCurrentModuleOnlyChecked() {
+        return topPanelWithinCurrentModuleOnly.isChecked();
+    }
+
+    public boolean isTopPanelWithinCurrentModuleOnlyEnabled() {
+        return topPanelWithinCurrentModuleOnly.isEnabled();
+    }
+
+    public void setTopPanelWithinCurrentModuleOnly(boolean value) {
+        if (value != topPanelWithinCurrentModuleOnly.isChecked()) {
+            topPanelWithinCurrentModuleOnly.click();
+        }
+    }
+
+    // ========== Run/Trace/Benchmark Dropdown Arrows ==========
+
+    public void clickRunDropdown() {
+        runDropdownBtn.click();
+    }
+
+    public void clickBenchmarkDropdown() {
+        benchmarkDropdownBtn.click();
+    }
+
+    public void clickRunStartBtn() {
+        runStartBtn.click();
+    }
+
+    // ========== Run/Trace/Benchmark Visibility ==========
+
+    public boolean isRunButtonVisible() {
+        return runBtn.isVisible(1000);
+    }
+
+    public boolean isTraceButtonVisible() {
+        return traceBtn.isVisible(1000);
+    }
+
+    public boolean isBenchmarkButtonVisible() {
+        return benchmarkBtn.isVisible(1000);
+    }
+
+    // ========== Target Table and Test Runs ==========
+
+    public String getTargetTableText() {
+        if (targetTableLink.isVisible(2000)) {
+            return targetTableLink.getText().trim();
+        }
+        return "";
+    }
+
+    public boolean isTargetTableVisible() {
+        return targetTableLink.isVisible(2000);
+    }
+
+    public void clickTargetTable() {
+        targetTableLink.click();
+        WaitUtil.sleep(500, "Waiting for target table navigation");
+    }
+
+    public String getAvailableTestRunsLinkText() {
+        if (availableTestRunsLink.isVisible(2000)) {
+            return availableTestRunsLink.getText().trim();
+        }
+        return "";
+    }
+
+    public boolean isAvailableTestRunsLinkVisible() {
+        return availableTestRunsLink.isVisible(1000);
+    }
+
+    // ========== Table Actions Test Button ==========
+
+    public void clickTableActionsTestBtn() {
+        tableActionsTestBtn.click();
+    }
+
+    public void clickTableActionsTestDropdown() {
+        tableActionsTestDropdownBtn.click();
+    }
 
     public void copyTableAsNew(String newName, String description) {
         CopyTableDialogComponent copyDialog = clickCopy();

@@ -21,6 +21,7 @@ public class TestResultValidationComponent extends BaseComponent {
     private List<WebElement> testResultRowElementsList;
     private List<WebElement> testResultRowElementsLinksList;
     private List<WebElement> testResultBadgeErrors;
+    private WebElement currentModuleOnlyCheckbox;  //TODO: ?????
 
     public TestResultValidationComponent() {
         super(LocalDriverPool.getPage());
@@ -42,6 +43,7 @@ public class TestResultValidationComponent extends BaseComponent {
         testResultRowElementsList = createScopedElementList("xpath=.//table[@class='table']//tr[contains(@class, 'test-result-row')]//td[contains(@class, 'test-name')]", "testResultRowElements");
         testResultRowElementsLinksList = createScopedElementList("xpath=.//a[@class='testError']", "testResultRowElementsLinksList");
         testResultBadgeErrors = createScopedElementList("xpath=.//span[@class='badge badge-error']", "testResultBadgeError");
+        currentModuleOnlyCheckbox = new WebElement(page, "xpath=//input[@id='currentModuleOnly']", "currentModuleOnlyCheckbox");
     }
 
     public TableComponent getResultTable() {
@@ -89,6 +91,40 @@ public class TestResultValidationComponent extends BaseComponent {
 
     public List<String> getTestResult(int rowIndex) {
         return getResultTable().getRow(rowIndex).getValue();
+    }
+
+    public int countTestTables() {
+        WaitUtil.waitForCondition(() -> !testResultRowElementsList.isEmpty(), 5000, 100, "Waiting for test result rows to load");
+        return testResultRowElementsList.size();
+    }
+
+    public void checkAllTablesPassed() {
+        WaitUtil.waitForCondition(() -> !testResultRowElementsList.isEmpty(), 10000, 250, "Waiting for test results to appear");
+        boolean allPassed = testResultBadgeErrors.stream().noneMatch(badge -> badge.isVisible(500));
+        if (!allPassed) {
+            throw new AssertionError("Expected all test tables to pass, but found failures: " + getAllFailedTests());
+        }
+    }
+
+    public void checkTestTableFailed(String tableName) {
+        WaitUtil.waitForCondition(() -> !testResultRowElementsList.isEmpty(), 10000, 250, "Waiting for test results to appear");
+        boolean found = testResultRowElementsList.stream()
+                .anyMatch(row -> row.getText().contains(tableName));
+        if (!found) {
+            throw new AssertionError("Test table '" + tableName + "' not found in results");
+        }
+        boolean hasBadge = testResultBadgeErrors.stream().anyMatch(badge -> badge.isVisible(500));
+        if (!hasBadge) {
+            throw new AssertionError("Expected test table '" + tableName + "' to have failures, but all passed");
+        }
+    }
+
+    public boolean isCurrentModuleOnlyChecked() {
+        return currentModuleOnlyCheckbox.isChecked();
+    }
+
+    public boolean isCurrentModuleOnlyEnabled() {
+        return currentModuleOnlyCheckbox.isEnabled();
     }
 
     public List<String> getAllFailedTests() {

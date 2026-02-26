@@ -21,5 +21,10 @@
     <test name="TestOpenApiReconciliationEdgeCases"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationEdgeCases"/></classes></test>
     <test name="TestCreateProjectFromOpenApiFile"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiFile"/></classes></test>
     <test name="TestCreateDataTablesFromOpenApiGetMethod"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethod"/></classes></test>
+    <test name="TestProjectCompilation"><classes><class name="tests.ui.webstudio.rules_editor.TestProjectCompilation"/></classes></test>
+    <test name="TestCompileThisModuleOnly"><classes><class name="tests.ui.webstudio.rules_editor.TestCompileThisModuleOnly"/></classes></test>
+    <test name="TestCompilationProgressBar"><classes><class name="tests.ui.webstudio.rules_editor.TestCompilationProgressBar"/></classes></test>
+    <test name="TestWorkWithDuplicateTables"><classes><class name="tests.ui.webstudio.rules_editor.TestWorkWithDuplicateTables"/></classes></test>
+    <test name="TestSwitchModuleViaBreadcrumbsNavigation"><classes><class name="tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation"/></classes></test>
 
 </suite>
