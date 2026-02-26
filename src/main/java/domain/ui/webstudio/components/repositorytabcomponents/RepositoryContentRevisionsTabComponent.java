@@ -72,6 +72,8 @@ public class RepositoryContentRevisionsTabComponent extends BaseComponent {
             throw new IllegalArgumentException("Row index must be >= 1, got: " + rowIndex);
         }
         LOGGER.info("Opening revision at row {}", rowIndex);
+        WaitUtil.waitForCondition(() -> visibleRows.size() >= rowIndex, 5000, 200,
+                "Waiting for at least " + rowIndex + " revision rows to load");
         LocalDriverPool.getPage().onDialog(Dialog::accept);
         visibleRows.get(rowIndex - 1).getLocator().locator("xpath=.//a[@attr='open-revision']").click();
         WaitUtil.sleep(1000, "Waiting for revision to open");

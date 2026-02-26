@@ -10,6 +10,7 @@ public class UpdateFileDialogComponent extends BaseComponent {
     private WebElement fileInput;
     private WebElement updateButton;
     private WebElement cancelButton;
+    private WebElement fileChangedOkBtn;
 
     public UpdateFileDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -25,11 +26,21 @@ public class UpdateFileDialogComponent extends BaseComponent {
         fileInput = createScopedElement("xpath=.//div[@id='updateFileForm:file']//input[@type='file']", "fileInput");
         updateButton = createScopedElement("xpath=.//footer/input[@value='Update']", "updateButton");
         cancelButton = createScopedElement("xpath=.//footer/input[@value='Cancel']", "cancelButton");
+        fileChangedOkBtn = new WebElement(page, "xpath=//div[@id='fileChanged_container']//input[@value='OK']", "fileChangedOkBtn");
     }
 
     public UpdateFileDialogComponent updateFile(String filePath) {
         fileInput.setInputFiles(filePath);
         WaitUtil.sleep(1000, "Waiting for file to be selected");
+        return this;
+    }
+
+    public boolean isFileChangedWarningVisible() {
+        return fileChangedOkBtn.isVisible(500);
+    }
+
+    public UpdateFileDialogComponent clickFileChangedOk() {
+        fileChangedOkBtn.click();
         return this;
     }
 

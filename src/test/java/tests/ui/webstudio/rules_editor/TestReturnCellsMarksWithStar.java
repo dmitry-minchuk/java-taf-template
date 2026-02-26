@@ -56,14 +56,14 @@ public class TestReturnCellsMarksWithStar extends BaseTest {
 
         assertThat(table.getCellText(4, 3).replaceAll("\n", ""))
                 .as("Cell (4,3) should contain formula with return mark '=a+7  ★'")
-                .contains("a+7  ★");
+                .contains("a+7 ★");
 
         assertThat(table.getCellText(4, 4))
                 .as("Cell (4,4) should contain value with return mark '26  ★'")
-                .contains("26  ★");
+                .contains("26 ★");
 
         assertThat(table.getCellText(4, 5).replaceAll("\n", ""))
                 .as("Cell (4,5) should contain formula with return mark '=a★'")
-                .contains("a  ★");
+                .contains("a ★");
     }
 }

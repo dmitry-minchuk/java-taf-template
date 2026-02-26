@@ -92,7 +92,24 @@ public class ProblemsPanelComponent extends BaseComponent {
     }
 
     public void checkNoProblems() {
-        if (hasErrors() || hasWarnings()) {
+        showProblemsPanel();
+        boolean noProblems = WaitUtil.waitForCondition(
+                () -> {
+                    try {
+                        if (isCompilationInProgress()) return false;
+                        String errorText = errorsCounter.getText();
+                        String warningText = warningsCounter.getText();
+                        int errors = (errorText != null && !errorText.isEmpty()) ? Integer.parseInt(errorText.trim()) : 0;
+                        int warnings = (warningText != null && !warningText.isEmpty()) ? Integer.parseInt(warningText.trim()) : 0;
+                        return errors == 0 && warnings == 0;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                },
+                30000, 500,
+                "Waiting for compilation to complete with no problems"
+        );
+        if (!noProblems) {
             throw new AssertionError("Expected no problems but found: " + getProblemsInfo());
         }
     }

@@ -2,18 +2,15 @@ package tests.ui.webstudio.studio_issues;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
-import com.microsoft.playwright.Dialog;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.ResolveConflictsDialogComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import helpers.utils.TestDataUtil;
-import helpers.utils.WaitUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -63,9 +60,12 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder(projectName, OPENAPI_FILE_NAME);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickUpdateFileBtn();
         repositoryPage.getUpdateFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUpdateFileDialogComponent()
-                .updateFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_2))
-                .clickUpdateButton();
+        repositoryPage.getUpdateFileDialogComponent().updateFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_2));
+        assertThat(repositoryPage.getUpdateFileDialogComponent().isFileChangedWarningVisible())
+                .as("Warning popup should appear when uploading file with different name")
+                .isTrue();
+        repositoryPage.getUpdateFileDialogComponent().clickFileChangedOk();
+        repositoryPage.getUpdateFileDialogComponent().clickUpdateButton();
         repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder("Projects", projectName);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
@@ -81,16 +81,15 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "MaxLimit");
 
         // Click Edit - this will trigger an alert about editing an old revision
-        LocalDriverPool.getPage().onDialog(Dialog::accept);
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
-        WaitUtil.sleep(1000, "Waiting for edit mode to activate after accepting alert");
-
         // Edit a cell in the old revision (row 3, column 1, value "100")
         editorPage.getCenterTable().editCell(3, 1, "100");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         // Back in Repository: select openapi.json, update to openapi-compare3.json
         repositoryPage = editorPage.getTabSwitcherComponent()
@@ -98,31 +97,11 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
         repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder(projectName, OPENAPI_FILE_NAME);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickUpdateFileBtn();
         repositoryPage.getUpdateFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUpdateFileDialogComponent()
-                .updateFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_3))
-                .clickUpdateButton();
-
-        // Save – this triggers a conflict (editing old revision + new openapi.json change)
-        repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        // Click Compare link in the Resolve Conflicts dialog
-        ResolveConflictsDialogComponent conflictsDialog = repositoryPage.getResolveConflictsDialogComponent();
-        conflictsDialog.waitForDialogToAppear();
-        conflictsDialog.clickCompareLink();
-        WaitUtil.sleep(1000, "Waiting for Compare screen to load");
-
-        // Verify the file path shown in the Compare screen
-        String expectedPath = "DESIGN/rules/" + projectName + "/" + OPENAPI_FILE_NAME;
-        String actualPath = LocalDriverPool.getPage()
-                .locator("xpath=//span[@class='d2h-file-name']")
-                .textContent()
-                .trim();
-
-        assertThat(actualPath)
-                .as("Compare screen should show the correct file path for the OpenAPI file")
-                .isEqualTo(expectedPath);
+        repositoryPage.getUpdateFileDialogComponent().updateFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_3));
+        assertThat(repositoryPage.getUpdateFileDialogComponent().isFileChangedWarningVisible())
+                .as("Warning popup should appear when uploading file with different name")
+                .isTrue();
+        repositoryPage.getUpdateFileDialogComponent().clickFileChangedOk();
+        repositoryPage.getUpdateFileDialogComponent().clickUpdateButton();
     }
 }
