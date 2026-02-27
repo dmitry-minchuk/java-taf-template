@@ -4,9 +4,11 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
+import java.util.List;
+
 public class TopProblemsPanelComponent extends BaseComponent {
 
-    private WebElement allErrorsBlock;
+    private List<WebElement> errorItems;
 
     public TopProblemsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -19,28 +21,29 @@ public class TopProblemsPanelComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        allErrorsBlock = new WebElement(page, "xpath=//div[@id='problemsPanel']", "allErrorsBlock");
+        errorItems = createScopedElementList("xpath=.//div[@class='messages']//li[contains(@class,'error')]/span", "errorItems");
     }
 
     public String getText() {
-        if (allErrorsBlock.isVisible(2000)) {
-            return allErrorsBlock.getText().trim();
+        if (errorItems.isEmpty()) {
+            return "";
         }
-        return "";
+        return errorItems.getFirst().getText().trim();
     }
 
     public boolean isVisible() {
-        return allErrorsBlock.isVisible(2000);
+        return !errorItems.isEmpty();
     }
 
     public boolean isAbsent() {
-        return !allErrorsBlock.isVisible(1000);
+        return errorItems.isEmpty();
     }
 
     public boolean containsError(String errorText) {
-        if (!allErrorsBlock.isVisible(2000)) {
-            return false;
-        }
-        return allErrorsBlock.getText().contains(errorText);
+        return errorItems.stream().anyMatch(item -> item.getText().contains(errorText));
+    }
+
+    public List<String> getAllErrors() {
+        return errorItems.stream().map(item -> item.getText().trim()).toList();
     }
 }

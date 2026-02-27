@@ -161,7 +161,7 @@ public class WebElement {
     
     public boolean isVisible() {
         try {
-            waitForVisible(100);
+            waitForVisible(250);
         } catch (Exception e) {
             return false;
         }

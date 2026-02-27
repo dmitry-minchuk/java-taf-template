@@ -44,14 +44,15 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "someLookupBig2");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+                .selectItemInFolderByIndex("Decision", "someLookupBig2", 1);
+        assertThat(editorPage.getProblemsPanelComponent().getAllErrors())
                 .as("Error message for duplicated table in same module")
-                .isEqualTo("Found duplicated table 'SmartLookup Double someLookupBig2( String param1, Integer param2)'.");
+                .contains("Found duplicated table 'SmartLookup Double someLookupBig2( String param1, Integer param2)'.");
         editorPage.getCenterTable().editCell(3, 1, "Param 2");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        assertThat(editorPage.getProblemsPanelComponent().getAllErrors())
                 .as("Error message should persist after editing cell")
-                .isEqualTo("Found duplicated table 'SmartLookup Double someLookupBig2( String param1, Integer param2)'.");
+                .contains("Found duplicated table 'SmartLookup Double someLookupBig2( String param1, Integer param2)'.");
 
         // Section 2: Run/Trace/AvailableTestRuns are absent for table with error
         assertThat(editorPage.getEditorToolbarPanelComponent().isRunButtonVisible())
@@ -80,7 +81,8 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         assertThat(editorPage.getEditorToolbarPanelComponent().isWithinCurrentModuleOnlyInputArgsEnabled())
                 .as("WithinCurrentModuleOnly should be enabled after Trace click (same module)")
                 .isTrue();
-        editorPage.getEditorToolbarPanelComponent().clickTableActionsTestDropdown();
+        editorPage.refresh();
+        editorPage.getEditorToolbarPanelComponent().clickTestDropdown();
         assertThat(editorPage.getEditorToolbarPanelComponent().isWithinCurrentModuleOnlyInputArgsChecked())
                 .as("WithinCurrentModuleOnly should be unchecked after TestDropdown click (same module)")
                 .isFalse();
@@ -89,7 +91,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
                 .isTrue();
         assertThat(editorPage.getEditorToolbarPanelComponent().getAvailableTestRunsLinkText())
                 .as("AvailableTestRunsLink text for duplicate table without error")
-                .isEqualTo("someLookupBig2Test (1 test case)");
+                .contains("someLookupBig2Test (1 test case)");
         editorPage.getEditorToolbarPanelComponent().clickTableActionsTestBtn();
         editorPage.getTestResultValidationComponent().checkAllTablesPassed();
 

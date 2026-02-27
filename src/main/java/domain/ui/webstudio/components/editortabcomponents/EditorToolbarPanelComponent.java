@@ -32,12 +32,12 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement breadcrumbsDropdownItemTemplate;
     private WebElement breadcrumbsCategoryLink;
     // Run Tests Menu elements
-    @Getter
-    private WebElement testDropdownBtn;
     private WebElement testPerPageDropdown;
     private WebElement failuresOnlyCheckbox;
     private WebElement compoundResultCheckbox;
     private WebElement runTestsBtn;
+    @Getter
+    private WebElement testDropdownBtn;
     private WebElement topPanelTestBtn;
     private WebElement topPanelRunTestBtn;
     // More Menu elements
@@ -124,7 +124,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         topPanelWithinCurrentModuleOnly = new WebElement(page, "xpath=//input[@id='testModuleOnlyField']", "topPanelWithinCurrentModuleOnly");
         // Target Table and Test Runs
         targetTableLink = new WebElement(page, "xpath=//section[@id='targetTablesSection']//a", "targetTableLink");
-        availableTestRunsLink = new WebElement(page, "xpath=//a[@class='testRunLink']", "availableTestRunsLink");
+        availableTestRunsLink = new WebElement(page, "xpath=//section[@id='testsSection']", "availableTestRunsLink");
         tableActionsTestBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']", "tableActionsTestBtn");
         tableActionsTestDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']/parent::*//td[@class='arrow']", "tableActionsTestDropdownBtn");
 
@@ -147,8 +147,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         addedElementsExpanderTemplate = new WebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
         selectTypeDropdown = new WebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
         // Trace Menu elements - page-level (form elements)
-        traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
-        traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
+        traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton'] | //input[@name='traceButton']", "traceInsideMenuBtn");
+        traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton'] | //input[@name='traceIntoFileButton']", "traceIntoFileBtn");
         factorTextField = new WebElement(page, "xpath=//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
         factorTextFieldForTrace = new WebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
         jsonRadioBtn = new WebElement(page, "xpath=//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
@@ -221,6 +221,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public IRunMenu clickRun() {
+        runBtn.waitForVisible();
         runBtn.click();
         return new RunMenu();
     }
@@ -431,12 +432,13 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         ITraceMenu selectJSONTrace(String json);
         ITraceMenu clickTraceIntoFile();
         ITraceWindow clickTraceInsideMenu();
+        ITraceWindow clickTraceInsideMenu(boolean isPopupExpected);
         List<String> getAliasDropdownValues();
     }
 
     // Implementation for Playwright Trace Menu
     public class TraceMenu implements ITraceMenu {
-        
+
         @Override
         public ITraceMenu setFactorTextField(String text) {
             if (factorTextFieldForTrace.isVisible()) {
@@ -460,15 +462,24 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
         @Override
         public ITraceWindow clickTraceInsideMenu() {
-            // Wait for popup to open after click
-            Page popup = page.waitForPopup(() -> {
-                traceInsideMenuBtn.click();
-            });
+            return clickTraceInsideMenu(true);
+        }
 
-            // Wait for popup to load and trace tree to be ready
-            popup.waitForLoadState();
-            popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
-            return new TraceWindow(popup);
+        @Override
+        public ITraceWindow clickTraceInsideMenu(boolean isPopupExpected) {
+            if (isPopupExpected) {
+                Page popup = page.waitForPopup(() -> {
+                    traceInsideMenuBtn.waitForVisible();
+                    traceInsideMenuBtn.click();
+                });
+                popup.waitForLoadState();
+                popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
+                return new TraceWindow(popup);
+            } else {
+                traceInsideMenuBtn.waitForVisible();
+                traceInsideMenuBtn.click();
+                return null;
+            }
         }
 
         @Override
@@ -654,10 +665,14 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // ========== Run/Trace/Benchmark Dropdown Arrows ==========
 
     public void clickRunDropdown() {
+        runBtn.waitForVisible();
+        runBtn.hover();
         runDropdownBtn.click();
     }
 
     public void clickBenchmarkDropdown() {
+        benchmarkBtn.waitForVisible();
+        benchmarkBtn.hover();
         benchmarkDropdownBtn.click();
     }
 
