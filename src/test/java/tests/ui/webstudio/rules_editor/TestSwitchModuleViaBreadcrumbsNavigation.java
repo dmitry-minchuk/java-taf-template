@@ -44,7 +44,9 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_FIRST, "module_AR");
         editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(NAME_PROJECT_SECOND);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_SECOND, "module_AZ");
-        editorPage.getProblemsPanelComponent().checkNoProblems();
+        assertThat(editorPage.getProblemsPanelComponent().hasErrors())
+                .as("No errors should be present after switching to module_AZ")
+                .isFalse();
 
         // 2 + 3 + 4: Switch through multiple modules via breadcrumbs
         editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(NAME_PROJECT_FIRST);
