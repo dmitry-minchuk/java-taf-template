@@ -4,6 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
+import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -23,12 +24,12 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestAddDeleteEditProperties extends BaseTest {
+public class TestEditingProperties extends BaseTest {
 
     private static final String PROJECT_NAME = "TestAddDeleteEditProperties";
     private static final String EXCEL_FILE = "TestAddDeleteEditProperties.xlsx";
 
-    @Test(priority = 1)
+    @Test
     @TestCaseId("IPBQA-25861")
     @Description("Rules Editor - Edit existing properties in table details")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
@@ -36,7 +37,7 @@ public class TestAddDeleteEditProperties extends BaseTest {
         EditorPage editorPage = loginAndCreateProject();
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                        .selectModule(PROJECT_NAME, PROJECT_NAME);
+                .selectModule(PROJECT_NAME, PROJECT_NAME);
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
@@ -70,78 +71,8 @@ public class TestAddDeleteEditProperties extends BaseTest {
         editAndCheckDropdownProperty(editorPage, "Empty Result Processing", "emptyResultProcessing", "Skip");
     }
 
-    @Test(priority = 2)
-    @TestCaseId("IPBQA-25857")
-    @Description("Rules Editor - Add and delete properties in table details")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testAddAndDeleteProperty() {
-        EditorPage editorPage = loginAndCreateProject();
-
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, PROJECT_NAME);
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "MyRules2");
-
-        addAndCheckProperty(editorPage, "Category", "category", "MyCategory");
-        addAndCheckProperty(editorPage, "Description", "description", "TestDescription");
-        addAndCheckProperty(editorPage, "Tags", "tags", "Tag1,Tag2");
-        addAndCheckProperty(editorPage, "Effective Date", "effectiveDate", "05/14/2024");
-        addAndCheckProperty(editorPage, "Expiration Date", "expirationDate", "05/16/2024");
-        addAndCheckProperty(editorPage, "Start Request Date", "startRequestDate", "05/14/2024");
-        addAndCheckProperty(editorPage, "End Request Date", "endRequestDate", "04/13/2024");
-        addAndCheckProperty(editorPage, "LOB", "lob", "007");
-        addAndCheckProperty(editorPage, "Nature", "nature", "TestNature1");
-        addAndCheckProperty(editorPage, "ID", "id", "test2");
-        addAndCheckProperty(editorPage, "Build Phase", "buildPhase", "Property2");
-
-        addAndCheckCheckboxProperty(editorPage, "Canada Region", "caRegions", "QC");
-        addAndCheckCheckboxProperty(editorPage, "Canada Province", "caProvinces", "NT", "YT");
-        addAndCheckCheckboxProperty(editorPage, "Countries", "country", "BY");
-        addAndCheckCheckboxProperty(editorPage, "Currency", "currency", "YER");
-        addAndCheckCheckboxProperty(editorPage, "Language", "lang", "SPA");
-        addAndCheckCheckboxProperty(editorPage, "US Region", "usregion", "NE");
-        addAndCheckCheckboxProperty(editorPage, "US States", "state", "WA", "WV");
-
-        addAndCheckBooleanProperty(editorPage, "Cacheable", "cacheable", false);
-
-        addAndCheckDropdownProperty(editorPage, "Origin", "origin", "Deviation");
-        addAndCheckDropdownProperty(editorPage, "Recalculate", "recalculate", "Analyze");
-        addAndCheckDropdownProperty(editorPage, "Validate DT", "validateDT", "Off");
-        addAndCheckDropdownProperty(editorPage, "Empty Result Processing", "emptyResultProcessing", "Return");
-
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Decision", "MyRules1");
-
-        deletePropertyAndCheck(editorPage, "Category", "category");
-        deletePropertyAndCheck(editorPage, "Description", "description");
-        deletePropertyAndCheck(editorPage, "Tags", "tags");
-        deletePropertyAndCheck(editorPage, "Effective Date", "effectiveDate");
-        deletePropertyAndCheck(editorPage, "Expiration Date", "expirationDate");
-        deletePropertyAndCheck(editorPage, "Start Request Date", "startRequestDate");
-        deletePropertyAndCheck(editorPage, "End Request Date", "endRequestDate");
-        deletePropertyAndCheck(editorPage, "Canada Region", "caRegions");
-        deletePropertyAndCheck(editorPage, "Canada Province", "caProvinces");
-        deletePropertyAndCheck(editorPage, "Countries", "country");
-        deletePropertyAndCheck(editorPage, "Region", "region");
-        deletePropertyAndCheck(editorPage, "Currency", "currency");
-        deletePropertyAndCheck(editorPage, "Language", "lang");
-        deletePropertyAndCheck(editorPage, "LOB", "lob");
-        deletePropertyAndCheck(editorPage, "Origin", "origin");
-        deletePropertyAndCheck(editorPage, "US Region", "usregion");
-        deletePropertyAndCheck(editorPage, "US States", "state");
-        deletePropertyAndCheck(editorPage, "ID", "id");
-        deletePropertyAndCheck(editorPage, "Build Phase", "buildPhase");
-        deletePropertyAndCheck(editorPage, "Validate DT", "validateDT");
-        deletePropertyAndCheck(editorPage, "Cacheable", "cacheable");
-        deletePropertyAndCheck(editorPage, "Recalculate", "recalculate");
-        deletePropertyAndCheck(editorPage, "Nature", "nature");
-        deletePropertyAndCheck(editorPage, "Empty Result Processing", "emptyResultProcessing");
-    }
-
     private EditorPage loginAndCreateProject() {
-        LoginService loginService = new LoginService(configuration.driver.LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
@@ -199,41 +130,6 @@ public class TestAddDeleteEditProperties extends BaseTest {
         assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
                 .as("Property '%s' should have value '%s'", propertyTableName, value)
                 .isEqualToIgnoringCase(value);
-    }
-
-    private void addAndCheckProperty(EditorPage editorPage, String propertyName, String propertyTableName, String value) {
-        RightTableDetailsComponent tableDetails = editorPage.getRightTableDetailsComponent();
-        tableDetails.addProperty(propertyName);
-        editAndCheckProperty(editorPage, propertyName, propertyTableName, value);
-    }
-
-    private void addAndCheckCheckboxProperty(EditorPage editorPage, String propertyName, String propertyTableName, String... values) {
-        RightTableDetailsComponent tableDetails = editorPage.getRightTableDetailsComponent();
-        tableDetails.addProperty(propertyName);
-        editAndCheckCheckboxProperty(editorPage, propertyName, propertyTableName, values);
-    }
-
-    private void addAndCheckBooleanProperty(EditorPage editorPage, String propertyName, String propertyTableName, boolean value) {
-        RightTableDetailsComponent tableDetails = editorPage.getRightTableDetailsComponent();
-        tableDetails.addProperty(propertyName);
-        editAndCheckBooleanProperty(editorPage, propertyName, propertyTableName, value);
-    }
-
-    private void addAndCheckDropdownProperty(EditorPage editorPage, String propertyName, String propertyTableName, String value) {
-        RightTableDetailsComponent tableDetails = editorPage.getRightTableDetailsComponent();
-        tableDetails.addProperty(propertyName);
-        editAndCheckDropdownProperty(editorPage, propertyName, propertyTableName, value);
-    }
-
-    private void deletePropertyAndCheck(EditorPage editorPage, String propertyName, String propertyTableName) {
-        RightTableDetailsComponent tableDetails = editorPage.getRightTableDetailsComponent();
-        tableDetails.deleteProperty(propertyName);
-        WaitUtil.sleep(300, "Waiting after deleting property");
-        tableDetails.clickSaveBtn();
-
-        assertThat(editorPage.getCenterTable().isPropertyPresent(propertyTableName))
-                .as("Property '%s' should not be present", propertyTableName)
-                .isFalse();
     }
 
     private String formatDate(String dateValue) {

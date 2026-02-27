@@ -18,28 +18,10 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/*
- * Covered atomic tests (IPBQA-31073):
- *   2.8.3 - Create Data tables from OpenAPI GET methods
- *   - Verify Data tables are generated from OpenAPI GET methods (runtime and no-runtime variants)
- *   - Verify tables are editable and changes are saved correctly
- */
-public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
-
-    private static final String FILE_WITH_RUNTIME = "openapiDataRuntime.json";
-    private static final String PROJECT_WITH_RUNTIME = "openapiDataRuntime_";
+public class TestCreateDataTablesFromOpenApiGetMethodNoRuntime extends BaseTest {
 
     private static final String FILE_NO_RUNTIME = "openapiDataNoRuntime.json";
     private static final String PROJECT_NO_RUNTIME = "openapiNoDataRuntime_";
-
-    @Test
-    @TestCaseId("IPBQA-31073")
-    @Description("Create Data tables from OpenAPI GET methods with runtime context: verify tables exist and are editable")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testCreateDataTablesFromOpenApiGetMethodWithRuntime() {
-        String projectName = PROJECT_WITH_RUNTIME + System.currentTimeMillis();
-        scenario(FILE_WITH_RUNTIME, projectName);
-    }
 
     @Test
     @TestCaseId("IPBQA-31073")
@@ -57,14 +39,11 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        // Create project from OpenAPI file
         repositoryPage.createProjectFromOpenApi(fileName, projectName);
 
-        // Navigate to Editor and select Algorithms module
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms");
 
-        // Verify Spreadsheet items: non-data tables generated from API methods
         editorPage.getEditorLeftRulesTreeComponent().setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE);
         editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Spreadsheet");
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isItemExistsInFolder("Spreadsheet", "MyNotDataTable1"))
@@ -74,7 +53,6 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
                 .as("getNotDatTable should be present in Spreadsheet folder")
                 .isTrue();
 
-        // Verify Data tables generated from GET methods exist
         assertThat(editorPage.getEditorLeftRulesTreeComponent().isFolderExistsInTree("Data"))
                 .as("Data folder should be present for tables generated from GET methods")
                 .isTrue();
@@ -92,10 +70,7 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
                 .as("NewDatatypeData table should be present in Data folder")
                 .isTrue();
 
-        // Verify MyDatatypeData table is editable
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Data", "MyDatatypeData");
-
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Data", "MyDatatypeData");
         TableComponent table = editorPage.getCenterTable();
         table.doubleClickCell(3, 1);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
@@ -110,10 +85,7 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
                 .as("Second column of inserted row should contain '100'")
                 .isEqualTo("100");
 
-        // Verify MystrData table: 1 column, insert row with single value
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Data", "MystrData");
-
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Data", "MystrData");
         table = editorPage.getCenterTable();
         table.doubleClickCell(3, 1);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
@@ -124,10 +96,7 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
                 .as("Single column of inserted row should contain 'test1'")
                 .isEqualTo("test1");
 
-        // Verify SuperDatatypeData table: insert two rows — one with reference, one with data
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Data", "SuperDatatypeData");
-
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Data", "SuperDatatypeData");
         table = editorPage.getCenterTable();
         table.doubleClickCell(2, 1);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
@@ -140,20 +109,11 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
         table.editCell(5, 2, "someValue");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
-        assertThat(table.getCellText(3, 1))
-                .as("Reference row should contain '>MyDatatypeData'")
-                .isEqualTo(">MyDatatypeData");
-        assertThat(table.getCellText(5, 1))
-                .as("Data row first column should contain 'test1'")
-                .isEqualTo("test1");
-        assertThat(table.getCellText(5, 2))
-                .as("Data row second column should contain 'someValue'")
-                .isEqualTo("someValue");
+        assertThat(table.getCellText(3, 1)).as("Reference row should contain '>MyDatatypeData'").isEqualTo(">MyDatatypeData");
+        assertThat(table.getCellText(5, 1)).as("Data row first column should contain 'test1'").isEqualTo("test1");
+        assertThat(table.getCellText(5, 2)).as("Data row second column should contain 'someValue'").isEqualTo("someValue");
 
-        // Verify NewDatatypeData table: 3 columns, insert two rows — one with references, one with data
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Data", "NewDatatypeData");
-
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Data", "NewDatatypeData");
         table = editorPage.getCenterTable();
         table.doubleClickCell(2, 1);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
@@ -168,21 +128,11 @@ public class TestCreateDataTablesFromOpenApiGetMethod extends BaseTest {
         table.editCell(5, 3, "someValue");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
-        assertThat(table.getCellText(3, 1))
-                .as("Reference row col 1 should contain '>MyDatatypeData'")
-                .isEqualTo(">MyDatatypeData");
-        assertThat(table.getCellText(3, 2))
-                .as("Reference row col 2 should contain '>MyDatatypeData'")
-                .isEqualTo(">MyDatatypeData");
-        assertThat(table.getCellText(5, 1))
-                .as("Data row col 1 should contain 'test1'")
-                .isEqualTo("test1");
-        assertThat(table.getCellText(5, 2))
-                .as("Data row col 2 should contain 'test1'")
-                .isEqualTo("test1");
-        assertThat(table.getCellText(5, 3))
-                .as("Data row col 3 should contain 'someValue'")
-                .isEqualTo("someValue");
+        assertThat(table.getCellText(3, 1)).as("Reference row col 1 should contain '>MyDatatypeData'").isEqualTo(">MyDatatypeData");
+        assertThat(table.getCellText(3, 2)).as("Reference row col 2 should contain '>MyDatatypeData'").isEqualTo(">MyDatatypeData");
+        assertThat(table.getCellText(5, 1)).as("Data row col 1 should contain 'test1'").isEqualTo("test1");
+        assertThat(table.getCellText(5, 2)).as("Data row col 2 should contain 'test1'").isEqualTo("test1");
+        assertThat(table.getCellText(5, 3)).as("Data row col 3 should contain 'someValue'").isEqualTo("someValue");
 
         editorPage.getProblemsPanelComponent().checkNoProblems();
     }
