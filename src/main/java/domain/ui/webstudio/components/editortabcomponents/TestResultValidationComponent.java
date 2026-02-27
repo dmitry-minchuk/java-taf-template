@@ -21,7 +21,7 @@ public class TestResultValidationComponent extends BaseComponent {
     private List<WebElement> testResultRowElementsList;
     private List<WebElement> testResultRowElementsLinksList;
     private List<WebElement> testResultBadgeErrors;
-    private WebElement currentModuleOnlyCheckbox;  //TODO: ?????
+    private WebElement currentModuleOnlyCheckbox;
 
     public TestResultValidationComponent() {
         super(LocalDriverPool.getPage());

@@ -15,7 +15,7 @@ public class ProblemsPanelComponent extends BaseComponent {
     private WebElement errorsCounter;
     private WebElement warningsCounter;
     private WebElement compilationProgressBar;
-    private WebElement compilationProgressBarNotSavedProject;  //TODO: ?????
+    private WebElement compilationProgressBarNotSavedProject;
     private List<WebElement> errorElements;
     private List<WebElement> warningElements;
 

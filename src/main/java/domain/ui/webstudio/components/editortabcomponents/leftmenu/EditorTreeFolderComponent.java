@@ -15,6 +15,7 @@ public class EditorTreeFolderComponent extends BaseComponent {
     private WebElement expanderClosed;
     private WebElement folderName;
     private WebElement itemTemplate;
+    private WebElement indexedItemTemplate;
 
     public EditorTreeFolderComponent() {
         super(LocalDriverPool.getPage());
@@ -30,6 +31,7 @@ public class EditorTreeFolderComponent extends BaseComponent {
         expanderClosed = createScopedElement("xpath=./div/span[contains(@class,'rf-trn-hnd-colps')]", "expanderClosed");
         folderName = createScopedElement("xpath=./div/span/span/span[text()][1]", "folderName");
         itemTemplate = createScopedElement("xpath=.//a[span[text()='%s']]", "treeItem");
+        indexedItemTemplate = createScopedElement("xpath=(.//a[span[text()='%s']])[%s]", "indexedTreeItem");
     }
 
     public void expandFolder() {
@@ -57,9 +59,7 @@ public class EditorTreeFolderComponent extends BaseComponent {
         return itemTemplate.format(itemName);
     }
 
-    public void selectSecondItem(String itemName) {  //TODO: ?????
-        WebElement secondItem = createScopedElement(
-                "xpath=(.//a[span[text()='" + itemName + "']])[2]", "secondTreeItem");
-        secondItem.click();
+    public void selectItemByIndex(String itemName, int index) {
+        indexedItemTemplate.format(itemName, index).click();
     }
 }

@@ -59,7 +59,6 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement traceBtn;
     private WebElement benchmarkBtn;
     private WebElement benchmarkDropdownBtn;
-    private WebElement runStartBtn; //TODO: ?????
     @Getter
     private WebElement editTableBtn;
     private WebElement copyTableBtn;
@@ -136,7 +135,6 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         traceBtn = createScopedElement("xpath=.//img[contains(@src, 'trace')]", "traceBtn");
         benchmarkBtn = createScopedElement("xpath=.//span[contains(text(), 'Benchmark')]", "benchmarkBtn");
         benchmarkDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//a[@id='benchmarkLink']//td[@class='arrow']", "benchmarkDropdownBtn");
-        runStartBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:runButton']", "runStartBtn");
         editTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'editTable')]]", "editBtn");
         copyTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
         removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
@@ -661,10 +659,6 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void clickBenchmarkDropdown() {
         benchmarkDropdownBtn.click();
-    }
-
-    public void clickRunStartBtn() {
-        runStartBtn.click();
     }
 
     // ========== Run/Trace/Benchmark Visibility ==========

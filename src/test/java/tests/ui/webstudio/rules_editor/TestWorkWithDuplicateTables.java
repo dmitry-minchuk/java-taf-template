@@ -63,7 +63,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
                 .isFalse();
 
         // Section 3: Select duplicate table WITHOUT error, check Run/Trace/Test dropdowns
-        editorPage.getEditorLeftRulesTreeComponent().selectSecondItemInFolder("Decision", "someLookupBig2");
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolderByIndex("Decision", "someLookupBig2", 2);
         editorPage.getEditorToolbarPanelComponent().clickRun();
         assertThat(editorPage.getEditorToolbarPanelComponent().isWithinCurrentModuleOnlyInputArgsChecked())
                 .as("WithinCurrentModuleOnly should be unchecked after Run click (same module)")
@@ -155,9 +155,10 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         assertThat(editorPage.getEditorToolbarPanelComponent().isWithinCurrentModuleOnlyInputArgsEnabled())
                 .as("WithinCurrentModuleOnly should be disabled after Trace (diff modules)")
                 .isFalse();
-        var runMenu = editorPage.getEditorToolbarPanelComponent().clickRun();
-        runMenu.setInputTextField("1", "a1").setInputTextField("2", "11");
-        editorPage.getEditorToolbarPanelComponent().clickRunStartBtn();
+        editorPage.getEditorToolbarPanelComponent().clickRun()
+                .setInputTextField("1", "a1")
+                .setInputTextField("2", "11")
+                .clickRunInsideMenu();
         assertThat(editorPage.getTestResultValidationComponent().getResultTable().getCellText(1, 4))
                 .as("Run result for someLookupBig2 should be 100")
                 .isEqualTo("100");

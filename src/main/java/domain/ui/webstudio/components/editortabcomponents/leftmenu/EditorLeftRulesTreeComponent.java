@@ -141,10 +141,10 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         return folders;
     }
 
-    public EditorLeftRulesTreeComponent selectSecondItemInFolder(String folderName, String itemName) { //TODO: ?????
+    public EditorLeftRulesTreeComponent selectItemInFolderByIndex(String folderName, String itemName, int index) {
         waitUntilSpinnerLoaded();
         EditorTreeFolderComponent folder = findFolderInTree(folderName);
-        folder.selectSecondItem(itemName);
+        folder.selectItemByIndex(itemName, index);
         return this;
     }
 
