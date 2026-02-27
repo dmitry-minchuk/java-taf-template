@@ -107,9 +107,13 @@ public class TestResultValidationComponent extends BaseComponent {
     }
 
     public void checkTestTableFailed(String tableName) {
-        WaitUtil.waitForCondition(() -> !testResultRowElementsList.isEmpty(), 10000, 250, "Waiting for test results to appear");
+        WaitUtil.waitForCondition(
+                () -> !testResultRowElementsList.isEmpty() || !testResultRowElementsLinksList.isEmpty(),
+                10000, 250, "Waiting for test results to appear");
         boolean found = testResultRowElementsList.stream()
-                .anyMatch(row -> row.getText().contains(tableName));
+                .anyMatch(row -> row.getText().contains(tableName))
+                || testResultRowElementsLinksList.stream()
+                .anyMatch(link -> link.getText().contains(tableName));
         if (!found) {
             throw new AssertionError("Test table '" + tableName + "' not found in results");
         }

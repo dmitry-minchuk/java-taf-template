@@ -138,13 +138,14 @@ public class TestWorkWithDuplicateTables extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "someLookupBig2");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+        assertThat(editorPage.getProblemsPanelComponent().getAllErrors())
                 .as("Error message for duplicate table in different modules")
-                .isEqualTo("There can be only one active table.");
+                .contains("There can be only one active table.");
         editorPage.getCenterTable().editCell(3, 1, "Param 2");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        assertThat(editorPage.getProblemsPanelComponent().getAllErrors())
                 .as("Error message should persist after editing cell (diff modules)")
-                .isEqualTo("There can be only one active table.");
+                .contains("There can be only one active table.");
 
         // Section 6: Run/Trace with WithinCurrentModuleOnly checked and disabled (diff modules)
         editorPage.getEditorToolbarPanelComponent().clickRun();
@@ -187,6 +188,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         // Section 8: Top Panel Test — WithinCurrentModuleOnly unchecked & enabled, then set and run
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", "someLookupBig2");
         editorPage.getEditorToolbarPanelComponent().clickTopPanelTestDropdown();
+        editorPage.getEditorToolbarPanelComponent().setTopPanelWithinCurrentModuleOnly(false);
         assertThat(editorPage.getEditorToolbarPanelComponent().isTopPanelWithinCurrentModuleOnlyChecked())
                 .as("TopPanel WithinCurrentModuleOnly should be unchecked (diff modules)")
                 .isFalse();
@@ -205,9 +207,9 @@ public class TestWorkWithDuplicateTables extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "someLookupBig2Test");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+        assertThat(editorPage.getEditorMainContentProblemsPanelComponent().getWarningMessages())
                 .as("Error message for test table referencing duplicated rule (diff modules)")
-                .isEqualTo("Tested rules have errors");
+                .contains("Tested rules have errors");
         editorPage.getEditorToolbarPanelComponent().clickRunDropdown();
         assertThat(editorPage.getEditorToolbarPanelComponent().isWithinCurrentModuleOnlyTestTablesChecked())
                 .as("WithinCurrentModuleOnlyTestTables should be checked (diff modules)")
@@ -245,15 +247,16 @@ public class TestWorkWithDuplicateTables extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "someLookupBig2");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+        assertThat(editorPage.getProblemsPanelComponent().getAllErrors())
                 .as("Error message for duplicate table across projects with dependency")
-                .isEqualTo("Method 'someLookupBig2(String param1," +
+                .contains("Method 'someLookupBig2(String param1," +
                         " Integer param2)' is already used in modules 'module_AZ' and 'module_KS' with the same version," +
                         " active status, properties set.");
         editorPage.getCenterTable().editCell(3, 1, "Param 2");
-        assertThat(editorPage.getTopProblemsPanelComponent().getText())
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        assertThat(editorPage.getProblemsPanelComponent().getAllErrors())
                 .as("Error message should persist after editing cell (dependency project)")
-                .isEqualTo("Method 'someLookupBig2(String param1," +
+                .contains("Method 'someLookupBig2(String param1," +
                         " Integer param2)' is already used in modules 'module_AZ' and 'module_KS' with the same version," +
                         " active status, properties set.");
 

@@ -10,7 +10,6 @@ import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftPro
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.List;
 
@@ -47,11 +46,6 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement withinCurrentModuleOnlyInputArgs;
     private WebElement withinCurrentModuleOnlyTestTables;
     private WebElement topPanelWithinCurrentModuleOnly;
-    // Target Table and Test Runs
-    private WebElement targetTableLink;
-    private WebElement availableTestRunsLink;
-    private WebElement tableActionsTestBtn;
-    private WebElement tableActionsTestDropdownBtn;
 
     // SECOND LINE TOOLBAR
     private WebElement runBtn;
@@ -59,6 +53,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement traceBtn;
     private WebElement benchmarkBtn;
     private WebElement benchmarkDropdownBtn;
+    private WebElement targetTableLink;
+    private WebElement availableTestRunsLink;
+    private WebElement tableActionsTestBtn;
+    private WebElement tableActionsTestDropdownBtn;
     @Getter
     private WebElement editTableBtn;
     private WebElement copyTableBtn;
@@ -113,8 +111,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         failuresOnlyCheckbox = new WebElement(page, "xpath=//input[@name='failuresOnly']", "failuresOnlyCheckbox");
         compoundResultCheckbox = new WebElement(page, "xpath=//input[@name='complexResult']", "compoundResultCheckbox");
         runTestsBtn = new WebElement(page, "xpath=//a[@class='button' and text()='Test']", "runTestsBtn");
-        topPanelTestBtn = new WebElement(page, "xpath=//a[@title='Run Tests']", "topPanelTestBtn");
-        topPanelRunTestBtn = new WebElement(page, "xpath=//input[@value='Test' and @type='submit']", "topPanelRunTestBtn");
+        topPanelTestBtn = new WebElement(page, "xpath=//div[@id='testPanel']//a[@title='Run Tests']", "topPanelTestBtn");
+        topPanelRunTestBtn = new WebElement(page, "xpath=//ul[@id='testSettings']//a[contains(@class,'button') and text()='Test']", "topPanelRunTestBtn");
         // More Menu elements initialization
         changesBtn = new WebElement(page, "xpath=//*[@id='topRevertLink']", "changesBtn");
         revisionsBtn = new WebElement(page, "xpath=//a[@title='Show project revisions']", "revisionsBtn");
@@ -126,7 +124,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         targetTableLink = new WebElement(page, "xpath=//section[@id='targetTablesSection']//a", "targetTableLink");
         availableTestRunsLink = new WebElement(page, "xpath=//section[@id='testsSection']", "availableTestRunsLink");
         tableActionsTestBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']", "tableActionsTestBtn");
-        tableActionsTestDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']/parent::*//td[@class='arrow']", "tableActionsTestDropdownBtn");
+        tableActionsTestDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//a[.//span[text()='Test']]//td[@class='arrow']", "tableActionsTestDropdownBtn");
 
         // SECOND LINE TOOLBAR
         // Toolbar elements - scoped to toolbar container
@@ -613,7 +611,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         return topPanelTestBtn.isVisible(2000);
     }
 
-    public void clickTestButton() {
+    public void clickTopPanelTestButton() {
         topPanelTestBtn.click();
     }
 
@@ -627,6 +625,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void clickTopPanelRunTestBtn() {
+        topPanelRunTestBtn.waitForVisible();
         topPanelRunTestBtn.click();
     }
 
@@ -726,6 +725,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void clickTableActionsTestDropdown() {
+        tableActionsTestBtn.waitForVisible();
+        tableActionsTestBtn.hover();
         tableActionsTestDropdownBtn.click();
     }
 

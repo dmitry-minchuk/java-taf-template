@@ -16,6 +16,7 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     private WebElement closeBtn;
 
     private List<WebElement> errorMessages;
+    private List<WebElement> warningMessages;
     private WebElement hideProblemsBtn;
     private WebElement showProblemsBtn;
 
@@ -36,6 +37,7 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
         closeBtn = createScopedElement("xpath=.//button[@title='Close'] | .//span[contains(@class,'close')]", "closeBtn");
 
         errorMessages = createScopedElementList("xpath=.//div[@class='problem-error']", "errorMessages");
+        warningMessages = createScopedElementList("xpath=.//div[@class='problem-warning']", "warningMessages");
         hideProblemsBtn = createScopedElement("xpath=.//img[@title='Hide Problems']", "hideProblemsBtn");
         showProblemsBtn = createScopedElement("xpath=.//img[@title='Show Problems']", "showProblemsBtn");
     }
@@ -119,6 +121,14 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
         WaitUtil.sleep(500, "Waiting for inline error panel to fully render");
         WaitUtil.waitForListNotEmpty(() -> errorMessages, 20000, 1000, "Waiting for error messages to load");
         return errorMessages.stream()
+                .map(e -> e.getText().trim())
+                .toList();
+    }
+
+    public List<String> getWarningMessages() {
+        WaitUtil.sleep(500, "Waiting for inline error panel to fully render");
+        WaitUtil.waitForListNotEmpty(() -> warningMessages, 20000, 1000, "Waiting for error messages to load");
+        return warningMessages.stream()
                 .map(e -> e.getText().trim())
                 .toList();
     }
