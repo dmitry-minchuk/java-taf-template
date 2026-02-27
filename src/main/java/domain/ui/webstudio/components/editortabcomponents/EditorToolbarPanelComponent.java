@@ -656,6 +656,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void setTopPanelWithinCurrentModuleOnly(boolean value) {
+        topPanelWithinCurrentModuleOnly.waitForVisible();
         if (value != topPanelWithinCurrentModuleOnly.isChecked()) {
             topPanelWithinCurrentModuleOnly.click();
         }
