@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.ProblemsPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -63,6 +64,7 @@ public class TestProjectCompilation extends BaseTest {
 
         //3
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule1Test");
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
@@ -71,6 +73,7 @@ public class TestProjectCompilation extends BaseTest {
                 .as("Compilation progress bar should be absent after edit")
                 .isFalse();
 
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
         assertThat(editorPage.getProblemsPanelComponent().isCompilationProgressBarVisible())
@@ -114,6 +117,7 @@ public class TestProjectCompilation extends BaseTest {
 
         //3
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule1Test");
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
@@ -122,6 +126,7 @@ public class TestProjectCompilation extends BaseTest {
                 .as("Compilation progress bar should be absent after edit")
                 .isFalse();
 
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
         assertThat(editorPage.getProblemsPanelComponent().isCompilationProgressBarVisible())
@@ -152,6 +157,7 @@ public class TestProjectCompilation extends BaseTest {
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_CALC1, "CalcModule");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "mySpr");
         assertThat(editorPage.getTopProblemsPanelComponent().isAbsent())
@@ -161,6 +167,7 @@ public class TestProjectCompilation extends BaseTest {
         //2
         editorPage.getEditorToolbarPanelComponent().selectBreadcrumbModule(NAME_PROJECT_CALC2, "CalcModule");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "mySpr");
         assertThat(editorPage.getTopProblemsPanelComponent().isAbsent())
@@ -204,6 +211,7 @@ public class TestProjectCompilation extends BaseTest {
 
         //2
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "AccidentPremium");
         editorPage.getEditorToolbarPanelComponent().runAllTests();
@@ -211,6 +219,7 @@ public class TestProjectCompilation extends BaseTest {
 
         //3
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "AccidentPremium");
         LocalDriverPool.getPage().reload();
@@ -233,28 +242,37 @@ public class TestProjectCompilation extends BaseTest {
                 .isEqualTo("Test 3");
 
         //5
+        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameExample3Project);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameExample3Project, "AutoPolicyTests");
         var copyModuleDialog = editorPage.openCopyModuleDialog();
         copyModuleDialog.setModuleName("AutoPolicyTests2");
         copyModuleDialog.clickCopy();
 
+        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameExample3Project);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameExample3Project, "AutoPolicyTests2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "DriverPremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineDriverPremium DriverPremiumTest1");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         editorPage.getEditorLeftRulesTreeComponent()
                 .selectItemInFolder("Test", "PolicyPremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DeterminePolicyPremium PolicyPremiumTest1");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         editorPage.getEditorLeftRulesTreeComponent()
                 .selectItemInFolder("Test", "VehiclePremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineVehiclePremium VehiclePremiumTest1");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         assertThat(editorPage.getEditorToolbarPanelComponent().getTestButtonText())
                 .as("Test button should show 'Test 6' after copying module and adding tests")
                 .isEqualTo("Test 6");
+
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
 
         //6
         LocalDriverPool.getPage().reload();

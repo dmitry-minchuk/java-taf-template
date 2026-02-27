@@ -13,6 +13,7 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -22,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
 
     private static final String NAME_PROJECT_FIRST = "TestSwitchModuleViaBreadcrumbsNavigationFirst";
-    private static final String ZIP_FILE_FIRST = "TestSwitchModuleViaBreadcrumbsNavigation/RulesEditor.TestSwitchModuleViaBreadcrumbsNavigationFirst.zip";
+    private static final String ZIP_FILE_FIRST = "RulesEditor.TestSwitchModuleViaBreadcrumbsNavigationFirst.zip";
     private static final String NAME_PROJECT_SECOND = "TestSwitchModuleViaBreadcrumbsNavigationSecond";
-    private static final String ZIP_FILE_SECOND = "TestSwitchModuleViaBreadcrumbsNavigation/RulesEditor.TestSwitchModuleViaBreadcrumbsNavigationSecond.zip";
+    private static final String ZIP_FILE_SECOND = "RulesEditor.TestSwitchModuleViaBreadcrumbsNavigationSecond.zip";
 
     @Test
     @TestCaseId("IPBQA-31804")
@@ -63,6 +64,7 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
 
         long startTime = System.currentTimeMillis();
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "SmartRule1");
         long elapsedTime = System.currentTimeMillis() - startTime;

@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.ProblemsPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -67,6 +68,7 @@ public class TestCompilationProgressBar extends BaseTest {
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameMainProject, "module_KS");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "SmartRule1");
 
@@ -90,11 +92,13 @@ public class TestCompilationProgressBar extends BaseTest {
                 .isFalse();
 
         //9
+        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameMainProject);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameMainProject, "module_KS");
         var copyModuleDialog = editorPage.openCopyModuleDialog();
         copyModuleDialog.setModuleName("module_KS2");
         copyModuleDialog.clickCopy();
 
+        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameMainProject);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameMainProject, "module_KS2");
         ProblemsPanelComponent problemsPanel = editorPage.getProblemsPanelComponent();
         problemsPanel.waitForCompilationProgressBarToContain("Loaded 100% (37/37)", 200000);
@@ -138,6 +142,7 @@ public class TestCompilationProgressBar extends BaseTest {
         copyModuleDialog.setModuleName("Main2");
         copyModuleDialog.clickCopy();
 
+        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameProjectSample);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameProjectSample, "Main2");
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete(15000, 250);
         assertThat(editorPage.getProblemsPanelComponent().isCompilationProgressBarVisible())

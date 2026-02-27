@@ -10,6 +10,7 @@ import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditModuleDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -74,7 +75,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
 
         //2
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, NAME_MY_PROJECT, "MyProject.zip");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, NAME_MY_PROJECT, "TestCompileThisModuleOnly_MyProject.zip");
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, NAME_TEST3_PROJECT, "TestProject3.zip");
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
@@ -100,6 +101,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
 
         //2.2
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule1Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -160,6 +162,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         //2.5
         toolbar.selectBreadcrumbModule(NAME_TEST3_PROJECT, "TestSomeState2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule2Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -189,6 +192,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         //2.7
         toolbar.selectBreadcrumbModule(NAME_TEST3_PROJECT, "TestSomeState3");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule2Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -206,6 +210,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         //2.9
         toolbar.selectBreadcrumbModule(NAME_TEST3_PROJECT, "TestSomeState2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule2Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -229,6 +234,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         //3.1
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_TEST2_PROJECT, "TestSomeState");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule1Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -240,6 +246,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         //3.2
         toolbar.selectBreadcrumbModule(NAME_TEST2_PROJECT, "TestSomeState2");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule2Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -272,6 +279,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         assertThat(editorPage.getProblemsPanelComponent().isCompilationProgressBarVisible())
                 .as("Compilation progress bar should be absent").isFalse();
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "SmartRule1Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -333,6 +341,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
                 .as("currentModuleOnly should be disabled").isFalse();
 
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "Hello2Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -342,6 +351,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
                 .as("Should have exactly 1 test table").isEqualTo(1);
 
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "Hello2Test");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -359,6 +369,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
         //5.2
         toolbar.selectBreadcrumbModule(NAME_SAMPLE2_PROJECT, "Main_Test");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "HelloTest");
         toolbar = editorPage.getEditorToolbarPanelComponent();
@@ -372,6 +383,7 @@ public class TestCompileThisModuleOnly extends BaseTest {
                 .as("Should have exactly 1 test table").isEqualTo(1);
 
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "HelloTest");
         traceWindow = toolbar.clickTraceExpectTraceWindow();

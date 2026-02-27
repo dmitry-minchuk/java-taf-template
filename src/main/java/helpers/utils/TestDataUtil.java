@@ -37,7 +37,7 @@ public class TestDataUtil {
         File resourcesDir = new File(HOST_RESOURCE_PATH);
         Collection<File> foundFiles = FileUtils.listFiles(resourcesDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         List<File> matchingFiles = foundFiles.stream()
-                .filter(file -> file.getName().contains(fileName))
+                .filter(file -> file.getName().equalsIgnoreCase(fileName))
                 .toList();
 
         if (matchingFiles.size() == 1) {

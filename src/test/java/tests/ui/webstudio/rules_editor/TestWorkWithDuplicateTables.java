@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -35,12 +36,13 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
-                NAME_PROJECT_SAME_MODULE, "TestWorkWithDuplicateTables/" + NAME_PROJECT_SAME_MODULE + ".zip");
+                NAME_PROJECT_SAME_MODULE, NAME_PROJECT_SAME_MODULE + ".zip");
 
         // Section 1: Same module duplicate tables — select table with error
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_SAME_MODULE, "module_AZ");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "someLookupBig2");
         assertThat(editorPage.getTopProblemsPanelComponent().getText())
@@ -93,6 +95,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
 
         // Section 4: Select test table, check RunDropdown/Trace/BenchmarkDropdown with WithinCurrentModuleOnlyTestTables
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "someLookupBig2Test");
         assertThat(editorPage.getTopProblemsPanelComponent().isAbsent())
@@ -125,11 +128,12 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         // Section 5: Different modules duplicate tables
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
-                NAME_PROJECT_DIFF_MODULES, "TestWorkWithDuplicateTables/" + NAME_PROJECT_DIFF_MODULES + ".zip");
+                NAME_PROJECT_DIFF_MODULES, NAME_PROJECT_DIFF_MODULES + ".zip");
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_DIFF_MODULES, "module_AZ");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "someLookupBig2");
         assertThat(editorPage.getTopProblemsPanelComponent().getText())
@@ -196,6 +200,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
 
         // Section 9: Test table errors (diff modules) — WithinCurrentModuleOnlyTestTables checked & disabled
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "someLookupBig2Test");
         assertThat(editorPage.getTopProblemsPanelComponent().getText())
@@ -228,13 +233,14 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         // Section 10: Project with dependency — duplicate table error across projects
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
-                NAME_PROJECT_WITH_DEPENDENCY, "TestWorkWithDuplicateTables/" + NAME_PROJECT_WITH_DEPENDENCY + ".zip");
+                NAME_PROJECT_WITH_DEPENDENCY, NAME_PROJECT_WITH_DEPENDENCY + ".zip");
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
-                NAME_PROJECT_DEPENDENT, "TestWorkWithDuplicateTables/" + NAME_PROJECT_DEPENDENT + ".zip");
+                NAME_PROJECT_DEPENDENT, NAME_PROJECT_DEPENDENT + ".zip");
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_WITH_DEPENDENCY, "module_AZ");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "someLookupBig2");
         assertThat(editorPage.getTopProblemsPanelComponent().getText())
@@ -262,6 +268,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
 
         // Section 12: Test table in dependency project — WithinCurrentModuleOnlyTestTables unchecked & enabled
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "someLookupBig2Test");
         assertThat(editorPage.getTopProblemsPanelComponent().isAbsent())
@@ -296,6 +303,7 @@ public class TestWorkWithDuplicateTables extends BaseTest {
         // Section 13: Switch to dependent project — no errors, WithinCurrentModuleOnly unchecked & enabled
         editorPage.getEditorToolbarPanelComponent().selectBreadcrumbModule(NAME_PROJECT_DEPENDENT, "module_KS");
         editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "someLookupBig2");
         assertThat(editorPage.getTopProblemsPanelComponent().isAbsent())
