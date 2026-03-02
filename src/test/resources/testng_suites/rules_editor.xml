@@ -14,12 +14,14 @@
     <test name="TestRestrictionsErrorMessagesForProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestRestrictionsErrorMessagesForProperties"/></classes></test>
     <test name="TestReturnCellsMarksWithStar"><classes><class name="tests.ui.webstudio.rules_editor.TestReturnCellsMarksWithStar"/></classes></test>
     <test name="TestDetermineSpreadsheetResultCellType"><classes><class name="tests.ui.webstudio.rules_editor.TestDetermineSpreadsheetResultCellType"/></classes></test>
-    <test name="TestAddDeleteEditProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestAddDeleteEditProperties"/></classes></test>
+    <test name="TestEditingProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestEditingProperties"/></classes></test>
+    <test name="TestAddAndDeleteProperty"><classes><class name="tests.ui.webstudio.rules_editor.TestAddAndDeleteProperty"/></classes></test>
     <test name="TestExportProjectFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestExportProjectFunctionality"/></classes></test>
-    <test name="TestOpenApiImportAndReconciliation"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiImportAndReconciliation"/></classes></test>
-    <test name="TestOpenApiImportLocalChanges"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiImportLocalChanges"/></classes></test>
-    <test name="TestOpenApiReconciliationEdgeCases"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationEdgeCases"/></classes></test>
-    <test name="TestCreateProjectFromOpenApiFile"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiFile"/></classes></test>
-    <test name="TestCreateDataTablesFromOpenApiGetMethod"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethod"/></classes></test>
+    <test name="TestProjectCompilationAutoIncludeFalse"><classes><class name="tests.ui.webstudio.rules_editor.TestProjectCompilationAutoIncludeFalse"/></classes></test>
+    <test name="TestProjectCompilationAutoIncludeTrue"><classes><class name="tests.ui.webstudio.rules_editor.TestProjectCompilationAutoIncludeTrue"/></classes></test>
+    <test name="TestProjectHasTheSameModuleInDependency"><classes><class name="tests.ui.webstudio.rules_editor.TestProjectHasTheSameModuleInDependency"/></classes></test>
+    <test name="TestTestButtonAvailable"><classes><class name="tests.ui.webstudio.rules_editor.TestTestButtonAvailable"/></classes></test>
+    <test name="TestWorkWithDuplicateTables"><classes><class name="tests.ui.webstudio.rules_editor.TestWorkWithDuplicateTables"/></classes></test>
+    <test name="TestSwitchModuleViaBreadcrumbsNavigation"><classes><class name="tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation"/></classes></test>
 
 </suite>

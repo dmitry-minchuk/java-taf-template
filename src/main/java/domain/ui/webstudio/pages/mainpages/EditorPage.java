@@ -39,6 +39,8 @@ public class EditorPage extends BasePage {
     private CopyModuleDialogComponent copyModuleDialogComponent;
     private RemoveModuleDialogComponent removeModulePopupComponent;
     private CreateTableDialogComponent createTableDialogComponent;
+    private TopProblemsPanelComponent topProblemsPanelComponent;
+    private EditModuleDialogComponent editModuleDialogComponent;
     private WebElement exportProjectBtn;
     private WebElement editProjectIconTemplate;
     private WebElement projectHeaderTemplate;
@@ -53,6 +55,7 @@ public class EditorPage extends BasePage {
     private WebElement dependenciesHeader;
     private WebElement addDependenciesLink;
     private WebElement manageDependenciesBtn;
+    private WebElement refreshBtn;
 
     public EditorPage() {
         super();
@@ -80,6 +83,8 @@ public class EditorPage extends BasePage {
         copyModuleDialogComponent = createScopedComponent(CopyModuleDialogComponent.class, "xpath=//div[@id='copyModulePopup_container']", "copyModuleDialogComponent");
         removeModulePopupComponent = createScopedComponent(RemoveModuleDialogComponent.class, "xpath=//div[@id='removeModulePopup_content']", "removeModulePopupComponent");
         createTableDialogComponent = createScopedComponent(CreateTableDialogComponent.class, "xpath=//span[@id='wizardData']", "createTableDialogComponent");
+        topProblemsPanelComponent = createScopedComponent(TopProblemsPanelComponent.class, "xpath=//div[@id='content']", "topProblemsPanelComponent");
+        editModuleDialogComponent = createScopedComponent(EditModuleDialogComponent.class, "xpath=//div[@id='editModulePopup_container']", "editModuleDialogComponent");
         projectHeaderTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..", "projectHeaderTemplate");
         editProjectIconTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..//img", "editProjectIconTemplate");
         moduleHeader = new WebElement(getPage(), "xpath=//div[@id='content']//div[@class='page editable']/h1", "moduleHeader");
@@ -93,6 +98,7 @@ public class EditorPage extends BasePage {
         dependenciesHeader = new WebElement(getPage(), "xpath=//div[@id='content']//span[text()='Dependencies']", "dependenciesHeader");
         addDependenciesLink = new WebElement(getPage(), "xpath=//div[@id='content']//a[contains(text(),'Click to add dependencies')]", "addDependenciesLink");
         manageDependenciesBtn = new WebElement(getPage(), "xpath=//div[@id='content']//a[@title='Manage Dependencies']//img", "manageDependenciesBtn");
+        refreshBtn = new WebElement(getPage(), "xpath=//a[@id='refreshBtn']", "refreshBtn");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {
@@ -148,6 +154,10 @@ public class EditorPage extends BasePage {
             return true;
         }
         return propsTable.getLocator().locator("xpath=.//tr").count() == 0;
+    }
+
+    public void refresh() {
+        refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 
     public ManageDependenciesDialogComponent openManageDependenciesDialog() {

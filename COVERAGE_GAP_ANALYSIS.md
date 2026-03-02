@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-02-25
+> Updated: 2026-02-27
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,9 +9,9 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | 70 test classes (69 `Test*.java` + `CreateDataTypeTableTest`) |
+| Migrated to new framework | 75 test classes (74 `Test*.java` + `CreateDataTypeTableTest`) |
 | ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~43% of legacy** (up from ~40%; OpenAPI section now fully migrated) |
+| **New framework overall coverage** | **~46% of legacy** (up from ~43%; Single/Multi Mode section now fully migrated) |
 
 ---
 
@@ -28,7 +28,7 @@
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
 | **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
 | **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
-| **C7** | TestProjectCompilationAndModuleMode | TestProjectCompilation + TestCompileThisModuleOnly | Project compilation main scenarios (2.11.2), Progress bar behavior (2.11.1), Run/Trace/Test in opened module (2.11.3), Duplicate tables errors (2.11.6), Breadcrumb navigation (2.11.7) | 🔴 HIGH |
+| **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | TestCompareExcelFilesAndChanges | TestCompareExcelFiles + TestDisplayChangedRows | Compare Excel files (2.1.55), Display Changed Rows Only (EPBDS-10790), Identical files info message (EPBDS-10162), Comparing project revisions (2.2.28) | 🟡 MEDIUM |
 | **C9** | TestEditorDeployAndRevisions | TestDeployButton + TestTabRevisionsOnEditorTab | Deploy button in Editor (EPBDS-9423), Revision page in Editor (EPBDS-9815), Local Changes page: Restore/Compare (EPBDS-10399) | 🟡 MEDIUM |
 | **C10** | TestRepositoryTableActions | TestUIRepositoryTab + TestTableActionButtons | Table action buttons: open/close/deploy (EPBDS-11936), Repository tab operations, Multi-user operations, Deployment status verification | 🟡 MEDIUM |
@@ -54,18 +54,18 @@
 | OpenAPI file operations (Compare screen, error messages, default date) | EPBDS-10543, EPBDS-10789, EPBDS-10548 | TestOpenApiErrorMessages + TestGenerateOpenApiDefaultDate + TestCompareScreenForOpenApiFiles | ✅ **studio_issues** (~93% avg: `.contains()` vs exact match in error messages; compare locator uncertainty) |
 | Auto-add/update OpenAPI file in reconciliation mode | EPBDS-12260, IPBQA-32071 | TestOpenApiImportLocalChanges | ✅ **C3b** |
 
-### 2. Single/Multi Mode (2.11) — 0%
-**Legacy tests:** 6 | **New framework:** 0 tests
+### 2. Single/Multi Mode (2.11) — ~100% ✅
+**Legacy tests:** 6 | **New framework:** 5 test classes, 9 methods (C7 fully migrated)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
-| Project compilation – main scenarios | EPBDS-11873, IPBQA-31701 | TestProjectCompilation | → **C7** |
-| Hide Progress Bar after compilation finished | EPBDS-11812, IPBQA-31733 | TestCompilationProgressBar | → **C7** |
-| Run/Trace/Test in currently opened module only | EPBDS-11813, IPBQA-31729 | TestCompileThisModuleOnly | → **C7** |
-| Single/Multi-module setting on module level | EPBDS-11799, IPBQA-31758 | — | → **C7** |
-| Compile This Module Only redesign | EPBDS-11799, IPBQA-31895 | TestCompileThisModuleOnly | → **C7** |
-| Errors and Run/Trace/Test buttons for duplicate tables | EPBDS-11791, IPBQA-31790 | TestWorkWithDuplicateTables | → **C7** |
-| No errors on switching projects via breadcrumb | EPBDS-11827, IPBQA-31804 | TestSwitchModuleViaBreadcrumbsNavigation | → **C7** |
+| Project compilation – main scenarios | EPBDS-11873, IPBQA-31701 | TestProjectCompilation | ✅ **C7** TestProjectCompilation (4 methods) |
+| Hide Progress Bar after compilation finished | EPBDS-11812, IPBQA-31733 | TestCompilationProgressBar | ✅ **C7** TestCompilationProgressBar (2 methods) |
+| Run/Trace/Test in currently opened module only | EPBDS-11813, IPBQA-31729 | TestCompileThisModuleOnly | ✅ **C7** TestCompileThisModuleOnly (1 method) |
+| Single/Multi-module setting on module level | EPBDS-11799, IPBQA-31758 | — | ✅ **C7** TestCompileThisModuleOnly |
+| Compile This Module Only redesign | EPBDS-11799, IPBQA-31895 | TestCompileThisModuleOnly | ✅ **C7** TestCompileThisModuleOnly |
+| Errors and Run/Trace/Test buttons for duplicate tables | EPBDS-11791, IPBQA-31790 | TestWorkWithDuplicateTables | ✅ **C7** TestWorkWithDuplicateTables (1 method) |
+| No errors on switching projects via breadcrumb | EPBDS-11827, IPBQA-31804 | TestSwitchModuleViaBreadcrumbsNavigation | ✅ **C7** TestSwitchModuleViaBreadcrumbsNavigation (1 method) |
 
 ---
 
@@ -224,7 +224,8 @@
 | Admin: User management + ACL | ~70% | TestAdminUsers, TestAdminUsersProjects, TestAdminUserSettings ✅ |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
-| Rules Editor (core) | ~55% | 15 rules_editor tests ✅ |
+| Rules Editor (core) | ~62% | 20 rules_editor tests ✅ |
+| Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~44% | 11 git tests ✅ |
 | Studio Issues (bug regression) | ~43% | 24 studio_issues tests ✅ |
 | Repository (basic operations) | ~55% | C1 + C2 + basic ops across suites ✅ |
@@ -237,7 +238,7 @@
 | Priority | Composite Test | Atomic features consolidated | Effort |
 |----------|----------------|------------------------------|--------|
 | ~~🔴~~ | ~~**C5** TestCreateProjectFromOpenApi~~ | ~~2 remaining OpenAPI features~~ | ✅ DONE |
-| 🔴 1 | **C7** TestProjectCompilationAndModuleMode | 7 Single/Multi Mode features → 1 test | Medium |
+| ~~🔴~~ | ~~**C7** TestProjectCompilationAndModuleMode~~ | ~~7 Single/Multi Mode features → 5 test classes, 9 methods~~ | ✅ DONE |
 | 🟡 2 | **C8** TestCompareExcelFilesAndChanges | 4 compare features → 1 test | Medium |
 | 🟡 3 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
 | 🟡 4 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |

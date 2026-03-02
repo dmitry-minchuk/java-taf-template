@@ -141,6 +141,13 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         return folders;
     }
 
+    public EditorLeftRulesTreeComponent selectItemInFolderByIndex(String folderName, String itemName, int index) {
+        waitUntilSpinnerLoaded();
+        EditorTreeFolderComponent folder = findFolderInTree(folderName);
+        folder.selectItemByIndex(itemName, index);
+        return this;
+    }
+
     public WebElement getTableIcon(String tableName) {
         return tableIconTemplate.format(tableName);
     }

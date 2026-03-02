@@ -16,31 +16,33 @@ public class UserService {
     private static final String SPLITTER = "::";
     private static final String USER_NAME_DATA_PATTERN = "%s.login";
     private static final String USER_PASSWORD_DATA_PATTERN = "%s.password";
-    private static List<UserData> userList = new ArrayList<>();
+    private static volatile List<UserData> userList = null;
 
     public static UserData getUser(User user) {
-        if (userList.isEmpty()) {
-            initUserList();
-            userList = Collections.unmodifiableList(userList); // Multithreading support
+        if (userList == null) {
+            synchronized (UserService.class) {
+                if (userList == null) {
+                    userList = initUserList();
+                }
+            }
         }
         return userList.stream().filter(u -> u.getLogin().equals(user.getValue())).findFirst().orElseThrow(
                 () -> new RuntimeException("No such user in the pool: " + user.getValue()));
     }
 
-    private static synchronized void initUserList() { // Multithreading support
-        if (!userList.isEmpty()) {
-            return;
-        }
+    private static List<UserData> initUserList() {
         String userPool = ProjectConfiguration.getProperty(USER_POOL);
         LOGGER.debug("User pool initialization. User: " + userPool);
         if (userPool.isEmpty()) {
             throw new RuntimeException("User pool is empty!");
         }
+        List<UserData> list = new ArrayList<>();
         String[] users = userPool.split(SPLITTER);
         for (String user : users) {
             String userName = ProjectConfiguration.getProperty(String.format(USER_NAME_DATA_PATTERN, user));
             String userPassword = ProjectConfiguration.getProperty(String.format(USER_PASSWORD_DATA_PATTERN, user));
-            userList.add(new UserData(userName, userPassword));
+            list.add(new UserData(userName, userPassword));
         }
+        return Collections.unmodifiableList(list);
     }
 }

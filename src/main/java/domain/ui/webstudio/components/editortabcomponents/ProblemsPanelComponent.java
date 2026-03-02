@@ -15,6 +15,7 @@ public class ProblemsPanelComponent extends BaseComponent {
     private WebElement errorsCounter;
     private WebElement warningsCounter;
     private WebElement compilationProgressBar;
+    private WebElement compilationProgressBarNotSavedProject;
     private List<WebElement> errorElements;
     private List<WebElement> warningElements;
 
@@ -34,6 +35,7 @@ public class ProblemsPanelComponent extends BaseComponent {
         errorsCounter = createScopedElement("#errors-count", "errorsCounter");
         warningsCounter = createScopedElement("#warnings-count", "warningsCounter");
         compilationProgressBar = createScopedElement("xpath=.//div[@class='panel']//div[@id='progress-info-panel']", "compilationProgressBar");
+        compilationProgressBarNotSavedProject = new WebElement(page, "xpath=//div[contains(@class,'ui-layout-resizer')]//div[@class='messagePanel']", "compilationProgressBarNotSavedProject");
         errorElements = createScopedElementList("xpath=.//div[@id='errors-panel']//a", "errorElements");
         warningElements = createScopedElementList("xpath=.//div[@id='warnings-panel']//a", "warningElements");
     }
@@ -182,5 +184,44 @@ public class ProblemsPanelComponent extends BaseComponent {
         return warningElements.stream()
                 .map(WebElement::getText)
                 .anyMatch(warning -> warning.contains(warningMessage));
+    }
+
+    public boolean isCompilationProgressBarVisible() {
+        return compilationProgressBar.isVisible(1000);
+    }
+
+    public boolean isCompilationProgressBarNotSavedProjectVisible() {
+        return compilationProgressBarNotSavedProject.isVisible(1000);
+    }
+
+    public String getCompilationProgressBarText() {
+        try {
+            return compilationProgressBar.getText();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public String getCompilationProgressBarNotSavedProjectText() {
+        try {
+            return compilationProgressBarNotSavedProject.getText();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public void waitForCompilationProgressBarToContain(String text, long timeoutMs) {
+        WaitUtil.waitForCondition(
+                () -> {
+                    try {
+                        String barText = compilationProgressBarNotSavedProject.getText();
+                        return barText != null && barText.contains(text);
+                    } catch (Exception e) {
+                        return false;
+                    }
+                },
+                timeoutMs, 1000,
+                "Waiting for compilation progress bar to contain: " + text
+        );
     }
 }
