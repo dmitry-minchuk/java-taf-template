@@ -2,6 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Dialog;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
@@ -209,7 +210,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void switchBranch(String branchName) {
         breadcrumbsModuleBranch.click();
-        WaitUtil.sleep(250, "Waiting for branch dropdown to open");
+        breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
         breadcrumbsDropdownItemTemplate.format(branchName).click();
         WaitUtil.sleep(1000, "Waiting for branch switch to complete");
     }
@@ -546,16 +547,15 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         if (actualProject.equals(projectName) && !actualModule.equals(moduleName)) {
             WaitUtil.retryOnException(() -> {
                 breadcrumbsModuleToggle.click();
-                WaitUtil.sleep(250, "Waiting for module dropdown to open");
+                breadcrumbsDropdownItemTemplate.format(moduleName).waitForVisible();
                 breadcrumbsDropdownItemTemplate.format(moduleName).click(100);
                 return true;
             }, 5000, 500, "Selecting module " + moduleName + " from breadcrumb");
         } else if (!actualProject.equals(projectName)) {
             navigateToProjectRoot(projectName);
-            new EditorLeftProjectModuleSelectorComponent(
-                    new WebElement(page, "xpath=//div[@id='projects']")).selectModule(projectName, moduleName);
+            new EditorLeftProjectModuleSelectorComponent(new WebElement(page, "xpath=//div[@id='projects']")).selectModule(projectName, moduleName);
         }
-        WaitUtil.sleep(500, "Waiting for module view to load after breadcrumb navigation");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
     }
 
     public void selectProjectBreadcrumbs(String projectName) {
