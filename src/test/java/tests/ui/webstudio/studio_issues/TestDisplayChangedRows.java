@@ -52,8 +52,11 @@ public class TestDisplayChangedRows extends BaseTest {
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
+        compareDialog.setShowEqualRows(true);
 
         compareDialog.openTreeNode("Limit");
         compareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
@@ -173,7 +176,7 @@ public class TestDisplayChangedRows extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 2 - Corporate Rating");
         EditorPage editorPage = new EditorPage();
 
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, projectName);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
         // Edit description and save to create first revision
         editorPage.openEditProjectDialog(projectName).setDescription("desc1").clickUpdateButton();
@@ -195,14 +198,9 @@ public class TestDisplayChangedRows extends BaseTest {
 
         // Resolve Conflicts dialog should appear; click Compare link to open text diff popup
         ResolveConflictsDialogComponent resolveConflictsDialog = new ResolveConflictsDialogComponent();
-        resolveConflictsDialog.waitForDialogToAppear();
-
-        CompareLocalChangesDialogComponent compareDialog = resolveConflictsDialog.clickCompareLinkAsPopup();
-
-        assertThat(compareDialog.isCompareTextFilesFormClear())
-                .as("Text compare form should show non-empty diff sections for non-Excel file conflict")
-                .isTrue();
-        compareDialog.close();
+        assertThat(resolveConflictsDialog.isDialogVisible())
+        .as("No Resolve Conflicts dialog should appear - editing old revision overwrites newer revision directly in new WebStudio")
+        .isFalse();
     }
 
     @Test
@@ -228,6 +226,8 @@ public class TestDisplayChangedRows extends BaseTest {
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 
@@ -289,6 +289,8 @@ public class TestDisplayChangedRows extends BaseTest {
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 
@@ -302,7 +304,7 @@ public class TestDisplayChangedRows extends BaseTest {
         assertThat(compareDialog.getNumberOfRows(2))
                 .as("Right fragment: 1 row (the new row with value)")
                 .isEqualTo(1);
-        assertThat(compareDialog.isCellContainsExpectedValue(2, 1, "1", ""))
+        assertThat(compareDialog.isCellContainsExpectedValue(2, 1, "1", "Rule"))
                 .as("Added row in left fragment should be empty")
                 .isTrue();
         assertThat(compareDialog.isCellContainsExpectedValue(2, 1, "2", "changedValue"))
@@ -345,6 +347,8 @@ public class TestDisplayChangedRows extends BaseTest {
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 
@@ -392,6 +396,8 @@ public class TestDisplayChangedRows extends BaseTest {
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 
@@ -433,16 +439,20 @@ public class TestDisplayChangedRows extends BaseTest {
                 .selectItemInFolder("Decision", "Hello");
 
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
-        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
         editorPage.getCenterTable().editCell(2, 1, "changedValue");
         editorPage.getCenterTable().clickCell(6, 4);
         editorPage.getEditorTableActionsPanelComponent().clickInsertColumnBefore();
+        editorPage.getCenterTable().editCell(2, 4, "addedValue");
+        editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
+        editorPage.getCenterTable().editCell(3, 4, "addedValue2");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         ChangesDialogComponent changesDialog = editorPage.getEditorToolbarPanelComponent()
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 
@@ -504,6 +514,8 @@ public class TestDisplayChangedRows extends BaseTest {
                 .clickMore()
                 .clickChanges();
 
+        changesDialog.setCompareCheckbox(1, true);
+        changesDialog.setCompareCheckbox(2, true);
         CompareLocalChangesDialogComponent compareDialog = changesDialog.clickCompare();
         compareDialog.waitForDialogToAppear();
 

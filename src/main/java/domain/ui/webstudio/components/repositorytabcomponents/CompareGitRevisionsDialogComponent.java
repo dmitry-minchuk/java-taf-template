@@ -67,8 +67,9 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
         treeNodeLinkTemplate = new WebElement(getPage(),
                 "xpath=//span[contains(@class,'rf-trn-lbl') and (text()='%s')]",
                 "treeNodeLinkTemplate");
+        // idSuffix pattern: "1_te_c-7:5" — uses ends-with to avoid substring collisions (e.g. c-2:1 vs c-2:10)
         cellTemplate = new WebElement(getPage(),
-                "xpath=//td[(contains(@id,'diffTreeForm') or contains(@id,'compareRevisionsForm')) and contains(@id,'%s')]",
+                "xpath=//td[(contains(@id,'diffTreeForm') or contains(@id,'compareRevisionsForm')) and (substring(@id, string-length(@id) - string-length('%1$s') + 1) = '%1$s')]",
                 "cellTemplate");
         editorRowsTemplate = new WebElement(getPage(),
                 "xpath=//div[@id='diffTreeForm:editor%s_te_table']//tr[./td]",
@@ -125,7 +126,7 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     // ========== Cell highlighting ==========
 
     public boolean isCellHighlightedGreen(int row, int col, String fragment) {
-        return isCellHighlightedWithColor(row, col, fragment, "rgba(195, 214, 155, 1)");
+        return isCellHighlightedWithColor(row, col, fragment, "rgb(195, 214, 155)");
     }
 
     public boolean isCellHighlightedWithColor(int row, int col, String fragment, String colorRGBA) {
