@@ -1,8 +1,10 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
+import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
+import domain.ui.webstudio.components.editortabcomponents.CompareLocalChangesDialogComponent;
 import helpers.utils.WaitUtil;
 
 public class ResolveConflictsDialogComponent extends BaseComponent {
@@ -82,5 +84,13 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
     public void clickCompareLink() {
         compareLink.click();
         WaitUtil.sleep(500, "Wait for compare screen to load");
+    }
+
+    public CompareLocalChangesDialogComponent clickCompareLinkAsPopup() {
+        Page popup = page.waitForPopup(() -> {
+            compareLink.click();
+        });
+        popup.waitForLoadState();
+        return new CompareLocalChangesDialogComponent(popup);
     }
 }
