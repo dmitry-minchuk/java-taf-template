@@ -145,8 +145,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         addedElementsExpanderTemplate = new WebElement(page, "xpath=//span[./span[contains(text(), '%s')]/a[@title='Add new element to collection']]/preceding-sibling::span", "addedElementsExpanderTemplate");
         selectTypeDropdown = new WebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
         // Trace Menu elements - page-level (form elements)
-        traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton'] | //input[@name='traceButton']", "traceInsideMenuBtn");
-        traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton'] | //input[@name='traceIntoFileButton']", "traceIntoFileBtn");
+        traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
+        traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
         factorTextField = new WebElement(page, "xpath=//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
         factorTextFieldForTrace = new WebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
         jsonRadioBtn = new WebElement(page, "xpath=//input[@type='radio' and@value='TEXT']", "jsonRadioBtn");
