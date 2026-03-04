@@ -129,4 +129,18 @@ public class SystemSettingsPageComponent extends BaseComponent {
     public void setDatabaseMaxPoolSize(int size) {
         databaseMaxPoolSizeField.fill(String.valueOf(size));
     }
+
+    public void setProjectHistoryCount(String value) {
+        projectHistoryCountField.clear();
+        projectHistoryCountField.fill(value);
+    }
+
+    public String getProjectHistoryCount() {
+        return projectHistoryCountField.getAttribute("value");
+    }
+
+    public void clearAllHistory() {
+        clearAllHistoryBtn.click();
+        getModalOkBtn().waitForVisible().click();
+    }
 }

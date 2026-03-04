@@ -56,4 +56,9 @@ public class EditorRevisionsTabComponent extends BaseComponent {
         actionLink.click();
         WaitUtil.sleep(2000, "Waiting after opening revision " + rowIndex);
     }
+
+    public int getRowCount() {
+        waitForTableToLoad();
+        return revisionRows.size();
+    }
 }
