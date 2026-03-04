@@ -2,6 +2,7 @@ package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.admincomponents.AdminNavigationComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
@@ -18,6 +19,8 @@ public class AdminPage extends BasePage {
 
     @Getter
     private AdminNavigationComponent adminNavigationComponent;
+    @Getter
+    private TabSwitcherComponent tabSwitcherComponent;
     private EmailPageComponent emailPageComponent;
     private SystemSettingsPageComponent systemSettingsPageComponent;
     private UsersPageComponent usersPageComponent;
@@ -43,6 +46,7 @@ public class AdminPage extends BasePage {
         
         // Initialize components with proper root locators
         adminNavigationComponent = new AdminNavigationComponent(adminNavigation);
+        tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
         emailPageComponent = new EmailPageComponent(contentContainer);
         systemSettingsPageComponent = new SystemSettingsPageComponent(contentContainer);
         usersPageComponent = new UsersPageComponent(contentContainer);

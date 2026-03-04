@@ -62,6 +62,7 @@ public class RepositoryPage extends BasePage {
     private ResolveConflictsDialogComponent resolveConflictsDialogComponent;
     private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
     private ConfirmUndeleteDialogComponent confirmUndeleteDialogComponent;
+    private ConfirmCloseProjectDialogComponent confirmCloseProjectDialogComponent;
     private FileChangedWarningComponent fileChangedWarningComponent;
     private TableComponent projectsTable;
     private ExportProjectDialogComponent exportProjectDialogComponent;
@@ -103,6 +104,7 @@ public class RepositoryPage extends BasePage {
         resolveConflictsDialogComponent = createScopedComponent(ResolveConflictsDialogComponent.class, "xpath=//div[@role='dialog' and .//div[contains(text(), 'Resolve Conflicts')]]", "resolveConflictsDialogComponent");
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
         confirmUndeleteDialogComponent = createScopedComponent(ConfirmUndeleteDialogComponent.class, "xpath=//div[@id='modalUndeleteProject_container']", "confirmUndeleteDialogComponent");
+        confirmCloseProjectDialogComponent = createScopedComponent(ConfirmCloseProjectDialogComponent.class, "xpath=//div[@id='modalCloseProject_container']", "confirmCloseProjectDialogComponent");
         fileChangedWarningComponent = createScopedComponent(FileChangedWarningComponent.class, "xpath=//div[@id='fileChanged_content']", "fileChangedWarningComponent");
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
 

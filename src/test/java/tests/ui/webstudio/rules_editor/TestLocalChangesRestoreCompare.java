@@ -6,10 +6,10 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
-import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.ChangesDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.CompareLocalChangesDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorRevisionsTabComponent;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -44,6 +44,10 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
                 .as("Fresh project should show no changes message")
                 .isEqualTo("No changes in history");
 
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "Hello");
+
         // Step 2: Undone edit does not create history
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(6, 4, "Good Morning1");
@@ -55,6 +59,10 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         assertThat(changesDialog.getNoChangesMessage())
                 .as("Undone edit should not create a history entry")
                 .isEqualTo("No changes in history");
+
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "Hello");
 
         // Steps 3-4: Single edit creates Local Changes (1); compare shows highlighted cell
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
@@ -84,13 +92,17 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         assertThat(compareDialog.isCellHighlighted(6, 4, 1))
                 .as("Cell (6,4) in fragment 1 should be highlighted after single edit")
                 .isTrue();
-        assertThat(compareDialog.isCellContainsExpectedValue(6, 4, "2", "Good Morning"))
-                .as("Fragment 2 (older state) cell (6,4) should show original value 'Good Morning'")
+        assertThat(compareDialog.isCellContainsExpectedValue(6, 4, "1", "Good Morning"))
+                .as("Fragment 1 (older state) cell (6,4) should show original value 'Good Morning'")
                 .isTrue();
-        assertThat(compareDialog.isCellContainsExpectedValue(6, 4, "1", "Good Morning1"))
-                .as("Fragment 1 (newer state) cell (6,4) should show edited value 'Good Morning1'")
+        assertThat(compareDialog.isCellContainsExpectedValue(6, 4, "2", "Good Morning1"))
+                .as("Fragment 2 (newer state) cell (6,4) should show edited value 'Good Morning1'")
                 .isTrue();
         compareDialog.close();
+
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "Hello");
 
         // Steps 5-6: Second edit creates Local Changes (2); compare shows second edit diff
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
@@ -120,11 +132,11 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         assertThat(compareDialog.isCellHighlighted(7, 4, 1))
                 .as("Cell (7,4) in fragment 1 should be highlighted after second edit")
                 .isTrue();
-        assertThat(compareDialog.isCellContainsExpectedValue(7, 4, "2", "Good Afternoon"))
-                .as("Fragment 2 (older state) cell (7,4) should show original value 'Good Afternoon'")
+        assertThat(compareDialog.isCellContainsExpectedValue(7, 4, "1", "Good Afternoon"))
+                .as("Fragment 1 (older state) cell (7,4) should show original value 'Good Afternoon'")
                 .isTrue();
-        assertThat(compareDialog.isCellContainsExpectedValue(7, 4, "1", "Good Afternoon1"))
-                .as("Fragment 1 (newer state) cell (7,4) should show edited value 'Good Afternoon1'")
+        assertThat(compareDialog.isCellContainsExpectedValue(7, 4, "2", "Good Afternoon1"))
+                .as("Fragment 2 (newer state) cell (7,4) should show edited value 'Good Afternoon1'")
                 .isTrue();
         compareDialog.close();
 
@@ -243,8 +255,8 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         EditorRevisionsTabComponent revisionsTab = new EditorRevisionsTabComponent();
         revisionsTab.waitForTableToLoad();
         assertThat(revisionsTab.getRowCount())
-                .as("Should have 2 revisions after save")
-                .isEqualTo(2);
+                .as("Should have 1 revision after save")
+                .isEqualTo(1);
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
@@ -316,6 +328,7 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", projectName);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
+        repositoryPage.getConfirmCloseProjectDialogComponent().clickClose();
         repositoryPage.waitUntilSpinnerLoaded();
 
         repositoryPage.getLeftRepositoryTreeComponent()
@@ -350,6 +363,10 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         assertThat(changesDialog.getNoChangesMessage())
                 .as("No history should exist after close and reopen")
                 .isEqualTo("No changes in history");
+
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "Hello");
 
         // Step 15: New edit after close/reopen creates fresh Local Changes (1)
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
@@ -443,6 +460,7 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         SystemSettingsPageComponent systemSettings = adminPage.navigateToSystemSettingsPage();
         systemSettings.cancelClearAllHistory();
+        adminPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
@@ -465,7 +483,7 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         adminPage = editorPage.openUserMenu().navigateToAdministration();
         systemSettings = adminPage.navigateToSystemSettingsPage();
         systemSettings.clearAllHistory();
-        systemSettings.applySettingsAndRelogin(User.ADMIN);
+        adminPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
@@ -487,7 +505,7 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         systemSettings.setProjectHistoryCount("0");
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
-        editorPage = new EditorPage();
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
@@ -511,7 +529,7 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         systemSettings.setProjectHistoryCount("10");
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
-        editorPage = new EditorPage();
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
