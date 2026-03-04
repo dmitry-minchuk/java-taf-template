@@ -187,6 +187,11 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
 
     public int getNumberOfRows(int fragment) {
         String frag = String.valueOf(fragment);
+        WaitUtil.waitForCondition(() -> {
+            int c = tableEditorRowsTemplate.format(frag).getLocator().count();
+            if (c == 0) c = comparisonLayoutRowsTemplate.format(frag).getLocator().count();
+            return c > 0;
+        }, 10000, 250, "Waiting for comparison rows to appear for fragment " + fragment);
         int count = tableEditorRowsTemplate.format(frag).getLocator().count();
         if (count == 0) {
             count = comparisonLayoutRowsTemplate.format(frag).getLocator().count();
