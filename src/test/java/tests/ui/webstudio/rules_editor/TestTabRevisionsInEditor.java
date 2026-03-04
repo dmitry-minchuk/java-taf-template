@@ -7,6 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorRevisionsTabComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentRevisionsTabComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
@@ -65,6 +66,22 @@ public class TestTabRevisionsInEditor extends BaseTest {
                 .as("Oldest revision comment should indicate project creation")
                 .isEqualTo("Project " + projectName + " is created.");
 
+        // Compare editor revisions count with repository revisions count
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+        RepositoryContentRevisionsTabComponent repoRevisionsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectRevisionsTab();
+        int repositoryRevisionCount = repoRevisionsTab.getRevisionsCount();
+
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
+        editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
+        revisionsTab.waitForTableToLoad();
+        assertThat(revisionsTab.getRowCount())
+                .as("Editor revisions count should match repository revisions count")
+                .isEqualTo(repositoryRevisionCount);
+
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
         editorPage.getEditorLeftRulesTreeComponent()
                 .expandFolderInTree("Decision")
@@ -76,7 +93,7 @@ public class TestTabRevisionsInEditor extends BaseTest {
                 .as("Revision count should still be 2 after module navigation")
                 .isEqualTo(2);
 
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", projectName);

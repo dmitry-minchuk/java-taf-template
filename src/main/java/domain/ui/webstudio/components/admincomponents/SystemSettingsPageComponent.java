@@ -14,6 +14,7 @@ public class SystemSettingsPageComponent extends BaseComponent {
     private WebElement testThreadCountField;
     private WebElement projectHistoryCountField;
     private WebElement clearAllHistoryBtn;
+    private WebElement cancelModalBtn;
     private WebElement applyButton;
     private WebElement errorMessage;
 
@@ -43,6 +44,7 @@ public class SystemSettingsPageComponent extends BaseComponent {
         testThreadCountField = createScopedElement("#testRunThreadCount", "testThreadCountField");
         projectHistoryCountField = createScopedElement("#projectHistoryCount", "projectHistoryCountField");
         clearAllHistoryBtn = createScopedElement("xpath=.//button[./span[text()='Clear All History']]", "clearAllHistoryBtn");
+        cancelModalBtn = new WebElement(page, "xpath=//div[@class='ant-modal-container']//button[./span[contains(text(),'Cancel')]]", "cancelModalBtn");
         applyButton = createScopedElement("xpath=.//button[./span[text()='Apply Changes'] or ./span[text()='Apply']]", "applyButton");
         errorMessage = createScopedElement("xpath=.//div[contains(@class, 'ant-form-item-explain-error')]", "errorMessage");
 
@@ -142,5 +144,10 @@ public class SystemSettingsPageComponent extends BaseComponent {
     public void clearAllHistory() {
         clearAllHistoryBtn.click();
         getModalOkBtn().waitForVisible().click();
+    }
+
+    public void cancelClearAllHistory() {
+        clearAllHistoryBtn.click();
+        cancelModalBtn.waitForVisible().click();
     }
 }
