@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-02-27
+> Updated: 2026-03-02
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,9 +9,10 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | 75 test classes (74 `Test*.java` + `CreateDataTypeTableTest`) |
+| Migrated to new framework | 101 test classes (100 `Test*.java` + `CreateDataTypeTableTest`) |
+| Suites | `rules_editor.xml` (19) · `studio_issues.xml` (43) · `studio_smoke.xml` (21) |
 | ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~46% of legacy** (up from ~43%; Single/Multi Mode section now fully migrated) |
+| **New framework overall coverage** | **~52% of legacy** (up from ~46%; C8 compare features + Tags section + studio_smoke additions) |
 
 ---
 
@@ -29,7 +30,7 @@
 | **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
 | **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
-| **C8** | TestCompareExcelFilesAndChanges | TestCompareExcelFiles + TestDisplayChangedRows | Compare Excel files (2.1.55), Display Changed Rows Only (EPBDS-10790), Identical files info message (EPBDS-10162), Comparing project revisions (2.2.28) | 🟡 MEDIUM |
+| **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
 | **C9** | TestEditorDeployAndRevisions | TestDeployButton + TestTabRevisionsOnEditorTab | Deploy button in Editor (EPBDS-9423), Revision page in Editor (EPBDS-9815), Local Changes page: Restore/Compare (EPBDS-10399) | 🟡 MEDIUM |
 | **C10** | TestRepositoryTableActions | TestUIRepositoryTab + TestTableActionButtons | Table action buttons: open/close/deploy (EPBDS-11936), Repository tab operations, Multi-user operations, Deployment status verification | 🟡 MEDIUM |
 | **C11** | TestEditorOrderingAndSearch | TestOrderingMode + TestSearchOnProjectLevel | Table ordering mode – default setting (EPBDS-13592), Search on Project level (EPBDS-13988), User preference persistence | 🟡 MEDIUM |
@@ -87,7 +88,7 @@
 | Saving a Project | 2.2.14 | various | ✅ **C1** + many git/rules_editor tests |
 | Opening Project Revision via Revisions tab | IPBQA-29644 | testProjectRestoreFromOldRevision | ✅ **C2** |
 | Opening Project Revision via Open Revision button | — | Repository.Test056 | ✅ **C2** |
-| Comparing Project Revisions | EPBDS-8517, EPBDS-8536 | Test035 | → **C8** (pending) |
+| Comparing Project Revisions | EPBDS-8517, EPBDS-8536 | Test035 | ✅ **C8** |
 | Exporting a Project or File | EPBDS-10703, IPBQA-31329 | TestExportProjectFunctionality | ✅ **C2** |
 | Table action buttons (open/close/deploy) | EPBDS-12712, IPBQA-32158 | TestTableActionButtons | → **C10** (pending) |
 | Copying a project | 2.2.15 | Test060 | ✅ TestGitStatusCopyClosedProject + git tests |
@@ -117,10 +118,10 @@
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
 | Filtering projects (incl. advanced filter) | 2.1.1 | Test109 | → **C1** (partial via repo filter) |
-| Comparing & Reverting Module Changes | 2.1.11, EPBDS-8867 | Test027, Test028 | → **C8** |
-| Compare Excel files | EPBDS-10472, IPBQA-30875 | TestCompareExcelFiles | → **C8** |
-| Display Changed Rows Only in Compare | EPBDS-12481, IPBQA-32105 | TestDisplayChangedRows | → **C8** |
-| Identical files info message | EPBDS-10162 | — | → **C8** |
+| Comparing & Reverting Module Changes | 2.1.11, EPBDS-8867 | Test027, Test028 | ✅ **C8** |
+| Compare Excel files | EPBDS-10472, IPBQA-30875 | TestCompareExcelFiles | ✅ **C8** |
+| Display Changed Rows Only in Compare | EPBDS-12481, IPBQA-32105 | TestDisplayChangedRows | ✅ **C8** |
+| Identical files info message | EPBDS-10162 | — | ✅ **C8** |
 | Deploy button in Editor | EPBDS-9507, IPBQA-29618 | TestDeployButton | → **C9** |
 | Revision page in Editor (project history) | EPBDS-9997, IPBQA-30123 | TestTabRevisionsOnEditorTab | → **C9** |
 | Local Changes page: Restore, Compare | EPBDS-10539, IPBQA-30730 | TestChangesRestoreCompareHistorySettings | → **C9** |
@@ -224,12 +225,13 @@
 | Admin: User management + ACL | ~70% | TestAdminUsers, TestAdminUsersProjects, TestAdminUserSettings ✅ |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
-| Rules Editor (core) | ~62% | 20 rules_editor tests ✅ |
+| Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~44% | 11 git tests ✅ |
-| Studio Issues (bug regression) | ~43% | 24 studio_issues tests ✅ |
+| Studio Issues (bug regression) | ~45% | 25 studio_issues tests ✅ |
 | Repository (basic operations) | ~55% | C1 + C2 + basic ops across suites ✅ |
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
+| Compare (Excel/revisions/local changes) | ~80% | C8: TestCompareExcelFiles + TestDisplayChangedRows ✅ |
 
 ---
 
@@ -239,7 +241,7 @@
 |----------|----------------|------------------------------|--------|
 | ~~🔴~~ | ~~**C5** TestCreateProjectFromOpenApi~~ | ~~2 remaining OpenAPI features~~ | ✅ DONE |
 | ~~🔴~~ | ~~**C7** TestProjectCompilationAndModuleMode~~ | ~~7 Single/Multi Mode features → 5 test classes, 9 methods~~ | ✅ DONE |
-| 🟡 2 | **C8** TestCompareExcelFilesAndChanges | 4 compare features → 1 test | Medium |
+| ~~🟡 2~~ | ~~**C8** TestCompareExcelFilesAndChanges~~ | ~~4 compare features → 2 tests~~ | ✅ DONE |
 | 🟡 3 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
 | 🟡 4 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
 | 🟡 5 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |

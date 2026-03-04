@@ -43,6 +43,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // More Menu elements
     private WebElement changesBtn;
     private WebElement revisionsBtn;
+    private WebElement compareExcelFilesBtn;
     // Within Current Module Only checkboxes
     private WebElement withinCurrentModuleOnlyInputArgs;
     private WebElement withinCurrentModuleOnlyTestTables;
@@ -117,6 +118,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         // More Menu elements initialization
         changesBtn = new WebElement(page, "xpath=//*[@id='topRevertLink']", "changesBtn");
         revisionsBtn = new WebElement(page, "xpath=//a[@title='Show project revisions']", "revisionsBtn");
+        compareExcelFilesBtn = new WebElement(page, "xpath=//a[contains(text(),'Compare Excel files')]", "compareExcelFilesBtn");
         // Within Current Module Only checkboxes
         withinCurrentModuleOnlyInputArgs = new WebElement(page, "xpath=//input[@id='runTestModuleOnlyInputArgs']", "withinCurrentModuleOnlyInputArgs");
         withinCurrentModuleOnlyTestTables = new WebElement(page, "xpath=//input[@id='runTestModuleOnly']", "withinCurrentModuleOnlyTestTables");
@@ -306,6 +308,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     public interface IMoreMenu {
         ChangesDialogComponent clickChanges();
         void clickRevisions();
+        CompareExcelFilesDialogComponent clickCompareExcelFiles();
     }
 
     // Implementation for Playwright Run Menu
@@ -422,6 +425,15 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         public void clickRevisions() {
             revisionsBtn.click();
             WaitUtil.sleep(500, "Waiting for Revisions dialog to open");
+        }
+
+        @Override
+        public CompareExcelFilesDialogComponent clickCompareExcelFiles() {
+            Page popup = page.waitForPopup(() -> {
+                compareExcelFilesBtn.click();
+            });
+            popup.waitForLoadState();
+            return new CompareExcelFilesDialogComponent(popup);
         }
     }
 

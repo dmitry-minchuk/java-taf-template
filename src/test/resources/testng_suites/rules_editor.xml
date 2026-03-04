@@ -23,5 +23,7 @@
     <test name="TestTestButtonAvailable"><classes><class name="tests.ui.webstudio.rules_editor.TestTestButtonAvailable"/></classes></test>
     <test name="TestWorkWithDuplicateTables"><classes><class name="tests.ui.webstudio.rules_editor.TestWorkWithDuplicateTables"/></classes></test>
     <test name="TestSwitchModuleViaBreadcrumbsNavigation"><classes><class name="tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation"/></classes></test>
+    <test name="TestCompareExcelFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestCompareExcelFiles"/></classes></test>
+    <test name="TestDisplayChangedRows"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRows"/></classes></test>
 
 </suite>

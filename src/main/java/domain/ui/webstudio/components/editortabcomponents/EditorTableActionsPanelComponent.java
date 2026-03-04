@@ -12,6 +12,7 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
     private WebElement redoChangesBtn;
     private WebElement insertRowAfterBtn;
     private WebElement removeRowBtn;
+    private WebElement insertColumnBeforeBtn;
 
     public EditorTableActionsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -29,6 +30,8 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
         redoChangesBtn = createScopedElement("xpath=.//img[@title='Redo changes']", "redoChangesBtn");
         insertRowAfterBtn = createScopedElement("xpath=.//img[@title='Insert row after']", "insertRowAfterBtn");
         removeRowBtn = createScopedElement("xpath=.//img[@title='Remove row']", "removeRowBtn");
+        // TODO: verify locator for insert column before button
+        insertColumnBeforeBtn = createScopedElement("xpath=.//img[@title='Insert column before']", "insertColumnBeforeBtn");
     }
 
     private void waitWhileTablePanelActionExecuted() {
@@ -57,6 +60,11 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
 
     public void clickRemoveRow() {
         removeRowBtn.click();
+        waitWhileTablePanelActionExecuted();
+    }
+
+    public void clickInsertColumnBefore() {
+        insertColumnBeforeBtn.click();
         waitWhileTablePanelActionExecuted();
     }
 }
