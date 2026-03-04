@@ -27,7 +27,7 @@ public class EditorRevisionsTabComponent extends BaseComponent {
 
     private void initializeElements() {
         revisionRows = createElementList(
-                "xpath=//div[@id='content']//table//tr[position()>1]",
+                "xpath=//div[@id='content']//table//tbody[contains(@class,'rf-dt-b')]//tr",
                 "revisionRows");
         actionLinkTemplate = new WebElement(page,
                 "xpath=(//div[@id='content']//table//tr)[%s]//td[last()]//a",
@@ -41,7 +41,7 @@ public class EditorRevisionsTabComponent extends BaseComponent {
 
     public String getCommentForRow(int rowIndex) {
         WebElement commentCell = new WebElement(page,
-                String.format("xpath=(//div[@id='content']//table//tr)[%s]//td[contains(@class,'comment') or position()=last()-1]", rowIndex + 1),
+                String.format("xpath=(//div[@id='content']//table//tr)[%s]//td[position()=3]", rowIndex + 1),
                 "commentCell_" + rowIndex);
         return commentCell.getText().trim();
     }

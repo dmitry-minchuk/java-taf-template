@@ -20,6 +20,7 @@ public class ConfirmCloseProjectDialogComponent extends BaseComponent {
     }
 
     public void clickClose() {
+        closeProjectBtn.waitForVisible(5000);
         closeProjectBtn.click();
         WaitUtil.sleep(500, "Waiting after closing project");
     }

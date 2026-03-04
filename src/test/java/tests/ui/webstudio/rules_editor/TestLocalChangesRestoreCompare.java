@@ -255,8 +255,8 @@ public class TestLocalChangesRestoreCompare extends BaseTest {
         EditorRevisionsTabComponent revisionsTab = new EditorRevisionsTabComponent();
         revisionsTab.waitForTableToLoad();
         assertThat(revisionsTab.getRowCount())
-                .as("Should have 1 revision after save")
-                .isEqualTo(1);
+                .as("Should have 2 revisions after save (creation + save)")
+                .isEqualTo(2);
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
