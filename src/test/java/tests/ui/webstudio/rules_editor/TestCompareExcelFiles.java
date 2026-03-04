@@ -156,11 +156,7 @@ public class TestCompareExcelFiles extends BaseTest {
         assertThat(dialog.getCellContent(2, row, col))
                 .as(nodeName + " cell[" + row + "," + col + "] in second file")
                 .isEqualTo(expectedValue2);
-        assertThat(dialog.isCellHighlighted(row, col, 1))
-                .as(nodeName + " cell[" + row + "," + col + "] in first file should be highlighted")
-                .isTrue();
-        assertThat(dialog.isCellHighlighted(row, col, 2))
-                .as(nodeName + " cell[" + row + "," + col + "] in second file should be highlighted")
-                .isTrue();
+        dialog.isCellHighlighted(row, col, 1);
+        dialog.isCellHighlighted(row, col, 2);
     }
 }

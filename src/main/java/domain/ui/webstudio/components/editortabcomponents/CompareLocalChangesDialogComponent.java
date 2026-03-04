@@ -66,12 +66,12 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
                 "showEqualRowsCheckbox");
         treeNodeExpanderTemplate = new WebElement(getPage(),
                 "xpath=//div[@id='diffTreeForm:newTree' or contains(@id,'compareRevisionsForm:newTree')]" +
-                        "//div[contains(@class,'rf-trn') and .//span[contains(@class,'rf-trn-lbl') and normalize-space(text())='%s']]" +
+                        "//div[contains(@class,'rf-trn') and .//span[contains(@class,'rf-trn-lbl') and text()='%s']]" +
                         "/span[contains(@class,'colps') or contains(@class,'exp')]",
                 "treeNodeExpanderTemplate");
         treeNodeLinkTemplate = new WebElement(getPage(),
                 "xpath=//div[@id='diffTreeForm:newTree' or contains(@id,'compareRevisionsForm:newTree')]" +
-                        "//div[contains(@class,'rf-trn') and .//span[contains(@class,'rf-trn-lbl') and normalize-space(text())='%s']]/span[2]/span",
+                        "//div[contains(@class,'rf-trn') and .//span[contains(@class,'rf-trn-lbl') and text()='%s']]/span[2]/span",
                 "treeNodeLinkTemplate");
         treeItemTemplate = new WebElement(getPage(),
                 "xpath=//div[@id='diffTreeForm:newTree']//span[@class='rf-trn-lbl' and text()='%s']",
