@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-02
+> Updated: 2026-03-03
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,10 +9,10 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | 101 test classes (100 `Test*.java` + `CreateDataTypeTableTest`) |
-| Suites | `rules_editor.xml` (19) · `studio_issues.xml` (43) · `studio_smoke.xml` (21) |
+| Migrated to new framework | 103 test classes (102 `Test*.java` + `CreateDataTypeTableTest`) |
+| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (21) |
 | ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~52% of legacy** (up from ~46%; C8 compare features + Tags section + studio_smoke additions) |
+| **New framework overall coverage** | **~55% of legacy** (up from ~52%; C9 revisions + local changes) |
 
 ---
 
@@ -31,7 +31,7 @@
 | **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
-| **C9** | TestEditorDeployAndRevisions | TestDeployButton + TestTabRevisionsOnEditorTab | Deploy button in Editor (EPBDS-9423), Revision page in Editor (EPBDS-9815), Local Changes page: Restore/Compare (EPBDS-10399) | 🟡 MEDIUM |
+| **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton (⛔ deploy-blocked) + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⛔ Deploy button (deploy not available for testing), ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
 | **C10** | TestRepositoryTableActions | TestUIRepositoryTab + TestTableActionButtons | Table action buttons: open/close/deploy (EPBDS-11936), Repository tab operations, Multi-user operations, Deployment status verification | 🟡 MEDIUM |
 | **C11** | TestEditorOrderingAndSearch | TestOrderingMode + TestSearchOnProjectLevel | Table ordering mode – default setting (EPBDS-13592), Search on Project level (EPBDS-13988), User preference persistence | 🟡 MEDIUM |
 | **C12** | TestDesignRepositoryManagement | TestAddDeleteDesignRepository + TestSupportedRepositories | Multiple Design Repos (EPBDS-9983), Repository Name Validation (EPBDS-11289), Webstudio with wrong repo settings (EPBDS-11420), Supported repositories availability | 🟡 MEDIUM |
@@ -122,9 +122,9 @@
 | Compare Excel files | EPBDS-10472, IPBQA-30875 | TestCompareExcelFiles | ✅ **C8** |
 | Display Changed Rows Only in Compare | EPBDS-12481, IPBQA-32105 | TestDisplayChangedRows | ✅ **C8** |
 | Identical files info message | EPBDS-10162 | — | ✅ **C8** |
-| Deploy button in Editor | EPBDS-9507, IPBQA-29618 | TestDeployButton | → **C9** |
-| Revision page in Editor (project history) | EPBDS-9997, IPBQA-30123 | TestTabRevisionsOnEditorTab | → **C9** |
-| Local Changes page: Restore, Compare | EPBDS-10539, IPBQA-30730 | TestChangesRestoreCompareHistorySettings | → **C9** |
+| Deploy button in Editor | EPBDS-9507, IPBQA-29618 | TestDeployButton | ⛔ deploy-blocked in **C9** |
+| Revision page in Editor (project history) | EPBDS-9997, IPBQA-30123 | TestTabRevisionsOnEditorTab | ✅ **C9** TestTabRevisionsInEditor (1 method) |
+| Local Changes page: Restore, Compare | EPBDS-10539, IPBQA-30730 | TestChangesRestoreCompareHistorySettings | ✅ **C9** TestLocalChangesRestoreCompare (10 methods) |
 | Table ordering mode (default setting) | EPBDS-13851, IPBQA-32512 | TestOrderingMode | → **C11** |
 | Search on Project level screen | EPBDS-14181, IPBQA-32590 | TestSearchOnProjectLevel | → **C11** |
 | Versioning by folders | EPBDS-10363, IPBQA-30979 | TestVersioningByFolders | → **C13** |
@@ -242,7 +242,7 @@
 | ~~🔴~~ | ~~**C5** TestCreateProjectFromOpenApi~~ | ~~2 remaining OpenAPI features~~ | ✅ DONE |
 | ~~🔴~~ | ~~**C7** TestProjectCompilationAndModuleMode~~ | ~~7 Single/Multi Mode features → 5 test classes, 9 methods~~ | ✅ DONE |
 | ~~🟡 2~~ | ~~**C8** TestCompareExcelFilesAndChanges~~ | ~~4 compare features → 2 tests~~ | ✅ DONE |
-| 🟡 3 | **C9** TestEditorDeployAndRevisions | 3 editor features → 1 test | Medium |
+| ~~🟡 3~~ | ~~**C9** TestEditorDeployAndRevisions~~ | ~~3 editor features → TestTabRevisionsInEditor + TestLocalChangesRestoreCompare~~ | ✅ DONE (deploy-blocked) |
 | 🟡 4 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
 | 🟡 5 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
 | 🟡 6 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |

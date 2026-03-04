@@ -169,10 +169,11 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
 
     public boolean isCellHighlighted(int row, int col, int fragment) {
         String cellSuffix = fragment + "_te_c-" + row + ":" + col;
-        String headerSuffix = fragment + "_te_c-1:1";
-        String cellColor = cellTemplate.format(cellSuffix).getCssValue("background-color");
-        String headerColor = cellTemplate.format(headerSuffix).getCssValue("background-color");
-        return !cellColor.equals(headerColor);
+        WebElement cell = cellTemplate.format(cellSuffix);
+        cell.waitForVisible(5000);
+        String color = cell.getCssValue("background-color");
+        LOGGER.info("Cell [{},{}] fragment={} background-color: {}", row, col, fragment, color);
+        return !color.equals("rgb(255, 255, 255)") && !color.equals("rgba(0, 0, 0, 0)");
     }
 
     public boolean isCellContainsExpectedValue(int row, int col, String fragment, String expectedValue) {

@@ -25,5 +25,7 @@
     <test name="TestSwitchModuleViaBreadcrumbsNavigation"><classes><class name="tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation"/></classes></test>
     <test name="TestCompareExcelFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestCompareExcelFiles"/></classes></test>
     <test name="TestDisplayChangedRows"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRows"/></classes></test>
+    <test name="TestTabRevisionsInEditor"><classes><class name="tests.ui.webstudio.rules_editor.TestTabRevisionsInEditor"/></classes></test>
+    <test name="TestLocalChangesRestoreCompare"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesRestoreCompare"/></classes></test>
 
 </suite>
