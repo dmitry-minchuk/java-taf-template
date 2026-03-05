@@ -75,7 +75,7 @@ pipeline {
     }
     parameters {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Tested application version (openl-tablets). Special chars like : or | or [] not allowed here!')
-        string(name: 'TESTS_BRANCH', defaultValue: 'playwright_testcontainers', description: 'Autotests repository branch')
+        string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests repository branch')
     }
     stages {
         stage('Pull Docker Images') {
