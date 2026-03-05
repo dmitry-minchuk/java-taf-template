@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-03
+> Updated: 2026-03-05
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,10 +9,10 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | 103 test classes (102 `Test*.java` + `CreateDataTypeTableTest`) |
-| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (21) |
-| ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~57% of legacy** (up from ~55%; C10 table actions + properties) |
+| Migrated to new framework | 108 test classes |
+| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (26) · `studio_git.xml` (11) |
+| ACL functionality | Новая ACL модель (BRD EPBDS-14295): 6 тест-классов покрывают роли Manager/Contributor/Viewer, permissions V/C/E/D, системные действия. 3 фичи disabled — не реализованы в UI (Deploy button, Benchmark, Manager→Admin) |
+| **New framework overall coverage** | **~59% of legacy** (up from ~57%; +4 новых ACL класса) |
 
 ---
 
@@ -28,7 +28,7 @@
 | **C3b** | **`TestOpenApiImportLocalChanges`** ✅ DONE | TestOpenApiImportLocalChanges | ✅ Local Changes history after re-generation (Step 1), ✅ Template project + Compare window (Step 2-2.2), ✅ No Local Changes after Reconciliation mode import (Step 3), ✅ No new record for same file content (Step 4), ✅ New record for different file (Step 5) | ✅ `rules_editor.xml` |
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
 | **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
-| **C6** | ~~TestAclPermissions~~ ❌ REMOVED | ACLTest (removed from product) | ACL functionality removed; covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings | N/A |
+| **C6** | **ACL tests** ✅ DONE (6 классов) | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission | Новая ACL модель (BRD EPBDS-14295): Manager/Contributor/Viewer роли, V+C+E+D+M permissions, Run visible all users. 3 теста disabled (Deploy button, Benchmark, Manager→Admin — не имплементированы в UI) | ✅ `studio_smoke.xml` |
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
 | **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton (⛔ deploy-blocked) + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⛔ Deploy button (deploy not available for testing), ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
@@ -222,7 +222,7 @@
 |---------|----------|--------------|
 | Admin: System Settings (dispatch/verify/threads) | ~80% | TestAdminSystemSettings ✅ |
 | Admin: Notifications | ~90% | TestAdminNotifications ✅ |
-| Admin: User management + ACL | ~70% | TestAdminUsers, TestAdminUsersProjects, TestAdminUserSettings ✅ |
+| Admin: User management + ACL (новая модель BRD EPBDS-14295) | ~85% | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission ✅ (3 теста disabled — не имплементировано в UI) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
 | Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ |
