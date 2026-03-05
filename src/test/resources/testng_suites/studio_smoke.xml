@@ -8,8 +8,8 @@
 
     <test name="TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
     <test name="TestUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUserSettings"/></classes></test>
-    <test name="TestUsersManagementWithoutExternalAuth"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUsers"/></classes></test>
-    <test name="TestAdminUsersProjects"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUsersProjects"/></classes></test>
+    <test name="TestACLUserManagementAndRepositoryRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLUserManagementAndRepositoryRoles"/></classes></test>
+    <test name="TestACLProjectLevelRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLProjectLevelRoles"/></classes></test>
     <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettings"/></classes></test>
     <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettingsDBValidation"/></classes></test>
     <test name="TestNotifications"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminNotifications"/></classes></test>
