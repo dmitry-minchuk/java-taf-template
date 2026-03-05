@@ -86,7 +86,11 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     }
 
     public String getRevision() {
-        return getProperty(Property.REVISION);
+        int row = findRowByText(Property.REVISION.getText());
+        return propertiesTable.getCell(row, 2).getLocator()
+                .locator("xpath=.//span[@class='expandable']")
+                .textContent()
+                .trim();
     }
 
     public String getStatus() {

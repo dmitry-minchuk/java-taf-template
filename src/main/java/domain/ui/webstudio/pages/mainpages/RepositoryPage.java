@@ -361,4 +361,35 @@ public class RepositoryPage extends BasePage {
         inlineMessage.waitForVisible(DEFAULT_TIMEOUT_MS);
         return inlineMessage.getText().trim();
     }
+
+    public boolean isTableActionButtonPresent(String projectName, String actionTitle) {
+        int rowIndex = findProjectRowIndex(projectName);
+        if (rowIndex == -1) return false;
+        TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(rowIndex);
+        List<WebElement> cells = row.getCells();
+        WebElement actionsCell = cells.get(cells.size() - 1);
+        return actionsCell.getLocator().locator(String.format("xpath=.//a[@title='%s']", actionTitle)).count() > 0;
+    }
+
+    public void clickTableActionButton(String projectName, String actionTitle) {
+        int rowIndex = findProjectRowIndex(projectName);
+        if (rowIndex == -1) {
+            throw new RuntimeException("Project '" + projectName + "' not found in projects table");
+        }
+        TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(rowIndex);
+        List<WebElement> cells = row.getCells();
+        WebElement actionsCell = cells.get(cells.size() - 1);
+        actionsCell.getLocator().locator(String.format("xpath=.//a[@title='%s']", actionTitle)).click();
+        WaitUtil.sleep(500, "Waiting after table action button click");
+    }
+
+    public String getProjectStatusFromTable(String projectName) {
+        int rowIndex = findProjectRowIndex(projectName);
+        if (rowIndex == -1) {
+            throw new RuntimeException("Project '" + projectName + "' not found in projects table");
+        }
+        List<String> headers = projectsTable.getHeaders();
+        int statusColIndex = headers.indexOf("Status");
+        return projectsTable.getRow(rowIndex).getCells().get(statusColIndex).getText().trim();
+    }
 }
