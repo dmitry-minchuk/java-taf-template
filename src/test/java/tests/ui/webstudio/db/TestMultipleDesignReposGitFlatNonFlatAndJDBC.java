@@ -42,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
+    private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
     private PostgreSQLContainer<?> postgresContainer;
 
@@ -68,6 +69,13 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         additionalContainerConfig.put("db.url", pgJdbcUrl);
         additionalContainerConfig.put("db.user", postgresContainer.getUsername());
         additionalContainerConfig.put("db.password", postgresContainer.getPassword());
+
+        // Copy the PostgreSQL JDBC driver JAR into /opt/openl/lib/ in the WebStudio container.
+        // WebStudio scans this directory at startup (same mechanism as compose.yaml init service).
+        // The JAR is resolved from Maven local cache — it's already a compile dependency.
+        String pgJarPath = System.getProperty("user.home")
+                + "/.m2/repository/org/postgresql/postgresql/42.7.5/postgresql-42.7.5.jar";
+        additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
 
         super.beforeMethod(result);
     }

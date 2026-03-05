@@ -24,16 +24,16 @@ public class AppContainerFactory {
     public static AppContainerData createContainer(String containerName,
                                                    Network network,
                                                    Map<String, String> envVars,
-                                                   String copyFileFromPath,
-                                                   String copyFileToContainerPath) {
+                                                   Map<String, String> filesToCopy) {
         GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(DOCKER_IMAGE_NAME));
         container.addExposedPort(APP_PORT);
         container.withNetwork(network);
         container.withNetworkAliases(containerName);
         if(envVars != null)
             container.withEnv(envVars);
-        if(copyFileFromPath != null && copyFileToContainerPath != null)
-            container.withCopyFileToContainer(getMountableFile(copyFileFromPath), copyFileToContainerPath);
+        if(filesToCopy != null)
+            filesToCopy.forEach((hostPath, containerPath) ->
+                    container.withCopyFileToContainer(getMountableFile(hostPath), containerPath));
         container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH)
                 .forStatusCode(200)
                 .withStartupTimeout(Duration.ofMinutes(5)));

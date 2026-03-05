@@ -14,10 +14,9 @@ public class AppContainerPool {
     public static void setAppContainer(String containerName,
                                        Network network,
                                        Map<String, String> envVars,
-                                       String copyFileFromPath,
-                                       String copyFileToContainerPath) {
+                                       Map<String, String> filesToCopy) {
         if(threadLocalAppContainer.get() == null) {
-            threadLocalAppContainer.set(AppContainerFactory.createContainer(containerName, network, envVars, copyFileFromPath, copyFileToContainerPath));
+            threadLocalAppContainer.set(AppContainerFactory.createContainer(containerName, network, envVars, filesToCopy));
             if (network != null)
                 WaitUtil.sleep(3000, "Wait 3 seconds for DNS propagation in Docker's embedded DNS server");
         }
