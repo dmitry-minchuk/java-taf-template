@@ -28,6 +28,8 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement flatFolderStructureCheckBox;
     private WebElement secureConnectionCheckbox;
     private WebElement applyChangesBtn;
+    private WebElement designRepoActiveTab;
+    private WebElement typeOption;
 
     public RepositoriesPageComponent() {
         super(LocalDriverPool.getPage());
@@ -60,6 +62,8 @@ public class RepositoriesPageComponent extends BaseComponent {
         flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
         secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_secureConnection']", "secureConnectionCheckbox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
+        designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
+        typeOption = createScopedElement("xpath=.//div[contains(@class,'ant-select-item-option') and .//span[text()='%s']]", "typeOption");
     }
 
     public RepositoriesPageComponent clickDesignRepositoriesTab() {
@@ -78,11 +82,13 @@ public class RepositoriesPageComponent extends BaseComponent {
     }
 
     public void addDesignRepository() {
+        addDesignRepository("Design1");
+    }
+
+    public void addDesignRepository(String expectedTabName) {
         clickDesignRepositoriesTab();
         clickAddRepository();
-        // Wait for the newly added repo's nav tab to become active in the repositories tabs
-        createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='Design1']]", "design1ActiveTab")
-                .waitForVisible(5000);
+        designRepoActiveTab.format(expectedTabName).waitForVisible(5000);
     }
 
     public RepositoriesPageComponent selectDesignRepositoryByName(String name) {
@@ -116,7 +122,7 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     public RepositoriesPageComponent setDesignRepositoryType(String type) {
         remoteRepositoryTypeSelector.click();
-        createScopedElement("xpath=.//div[contains(@class,'ant-select-item-option') and .//span[text()='" + type + "']]", "typeOption").click();
+        typeOption.format(type).click();
         return this;
     }
 

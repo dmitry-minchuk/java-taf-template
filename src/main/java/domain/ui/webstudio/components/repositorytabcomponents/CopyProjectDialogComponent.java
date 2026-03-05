@@ -60,7 +60,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
     public CopyProjectDialogComponent setNewBranchName(String branchName) {
         LOGGER.info("Setting new branch name: {}", branchName);
         newBranchNameField.fill(branchName);
-        WaitUtil.sleep(500, "Waiting for branch name to be entered");
         return this;
     }
 
@@ -163,13 +162,16 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public void waitForDialogToClose() {
-        WaitUtil.waitForCondition(() -> !isDialogVisible(), 5000, 100, "Waiting for Copy Project dialog to close");
-        // modalCopyProject_shade is a sibling of the container, not a child — must use page-level locator
-        dialogContainer.getPage()
-                .locator("xpath=//div[@id='modalCopyProject_shade']")
-                .waitFor(new com.microsoft.playwright.Locator.WaitForOptions()
-                        .setState(com.microsoft.playwright.options.WaitForSelectorState.HIDDEN)
-                        .setTimeout(5000));
+        try {
+            WaitUtil.waitForCondition(() -> !isDialogVisible(), 5000, 100, "Waiting for Copy Project dialog to close");
+        } catch (Exception e) {
+            List<String> visibleErrors = getErrors();
+            if (!visibleErrors.isEmpty()) {
+                throw new RuntimeException("Copy dialog did not close. Errors: " + visibleErrors, e);
+            }
+            throw e;
+        }
+        dialogShade.waitForHidden(5000);
     }
 
     public List<String> getErrors() {

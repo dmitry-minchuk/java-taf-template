@@ -7,6 +7,7 @@ import helpers.utils.WaitUtil;
 
 public class EditProjectDialogComponent extends BaseComponent {
 
+    private WebElement projectNameField;
     private WebElement descriptionField;
     private WebElement updateBtn;
     private WebElement cancelBtn;
@@ -22,9 +23,28 @@ public class EditProjectDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        descriptionField = createScopedElement("xpath=//textarea[@id='projectDescription']", "descriptionField");
-        updateBtn = createScopedElement("xpath=//input[@value='Update']", "updateBtn");
-        cancelBtn = createScopedElement("xpath=//input[@value='Cancel']", "cancelBtn");
+        projectNameField = createScopedElement("xpath=.//input[@id='projectName']", "projectNameField");
+        descriptionField = createScopedElement("xpath=.//textarea[@id='projectDescription']", "descriptionField");
+        updateBtn = createScopedElement("xpath=.//input[@value='Update']", "updateBtn");
+        cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
+    }
+
+    public boolean isProjectNameFieldVisible() {
+        return projectNameField.isVisible(1000);
+    }
+
+    public EditProjectDialogComponent setProjectName(String name) {
+        projectNameField.clear();
+        projectNameField.fillSequentially(name);
+        return this;
+    }
+
+    public String getProjectName() {
+        return projectNameField.getCurrentInputValue();
+    }
+
+    public boolean isUpdateButtonEnabled() {
+        return updateBtn.isEnabled();
     }
 
     public EditProjectDialogComponent setDescription(String description) {

@@ -9,6 +9,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.editortabcomponents.EditProjectDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -22,6 +23,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +32,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Migrated from: Repository/TestMultipleDesignReposGitFlatNonFlatAndJDBC.java
+ * Migrated from: Repository/TestMultipleDesignRepositoriesWithPostgres.java
  * Ticket: IPBQA-30859
  *
  * Adaptation: Instead of using a pre-deployed PostgreSQL instance (used in legacy @BeforeMethod
@@ -39,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * The PostgreSQL container URL uses host.docker.internal so the app Docker container can reach it.
  */
-public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
+public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
@@ -52,6 +55,9 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
     @Override
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
+        additionalContainerConfig.clear();
+        additionalContainerFiles.clear();
+
         LOGGER.info("Starting PostgreSQL container for JDBC integration test...");
         postgresContainer = new PostgreSQLContainer<>("postgres:alpine");
         postgresContainer.start();
@@ -62,10 +68,9 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         LOGGER.info("PostgreSQL container started. JDBC URL (for app container): {}", pgJdbcUrl);
 
         // Configure Studio to use PostgreSQL as its security/user database (JDBC integration)
+        // user.mode and security.administrators already set by DEFAULT_STUDIO_PARAMS
         // Legacy: clearDB() dropped tables from this Postgres DB before each test.
         // New approach: fresh container per test = no leftover state, no clearDB() needed.
-        additionalContainerConfig.put("user.mode", "multi");
-        additionalContainerConfig.put("security.administrators", "admin");
         additionalContainerConfig.put("db.url", pgJdbcUrl);
         additionalContainerConfig.put("db.user", postgresContainer.getUsername());
         additionalContainerConfig.put("db.password", postgresContainer.getPassword());
@@ -93,9 +98,12 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
     @TestCaseId("IPBQA-30859")
     @Description("Multiple Design Repositories: Git flat, Git non-flat, and JDBC security DB — project management across repos")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testMultipleDesignReposGitFlatNonFlatAndJDBC() {
-        // Step 1: Login and create project in default Design repository
+    public void testMultipleDesignRepositoriesWithPostgres() {
+        // Step 0: Login and verify PostgreSQL is actually used as security DB
         EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        verifyPostgresContainsOpenLTables();
+
+        // Step 1: Create project in default Design repository
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProjectDesign, "Example 1 - Bank Rating");
@@ -200,6 +208,7 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         assertThat(propsTab.getRepository()).isEqualTo("Design");
 
         // Step 7: Copy ProjectDesignRepo to Design1 (same name) — conflict/closed scenario
+        // New UI requires explicit path for non-flat repos (legacy didn't set path)
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectItemInFolder("Projects", nameProjectDesign);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
@@ -208,27 +217,29 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
                 .setSeparateProject(true)
                 .setNewProjectName(nameProjectDesign)
                 .selectRepository("Design1")
+                .setProjectFolder("/step7")
                 .clickCopyButton();
 
-        // After copy, original in Design1 should be no-changes
+        // After copy, the opened project (Design) should still show No Changes
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .selectOpenedItemInFolder("Projects", nameProjectDesign);
         propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         assertThat(propsTab.getStatus()).isEqualTo("No Changes");
 
-        // The copy in Design repo (closed version) should have expected properties
-        // NOTE: "getProjectFromTableWithClosedStatus" pattern from legacy = find the closed entry in the table
+        // The copy creates a closed version visible in the tree (closed.gif icon)
         repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign);
+                .selectClosedItemInFolder("Projects", nameProjectDesign);
         propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         assertThat(propsTab.getName()).isEqualTo(nameProjectDesign);
-        assertThat(propsTab.getPath()).isEqualTo(nameProjectDesign);
+        assertThat(propsTab.getPath()).isEqualTo("step7/" + nameProjectDesign);
         assertThat(propsTab.getRepository()).isEqualTo("Design1");
         assertThat(propsTab.getStatus()).isEqualTo("Closed");
 
-        // Step 7.1: Try to open the closed project — should show "cannot open two projects with same name" message
+        // Step 7.1: Try to open the closed project — shows closable error at top of page
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        assertThat(repositoryPage.getMessagePopupText())
-                .contains("WebStudio cannot open two projects with same name");
-        repositoryPage.closeMessagePopup();
+        assertThat(repositoryPage.getClosableMessageText())
+                .contains("Cannot open two projects with the same name");
+        repositoryPage.closeClosableMessage();
 
         // Step 8: Try to copy again to Design1 with /copied/ path — should show duplicate error
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
@@ -254,37 +265,52 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
                 .selectRepository("Design")
                 .clickCopyButton();
 
+        // After copy, the opened project (Design1) should still show No Changes
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .selectOpenedItemInFolder("Projects", nameProjectDesign1);
         propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         assertThat(propsTab.getRepository()).isEqualTo("Design1");
         assertThat(propsTab.getStatus()).isEqualTo("No Changes");
 
-        // The closed copy in Design repo
+        // The closed copy in Design repo (closed.gif icon)
         repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign1);
+                .selectClosedItemInFolder("Projects", nameProjectDesign1);
         propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         assertThat(propsTab.getName()).isEqualTo(nameProjectDesign1);
         assertThat(propsTab.getRepository()).isEqualTo("Design");
         assertThat(propsTab.getStatus()).isEqualTo("Closed");
 
-        // Step 9.1: Open closed copy — should show "cannot open two projects with same name"
+        // Step 9.1: Open closed copy — shows closable error at top of page
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        assertThat(repositoryPage.getMessagePopupText())
-                .contains("WebStudio cannot open two projects with same name");
-        repositoryPage.closeMessagePopup();
+        assertThat(repositoryPage.getClosableMessageText())
+                .contains("Cannot open two projects with the same name");
+        repositoryPage.closeClosableMessage();
 
-        // Step 9.2: Editor tab — open ProjectDesign1Repo, edit project name, assert enabled
-        // (nameProjectDesign1 is in Design1 — editing allowed)
-        // NOTE: Editor tab navigation from Repository tab — switching to Editor and back
-        // Requires EditorPage.getEditProjectDialog() or similar — left as TODO pending component addition
+        // Step 9.2: Switch to Editor tab, open ProjectDesign1Repo, verify project name is editable
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectDesign1);
+        EditProjectDialogComponent editDialog = editorPage.openEditProjectDialog(nameProjectDesign1);
+        editDialog.setProjectName("Check");
+        assertThat(editDialog.getProjectName()).isEqualTo("Check");
+        assertThat(editDialog.isUpdateButtonEnabled()).isTrue();
+        editDialog.clickCancelButton();
 
-        // Step 10: From breadcrumbs in Editor, select ProjectDesignRepo — edit project name field absent
-        // (ProjectDesignRepo is in Design1 as a separate branch/non-flat — editing not allowed from this view)
-        // NOTE: Left as TODO pending EditorPage edit project support for multi-repo
+        // Step 10: Switch to ProjectDesignRepo via breadcrumbs — verify Edit Project dialog opens
+        // Legacy asserted project name field was absent for flat repos; new UI always shows it
+        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameProjectDesign);
+        editDialog = editorPage.openEditProjectDialog(nameProjectDesign);
+        assertThat(editDialog.getProjectName()).isEqualTo(nameProjectDesign);
+        editDialog.clickCancelButton();
+
+        // Switch back to Repository tab for remaining steps
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage = new RepositoryPage();
 
         // Step 11: Delete and Erase ProjectDesignRepo — no "also delete from repository" checkbox expected
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign);
+        // Two ProjectDesignRepo entries exist (opened in Design, closed in Design1) — select the opened one
         repositoryPage.setShowDeletedProjects(false);
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .selectOpenedItemInFolder("Projects", nameProjectDesign);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickEraseBtn();
@@ -294,13 +320,44 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         repositoryPage.getConfirmEraseDialogComponent().clickErase();
 
         // Step 12: Delete and Erase ProjectDesign1Repo — "also delete from repository" checkbox expected
+        // Two ProjectDesign1Repo entries exist (opened in Design1, closed in Design) — select the opened one
         repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign1);
+                .selectOpenedItemInFolder("Projects", nameProjectDesign1);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickEraseBtn();
         assertThat(repositoryPage.getConfirmEraseDialogComponent().isAlsoDeleteFromRepositoryVisible())
                 .as("Erasing from non-flat Git repo should show 'also delete from repository' checkbox")
                 .isTrue();
+
+        //TODO: do not create separate folder for DB tests and separate suite for DB tests
+        //TODO: finish TestSplitDesignRepositoryDeployRules
+        //TODO: make it all look pretty and reusable - ugly methods should be prettified (beforeMethod logic, verifyPostgresContainsOpenLTables)
+        //TODO: check all the changes and LOGS and remove strange waiters
+    }
+
+    private void verifyPostgresContainsOpenLTables() {
+        try (var conn = DriverManager.getConnection(
+                postgresContainer.getJdbcUrl(),
+                postgresContainer.getUsername(),
+                postgresContainer.getPassword())) {
+            // If OpenL uses this PostgreSQL as security DB, it creates tables via Flyway migrations.
+            // If embedded H2 was used instead, this PostgreSQL would have zero OpenL tables.
+            var rs = conn.createStatement().executeQuery(
+                    "SELECT table_name FROM information_schema.tables " +
+                    "WHERE table_schema = 'public' AND table_name LIKE 'openl_%' ORDER BY table_name");
+            List<String> tables = new java.util.ArrayList<>();
+            while (rs.next()) {
+                tables.add(rs.getString("table_name"));
+            }
+            LOGGER.info("PostgreSQL verification: found OpenL tables: {}", tables);
+            assertThat(tables)
+                    .as("PostgreSQL should contain OpenL security tables — proves it's used instead of embedded H2")
+                    .isNotEmpty()
+                    .anyMatch(t -> t.contains("openl_users"))
+                    .anyMatch(t -> t.contains("openl_groups"));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to verify PostgreSQL contains OpenL tables", e);
+        }
     }
 }

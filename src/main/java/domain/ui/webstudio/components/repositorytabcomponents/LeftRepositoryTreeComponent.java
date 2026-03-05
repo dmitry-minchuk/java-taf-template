@@ -36,6 +36,22 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
         return this;
     }
 
+    // Use only when duplicate project names exist (one opened, one closed) to resolve strict mode violation
+    public LeftRepositoryTreeComponent selectClosedItemInFolder(String folderName, String itemName) {
+        RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
+        folder.selectClosedItem(itemName);
+        WaitUtil.sleep(500, "Waiter for selected item details to load");
+        return this;
+    }
+
+    // Use only when duplicate project names exist (one opened, one closed) to resolve strict mode violation
+    public LeftRepositoryTreeComponent selectOpenedItemInFolder(String folderName, String itemName) {
+        RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
+        folder.selectOpenedItem(itemName);
+        WaitUtil.sleep(500, "Waiter for selected item details to load");
+        return this;
+    }
+
     public LeftRepositoryTreeComponent expandFolderInTree(String folderName) {
         RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
         folder.expandFolder();

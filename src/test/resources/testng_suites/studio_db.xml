@@ -4,7 +4,7 @@
     <test name="DB Integration Tests">
         <classes>
             <class name="tests.ui.webstudio.db.TestSplitDesignRepositoryDeployRules"/>
-            <class name="tests.ui.webstudio.db.TestMultipleDesignReposGitFlatNonFlatAndJDBC"/>
+            <class name="tests.ui.webstudio.db.TestMultipleDesignRepositoriesWithPostgres"/>
         </classes>
     </test>
 </suite>

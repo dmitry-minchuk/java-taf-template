@@ -44,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestSplitDesignRepositoryDeployRules extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
+    private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
     private OracleContainer oracleContainer;
     private String oracleJdbcUrl;
@@ -54,18 +55,21 @@ public class TestSplitDesignRepositoryDeployRules extends BaseTest {
     @Override
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
+        additionalContainerConfig.clear();
+        additionalContainerFiles.clear();
+
         LOGGER.info("Starting Oracle Free container for DB integration test...");
         oracleContainer = new OracleContainer("gvenzl/oracle-free:slim-faststart");
         oracleContainer.start();
 
         int oraclePort = oracleContainer.getMappedPort(1521);
-        // Use host.docker.internal so the app Docker container can reach the Oracle container
         oracleJdbcUrl = "jdbc:oracle:thin:@host.docker.internal:" + oraclePort + "/" + oracleContainer.getDatabaseName();
         LOGGER.info("Oracle container started. JDBC URL (for app container): {}", oracleJdbcUrl);
 
-        // App container uses default Studio params; Oracle is configured via Admin UI during the test
-        additionalContainerConfig.put("user.mode", "multi");
-        additionalContainerConfig.put("security.administrators", "admin");
+        // user.mode and security.administrators already set by DEFAULT_STUDIO_PARAMS
+
+        String ojdbcJarPath = System.getProperty("user.home") + "/.m2/repository/com/oracle/database/jdbc/ojdbc11/23.7.0.25.01/ojdbc11-23.7.0.25.01.jar";
+        additionalContainerFiles.put(ojdbcJarPath, "/opt/openl/lib/ojdbc11.jar");
 
         super.beforeMethod(result);
     }

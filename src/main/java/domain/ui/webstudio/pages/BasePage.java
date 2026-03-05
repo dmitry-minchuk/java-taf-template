@@ -22,6 +22,9 @@ public abstract class BasePage extends CorePage {
     @Getter
     private WebElement modalOkBtn;
     private WebElement notificationPanel;
+    // JSF closable messages: <div class="message closable error/info/warning"> at top of page
+    // Legacy locator: //div[contains(@class, 'message closable')] | //div[@class='messages']
+    private WebElement closableMessage;
 
     public BasePage() {
         super();
@@ -40,6 +43,7 @@ public abstract class BasePage extends CorePage {
         contentLoadingSpinner = new WebElement(page, "xpath=//div[@id='loadingPanel']", "contentLoadingSpinner");
         modalOkBtn = new WebElement(page, "xpath=//div[@class='ant-modal-content']//button[./span[contains(text(),'OK')]]", "applyChangesBtn");
         notificationPanel = new WebElement(page, "xpath=//div[@data-show='true' and contains(@class, 'ant-alert-banner')]", "Notification Panel");
+        closableMessage = new WebElement(page, "xpath=//div[contains(@class, 'message closable')]", "closableMessage");
     }
 
     public void closeAllMessages() {
@@ -104,5 +108,20 @@ public abstract class BasePage extends CorePage {
             return notificationPanel.getText();
         }
         throw new RuntimeException("No Notification text found!");
+    }
+
+    public boolean isClosableMessageVisible() {
+        return closableMessage.isVisible(1000);
+    }
+
+    public String getClosableMessageText() {
+        closableMessage.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return closableMessage.getText().trim();
+    }
+
+    public void closeClosableMessage() {
+        if (isClosableMessageVisible()) {
+            closableMessage.click();
+        }
     }
 }

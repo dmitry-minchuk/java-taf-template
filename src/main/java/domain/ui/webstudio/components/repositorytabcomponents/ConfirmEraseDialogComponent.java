@@ -3,7 +3,6 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
-import helpers.utils.WaitUtil;
 
 public class ConfirmEraseDialogComponent extends BaseComponent {
 
@@ -33,7 +32,7 @@ public class ConfirmEraseDialogComponent extends BaseComponent {
 
     public void clickErase() {
         eraseBtn.click();
-        WaitUtil.sleep(500, "Waiting after clicking Erase button");
+        eraseBtn.waitForHidden(5000);
     }
 
     public void clickCancel() {
