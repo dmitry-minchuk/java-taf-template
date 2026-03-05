@@ -147,8 +147,9 @@ public class TestACLContributorRole extends BaseTest {
         editorPage = loginService.login(new UserData(contributorUsername, contributorUsername));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
+        final RepositoryPage contributorRepoPage = repositoryPage;
         WaitUtil.waitForCondition(
-                () -> repositoryPage.getAllVisibleProjectsInTable().contains(projectName),
+                () -> contributorRepoPage.getAllVisibleProjectsInTable().contains(projectName),
                 10000, 500, "Waiting for project to appear for contributor"
         );
 
@@ -179,8 +180,9 @@ public class TestACLContributorRole extends BaseTest {
         editorPage = loginService.login(new UserData(viewerUsername, viewerUsername));
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
+        final RepositoryPage viewerRepoPage = repositoryPage;
         WaitUtil.waitForCondition(
-                () -> repositoryPage.getAllVisibleProjectsInTable().contains(projectName),
+                () -> viewerRepoPage.getAllVisibleProjectsInTable().contains(projectName),
                 10000, 500, "Waiting for project to appear for viewer"
         );
 
