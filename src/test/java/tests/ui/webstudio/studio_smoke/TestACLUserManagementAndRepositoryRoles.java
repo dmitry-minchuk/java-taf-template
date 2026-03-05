@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
-import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
@@ -16,8 +15,7 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import helpers.utils.StringUtil;
-import helpers.utils.WaitUtil;
+import helpers.service.WorkflowService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -25,43 +23,25 @@ import tests.BaseTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
-public class TestAdminUsersProjects extends BaseTest {
+public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
 
     @Test
-    @TestCaseId("IPBQA-32784") // New ID
-    @Description("Users management for project roles: create user, assign project-specific roles and verify permissions.")
+    @TestCaseId("IPBQA-32912")
+    @Description("ACL: user management (create/edit/delete) and repository-level role assignment (Manager/Viewer) without external auth system")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testAdminUsersOnProjectsLevel() {
+    public void testACLUserManagementAndRepositoryRoles() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
 
-        // ============ Admin Setup: Log in and create two projects ============
+        // ============ Steps 1-3: Admin login and verify users page ============
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
-        RepositoryPage adminRepoPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-
-        String project1Name = StringUtil.generateUniqueName("ProjectRoleTest1");
-        adminRepoPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, project1Name, "Example 1 - Bank Rating");
-
-        // Wait for the first project to appear in the table, confirming the refresh is complete
-        WaitUtil.waitForCondition(
-                () -> adminRepoPage.getAllVisibleProjectsInTable().contains(project1Name),
-                15000, // timeout in ms
-                500,   // polling interval in ms
-                "Waiting for project '" + project1Name + "' to appear in the repository table."
-        );
-
-        String project2Name = StringUtil.generateUniqueName("ProjectRoleTest2");
-        adminRepoPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, project2Name, "Sample Project");
-
-
-        // ============ Start Test: Navigate to users page ============
         UsersPageComponent usersComponent = editorPage
                 .openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
 
         Assert.assertTrue(usersComponent.isUserInList("admin"), "Admin user should be in the users list");
+        Assert.assertTrue(usersComponent.areActionsAvailableForUser("admin"), "Edit and delete actions should be available for admin user");
 
         // ============ Steps 4-5: Add new user 'test' ============
         int initialUserCount = usersComponent.getUsersCount();
@@ -71,75 +51,112 @@ public class TestAdminUsersProjects extends BaseTest {
                 .saveUser();
 
         Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
-        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1, "User count should increase by 1");
+        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1,
+                "User count should increase by 1");
+
+        // Verify alphabetical order
+        List<String> allUsers = usersComponent.getAllUsernames();
+        assertThat(allUsers).containsSequence("admin", "test");
+
+        // ============ Step 6: Edit user 'test' email ============
+        usersComponent.clickEditUser("test")
+                .setEmail("test@example.com")
+                .saveUser();
+
+        // Verify email was updated
+        usersComponent.clickEditUser("test");
+        Assert.assertEquals(usersComponent.getEmail(), "test@example.com", "Email should be updated to 'test@example.com'");
+        usersComponent.cancelUser();
+
+        // ============ Step 7: Delete user 'test' ============
+        usersComponent.clickDeleteUser("test");
+        Assert.assertFalse(usersComponent.isUserInList("test"), "User 'test' should be removed from the list");
+        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should return to initial value");
+
+        // ============ Step 8: Try to create duplicate 'Admin' user ============
+        usersComponent.clickAddUser()
+                .setUsername("admin")
+                .setPassword("admin123")
+                .saveUser(false);
+
+        usersComponent.closeAllMessages();
+        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should be equal to previous value");
+        usersComponent.cancelUser();
+
+        // ============ Step 9: Re-create user 'test' ============
+        usersComponent.clickAddUser()
+                .setUsername("test")
+                .setPassword("test")
+                .saveUser();
+
+        Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be created successfully");
 
         // ============ Step 10: Login as 'test' user and verify no projects/options ============
         editorPage.openUserMenu().signOut();
         UserData testUser = new UserData("test", "test");
         editorPage = loginService.login(testUser);
+
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         List<String> visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects).isEmpty();
+        assertThat(repositoryPage.getCreateProjectLink().isVisible())
+                .as("Create Project link should not be visible for user without roles")
+                .isFalse();
         editorPage.openUserMenu().signOut();
 
-        // ============ Step 11: Admin adds Manager role for BOTH projects to 'test' user ============
-        editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        // ============ Step 11: Admin adds Manager role for Project 1 to 'test' user ============
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
         usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
 
         usersComponent.clickEditUser("test")
-                .clickProjectsTab()
                 .clickAddRoleBtn()
-                .setProject(0, project1Name)
-                .setProjectRole(0, "Manager")
-                .clickAddRoleBtn()
-                .setProject(1, project2Name)
-                .setProjectRole(1, "Manager")
+                .setRoleRepository(0, "Design")
+                .setRole(0, "Manager")
                 .saveUser();
 
-        assertThat(usersComponent.isUserInList("test")).isTrue();
+        // Verify role was added
+        usersComponent.clickEditUser("test");
+        Assert.assertEquals(usersComponent.getRoleRepository(0), "Design", "Repository should be 'Design'");
+        Assert.assertEquals(usersComponent.getRole(0), "Manager", "Role should be 'Manager'");
+        usersComponent.cancelUser();
 
-        // ============ Step 12: Login as 'test' and verify Manager access to BOTH projects ============
+        // ============ Step 12: Login as 'test' and verify Manager access ============
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(testUser);
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
-        assertThat(visibleProjects)
-            .as("User 'test' should see BOTH projects with assigned Manager roles")
-            .contains(project1Name)
-            .contains(project2Name);
+        assertThat(visibleProjects).as("User 'test' should see the project with Manager role").isNotEmpty().contains(projectName);
 
-        // Verify Project-level Manager permissions
-        // Note: Project-level Manager has different permissions than Repository-level Manager.
-        // Project Manager does NOT have Delete permission (unlike Repository Manager).
+        // Verify Manager-specific options are available
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", project1Name);
+                .selectItemInFolder("Projects", projectName);
         RepositoryContentButtonsPanelComponent managerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-        assertThat(managerButtonsPanel.isCopyBtnVisible()).as("Project Manager should see Copy button").isTrue();
-        assertThat(managerButtonsPanel.isDeleteBtnVisible()).as("Project Manager should NOT see Delete button (unlike Repository Manager)").isFalse();
-        assertThat(managerButtonsPanel.isDeployBtnVisible()).as("Project Manager should NOT see Deploy button").isFalse();
-        assertThat(managerButtonsPanel.isExportBtnVisible()).as("Project Manager should see Export button").isTrue();
+        assertThat(managerButtonsPanel.isCopyBtnVisible(1000)).as("Manager should see Copy button").isTrue();
+        assertThat(managerButtonsPanel.isDeleteBtnVisible()).as("Manager should see Delete button").isTrue();
+        assertThat(!managerButtonsPanel.isDeployBtnVisible()).as("Manager should NOT see Deploy button").isTrue();
+        assertThat(managerButtonsPanel.isExportBtnVisible()).as("Manager should see Export button").isTrue();
 
-        // Verify Project Manager CAN edit tables in Editor tab
+        // Verify Manager CAN edit tables in Editor tab
         repositoryPage.refresh();
         repositoryPage.unlockAllProjects();
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(project1Name, "Bank Rating");
+                .selectModule(projectName, "Bank Rating");
         editorPage.getEditorLeftRulesTreeComponent()
                 .expandFolderInTree("Rating Algorithm")
                 .selectItemInFolder("Rating Algorithm", "BankRatingCalculation");
         EditorToolbarPanelComponent managerToolbar = editorPage.getEditorToolbarPanelComponent();
         assertThat(managerToolbar.getEditTableBtn().isVisible(2000))
-                .as("Project Manager should see Edit button for tables in Editor")
+                .as("Manager should see Edit button for tables in Editor")
                 .isTrue();
 
         editorPage.openUserMenu().signOut();
 
-        // ============ Step 13: Admin changes 'test' role to Viewer for BOTH projects ============
+        // ============ Step 13: Admin changes 'test' role to Viewer ============
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         usersComponent = editorPage.openUserMenu()
@@ -147,30 +164,31 @@ public class TestAdminUsersProjects extends BaseTest {
                 .navigateToUsersPage();
 
         usersComponent.clickEditUser("test")
-                .clickProjectsTab()
-                .setProjectRole(0, "Viewer")
-                .setProjectRole(1, "Viewer")
+                .setRole(0, "Viewer")
                 .saveUser();
 
-        // ============ Step 14: Login as 'test' and verify Viewer access to BOTH projects ============
+        // Verify role was changed
+        usersComponent.clickEditUser("test");
+        Assert.assertEquals(usersComponent.getRole(0), "Viewer", "Role should be changed to 'Viewer'");
+        usersComponent.cancelUser();
+
+        // ============ Step 14: Login as 'test' and verify Viewer access ============
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(testUser);
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
-        assertThat(visibleProjects)
-            .as("User 'test' should still see BOTH projects with Viewer roles")
-            .contains(project1Name)
-            .contains(project2Name);
+        assertThat(visibleProjects).as("User 'test' should still see the project with Viewer role").isNotEmpty().contains(projectName);
 
         // Verify Viewer-restricted options are NOT available
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", project1Name);
+                .selectItemInFolder("Projects", projectName);
         RepositoryContentButtonsPanelComponent viewerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
         assertThat(viewerButtonsPanel.isCopyBtnVisible()).as("Viewer should NOT see Copy button").isFalse();
         assertThat(viewerButtonsPanel.isDeleteBtnVisible()).as("Viewer should NOT see Delete button").isFalse();
         assertThat(viewerButtonsPanel.isDeployBtnVisible()).as("Viewer should NOT see Deploy button").isFalse();
         assertThat(viewerButtonsPanel.isSaveBtnVisible()).as("Viewer should NOT see Save button").isFalse();
+        // Viewer should still have read-only access
         assertThat(viewerButtonsPanel.isExportBtnVisible()).as("Viewer should still see Export button").isTrue();
 
         // ============ Step 15: Verify Viewer cannot edit tables in Editor tab ============
@@ -180,7 +198,7 @@ public class TestAdminUsersProjects extends BaseTest {
 
         // Open project and select a module (Example 1 - Bank Rating has "Bank Rating" module)
         editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(project1Name, "Bank Rating");
+                .selectModule(projectName, "Bank Rating");
 
         // Expand rules tree and select a table to verify Edit button visibility
         editorPage.getEditorLeftRulesTreeComponent()
