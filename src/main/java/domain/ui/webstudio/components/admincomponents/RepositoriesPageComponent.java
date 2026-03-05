@@ -26,6 +26,7 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement remoteRepositoryPasswordField;
     private WebElement remoteRepositoryBranchField;
     private WebElement flatFolderStructureCheckBox;
+    private WebElement secureConnectionCheckbox;
     private WebElement applyChangesBtn;
 
     public RepositoriesPageComponent() {
@@ -53,6 +54,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         remoteRepositoryPasswordField = createScopedElement("xpath=.//input[@id='settings_password']", "passwordField");
         remoteRepositoryBranchField = createScopedElement("xpath=.//input[@id='settings_branch']", "remoteRepositorBranchField");
         flatFolderStructureCheckBox = createScopedElement("xpath=.//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
+        secureConnectionCheckbox = createScopedElement("xpath=.//input[@id='settings_secureConnection']", "secureConnectionCheckbox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
     }
 
@@ -74,6 +76,73 @@ public class RepositoriesPageComponent extends BaseComponent {
     public void addDesignRepository() {
         clickDesignRepositoriesTab();
         clickAddRepository();
+    }
+
+    public RepositoriesPageComponent selectDesignRepositoryByName(String name) {
+        designRepositoryList.stream()
+                .filter(tab -> tab.getText().trim().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Design repository tab '" + name + "' not found"))
+                .click();
+        return this;
+    }
+
+    public String getDesignRepositoryNameValue() {
+        return remoteRepositoryNameField.getAttribute("value");
+    }
+
+    public String getDesignRepositoryType() {
+        return remoteRepositoryTypeSelector.getAttribute("value");
+    }
+
+    public boolean isDesignRepositoryRemote() {
+        return remoteRepositoryCheckBox.isChecked();
+    }
+
+    public String getDesignRepositoryLocalPath() {
+        return remoteRepositoryPathField.getAttribute("value");
+    }
+
+    public String getDesignRepositoryUrl() {
+        return remoteRepositoryPathField.getAttribute("value");
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryType(String type) {
+        remoteRepositoryTypeSelector.click();
+        createScopedElement("xpath=.//div[contains(@class,'ant-select-item-option') and .//span[text()='" + type + "']]", "typeOption").click();
+        return this;
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryJdbcUrl(String url) {
+        remoteRepositoryPathField.waitForVisible(3000).clear();
+        remoteRepositoryPathField.fillSequentially(url);
+        return this;
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryLogin(String login) {
+        remoteRepositoryLoginField.clear();
+        remoteRepositoryLoginField.fillSequentially(login);
+        return this;
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryPassword(String password) {
+        remoteRepositoryPasswordField.clear();
+        remoteRepositoryPasswordField.fillSequentially(password);
+        return this;
+    }
+
+    public RepositoriesPageComponent setSecureConnection(boolean enabled) {
+        if (enabled != secureConnectionCheckbox.isChecked()) {
+            secureConnectionCheckbox.click();
+        }
+        return this;
+    }
+
+    public RepositoriesPageComponent setFlatFolderStructure(boolean flat) {
+        if (flat != flatFolderStructureCheckBox.isChecked()) {
+            flatFolderStructureCheckBox.click();
+        }
+        return this;
     }
 
     public void createDesignRepository(String repositoryUrl, String login, String password, String branch, User user) {

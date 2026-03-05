@@ -10,6 +10,7 @@ import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import domain.ui.webstudio.components.editortabcomponents.ExportProjectDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.*;
+import domain.ui.webstudio.components.repositorytabcomponents.ConfirmEraseDialogComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -66,6 +67,7 @@ public class RepositoryPage extends BasePage {
     private FileChangedWarningComponent fileChangedWarningComponent;
     private TableComponent projectsTable;
     private ExportProjectDialogComponent exportProjectDialogComponent;
+    private ConfirmEraseDialogComponent confirmEraseDialogComponent;
 
     public RepositoryPage() {
         super();
@@ -107,6 +109,7 @@ public class RepositoryPage extends BasePage {
         confirmCloseProjectDialogComponent = createScopedComponent(ConfirmCloseProjectDialogComponent.class, "xpath=//div[@id='modalCloseProject_container']", "confirmCloseProjectDialogComponent");
         fileChangedWarningComponent = createScopedComponent(FileChangedWarningComponent.class, "xpath=//div[@id='fileChanged_content']", "fileChangedWarningComponent");
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
+        confirmEraseDialogComponent = createScopedComponent(ConfirmEraseDialogComponent.class, "xpath=//div[@id='modalEraseProject_container']", "confirmEraseDialogComponent");
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
@@ -132,7 +135,16 @@ public class RepositoryPage extends BasePage {
                 break;
             case TEMPLATE:
                 TemplateTabComponent templateComponent = createNewProjectComponent.selectTab(projectType);
-                templateComponent.createProjectFromTemplate(projectName, sourceName);
+                if (finalize) {
+                    templateComponent.createProjectFromTemplate(projectName, sourceName);
+                } else {
+                    if (!sourceName.isEmpty()) {
+                        templateComponent.selectProjectTemplate(sourceName);
+                    }
+                    if (!projectName.isEmpty()) {
+                        templateComponent.setProjectName(projectName);
+                    }
+                }
                 break;
             case OPEN_API:
                 OpenApiComponent openApiComponent = createNewProjectComponent.selectTab(projectType);
