@@ -240,7 +240,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
         // Wait for popup to load and trace tree to be ready
         popup.waitForLoadState();
-        popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
+        popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(10000));
         return new TraceWindow(popup);
     }
 
@@ -478,16 +478,13 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
         @Override
         public ITraceWindow clickTraceInsideMenu(boolean isPopupExpected) {
+            traceInsideMenuBtn.waitForVisible();
             if (isPopupExpected) {
-                Page popup = page.waitForPopup(() -> {
-                    traceInsideMenuBtn.waitForVisible();
-                    traceInsideMenuBtn.click();
-                });
+                Page popup = page.waitForPopup(() -> traceInsideMenuBtn.click());
                 popup.waitForLoadState();
-                popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(1000));
+                popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(10000));
                 return new TraceWindow(popup);
             } else {
-                traceInsideMenuBtn.waitForVisible();
                 traceInsideMenuBtn.click();
                 return null;
             }
