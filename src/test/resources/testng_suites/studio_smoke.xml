@@ -10,6 +10,9 @@
     <test name="TestUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUserSettings"/></classes></test>
     <test name="TestACLUserManagementAndRepositoryRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLUserManagementAndRepositoryRoles"/></classes></test>
     <test name="TestACLProjectLevelRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLProjectLevelRoles"/></classes></test>
+    <test name="TestACLContributorRole"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLContributorRole"/></classes></test>
+    <test name="TestACLDeploySystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeploySystemAction"/></classes></test>
+    <test name="TestACLRunBenchmarkSystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLRunBenchmarkSystemAction"/></classes></test>
     <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettings"/></classes></test>
     <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettingsDBValidation"/></classes></test>
     <test name="TestNotifications"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminNotifications"/></classes></test>
