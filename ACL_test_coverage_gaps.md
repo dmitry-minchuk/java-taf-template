@@ -1,231 +1,232 @@
 # ACL Test Coverage Gaps
 
-Based on: [ACL in OpenL BRD.txt](EPBDS-14295) and existing IPBQA Jira tickets.
-
-## Currently Covered
-
-| Test Class | Jira | What is covered |
-|---|---|---|
-| `TestACLUserManagementAndRepositoryRoles` | IPBQA-32912 | User CRUD + repository-level Manager/Viewer roles |
-| `TestACLProjectLevelRoles` | IPBQA-32912 | Project-level Manager/Viewer roles for multiple projects |
+Source: ACL in OpenL BRD.txt (EPBDS-14295)
 
 ---
 
-## NOT Covered — UI Scenarios
+## What Changed: Old vs New ACL Model
 
-### 1. Contributor Role (all levels)
-**Jira:** IPBQA-32912 (missing from E2E test), BRD FR2
-**Priority:** HIGH
+The BRD introduces a **completely new permission model**. Old IPBQA tickets (32455, 32470, 32474, 32492, 32493, 32517, 32530, 32532) test the **OLD** system and are NOT relevant to this new ACL.
+
+| Aspect | OLD system | NEW system (BRD) |
+|---|---|---|
+| Permissions | CREATE, ADD, EDIT, DELETE, ERASE, DEPLOY, RUN, BENCHMARK, VIEW | M (Manage), V (View), E (Edit), C (Create), D (Delete) |
+| Roles | Groups: Developers, Testers, Deployers, Viewers | Business roles: Manager, Contributor, Viewer |
+| Deploy | A permission that could be assigned | System action — available if user has ≥ Viewer on design AND Editor on deploy repo |
+| Run/Benchmark | Assignable permission (Testers group) | System action — available for ALL users |
+| Lock/Unlock | Existed | DEPRECATED |
+| Erase | Separate permission | Merged into Delete |
+| Add | Separate permission | Merged into Create |
+| Role assignment | Via API JSON payloads | Via UI in Admin tab or group name templates |
+
+---
+
+## New Role Matrix (FR2)
+
+| Role | M (Manage) | V (View) | C (Create) | E (Edit) | D (Delete) |
+|---|---|---|---|---|---|
+| Manager | x | x | x | x | x |
+| Contributor | — | x | x | x | x |
+| Viewer | — | x | — | — | — |
+
+Key rule (BR2): **Principle of least privilege** — "resources and groups should not have priority."
+
+---
+
+## Currently Covered by Migrated Tests
+
+| Test Class | BRD Requirement | What is tested |
+|---|---|---|
+| `TestACLUserManagementAndRepositoryRoles` | FR4, Use Case 3 | User CRUD, repository-level Manager + Viewer assignment, permission enforcement in Repository + Editor |
+| `TestACLProjectLevelRoles` | FR4, Use Case 3 | Project-level Manager + Viewer assignment for multiple projects, permission enforcement |
+
+---
+
+## NOT Covered — MVP Scope
+
+### 1. Contributor Role (FR2)
+**Priority: CRITICAL — role exists in production but is not tested at all**
 **Test class to create:** `TestACLContributorRole`
 
 Scenarios:
-- Assign Contributor role on repository level → verify user can create/edit/delete projects but cannot manage ACL
-- Assign Contributor role on project level → verify user can edit/delete content within project but cannot see Manage ACL button
-- Verify Contributor cannot deploy (Deploy is a system action, not a permission per BRD TR2)
-- Verify role hierarchy: Manager > Contributor > Viewer (same resource, most restrictive wins per BRD BR2)
+- Assign **Contributor** on repository level → user can Edit, Create, Delete but CANNOT assign roles (no Manage permission)
+- Assign **Contributor** on project level → same restrictions at project scope
+- Verify Contributor CANNOT see "Manage ACL" / "Access Management" button (no M permission)
+- Verify Contributor CAN edit tables in Editor (E permission)
+- Verify Contributor CAN delete a project (D permission)
+- Verify Contributor CANNOT see the option to add roles for other users
+- Compare Contributor vs Viewer: Contributor sees Edit/Delete buttons, Viewer does not
+- Compare Contributor vs Manager: Manager sees role management UI, Contributor does not
 
 ---
 
-### 2. User Without Permissions By Default — Design Repository
-**Jira:** IPBQA-32493
-**Priority:** HIGH
-**Test class to create:** `TestACLDesignRepoUserWithoutDefaultPermissions`
+### 2. Manage Permission — Only Manager Can Assign Roles (FR1, FR2)
+**Priority: HIGH**
+**Test class to create:** `TestACLManagePermission`
+
+The M (Manage) permission allows the user to assign roles to resources they manage. Only Manager has it.
 
 Scenarios:
-- Create user with no groups/roles assigned
-- Verify user sees no projects in Repository tab
-- Via API: grant VIEW permission for specific project to this user
-- Verify user now sees that project with read-only buttons (Open, OpenRevision, Compare, Export only)
-- Verify Deployments button is NOT visible for VIEW-only user
-- Verify no edit actions available on file level
-- Via API: remove VIEW permission
-- Verify user loses access immediately on next page load
+- Login as user with Manager role on a repository
+- Navigate to Admin → Users → verify Manager CAN see and use the "Access Management" tab to assign roles
+- Assign Contributor role on same repository to another user
+- Login as user with Contributor role on same repository
+- Verify Contributor CANNOT access the role assignment UI
+- Verify Contributor CANNOT see any "Manage access" action on repository or project
 
 ---
 
-### 3. Module-Level ACL (granular file/module permissions)
-**Jira:** IPBQA-32492
-**Priority:** HIGH
-**Test class to create:** `TestACLModuleLevelPermissions`
+### 3. Deploy — System Action, Not a Permission (TR2, BRD)
+**Priority: HIGH**
+**Test class to create:** `TestACLDeploySystemAction`
+
+BRD states: Deploy must be available for users with **at least Viewer rights in the design repository AND editor rights in the deploy repository**.
 
 Scenarios:
-- Assign VIEW on project + EDIT on specific module file (.xlsx) to a user
-- Login as that user, open module in Editor
-- Verify Edit button IS visible for the permitted module
-- Verify Edit button is NOT visible for other modules (only VIEW)
-- Edit a table in the permitted module, save → verify changes saved
-- Verify user cannot copy the module to a different path (Create permission absent)
-- Via API: verify ACL list shows both project VIEW and module EDIT entries
+- User has Viewer on design repo only → verify Deploy button is NOT visible (no access to deploy repo)
+- User has Viewer on design repo + Contributor (Edit) on deploy/production repo → verify Deploy button IS visible
+- User has Manager on design repo but no access to deploy repo → verify Deploy button is NOT visible
+- User has Contributor on design repo + Viewer on deploy repo → verify Deploy button is NOT visible (Viewer is not enough on deploy side)
+- Admin (full access) → Deploy button should be visible
+- Verify this behavior is consistent in both Repository tab and Editor tab
 
 ---
 
-### 4. ACL for Non-Flat Git Repository
-**Jira:** IPBQA-32517
-**Priority:** MEDIUM
-**Test class to create:** `TestACLNonFlatGitRepository`
+### 4. Run and Benchmark — Available for ALL Users (TR2)
+**Priority: MEDIUM**
+**Test class to create:** `TestACLRunBenchmarkSystemAction`
 
-Preconditions: Studio configured with Git design repo, Flat folder structure UNCHECKED.
+BRD states: Run and Benchmark are system actions, NOT permissions — must be available for all users.
 
 Scenarios:
-- Create projects in a subfolder path (e.g., /folder1)
-- Assign VIEW permission to user for the design repo
-- Verify user sees projects in nested folder structure
-- Verify Elements tab Actions column is empty for VIEW-only user (no edit icons)
-- Verify Rules deploy configuration tab shows "absent" message for Viewer
-- Open project in Editor, verify toolbar panel is empty (no edit actions)
+- Create user with Viewer role only (no other permissions)
+- Open a project in Editor
+- Open a rules table that has Run/Test button
+- Verify Run (Test) button IS visible and functional for Viewer
+- Verify Benchmark button IS visible and functional for Viewer
+- These should NOT be controlled by role assignment
 
 ---
 
-### 5. ACL for Deployment Configurations — User Without Permissions
-**Jira:** IPBQA-32530
-**Priority:** MEDIUM
-**Test class to create:** `TestACLDeployConfigUserWithoutPermissions`
+### 5. Lock/Unlock — Deprecated (TR2)
+**Priority: MEDIUM**
 
-Preconditions: Deploy Configuration repo = Database (JDBC).
+BRD states: Lock/Unlock functionality must be deprecated from the system.
 
 Scenarios:
-- Create user without any privileges
-- Via API: grant VIEW on design repo + VIEW on specific DeployConfig
-- Login as user, navigate to Repository
-- Verify user sees projects list (VIEW on design)
-- Verify Deployments button is NOT visible on top navigation
-- Open Deploy Configurations tab → verify DeployConfig IS visible
-- Verify Actions column is absent (no edit icons) for deploy configuration
-- Via API: grant DEPLOY permission on specific DeployConfig
-- Re-login → verify Deploy button appears for that DeployConfig
+- Verify there is no Lock Project / Unlock Project button visible in Repository tab for any user role
+- Verify there is no Lock/Unlock option in any context menu or toolbar
+- Note: Current tests call `repositoryPage.unlockAllProjects()` — this should be investigated whether it's still needed or is a leftover
 
 ---
 
-### 6. ACL for Multiple Deployment Configurations
-**Jira:** IPBQA-32532
-**Priority:** MEDIUM
-**Test class to create:** `TestACLMultipleDeployConfigurations`
+### 6. ACL Management UI in Admin Tab (FR5, EPBDS-14584)
+**Priority: HIGH**
+**Test class to create:** `TestACLManagementAdminTab`
+
+BRD requires a dedicated ACL management interface within the Admin tab (separate from the Users tab).
 
 Scenarios:
-- Create two deploy configurations: DeployConfig, DeployConfig2
-- Assign different permissions to different users via API:
-  - user: full access to DeployConfig only
-  - user1: DEPLOY + ERASE on DeployConfig2 only
-- Login as user → verify only DeployConfig is editable, DeployConfig2 is read-only or hidden
-- Login as user1 → verify only DeployConfig2 is accessible with Deploy button
-- Verify Viewer group permissions are applied by default for both configs
+- Navigate to Admin tab → find the ACL management section (separate from Users sub-tab)
+- Verify repository list is displayed with current access entries
+- Add a role entry for a user directly from ACL management page (not via Users > Edit)
+- Verify the entry appears correctly
+- Remove a role entry → verify user loses access on next login
+- Verify the UI correctly shows: who has access, to which resource, with which role
 
 ---
 
-### 7. ACL for Multiple Design Repositories
-**Jira:** IPBQA-32470
-**Priority:** MEDIUM
-**Test class to create:** `TestACLMultipleDesignRepositories`
+### 7. Viewing Parsed ACL per User — EUMS Groups (FR5, EPBDS-14577)
+**Priority: HIGH (MVP scope)**
+**Test class to create:** `TestACLParsedGroupsUserView`
 
-Preconditions: Two design repos configured: Design (Git) and Design1 (JDBC).
+BRD requires a UI for viewing parsed and mapped ACLs of each user (this is the "ACL parsing on User view" in Admin tab).
 
 Scenarios:
-- Create projects in different repos: Bank Rating in Design, Corporate Rating in Design1
-- Create user with Viewers group (VIEW on all repos)
-- Verify user sees projects from both repos with correct read-only buttons
-- Via API: grant EDIT on Design1 only
-- Re-login → verify user can edit projects in Design1 but not in Design
-- Via API: remove all permissions from Design
-- Re-login → verify Design projects disappear from user's view
+- Admin navigates to Admin → Users → select a user
+- Verify the user detail view shows which groups were parsed and which roles were auto-assigned
+- Visual feedback: successfully parsed group permissions must have **green highlight** (FR3.5)
+- If group doesn't match any template → permission row should show different visual state (no green)
+- Verify the distinction between: manually assigned roles vs auto-assigned from EUMS groups
 
 ---
 
-### 8. ACL for Multiple Production/Deployment Repositories
-**Jira:** IPBQA-32474
-**Priority:** MEDIUM
-**Test class to create:** `TestACLMultipleProductionRepositories`
-
-Preconditions: Two deployment repos configured: Deployment (JDBC), Deployment1 (local).
-
-Scenarios:
-- Assign Testers group to a user (RUN + BENCHMARK only, no deploy)
-- Verify user sees no Create Deploy Configuration button
-- Verify Deploy button is absent for all projects
-- Via API: grant DEPLOY on specific production (Deployment only)
-- Re-login → verify Deploy button appears, user can select Deployment but not Deployment1
-- Verify user cannot create new deploy configurations
-
----
-
-### 9. ACL UI Management — Admin Tab (ACL Management Page)
-**Jira:** EPBDS-14584, EPBDS-14587
-**Priority:** HIGH
-**Test class to create:** `TestACLManagementUI`
-
-Scenarios (directly managing ACL from Admin tab, not from User edit form):
-- Navigate to Admin → ACL (or Access Management) section
-- Verify repository list is displayed with current ACL entries
-- Add/remove role for user directly from ACL management page
-- Verify visual indication (green highlight) for successfully parsed group permissions per BRD FR3.5
-- Verify ACL changes take effect on next user login
-
----
-
-### 10. ACL Group Name Templates (with EUMS / Active Directory)
-**Jira:** EPBDS-14576, FR3.1-FR3.4 in BRD
-**Priority:** LOW (requires external EUMS integration)
+### 8. Group Name Templates Configuration (FR3.1, FR3.2 — MVP with EUMS)
+**Priority: HIGH for EUMS environments**
 **Test class to create:** `TestACLGroupNameTemplates`
 
+Note: Requires OpenL Studio configured with EUMS (e.g., Active Directory or LDAP).
+
+Scenarios (FR3.1 — Template creation):
+- Admin navigates to Admin → ACL / Group Templates section
+- Create first template: `git_<repositoryName>_<role>`
+- Verify template saved and displayed
+- Create second template: `<repositoryName>_<role>`
+- Verify both templates active simultaneously (multiple template support is MVP)
+- Try invalid template format → verify error message
+
+Scenarios (FR3.2 — Role mapping):
+- Configure role label mapping: `ro` = Viewer, `rw` = Contributor, `mnt` = Manager
+- Save configuration
+- Verify mapping is persisted
+
+Scenarios (FR3.3-FR3.4 — Auto-assignment on login):
+- Add user to EUMS group `git_Design_rw`
+- User logs in → verify Contributor role auto-assigned on Design repository
+- Add user to EUMS group `git_Design_mnt` → verify Manager auto-assigned on next login
+- Remove user from group → re-login → verify role revoked (changes in EUMS reflected on next login, FR3.4)
+
+Alternate flows:
+- User's group name doesn't match any template → login succeeds but user sees no resources + warning message (Use Case 1, Alternate Flow 1)
+
+---
+
+### 9. Changing Access Rights — Principle of Least Privilege (BR2, Use Case 4)
+**Priority: MEDIUM**
+**Test class to create:** `TestACLPrincipleOfLeastPrivilege`
+
+BRD states: "resources and groups should not have priority." Uses least privilege principle.
+
 Scenarios:
-- Configure group name template: `git_<repositoryName>_<role>`
-- Configure role mapping: ro=Viewer, rw=Contributor, mnt=Manager
-- Simulate user login with group `git_Design_rw` → verify Contributor role auto-assigned on Design repo
-- Simulate user login with group `git_Design_mnt` → verify Manager role auto-assigned
-- Configure second template: `<repositoryName>_<role>`
-- Verify both templates active simultaneously
-- Test invalid template format → verify error message shown
-- User with non-matching group → verify login succeeds but user sees no resources + warning message
+- User has Contributor on a project AND Viewer on the repository containing that project
+- Verify that the effective permission is the **least** between conflicting entries: Viewer behavior applies for repository-level actions
+- User has Manager on repository AND Viewer on a specific project within that repository
+- Verify that project-level access is governed by project-level role (Viewer), not inherited Manager
+- Admin removes user from project-level group but forgets to remove from repository-level group
+- Verify user retains repository-level access (both entries remain active)
 
 ---
 
-### 11. User Without Any Access Logs Into Studio
-**Jira:** EPBDS-14295 Use Case 1 (Alternate Flow 1)
-**Priority:** LOW
-**Test class to create:** `TestACLUserWithNoAccessWarning`
+### 10. User With No Matching Group / No Access — Warning Message (Use Case 1)
+**Priority: MEDIUM**
+**Test class to create:** part of `TestACLUserWithNoAccess` (already partially covered in `TestACLUserManagementAndRepositoryRoles`)
+
+Currently covered: user with no roles sees empty repository.
+NOT covered: the **warning message** that BRD specifies should be shown.
 
 Scenarios:
-- Create user with no roles and no group memberships
-- Login as that user
-- Verify warning message: "You have no rights to view any resources" (or equivalent)
-- Verify Repository tab shows empty state, no projects visible
-- Verify no Create Project option available
+- Login as user with no roles assigned
+- Verify warning message is displayed: "You have no rights to view any resources" (or similar text)
+- Verify the warning is visible in both Repository and Editor tabs
+- Assign a role → re-login → verify warning disappears
 
 ---
 
-### 12. E2E ACL Flow — Complete IPBQA-32912
-**Jira:** IPBQA-32912 (status: Open — not yet automated)
-**Priority:** HIGH
-**Note:** Current `TestACLUserManagementAndRepositoryRoles` covers steps 1-15 of this ticket. Remaining gap: Contributor role steps are not included in the original ticket but should be added per BRD.
+## Out of Scope (Non-MVP — do NOT create tests yet)
+
+Per BRD "Non-MVP Scope":
+1. **Granular access** at file/module/folder level via UI or templates
+2. **Access based on tags or geographical divisions**
+3. **Audit logging** (view/export ACL-related action logs)
+4. **Direct access management from resource views** (e.g., clicking a project and managing ACL inline)
+5. **Real-time EUMS synchronization** (changes applied without re-login)
+6. **System Admin vs Business Admin role split** (EPBDS-14575)
 
 ---
 
-## API-Only Tickets (already Passed, no UI automation needed)
+## Notes on Old IPBQA Tickets
 
-| Jira | Summary | Status |
-|---|---|---|
-| IPBQA-32455 | ACL: adding permissions to design repo | Passed |
-| IPBQA-32465 | ACL: adding permissions to deployConfig when user has no permissions | Passed |
-| IPBQA-32466 | ACL: adding permissions to deployConfig repo - API, UI | Passed |
-| IPBQA-32470 | ACL: adding permissions to different repos | Passed |
-| IPBQA-32474 | ACL: adding permissions to different productions | Passed |
-| IPBQA-32492 | ACL: module-level permissions | Passed |
-| IPBQA-32493 | ACL: design repo user without default permissions | Passed |
-| IPBQA-32517 | ACL: non-flat git repo permissions | Passed |
-| IPBQA-32530 | ACL: deployConfig user without default permissions | Passed |
-| IPBQA-32532 | ACL: multiple deployment configurations | Passed |
-| IPBQA-32723 | API: /acls/repositories/roots/{id} | Passed |
-| IPBQA-32728 | API: /acls/roles | Passed |
-| IPBQA-32729 | API: /acls/repositories | Passed |
-| IPBQA-32734 | API: /acls/projects | Passed |
+The following tickets test the **OLD permission model** and are not applicable to new ACL:
+- IPBQA-32455, 32465, 32466, 32470, 32474, 32492, 32493, 32517, 32530, 32532 — all use old `CREATE/ADD/ERASE/DEPLOY/RUN/BENCHMARK` permission strings and old `Developers/Testers/Deployers` groups
 
-These are already covered at API level. UI coverage (scenarios 2-8 above) would complement them.
-
----
-
-## Out of Scope (Non-MVP per BRD)
-
-- Audit logging (view/export ACL logs)
-- Granular access control at folder/file level via UI (project-level is MVP, file-level via API exists)
-- Real-time EUMS synchronization
-- System Administrator vs Business Administrator role split (EPBDS-14575)
-- Access control based on geographical divisions or tags
+IPBQA-32912 is the only ticket aligned with the new model (Manager/Contributor/Viewer roles).
