@@ -50,6 +50,10 @@ public class UserSlidingRightMenuComponent extends BaseComponent {
         select(MenuElements.HELP);
     }
 
+    public boolean isAdministrationMenuItemVisible() {
+        return administrationMenuItem.isVisible(1000);
+    }
+
     public void signOut() {
         select(MenuElements.SIGN_OUT);
     }

@@ -37,9 +37,12 @@ public class UsersPageComponent extends BaseComponent {
 
     // ==== Role Management Section ====
     private WebElement projectsTab;
+    private WebElement deployReposTab;
     private WebElement addRoleBtn;
     private WebElement roleRepositoryTemplate;
     private WebElement roleNameTemplate;
+    private WebElement deployRepoRepositoryTemplate;
+    private WebElement deployRepoRoleTemplate;
     private WebElement projectSelectorTemplate;
     private WebElement projectRoleSelectorTemplate;
     private WebElement removeRoleBtn;
@@ -83,9 +86,12 @@ public class UsersPageComponent extends BaseComponent {
 
         // Role management
         projectsTab = new WebElement(page, "xpath=//div[@data-node-key='projects']", "projectsTab");
+        deployReposTab = new WebElement(page, "xpath=//div[@data-node-key='deployRepos']", "deployReposTab");
         addRoleBtn = new WebElement(page, "xpath=//div[@role='tabpanel' and @aria-hidden='false']//button[./span[contains(text(),'Add Role')]]", "addRoleBtn");
         roleRepositoryTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_id']", "designRepoSelectorTemplate");
         roleNameTemplate = new WebElement(page, "xpath=//input[@id='designRepos_%s_role']", "roleSelectorTemplate");
+        deployRepoRepositoryTemplate = new WebElement(page, "xpath=//input[@id='deployRepos_%s_id']", "deployRepoSelectorTemplate");
+        deployRepoRoleTemplate = new WebElement(page, "xpath=//input[@id='deployRepos_%s_role']", "deployRepoRoleTemplate");
         projectSelectorTemplate = new WebElement(page, "xpath=//input[@id='projects_%s_id']", "projectSelectorTemplate");
         projectRoleSelectorTemplate = new WebElement(page, "xpath=//input[@id='projects_%s_role']", "projectRoleSelectorTemplate");
         removeRoleBtn = new WebElement(page, "xpath=//button[./span[contains(@aria-label,'delete')] and ancestor::div[contains(@class,'ant-form-item')]]", "removeRoleBtn");
@@ -239,6 +245,23 @@ public class UsersPageComponent extends BaseComponent {
 
     public UsersPageComponent clickProjectsTab() {
         projectsTab.click();
+        return this;
+    }
+
+    public UsersPageComponent clickDeployReposTab() {
+        deployReposTab.click();
+        return this;
+    }
+
+    public UsersPageComponent setDeployRoleRepository(int row, String repositoryName) {
+        deployRepoRepositoryTemplate.format(row).child("xpath=/ancestor::div[contains(@class,'ant-select-content')]").click();
+        selectOptionTemplate.format(repositoryName).waitForVisible().click();
+        return this;
+    }
+
+    public UsersPageComponent setDeployRole(int row, String role) {
+        deployRepoRoleTemplate.format(row).child("xpath=/ancestor::div[contains(@class,'ant-select-content')]").click();
+        selectOptionTemplate.format(role).waitForVisible().click();
         return this;
     }
 
