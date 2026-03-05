@@ -14,6 +14,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
 
     private WebElement dialogContainer;
+    private WebElement dialogShade;
     private WebElement newBranchNameField;
     private WebElement copyButton;
     private WebElement cancelButton;
@@ -40,6 +41,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     private void initializeElements() {
         dialogContainer = createScopedElement("xpath=//div[@id='modalCopyProject_container']", "dialogContainer");
+        dialogShade = createScopedElement("xpath=//div[@id='modalCopyProject_shade']", "dialogShade");
         newBranchNameField = createScopedElement("xpath=.//input[@id='copyProjectForm:newBranchName']", "newBranchNameField");
         copyButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Copy']", "copyButton");
         cancelButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Cancel']", "cancelButton");
@@ -110,12 +112,19 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public CopyProjectDialogComponent selectRepository(String repositoryName) {
-        repositorySelect.selectByVisibleText(repositoryName);
+        // The repository select fires JSF AJAX (mojarra.ab) on change which re-renders
+        // the newProject table including projectFolder. Use waitForResponse to ensure
+        // the AJAX completes before we attempt to fill the path field.
+        repositorySelect.getPage().waitForResponse(
+                response -> response.url().contains("index.xhtml"),
+                () -> repositorySelect.selectByVisibleText(repositoryName)
+        );
         return this;
     }
 
     public CopyProjectDialogComponent setProjectFolder(String folderPath) {
-        projectFolderField.fill(folderPath);
+        projectFolderField.clear();
+        projectFolderField.fillSequentially(folderPath);
         return this;
     }
 
@@ -148,12 +157,19 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return dialogContainer.isVisible(1000);
     }
 
-    public void waitForDialogToAppear() {
+    public CopyProjectDialogComponent waitForDialogToAppear() {
         WaitUtil.waitForCondition(this::isDialogVisible, 5000, 100, "Waiting for Copy Project dialog to appear");
+        return this;
     }
 
     public void waitForDialogToClose() {
         WaitUtil.waitForCondition(() -> !isDialogVisible(), 5000, 100, "Waiting for Copy Project dialog to close");
+        // modalCopyProject_shade is a sibling of the container, not a child — must use page-level locator
+        dialogContainer.getPage()
+                .locator("xpath=//div[@id='modalCopyProject_shade']")
+                .waitFor(new com.microsoft.playwright.Locator.WaitForOptions()
+                        .setState(com.microsoft.playwright.options.WaitForSelectorState.HIDDEN)
+                        .setTimeout(5000));
     }
 
     public List<String> getErrors() {

@@ -73,8 +73,7 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         // Copy the PostgreSQL JDBC driver JAR into /opt/openl/lib/ in the WebStudio container.
         // WebStudio scans this directory at startup (same mechanism as compose.yaml init service).
         // The JAR is resolved from Maven local cache — it's already a compile dependency.
-        String pgJarPath = System.getProperty("user.home")
-                + "/.m2/repository/org/postgresql/postgresql/42.7.5/postgresql-42.7.5.jar";
+        String pgJarPath = System.getProperty("user.home") + "/.m2/repository/org/postgresql/postgresql/42.7.5/postgresql-42.7.5.jar";
         additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
 
         super.beforeMethod(result);
@@ -105,16 +104,17 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent reposPage = adminPage.navigateToRepositoriesPage();
         reposPage.addDesignRepository();
+        // After clicking Add, the form auto-shows the new Design1 repo (active panel)
+        // Form fields are scoped to ant-tabs-tabpane-active, so they correctly read Design1 values
 
         // Assert default values of newly added Design1 repository
         assertThat(reposPage.getDesignRepositoryNameValue()).isEqualTo("Design1");
         assertThat(reposPage.getDesignRepositoryType()).isEqualTo("Git");
-        assertThat(reposPage.isDesignRepositoryRemote()).isFalse();
-        // Local path should contain "repositories/design1" — container workspace path
+        // New UI has no remote/local checkbox — local path confirms it's not remote
         assertThat(reposPage.getDesignRepositoryLocalPath()).contains("repositories/design1");
 
-        // Make Design1 non-flat folder structure
-        reposPage.setFlatFolderStructure(false);
+        // New UI: no flat/non-flat checkbox — Design1 is non-flat by default (has path-in-repository support)
+        // Just save Design1 repository to persist it
         reposPage.applyChangesAndRelogin(User.ADMIN);
 
         // Step 3: Open Repository tab and check create project dialog repository selectors
@@ -126,9 +126,9 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         assertThat(repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().getRepositorySelectValue())
                 .isEqualTo("-- Select a repository --");
         repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().selectRepository("Design");
-        // Path field absent for flat repo (Design)
+        // In new WebStudio, path-in-repository field is shown for all repo types (flat/non-flat distinction removed from dialog)
         assertThat(repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().isPathInRepositoryVisible())
-                .isFalse();
+                .isTrue();
 
         // Switch to Design1 (non-flat) — path field should appear
         repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().selectRepository("Design1");
@@ -169,6 +169,8 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
                 .selectItemInFolder("Projects", nameProjectDesign);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
         repositoryPage.getCopyProjectDialogComponent()
+                .waitForDialogToAppear()
+                .setSeparateProject(true)
                 .setNewProjectName(nameCopiedProjectToDesign1)
                 .selectRepository("Design1")
                 .setProjectFolder("/copied")
@@ -186,6 +188,8 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
                 .selectItemInFolder("Projects", nameProjectDesign1);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
         repositoryPage.getCopyProjectDialogComponent()
+                .waitForDialogToAppear()
+                .setSeparateProject(true)
                 .setNewProjectName(nameCopiedProjectFromDesign1)
                 .selectRepository("Design")
                 .clickCopyButton();
@@ -200,6 +204,8 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
                 .selectItemInFolder("Projects", nameProjectDesign);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
         repositoryPage.getCopyProjectDialogComponent()
+                .waitForDialogToAppear()
+                .setSeparateProject(true)
                 .setNewProjectName(nameProjectDesign)
                 .selectRepository("Design1")
                 .clickCopyButton();
@@ -227,6 +233,8 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
         // Step 8: Try to copy again to Design1 with /copied/ path — should show duplicate error
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
         repositoryPage.getCopyProjectDialogComponent()
+                .waitForDialogToAppear()
+                .setSeparateProject(true)
                 .setNewProjectName(nameProjectDesign)
                 .selectRepository("Design1")
                 .setProjectFolder("/copied")
@@ -240,6 +248,8 @@ public class TestMultipleDesignReposGitFlatNonFlatAndJDBC extends BaseTest {
                 .selectItemInFolder("Projects", nameProjectDesign1);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
         repositoryPage.getCopyProjectDialogComponent()
+                .waitForDialogToAppear()
+                .setSeparateProject(true)
                 .setNewProjectName(nameProjectDesign1)
                 .selectRepository("Design")
                 .clickCopyButton();

@@ -60,7 +60,7 @@ public class TemplateTabComponent extends BaseComponent {
     }
 
     public String getRepositorySelectValue() {
-        return repositorySelect.getCurrentInputValue();
+        return repositorySelect.getSelectedOptionText();
     }
 
     public TemplateTabComponent selectRepository(String repositoryName) {
@@ -69,7 +69,10 @@ public class TemplateTabComponent extends BaseComponent {
     }
 
     public boolean isPathInRepositoryVisible() {
-        return pathInRepositoryField.isVisible(1000);
+        // With multiple repos, the default is "-- Select a repository --" and path field starts absent.
+        // After selecting a non-flat repo, JSF AJAX adds the field to DOM (wait for it to appear).
+        // After selecting a flat repo, AJAX keeps it absent (timeout = false).
+        return pathInRepositoryField.isVisible(2000);
     }
 
     public String getPathInRepositoryValue() {

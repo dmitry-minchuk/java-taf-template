@@ -44,17 +44,21 @@ public class RepositoriesPageComponent extends BaseComponent {
         deploymentRepositoriesTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deployment Repositories')]", "deploymentRepositoriesTab");
         addRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Design Repository')]]", "addRepositoryBtn");
         addDeploymentRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Deployment Repository')]]", "addDeploymentRepositoryBtn");
-        designRepositoryList = createScopedElementList("xpath=.//div[@class='ant-tabs-content-holder']//div[@class='ant-tabs-nav-list']/div[@data-node-key]", "designRepositoryList");
+        // repositories-tabs: nav-list is a sibling of content-holder, not inside it
+        designRepositoryList = createScopedElementList("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]/div[@data-node-key]", "designRepositoryList");
 
-        remoteRepositoryNameField = createScopedElement("xpath=.//input[@id='name']", "remoteRepositoryCheckBox");
-        remoteRepositoryTypeSelector = createScopedElement("xpath=.//input[@id='type']", "remoteRepositoryCheckBox");
-        remoteRepositoryCheckBox = createScopedElement("xpath=.//input[@id='settings_remoteRepository']", "remoteRepositoryCheckBox");
-        remoteRepositoryPathField = createScopedElement("xpath=.//input[@id='settings_uri']", "loginField");
-        remoteRepositoryLoginField = createScopedElement("xpath=.//input[@id='settings_login']", "loginField");
-        remoteRepositoryPasswordField = createScopedElement("xpath=.//input[@id='settings_password']", "passwordField");
-        remoteRepositoryBranchField = createScopedElement("xpath=.//input[@id='settings_branch']", "remoteRepositorBranchField");
-        flatFolderStructureCheckBox = createScopedElement("xpath=.//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
-        secureConnectionCheckbox = createScopedElement("xpath=.//input[@id='settings_secureConnection']", "secureConnectionCheckbox");
+        // Scope form fields to the active tab panel within the left-positioned repos tabs
+        // This prevents reading values from hidden (non-active) repo panels
+        remoteRepositoryNameField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='name']", "remoteRepositoryNameField");
+        // Type is shown in ant-select-content div (not the hidden search input[@id='type'])
+        remoteRepositoryTypeSelector = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//div[contains(@class,'ant-select-content')]", "remoteRepositoryTypeSelector");
+        remoteRepositoryCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_remoteRepository']", "remoteRepositoryCheckBox");
+        remoteRepositoryPathField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_uri']", "remoteRepositoryPathField");
+        remoteRepositoryLoginField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_login']", "remoteRepositoryLoginField");
+        remoteRepositoryPasswordField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_password']", "remoteRepositoryPasswordField");
+        remoteRepositoryBranchField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_branch']", "remoteRepositoryBranchField");
+        flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
+        secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_secureConnection']", "secureConnectionCheckbox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
     }
 
@@ -76,6 +80,9 @@ public class RepositoriesPageComponent extends BaseComponent {
     public void addDesignRepository() {
         clickDesignRepositoriesTab();
         clickAddRepository();
+        // Wait for the newly added repo's nav tab to become active in the repositories tabs
+        createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='Design1']]", "design1ActiveTab")
+                .waitForVisible(5000);
     }
 
     public RepositoriesPageComponent selectDesignRepositoryByName(String name) {
@@ -88,11 +95,11 @@ public class RepositoriesPageComponent extends BaseComponent {
     }
 
     public String getDesignRepositoryNameValue() {
-        return remoteRepositoryNameField.getAttribute("value");
+        return remoteRepositoryNameField.getCurrentInputValue();
     }
 
     public String getDesignRepositoryType() {
-        return remoteRepositoryTypeSelector.getAttribute("value");
+        return remoteRepositoryTypeSelector.getText();
     }
 
     public boolean isDesignRepositoryRemote() {
@@ -100,11 +107,11 @@ public class RepositoriesPageComponent extends BaseComponent {
     }
 
     public String getDesignRepositoryLocalPath() {
-        return remoteRepositoryPathField.getAttribute("value");
+        return remoteRepositoryPathField.getCurrentInputValue();
     }
 
     public String getDesignRepositoryUrl() {
-        return remoteRepositoryPathField.getAttribute("value");
+        return remoteRepositoryPathField.getCurrentInputValue();
     }
 
     public RepositoriesPageComponent setDesignRepositoryType(String type) {
