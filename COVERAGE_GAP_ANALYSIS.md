@@ -12,7 +12,7 @@
 | Migrated to new framework | 103 test classes (102 `Test*.java` + `CreateDataTypeTableTest`) |
 | Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (21) |
 | ACL functionality | Removed from product; basic user/project ACL covered by TestAdminUsers + TestAdminUsersProjects + TestAdminUserSettings |
-| **New framework overall coverage** | **~55% of legacy** (up from ~52%; C9 revisions + local changes) |
+| **New framework overall coverage** | **~57% of legacy** (up from ~55%; C10 table actions + properties) |
 
 ---
 
@@ -32,7 +32,7 @@
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
 | **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton (⛔ deploy-blocked) + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⛔ Deploy button (deploy not available for testing), ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
-| **C10** | TestRepositoryTableActions | TestUIRepositoryTab + TestTableActionButtons | Table action buttons: open/close/deploy (EPBDS-11936), Repository tab operations, Multi-user operations, Deployment status verification | 🟡 MEDIUM |
+| **C10** | **`TestRepositoryTableActions`** ✅ DONE | TestUIRepositoryTab + TestTableActionButtons | ✅ Table action buttons open/close (EPBDS-12712, IPBQA-32158): Deploy/Close/Open icons in Actions column, ButtonsPanel open/close, viewer user access; ✅ Repository tab properties (IPBQA-29847): ModifiedBy/ModifiedAt/Revision multi-user; ⛔ Deploy-blocked: Deploy table action "already deployed" dialog, Deploy Configuration properties, Production repository verification | ✅ `studio_smoke.xml` (deploy steps blocked) |
 | **C11** | TestEditorOrderingAndSearch | TestOrderingMode + TestSearchOnProjectLevel | Table ordering mode – default setting (EPBDS-13592), Search on Project level (EPBDS-13988), User preference persistence | 🟡 MEDIUM |
 | **C12** | TestDesignRepositoryManagement | TestAddDeleteDesignRepository + TestSupportedRepositories | Multiple Design Repos (EPBDS-9983), Repository Name Validation (EPBDS-11289), Webstudio with wrong repo settings (EPBDS-11420), Supported repositories availability | 🟡 MEDIUM |
 | **C13** | TestVersioningByFolders | TestVersioningByFolders | Versioning by folders (EPBDS-10363), Table properties across versions, Property inheritance per version | 🟢 LOW |
@@ -90,7 +90,7 @@
 | Opening Project Revision via Open Revision button | — | Repository.Test056 | ✅ **C2** |
 | Comparing Project Revisions | EPBDS-8517, EPBDS-8536 | Test035 | ✅ **C8** |
 | Exporting a Project or File | EPBDS-10703, IPBQA-31329 | TestExportProjectFunctionality | ✅ **C2** |
-| Table action buttons (open/close/deploy) | EPBDS-12712, IPBQA-32158 | TestTableActionButtons | → **C10** (pending) |
+| Table action buttons (open/close/deploy) | EPBDS-12712, IPBQA-32158 | TestTableActionButtons | ✅ **C10** TestRepositoryTableActions (deploy-blocked steps excluded) |
 | Copying a project | 2.2.15 | Test060 | ✅ TestGitStatusCopyClosedProject + git tests |
 | Creating a Project from a Template | 2.2.6 | test040 | ✅ TestRepositoryBrowsingFilterStatus + many git tests |
 | Creating a Project from Excel file | 2.2.7 | — | ✅ CreateDataTypeTableTest |
@@ -100,7 +100,7 @@
 | Delete folder and file | 2.2.19 | Test050, Test055 | ✅ TestFileAddDelete |
 | Copy a file | 2.2.20 | Test073–Test079 | ❌ not migrated (file-level copy, not module) |
 | Copying a Module | 2.1.12 | Test129 | ✅ TestExportProjectFunctionality |
-| Unlocking a Project | IPBQA-30550 | TestUnlockProjectDeployConf | → **C10** (pending) |
+| Unlocking a Project | IPBQA-30550 | TestUnlockProjectDeployConf | ⛔ deploy-blocked (requires deploy configurations) |
 | Resolve Conflicts (by Sheets) | EPBDS-13488, IPBQA-32406 | TestResolveConflictFunctionality | standalone test (not migrated) |
 | Resolve Conflicts dialog improvements | EPBDS-9158, IPBQA-29110 | TestImproveResolveConflictDialog | standalone test (not migrated) |
 | Revisions on Resolve Conflicts screen | EPBDS-9717, IPBQA-29901 | — | standalone test (not migrated) |
@@ -243,7 +243,7 @@
 | ~~🔴~~ | ~~**C7** TestProjectCompilationAndModuleMode~~ | ~~7 Single/Multi Mode features → 5 test classes, 9 methods~~ | ✅ DONE |
 | ~~🟡 2~~ | ~~**C8** TestCompareExcelFilesAndChanges~~ | ~~4 compare features → 2 tests~~ | ✅ DONE |
 | ~~🟡 3~~ | ~~**C9** TestEditorDeployAndRevisions~~ | ~~3 editor features → TestTabRevisionsInEditor + TestLocalChangesRestoreCompare~~ | ✅ DONE (deploy-blocked) |
-| 🟡 4 | **C10** TestRepositoryTableActions | 3 table action features → 1 test | Medium |
+| ~~🟡 4~~ | ~~**C10** TestRepositoryTableActions~~ | ~~3 table action features → 2 tests~~ | ✅ DONE (deploy steps blocked) |
 | 🟡 5 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
 | 🟡 6 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |
 | 🟢 7 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
