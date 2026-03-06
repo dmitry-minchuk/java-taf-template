@@ -325,7 +325,6 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
                 .as("Erase dialog for non-flat Git repo should show 'also delete from repository' checkbox")
                 .isTrue();
 
-        //TODO: check all the changes and LOGS and remove strange waiters
     }
 
     private void verifyPostgresContainsOpenLTables() {

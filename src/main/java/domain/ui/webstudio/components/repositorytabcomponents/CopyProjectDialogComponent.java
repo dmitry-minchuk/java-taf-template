@@ -3,7 +3,6 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
-import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,8 +12,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
 
-    private WebElement dialogContainer;
-    private WebElement dialogShade;
     private WebElement newBranchNameField;
     private WebElement copyButton;
     private WebElement cancelButton;
@@ -40,8 +37,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        dialogContainer = createScopedElement("xpath=//div[@id='modalCopyProject_container']", "dialogContainer");
-        dialogShade = createScopedElement("xpath=//div[@id='modalCopyProject_shade']", "dialogShade");
         newBranchNameField = createScopedElement("xpath=.//input[@id='copyProjectForm:newBranchName']", "newBranchNameField");
         copyButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Copy']", "copyButton");
         cancelButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Cancel']", "cancelButton");
@@ -152,18 +147,14 @@ public class CopyProjectDialogComponent extends BaseComponent {
         cancelButton.click();
     }
 
-    public boolean isDialogVisible() {
-        return dialogContainer.isVisible(1000);
-    }
-
     public CopyProjectDialogComponent waitForDialogToAppear() {
-        WaitUtil.waitForCondition(this::isDialogVisible, 5000, 100, "Waiting for Copy Project dialog to appear");
+        getRootLocator().waitForVisible(5000);
         return this;
     }
 
     public void waitForDialogToClose() {
         try {
-            WaitUtil.waitForCondition(() -> !isDialogVisible(), 5000, 100, "Waiting for Copy Project dialog to close");
+            getRootLocator().waitForHidden(5000);
         } catch (Exception e) {
             List<String> visibleErrors = getErrors();
             if (!visibleErrors.isEmpty()) {
@@ -171,7 +162,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
             }
             throw e;
         }
-        dialogShade.waitForHidden(5000);
     }
 
     public List<String> getErrors() {
