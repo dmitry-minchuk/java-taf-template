@@ -26,7 +26,10 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement remoteRepositoryPasswordField;
     private WebElement remoteRepositoryBranchField;
     private WebElement flatFolderStructureCheckBox;
+    private WebElement secureConnectionCheckbox;
     private WebElement applyChangesBtn;
+    private WebElement designRepoActiveTab;
+    private WebElement typeOption;
 
     public RepositoriesPageComponent() {
         super(LocalDriverPool.getPage());
@@ -43,17 +46,25 @@ public class RepositoriesPageComponent extends BaseComponent {
         deploymentRepositoriesTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deployment Repositories')]", "deploymentRepositoriesTab");
         addRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Design Repository')]]", "addRepositoryBtn");
         addDeploymentRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Deployment Repository')]]", "addDeploymentRepositoryBtn");
-        designRepositoryList = createScopedElementList("xpath=.//div[@class='ant-tabs-content-holder']//div[@class='ant-tabs-nav-list']/div[@data-node-key]", "designRepositoryList");
+        // repositories-tabs: nav-list is a sibling of content-holder, not inside it
+        designRepositoryList = createScopedElementList("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]/div[@data-node-key]", "designRepositoryList");
 
-        remoteRepositoryNameField = createScopedElement("xpath=.//input[@id='name']", "remoteRepositoryCheckBox");
-        remoteRepositoryTypeSelector = createScopedElement("xpath=.//input[@id='type']", "remoteRepositoryCheckBox");
-        remoteRepositoryCheckBox = createScopedElement("xpath=.//input[@id='settings_remoteRepository']", "remoteRepositoryCheckBox");
-        remoteRepositoryPathField = createScopedElement("xpath=.//input[@id='settings_uri']", "loginField");
-        remoteRepositoryLoginField = createScopedElement("xpath=.//input[@id='settings_login']", "loginField");
-        remoteRepositoryPasswordField = createScopedElement("xpath=.//input[@id='settings_password']", "passwordField");
-        remoteRepositoryBranchField = createScopedElement("xpath=.//input[@id='settings_branch']", "remoteRepositorBranchField");
-        flatFolderStructureCheckBox = createScopedElement("xpath=.//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
+        // Scope form fields to the active tab panel within the left-positioned repos tabs
+        // This prevents reading values from hidden (non-active) repo panels
+        remoteRepositoryNameField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='name']", "remoteRepositoryNameField");
+        // Type selector: scope to the ant-select that contains input[@id='type'] to avoid matching other selects (e.g. Deployment branch)
+        remoteRepositoryTypeSelector = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//div[contains(@class,'ant-select') and .//input[@id='type']]//div[contains(@class,'ant-select-content')]", "remoteRepositoryTypeSelector");
+        remoteRepositoryCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_remoteRepository']", "remoteRepositoryCheckBox");
+        remoteRepositoryPathField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_uri']", "remoteRepositoryPathField");
+        remoteRepositoryLoginField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_login']", "remoteRepositoryLoginField");
+        remoteRepositoryPasswordField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_password']", "remoteRepositoryPasswordField");
+        remoteRepositoryBranchField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_branch']", "remoteRepositoryBranchField");
+        flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
+        secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_secure']", "secureConnectionCheckbox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
+        designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
+        // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
+        typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
     }
 
     public RepositoriesPageComponent clickDesignRepositoriesTab() {
@@ -72,8 +83,80 @@ public class RepositoriesPageComponent extends BaseComponent {
     }
 
     public void addDesignRepository() {
+        addDesignRepository("Design1");
+    }
+
+    public void addDesignRepository(String expectedTabName) {
         clickDesignRepositoriesTab();
         clickAddRepository();
+        designRepoActiveTab.format(expectedTabName).waitForVisible(5000);
+    }
+
+    public RepositoriesPageComponent selectDesignRepositoryByName(String name) {
+        designRepositoryList.stream()
+                .filter(tab -> tab.getText().trim().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Design repository tab '" + name + "' not found"))
+                .click();
+        return this;
+    }
+
+    public String getDesignRepositoryNameValue() {
+        return remoteRepositoryNameField.getCurrentInputValue();
+    }
+
+    public String getDesignRepositoryType() {
+        return remoteRepositoryTypeSelector.getText();
+    }
+
+    public boolean isDesignRepositoryRemote() {
+        return remoteRepositoryCheckBox.isChecked();
+    }
+
+    public String getDesignRepositoryLocalPath() {
+        return remoteRepositoryPathField.getCurrentInputValue();
+    }
+
+    public String getDesignRepositoryUrl() {
+        return remoteRepositoryPathField.getCurrentInputValue();
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryType(String type) {
+        remoteRepositoryTypeSelector.click();
+        typeOption.format(type).click();
+        return this;
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryJdbcUrl(String url) {
+        remoteRepositoryPathField.waitForVisible(3000).clear();
+        remoteRepositoryPathField.fillSequentially(url);
+        return this;
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryLogin(String login) {
+        remoteRepositoryLoginField.clear();
+        remoteRepositoryLoginField.fillSequentially(login);
+        return this;
+    }
+
+    public RepositoriesPageComponent setDesignRepositoryPassword(String password) {
+        remoteRepositoryPasswordField.clear();
+        remoteRepositoryPasswordField.fillSequentially(password);
+        return this;
+    }
+
+    public RepositoriesPageComponent setSecureConnection(boolean enabled) {
+        if (enabled != secureConnectionCheckbox.isChecked()) {
+            secureConnectionCheckbox.click();
+        }
+        return this;
+    }
+
+    public RepositoriesPageComponent setFlatFolderStructure(boolean flat) {
+        if (flat != flatFolderStructureCheckBox.isChecked()) {
+            flatFolderStructureCheckBox.click();
+        }
+        return this;
     }
 
     public void createDesignRepository(String repositoryUrl, String login, String password, String branch, User user) {

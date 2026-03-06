@@ -10,6 +10,8 @@ public class TemplateTabComponent extends BaseComponent {
     private WebElement projectNameField;
     private WebElement createProjectBtn;
     private WebElement cancelBtn;
+    private WebElement repositorySelect;
+    private WebElement pathInRepositoryField;
 
     public TemplateTabComponent() {
         super(LocalDriverPool.getPage());
@@ -26,6 +28,8 @@ public class TemplateTabComponent extends BaseComponent {
         projectNameField = createScopedElement("xpath=.//input[@id='createProjectFormTempl:projectName']", "projectNameField");
         createProjectBtn = createScopedElement("xpath=.//input[@id='createProjectFormTempl:sbtTemplatesBtn']", "createProjectBtn");
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
+        repositorySelect = createScopedElement("xpath=.//select[@id='createProjectFormTempl:repositoryTemplate']", "repositorySelect");
+        pathInRepositoryField = createScopedElement("xpath=.//input[@id='createProjectFormTempl:projectFolderTemplate']", "pathInRepositoryField");
     }
 
     public void selectProjectTemplate(String templateName) {
@@ -53,5 +57,35 @@ public class TemplateTabComponent extends BaseComponent {
 
     public boolean isTemplateAvailable(String templateName) {
         return projectTemplate.format(templateName).isVisible();
+    }
+
+    public String getRepositorySelectValue() {
+        return repositorySelect.getSelectedOptionText();
+    }
+
+    public TemplateTabComponent selectRepository(String repositoryName) {
+        repositorySelect.selectByVisibleText(repositoryName);
+        return this;
+    }
+
+    public boolean isPathInRepositoryVisible() {
+        // With multiple repos, the default is "-- Select a repository --" and path field starts absent.
+        // After selecting a non-flat repo, JSF AJAX adds the field to DOM (wait for it to appear).
+        // After selecting a flat repo, AJAX keeps it absent (timeout = false).
+        return pathInRepositoryField.isVisible(2000);
+    }
+
+    public String getPathInRepositoryValue() {
+        return pathInRepositoryField.getCurrentInputValue();
+    }
+
+    public TemplateTabComponent setPathInRepository(String path) {
+        pathInRepositoryField.clear();
+        pathInRepositoryField.fillSequentially(path);
+        return this;
+    }
+
+    public void clickCreate() {
+        createProjectBtn.click();
     }
 }

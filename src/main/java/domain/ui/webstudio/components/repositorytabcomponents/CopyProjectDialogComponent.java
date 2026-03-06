@@ -3,7 +3,6 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
-import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +12,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
 
-    private WebElement dialogContainer;
     private WebElement newBranchNameField;
     private WebElement copyButton;
     private WebElement cancelButton;
@@ -39,7 +37,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        dialogContainer = createScopedElement("xpath=//div[@id='modalCopyProject_container']", "dialogContainer");
         newBranchNameField = createScopedElement("xpath=.//input[@id='copyProjectForm:newBranchName']", "newBranchNameField");
         copyButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Copy']", "copyButton");
         cancelButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Cancel']", "cancelButton");
@@ -58,7 +55,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
     public CopyProjectDialogComponent setNewBranchName(String branchName) {
         LOGGER.info("Setting new branch name: {}", branchName);
         newBranchNameField.fill(branchName);
-        WaitUtil.sleep(500, "Waiting for branch name to be entered");
         return this;
     }
 
@@ -110,12 +106,19 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public CopyProjectDialogComponent selectRepository(String repositoryName) {
-        repositorySelect.selectByVisibleText(repositoryName);
+        // The repository select fires JSF AJAX (mojarra.ab) on change which re-renders
+        // the newProject table including projectFolder. Use waitForResponse to ensure
+        // the AJAX completes before we attempt to fill the path field.
+        repositorySelect.getPage().waitForResponse(
+                response -> response.url().contains("index.xhtml"),
+                () -> repositorySelect.selectByVisibleText(repositoryName)
+        );
         return this;
     }
 
     public CopyProjectDialogComponent setProjectFolder(String folderPath) {
-        projectFolderField.fill(folderPath);
+        projectFolderField.clear();
+        projectFolderField.fillSequentially(folderPath);
         return this;
     }
 
@@ -144,16 +147,21 @@ public class CopyProjectDialogComponent extends BaseComponent {
         cancelButton.click();
     }
 
-    public boolean isDialogVisible() {
-        return dialogContainer.isVisible(1000);
-    }
-
-    public void waitForDialogToAppear() {
-        WaitUtil.waitForCondition(this::isDialogVisible, 5000, 100, "Waiting for Copy Project dialog to appear");
+    public CopyProjectDialogComponent waitForDialogToAppear() {
+        getRootLocator().waitForVisible(5000);
+        return this;
     }
 
     public void waitForDialogToClose() {
-        WaitUtil.waitForCondition(() -> !isDialogVisible(), 5000, 100, "Waiting for Copy Project dialog to close");
+        try {
+            getRootLocator().waitForHidden(5000);
+        } catch (Exception e) {
+            List<String> visibleErrors = getErrors();
+            if (!visibleErrors.isEmpty()) {
+                throw new RuntimeException("Copy dialog did not close. Errors: " + visibleErrors, e);
+            }
+            throw e;
+        }
     }
 
     public List<String> getErrors() {

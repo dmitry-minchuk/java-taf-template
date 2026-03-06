@@ -32,5 +32,7 @@
     <test name="TestDeleteOpenApiFileRemovesProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestDeleteOpenApiFileRemovesProperties"/></classes></test>
     <test name="TestCreateDataTablesFromOpenApiGetMethodWithRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodWithRuntime"/></classes></test>
     <test name="TestCreateDataTablesFromOpenApiGetMethodNoRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodNoRuntime"/></classes></test>
+    <test name="TestMultipleDesignRepositoriesWithPostgres"><classes><class name="tests.ui.webstudio.repository.TestMultipleDesignRepositoriesWithPostgres"/></classes></test>
+    <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnection"/></classes></test>
 
 </suite>

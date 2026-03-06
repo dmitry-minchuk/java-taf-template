@@ -212,6 +212,11 @@ public class WebElement {
         LOGGER.info("Getting select option texts from {}", elementName);
         return locator.locator("option").allTextContents();
     }
+
+    public String getSelectedOptionText() {
+        LOGGER.info("Getting selected option text from {}", elementName);
+        return (String) locator.evaluate("el => el.options[el.selectedIndex].text");
+    }
     
     public WebElement child(String subSelector) {
         return new WebElement(this, subSelector, elementName + " > " + subSelector);

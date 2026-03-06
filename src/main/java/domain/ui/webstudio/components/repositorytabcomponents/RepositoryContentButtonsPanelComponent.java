@@ -22,6 +22,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     private WebElement exportBtn;
     private WebElement syncBtn;
     private WebElement undeleteBtn;
+    private WebElement eraseBtn;
 
     public RepositoryContentButtonsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -48,6 +49,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         exportBtn = createScopedElement("xpath=.//input[@value='Export']", "exportBtn");
         syncBtn = createScopedElement("xpath=.//input[@value='Sync']", "syncBtn");
         undeleteBtn = createScopedElement("xpath=.//input[@value='Undelete']", "undeleteBtn");
+        eraseBtn = createScopedElement("xpath=.//input[@value='Erase']", "eraseBtn");
     }
 
     // Legacy methods for compatibility
@@ -89,7 +91,8 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     }
 
     public void clickEraseBtn() {
-        deleteBtn.click();
+        eraseBtn.click();
+        WaitUtil.sleep(500, "Waiting for erase confirmation dialog to open");
     }
 
     public void clickAddFolderBtn() {

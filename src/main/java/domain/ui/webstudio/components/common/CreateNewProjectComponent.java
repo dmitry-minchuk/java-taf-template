@@ -14,6 +14,7 @@ public class CreateNewProjectComponent extends BaseComponent {
 
     private ExcelFilesComponent excelFilesComponent;
     private ZipArchiveComponent zipArchiveComponent;
+    @Getter
     private TemplateTabComponent templateTabComponent;
     private WorkspaceComponent workspaceTabComponent;
     private OpenApiComponent openApiComponent;
@@ -56,6 +57,10 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void closeDialog() {
+        closeDialogBtn.click();
+    }
+
+    public void cancelCreation() {
         closeDialogBtn.click();
     }
 

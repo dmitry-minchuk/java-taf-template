@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-05
+> Updated: 2026-03-06
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,10 +9,10 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | 108 test classes |
-| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (26) · `studio_git.xml` (11) |
+| Migrated to new framework | 110 test classes |
+| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (28) · `studio_git.xml` (11) |
 | ACL functionality | Новая ACL модель (BRD EPBDS-14295): 6 тест-классов покрывают роли Manager/Contributor/Viewer, permissions V/C/E/D, системные действия Run+Benchmark. 2 фичи disabled — не реализованы в UI (Deploy button, Manager→Admin) |
-| **New framework overall coverage** | **~59% of legacy** (up from ~57%; +4 новых ACL класса) |
+| **New framework overall coverage** | **~60% of legacy** (up from ~57%; +4 ACL класса + 2 JDBC integration tests с Testcontainers) |
 
 ---
 
@@ -35,6 +35,8 @@
 | **C10** | **`TestRepositoryTableActions`** ✅ DONE | TestUIRepositoryTab + TestTableActionButtons | ✅ Table action buttons open/close (EPBDS-12712, IPBQA-32158): Deploy/Close/Open icons in Actions column, ButtonsPanel open/close, viewer user access; ✅ Repository tab properties (IPBQA-29847): ModifiedBy/ModifiedAt/Revision multi-user; ⛔ Deploy-blocked: Deploy table action "already deployed" dialog, Deploy Configuration properties, Production repository verification | ✅ `studio_smoke.xml` (deploy steps blocked) |
 | **C11** | TestEditorOrderingAndSearch | TestOrderingMode + TestSearchOnProjectLevel | Table ordering mode – default setting (EPBDS-13592), Search on Project level (EPBDS-13988), User preference persistence | 🟡 MEDIUM |
 | **C12** | TestDesignRepositoryManagement | TestAddDeleteDesignRepository + TestSupportedRepositories | Multiple Design Repos (EPBDS-9983), Repository Name Validation (EPBDS-11289), Webstudio with wrong repo settings (EPBDS-11420), Supported repositories availability | 🟡 MEDIUM |
+| **C12b** | **`TestMultipleDesignRepositoriesWithPostgres`** ✅ DONE | TestMultipleDesignReposGitFlatNonFlatAndJDBC | ✅ Multiple Design Repos: Git flat (Design) + Git non-flat (Design1) (IPBQA-30859), ✅ PostgreSQL JDBC security DB via Testcontainers, ✅ Copy project across repos with path-in-repository, ✅ Duplicate project name error, ✅ Edit Project dialog for flat/non-flat | `studio_smoke.xml` |
+| **C12c** | **`TestDeploymentConfigurationRepositoryConnection`** ✅ DONE | TestDeploymentConfigurationRepositoryConnection | ✅ Deployment Configuration Repository via Oracle JDBC (IPBQA-27365), ✅ Oracle container via Testcontainers, ✅ Deploy project to Oracle JDBC deployment repo, ✅ Verify deployed data in Oracle DB | `studio_smoke.xml` |
 | **C13** | TestVersioningByFolders | TestVersioningByFolders | Versioning by folders (EPBDS-10363), Table properties across versions, Property inheritance per version | 🟢 LOW |
 | **C14** | TestGitCommentAndCommitter | TestGitCustomizeCommentFields + TestGitCommitterName + TestGitCommentsGenerationOnProjectName | Customized Comment fields (EPBDS-8371), Committer's name (EPBDS-8362), Comments generation on project name (EPBDS-8460) | 🟢 LOW |
 
@@ -185,13 +187,14 @@
 | Write OpenL runtime errors in log | EPBDS-12576, IPBQA-32104 | — | standalone test (not migrated) |
 | Alphabetical sorting of deployments | EPBDS-13121, IPBQA-32307 | — | standalone test (not migrated) |
 
-### 8. Admin: System Settings – Repositories (2.3.1.8-12) — ~5%
-**Legacy tests:** 10+ | **New framework:** 0 tests
+### 8. Admin: System Settings – Repositories (2.3.1.8-12) — ~30%
+**Legacy tests:** 10+ | **New framework:** 2 tests (Testcontainers-based JDBC integration)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
 | Supported repositories availability | EPBDS-9227, IPBQA-29276 | TestSupportedRepositories | → **C12** |
-| Multiple Design Repos (flat git + JDBC) | EPBDS-10968, IPBQA-30682 | TestMultipleDesignReposGitFlatNonFlatAndJDBC | → **C12** |
+| Multiple Design Repos: Git flat + non-flat + PostgreSQL JDBC security DB | EPBDS-10968, IPBQA-30682 | TestMultipleDesignReposGitFlatNonFlatAndJDBC | ✅ **C12b** TestMultipleDesignRepositoriesWithPostgres |
+| Deployment Configuration Repository — Oracle JDBC | IPBQA-27365 | TestDeploymentConfigurationRepositoryConnection | ✅ **C12c** TestDeploymentConfigurationRepositoryConnection |
 | Webstudio works if one design repo has wrong settings | EPBDS-11441, IPBQA-31634 | — | → **C12** |
 | Restore default (Repositories) | EPBDS-9628, IPBQA-29638 | TestRestoreDefault | standalone test (not migrated) |
 | Common: History max count & Clean history | EPBDS-10539, IPBQA-30730 | TestCommonSettingsHistory | standalone test (not migrated) |
@@ -230,6 +233,7 @@
 | Git (core operations) | ~44% | 11 git tests ✅ |
 | Studio Issues (bug regression) | ~45% | 25 studio_issues tests ✅ |
 | Repository (basic operations) | ~55% | C1 + C2 + basic ops across suites ✅ |
+| Admin: Repositories (JDBC integration) | ~30% | C12b TestMultipleDesignRepositoriesWithPostgres + C12c TestDeploymentConfigurationRepositoryConnection ✅ (Testcontainers: PostgreSQL + Oracle) |
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
 | Compare (Excel/revisions/local changes) | ~80% | C8: TestCompareExcelFiles + TestDisplayChangedRows ✅ |
 
@@ -245,7 +249,9 @@
 | ~~🟡 3~~ | ~~**C9** TestEditorDeployAndRevisions~~ | ~~3 editor features → TestTabRevisionsInEditor + TestLocalChangesRestoreCompare~~ | ✅ DONE (deploy-blocked) |
 | ~~🟡 4~~ | ~~**C10** TestRepositoryTableActions~~ | ~~3 table action features → 2 tests~~ | ✅ DONE (deploy steps blocked) |
 | 🟡 5 | **C11** TestEditorOrderingAndSearch | 2 editor features → 1 test | Low |
-| 🟡 6 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test | High |
+| ~~🟡~~ | ~~**C12b** TestMultipleDesignRepositoriesWithPostgres~~ | ~~Multiple Design Repos + PostgreSQL JDBC (IPBQA-30859)~~ | ✅ DONE |
+| ~~🟡~~ | ~~**C12c** TestDeploymentConfigurationRepositoryConnection~~ | ~~Deployment Repo via Oracle JDBC (IPBQA-27365)~~ | ✅ DONE |
+| 🟡 6 | **C12** TestDesignRepositoryManagement | 4 repo management features → 1 test (remaining: add/delete repo, name validation, wrong settings) | High |
 | 🟢 7 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
 | 🟢 8 | **C14** TestGitCommentAndCommitter | 3 git comment features → 1 test | Low |
 

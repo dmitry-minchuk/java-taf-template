@@ -135,12 +135,31 @@ public abstract class BaseTest implements ITest {
             containerConfig = configAnnotation.startParams().getParameterMap();
             containerConfig.putAll(getAdditionalContainerConfig(testMethod));
             containerConfig.forEach((key, value) -> LOGGER.info(String.format("[%s] -> [%s]", key, value)));
-            String copyFileFromPath = configAnnotation.copyFileFromPath().isEmpty() ? null : configAnnotation.copyFileFromPath();
-            String copyFileToContainerPath = configAnnotation.copyFileToContainerPath().isEmpty() ? null : configAnnotation.copyFileToContainerPath();
-            AppContainerPool.setAppContainer(appContainerName, network, containerConfig, copyFileFromPath, copyFileToContainerPath);
+            Map<String, String> filesToCopy = getAdditionalContainerFiles(testMethod);
+            if (!configAnnotation.copyFileFromPath().isEmpty() && !configAnnotation.copyFileToContainerPath().isEmpty()) {
+                filesToCopy.put(configAnnotation.copyFileFromPath(), configAnnotation.copyFileToContainerPath());
+            }
+            AppContainerPool.setAppContainer(appContainerName, network, containerConfig, filesToCopy.isEmpty() ? null : filesToCopy);
         } else {
-            AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, null);
+            AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null);
         }
+    }
+
+    private Map<String, String> getAdditionalContainerFiles(Method testMethod) {
+        Field additionalFiles;
+        try {
+            additionalFiles = testMethod.getDeclaringClass().getDeclaredField("additionalContainerFiles");
+            additionalFiles.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            return new HashMap<>();
+        }
+        Object raw;
+        try {
+            raw = additionalFiles.get(null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return getStringStringMap(raw);
     }
 
     // This is needed for container extra configuration and not breaking annotation config logic
