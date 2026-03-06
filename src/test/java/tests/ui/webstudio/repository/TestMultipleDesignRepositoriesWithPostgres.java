@@ -23,8 +23,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import helpers.utils.DbVerificationUtil;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -331,32 +331,19 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
                 .as("Erase dialog for non-flat Git repo should show 'also delete from repository' checkbox")
                 .isTrue();
 
-        //TODO: make it all look pretty and reusable - ugly methods should be prettified (beforeMethod logic, verifyPostgresContainsOpenLTables)
         //TODO: check all the changes and LOGS and remove strange waiters
     }
 
     private void verifyPostgresContainsOpenLTables() {
-        try (var conn = DriverManager.getConnection(
+        List<String> tables = DbVerificationUtil.queryTableNames(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
-                postgresContainer.getPassword())) {
-            // If OpenL uses this PostgreSQL as security DB, it creates tables via Flyway migrations.
-            // If embedded H2 was used instead, this PostgreSQL would have zero OpenL tables.
-            var rs = conn.createStatement().executeQuery(
-                    "SELECT table_name FROM information_schema.tables " +
-                    "WHERE table_schema = 'public' AND table_name LIKE 'openl_%' ORDER BY table_name");
-            List<String> tables = new java.util.ArrayList<>();
-            while (rs.next()) {
-                tables.add(rs.getString("table_name"));
-            }
-            LOGGER.info("PostgreSQL verification: found OpenL tables: {}", tables);
-            assertThat(tables)
-                    .as("PostgreSQL should contain OpenL security tables — proves it's used instead of embedded H2")
-                    .isNotEmpty()
-                    .anyMatch(t -> t.contains("openl_users"))
-                    .anyMatch(t -> t.contains("openl_groups"));
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to verify PostgreSQL contains OpenL tables", e);
-        }
+                postgresContainer.getPassword(),
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name LIKE 'openl_%' ORDER BY table_name");
+        assertThat(tables)
+                .as("PostgreSQL should contain OpenL security tables — proves it's used instead of embedded H2")
+                .isNotEmpty()
+                .anyMatch(t -> t.contains("openl_users"))
+                .anyMatch(t -> t.contains("openl_groups"));
     }
 }

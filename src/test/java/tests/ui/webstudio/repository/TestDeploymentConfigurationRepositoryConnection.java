@@ -22,9 +22,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import helpers.utils.DbVerificationUtil;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,29 +129,13 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
     }
 
     private void verifyOracleContainsDeployedData() {
-        try (var conn = DriverManager.getConnection(
+        List<Map<String, String>> rows = DbVerificationUtil.queryRows(
                 oracleContainer.getJdbcUrl(),
                 oracleContainer.getUsername(),
-                oracleContainer.getPassword())) {
-            var rs = conn.createStatement().executeQuery(
-                    "SELECT id, file_name, author, file_comment, modified_at, dbms_lob.getlength(file_data) as file_size FROM openl_repository ORDER BY id");
-            List<String> entries = new ArrayList<>();
-            while (rs.next()) {
-                String entry = String.format("\nid=%d, \nname=%s, \nauthor=%s, \ncomment=%s, \nmodified=%s, \nsize=%d bytes",
-                        rs.getInt("id"),
-                        rs.getString("file_name"),
-                        rs.getString("author"),
-                        rs.getString("file_comment"),
-                        rs.getTimestamp("modified_at"),
-                        rs.getLong("file_size"));
-                entries.add(entry);
-            }
-            entries.forEach(e -> LOGGER.info("Oracle OPENL_REPOSITORY row: {}", e));
-            assertThat(entries)
-                    .as("Oracle deployment repository should contain deployed project files")
-                    .isNotEmpty();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to verify Oracle contains deployed data", e);
-        }
+                oracleContainer.getPassword(),
+                "SELECT id, file_name, author, file_comment, modified_at, dbms_lob.getlength(file_data) as file_size FROM openl_repository ORDER BY id");
+        assertThat(rows)
+                .as("Oracle deployment repository should contain deployed project files")
+                .isNotEmpty();
     }
 }
