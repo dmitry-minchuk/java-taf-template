@@ -7,13 +7,19 @@ import helpers.utils.WaitUtil;
 
 public class DeployModalComponent extends BaseComponent {
 
+    private static final String MODAL_BASE = "//div[contains(@class,'ant-modal-container') and .//form[@id='deploy_form']]";
+
     private WebElement modal;
-    private WebElement repositoryDropdown;
-    private WebElement deploymentNameInput;
+    private WebElement repositorySelect;
+    private WebElement deploymentNameSelect;
+    private WebElement deploymentNameSearchInput;
     private WebElement commentTextarea;
     private WebElement deployButton;
     private WebElement cancelButton;
+    private WebElement successNotification;
     private WebElement errorMessage;
+    private WebElement firstDropdownOption;
+    private WebElement dropdownOption;
 
     public DeployModalComponent() {
         super(LocalDriverPool.getPage());
@@ -26,20 +32,18 @@ public class DeployModalComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        // Modal container
-        modal = createScopedElement("xpath=.//div[@id='modalDeploy_container' or contains(@class,'modal-deploy')]", "deployModal");
-
-        // Form elements - using typical JSF form naming patterns
-        repositoryDropdown = createScopedElement("xpath=.//select[@id='deployForm:repository' or contains(@id,'repository')]", "repositoryDropdown");
-        deploymentNameInput = createScopedElement("xpath=.//input[@id='deployForm:deploymentName' or contains(@id,'deploymentName')]", "deploymentNameInput");
-        commentTextarea = createScopedElement("xpath=.//textarea[@id='deployForm:comment' or contains(@id,'comment')]", "commentTextarea");
-
-        // Action buttons
-        deployButton = createScopedElement("xpath=.//input[@value='Deploy' and @type='submit']", "deployButton");
-        cancelButton = createScopedElement("xpath=.//input[@value='Cancel' and @type='button']", "cancelButton");
-
-        // Error message
-        errorMessage = createScopedElement("xpath=.//span[contains(@class,'error') or contains(@class,'rf-msg')]", "errorMessage");
+        modal = new WebElement(page, "xpath=" + MODAL_BASE, "deployModal");
+        repositorySelect = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-select') and .//input[@id='deploy_form_repository']]//div[contains(@class,'ant-select-content')]", "repositorySelect");
+        deploymentNameSelect = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-select') and .//input[@id='deploy_form_deploymentName']]//div[contains(@class,'ant-select-content')]", "deploymentNameSelect");
+        deploymentNameSearchInput = new WebElement(page, "xpath=" + MODAL_BASE + "//input[@id='deploy_form_deploymentName']", "deploymentNameSearchInput");
+        commentTextarea = new WebElement(page, "xpath=" + MODAL_BASE + "//textarea[@id='deploy_form_comment']", "commentTextarea");
+        deployButton = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-modal-footer')]//button[contains(@class,'ant-btn-primary')]", "deployButton");
+        cancelButton = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-modal-footer')]//button[not(contains(@class,'ant-btn-primary'))]", "cancelButton");
+        // Ant Design dropdown options render at body level
+        firstDropdownOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item') and contains(@class,'ant-select-item-option') and @title]", "firstDropdownOption");
+        dropdownOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item') and contains(@class,'ant-select-item-option') and @title='%s']", "dropdownOption");
+        successNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification')]//div[contains(@class,'ant-notification-notice-success')]", "successNotification");
+        errorMessage = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-form-item-explain-error')]", "errorMessage");
     }
 
     public boolean isModalVisible() {
@@ -47,7 +51,7 @@ public class DeployModalComponent extends BaseComponent {
     }
 
     public DeployModalComponent waitForModal() {
-        boolean modalAppeared = WaitUtil.waitForCondition(() -> isModalVisible(), DEFAULT_TIMEOUT_MS, 500, "Waiting for deploy configuration modal to appear");
+        boolean modalAppeared = WaitUtil.waitForCondition(() -> isModalVisible(), DEFAULT_TIMEOUT_MS, 500, "Waiting for deploy modal to appear");
         if (!modalAppeared) {
             throw new RuntimeException("Deploy modal did not appear within timeout");
         }
@@ -55,12 +59,20 @@ public class DeployModalComponent extends BaseComponent {
     }
 
     public DeployModalComponent selectRepository(String repositoryName) {
-        repositoryDropdown.selectByVisibleText(repositoryName);
+        repositorySelect.click();
+        if (repositoryName != null) {
+            dropdownOption.format(repositoryName).click();
+        } else {
+            firstDropdownOption.click();
+        }
         return this;
     }
 
     public DeployModalComponent fillDeploymentName(String name) {
-        deploymentNameInput.fillSequentially(name);
+        deploymentNameSelect.click();
+        deploymentNameSearchInput.fillSequentially(name);
+        // Click outside to trigger onBlur which sets the new deployment name
+        commentTextarea.click();
         return this;
     }
 
@@ -88,6 +100,10 @@ public class DeployModalComponent extends BaseComponent {
     public void deployWithoutMandatoryFields() {
         waitForModal();
         clickDeploy();
+    }
+
+    public boolean isSuccessNotificationVisible() {
+        return successNotification.isVisible(5000);
     }
 
     public boolean isErrorMessageDisplayed() {

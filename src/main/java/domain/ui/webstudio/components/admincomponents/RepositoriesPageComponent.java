@@ -52,18 +52,19 @@ public class RepositoriesPageComponent extends BaseComponent {
         // Scope form fields to the active tab panel within the left-positioned repos tabs
         // This prevents reading values from hidden (non-active) repo panels
         remoteRepositoryNameField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='name']", "remoteRepositoryNameField");
-        // Type is shown in ant-select-content div (not the hidden search input[@id='type'])
-        remoteRepositoryTypeSelector = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//div[contains(@class,'ant-select-content')]", "remoteRepositoryTypeSelector");
+        // Type selector: scope to the ant-select that contains input[@id='type'] to avoid matching other selects (e.g. Deployment branch)
+        remoteRepositoryTypeSelector = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//div[contains(@class,'ant-select') and .//input[@id='type']]//div[contains(@class,'ant-select-content')]", "remoteRepositoryTypeSelector");
         remoteRepositoryCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_remoteRepository']", "remoteRepositoryCheckBox");
         remoteRepositoryPathField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_uri']", "remoteRepositoryPathField");
         remoteRepositoryLoginField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_login']", "remoteRepositoryLoginField");
         remoteRepositoryPasswordField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_password']", "remoteRepositoryPasswordField");
         remoteRepositoryBranchField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_branch']", "remoteRepositoryBranchField");
         flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
-        secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_secureConnection']", "secureConnectionCheckbox");
+        secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_secure']", "secureConnectionCheckbox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
         designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
-        typeOption = createScopedElement("xpath=.//div[contains(@class,'ant-select-item-option') and .//span[text()='%s']]", "typeOption");
+        // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
+        typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
     }
 
     public RepositoriesPageComponent clickDesignRepositoriesTab() {

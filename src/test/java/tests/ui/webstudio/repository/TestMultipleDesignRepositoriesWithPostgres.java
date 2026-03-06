@@ -1,4 +1,4 @@
-package tests.ui.webstudio.db;
+package tests.ui.webstudio.repository;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
@@ -331,8 +331,6 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
                 .as("Erase dialog for non-flat Git repo should show 'also delete from repository' checkbox")
                 .isTrue();
 
-        //TODO: do not create separate folder for DB tests and separate suite for DB tests
-        //TODO: finish TestSplitDesignRepositoryDeployRules
         //TODO: make it all look pretty and reusable - ugly methods should be prettified (beforeMethod logic, verifyPostgresContainsOpenLTables)
         //TODO: check all the changes and LOGS and remove strange waiters
     }
