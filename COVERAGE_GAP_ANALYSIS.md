@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-06
+> Updated: 2026-03-08
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,10 +9,11 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| Migrated to new framework | 110 test classes |
-| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (28) · `studio_git.xml` (11) |
+| New framework — total test classes | **110** (108 active in suites + 2 disabled orphans) |
+| Disabled orphan tests | `TestButtonDeployAvailableDeployConfiguration` (EPBDS-8289) + `TestNewDeployPopup` (IPBQA-32875) — both deploy-blocked, `@Test` commented out, not in any suite |
+| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (28) · `studio_git.xml` (11) · `service_smoke.xml` (3) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 108** |
 | ACL functionality | Новая ACL модель (BRD EPBDS-14295): 6 тест-классов покрывают роли Manager/Contributor/Viewer, permissions V/C/E/D, системные действия Run+Benchmark. 2 фичи disabled — не реализованы в UI (Deploy button, Manager→Admin) |
-| **New framework overall coverage** | **~60% of legacy** (up from ~57%; +4 ACL класса + 2 JDBC integration tests с Testcontainers) |
+| **New framework overall coverage** | **~60% of legacy feature areas** (stable; completed: C1–C10, C12b, C12c, ACL, OpenAPI full; next priority: C11, C12, C13, C14) |
 
 ---
 
@@ -175,7 +176,7 @@
 | Protected Branches | IPBQA-31896 | TestProtectedBranches | standalone test (not migrated) |
 
 ### 7. WebService (Section 1) — ~25%
-**Legacy tests:** 10+ | **New framework:** 3 tests
+**Legacy tests:** 10+ | **New framework:** 3 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestWebservicesGitRepo + TestDeployProjectsWithoutServiceNameInRulesDeploy)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -231,11 +232,12 @@
 | Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~44% | 11 git tests ✅ |
-| Studio Issues (bug regression) | ~45% | 25 studio_issues tests ✅ |
+| Studio Issues (bug regression) | ~50% | 43 studio_issues tests ✅ |
 | Repository (basic operations) | ~55% | C1 + C2 + basic ops across suites ✅ |
 | Admin: Repositories (JDBC integration) | ~30% | C12b TestMultipleDesignRepositoriesWithPostgres + C12c TestDeploymentConfigurationRepositoryConnection ✅ (Testcontainers: PostgreSQL + Oracle) |
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
 | Compare (Excel/revisions/local changes) | ~80% | C8: TestCompareExcelFiles + TestDisplayChangedRows ✅ |
+| Client: Central + Zip projects | ~80% | `central_projects_regression.xml` (TestLocalCentralProjects) + `zip_projects_regression.xml` (TestLocalZippedProjects) ✅ |
 
 ---
 
