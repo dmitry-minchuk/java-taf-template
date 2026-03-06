@@ -16,6 +16,8 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -59,26 +61,18 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         additionalContainerFiles.clear();
 
         LOGGER.info("Starting PostgreSQL container for JDBC integration test...");
-        postgresContainer = new PostgreSQLContainer<>("postgres:alpine");
+        postgresContainer = new PostgreSQLContainer<>(ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE));
         postgresContainer.start();
 
         int pgPort = postgresContainer.getMappedPort(5432);
-        // Build JDBC URL using host.docker.internal so the app container can reach it
         String pgJdbcUrl = "jdbc:postgresql://host.docker.internal:" + pgPort + "/" + postgresContainer.getDatabaseName();
         LOGGER.info("PostgreSQL container started. JDBC URL (for app container): {}", pgJdbcUrl);
 
-        // Configure Studio to use PostgreSQL as its security/user database (JDBC integration)
-        // user.mode and security.administrators already set by DEFAULT_STUDIO_PARAMS
-        // Legacy: clearDB() dropped tables from this Postgres DB before each test.
-        // New approach: fresh container per test = no leftover state, no clearDB() needed.
         additionalContainerConfig.put("db.url", pgJdbcUrl);
         additionalContainerConfig.put("db.user", postgresContainer.getUsername());
         additionalContainerConfig.put("db.password", postgresContainer.getPassword());
 
-        // Copy the PostgreSQL JDBC driver JAR into /opt/openl/lib/ in the WebStudio container.
-        // WebStudio scans this directory at startup (same mechanism as compose.yaml init service).
-        // The JAR is resolved from Maven local cache — it's already a compile dependency.
-        String pgJarPath = System.getProperty("user.home") + "/.m2/repository/org/postgresql/postgresql/42.7.5/postgresql-42.7.5.jar";
+        String pgJarPath = System.getProperty("user.home") + "/" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_JAR_MAVEN_PATH);
         additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
 
         super.beforeMethod(result);

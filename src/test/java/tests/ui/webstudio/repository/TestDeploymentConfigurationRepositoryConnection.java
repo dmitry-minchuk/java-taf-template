@@ -15,6 +15,8 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import org.testcontainers.oracle.OracleContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -60,14 +62,14 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
         additionalContainerFiles.clear();
 
         LOGGER.info("Starting Oracle Free container for JDBC integration test...");
-        oracleContainer = new OracleContainer("gvenzl/oracle-free:slim-faststart");
+        oracleContainer = new OracleContainer(ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_CONTAINER_IMAGE));
         oracleContainer.start();
 
         int oraclePort = oracleContainer.getMappedPort(1521);
         oracleJdbcUrl = "jdbc:oracle:thin:@host.docker.internal:" + oraclePort + "/" + oracleContainer.getDatabaseName();
         LOGGER.info("Oracle container started. JDBC URL (for app container): {}", oracleJdbcUrl);
 
-        String ojdbcJarPath = System.getProperty("user.home") + "/.m2/repository/com/oracle/database/jdbc/ojdbc11/23.7.0.25.01/ojdbc11-23.7.0.25.01.jar";
+        String ojdbcJarPath = System.getProperty("user.home") + "/" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_JAR_MAVEN_PATH);
         additionalContainerFiles.put(ojdbcJarPath, "/opt/openl/lib/ojdbc11.jar");
 
         super.beforeMethod(result);
