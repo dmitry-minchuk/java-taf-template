@@ -65,7 +65,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         postgresContainer.start();
 
         int pgPort = postgresContainer.getMappedPort(5432);
-        String pgJdbcUrl = "jdbc:postgresql://host.docker.internal:" + pgPort + "/" + postgresContainer.getDatabaseName();
+        String pgJdbcUrl = "jdbc:postgresql://" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_CONTAINER_HOST) + ":" + pgPort + "/" + postgresContainer.getDatabaseName();
         LOGGER.info("PostgreSQL container started. JDBC URL (for app container): {}", pgJdbcUrl);
 
         additionalContainerConfig.put("db.url", pgJdbcUrl);

@@ -22,6 +22,7 @@ public enum PropertyNameSpace {
     GIT_URL("git.url"),
     GIT_LOGIN("git.login"),
     GIT_PASSWORD("git.password"),
+    DB_CONTAINER_HOST("db.container.host"),
     DB_POSTGRES_CONTAINER_IMAGE("db.postgres.container.image"),
     DB_POSTGRES_JAR_MAVEN_PATH("db.postgres.jar.maven.path"),
     DB_ORACLE_CONTAINER_IMAGE("db.oracle.container.image"),

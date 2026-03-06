@@ -66,7 +66,7 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
         oracleContainer.start();
 
         int oraclePort = oracleContainer.getMappedPort(1521);
-        oracleJdbcUrl = "jdbc:oracle:thin:@host.docker.internal:" + oraclePort + "/" + oracleContainer.getDatabaseName();
+        oracleJdbcUrl = "jdbc:oracle:thin:@" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_CONTAINER_HOST) + ":" + oraclePort + "/" + oracleContainer.getDatabaseName();
         LOGGER.info("Oracle container started. JDBC URL (for app container): {}", oracleJdbcUrl);
 
         String ojdbcJarPath = System.getProperty("user.home") + "/" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_JAR_MAVEN_PATH);
