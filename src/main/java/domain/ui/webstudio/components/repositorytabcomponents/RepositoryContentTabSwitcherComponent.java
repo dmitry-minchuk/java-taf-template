@@ -11,12 +11,10 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
     private WebElement propertiesTab;
     private WebElement revisionsTab;
     private WebElement elementsTab;
-    private WebElement deployConfigTab;
 
     private RepositoryContentTabPropertiesComponent propertiesTabComponent;
     private RepositoryContentRevisionsTabComponent revisionsTabComponent;
     private ElementsTabComponent elementsTabComponent;
-    private DeployConfigurationTabsComponent deployConfigTabComponent;
 
     public RepositoryContentTabSwitcherComponent() {
         super(LocalDriverPool.getPage());
@@ -32,12 +30,10 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
         propertiesTab = createScopedElement("xpath=.//td[@data-tabname='Properties']", "propertiesTab");
         revisionsTab = createScopedElement("xpath=.//td[@data-tabname='Revisions']", "revisionsTab");
         elementsTab = createScopedElement("xpath=.//td[@data-tabname='Elements']", "elementsTab");
-        deployConfigTab = createScopedElement("xpath=.//td[@data-tabname='RulesDeployConfiguration']", "deployConfigTab");
 
         propertiesTabComponent = createScopedComponent(RepositoryContentTabPropertiesComponent.class, "xpath=.//div[@id='properties']", "propertiesTabComponent");
         revisionsTabComponent = createScopedComponent(RepositoryContentRevisionsTabComponent.class, "xpath=.//div[@id='revisions']", "revisionsTabComponent");
         elementsTabComponent = createScopedComponent(ElementsTabComponent.class, "xpath=.//div[@id='elements']", "elementsTabComponent");
-        deployConfigTabComponent = createScopedComponent(DeployConfigurationTabsComponent.class, "xpath=.//div[@id='content']", "deployConfigTabComponent");
     }
 
     public RepositoryContentTabPropertiesComponent selectPropertiesTab() {
@@ -53,11 +49,6 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
     public ElementsTabComponent selectElementsTab() {
         elementsTab.click();
         return elementsTabComponent;
-    }
-
-    public DeployConfigurationTabsComponent selectDeployConfigTab() {
-        deployConfigTab.click();
-        return deployConfigTabComponent;
     }
 
     public List<String> getAvailableTabNames() {

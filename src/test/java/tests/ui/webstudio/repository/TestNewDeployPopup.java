@@ -66,7 +66,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * All containers communicate via Docker DNS aliases (no host.docker.internal).
  */
 public class TestNewDeployPopup extends BaseTest {
-    //TODO: clean all related to deployConfiguration code
 
     private static final int WS_PORT = 8080;
     private static final String POSTGRES_ALIAS = "postgres";
