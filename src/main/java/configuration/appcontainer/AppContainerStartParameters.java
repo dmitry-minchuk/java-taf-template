@@ -9,6 +9,7 @@ import java.util.Map;
 public enum AppContainerStartParameters {
     EMPTY,
     DEFAULT_STUDIO_PARAMS,
+    DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
     SAML_STUDIO_PARAMS,
     OAUTH_STUDIO_PARAMS,
@@ -19,6 +20,15 @@ public enum AppContainerStartParameters {
         switch (this) {
             case EMPTY:
                 config.put("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0");
+                break;
+            case DEPLOY_STUDIO_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                config.put("production-repository-configs", "production");
+                config.put("repository.production.name", "Deployment");
+                config.put("repository.production.$$ref", "repo-jdbc");
+                config.put("repository.production.uri", "jdbc:postgresql://postgres:5432/openl?currentSchema=repository");
+                config.put("repository.production.login", "openl");
+                config.put("repository.production.password", "openl");
                 break;
             case STUDIO_GIT:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
