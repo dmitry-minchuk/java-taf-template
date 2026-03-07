@@ -18,6 +18,8 @@ import helpers.service.LoginService;
 import helpers.service.UserService;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import configuration.network.NetworkPool;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -42,14 +44,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  * The container is configured as the Studio's users/security database via app container env vars,
  * demonstrating JDBC integration. Since each test gets a fresh container, clearDB() is not needed.
  *
- * The PostgreSQL container URL uses host.docker.internal so the app Docker container can reach it.
+ * All containers share a Docker network (created here and registered in NetworkPool).
+ * The app container joins the same network via BaseTest support for pre-registered networks.
+ * PostgreSQL is accessible via Docker DNS alias "postgres" — no host.docker.internal dependency.
  */
 public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
+
+    private static final String POSTGRES_ALIAS = "postgres";
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
     private PostgreSQLContainer<?> postgresContainer;
+    private Network testNetwork;
 
     private final String nameProjectDesign = "ProjectDesignRepo";
     private final String nameProjectDesign1 = "ProjectDesign1Repo";
@@ -60,13 +67,21 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         additionalContainerConfig.clear();
         additionalContainerFiles.clear();
 
+        // 1. Create shared Docker network and register in NetworkPool
+        // so BaseTest places app container into the same network
+        testNetwork = Network.newNetwork();
+        NetworkPool.setNetwork(testNetwork);
+
+        // 2. Start PostgreSQL in the shared network with DNS alias
         LOGGER.info("Starting PostgreSQL container for JDBC integration test...");
-        postgresContainer = new PostgreSQLContainer<>(ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE));
+        postgresContainer = new PostgreSQLContainer<>(ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE))
+                .withNetwork(testNetwork)
+                .withNetworkAliases(POSTGRES_ALIAS);
         postgresContainer.start();
 
-        int pgPort = postgresContainer.getMappedPort(5432);
-        String pgJdbcUrl = "jdbc:postgresql://" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_CONTAINER_HOST) + ":" + pgPort + "/" + postgresContainer.getDatabaseName();
-        LOGGER.info("PostgreSQL container started. JDBC URL (for app container): {}", pgJdbcUrl);
+        // 3. Build JDBC URL using Docker DNS alias (resolved inside the network)
+        String pgJdbcUrl = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/" + postgresContainer.getDatabaseName();
+        LOGGER.info("PostgreSQL started. In-network JDBC URL: {}", pgJdbcUrl);
 
         additionalContainerConfig.put("db.url", pgJdbcUrl);
         additionalContainerConfig.put("db.user", postgresContainer.getUsername());
@@ -81,6 +96,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
     @Override
     @AfterMethod
     public void afterMethod(ITestResult result) {
+        // super.afterMethod handles app container + network cleanup (via NetworkPool)
         super.afterMethod(result);
         if (postgresContainer != null && postgresContainer.isRunning()) {
             LOGGER.info("Stopping PostgreSQL container...");

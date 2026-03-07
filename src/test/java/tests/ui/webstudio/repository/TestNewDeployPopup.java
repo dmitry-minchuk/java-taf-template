@@ -3,7 +3,6 @@ package tests.ui.webstudio.repository;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
-import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import configuration.network.NetworkPool;
@@ -55,18 +54,24 @@ import static org.assertj.core.api.Assertions.assertThat;
  * repository (PostgreSQL via JDBC), redeploy, auto-deploy, and verification
  * that deployed rules are accessible via WebService REST endpoint.
  *
- * Infrastructure (3 containers in the same Docker network):
+ * Infrastructure (3 containers in shared Docker network):
  * - PostgreSQL (alias "postgres") — production repository storage
- * - WebStudio (app container) — DEPLOY_STUDIO_PARAMS, deploys rules to PostgreSQL
+ * - WebStudio (app container) — deploys rules to PostgreSQL via Docker DNS
  * - WebService (alias "wscontainer") — picks up deployed rules from PostgreSQL,
  *   exposes REST endpoints
+ *
+ * All containers share a single Docker network created here and registered via
+ * NetworkPool BEFORE super.beforeMethod(). BaseTest detects the pre-registered
+ * network and places the app container into it, so all 3 containers communicate
+ * via Docker DNS aliases (no host.docker.internal dependency — works on Linux CI).
  *
  * The PostgreSQL JDBC driver JAR is copied into both WebStudio and WebService containers.
  */
 public class TestNewDeployPopup extends BaseTest {
 
     private static final int WS_PORT = 8080;
-    private static final String WS_NETWORK_ALIAS = "wscontainer";
+    private static final String POSTGRES_ALIAS = "postgres";
+    private static final String POSTGRES_JDBC_URL = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/openl?currentSchema=repository";
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
@@ -81,38 +86,51 @@ public class TestNewDeployPopup extends BaseTest {
         additionalContainerConfig.clear();
         additionalContainerFiles.clear();
 
-        // 1. Create shared Docker network for all containers (app + postgres + ws)
+        // 1. Create shared Docker network for all containers.
+        // Register it in NetworkPool BEFORE super.beforeMethod() so that BaseTest
+        // places the app container into this same network (both LOCAL and DOCKER modes).
         deployNetwork = Network.newNetwork();
         NetworkPool.setNetwork(deployNetwork);
 
-        // 2. Start PostgreSQL in the shared network BEFORE other containers start.
-        LOGGER.info("Starting PostgreSQL container in shared Docker network for deploy test...");
+        // 2. Start PostgreSQL in the shared network
+        LOGGER.info("Starting PostgreSQL container in shared Docker network...");
         postgresContainer = new PostgreSQLContainer<>(ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE))
                 .withDatabaseName("openl")
                 .withUsername("openl")
                 .withPassword("openl")
                 .withNetwork(deployNetwork)
-                .withNetworkAliases("postgres")
-                .withInitScript("test_data/TestNewDeployPopup/init_deploy_schema.sql");
+                .withNetworkAliases(POSTGRES_ALIAS);
         postgresContainer.start();
-        LOGGER.info("PostgreSQL started. In-network URL: jdbc:postgresql://postgres:5432/openl");
+        LOGGER.info("PostgreSQL started. In-network URL: {}", POSTGRES_JDBC_URL);
 
-        // 3. PostgreSQL JDBC driver JAR path — needed for both app and ws containers
+        // Create the 'repository' schema required by production-repository JDBC config
+        try (var conn = java.sql.DriverManager.getConnection(
+                postgresContainer.getJdbcUrl(),
+                postgresContainer.getUsername(),
+                postgresContainer.getPassword());
+             var stmt = conn.createStatement()) {
+            stmt.execute("CREATE SCHEMA IF NOT EXISTS repository");
+            LOGGER.info("Schema 'repository' created in PostgreSQL");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create 'repository' schema in PostgreSQL", e);
+        }
+
+        // 3. PostgreSQL JDBC driver JAR — copied into both app and ws containers
         String pgJarPath = System.getProperty("user.home") + "/"
                 + ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_JAR_MAVEN_PATH);
         additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
 
         // 4. Start WebService container in the same network.
-        // WS polls PostgreSQL production repository for deployed rules.
+        // WS polls PostgreSQL production repository for deployed rules via Docker DNS.
         LOGGER.info("Starting WebService container in shared Docker network...");
         String wsImageName = ProjectConfiguration.getProperty(PropertyNameSpace.WS_DOCKER_IMAGE_NAME);
         wsContainer = new GenericContainer<>(DockerImageName.parse(wsImageName))
                 .withNetwork(deployNetwork)
-                .withNetworkAliases(WS_NETWORK_ALIAS)
+                .withNetworkAliases("wscontainer")
                 .withExposedPorts(WS_PORT)
                 .withEnv("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0")
                 .withEnv("PRODUCTION-REPOSITORY__REF_", "repo-jdbc")
-                .withEnv("PRODUCTION-REPOSITORY_URI", "jdbc:postgresql://postgres:5432/openl?currentSchema=repository")
+                .withEnv("PRODUCTION-REPOSITORY_URI", POSTGRES_JDBC_URL)
                 .withEnv("PRODUCTION-REPOSITORY_LOGIN", "openl")
                 .withEnv("PRODUCTION-REPOSITORY_PASSWORD", "openl")
                 .withEnv("RULESERVICE_DEPLOYER_ENABLED", "true")
@@ -121,20 +139,23 @@ public class TestNewDeployPopup extends BaseTest {
                 .withCopyFileToContainer(
                         MountableFile.forHostPath(Path.of(pgJarPath)),
                         "/opt/openl/lib/postgresql.jar")
-                .waitingFor(Wait.forHttp("/webservice")
+                .waitingFor(Wait.forHttp("/admin/healthcheck/startup")
                         .forStatusCode(200)
                         .withStartupTimeout(Duration.ofMinutes(5)));
         wsContainer.start();
-        LOGGER.info("WebService started. Localhost URL: http://localhost:{}/webservice",
-                wsContainer.getMappedPort(WS_PORT));
+        LOGGER.info("WebService started. Host URL: http://localhost:{}", wsContainer.getMappedPort(WS_PORT));
 
         // 5. Call parent which starts app container + Playwright.
+        // BaseTest detects our pre-registered network from NetworkPool and places
+        // the app container into the same network. DEPLOY_STUDIO_PARAMS provides
+        // the JDBC URL with alias "postgres:5432" which resolves via Docker DNS.
         super.beforeMethod(result);
     }
 
     @Override
     @AfterMethod
     public void afterMethod(ITestResult result) {
+        // super.afterMethod handles app container + network cleanup (via NetworkPool)
         super.afterMethod(result);
         if (wsContainer != null && wsContainer.isRunning()) {
             LOGGER.info("Stopping WebService container...");
@@ -143,13 +164,6 @@ public class TestNewDeployPopup extends BaseTest {
         if (postgresContainer != null && postgresContainer.isRunning()) {
             LOGGER.info("Stopping PostgreSQL container...");
             postgresContainer.stop();
-        }
-        if (deployNetwork != null) {
-            try {
-                deployNetwork.close();
-            } catch (Exception e) {
-                LOGGER.debug("Network cleanup: {}", e.getMessage());
-            }
         }
     }
 
@@ -372,12 +386,12 @@ public class TestNewDeployPopup extends BaseTest {
         // =========================================================================
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
-        editorPage.getEditorLeftRulesTreeComponent().expandCategory("Decision");
-        editorPage.getEditorLeftRulesTreeComponent().selectTableByName("Greeting1");
+        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Decision");
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", "Greeting1");
 
-        editorPage.getEditorTableActionsPanelComponent().clickEditTable();
-        editorPage.getCenterTable().setCellValue(2, 6, "1000");
-        editorPage.getEditorTableActionsPanelComponent().clickSaveTable();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
+        editorPage.getCenterTable().editCell(2, 6, "1000");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         WaitUtil.sleep(1000, "Wait for table save");
 
         repositoryPage = editorPage.getTabSwitcherComponent()
@@ -434,12 +448,12 @@ public class TestNewDeployPopup extends BaseTest {
         editorPage = new EditorPage();
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
-        editorPage.getEditorLeftRulesTreeComponent().expandCategory("Decision");
-        editorPage.getEditorLeftRulesTreeComponent().selectTableByName("Greeting1");
+        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Decision");
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", "Greeting1");
 
-        editorPage.getEditorTableActionsPanelComponent().clickEditTable();
-        editorPage.getCenterTable().setCellValue(2, 6, "2000");
-        editorPage.getEditorTableActionsPanelComponent().clickSaveTable();
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
+        editorPage.getCenterTable().editCell(2, 6, "2000");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         WaitUtil.sleep(1000, "Wait for table save");
 
         repositoryPage = editorPage.getTabSwitcherComponent()

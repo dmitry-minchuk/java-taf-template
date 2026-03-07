@@ -5,6 +5,9 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
+import configuration.network.NetworkPool;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -15,16 +18,14 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import configuration.projectconfig.ProjectConfiguration;
-import configuration.projectconfig.PropertyNameSpace;
+import helpers.utils.DbVerificationUtil;
+import org.testcontainers.containers.Network;
 import org.testcontainers.oracle.OracleContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
-
-import helpers.utils.DbVerificationUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,14 +44,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Adaptation: Instead of connecting to a pre-deployed Oracle 12c instance,
  * each test run spins up an Oracle Free container via Testcontainers.
  * The ojdbc11 JAR is copied into the WebStudio container's /opt/openl/lib/.
+ *
+ * All containers share a Docker network (created here and registered in NetworkPool).
+ * Oracle is accessible via Docker DNS alias "oracle" — no host.docker.internal dependency.
  */
 public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
+
+    private static final String ORACLE_ALIAS = "oracle";
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
     private OracleContainer oracleContainer;
     private String oracleJdbcUrl;
+    private Network testNetwork;
 
     private final String projectName = "OracleDeployTest";
     private final String deploymentName = "oracle-deploy";
@@ -61,13 +68,20 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
         additionalContainerConfig.clear();
         additionalContainerFiles.clear();
 
+        // 1. Create shared Docker network and register in NetworkPool
+        testNetwork = Network.newNetwork();
+        NetworkPool.setNetwork(testNetwork);
+
+        // 2. Start Oracle in the shared network with DNS alias
         LOGGER.info("Starting Oracle Free container for JDBC integration test...");
-        oracleContainer = new OracleContainer(ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_CONTAINER_IMAGE));
+        oracleContainer = new OracleContainer(ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_CONTAINER_IMAGE))
+                .withNetwork(testNetwork)
+                .withNetworkAliases(ORACLE_ALIAS);
         oracleContainer.start();
 
-        int oraclePort = oracleContainer.getMappedPort(1521);
-        oracleJdbcUrl = "jdbc:oracle:thin:@" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_CONTAINER_HOST) + ":" + oraclePort + "/" + oracleContainer.getDatabaseName();
-        LOGGER.info("Oracle container started. JDBC URL (for app container): {}", oracleJdbcUrl);
+        // 3. Build JDBC URL using Docker DNS alias (resolved inside the network by app container)
+        oracleJdbcUrl = "jdbc:oracle:thin:@" + ORACLE_ALIAS + ":1521/" + oracleContainer.getDatabaseName();
+        LOGGER.info("Oracle started. In-network JDBC URL: {}", oracleJdbcUrl);
 
         String ojdbcJarPath = System.getProperty("user.home") + "/" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_JAR_MAVEN_PATH);
         additionalContainerFiles.put(ojdbcJarPath, "/opt/openl/lib/ojdbc11.jar");
@@ -78,6 +92,7 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
     @Override
     @AfterMethod
     public void afterMethod(ITestResult result) {
+        // super.afterMethod handles app container + network cleanup (via NetworkPool)
         super.afterMethod(result);
         if (oracleContainer != null && oracleContainer.isRunning()) {
             LOGGER.info("Stopping Oracle container...");
