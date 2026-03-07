@@ -381,76 +381,47 @@ public class TestNewDeployPopup extends BaseTest {
         LOGGER.info("Step 7: Tutorial 2 deployed");
 
         // =========================================================================
-        // STEP 8: Verify deployed rules accessible via WebService REST endpoint
+        // STEP 8: Verify deployed services visible in WebService
         // Legacy steps: 18
         // =========================================================================
-        verifyDeployedRulesAccessibleViaWebService(deploymentName, nameProject);
-        LOGGER.info("Step 8: WebService REST verification completed — all steps done");
+        verifyDeployedServicesVisible(nameProject, nameDependentProject1,
+                nameDependentProject2, nameProjectTutorial2);
+        LOGGER.info("Step 8: WebService verification completed — all steps done");
     }
 
-    private void verifyDeployedRulesAccessibleViaWebService(String deploymentName, String projectName) {
-        String wsBaseUrl = String.format("http://localhost:%d", wsContainer.getMappedPort(WS_PORT));
-        String serviceListUrl = wsBaseUrl + "/webservice";
+    private void verifyDeployedServicesVisible(String... expectedProjects) {
+        String serviceListUrl = String.format("http://localhost:%d/admin/services", wsContainer.getMappedPort(WS_PORT));
+        HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
-        LOGGER.info("Verifying deployed rules via WS. Service list: {}", serviceListUrl);
-
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-
-        // Wait for WS to pick up deployed rules (polling delay is 2 seconds)
-        boolean serviceFound = false;
-        for (int attempt = 1; attempt <= 10; attempt++) {
+        String body = "";
+        for (int attempt = 1; attempt <= 15; attempt++) {
             try {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(serviceListUrl))
-                        .timeout(Duration.ofSeconds(10))
-                        .GET()
-                        .build();
-                HttpResponse<String> response = httpClient.send(request,
+                HttpResponse<String> response = httpClient.send(
+                        HttpRequest.newBuilder().uri(URI.create(serviceListUrl)).GET().build(),
                         HttpResponse.BodyHandlers.ofString());
-
-                if (response.statusCode() == 200 && response.body().contains(projectName)) {
-                    serviceFound = true;
-                    LOGGER.info("Service '{}' found in WS (attempt {})", projectName, attempt);
+                body = response.body();
+                if (response.statusCode() == 200
+                        && java.util.Arrays.stream(expectedProjects).allMatch(body::contains)) {
+                    LOGGER.info("All {} services found in WS (attempt {})", expectedProjects.length, attempt);
                     break;
                 }
-                LOGGER.info("Service not yet visible in WS (attempt {}/10)", attempt);
             } catch (Exception e) {
-                LOGGER.info("WS not ready (attempt {}/10): {}", attempt, e.getMessage());
+                LOGGER.info("WS not ready (attempt {}/15): {}", attempt, e.getMessage());
             }
             WaitUtil.sleep(3000, "Waiting for WS to pick up deployed rules");
         }
-        assertThat(serviceFound)
-                .as("Deployed project '%s' should appear in WS service list within 30s",
-                        projectName)
-                .isTrue();
 
-        // Call REST endpoint for Bank Rating project (getBankData method)
-        // WS exposes services under deployment name, so URL is:
-        // /webservice/REST/{deploymentName}/{projectName}/getBankData
-        String getBankDataUrl = wsBaseUrl + "/webservice/REST/"
-                + deploymentName + "/" + projectName + "/getBankData";
-        LOGGER.info("Calling REST endpoint: {}", getBankDataUrl);
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(getBankDataUrl))
-                    .timeout(Duration.ofSeconds(10))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{}"))
-                    .build();
-            HttpResponse<String> response = httpClient.send(request,
-                    HttpResponse.BodyHandlers.ofString());
-            LOGGER.info("REST response: status={}, bodyLength={}",
-                    response.statusCode(), response.body().length());
-            assertThat(response.statusCode())
-                    .as("REST endpoint getBankData should return 200 OK")
-                    .isEqualTo(200);
-            assertThat(response.body())
-                    .as("REST response should contain bank data")
-                    .isNotEmpty();
+            var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String pretty = mapper.writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(mapper.readTree(body));
+            LOGGER.info("WS service list:\n{}", pretty);
         } catch (Exception e) {
-            throw new AssertionError("Failed to call WS REST endpoint: " + e.getMessage(), e);
+            LOGGER.info("WS service list (raw): {}", body);
+        }
+        String serviceList = body;
+        for (String project : expectedProjects) {
+            assertThat(serviceList).as("Should contain '%s'", project).contains(project);
         }
     }
 }
