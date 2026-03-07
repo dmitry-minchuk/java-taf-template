@@ -8,6 +8,7 @@ import configuration.driver.LocalDriverPool;
 import configuration.network.NetworkPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import domain.api.GetWsServicesMethod;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -33,14 +34,11 @@ import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -383,44 +381,16 @@ public class TestNewDeployPopup extends BaseTest {
         // STEP 8: Verify deployed services visible in WebService
         // Legacy steps: 18
         // =========================================================================
-        verifyDeployedServicesVisible(nameProject, nameDependentProject1,
-                nameDependentProject2, nameProjectTutorial2);
+        GetWsServicesMethod wsApi = new GetWsServicesMethod(wsContainer, WS_PORT);
+        List<String> expected = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
+
+        WaitUtil.waitForCondition(
+                () -> wsApi.getServiceNames().containsAll(expected),
+                45000, 3000, "Waiting for all services to appear in WS");
+
+        List<String> actual = wsApi.getServiceNames();
+        LOGGER.info("WS services: {}", actual);
+        assertThat(actual).as("WS should contain all deployed services").containsAll(expected);
         LOGGER.info("Step 8: WebService verification completed — all steps done");
-    }
-
-    private void verifyDeployedServicesVisible(String... expectedProjects) {
-        String serviceListUrl = String.format("http://localhost:%d/admin/services", wsContainer.getMappedPort(WS_PORT));
-        HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
-
-        String body = "";
-        for (int attempt = 1; attempt <= 15; attempt++) {
-            try {
-                HttpResponse<String> response = httpClient.send(
-                        HttpRequest.newBuilder().uri(URI.create(serviceListUrl)).GET().build(),
-                        HttpResponse.BodyHandlers.ofString());
-                body = response.body();
-                if (response.statusCode() == 200
-                        && java.util.Arrays.stream(expectedProjects).allMatch(body::contains)) {
-                    LOGGER.info("All {} services found in WS (attempt {})", expectedProjects.length, attempt);
-                    break;
-                }
-            } catch (Exception e) {
-                LOGGER.info("WS not ready (attempt {}/15): {}", attempt, e.getMessage());
-            }
-            WaitUtil.sleep(3000, "Waiting for WS to pick up deployed rules");
-        }
-
-        try {
-            var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            String pretty = mapper.writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(mapper.readTree(body));
-            LOGGER.info("WS service list:\n{}", pretty);
-        } catch (Exception e) {
-            LOGGER.info("WS service list (raw): {}", body);
-        }
-        String serviceList = body;
-        for (String project : expectedProjects) {
-            assertThat(serviceList).as("Should contain '%s'", project).contains(project);
-        }
     }
 }

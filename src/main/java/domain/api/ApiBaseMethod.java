@@ -39,6 +39,11 @@ public abstract class ApiBaseMethod {
         }
     }
 
+    protected ApiBaseMethod(String baseUrl, String path) {
+        this.fullApiUrl = baseUrl + path;
+        LOGGER.debug("API URL constructed (custom base): {}", this.fullApiUrl);
+    }
+
     public Response callApi(Method method, RequestSpecification requestSpecification, String fullApiUrl, boolean withLogs) {
         RestAssured.useRelaxedHTTPSValidation();
         Response response;
