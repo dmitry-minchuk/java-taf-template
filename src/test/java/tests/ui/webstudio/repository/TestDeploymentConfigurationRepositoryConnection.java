@@ -5,9 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
-import configuration.network.NetworkPool;
-import configuration.projectconfig.ProjectConfiguration;
-import configuration.projectconfig.PropertyNameSpace;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -16,11 +13,10 @@ import domain.ui.webstudio.components.repositorytabcomponents.DeployModalCompone
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.DbVerificationUtil;
-import org.testcontainers.containers.Network;
-import org.testcontainers.oracle.OracleContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -50,54 +46,29 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
 
-    private static final String ORACLE_ALIAS = "oracle";
-
-    private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
-    private OracleContainer oracleContainer;
-    private String oracleJdbcUrl;
-    private Network testNetwork;
-
+    private DeployInfrastructureService deployInfra;
     private final String projectName = "OracleDeployTest";
     private final String deploymentName = "oracle-deploy";
 
     @Override
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
-        additionalContainerConfig.clear();
         additionalContainerFiles.clear();
-
-        // 1. Create shared Docker network and register in NetworkPool
-        testNetwork = Network.newNetwork();
-        NetworkPool.setNetwork(testNetwork);
-
-        // 2. Start Oracle in the shared network with DNS alias
-        LOGGER.info("Starting Oracle Free container for JDBC integration test...");
-        oracleContainer = new OracleContainer(ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_CONTAINER_IMAGE))
-                .withNetwork(testNetwork)
-                .withNetworkAliases(ORACLE_ALIAS);
-        oracleContainer.start();
-
-        // 3. Build JDBC URL using Docker DNS alias (resolved inside the network by app container)
-        oracleJdbcUrl = "jdbc:oracle:thin:@" + ORACLE_ALIAS + ":1521/" + oracleContainer.getDatabaseName();
-        LOGGER.info("Oracle started. In-network JDBC URL: {}", oracleJdbcUrl);
-
-        String ojdbcJarPath = System.getProperty("user.home") + "/" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_JAR_MAVEN_PATH);
-        additionalContainerFiles.put(ojdbcJarPath, "/opt/openl/lib/ojdbc11.jar");
-
+        deployInfra = DeployInfrastructureService.builder()
+                .withOracle()
+                .build();
+        deployInfra.start();
+        additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
         super.beforeMethod(result);
     }
 
     @Override
     @AfterMethod
     public void afterMethod(ITestResult result) {
-        // super.afterMethod handles app container + network cleanup (via NetworkPool)
         super.afterMethod(result);
-        if (oracleContainer != null && oracleContainer.isRunning()) {
-            LOGGER.info("Stopping Oracle container...");
-            oracleContainer.stop();
-        }
+        deployInfra.cleanup();
     }
 
     @Test
@@ -113,10 +84,10 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
         // Step 2: Add Deployment Repository with type "Database JDBC" pointing to Oracle
         reposPage.addDeploymentRepository();
         reposPage.setDesignRepositoryType("Database JDBC");
-        reposPage.setDesignRepositoryJdbcUrl(oracleJdbcUrl);
+        reposPage.setDesignRepositoryJdbcUrl(deployInfra.getOracleJdbcUrl());
         reposPage.setSecureConnection(true);
-        reposPage.setDesignRepositoryLogin(oracleContainer.getUsername());
-        reposPage.setDesignRepositoryPassword(oracleContainer.getPassword());
+        reposPage.setDesignRepositoryLogin(deployInfra.getOracleContainer().getUsername());
+        reposPage.setDesignRepositoryPassword(deployInfra.getOracleContainer().getPassword());
 
         // Step 3: Apply and relogin
         reposPage.applyChangesAndRelogin(User.ADMIN);
@@ -147,9 +118,9 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
 
     private void verifyOracleContainsDeployedData() {
         List<Map<String, String>> rows = DbVerificationUtil.queryRows(
-                oracleContainer.getJdbcUrl(),
-                oracleContainer.getUsername(),
-                oracleContainer.getPassword(),
+                deployInfra.getOracleContainer().getJdbcUrl(),
+                deployInfra.getOracleContainer().getUsername(),
+                deployInfra.getOracleContainer().getPassword(),
                 "SELECT id, file_name, author, file_comment, modified_at, dbms_lob.getlength(file_data) as file_size FROM openl_repository ORDER BY id");
         assertThat(rows)
                 .as("Oracle deployment repository should contain deployed project files")

@@ -5,9 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
-import configuration.network.NetworkPool;
-import configuration.projectconfig.ProjectConfiguration;
-import configuration.projectconfig.PropertyNameSpace;
 import domain.api.GetWsServicesMethod;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -17,26 +14,17 @@ import domain.ui.webstudio.components.repositorytabcomponents.DeployModalCompone
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.MountableFile;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,102 +54,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestNewDeployPopup extends BaseTest {
 
     private static final int WS_PORT = 8080;
-    private static final String POSTGRES_ALIAS = "postgres";
-    private static final String POSTGRES_JDBC_URL = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/openl?currentSchema=repository";
-
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
-    private PostgreSQLContainer<?> postgresContainer;
-    private GenericContainer<?> wsContainer;
-    private Network deployNetwork;
+    private DeployInfrastructureService deployInfra;
 
     @Override
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
         additionalContainerFiles.clear();
-
-        // 1. Create shared Docker network and register BEFORE super.beforeMethod()
-        // so BaseTest places the app container into the same network.
-        deployNetwork = Network.newNetwork();
-        NetworkPool.setNetwork(deployNetwork);
-
-        // 2. Start PostgreSQL
-        LOGGER.info("Starting PostgreSQL container in shared Docker network...");
-        postgresContainer = new PostgreSQLContainer<>(
-                ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE))
-                .withDatabaseName("openl")
-                .withUsername("openl")
-                .withPassword("openl")
-                .withNetwork(deployNetwork)
-                .withNetworkAliases(POSTGRES_ALIAS);
-        postgresContainer.start();
-        LOGGER.info("PostgreSQL started. In-network URL: {}", POSTGRES_JDBC_URL);
-
-        // Create 'repository' schema required by production-repository JDBC config
-        try (var conn = java.sql.DriverManager.getConnection(
-                postgresContainer.getJdbcUrl(),
-                postgresContainer.getUsername(),
-                postgresContainer.getPassword());
-             var stmt = conn.createStatement()) {
-            stmt.execute("CREATE SCHEMA IF NOT EXISTS repository");
-            LOGGER.info("Schema 'repository' created in PostgreSQL");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create 'repository' schema", e);
-        }
-
-        // 3. PostgreSQL JDBC driver JAR — copied into both app and ws containers
-        String pgJarPath = System.getProperty("user.home") + "/"
-                + ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_JAR_MAVEN_PATH);
-
-        // 3a. Create .properties for production repository ($$ref works only via file)
-        Path propsFile;
-        try {
-            propsFile = Files.createTempFile("openl-deploy-", ".properties");
-            String propsContent = String.join("\n",
-                    "production-repository-configs = production",
-                    "repository.production.name = Deployment",
-                    "repository.production.$$ref = repo-jdbc",
-                    "repository.production.uri = " + POSTGRES_JDBC_URL,
-                    "repository.production.login = openl",
-                    "repository.production.password = openl",
-                    ""
-            );
-            Files.writeString(propsFile, propsContent);
-            propsFile.toFile().setReadable(true, false);
-            LOGGER.info("Created .properties for production repository: {}", propsFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create .properties file", e);
-        }
-
-        // Set additional files for app container (picked up by AppContainerFactory)
-        additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
-        additionalContainerFiles.put(propsFile.toAbsolutePath().toString(), "/opt/openl/shared/.properties");
-
-        // 4. Start WebService container
-        LOGGER.info("Starting WebService container in shared Docker network...");
-        String wsImageName = ProjectConfiguration.getProperty(PropertyNameSpace.WS_DOCKER_IMAGE_NAME);
-        wsContainer = new GenericContainer<>(DockerImageName.parse(wsImageName))
-                .withNetwork(deployNetwork)
-                .withNetworkAliases("wscontainer")
-                .withExposedPorts(WS_PORT)
-                .withEnv("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0")
-                .withEnv("PRODUCTION-REPOSITORY__REF_", "repo-jdbc")
-                .withEnv("PRODUCTION-REPOSITORY_URI", POSTGRES_JDBC_URL)
-                .withEnv("PRODUCTION-REPOSITORY_LOGIN", "openl")
-                .withEnv("PRODUCTION-REPOSITORY_PASSWORD", "openl")
-                .withEnv("RULESERVICE_DEPLOYER_ENABLED", "true")
-                .withEnv("ruleservice.datasource.deploy.classpath.jars", "true")
-                .withEnv("ruleservice.deployer.delay", "2")
-                .withCopyFileToContainer(
-                        MountableFile.forHostPath(Path.of(pgJarPath)),
-                        "/opt/openl/lib/postgresql.jar")
-                .waitingFor(Wait.forHttp("/admin/healthcheck/startup")
-                        .forStatusCode(200)
-                        .withStartupTimeout(Duration.ofMinutes(5)));
-        wsContainer.start();
-        LOGGER.info("WebService started. Host URL: http://localhost:{}", wsContainer.getMappedPort(WS_PORT));
-
-        // 5. Start app container + Playwright via BaseTest
+        deployInfra = DeployInfrastructureService.builder()
+                .withPostgres()
+                .withWsContainer()
+                .build();
+        deployInfra.start();
+        additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
         super.beforeMethod(result);
     }
 
@@ -169,14 +75,7 @@ public class TestNewDeployPopup extends BaseTest {
     @AfterMethod
     public void afterMethod(ITestResult result) {
         super.afterMethod(result);
-        if (wsContainer != null && wsContainer.isRunning()) {
-            LOGGER.info("Stopping WebService container...");
-            wsContainer.stop();
-        }
-        if (postgresContainer != null && postgresContainer.isRunning()) {
-            LOGGER.info("Stopping PostgreSQL container...");
-            postgresContainer.stop();
-        }
+        deployInfra.cleanup();
     }
 
     @Test
@@ -381,7 +280,7 @@ public class TestNewDeployPopup extends BaseTest {
         // STEP 8: Verify deployed services visible in WebService
         // Legacy steps: 18
         // =========================================================================
-        GetWsServicesMethod wsApi = new GetWsServicesMethod(wsContainer, WS_PORT);
+        GetWsServicesMethod wsApi = new GetWsServicesMethod(deployInfra.getWsContainer(), WS_PORT);
         List<String> expected = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
 
         WaitUtil.waitForCondition(
