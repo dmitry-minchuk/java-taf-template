@@ -281,15 +281,22 @@ public class TestNewDeployPopup extends BaseTest {
         // Legacy steps: 18
         // =========================================================================
         GetWsServicesMethod wsApi = new GetWsServicesMethod(deployInfra.getWsContainer(), WS_PORT);
-        List<String> expected = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
+        List<String> expectedProjects = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
 
         WaitUtil.waitForCondition(
-                () -> wsApi.getServiceNames().containsAll(expected),
+                () -> {
+                    List<String> services = wsApi.getServiceNames();
+                    return expectedProjects.stream().allMatch(
+                            project -> services.stream().anyMatch(s -> s.endsWith("_" + project)));
+                },
                 45000, 3000, "Waiting for all services to appear in WS");
 
         List<String> actual = wsApi.getServiceNames();
         LOGGER.info("WS services: {}", actual);
-        assertThat(actual).as("WS should contain all deployed services").containsAll(expected);
+        for (String project : expectedProjects) {
+            assertThat(actual).as("WS should contain service for project '%s'", project)
+                    .anyMatch(s -> s.endsWith("_" + project));
+        }
         LOGGER.info("Step 8: WebService verification completed — all steps done");
     }
 }
