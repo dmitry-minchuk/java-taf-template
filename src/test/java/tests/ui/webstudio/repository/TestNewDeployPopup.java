@@ -11,7 +11,7 @@ import configuration.projectconfig.PropertyNameSpace;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.DeployConfigurationTabsComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -32,16 +32,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,9 +49,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Migrated from: SmokeStudio/TestDeployConfCreateDeployRedeploy.java
  * Ticket: IPBQA-30049
  *
- * Full deploy configuration lifecycle: creation, validation, deploy to production
- * repository (PostgreSQL via JDBC), redeploy, auto-deploy, and verification
- * that deployed rules are accessible via WebService REST endpoint.
+ * Deploy lifecycle: deploy project to production repository (PostgreSQL via JDBC),
+ * edit and redeploy, deploy dependent projects, and verify that deployed rules
+ * are accessible via WebService REST endpoint.
+ *
+ * NOTE: The legacy "Deploy Configuration" entity was removed from WebStudio
+ * (EPBDS-15093). Deployment now works directly from a project via DeployModal.
+ * Dependencies are resolved automatically by the backend.
  *
  * Infrastructure (3 containers in shared Docker network):
  * - PostgreSQL (alias "postgres") — production repository storage
@@ -60,20 +63,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * - WebService (alias "wscontainer") — picks up deployed rules from PostgreSQL,
  *   exposes REST endpoints
  *
- * All containers share a single Docker network created here and registered via
- * NetworkPool BEFORE super.beforeMethod(). BaseTest detects the pre-registered
- * network and places the app container into it, so all 3 containers communicate
- * via Docker DNS aliases (no host.docker.internal dependency — works on Linux CI).
- *
- * The PostgreSQL JDBC driver JAR is copied into both WebStudio and WebService containers.
+ * All containers communicate via Docker DNS aliases (no host.docker.internal).
  */
 public class TestNewDeployPopup extends BaseTest {
+    //TODO: clean all related to deployConfiguration code
 
     private static final int WS_PORT = 8080;
     private static final String POSTGRES_ALIAS = "postgres";
     private static final String POSTGRES_JDBC_URL = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/openl?currentSchema=repository";
 
-    private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
     private PostgreSQLContainer<?> postgresContainer;
@@ -83,18 +81,17 @@ public class TestNewDeployPopup extends BaseTest {
     @Override
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
-        additionalContainerConfig.clear();
         additionalContainerFiles.clear();
 
-        // 1. Create shared Docker network for all containers.
-        // Register it in NetworkPool BEFORE super.beforeMethod() so that BaseTest
-        // places the app container into this same network (both LOCAL and DOCKER modes).
+        // 1. Create shared Docker network and register BEFORE super.beforeMethod()
+        // so BaseTest places the app container into the same network.
         deployNetwork = Network.newNetwork();
         NetworkPool.setNetwork(deployNetwork);
 
-        // 2. Start PostgreSQL in the shared network
+        // 2. Start PostgreSQL
         LOGGER.info("Starting PostgreSQL container in shared Docker network...");
-        postgresContainer = new PostgreSQLContainer<>(ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE))
+        postgresContainer = new PostgreSQLContainer<>(
+                ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE))
                 .withDatabaseName("openl")
                 .withUsername("openl")
                 .withPassword("openl")
@@ -103,7 +100,7 @@ public class TestNewDeployPopup extends BaseTest {
         postgresContainer.start();
         LOGGER.info("PostgreSQL started. In-network URL: {}", POSTGRES_JDBC_URL);
 
-        // Create the 'repository' schema required by production-repository JDBC config
+        // Create 'repository' schema required by production-repository JDBC config
         try (var conn = java.sql.DriverManager.getConnection(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
@@ -112,16 +109,38 @@ public class TestNewDeployPopup extends BaseTest {
             stmt.execute("CREATE SCHEMA IF NOT EXISTS repository");
             LOGGER.info("Schema 'repository' created in PostgreSQL");
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create 'repository' schema in PostgreSQL", e);
+            throw new RuntimeException("Failed to create 'repository' schema", e);
         }
 
         // 3. PostgreSQL JDBC driver JAR — copied into both app and ws containers
         String pgJarPath = System.getProperty("user.home") + "/"
                 + ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_JAR_MAVEN_PATH);
-        additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
 
-        // 4. Start WebService container in the same network.
-        // WS polls PostgreSQL production repository for deployed rules via Docker DNS.
+        // 3a. Create .properties for production repository ($$ref works only via file)
+        Path propsFile;
+        try {
+            propsFile = Files.createTempFile("openl-deploy-", ".properties");
+            String propsContent = String.join("\n",
+                    "production-repository-configs = production",
+                    "repository.production.name = Deployment",
+                    "repository.production.$$ref = repo-jdbc",
+                    "repository.production.uri = " + POSTGRES_JDBC_URL,
+                    "repository.production.login = openl",
+                    "repository.production.password = openl",
+                    ""
+            );
+            Files.writeString(propsFile, propsContent);
+            propsFile.toFile().setReadable(true, false);
+            LOGGER.info("Created .properties for production repository: {}", propsFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create .properties file", e);
+        }
+
+        // Set additional files for app container (picked up by AppContainerFactory)
+        additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
+        additionalContainerFiles.put(propsFile.toAbsolutePath().toString(), "/opt/openl/shared/.properties");
+
+        // 4. Start WebService container
         LOGGER.info("Starting WebService container in shared Docker network...");
         String wsImageName = ProjectConfiguration.getProperty(PropertyNameSpace.WS_DOCKER_IMAGE_NAME);
         wsContainer = new GenericContainer<>(DockerImageName.parse(wsImageName))
@@ -145,17 +164,13 @@ public class TestNewDeployPopup extends BaseTest {
         wsContainer.start();
         LOGGER.info("WebService started. Host URL: http://localhost:{}", wsContainer.getMappedPort(WS_PORT));
 
-        // 5. Call parent which starts app container + Playwright.
-        // BaseTest detects our pre-registered network from NetworkPool and places
-        // the app container into the same network. DEPLOY_STUDIO_PARAMS provides
-        // the JDBC URL with alias "postgres:5432" which resolves via Docker DNS.
+        // 5. Start app container + Playwright via BaseTest
         super.beforeMethod(result);
     }
 
     @Override
     @AfterMethod
     public void afterMethod(ITestResult result) {
-        // super.afterMethod handles app container + network cleanup (via NetworkPool)
         super.afterMethod(result);
         if (wsContainer != null && wsContainer.isRunning()) {
             LOGGER.info("Stopping WebService container...");
@@ -169,21 +184,23 @@ public class TestNewDeployPopup extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30049")
-    @Description("Deploy Configuration: create, validate, deploy to production PostgreSQL, redeploy, auto-deploy")
+    @Description("Deploy lifecycle: deploy to production PostgreSQL, edit, redeploy, "
+            + "deploy dependent projects, verify via WS REST")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testNewDeployPopup() {
+        String nameProject = StringUtil.generateUniqueName("DeployTest");
+        String deploymentName = StringUtil.generateUniqueName("Deploy");
+
         // =========================================================================
         // STEP 1: Login, create project from template, get initial revision
+        // Legacy steps: 1
         // =========================================================================
-        String nameProject = StringUtil.generateUniqueName("DeployTest");
-        String nameDeployConf1 = StringUtil.generateUniqueName("DC1");
-        String nameDeployConfComplex = StringUtil.generateUniqueName("DC2");
-
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+                .login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProject,
-                "Example 1 - Bank Rating");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,
+                nameProject, "Example 1 - Bank Rating");
 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
@@ -195,202 +212,69 @@ public class TestNewDeployPopup extends BaseTest {
         LOGGER.info("Step 1: Project '{}' created, initial revision: {}", nameProject, projectInitialRevision);
 
         // =========================================================================
-        // STEP 2: "Create Deploy Configuration" dialog validation
-        // Verify: name empty, Create disabled, Cancel enabled
+        // STEP 2: Deploy project to production via DeployModal
+        // Legacy steps: 11 (adapted — no Deploy Configuration, direct deploy)
         // =========================================================================
-        repositoryPage.getCreateDeployConfigBtn().click();
-        assertThat(repositoryPage.getConfigNameField().getCurrentInputValue())
-                .as("Deploy config name field should be empty by default")
-                .isEmpty();
-        assertThat(repositoryPage.getCreateBtn().isEnabled())
-                .as("Create button should be disabled when name is empty")
-                .isFalse();
-        LOGGER.info("Step 2: Dialog defaults verified — name empty, Create disabled");
-
-        // =========================================================================
-        // STEP 3: Cancel and verify dialog disappears
-        // =========================================================================
-        LocalDriverPool.getPage().keyboard().press("Escape");
-        LOGGER.info("Step 3: Create Deploy Configuration dialog closed");
-
-        // =========================================================================
-        // STEP 4: Create deploy configuration DC1, select it, get initial revision
-        // =========================================================================
-        repositoryPage.createDeployConfiguration(nameDeployConf1);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Deploy Configurations")
-                .selectItemInFolder("Deploy Configurations", nameDeployConf1);
-
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String initialModifiedByDC1 = propsTab.getModifiedBy();
-        String initialModifiedAtDC1 = propsTab.getModifiedAt();
-        String initialRevisionDeployConf1 = initialModifiedByDC1 + ": " + initialModifiedAtDC1;
-        LOGGER.info("Step 4: Deploy configuration '{}' created, revision: {}", nameDeployConf1, initialRevisionDeployConf1);
-
-        // =========================================================================
-        // STEP 5: Try to create duplicate deploy config — expect error
-        // =========================================================================
-        repositoryPage.getCreateDeployConfigBtn().click();
-        repositoryPage.getConfigNameField().fillSequentially(nameDeployConf1);
-        repositoryPage.getCreateBtn().click();
-        List<String> messages = repositoryPage.getAllMessages();
-        assertThat(messages.stream().anyMatch(m -> m.contains("already exists")))
-                .as("Error about existing deploy configuration should appear, got: %s", messages)
-                .isTrue();
-        repositoryPage.closeAllMessages();
-        LOGGER.info("Step 5: Duplicate name validation passed");
-
-        // =========================================================================
-        // STEP 6: Try reserved word name "COM4" — expect error
-        // =========================================================================
-        repositoryPage.getCreateDeployConfigBtn().click();
-        repositoryPage.getConfigNameField().fillSequentially("COM4");
-        repositoryPage.getCreateBtn().click();
-        messages = repositoryPage.getAllMessages();
-        assertThat(messages.stream().anyMatch(m -> m.toLowerCase().contains("reserved")))
-                .as("Error about reserved words should appear, got: %s", messages)
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("COM4"))
-                .as("Deploy config 'COM4' should NOT exist in tree")
-                .isFalse();
-        repositoryPage.closeAllMessages();
-        LOGGER.info("Step 6: Reserved word validation passed");
-
-        // =========================================================================
-        // STEP 7: Try forbidden chars "$%^&*?" — expect error
-        // =========================================================================
-        repositoryPage.getCreateDeployConfigBtn().click();
-        repositoryPage.getConfigNameField().fillSequentially("$%^&*?");
-        repositoryPage.getCreateBtn().click();
-        messages = repositoryPage.getAllMessages();
-        assertThat(messages.stream().anyMatch(m -> m.toLowerCase().contains("forbidden")))
-                .as("Error about forbidden characters should appear, got: %s", messages)
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("$%^&*?"))
-                .as("Deploy config with forbidden chars should NOT exist in tree")
-                .isFalse();
-        repositoryPage.closeAllMessages();
-        LOGGER.info("Step 7: Forbidden characters validation passed");
-
-        // =========================================================================
-        // STEP 9: Try to deploy empty configuration — expect error
-        // (step 8 is covered in other tests)
-        // =========================================================================
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Deploy Configurations", nameDeployConf1);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
         DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
-        if (deployModal.isModalVisible()) {
-            deployModal.deployWithAllFields(null, nameDeployConf1, "empty deploy attempt");
-        }
-        messages = repositoryPage.getAllMessages();
-        assertThat(messages.stream().anyMatch(m -> m.contains("at least one project")))
-                .as("Error about deploy config without projects should appear, got: %s", messages)
-                .isTrue();
-        repositoryPage.closeAllMessages();
-        LOGGER.info("Step 9: Empty deploy validation passed");
-
-        // =========================================================================
-        // STEP 10: Add project, verify status, remove, re-add, save, verify
-        // =========================================================================
-        DeployConfigurationTabsComponent deployConfigTab =
-                repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab();
-        deployConfigTab.openProjectsToDeployTab();
-        deployConfigTab.addProject(nameProject, projectInitialRevision);
-
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getStatus()).isEqualTo("In Editing");
-
-        deployConfigTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab();
-        deployConfigTab.openProjectsToDeployTab();
-        deployConfigTab.removeProjectFromDeploy(nameProject);
-
-        deployConfigTab.openProjectsToDeployTab();
-        assertThat(deployConfigTab.getVisibleProjectsInDeployList())
-                .as("Projects list should be empty after removal")
-                .isEmpty();
-
-        deployConfigTab.addProject(nameProject, projectInitialRevision);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().saveDeploy();
-        WaitUtil.sleep(1000, "Wait for save to complete");
-
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getStatus()).isEqualTo("No Changes");
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isDeployButtonEnabled())
-                .as("Deploy button should be enabled after saving")
-                .isTrue();
-        LOGGER.info("Step 10: Add/remove/re-add project, save — all passed");
-
-        // =========================================================================
-        // STEP 11: Deploy DC1 to "Deployment" production repo, verify success
-        // =========================================================================
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        deployModal = repositoryPage.getDeployModalComponent();
-        deployModal.deployWithAllFields(null, nameDeployConf1, "First deploy to production");
+        deployModal.deployWithAllFields(null, deploymentName, "First deploy to production");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy should succeed with success notification")
                 .isTrue();
         repositoryPage.closeAllMessages();
-        LOGGER.info("Step 11: Deploy configuration '{}' deployed to production", nameDeployConf1);
+        LOGGER.info("Step 2: Project '{}' deployed to production as '{}'", nameProject, deploymentName);
 
         // =========================================================================
-        // STEP 12: Create dependent projects from zip, create complex DC, deploy
+        // STEP 3: Create dependent projects from zip and deploy them
+        // Legacy steps: 12 (adapted — deploy each project directly,
+        // dependencies resolved automatically by backend)
         // =========================================================================
         String nameDependentProject1 = "Tutorial 3 - More Advanced Decision and Data Tables";
         String nameDependentProject2 = "Tutorial 6 - Introduction to Spreadsheet Tables";
-        String zipPath1 = "test_data/TestNewDeployPopup/Tutorial 3 - More Advanced Decision and Data Tables.zip";
-        String zipPath2 = "test_data/TestNewDeployPopup/Tutorial 6 - Introduction to Spreadsheet Tables.zip";
+        String zipFile1 = "Tutorial 3 - More Advanced Decision and Data Tables.zip";
+        String zipFile2 = "Tutorial 6 - Introduction to Spreadsheet Tables.zip";
+        String deploymentNameComplex = StringUtil.generateUniqueName("ComplexDeploy");
 
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, nameDependentProject1, zipPath1);
+        // Create Tutorial 3
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
+                nameDependentProject1, zipFile1);
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", nameDependentProject1);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String revisionDependentProject1 = propsTab.getRevision();
 
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, nameDependentProject2, zipPath2);
+        // Deploy Tutorial 3 — backend auto-resolves dependency on Tutorial 6
+        // (Tutorial 6 doesn't exist yet, so we create Tutorial 6 first)
+        // Actually, create both projects first, then deploy
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
+                nameDependentProject2, zipFile2);
+
+        // Deploy Tutorial 3 (has dependency on Tutorial 6)
         repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameDependentProject2);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String revisionDependentProject2 = propsTab.getRevision();
-
-        repositoryPage.createDeployConfiguration(nameDeployConfComplex);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Deploy Configurations")
-                .selectItemInFolder("Deploy Configurations", nameDeployConfComplex);
-
-        deployConfigTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab();
-        deployConfigTab.openProjectsToDeployTab();
-        deployConfigTab.addProject(nameDependentProject1, revisionDependentProject1);
-
-        // Legacy step 12: verify dependency message for dependent project
-        deployConfigTab.openProjectsToDeployTab();
-        List<String> projectsInDeploy = deployConfigTab.getVisibleProjectsInDeployList();
-        LOGGER.info("Step 12: Projects in deploy list: {}", projectsInDeploy);
-
-        deployConfigTab.addProject(nameDependentProject2, revisionDependentProject2);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().saveDeploy();
-        WaitUtil.sleep(1000, "Wait for save");
-
+                .selectItemInFolder("Projects", nameDependentProject1);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
         deployModal = repositoryPage.getDeployModalComponent();
-        deployModal.deployWithAllFields(null, nameDeployConfComplex, "Complex deploy");
+        deployModal.deployWithAllFields(null, deploymentNameComplex, "Deploy dependent project");
         assertThat(deployModal.isSuccessNotificationVisible())
-                .as("Complex deploy should succeed")
+                .as("Deploy of dependent project should succeed")
                 .isTrue();
         repositoryPage.closeAllMessages();
-        LOGGER.info("Step 12: Complex deploy '{}' succeeded", nameDeployConfComplex);
+        LOGGER.info("Step 3: Dependent projects deployed as '{}'", deploymentNameComplex);
 
         // =========================================================================
-        // STEP 13: Edit project, save, verify DC still points to initial revision
+        // STEP 4: Edit project table, save — new revision
+        // Legacy steps: 13
         // =========================================================================
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
-        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Decision");
-        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", "Greeting1");
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(nameProject, "Bank Rating");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "CapitalDynamicScore");
 
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
-        editorPage.getCenterTable().editCell(2, 6, "1000");
+        editorPage.getCenterTable().editCell(6, 2, "1000");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         WaitUtil.sleep(1000, "Wait for table save");
 
@@ -405,54 +289,40 @@ public class TestNewDeployPopup extends BaseTest {
 
         propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         String projectUpdatedRevision = propsTab.getRevision();
-        LOGGER.info("Step 13: Project updated, new revision: {}", projectUpdatedRevision);
-
-        // Close project
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
-        try {
-            repositoryPage.getConfirmCloseProjectDialogComponent().clickClose();
-        } catch (Exception e) {
-            LOGGER.debug("Close confirmation not needed: {}", e.getMessage());
-        }
-        WaitUtil.sleep(1000, "Wait for project close");
-
-        // Verify DC1 still has initial revision
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Deploy Configurations")
-                .selectItemInFolder("Deploy Configurations", nameDeployConf1);
-        deployConfigTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab();
-        deployConfigTab.openProjectsToDeployTab();
-        LOGGER.info("Step 13: Verified DC still points to initial project revision");
+        assertThat(projectUpdatedRevision)
+                .as("Revision should change after edit")
+                .isNotEqualTo(projectInitialRevision);
+        LOGGER.info("Step 4: Project edited, new revision: {}", projectUpdatedRevision);
 
         // =========================================================================
-        // STEP 14: Update DC with new project revision, save, redeploy
+        // STEP 5: Redeploy project with updated revision
+        // Legacy steps: 14 (adapted — just deploy again, same deployment name)
         // =========================================================================
-        deployConfigTab.removeProjectFromDeploy(nameProject);
-        deployConfigTab.openProjectsToDeployTab();
-        deployConfigTab.addProject(nameProject, projectUpdatedRevision);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().saveDeploy();
-        WaitUtil.sleep(1000, "Wait for save");
-
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
         deployModal = repositoryPage.getDeployModalComponent();
-        deployModal.deployWithAllFields(null, nameDeployConf1, "Redeploy with updated revision");
+        deployModal.deployWithAllFields(null, deploymentName, "Redeploy with updated revision");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Redeploy should succeed")
                 .isTrue();
         repositoryPage.closeAllMessages();
-        LOGGER.info("Step 14: DC1 redeployed with updated project revision");
+        LOGGER.info("Step 5: Project redeployed with updated revision");
 
         // =========================================================================
-        // STEP 15: Edit old revision, resolve conflict, deploy
+        // STEP 6: Edit again, resolve conflict if it occurs, deploy
+        // Legacy steps: 15 (conflict arose from DC save changing repo state;
+        // in new flow conflict may not occur — we handle both cases)
         // =========================================================================
-        editorPage = new EditorPage();
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProject);
-        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Decision");
-        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", "Greeting1");
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(nameProject, "Bank Rating");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "CapitalDynamicScore");
 
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
-        editorPage.getCenterTable().editCell(2, 6, "2000");
+        editorPage.getCenterTable().editCell(6, 2, "2000");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         WaitUtil.sleep(1000, "Wait for table save");
 
@@ -463,106 +333,72 @@ public class TestNewDeployPopup extends BaseTest {
                 .selectItemInFolder("Projects", nameProject);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        WaitUtil.sleep(1000, "Wait for save dialog");
+        WaitUtil.sleep(1000, "Wait for save");
 
-        // Resolve conflicts with "Use Yours"
+        // Resolve conflict if it appears (legacy behavior from DC save)
         if (repositoryPage.getResolveConflictsDialogComponent().isDialogVisible()) {
             repositoryPage.getResolveConflictsDialogComponent().resolveConflictUseYours();
-            LOGGER.info("Step 15: Conflict resolved using 'Use Yours'");
+            LOGGER.info("Step 6: Conflict resolved using 'Use Yours'");
+        } else {
+            LOGGER.info("Step 6: No conflict occurred (expected in new deploy flow)");
         }
 
         propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         String projectSecondUpdatedRevision = propsTab.getRevision();
-        LOGGER.info("Step 15: Second updated revision: {}", projectSecondUpdatedRevision);
+        assertThat(projectSecondUpdatedRevision)
+                .as("Revision should change after second edit")
+                .isNotEqualTo(projectUpdatedRevision);
+        LOGGER.info("Step 6: Second edit done, revision: {}", projectSecondUpdatedRevision);
 
-        // Deploy
+        // Deploy after edit
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
         deployModal = repositoryPage.getDeployModalComponent();
-        deployModal.deployWithAllFields(null, nameDeployConf1, "Deploy after conflict resolution");
+        deployModal.deployWithAllFields(null, deploymentName, "Deploy after second edit");
         assertThat(deployModal.isSuccessNotificationVisible())
-                .as("Deploy after conflict resolution should succeed")
+                .as("Deploy after second edit should succeed")
                 .isTrue();
         repositoryPage.closeAllMessages();
-
-        // Verify DC has updated revision
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Deploy Configurations", nameDeployConf1);
-        LOGGER.info("Step 15: Deploy after conflict resolution completed");
+        LOGGER.info("Step 6: Deployed after second edit");
 
         // =========================================================================
-        // STEP 16: Add another project to DC1, save, deploy
+        // STEP 7: Create and deploy another project (Tutorial 2)
+        // Legacy steps: 16 (adapted — deploy directly, not via DC)
         // =========================================================================
         String nameProjectTutorial2 = "Tutorial 2 - Introduction to Data Tables";
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProjectTutorial2,
-                nameProjectTutorial2);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,
+                nameProjectTutorial2, nameProjectTutorial2);
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", nameProjectTutorial2);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String revisionTutorial2 = propsTab.getRevision();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Deploy Configurations")
-                .selectItemInFolder("Deploy Configurations", nameDeployConf1);
-        deployConfigTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectDeployConfigTab();
-        deployConfigTab.openProjectsToDeployTab();
-        deployConfigTab.addProject(nameProjectTutorial2, revisionTutorial2);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().saveDeploy();
-        WaitUtil.sleep(1000, "Wait for save");
 
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
         deployModal = repositoryPage.getDeployModalComponent();
-        deployModal.deployWithAllFields(null, nameDeployConf1, "Deploy with additional project");
+        deployModal.deployWithAllFields(null, nameProjectTutorial2, "Deploy Tutorial 2");
         assertThat(deployModal.isSuccessNotificationVisible())
-                .as("Deploy with additional project should succeed")
+                .as("Deploy of Tutorial 2 should succeed")
                 .isTrue();
         repositoryPage.closeAllMessages();
-        LOGGER.info("Step 16: DC1 redeployed with '{}'", nameProjectTutorial2);
+        LOGGER.info("Step 7: Tutorial 2 deployed");
 
         // =========================================================================
-        // STEP 17: Close DC, verify status, open old revision
+        // STEP 8: Verify deployed rules accessible via WebService REST endpoint
+        // Legacy steps: 18
         // =========================================================================
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Deploy Configurations", nameDeployConf1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
-        WaitUtil.sleep(1000, "Wait for close");
-
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getStatus()).isEqualTo("Closed");
-
-        // Open old revision
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        WaitUtil.sleep(1000, "Wait for project to reopen");
-
-        LOGGER.info("Step 17: Deploy config closed and reopened — all 17 steps completed");
-
-        // =========================================================================
-        // STEP 18: Verify deployed rules are accessible via WebService REST endpoint
-        // After all deploys, WS should have picked up the rules from PostgreSQL.
-        // We verify by calling the REST endpoint for the Bank Rating project
-        // deployed through DC1.
-        // =========================================================================
-        verifyDeployedRulesAccessibleViaWebService(nameDeployConf1, nameProject);
-        LOGGER.info("Step 18: WebService REST verification completed — all 18 steps done");
+        verifyDeployedRulesAccessibleViaWebService(deploymentName, nameProject);
+        LOGGER.info("Step 8: WebService REST verification completed — all steps done");
     }
 
-    private void verifyDeployedRulesAccessibleViaWebService(String deployConfigName, String projectName) {
+    private void verifyDeployedRulesAccessibleViaWebService(String deploymentName, String projectName) {
         String wsBaseUrl = String.format("http://localhost:%d", wsContainer.getMappedPort(WS_PORT));
-        String encodedProjectName = URLEncoder.encode(projectName, StandardCharsets.UTF_8);
         String serviceListUrl = wsBaseUrl + "/webservice";
-        String restUrl = wsBaseUrl + "/webservice/REST/"
-                + URLEncoder.encode(deployConfigName, StandardCharsets.UTF_8)
-                + "/" + encodedProjectName;
 
-        LOGGER.info("Step 18: Verifying deployed rules via WS. Service list: {}", serviceListUrl);
-        LOGGER.info("Step 18: REST base URL: {}", restUrl);
+        LOGGER.info("Verifying deployed rules via WS. Service list: {}", serviceListUrl);
 
         HttpClient httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
 
         // Wait for WS to pick up deployed rules (polling delay is 2 seconds)
-        // Retry up to 30 seconds with 3-second intervals
         boolean serviceFound = false;
         for (int attempt = 1; attempt <= 10; attempt++) {
             try {
@@ -571,26 +407,31 @@ public class TestNewDeployPopup extends BaseTest {
                         .timeout(Duration.ofSeconds(10))
                         .GET()
                         .build();
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = httpClient.send(request,
+                        HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200 && response.body().contains(projectName)) {
                     serviceFound = true;
-                    LOGGER.info("Step 18: Service '{}' found in WS service list (attempt {})", projectName, attempt);
+                    LOGGER.info("Service '{}' found in WS (attempt {})", projectName, attempt);
                     break;
                 }
-                LOGGER.info("Step 18: Service not yet visible in WS (attempt {}/10), waiting...", attempt);
+                LOGGER.info("Service not yet visible in WS (attempt {}/10)", attempt);
             } catch (Exception e) {
-                LOGGER.info("Step 18: WS not ready (attempt {}/10): {}", attempt, e.getMessage());
+                LOGGER.info("WS not ready (attempt {}/10): {}", attempt, e.getMessage());
             }
             WaitUtil.sleep(3000, "Waiting for WS to pick up deployed rules");
         }
         assertThat(serviceFound)
-                .as("Deployed project '%s' should be visible in WebService service list within 30 seconds", projectName)
+                .as("Deployed project '%s' should appear in WS service list within 30s",
+                        projectName)
                 .isTrue();
 
-        // Verify REST endpoint returns valid response (getBankData method)
-        String getBankDataUrl = restUrl + "/getBankData";
-        LOGGER.info("Step 18: Calling REST endpoint: {}", getBankDataUrl);
+        // Call REST endpoint for Bank Rating project (getBankData method)
+        // WS exposes services under deployment name, so URL is:
+        // /webservice/REST/{deploymentName}/{projectName}/getBankData
+        String getBankDataUrl = wsBaseUrl + "/webservice/REST/"
+                + deploymentName + "/" + projectName + "/getBankData";
+        LOGGER.info("Calling REST endpoint: {}", getBankDataUrl);
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(getBankDataUrl))
@@ -598,8 +439,9 @@ public class TestNewDeployPopup extends BaseTest {
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{}"))
                     .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            LOGGER.info("Step 18: REST response status: {}, body length: {}",
+            HttpResponse<String> response = httpClient.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+            LOGGER.info("REST response: status={}, bodyLength={}",
                     response.statusCode(), response.body().length());
             assertThat(response.statusCode())
                     .as("REST endpoint getBankData should return 200 OK")
@@ -608,7 +450,7 @@ public class TestNewDeployPopup extends BaseTest {
                     .as("REST response should contain bank data")
                     .isNotEmpty();
         } catch (Exception e) {
-            throw new AssertionError("Failed to call WebService REST endpoint: " + e.getMessage(), e);
+            throw new AssertionError("Failed to call WS REST endpoint: " + e.getMessage(), e);
         }
     }
 }

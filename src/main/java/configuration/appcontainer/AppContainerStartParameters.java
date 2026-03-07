@@ -23,12 +23,12 @@ public enum AppContainerStartParameters {
                 break;
             case DEPLOY_STUDIO_PARAMS:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
-                config.put("production-repository-configs", "production");
-                config.put("repository.production.name", "Deployment");
-                config.put("repository.production.$$ref", "repo-jdbc");
-                config.put("repository.production.uri", "jdbc:postgresql://postgres:5432/openl?currentSchema=repository");
-                config.put("repository.production.login", "openl");
-                config.put("repository.production.password", "openl");
+                // Production repository config is passed via .properties file
+                // (not env vars) because WebStudio's $$ref syntax requires it.
+                // The .properties file is created dynamically in the test's
+                // beforeMethod and copied into the container via additionalContainerFiles.
+                // We only need to ensure base env vars (user.mode, security.administrators)
+                // are present — those come from DEFAULT_STUDIO_PARAMS.
                 break;
             case STUDIO_GIT:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());

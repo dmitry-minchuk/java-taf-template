@@ -48,6 +48,9 @@ public class AppContainerFactory {
     private static MountableFile getMountableFile(String resourcePath) {
         File file = new File(resourcePath);
         Path path = file.toPath();
-        return MountableFile.forHostPath(path);
+        // Use file mode 0666 (owner rw, group rw, others rw) to ensure
+        // container users (e.g. openl uid=1000) can read AND write copied files.
+        // WebStudio's Migrator writes back to .properties after migration.
+        return MountableFile.forHostPath(path, 0666);
     }
 }

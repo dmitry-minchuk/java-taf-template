@@ -93,28 +93,32 @@ public class WebElement {
         locator.click(new Locator.ClickOptions().setForce(true).setTimeout(timeoutInMillis));
     }
 
-    public void doubleClick() {
+    public WebElement doubleClick() {
         isVisible();
         LOGGER.info("Double clicking {} ", elementName);
         locator.dblclick();
+        return this;
     }
 
-    public void press(String key) {
+    public WebElement press(String key) {
         isVisible();
         LOGGER.info("Pressing {} on {}", key, elementName);
         locator.press(key);
+        return this;
     }
     
-    public void fill(String text) {
+    public WebElement fill(String text) {
         isVisible();
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
         locator.fill(text);
+        return this;
     }
 
-    public void fillSequentially(String text) {
+    public WebElement fillSequentially(String text) {
         isVisible();
         LOGGER.info("Filling Sequentially {} with text: '{}'", elementName, text);
         locator.pressSequentially(text);
+        return this;
     }
     
     public String getText() {
