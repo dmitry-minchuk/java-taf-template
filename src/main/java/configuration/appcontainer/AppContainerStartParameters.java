@@ -9,6 +9,7 @@ import java.util.Map;
 public enum AppContainerStartParameters {
     EMPTY,
     DEFAULT_STUDIO_PARAMS,
+    DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
     SAML_STUDIO_PARAMS,
     OAUTH_STUDIO_PARAMS,
@@ -19,6 +20,15 @@ public enum AppContainerStartParameters {
         switch (this) {
             case EMPTY:
                 config.put("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0");
+                break;
+            case DEPLOY_STUDIO_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                // Production repository config is passed via .properties file
+                // (not env vars) because WebStudio's $$ref syntax requires it.
+                // The .properties file is created dynamically in the test's
+                // beforeMethod and copied into the container via additionalContainerFiles.
+                // We only need to ensure base env vars (user.mode, security.administrators)
+                // are present — those come from DEFAULT_STUDIO_PARAMS.
                 break;
             case STUDIO_GIT:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());

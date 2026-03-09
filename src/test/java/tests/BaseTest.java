@@ -92,19 +92,27 @@ public abstract class BaseTest implements ITest {
     private void initializePlaywrightLocalTest(ITestResult result) {
         LOGGER.info("Initializing test with Playwright: {}", result.getMethod().getMethodName());
 
-        // Set up app container first
-        setupAppContainer(result, null);
+        // If the test pre-registered a network (e.g. for multi-container scenarios like deploy tests),
+        // reuse it so that app container joins the same Docker network as other containers.
+        Network network = NetworkPool.getNetwork();
 
-        // Initialize Playwright through unified interface (no network needed for Phase 1)
-        LocalDriverPool.initializePlaywright(null);
+        // Set up app container (with or without network)
+        setupAppContainer(result, network);
+
+        // Initialize Playwright through unified interface
+        LocalDriverPool.initializePlaywright(network);
     }
 
     private void initializePlaywrightDockerTest(ITestResult result) {
         LOGGER.info("Initializing test with Playwright Docker: {}", result.getMethod().getMethodName());
 
-        // Create Docker network for container communication
-        Network network = Network.newNetwork();
-        NetworkPool.setNetwork(network);
+        // Reuse network if the test already created one (e.g. for multi-container scenarios),
+        // otherwise create a new one for app + Playwright communication.
+        Network network = NetworkPool.getNetwork();
+        if (network == null) {
+            network = Network.newNetwork();
+            NetworkPool.setNetwork(network);
+        }
 
         // Set up app container with network
         setupAppContainer(result, network);
@@ -218,6 +226,11 @@ public abstract class BaseTest implements ITest {
 
         // Close app container
         AppContainerPool.closeAppContainer();
+
+        // Close network if one was pre-registered by the test (e.g. multi-container scenarios)
+        if (NetworkPool.getNetwork() != null) {
+            NetworkPool.closeNetwork();
+        }
     }
 
     private void cleanupPlaywrightDockerTest(ITestResult result) {

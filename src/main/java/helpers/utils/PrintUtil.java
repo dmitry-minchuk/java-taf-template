@@ -1,5 +1,8 @@
 package helpers.utils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -14,4 +17,17 @@ public class PrintUtil {
         });
         return sb.toString();
     };
+
+    public static String prettyPrintJson(String json) {
+        if (json == null || json.isBlank()) return json;
+        try {
+            String trimmed = json.trim();
+            if (trimmed.startsWith("[")) {
+                return new JSONArray(trimmed).toString(4);
+            }
+            return new JSONObject(trimmed).toString(4);
+        } catch (Exception e) {
+            return json;
+        }
+    }
 }

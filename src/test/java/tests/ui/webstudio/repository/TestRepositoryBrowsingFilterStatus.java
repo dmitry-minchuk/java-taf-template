@@ -120,9 +120,8 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
                 .as("Newly created project status should be 'No Changes'")
                 .isEqualTo("No Changes");
 
-        // [DEPLOY BLOCKED] Step 8: Create Deploy Configuration and verify its table (5 columns: no Branch)
-        // Requires: repositoryPage.createDeployConfiguration(), deploy config tree navigation.
-        // When unblocked: verify 5-column table for deploy config, and tabs contain "Projects to Deploy".
+        // [SKIPPED] Step 8: Deploy Configuration was removed from WebStudio (EPBDS-15093).
+        // Deploy now works directly from project via DeployModal.
 
         // ===== Step 9: Put project into "In Editing" state via Editor =====
         editorPage = repositoryPage.getTabSwitcherComponent()

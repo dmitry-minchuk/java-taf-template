@@ -14,18 +14,16 @@ import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentT
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import configuration.projectconfig.ProjectConfiguration;
-import configuration.projectconfig.PropertyNameSpace;
+import helpers.utils.DbVerificationUtil;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
-
-import helpers.utils.DbVerificationUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,14 +40,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * The container is configured as the Studio's users/security database via app container env vars,
  * demonstrating JDBC integration. Since each test gets a fresh container, clearDB() is not needed.
  *
- * The PostgreSQL container URL uses host.docker.internal so the app Docker container can reach it.
+ * All containers share a Docker network (created here and registered in NetworkPool).
+ * The app container joins the same network via BaseTest support for pre-registered networks.
+ * PostgreSQL is accessible via Docker DNS alias "postgres" — no host.docker.internal dependency.
  */
 public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
-    private PostgreSQLContainer<?> postgresContainer;
+    private DeployInfrastructureService deployInfra;
 
     private final String nameProjectDesign = "ProjectDesignRepo";
     private final String nameProjectDesign1 = "ProjectDesign1Repo";
@@ -60,20 +60,13 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         additionalContainerConfig.clear();
         additionalContainerFiles.clear();
 
-        LOGGER.info("Starting PostgreSQL container for JDBC integration test...");
-        postgresContainer = new PostgreSQLContainer<>(ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_CONTAINER_IMAGE));
-        postgresContainer.start();
+        deployInfra = DeployInfrastructureService.builder()
+                .withPostgresAsSecurityDb()
+                .build();
+        deployInfra.start();
 
-        int pgPort = postgresContainer.getMappedPort(5432);
-        String pgJdbcUrl = "jdbc:postgresql://" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_CONTAINER_HOST) + ":" + pgPort + "/" + postgresContainer.getDatabaseName();
-        LOGGER.info("PostgreSQL container started. JDBC URL (for app container): {}", pgJdbcUrl);
-
-        additionalContainerConfig.put("db.url", pgJdbcUrl);
-        additionalContainerConfig.put("db.user", postgresContainer.getUsername());
-        additionalContainerConfig.put("db.password", postgresContainer.getPassword());
-
-        String pgJarPath = System.getProperty("user.home") + "/" + ProjectConfiguration.getProperty(PropertyNameSpace.DB_POSTGRES_JAR_MAVEN_PATH);
-        additionalContainerFiles.put(pgJarPath, "/opt/openl/lib/postgresql.jar");
+        additionalContainerConfig.putAll(deployInfra.getContainerConfig());
+        additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
 
         super.beforeMethod(result);
     }
@@ -82,9 +75,8 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
     @AfterMethod
     public void afterMethod(ITestResult result) {
         super.afterMethod(result);
-        if (postgresContainer != null && postgresContainer.isRunning()) {
-            LOGGER.info("Stopping PostgreSQL container...");
-            postgresContainer.stop();
+        if (deployInfra != null) {
+            deployInfra.cleanup();
         }
     }
 
@@ -328,10 +320,11 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
     }
 
     private void verifyPostgresContainsOpenLTables() {
+        PostgreSQLContainer<?> pg = deployInfra.getPostgresContainer();
         List<String> tables = DbVerificationUtil.queryTableNames(
-                postgresContainer.getJdbcUrl(),
-                postgresContainer.getUsername(),
-                postgresContainer.getPassword(),
+                pg.getJdbcUrl(),
+                pg.getUsername(),
+                pg.getPassword(),
                 "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name LIKE 'openl_%' ORDER BY table_name");
         assertThat(tables)
                 .as("PostgreSQL should contain OpenL security tables — proves it's used instead of embedded H2")

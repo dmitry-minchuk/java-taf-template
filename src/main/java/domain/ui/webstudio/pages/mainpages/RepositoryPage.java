@@ -35,10 +35,6 @@ public class RepositoryPage extends BasePage {
     private WebElement advancedFilterBtn;
     private WebElement hideDeletedCheckbox;
     private WebElement applyFilterBtn;
-    private WebElement createDeployConfigBtn;
-    // createDeployConfigBtn-related elements (I did not create a component for that):
-    private WebElement configNameField;
-    private WebElement createBtn;
     // other components:
     private CreateNewProjectComponent createNewProjectComponent;
     private ConfigureCommitInfoComponent configureCommitInfoComponent;
@@ -77,9 +73,6 @@ public class RepositoryPage extends BasePage {
     private void initializeComponents() {
         createProjectLink = new WebElement(page, "xpath=//div[@id='top']//a[contains(text(), 'Create Project')]", "createProjectLink");
         refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
-        createDeployConfigBtn = new WebElement(page, "xpath=//a[contains(text(),'Create Deploy Configuration')]", "createDeployConfigBtnLocator");
-        configNameField = new WebElement(page, "xpath=//input[@id='newDProjectForm:projectName']", "configNameFieldLocator");
-        createBtn = new WebElement(page, "xpath=//input[@id='newDProjectForm:createBtn']", "createBtnLocator");
 
         filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
         clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
@@ -184,13 +177,6 @@ public class RepositoryPage extends BasePage {
             workspaceComponent.selectAllProjects().save();
         else
             workspaceComponent.selectAllProjects().selectRepository(repository).save();
-    }
-
-    public void createDeployConfiguration(String configName) {
-        createDeployConfigBtn.click();
-        configNameField.fillSequentially(configName);
-        createBtn.click();
-        refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 
     public void unlockAllProjects() {

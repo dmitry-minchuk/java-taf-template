@@ -18,7 +18,7 @@ public class NetworkPool {
         threadLocalNetwork.remove();
     }
 
-    public static Network getDriver() {
+    public static Network getNetwork() {
         return threadLocalNetwork.get();
     }
 }

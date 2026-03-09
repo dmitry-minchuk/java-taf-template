@@ -70,9 +70,9 @@ public class DeployModalComponent extends BaseComponent {
 
     public DeployModalComponent fillDeploymentName(String name) {
         deploymentNameSelect.click();
-        deploymentNameSearchInput.fillSequentially(name);
+        deploymentNameSearchInput.fillSequentially(name).press("Tab");
         // Click outside to trigger onBlur which sets the new deployment name
-        commentTextarea.click();
+        //commentTextarea.click();
         return this;
     }
 
