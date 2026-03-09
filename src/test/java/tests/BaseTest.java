@@ -94,7 +94,7 @@ public abstract class BaseTest implements ITest {
 
         // If the test pre-registered a network (e.g. for multi-container scenarios like deploy tests),
         // reuse it so that app container joins the same Docker network as other containers.
-        Network network = NetworkPool.getDriver();
+        Network network = NetworkPool.getNetwork();
 
         // Set up app container (with or without network)
         setupAppContainer(result, network);
@@ -108,7 +108,7 @@ public abstract class BaseTest implements ITest {
 
         // Reuse network if the test already created one (e.g. for multi-container scenarios),
         // otherwise create a new one for app + Playwright communication.
-        Network network = NetworkPool.getDriver();
+        Network network = NetworkPool.getNetwork();
         if (network == null) {
             network = Network.newNetwork();
             NetworkPool.setNetwork(network);
@@ -228,7 +228,7 @@ public abstract class BaseTest implements ITest {
         AppContainerPool.closeAppContainer();
 
         // Close network if one was pre-registered by the test (e.g. multi-container scenarios)
-        if (NetworkPool.getDriver() != null) {
+        if (NetworkPool.getNetwork() != null) {
             NetworkPool.closeNetwork();
         }
     }

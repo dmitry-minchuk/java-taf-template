@@ -2,7 +2,7 @@
 
 A Java test automation framework built with **Playwright**, **TestNG**, **TestContainers**, and modern testing technologies. This framework supports both local and Docker-based execution modes with unified driver management.
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
 Components → DriverPool (Unified Interface)
@@ -18,18 +18,19 @@ Components → DriverPool (Unified Interface)
     Download: DownloadUtil (mode-aware)
 ```
 
-## ✨ Key Features
+## Key Features
 
 - **Dual Execution Modes**: `PLAYWRIGHT_LOCAL` (default) and `PLAYWRIGHT_DOCKER` with automatic detection
 - **Unified Driver Pool**: Single interface for both execution modes
 - **TestContainers Integration**: Application containers with network isolation
+- **Multi-Container Infrastructure**: `DeployInfrastructureService` for tests requiring DB + WebService containers
 - **Parallel Test Execution**: TestNG parallel execution with configurable thread counts
 - **Report Portal Integration**: Enhanced reporting with screenshots, videos, and logs
 - **Comprehensive Configuration**: Property-based configuration with environment override support
 - **Cross-Browser Support**: Chromium, Firefox, and WebKit browsers
 - **File Upload/Download Support**: Mode-aware file operations with volume mapping
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -55,7 +56,7 @@ Components → DriverPool (Unified Interface)
    docker pull ghcr.io/openl-tablets/webstudio:6.0.0-d0f5599b68ba
    ```
 
-## 📋 Test Execution Guide
+## Test Execution Guide
 
 ### Execution Modes
 
@@ -119,7 +120,146 @@ Look for log entries indicating parallel execution:
 [TestNG-test-2] [INFO] Initializing test with Playwright: testPlaywrightUserSettings
 ```
 
-## ⚙️ Configuration
+## Container Networking (Docker DNS)
+
+All multi-container tests use **Docker DNS** via a shared `Network` object. No `host.docker.internal` dependency. This works on Linux CI without extra configuration.
+
+### How Containers Join the Same Network
+
+The entire mechanism is built on **one `Network` Java object** passed through `NetworkPool` (a ThreadLocal storage):
+
+```
+Test.beforeMethod()
+│
+├── 1. DeployInfrastructureService.start()
+│       ├── network = Network.newNetwork()         // create Docker network
+│       ├── NetworkPool.setNetwork(network)         // store in ThreadLocal
+│       ├── postgresContainer.withNetwork(network)  // DB joins the network
+│       └── wsContainer.withNetwork(network)        // WS joins the network
+│
+└── 2. super.beforeMethod()  →  BaseTest
+        ├── network = NetworkPool.getNetwork()      // read SAME object from ThreadLocal
+        └── setupAppContainer(result, network)
+                └── AppContainerFactory.createContainer(name, network, ...)
+                        └── container.withNetwork(network)  // App joins the SAME network
+```
+
+All containers call `.withNetwork(network)` with the **same Java object**, so Docker places them in one Docker network. `.withNetworkAliases("postgres")` / `.withNetworkAliases("wscontainer")` sets DNS names by which containers discover each other.
+
+`NetworkPool` is just a **transfer point** between `Test.beforeMethod()` (where network is created) and `BaseTest.beforeMethod()` (where it is read for the app container). Without it, `BaseTest` would not know which network to use.
+
+### How Extra Configuration Reaches the App Container
+
+`BaseTest.setupAppContainer()` uses **reflection** to pick up two static fields from the test class:
+
+| Field Name | Type | Purpose |
+|---|---|---|
+| `additionalContainerFiles` | `Map<String, String>` | Files to copy into container (host path -> container path) |
+| `additionalContainerConfig` | `Map<String, String>` | Extra env vars to pass to the container |
+
+The test populates these maps in `beforeMethod()` **before** calling `super.beforeMethod()`, and `BaseTest` reads them via `getDeclaredField()` + `setAccessible(true)`:
+
+```java
+// In test class:
+private static final Map<String, String> additionalContainerConfig = new HashMap<>();
+private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+@Override
+@BeforeMethod
+public void beforeMethod(ITestResult result) {
+    additionalContainerConfig.clear();
+    additionalContainerFiles.clear();
+
+    deployInfra = DeployInfrastructureService.builder()
+            .withPostgresAsSecurityDb()
+            .build();
+    deployInfra.start();
+
+    additionalContainerConfig.putAll(deployInfra.getContainerConfig());
+    additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
+
+    super.beforeMethod(result);  // BaseTest reads both maps via reflection
+}
+```
+
+## DeployInfrastructureService
+
+`helpers.service.DeployInfrastructureService` encapsulates all Docker infrastructure setup for multi-container tests. Builder pattern, supports PostgreSQL, Oracle, and WebService containers.
+
+### Why This Service Exists
+
+Multi-container tests (deploy to production, JDBC repositories, security DB) require 20-90 lines of boilerplate: network creation, DB container start, schema creation, JDBC JAR paths, `.properties` file generation, WS container with healthcheck, env vars. This service eliminates duplication.
+
+### Usage Patterns
+
+```java
+// 1. PostgreSQL as production repo + WebService container (TestNewDeployPopup):
+deployInfra = DeployInfrastructureService.builder()
+    .withPostgres().withWsContainer().build();
+
+// 2. Oracle as deployment repo (TestDeploymentConfigurationRepositoryConnection):
+deployInfra = DeployInfrastructureService.builder()
+    .withOracle().build();
+
+// 3. PostgreSQL as security DB (TestMultipleDesignRepositoriesWithPostgres):
+deployInfra = DeployInfrastructureService.builder()
+    .withPostgresAsSecurityDb().build();
+```
+
+### PostgreSQL Modes
+
+| | PRODUCTION_REPO | SECURITY_DB |
+|---|---|---|
+| DB name | `openl` | container default (`test`) |
+| Credentials | `openl/openl` | container defaults |
+| Schema | `CREATE SCHEMA repository` | none |
+| `.properties` file | generated and copied | none |
+| `getFilesToCopy()` | pgJar + `.properties` | pgJar only |
+| `getContainerConfig()` | empty map | `db.url`, `db.user`, `db.password` |
+
+### Why Production Repo Needs a `.properties` File (Not Env Vars)
+
+The production repository configuration uses OpenL's `$$ref` syntax to inherit settings from a predefined template:
+
+```properties
+production-repository-configs = production
+repository.production.name = Deployment
+repository.production.$$ref = repo-jdbc
+repository.production.uri = jdbc:postgresql://postgres:5432/openl?currentSchema=repository
+repository.production.login = openl
+repository.production.password = openl
+```
+
+The `$$ref` key contains `$$` characters that **cannot be passed as Docker env vars** (Docker `-e` does not support `$$` in key names) and **cannot be passed as JVM system properties** via `JAVA_OPTS`. The only way to deliver this configuration to the container is a **file mounted to `/opt/openl/shared/.properties`**.
+
+In contrast, the security DB mode uses simple flat keys (`db.url`, `db.user`, `db.password`) that work fine as env vars through `additionalContainerConfig`.
+
+### Public API
+
+| Method | Returns | Description |
+|---|---|---|
+| `start()` | void | Creates network, starts all configured containers |
+| `cleanup()` | void | Stops all running containers |
+| `getFilesToCopy()` | `Map<String, String>` | Files for `additionalContainerFiles` (JDBC JAR, `.properties`) |
+| `getContainerConfig()` | `Map<String, String>` | Env vars for `additionalContainerConfig` (security DB mode) |
+| `getWsContainer()` | `GenericContainer<?>` | Access WS container (for API calls) |
+| `getPostgresContainer()` | `PostgreSQLContainer<?>` | Access PG container (for DB verification) |
+| `getOracleContainer()` | `OracleContainer` | Access Oracle container (for DB verification) |
+| `getOracleJdbcUrl()` | `String` | In-network Oracle JDBC URL |
+
+## API Layer for WebService Verification
+
+`domain.api.GetWsServicesMethod` calls the WebService container's `/admin/services` endpoint to verify deployed rules.
+
+### Key Discovery: WS REST URL Pattern
+
+The Docker WS image deploys the application to `webapps/ROOT` (root context `/`), not `/webservice` as in the legacy WAR-based approach.
+
+- **Service list**: `GET /admin/services` (returns JSON array)
+- **REST method call**: `GET /{deploymentName}/{projectName}/{method}` (no `/REST/` prefix when only RESTFUL publisher is active, which is the default)
+- **Service names** in the API follow the format `{deploymentName}_{projectName}`
+
+## Configuration
 
 ### Core Configuration (`src/test/resources/config.properties`)
 
@@ -173,7 +313,7 @@ System properties override configuration file values:
 mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dbrowser=firefox -Dplaywright_default_timeout=10000
 ```
 
-## 🏢 Project Structure
+## Project Structure
 
 ```
 ├── src/
@@ -184,17 +324,17 @@ mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dbrowser=firefox -Dplaywright_defau
 │   │   │   ├── core/ui/               # Core UI components (WebElement, CoreComponent)
 │   │   │   ├── driver/                # Driver pools (LocalDriverPool, DockerDriverPool)
 │   │   │   ├── listeners/             # TestNG listeners and retry analyzers
-│   │   │   ├── network/               # Docker network management
+│   │   │   ├── network/               # Docker network management (NetworkPool)
 │   │   │   └── projectconfig/         # Configuration management
 │   │   ├── domain/
-│   │   │   ├── api/                   # API test methods
+│   │   │   ├── api/                   # API test methods (GetWsServicesMethod, etc.)
 │   │   │   ├── serviceclasses/        # Service classes and constants
 │   │   │   └── ui/webstudio/         # Page objects and components
 │   │   │       ├── components/        # UI components by functionality
 │   │   │       └── pages/             # Page objects
 │   │   └── helpers/
-│   │       ├── service/               # Business logic services
-│   │       └── utils/                 # Utility classes
+│   │       ├── service/               # Business logic services (DeployInfrastructureService, etc.)
+│   │       └── utils/                 # Utility classes (PrintUtil, WaitUtil, etc.)
 │   └── test/
 │       ├── java/tests/
 │       │   ├── BaseTest.java          # Base test class with setup/teardown
@@ -205,7 +345,7 @@ mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dbrowser=firefox -Dplaywright_defau
 │           └── test_data/             # Test data files
 ```
 
-## 🧪 Writing Tests
+## Writing Tests
 
 ### Basic Test Class
 
@@ -215,19 +355,14 @@ mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dbrowser=firefox -Dplaywright_defau
 @Description("Test admin email configuration")
 @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
 public void testAdminEmail() {
-    // Login and navigate
-    String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "test-project.zip");
-    
-    // Use page objects
-    AdminPage adminPage = new AdminPage();
-    adminPage.navigateToEmailSettings();
-    
-    // Use components  
+    EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+            .login(UserService.getUser(User.ADMIN));
+
+    AdminPage adminPage = editorPage.navigateToAdmin();
     EmailPageComponent emailComponent = adminPage.getEmailPageComponent();
     emailComponent.setEmailUrl("smtp.example.com");
     emailComponent.applySettings();
-    
-    // Assertions
+
     assertThat(emailComponent.isSettingsSaved()).isTrue();
 }
 ```
@@ -235,10 +370,9 @@ public void testAdminEmail() {
 ### Container Configuration
 
 ```java
-// use exact additionalContainerConfig named field to create additional parameters which will be added on runtime by reflection in BaseTest
-private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
-        Map.entry("production-repository.base.path", "TestWebservicesDeployUI")
-));
+// Use exact field names — BaseTest reads them via reflection
+private static final Map<String, String> additionalContainerConfig = new HashMap<>();
+private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
 // Use annotation for container setup
 @AppContainerConfig(
@@ -250,6 +384,46 @@ private static final Map<String, String> additionalContainerConfig = new HashMap
 // Or use different configurations
 @AppContainerConfig(startParams = AppContainerStartParameters.SAML_STUDIO_PARAMS)
 @AppContainerConfig(startParams = AppContainerStartParameters.OAUTH_STUDIO_PARAMS)
+```
+
+### Multi-Container Test (Deploy Infrastructure)
+
+```java
+public class TestNewDeployPopup extends BaseTest {
+
+    private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+    private DeployInfrastructureService deployInfra;
+
+    @Override
+    @BeforeMethod
+    public void beforeMethod(ITestResult result) {
+        additionalContainerFiles.clear();
+
+        deployInfra = DeployInfrastructureService.builder()
+                .withPostgres().withWsContainer().build();
+        deployInfra.start();
+
+        additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
+
+        super.beforeMethod(result);
+    }
+
+    @Override
+    @AfterMethod
+    public void afterMethod(ITestResult result) {
+        super.afterMethod(result);
+        if (deployInfra != null) {
+            deployInfra.cleanup();
+        }
+    }
+
+    @Test
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
+    public void testNewDeployPopup() {
+        // All containers (postgres, wscontainer, appcontainer) are in the same network
+        // and can reach each other via Docker DNS aliases
+    }
+}
 ```
 
 ### File Operations
@@ -303,7 +477,6 @@ public class TestWithDataProvider extends BaseTest {
     @Test(dataProvider = "ProjectData")
     public void testMultipleProjects(String path1, String path2, String path3) {
         // ReportPortal will show: testMultipleProjects[project1, project2, project3]
-        // Test logic here
     }
 
     @DataProvider(name = "ProjectData")
@@ -326,12 +499,12 @@ public class TestWithDataProvider extends BaseTest {
 
 #### Compatibility
 
-- ✅ Works with **all tests** extending BaseTest
-- ✅ Tests **without DataProvider** work unchanged (standard method names)
-- ✅ Thread-safe for **parallel execution**
-- ✅ Compatible with ReportPortal agent-java-testng **5.3.2+**
+- Works with **all tests** extending BaseTest
+- Tests **without DataProvider** work unchanged (standard method names)
+- Thread-safe for **parallel execution**
+- Compatible with ReportPortal agent-java-testng **5.3.2+**
 
-## 🔧 Driver Management
+## Driver Management
 
 ### Automatic Mode Detection
 
@@ -363,7 +536,7 @@ Page newPage = LocalDriverPool.createNewPage();
 | **Debugging** | Easier browser inspection | Containerized debugging |
 | **Video Recording** | Not available | Available for failed tests |
 
-## 📊 Reporting & Debugging
+## Reporting & Debugging
 
 ### Report Portal Integration
 
@@ -392,7 +565,7 @@ Application logs are automatically collected from containers:
 target/logs/app-container-<timestamp>.log
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -435,7 +608,7 @@ Run with increased logging:
 mvn test -Dexecution.mode=PLAYWRIGHT_LOCAL -Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Follow existing code patterns and naming conventions
 2. Add tests for new functionality  
@@ -443,6 +616,6 @@ mvn test -Dexecution.mode=PLAYWRIGHT_LOCAL -Dorg.slf4j.simpleLogger.defaultLogLe
 4. Ensure both execution modes work correctly
 5. Add appropriate logging and error handling
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
