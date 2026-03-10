@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -166,5 +167,10 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     public List<String> getErrors() {
         return errors.stream().map(WebElement::getText).toList();
+    }
+
+    public List<String> waitForErrors(int timeoutMs) {
+        WaitUtil.waitForCondition(() -> !errors.isEmpty(), timeoutMs, 100, "Waiting for copy dialog errors to appear");
+        return getErrors();
     }
 }
