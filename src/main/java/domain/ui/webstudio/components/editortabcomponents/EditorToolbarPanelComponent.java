@@ -233,14 +233,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public ITraceWindow clickTraceExpectTraceWindow() {
-        // Wait for popup to open after click
-        Page popup = page.waitForPopup(() -> {
-            traceBtn.click();
-        });
-
-        // Wait for popup to load and trace tree to be ready
+        traceBtn.waitForVisible();
+        Page popup = page.waitForPopup(() -> traceBtn.click());
         popup.waitForLoadState();
-        popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(10000));
+        popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
         return new TraceWindow(popup);
     }
 
@@ -482,7 +478,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             if (isPopupExpected) {
                 Page popup = page.waitForPopup(() -> traceInsideMenuBtn.click());
                 popup.waitForLoadState();
-                popup.waitForSelector("xpath=//div[@id='tree']", new Page.WaitForSelectorOptions().setTimeout(10000));
+                popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
                 return new TraceWindow(popup);
             } else {
                 traceInsideMenuBtn.click();
@@ -499,6 +495,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // Interface for Playwright Trace Window
     public interface ITraceWindow {
         ITraceWindow expandItemInTree(int position);
+        ITraceWindow selectItemInTree(int position);
         List<String> getVisibleItemsFromTree();
         TableComponent getCenterTable();
         void close();
@@ -507,28 +504,34 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // Implementation for Playwright Trace Window
     public class TraceWindow extends BasePage implements ITraceWindow {
         private WebElement traceExpanderTemplate;
+        private WebElement traceNodeTitleTemplate;
         private List<WebElement> visibleItemsFromTree;
         private TableComponent centerTable;
 
         public TraceWindow(Page tracePage) {
             super(tracePage);
-            // Initialize trace window elements based on actual HTML structure
-            traceExpanderTemplate = new WebElement(tracePage, "xpath=(//span[@class='fancytree-expander'])[%d]", "traceExpanderTemplate");
-            visibleItemsFromTree = createElementList("xpath=//span[@class='fancytree-title']", "visibleItemsFromTree");
+            traceExpanderTemplate = new WebElement(tracePage, "xpath=(//div[@role='treeitem']//span[contains(@class,'ant-tree-switcher') and not(contains(@class,'ant-tree-switcher-noop'))])[%d]", "traceExpanderTemplate");
+            traceNodeTitleTemplate = new WebElement(tracePage, "xpath=(//div[@role='treeitem']//span[contains(@class,'ant-tree-node-content-wrapper')])[%d]", "traceNodeTitleTemplate");
+            visibleItemsFromTree = createElementList("xpath=//span[contains(@class,'trace-node-title')]", "visibleItemsFromTree");
             centerTable = createScopedComponent(TableComponent.class, "xpath=//table[@class='te_table']", "centerTable");
         }
 
         @Override
         public ITraceWindow expandItemInTree(int position) {
-            WebElement item = traceExpanderTemplate.format(position + 1);
-            item.click();
-            WaitUtil.sleep(100, "Waiting for trace tree item " + position + " to expand");
+            traceExpanderTemplate.format(position + 1).click();
+            return this;
+        }
+
+        @Override
+        public ITraceWindow selectItemInTree(int position) {
+            traceNodeTitleTemplate.format(position + 1).click();
+            WaitUtil.waitForCondition(() -> centerTable.isVisible(), 5000, 200, "Waiting for trace table to appear in right panel");
             return this;
         }
 
         @Override
         public List<String> getVisibleItemsFromTree() {
-            WaitUtil.sleep(500, "Waiting for trace tree items to be fully rendered");
+            WaitUtil.waitForCondition(() -> !visibleItemsFromTree.isEmpty(), 10000, 200, "Waiting for trace tree items to appear");
             return visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
         }
 

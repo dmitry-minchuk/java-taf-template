@@ -337,8 +337,8 @@ public class TestAdminUserSettings extends BaseTest {
         traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .clickTraceInsideMenu();
-        TableComponent centerTable = traceWindow.expandItemInTree(0).getCenterTable();
-        assertThat(centerTable.getCell(3, 4).getText()).contains("0.0001").doesNotContain("E-");
+        TableComponent centerTable = traceWindow.expandItemInTree(0).selectItemInTree(0).getCenterTable();
+        assertThat(centerTable.getCell(5, 4).getText()).contains("0.0001").doesNotContain("E-");
         traceWindow.close();
 
         // Scenario 16: Disable showNumbersWithoutFormatting and test again
@@ -357,8 +357,8 @@ public class TestAdminUserSettings extends BaseTest {
         traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .clickTraceInsideMenu();
-        centerTable = traceWindow.expandItemInTree(0).getCenterTable();
-        assertThat(centerTable.getCell(3, 4).getText()).contains("0.0001").doesNotContain("E-");
+        centerTable = traceWindow.expandItemInTree(0).selectItemInTree(0).getCenterTable();
+        assertThat(centerTable.getCell(5, 4).getText()).contains("0.0001").doesNotContain("E-");
         traceWindow.close();
     }
 }
