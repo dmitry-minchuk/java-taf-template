@@ -72,10 +72,10 @@ public class TestGitCopyProjectIntoExistingBranchViaEditorTab extends BaseTest {
         copyDialog = repositoryPage.getCopyProjectDialogComponent();
         copyDialog.waitForDialogToAppear();
         copyDialog.setNewBranchName(BRANCH_NAME);
-        copyDialog.clickCopyButton();
+        copyDialog.clickCopyButton(false);
 
         // Verify error message is displayed
-        assertThat(copyDialog.getErrors())
+        assertThat(copyDialog.waitForErrors(5000))
                 .as("Error message about existing branch should be displayed")
                 .anyMatch(msg -> msg.contains(EXPECTED_ERROR_MESSAGE));
     }
