@@ -85,3 +85,4 @@ promptfoo/.env
 promptfoo/results/
 promptfoo/*.log
 promptfoo/package-lock.json
+/.factorypath
