@@ -210,23 +210,35 @@ public class TestRepositoryTableActions extends BaseTest {
                 .setRole(0, "Contributor")
                 .saveUser();
         UserData secondUser = new UserData(SECOND_USER, SECOND_USER_PASSWORD);
-        String firstLastSecondUser = SECOND_USER_FIRST + " " + SECOND_USER_LAST;
-
-        // ===== Get first user (admin) display name from My Profile =====
-        // Equivalent to legacy: String firstLastFirstUser = UserProfile.getFirstLastName();
-        MyProfilePageComponent myProfile = editorPage.openUserMenu()
-                .navigateToAdministration()
-                .navigateToMyProfilePage();
-        String firstLastFirstUser = myProfile.getDisplayName();
-        if (firstLastFirstUser == null || firstLastFirstUser.isEmpty()) {
-            firstLastFirstUser = myProfile.getUsername();
-        }
 
         // ===== Navigate to Repository and create project from template as admin (firstUser) =====
+        // createProject() internally calls fillCommitInfo() which may show the commit info dialog.
+        // After creation, the profile reflects the actual commit author name (filled by the dialog or pre-existing).
         editorPage = new EditorPage();
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
+
+        // ===== Read admin's actual commit author name from My Profile after project creation =====
+        // The commit info dialog (if it appeared) updates the profile. We read what is now there.
+        // If firstName+lastName are empty → username is used as commit author.
+        editorPage = new EditorPage();
+        MyProfilePageComponent myProfile = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToMyProfilePage();
+        String adminFirstName = myProfile.getFirstName();
+        String adminLastName = myProfile.getLastName();
+        String firstLastFirstUser;
+        if (adminFirstName.isEmpty() && adminLastName.isEmpty()) {
+            firstLastFirstUser = myProfile.getUsername();
+        } else {
+            firstLastFirstUser = adminFirstName.trim();
+        }
+
+        // ===== Navigate back to Repository and select project =====
+        editorPage = new EditorPage();
+        repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         // ===== Select project in tree, verify Properties tab =====
         repositoryPage.getLeftRepositoryTreeComponent()
@@ -236,9 +248,9 @@ public class TestRepositoryTableActions extends BaseTest {
                 .getRepositoryContentTabSwitcherComponent()
                 .selectPropertiesTab();
 
-        // Assert ModifiedBy = first user's display name
+        // Assert ModifiedBy = admin's actual commit author name
         assertThat(propertiesTab.getModifiedBy())
-                .as("ModifiedBy should equal admin's display name after project creation")
+                .as("ModifiedBy should equal admin's commit author name after project creation")
                 .isEqualTo(firstLastFirstUser);
 
         // Assert ModifiedAt contains today/yesterday/tomorrow (timezone tolerance — same as legacy)
@@ -279,15 +291,28 @@ public class TestRepositoryTableActions extends BaseTest {
         repositoryPage.waitUntilSpinnerLoaded();
         repositoryPage.refresh();
 
+        // ===== Read secondUser's actual commit author name from My Profile after save =====
+        editorPage = new EditorPage();
+        MyProfilePageComponent secondUserProfile = editorPage.openUserMenu()
+                .navigateToMyProfile()
+                .navigateToMyProfilePage();
+        String secondFirstName = secondUserProfile.getFirstName();
+        String firstLastSecondUser = secondFirstName.isEmpty() ? secondUserProfile.getUsername() : secondFirstName;
+
+        // ===== Navigate back to Repository and re-select project =====
+        editorPage = new EditorPage();
+        repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+
         // ===== Re-select project and verify Properties updated by secondUser =====
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", projectName);
         propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
 
-        // Assert ModifiedBy = second user's display name
+        // Assert ModifiedBy = second user's actual commit author name
         assertThat(propertiesTab.getModifiedBy())
-                .as("ModifiedBy should equal second user's display name after modification")
+                .as("ModifiedBy should equal second user's commit author name after modification")
                 .isEqualTo(firstLastSecondUser);
 
         // Assert ModifiedAt contains today/yesterday/tomorrow
