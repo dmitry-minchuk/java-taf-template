@@ -280,7 +280,7 @@ public class TestExportProjectFunctionality extends BaseTest {
         CopyProjectDialogComponent copyProjectDialog = repositoryPage.getCopyProjectDialogComponent();
         copyProjectDialog.waitForDialogToAppear();
         copyProjectDialog.setNewBranchName(BRANCH_NAME);
-        copyProjectDialog.clickCopyButton();
+        copyProjectDialog.clickCopyButton(false);
         repositoryPage.fillCommitInfo();
         repositoryPage.refresh();
 
