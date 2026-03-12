@@ -135,34 +135,7 @@ public class TestACLDeploySystemAction extends BaseTest {
                 .isFalse();
     }
 
-    // TODO: BRD TR2 requires Deploy button visible when user has Edit on deploy repo.
-    // Deploy button visibility feature is not yet implemented in UI — enabling when ready.
-    @Test(enabled = false)
-    @TestCaseId("EPBDS-15712")
-    @Description("ACL: Admin always sees Deploy button (full access to both design and deploy repos)")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testDeployVisibleForAdmin() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
-
-        // ============ Admin creates project and checks Deploy button ============
-        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
-
-        EditorPage editorPage = new EditorPage();
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-
-        WaitUtil.waitForCondition(
-                () -> repositoryPage.getAllVisibleProjectsInTable().contains(projectName),
-                10000, 500, "Waiting for project to appear for admin"
-        );
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent adminPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        // Admin has full access — Deploy should be visible (has both design and deploy repo access)
-        assertThat(adminPanel.isDeployBtnVisible())
-                .as("Admin should see Deploy button (full access to design + deploy repos)")
-                .isTrue();
-    }
+    // Positive deploy scenario (Deploy button visible with deploy repo access)
+    // is covered in TestACLDeployWithDeployRepo which uses DEPLOY_STUDIO_PARAMS
+    // with a real PostgreSQL production repository.
 }

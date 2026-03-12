@@ -1,10 +1,14 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import helpers.utils.WaitUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
@@ -23,6 +27,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     private WebElement syncBtn;
     private WebElement undeleteBtn;
     private WebElement eraseBtn;
+    private WebElement allButtonsLocator;
 
     public RepositoryContentButtonsPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -50,6 +55,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         syncBtn = createScopedElement("xpath=.//input[@value='Sync']", "syncBtn");
         undeleteBtn = createScopedElement("xpath=.//input[@value='Undelete']", "undeleteBtn");
         eraseBtn = createScopedElement("xpath=.//input[@value='Erase']", "eraseBtn");
+        allButtonsLocator = createScopedElement("xpath=.//input[@type='button' or @type='submit']", "allButtonsLocator");
     }
 
     // Legacy methods for compatibility
@@ -176,5 +182,20 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
 
     public boolean isCloseBtnVisible() {
         return closeBtn.isVisible();
+    }
+
+    public List<String> getAllVisibleButtonValues() {
+        List<String> values = new ArrayList<>();
+        Locator allButtons = allButtonsLocator.getLocator();
+        for (int i = 0; i < allButtons.count(); i++) {
+            Locator btn = allButtons.nth(i);
+            if (btn.isVisible()) {
+                String val = btn.getAttribute("value");
+                if (val != null && !val.isEmpty()) {
+                    values.add(val);
+                }
+            }
+        }
+        return values;
     }
 }

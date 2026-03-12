@@ -12,6 +12,7 @@ import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EditorToolbarPanelComponent extends BaseComponent {
@@ -81,6 +82,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // Input parameter elements - from RunDropDown.java
     private WebElement inputTextFieldTemplate;
     private WebElement inputSelectFieldTemplate;
+    // All actions locators (for deprecated feature checks)
+    private WebElement allTopToolbarLinks;
+    private WebElement allMoreMenuLinks;
 
     public EditorToolbarPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -157,6 +161,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         // Input parameter templates - page-level (form inputs)  
         inputTextFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//input[@type='text'])[%s]", "inputTextFieldTemplate");
         inputSelectFieldTemplate = new WebElement(page, "xpath=(//div[contains(@id, 'input')]//select)[%s]", "inputSelectFieldTemplate");
+        allTopToolbarLinks = new WebElement(page, "xpath=//form[@id='headerForm']//a", "allTopToolbarLinks");
+        allMoreMenuLinks = new WebElement(page, "xpath=//ul[contains(@class,'dropdown-menu')]//li//a", "allMoreMenuLinks");
     }
 
     public void clickVerify() {
@@ -755,5 +761,40 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     public void removeCurrentTable() {
         LocalDriverPool.getPage().onDialog(Dialog::accept);
         clickRemove();
+    }
+
+    public List<String> getAllVisibleTopToolbarActions() {
+        List<String> actions = new ArrayList<>();
+        com.microsoft.playwright.Locator links = allTopToolbarLinks.getLocator();
+        for (int i = 0; i < links.count(); i++) {
+            com.microsoft.playwright.Locator link = links.nth(i);
+            if (link.isVisible()) {
+                String text = link.textContent().trim();
+                if (!text.isEmpty()) {
+                    actions.add(text);
+                }
+                String title = link.getAttribute("title");
+                if (title != null && !title.isEmpty()) {
+                    actions.add(title);
+                }
+            }
+        }
+        return actions;
+    }
+
+    public List<String> getMoreMenuItems() {
+        List<String> items = new ArrayList<>();
+        clickMore();
+        com.microsoft.playwright.Locator menuItems = allMoreMenuLinks.getLocator();
+        for (int i = 0; i < menuItems.count(); i++) {
+            com.microsoft.playwright.Locator item = menuItems.nth(i);
+            if (item.isVisible()) {
+                String text = item.textContent().trim();
+                if (!text.isEmpty()) {
+                    items.add(text);
+                }
+            }
+        }
+        return items;
     }
 }

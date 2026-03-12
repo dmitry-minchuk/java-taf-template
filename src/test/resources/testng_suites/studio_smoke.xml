@@ -14,6 +14,10 @@
     <test name="TestACLDeploySystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeploySystemAction"/></classes></test>
     <test name="TestACLRunBenchmarkSystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLRunBenchmarkSystemAction"/></classes></test>
     <test name="TestACLManagePermission"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLManagePermission"/></classes></test>
+    <test name="TestACLDeployWithDeployRepo"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeployWithDeployRepo"/></classes></test>
+    <test name="TestACLLockUnlockDeprecated"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLLockUnlockDeprecated"/></classes></test>
+    <test name="TestACLNoAccessWarning"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLNoAccessWarning"/></classes></test>
+    <test name="TestACLParsedGroupsUserView"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLParsedGroupsUserView"/></classes></test>
     <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettings"/></classes></test>
     <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettingsDBValidation"/></classes></test>
     <test name="TestNotifications"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminNotifications"/></classes></test>

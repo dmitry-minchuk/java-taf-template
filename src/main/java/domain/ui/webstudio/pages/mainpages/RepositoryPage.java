@@ -360,6 +360,23 @@ public class RepositoryPage extends BasePage {
         return inlineMessage.getText().trim();
     }
 
+    public List<String> getTableActionTitles(String projectName) {
+        List<String> titles = new ArrayList<>();
+        int rowIndex = findProjectRowIndex(projectName);
+        if (rowIndex == -1) return titles;
+        TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(rowIndex);
+        List<WebElement> cells = row.getCells();
+        WebElement actionsCell = cells.get(cells.size() - 1);
+        com.microsoft.playwright.Locator links = actionsCell.getLocator().locator("xpath=.//a[@title]");
+        for (int i = 0; i < links.count(); i++) {
+            String title = links.nth(i).getAttribute("title");
+            if (title != null && !title.isEmpty()) {
+                titles.add(title);
+            }
+        }
+        return titles;
+    }
+
     public boolean isTableActionButtonPresent(String projectName, String actionTitle) {
         int rowIndex = findProjectRowIndex(projectName);
         if (rowIndex == -1) return false;
