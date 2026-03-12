@@ -64,6 +64,10 @@ public class RepositoryTreeFolderComponent extends BaseComponent {
         getOpenedItem(itemName).click();
     }
 
+    public void clickFolderName() {
+        folderName.click();
+    }
+
     public String getFolderName() {
         return folderName.getText(500);
     }

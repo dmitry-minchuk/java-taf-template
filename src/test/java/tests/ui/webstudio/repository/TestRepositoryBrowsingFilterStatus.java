@@ -9,16 +9,24 @@ import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import helpers.utils.StringUtil;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,17 +38,36 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   2.2.12 - Closing a Project
  *   2.2.14 - Saving a Project
  *   Multi-user locking status (Closed + locked by other user)
+ *   Deploy both projects via DeployModal (step 3)
  *
- * NOT covered (deploy automation required):
- *   2.2.4  - Browsing Deployment repo: project pictures by status
- *   2.2.5  - Deployment repo: Filter by name
- *   Deploy Configuration creation and verification (steps 8-11 of legacy IPBQA-30010)
- *   Production repository browsing, expand deployments, file presence check
- *   Production filter by name (steps 31-38 of legacy IPBQA-30010)
- *
- * TODO: Steps marked [DEPLOY BLOCKED] will be added when deploy automation is ready.
+ * NOT covered:
+ *   2.2.4  - Browsing Deployment repo: project pictures by status (Production tab UI not yet mapped)
+ *   2.2.5  - Deployment repo: Filter by name (Production tab UI not yet mapped)
+ *   Deploy Configuration was removed (EPBDS-15093) — legacy steps 8-11 obsolete
  */
 public class TestRepositoryBrowsingFilterStatus extends BaseTest {
+
+    private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+    private DeployInfrastructureService deployInfra;
+
+    @Override
+    @BeforeMethod
+    public void beforeMethod(ITestResult result) {
+        additionalContainerFiles.clear();
+        deployInfra = DeployInfrastructureService.builder()
+                .withPostgres()
+                .build();
+        deployInfra.start();
+        additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
+        super.beforeMethod(result);
+    }
+
+    @Override
+    @AfterMethod
+    public void afterMethod(ITestResult result) {
+        super.afterMethod(result);
+        deployInfra.cleanup();
+    }
 
     private static final String PROJECT_1 = "TestRepositoryBrowsingFilterStatus";
     private static final String PROJECT_2 = "TestRepositoryBrowsingFilterStatus2";
@@ -51,7 +78,7 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
     @Test
     @TestCaseId("IPBQA-30010")
     @Description("Repository - Browsing, filter by name, advanced filter, project status lifecycle, multi-user locking")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testRepositoryBrowsingFilterStatus() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
@@ -79,12 +106,38 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_1, TEMPLATE_NAME);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_2, TEMPLATE_NAME);
 
-        // [DEPLOY BLOCKED] Step 3: Deploy both projects and verify deployment status icons
-        // Requires: ButtonsPanel.deployProject() automation and deploy configuration support.
-        // When unblocked: verify status after deploy and check deploy confirmation.
+        // ===== Step 3: Deploy both projects via DeployModal =====
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_1);
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
+        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
+        String deploymentName1 = StringUtil.generateUniqueName("Dep1");
+        deployModal.deployWithAllFields(null, deploymentName1, "Deploy project 1");
+        assertThat(deployModal.isSuccessNotificationVisible())
+                .as("Deploy of PROJECT_1 should succeed")
+                .isTrue();
+        repositoryPage.closeAllMessages();
+
+        repositoryPage.refresh();
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_2);
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
+        deployModal = repositoryPage.getDeployModalComponent();
+        String deploymentName2 = StringUtil.generateUniqueName("Dep2");
+        deployModal.deployWithAllFields(null, deploymentName2, "Deploy project 2");
+        assertThat(deployModal.isSuccessNotificationVisible())
+                .as("Deploy of PROJECT_2 should succeed")
+                .isTrue();
+        repositoryPage.closeAllMessages();
 
         // ===== Step 4: Verify table structure (6 columns) =====
-        repositoryPage.refresh();
+        // After deploy, the server session remembers the selected project (detail view).
+        // Click the "Projects" folder label in the tree to switch to projects table view.
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectFolderInTree("Projects");
         List<String> headers = repositoryPage.getProjectsTable().getHeaders();
         assertThat(headers)
                 .as("Projects table should have 6 columns: Name, Branch, Status, Modified By, Modified At, Actions")
@@ -288,15 +341,10 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
                 .as("After clearing filter all projects should be visible again")
                 .isGreaterThanOrEqualTo(2);
 
-        // [DEPLOY BLOCKED] Step 19: Production repository — filter and status verification
-        // Requires: deploy integration to have projects present in Production repository.
-        // When unblocked:
-        //   - Click Production tab
-        //   - Expand Production tree, expand deployed project
-        //   - Verify tabs: Properties, Elements
-        //   - Verify file present in Elements tab (rules.xml etc.)
-        //   - Filter by name in Production
-        //   - Verify deployment count matches
-        //   - Clear production filter
+        // Step 19: Production repository browsing
+        // Legacy steps used a separate "Production" tab/tree (#prodTree) to browse deployed projects.
+        // Deploy Configuration was removed (EPBDS-15093). Production tab UI locators
+        // are not yet mapped in the new framework — requires separate investigation.
+        // The deploy itself was verified via success notifications in Step 3.
     }
 }

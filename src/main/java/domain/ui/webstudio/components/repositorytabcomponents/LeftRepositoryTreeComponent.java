@@ -58,6 +58,13 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
         return this;
     }
 
+    public LeftRepositoryTreeComponent selectFolderInTree(String folderName) {
+        RepositoryTreeFolderComponent folder = findFolderInTree(folderName);
+        folder.clickFolderName();
+        WaitUtil.sleep(500, "Waiting for folder content to load");
+        return this;
+    }
+
     public boolean isItemExistsInTree(String itemName) {
         return findTreeFolders().stream()
                 .anyMatch(folder -> folder.getItem(itemName).isVisible(250));
