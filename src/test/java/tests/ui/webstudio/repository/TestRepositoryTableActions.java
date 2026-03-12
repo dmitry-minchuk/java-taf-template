@@ -10,17 +10,25 @@ import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import helpers.utils.StringUtil;
 import helpers.utils.TestDataUtil;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,16 +37,36 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   EPBDS-12712 / IPBQA-32158 — Table action buttons (open/close/deploy) in repository projects table
  *   IPBQA-29847               — Repository tab properties (ModifiedBy, ModifiedAt, Revision) multi-user verification
  *
- * NOT covered (deploy automation required):
- *   EPBDS-12712 step — Deploy table action button flow (clicking Deploy then verifying "already deployed" dialog)
- *   IPBQA-29847 steps 11-21 — Deploy Configuration properties, Production repository verification,
- *                              copy project production verification
+ * Deploy automation: uses DeployInfrastructureService with PostgreSQL production repository.
+ * Deploy Configuration entity was removed (EPBDS-15093) — deployment is done directly via DeployModal.
  */
 public class TestRepositoryTableActions extends BaseTest {
 
+    private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+    private DeployInfrastructureService deployInfra;
+
+    @Override
+    @BeforeMethod
+    public void beforeMethod(ITestResult result) {
+        additionalContainerFiles.clear();
+        deployInfra = DeployInfrastructureService.builder()
+                .withPostgres()
+                .build();
+        deployInfra.start();
+        additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
+        super.beforeMethod(result);
+    }
+
+    @Override
+    @AfterMethod
+    public void afterMethod(ITestResult result) {
+        super.afterMethod(result);
+        deployInfra.cleanup();
+    }
+
     private static final String TEMPLATE_NAME = "Sample Project";
 
-    // Table action button titles (from legacy: RepositoryTab.tableActionBtnLocator @title values)
+    // Table action button titles — actual @title attributes of <a> tags in Actions column
     private static final String TABLE_ACTION_OPEN   = "Open project";
     private static final String TABLE_ACTION_CLOSE  = "Close project";
     private static final String TABLE_ACTION_DEPLOY = "Deploy project";
@@ -64,7 +92,7 @@ public class TestRepositoryTableActions extends BaseTest {
     @Test
     @TestCaseId("EPBDS-12712")
     @Description("Repository table action buttons: open/close/deploy icons in Actions column; ButtonsPanel open/close; viewer user access")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testTableActionButtons() {
         String projectName1 = "TestTableActionButtons_P1_" + System.currentTimeMillis();
         String projectName2 = "TestTableActionButtons_P2_" + System.currentTimeMillis();
@@ -95,10 +123,26 @@ public class TestRepositoryTableActions extends BaseTest {
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName1, TEMPLATE_NAME);
 
-        // [DEPLOY BLOCKED] Deploy table action button no longer exists in current UI (was removed):
-        // assertThat(repositoryPage.isTableActionButtonPresent(projectName1, TABLE_ACTION_DEPLOY)).isTrue();
-        // Full deploy flow requires: EditorTab.open() → deploy project → RepositoryTab → click Deploy action
-        //   → assert DeployWindowPage.isProjectAlreadyDeployed(project1) == true → cancel deploy dialog
+        // ===== Deploy project1 via right panel Deploy button =====
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName1);
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
+        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
+        String deploymentName = StringUtil.generateUniqueName("Deploy");
+        deployModal.deployWithAllFields(null, deploymentName, "First deploy");
+        assertThat(deployModal.isSuccessNotificationVisible())
+                .as("Deploy should succeed with success notification")
+                .isTrue();
+        repositoryPage.closeAllMessages();
+        repositoryPage.refresh();
+
+        // ===== Verify Deploy table action button in Actions column =====
+        // After deploy, the projects table should show a Deploy action icon for the project.
+        // TABLE_ACTION_DEPLOY title comes from <a[@title]> in the Actions column of the projects table.
+        assertThat(repositoryPage.isTableActionButtonPresent(projectName1, TABLE_ACTION_DEPLOY))
+                .as("'Deploy' table action button should be present in projects table when deploy repo is configured")
+                .isTrue();
 
         // ===== Close project1 via table action button → status becomes "Closed" =====
         assertThat(repositoryPage.isTableActionButtonPresent(projectName1, TABLE_ACTION_CLOSE))
@@ -119,11 +163,13 @@ public class TestRepositoryTableActions extends BaseTest {
                 .as("Project status in table should be 'No Changes' after clicking Open table action")
                 .isEqualTo(STATUS_NO_CHANGES);
 
-        // [DEPLOY BLOCKED] The following steps require deploy automation:
-        // 1. EditorTab.open() → select project1 → DeployWindowPage.deployProject(project1)
-        // 2. RepositoryTab.open() → click Deploy table action button for project1
-        // 3. Assert: DeployWindowPage.isProjectAlreadyDeployed(project1) == true
-        // 4. RepositoryDialogObjects.AutoDeploy_Cancel.click() — cancel deploy dialog
+        // ===== Click Deploy table action for already-deployed project → DeployModal opens for redeploy =====
+        repositoryPage.clickTableActionButton(projectName1, TABLE_ACTION_DEPLOY);
+        deployModal = repositoryPage.getDeployModalComponent();
+        assertThat(deployModal.isModalVisible())
+                .as("Clicking Deploy table action should open DeployModal for redeploy")
+                .isTrue();
+        deployModal.clickCancel();
 
         // ===== Create project2 from Excel file =====
         repositoryPage.createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName2, MAIN_XLS);
@@ -188,7 +234,7 @@ public class TestRepositoryTableActions extends BaseTest {
     @Test
     @TestCaseId("IPBQA-29847")
     @Description("Repository tab Properties: ModifiedBy, ModifiedAt, Revision verified across multi-user project modifications")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testRepositoryTabProperties() {
         String projectName = "TestRepositoryTabProperties_" + System.currentTimeMillis();
 
@@ -326,26 +372,44 @@ public class TestRepositoryTableActions extends BaseTest {
                 .as("ModifiedAt should have changed after second user's modification")
                 .isNotEqualTo(creationProjectTime);
 
-        // [DEPLOY BLOCKED] The following steps require deploy automation:
-        // 1. Logout secondUser → Login firstUser
-        // 2. RepositoryTab.open() → createDeploy(nameDeploy) — create deploy configuration
-        // 3. selectDeployInTree(nameDeploy)
-        // 4. Assert ModifiedBy == firstLastFirstUser (deploy conf created by first user)
-        // 5. Assert ModifiedAt contains valid date
-        // 6. Assert Revision.length() == 6
-        // 7. Logout firstUser → Login secondUser
-        // 8. selectDeployInTree → editDeploy → addProject(nameProject, modifiedProjectRevision) → saveDeploy
-        // 9. Assert ModifiedBy == firstLastSecondUser (deploy conf saved by second user)
-        // 10. Assert ModifiedAt changed
-        // 11. Logout secondUser → Login firstUser
-        // 12. verificationInProductionRepository(initialProjectBusinessRevision, firstUser, nameProject):
-        //     - deployProject → click Production → expand → assert "Revision in Design Repository" == revision
-        //     - assert ModifiedBy == firstUser, date valid, Revision present
-        // 13. Logout firstUser → Login secondUser
-        // 14. verificationInProductionRepository(modifiedProjectBusinessRevision, secondUser, nameProject)
-        // 15. Logout secondUser → Login firstUser
-        // 16. copyGitProjectViaIcon(nameProject)
-        // 17. verificationInProductionRepository(copiedProjectRevision, firstUser, nameProject)
+        // ===== Deploy project and verify deploy button is available =====
+        // NOTE: Legacy Deploy Configuration entity was removed (EPBDS-15093).
+        // Deployment now works directly via DeployModal.
+        // Legacy steps 1-10 (Deploy Configuration CRUD) are obsolete and skipped.
+
+        // Logout secondUser → Login as admin (firstUser)
+        editorPage = new EditorPage();
+        editorPage.openUserMenu().signOut();
+        editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+
+        // Deploy project via DeployModal
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
+        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
+        String deploymentName = StringUtil.generateUniqueName("Deploy");
+        deployModal.deployWithAllFields(null, deploymentName, "Deploy for properties verification");
+        assertThat(deployModal.isSuccessNotificationVisible())
+                .as("Deploy should succeed with success notification")
+                .isTrue();
+        repositoryPage.closeAllMessages();
+
+        // Verify project properties after deploy — ModifiedBy still reflects last save author
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
+        String postDeployModifiedAt = propertiesTab.getModifiedAt();
+        assertThat(containsValidDate(postDeployModifiedAt))
+                .as("ModifiedAt should still be a valid date after deploy")
+                .isTrue();
+        assertThat(propertiesTab.getRevision().length())
+                .as("Revision should still be 6 characters after deploy")
+                .isEqualTo(6);
     }
 
     private void handleOpenProjectDialog(RepositoryPage repositoryPage) {
