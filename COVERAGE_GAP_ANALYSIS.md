@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-09
+> Updated: 2026-03-12
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,12 +9,12 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| New framework — total test classes | **110** (all active in suites) |
+| New framework — total test classes | **114** (all active in suites) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
-| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (29) · `studio_git.xml` (11) · `service_smoke.xml` (3) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 109** |
-| ACL functionality | New ACL model (BRD EPBDS-14295): 6 test classes covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions. 2 features disabled — not implemented in UI (Deploy button, Manager to Admin) |
+| Suites | `rules_editor.xml` (21) · `studio_issues.xml` (43) · `studio_smoke.xml` (33) · `studio_git.xml` (11) · `service_smoke.xml` (3) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 113** |
+| ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions, deploy repo access, lock/unlock deprecated (BRD TR2), no-access warning, parsed groups view. 2 features disabled — not implemented in UI (Deploy button visibility for admin, Manager to Admin) |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
-| **New framework overall coverage** | **~62% of legacy feature areas** (stable; completed: C1-C10, C12b, C12c, C12d, ACL, OpenAPI full; next priority: C11, C12, C13, C14) |
+| **New framework overall coverage** | **~64% of legacy feature areas** (stable; completed: C1-C10, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C11, C12, C13, C14) |
 
 ---
 
@@ -30,7 +30,7 @@
 | **C3b** | **`TestOpenApiImportLocalChanges`** ✅ DONE | TestOpenApiImportLocalChanges | ✅ Local Changes history after re-generation (Step 1), ✅ Template project + Compare window (Step 2-2.2), ✅ No Local Changes after Reconciliation mode import (Step 3), ✅ No new record for same file content (Step 4), ✅ New record for different file (Step 5) | ✅ `rules_editor.xml` |
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
 | **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
-| **C6** | **ACL tests** ✅ DONE (6 classes) | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission | ✅ New ACL model (BRD EPBDS-14295): Manager/Contributor/Viewer roles, V+C+E+D+M permissions, Run+Benchmark visible to all users (test tables). ⛔ 2 tests disabled (Deploy button, Manager to Admin — not implemented in UI) | ✅ `studio_smoke.xml` |
+| **C6** | **ACL tests** ✅ DONE (10 classes) | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission, TestACLDeployWithDeployRepo, TestACLLockUnlockDeprecated, TestACLNoAccessWarning, TestACLParsedGroupsUserView | ✅ New ACL model (BRD EPBDS-14295): Manager/Contributor/Viewer roles, V+C+E+D+M permissions, Run+Benchmark system actions, deploy repo access (Contributor+Viewer on deploy repo), Lock/Unlock deprecated (BRD TR2), no-access warning + role assignment flow, parsed groups view in Admin. ⛔ 2 tests disabled (Deploy button for admin, Manager to Admin — not implemented in UI). Group Templates skipped (requires EUMS/LDAP) | ✅ `studio_smoke.xml` |
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
 | **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton (⛔ deploy-blocked) + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⛔ Deploy button (deploy not available for testing), ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
@@ -229,7 +229,7 @@
 |---------|----------|--------------|
 | Admin: System Settings (dispatch/verify/threads) | ~80% | TestAdminSystemSettings ✅ |
 | Admin: Notifications | ~90% | TestAdminNotifications ✅ |
-| Admin: User management + ACL (BRD EPBDS-14295) | ~85% | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission ✅ (2 tests disabled — not implemented in UI) |
+| Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes: UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo, RunBenchmarkSystemAction, ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (2 tests disabled — not implemented in UI; Group Templates skipped — requires EUMS/LDAP) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
 | Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ |
