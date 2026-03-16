@@ -58,7 +58,9 @@ public class SearchFilterComponent extends BaseComponent {
     }
 
     public SearchFilterComponent typeSearchAndEnter(String text) {
-        searchName.fill(text);
+        WaitUtil.sleep(1000, "Waiting before type search");
+        searchName.fillSequentially(text);
+        WaitUtil.sleep(1000, "Waiting after type search");
         searchName.press("Enter");
         return this;
     }
