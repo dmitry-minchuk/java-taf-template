@@ -45,7 +45,9 @@ public class CreateTableDialogComponent extends BaseComponent {
     }
 
     public CreateTableDialogComponent addParameter(String type, String name) {
-        parameterTypeSelect.selectByVisibleText(type);
+        if (type != null && !type.isEmpty()) {
+            parameterTypeSelect.selectByVisibleText(type);
+        }
         parameterNameInput.fill(name);
         nextButton.click();
         return this;

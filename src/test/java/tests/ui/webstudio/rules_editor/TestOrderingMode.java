@@ -49,7 +49,7 @@ public class TestOrderingMode extends BaseTest {
         // The dropdown options are covered by the FilterOptions enum; we verify the default and changing works
 
         // 1.4 Verification that the default "Default Order:" value is applied
-        EditorPage editorPage2 = adminPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        adminPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.createProject(
                 domain.ui.webstudio.components.common.CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
@@ -66,6 +66,7 @@ public class TestOrderingMode extends BaseTest {
                 .contains("Model", "Algorithm", "Test");
 
         // 1.6 Modify the "Default Order:" value
+        // Known bug EPBDS-15639: "Default Order" is not updated based on new user settings
         adminPage = editorPage.openUserMenu().navigateToMySettings();
         mySettings = adminPage.navigateToMySettingsPage();
         mySettings.setDefaultOrder("By Category Inversed");
@@ -129,6 +130,7 @@ public class TestOrderingMode extends BaseTest {
         assertThat(mySettings.getDefaultOrder()).isEqualTo("By Excel Sheet");
 
         // 2.3 Change default order for admin to "By Category Detailed"
+        // Known bug EPBDS-15639: "Default Order" is not updated based on new user settings
         mySettings.setDefaultOrder("By Category Detailed");
         mySettings.saveSettings();
 
@@ -193,9 +195,9 @@ public class TestOrderingMode extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "sortingtesting");
 
-        // Verify default filter
+        // Verify default filter (changed from "By Type" to "By Excel Sheet" in EPBDS-13592)
         assertThat(editorPage.getEditorLeftRulesTreeComponent().getViewFilterValue())
-                .containsIgnoringCase("By Type");
+                .containsIgnoringCase("By Excel Sheet");
 
         // Switch to "By Excel Sheet" and verify categories
         editorPage.getEditorLeftRulesTreeComponent()

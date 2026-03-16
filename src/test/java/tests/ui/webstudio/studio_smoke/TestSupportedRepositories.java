@@ -23,11 +23,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestSupportedRepositories extends BaseTest {
 
     private static final List<String> DESIGN_REPOSITORY_TYPES = Arrays.asList(
-            "Database (JDBC)", "Database (JNDI)", "AWS S3", "Azure Blob Storage", "Git");
+            "Database JDBC", "Database JNDI", "AWS S3", "Azure Blob Storage", "Git");
 
-    // Deployment repositories include "Local" in addition to the design types
+    // Deployment repositories have the same types as design (Local was removed)
     private static final List<String> DEPLOYMENT_REPOSITORY_TYPES = Arrays.asList(
-            "Database (JDBC)", "Database (JNDI)", "AWS S3", "Azure Blob Storage", "Git", "Local");
+            "Database JDBC", "Database JNDI", "AWS S3", "Azure Blob Storage", "Git");
 
     @Test
     @TestCaseId("IPBQA-29276")

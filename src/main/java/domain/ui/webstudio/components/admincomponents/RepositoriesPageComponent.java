@@ -68,14 +68,14 @@ public class RepositoriesPageComponent extends BaseComponent {
         designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
         // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
         typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
-        deleteRepositoryBtnTemplate = new WebElement(page, "xpath=(//span[@class='repositoryConfigButton'])[%s]//a", "deleteRepositoryBtn");
+        deleteRepositoryBtnTemplate = new WebElement(page, "xpath=//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]//button[contains(@class,'ant-tabs-tab-remove')]", "deleteRepositoryBtn");
         repositoryTypeOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option') and not(ancestor::div[contains(@class,'dropdown-hidden')])]", "repoTypeOptions");
     }
 
-    public RepositoriesPageComponent deleteRepository(String repositoryNumber) {
+    public RepositoriesPageComponent deleteRepository(String repositoryName) {
         page.onDialog(dialog -> dialog.accept());
-        deleteRepositoryBtnTemplate.format(repositoryNumber).hover();
-        deleteRepositoryBtnTemplate.format(repositoryNumber).click();
+        deleteRepositoryBtnTemplate.format(repositoryName).hover();
+        deleteRepositoryBtnTemplate.format(repositoryName).click();
         return this;
     }
 

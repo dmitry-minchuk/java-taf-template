@@ -45,7 +45,7 @@ public class SearchFilterComponent extends BaseComponent {
         selectType = new WebElement(page, "xpath=//a[@id='multiselect-select']", "selectType");
         outsideSelectTableType = new WebElement(page, "xpath=//div[@id='advancedSearch']//label[text()='Table Type']", "outsideSelectTableType");
         searchBtn = new WebElement(page, "xpath=//div[@id='advancedSearch']//input[@value='Search']", "searchBtn");
-        closeSearchBtn = new WebElement(page, "xpath=//a[contains(@class,'jquery-popup-close-icon')]", "closeSearchBtn");
+        closeSearchBtn = new WebElement(page, "xpath=//span[contains(@class,'jquery-popup-close-icon')]", "closeSearchBtn");
         headerContains = new WebElement(page, "xpath=//input[@id='tableHeader']", "headerContains");
         tableProperties = new WebElement(page, "xpath=//select[@id='propertyItems']", "tableProperties");
         addPropertyBtn = new WebElement(page, "xpath=//div[@id='advancedSearch']//input[@value='Add']", "addPropertyBtn");
@@ -117,7 +117,7 @@ public class SearchFilterComponent extends BaseComponent {
     }
 
     public String getResultCounterText() {
-        return searchResultCounter.getText();
+        return searchResultCounter.getText().trim();
     }
 
     public boolean isTableFound(String tableName) {

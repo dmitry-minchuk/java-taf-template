@@ -52,7 +52,7 @@ public class TestAddDeleteDesignRepository extends BaseTest {
         // Navigate to Admin → Repositories, delete first additional repo, add new one (becomes Design2)
         adminPage = editorPage.openUserMenu().navigateToAdministration();
         repositories = adminPage.navigateToRepositoriesPage();
-        repositories.deleteRepository("1");
+        repositories.deleteRepository("Design1");
         repositories.addDesignRepository();
         repositories.applyChangesAndRelogin(User.ADMIN);
 
