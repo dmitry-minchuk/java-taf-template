@@ -12,7 +12,7 @@
 | New framework — total test classes | **118** (all active in suites) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
 | Suites | `rules_editor.xml` (23) · `studio_issues.xml` (43) · `studio_smoke.xml` (35) · `studio_git.xml` (11) · `service_smoke.xml` (3) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 117** |
-| ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions, deploy repo access, lock/unlock deprecated (BRD TR2), no-access warning, parsed groups view. 2 features disabled — not implemented in UI (Deploy button visibility for admin, Manager to Admin) |
+| ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | **New framework overall coverage** | **~68% of legacy feature areas** (stable; completed: C1-C12, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C13, C14) |
 
@@ -30,7 +30,7 @@
 | **C3b** | **`TestOpenApiImportLocalChanges`** ✅ DONE | TestOpenApiImportLocalChanges | ✅ Local Changes history after re-generation (Step 1), ✅ Template project + Compare window (Step 2-2.2), ✅ No Local Changes after Reconciliation mode import (Step 3), ✅ No new record for same file content (Step 4), ✅ New record for different file (Step 5) | ✅ `rules_editor.xml` |
 | **C4** | **`TestOpenApiReconciliationEdgeCases`** ✅ DONE | OpenApiReconciliationFeature | ✅ Circular datatype validation (EPBDS-13215), ✅ Datatype error validation, ✅ Dependent project errors, ✅ Spreadsheet reconciliation errors, ✅ Multiple merged files JSON+YAML (IPBQA-30970) | ✅ `rules_editor.xml` |
 | **C5** | **`TestCreateProjectFromOpenApiFile`** + **`TestCreateDataTablesFromOpenApiGetMethod`** ✅ DONE | TestCreateProjectFromOpenApiFile + TestCreateDataTablesFromOpenApiGetMethod | ✅ Create project from OpenAPI JSON/YAML (2.8.1), ✅ Custom module names/paths, ✅ Delete OpenAPI file removes properties, ✅ Form validation errors, ✅ Create Data tables from GET methods (2.8.3), ✅ Data table editing | ✅ `rules_editor.xml` |
-| **C6** | **ACL tests** ✅ DONE (10 classes) | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission, TestACLDeployWithDeployRepo, TestACLLockUnlockDeprecated, TestACLNoAccessWarning, TestACLParsedGroupsUserView | ✅ New ACL model (BRD EPBDS-14295): Manager/Contributor/Viewer roles, V+C+E+D+M permissions, Run+Benchmark system actions, deploy repo access (Contributor+Viewer on deploy repo), Lock/Unlock deprecated (BRD TR2), no-access warning + role assignment flow, parsed groups view in Admin. ⛔ 2 tests disabled (Deploy button for admin, Manager to Admin — not implemented in UI). Group Templates skipped (requires EUMS/LDAP) | ✅ `studio_smoke.xml` |
+| **C6** | **ACL tests** ✅ DONE (10 classes, 23 methods) | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission, TestACLDeployWithDeployRepo, TestACLLockUnlockDeprecated, TestACLNoAccessWarning, TestACLParsedGroupsUserView | ✅ New ACL model (BRD EPBDS-14295): Manager/Contributor/Viewer roles, V+C+E+D+M permissions, Run+Benchmark system actions for all roles (Viewer/Contributor/Manager), deploy repo access incl. minimum combo Viewer(design)+Contributor(deploy) per BRD TR2, Lock/Unlock deprecated, no-access warning + role assignment flow, parsed groups view in Admin. ⛔ 1 test disabled (Manager to Admin — not implemented in UI). Group Templates skipped (requires EUMS/LDAP) | ✅ `studio_smoke.xml` |
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
 | **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton (⛔ deploy-blocked) + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⛔ Deploy button (deploy not available for testing), ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
@@ -204,22 +204,26 @@
 | Common: History max count & Clean history | EPBDS-10539, IPBQA-30730 | TestCommonSettingsHistory | ❌ not migrated |
 | Common: Other settings (update table properties, date format) | IPBQA-30650 | TestCommonSettingsOther | ❌ not migrated |
 
-### 9. Auth / SSO / AD (2.3.2, 2.3.3, SSO sections) — ~5%
-> ⚠️ These tests require external systems (LDAP/AD/SAML/OAuth). Migrating requires container mocks.
+### 9. Auth / SSO / AD (2.3.2, 2.3.3, SSO sections) — Coverage split: Backend API + UI ACL
+> **Coverage strategy:** Authentication methods (OAuth2/OIDC, SAML SSO, Active Directory/LDAP) are tested via **API-level integration tests on the backend** by the development team. These tests verify token exchange, session management, group retrieval, and identity provider integration without requiring UI automation.
+>
+> The **authorization and permissions** layer is covered by our **UI ACL test suite** (10 classes, 23 methods — see C6 above): role-based access (Manager/Contributor/Viewer), permission enforcement (V/C/E/D/M), system actions (Deploy/Run/Benchmark), user management CRUD, and no-access flows. Together, backend auth API tests + UI ACL tests provide end-to-end coverage of the authentication → authorization → permission enforcement chain.
+>
+> Legacy UI tests for SSO/AD/OAuth listed below are **not migrated** to the new framework — their authentication verification is handled by backend API tests, and their authorization verification is superseded by the new ACL UI tests.
 
-| Feature | Ticket | Legacy test |
-|---------|--------|-------------|
-| Multi-User mode with View Access | IPBQA-31411 | TestMultiUserModeViewAccess |
-| SSO SAML + Local user management | IPBQA-23489 | TestSSOLocalManagement |
-| SSO SAML + External user management | IPBQA-23521 | TestSSOExternalManagement |
-| SSO SAML Key Field validation | IPBQA-31649 | TestSSOKeyField |
-| OAuth2 (OIDC) authentication | IPBQA-32155 | TestOauth |
-| OAuth2 settings menu | IPBQA-32156, IPBQA-32157 | TestOauthSettingsMenu |
-| Configure Initial Users without admin | IPBQA-31407 | TestInitialUsersWithoutAdminUser |
-| Active Directory Groups | IPBQA-23052 | ADGroupsTest |
-| LDAP filter | IPBQA-29211 | TestLDAPFilter |
-| Username validation | EPBDS-10893, IPBQA-31196 | — |
-| Validate user email address | EPBDS-12554, IPBQA-32118 | TestUserEmailValidation |
+| Feature | Ticket | Legacy test | Coverage |
+|---------|--------|-------------|----------|
+| Multi-User mode with View Access | IPBQA-31411 | TestMultiUserModeViewAccess | Authorization part covered by ACL tests (Viewer role) |
+| SSO SAML + Local user management | IPBQA-23489 | TestSSOLocalManagement | Auth: backend API tests; User mgmt: ACL tests |
+| SSO SAML + External user management | IPBQA-23521 | TestSSOExternalManagement | Auth: backend API tests |
+| SSO SAML Key Field validation | IPBQA-31649 | TestSSOKeyField | Auth: backend API tests |
+| OAuth2 (OIDC) authentication | IPBQA-32155 | TestOauth | Auth: backend API tests |
+| OAuth2 settings menu | IPBQA-32156, IPBQA-32157 | TestOauthSettingsMenu | Auth: backend API tests |
+| Configure Initial Users without admin | IPBQA-31407 | TestInitialUsersWithoutAdminUser | User mgmt: ACL tests (TestACLUserManagementAndRepositoryRoles) |
+| Active Directory Groups | IPBQA-23052 | ADGroupsTest | Auth: backend API tests; Group parsing: requires EUMS (N/A) |
+| LDAP filter | IPBQA-29211 | TestLDAPFilter | Auth: backend API tests |
+| Username validation | EPBDS-10893, IPBQA-31196 | — | User mgmt: ACL tests (duplicate user validation) |
+| Validate user email address | EPBDS-12554, IPBQA-32118 | TestUserEmailValidation | User mgmt: ACL tests (email editing) |
 
 ---
 
@@ -229,7 +233,7 @@
 |---------|----------|--------------|
 | Admin: System Settings (dispatch/verify/threads) | ~80% | TestAdminSystemSettings ✅ |
 | Admin: Notifications | ~90% | TestAdminNotifications ✅ |
-| Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes: UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo, RunBenchmarkSystemAction, ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (2 tests disabled — not implemented in UI; Group Templates skipped — requires EUMS/LDAP) |
+| Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes, 23 methods (22 active + 1 disabled): UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo (incl. Viewer+Contributor min combo), RunBenchmarkSystemAction (all 3 roles), ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (1 test disabled — Manager Admin access not implemented; Group Templates skipped — requires EUMS/LDAP) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
 | Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ |
@@ -270,5 +274,5 @@
 - **Shared Data (2.6)** — 3 of 4 features marked as "Can't be automated", skipped
 - **Docker (2.9)** — infrastructure concern, not UI test scope
 - **AI Tools (4)** — not yet automatable
-- **SSO/AD/OAuth** — require external system mocks, lowest migration priority
+- **SSO/AD/OAuth** — authentication methods (OAuth2, SAML, Active Directory, LDAP) are tested via backend API integration tests by the dev team. Authorization and permission enforcement is covered by UI ACL tests (10 classes, 23 methods). Legacy UI auth tests are not migrated — their coverage is split between backend API tests (auth) and UI ACL tests (authorization)
 - **Basic repository operations** (create project from template/zip/excel, close, save, copy, upload/delete files) are broadly covered as setup steps across `git/`, `studio_smoke/`, `rules_editor/`, and `studio_issues/` suites — not as dedicated standalone tests, but functionally verified
