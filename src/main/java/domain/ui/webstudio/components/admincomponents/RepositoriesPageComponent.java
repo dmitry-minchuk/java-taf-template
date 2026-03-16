@@ -9,6 +9,7 @@ import helpers.service.UserService;
 import helpers.utils.StringUtil;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RepositoriesPageComponent extends BaseComponent {
 
@@ -30,6 +31,8 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement applyChangesBtn;
     private WebElement designRepoActiveTab;
     private WebElement typeOption;
+    private WebElement deleteRepositoryBtnTemplate;
+    private List<WebElement> repositoryTypeOptions;
 
     public RepositoriesPageComponent() {
         super(LocalDriverPool.getPage());
@@ -65,6 +68,15 @@ public class RepositoriesPageComponent extends BaseComponent {
         designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
         // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
         typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
+        deleteRepositoryBtnTemplate = new WebElement(page, "xpath=(//span[@class='repositoryConfigButton'])[%s]//a", "deleteRepositoryBtn");
+        repositoryTypeOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option') and not(ancestor::div[contains(@class,'dropdown-hidden')])]", "repoTypeOptions");
+    }
+
+    public RepositoriesPageComponent deleteRepository(String repositoryNumber) {
+        page.onDialog(dialog -> dialog.accept());
+        deleteRepositoryBtnTemplate.format(repositoryNumber).hover();
+        deleteRepositoryBtnTemplate.format(repositoryNumber).click();
+        return this;
     }
 
     public RepositoriesPageComponent clickDesignRepositoriesTab() {
@@ -107,6 +119,15 @@ public class RepositoriesPageComponent extends BaseComponent {
 
     public String getDesignRepositoryType() {
         return remoteRepositoryTypeSelector.getText();
+    }
+
+    public List<String> getAllRepositoryTypes() {
+        remoteRepositoryTypeSelector.click();
+        List<String> types = repositoryTypeOptions.stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+        page.keyboard().press("Escape");
+        return types;
     }
 
     public boolean isDesignRepositoryRemote() {

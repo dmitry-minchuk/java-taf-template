@@ -27,5 +27,7 @@
     <test name="TestDisplayChangedRows"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRows"/></classes></test>
     <test name="TestTabRevisionsInEditor"><classes><class name="tests.ui.webstudio.rules_editor.TestTabRevisionsInEditor"/></classes></test>
     <test name="TestLocalChangesRestoreCompare"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesRestoreCompare"/></classes></test>
+    <test name="TestOrderingMode"><classes><class name="tests.ui.webstudio.rules_editor.TestOrderingMode"/></classes></test>
+    <test name="TestSearchOnProjectLevel"><classes><class name="tests.ui.webstudio.rules_editor.TestSearchOnProjectLevel"/></classes></test>
 
 </suite>

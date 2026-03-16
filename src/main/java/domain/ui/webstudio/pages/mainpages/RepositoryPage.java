@@ -156,6 +156,18 @@ public class RepositoryPage extends BasePage {
         }
     }
 
+    public void createProjectFromTemplateWithSelectRepo(String projectName, String templateName, String repositoryName) {
+        createProjectLink.click();
+        TemplateTabComponent templateComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.TEMPLATE);
+        templateComponent.selectProjectTemplate(templateName);
+        templateComponent.setProjectName(projectName);
+        templateComponent.selectRepository(repositoryName);
+        templateComponent.createProject();
+        fillCommitInfo();
+        waitUntilSpinnerLoaded();
+        refreshBtn.click(DEFAULT_TIMEOUT_MS);
+    }
+
     public void fillCommitInfo() {
         waitUntilSpinnerLoaded();
         if (configureCommitInfoComponentShade.isVisible(3000))

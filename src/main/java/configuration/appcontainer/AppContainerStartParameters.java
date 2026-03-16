@@ -9,6 +9,7 @@ import java.util.Map;
 public enum AppContainerStartParameters {
     EMPTY,
     DEFAULT_STUDIO_PARAMS,
+    SINGLE_USER_STUDIO_PARAMS,
     DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
     SAML_STUDIO_PARAMS,
@@ -20,6 +21,10 @@ public enum AppContainerStartParameters {
         switch (this) {
             case EMPTY:
                 config.put("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0");
+                break;
+            case SINGLE_USER_STUDIO_PARAMS:
+                config.putAll(EMPTY.getParameterMap());
+                config.put("webstudio.configured", "true");
                 break;
             case DEPLOY_STUDIO_PARAMS:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
