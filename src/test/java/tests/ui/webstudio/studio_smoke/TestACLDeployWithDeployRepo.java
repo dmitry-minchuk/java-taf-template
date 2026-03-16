@@ -214,4 +214,76 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
                 .as("Viewer on both repos should NOT see Deploy — needs Edit on deploy repo (BRD TR2)")
                 .isFalse();
     }
+
+    @Test
+    @TestCaseId("EPBDS-15712")
+    @Description("ACL: Viewer on design + Contributor on deploy repo → Deploy button visible (minimum required combo per BRD TR2)")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
+    public void testDeployVisibleForViewerOnDesignWithContributorOnDeployRepo() {
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        String projectName = StringUtil.generateUniqueName("DeployACL");
+
+        // ============ Admin creates project and user ============
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,
+                projectName, "Example 1 - Bank Rating");
+
+        // Create user with Viewer on Design + Contributor on Deploy repo
+        // This is the minimum required combination per BRD TR2:
+        // "at least viewer rights in design and editor rights in deploy repo"
+        // Contributor has Edit (E) permission on deploy repo.
+        UsersPageComponent usersComponent = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToUsersPage();
+
+        String username = StringUtil.generateUniqueName("viewer_contrib");
+        usersComponent.clickAddUser()
+                .setUsername(username)
+                .setPassword(username)
+                .saveUser();
+
+        usersComponent.clickEditUser(username)
+                .clickAddRoleBtn()
+                .setRoleRepository(0, "Design")
+                .setRole(0, "Viewer")
+                .clickDeployReposTab()
+                .clickAddRoleBtn()
+                .setDeployRoleRepository(0, "Deployment")
+                .setDeployRole(0, "Contributor")
+                .saveUser();
+
+        // ============ Login as user ============
+        editorPage.openUserMenu().signOut();
+        editorPage = loginService.login(new UserData(username, username));
+        repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+
+        final RepositoryPage repoRef = repositoryPage;
+        WaitUtil.waitForCondition(
+                () -> repoRef.getAllVisibleProjectsInTable().contains(projectName),
+                10000, 500, "Waiting for project to appear for viewer+contributor"
+        );
+
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", projectName);
+
+        // ============ Verify Deploy IS visible (Contributor on deploy has Edit) ============
+        RepositoryContentButtonsPanelComponent buttonsPanel =
+                repositoryPage.getRepositoryContentButtonsPanelComponent();
+
+        assertThat(buttonsPanel.isDeployBtnVisible())
+                .as("Viewer(design) + Contributor(deploy) should see Deploy — minimum combo per BRD TR2")
+                .isTrue();
+
+        // Verify Viewer permissions on design side remain unchanged
+        assertThat(buttonsPanel.isExportBtnVisible())
+                .as("Viewer: Export visible (V permission)").isTrue();
+        assertThat(buttonsPanel.isCopyBtnVisible())
+                .as("Viewer: Copy NOT visible (no C permission)").isFalse();
+        assertThat(buttonsPanel.isDeleteBtnVisible())
+                .as("Viewer: Delete NOT visible (no D permission)").isFalse();
+    }
 }
