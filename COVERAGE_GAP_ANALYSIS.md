@@ -47,39 +47,9 @@
 
 ---
 
-## 🔴 CRITICAL GAPS (0–10% coverage)
+## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. OpenAPI (2.8) — ~95% ✅
-**Legacy tests:** 7 | **New framework:** C3 + C3b + C4 + C5 + studio_issues all done ✅
-
-| Feature | Ticket | Legacy test | Covered by |
-|---------|--------|-------------|------------|
-| Create Project from OpenAPI | EPBDS-10846, IPBQA-30678 | TestCreateProjectFromOpenApiFile | ✅ **C5** |
-| Import OpenAPI file for scaffolding in existing project | EPBDS-10812, IPBQA-31035 | TestOpenApiImport | ✅ **C3** |
-| Create Data tables from OpenAPI GET methods | EPBDS-10770, IPBQA-31073 | TestCreateDataTablesFromOpenApiGetMethod | ✅ **C5** (~95%: minor empty-cell assertions in reference rows not migrated) |
-| OpenAPI reconciliation feature | IPBQA-30902 | OpenApiReconciliationFeature | ✅ **C4** |
-| OpenAPI reconciliation with multiple merged files | EPBDS-10620, IPBQA-30970 | TestOpenApiReconciliationWithMultipleMergedFiles | ✅ **C4** |
-| OpenAPI file operations (Compare screen, error messages, default date) | EPBDS-10543, EPBDS-10789, EPBDS-10548 | TestOpenApiErrorMessages + TestGenerateOpenApiDefaultDate + TestCompareScreenForOpenApiFiles | ✅ **studio_issues** (~93% avg: `.contains()` vs exact match in error messages; compare locator uncertainty) |
-| Auto-add/update OpenAPI file in reconciliation mode | EPBDS-12260, IPBQA-32071 | TestOpenApiImportLocalChanges | ✅ **C3b** |
-
-### 2. Single/Multi Mode (2.11) — ~100% ✅
-**Legacy tests:** 6 | **New framework:** 5 test classes, 9 methods (C7 fully migrated)
-
-| Feature | Ticket | Legacy test | Covered by |
-|---------|--------|-------------|------------|
-| Project compilation – main scenarios | EPBDS-11873, IPBQA-31701 | TestProjectCompilation | ✅ **C7** TestProjectCompilation (4 methods) |
-| Hide Progress Bar after compilation finished | EPBDS-11812, IPBQA-31733 | TestCompilationProgressBar | ✅ **C7** TestCompilationProgressBar (2 methods) |
-| Run/Trace/Test in currently opened module only | EPBDS-11813, IPBQA-31729 | TestCompileThisModuleOnly | ✅ **C7** TestCompileThisModuleOnly (1 method) |
-| Single/Multi-module setting on module level | EPBDS-11799, IPBQA-31758 | — | ✅ **C7** TestCompileThisModuleOnly |
-| Compile This Module Only redesign | EPBDS-11799, IPBQA-31895 | TestCompileThisModuleOnly | ✅ **C7** TestCompileThisModuleOnly |
-| Errors and Run/Trace/Test buttons for duplicate tables | EPBDS-11791, IPBQA-31790 | TestWorkWithDuplicateTables | ✅ **C7** TestWorkWithDuplicateTables (1 method) |
-| No errors on switching projects via breadcrumb | EPBDS-11827, IPBQA-31804 | TestSwitchModuleViaBreadcrumbsNavigation | ✅ **C7** TestSwitchModuleViaBreadcrumbsNavigation (1 method) |
-
----
-
-## 🟡 PARTIALLY COVERED (20–60%)
-
-### 4. REPOSITORY (2.2) — ~55%
+### 1. REPOSITORY (2.2) — ~55%
 **Legacy tests:** 30+ | **New framework:** C1 + C2 done; basic operations widely covered across suites
 
 > Note: Many "basic operations" (create from zip/template/excel, close, save, copy project, upload/delete files) are covered **indirectly** across many existing tests as test setup steps. Only a few advanced features remain uncovered.
@@ -119,7 +89,7 @@
 | Non-flat git folder structure: create/copy/delete/edit | EPBDS-10853, IPBQA-30903 | TestNonFlatRepoIssues | → **C12** (partial) |
 | Change validation pattern for Repository Name | EPBDS-11533, IPBQA-31641 | TestRepositoryNameValidation | → **C12** |
 
-### 5. Editor – Advanced Features (2.1.x) — ~25%
+### 2. Editor – Advanced Features (2.1.x) — ~25%
 **Legacy tests:** 65+ | **New framework:** 15 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -160,7 +130,7 @@
 | Rename project in Editor (non-flat git) | EPBDS-10845, IPBQA-30937 | TestRenameProjectInEditor | ❌ not migrated |
 | Run/Trace buttons always visible | EPBDS-11722, IPBQA-31761 | TestRunTraceButtonsVisibleForAllTypeTables | ❌ not migrated |
 
-### 6. Git (2.5) — ~44%
+### 3. Git (2.5) — ~44%
 **Legacy tests:** 25+ | **New framework:** 11 tests
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -179,7 +149,7 @@
 | HTTP → HTTPS git repo URL change | EPBDS-11370, IPBQA-31528 | TestGitHttpToHttpsAndViceVersa | ❌ not migrated |
 | Protected Branches | IPBQA-31896 | TestProtectedBranches | ❌ not migrated |
 
-### 7. WebService (Section 1) — ~25%
+### 4. WebService (Section 1) — ~25%
 **Legacy tests:** 10+ | **New framework:** 3 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestWebservicesGitRepo + TestDeployProjectsWithoutServiceNameInRulesDeploy)
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -192,7 +162,7 @@
 | Write OpenL runtime errors in log | EPBDS-12576, IPBQA-32104 | — | ❌ not migrated |
 | Alphabetical sorting of deployments | EPBDS-13121, IPBQA-32307 | — | ❌ not migrated |
 
-### 8. Admin: System Settings – Repositories (2.3.1.8-12) — ~40%
+### 5. Admin: System Settings – Repositories (2.3.1.8-12) — ~40%
 **Legacy tests:** 10+ | **New framework:** 3 tests (Testcontainers-based JDBC integration + deploy)
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -205,27 +175,6 @@
 | Restore default (Repositories) | EPBDS-9628, IPBQA-29638 | TestRestoreDefault | ❌ not migrated |
 | Common: History max count & Clean history | EPBDS-10539, IPBQA-30730 | TestCommonSettingsHistory | ❌ not migrated |
 | Common: Other settings (update table properties, date format) | IPBQA-30650 | TestCommonSettingsOther | ❌ not migrated |
-
-### 9. Auth / SSO / AD (2.3.2, 2.3.3, SSO sections) — ~90% (Coverage split: Backend API + UI ACL)
-> **Coverage strategy:** Authentication methods (OAuth2/OIDC, SAML SSO, Active Directory/LDAP) are tested via **API-level integration tests on the backend** by the development team. These tests verify token exchange, session management, group retrieval, and identity provider integration without requiring UI automation.
->
-> The **authorization and permissions** layer is covered by our **UI ACL test suite** (10 classes, 23 methods — see C6 above): role-based access (Manager/Contributor/Viewer), permission enforcement (V/C/E/D/M), system actions (Deploy/Run/Benchmark), user management CRUD, and no-access flows. Together, backend auth API tests + UI ACL tests provide end-to-end coverage of the authentication → authorization → permission enforcement chain.
->
-> Legacy UI tests for SSO/AD/OAuth listed below are **not migrated** to the new framework — their authentication verification is handled by backend API tests, and their authorization verification is superseded by the new ACL UI tests.
-
-| Feature | Ticket | Legacy test | Coverage |
-|---------|--------|-------------|----------|
-| Multi-User mode with View Access | IPBQA-31411 | TestMultiUserModeViewAccess | Authorization part covered by ACL tests (Viewer role) |
-| SSO SAML + Local user management | IPBQA-23489 | TestSSOLocalManagement | Auth: backend API tests; User mgmt: ACL tests |
-| SSO SAML + External user management | IPBQA-23521 | TestSSOExternalManagement | Auth: backend API tests |
-| SSO SAML Key Field validation | IPBQA-31649 | TestSSOKeyField | Auth: backend API tests |
-| OAuth2 (OIDC) authentication | IPBQA-32155 | TestOauth | Auth: backend API tests |
-| OAuth2 settings menu | IPBQA-32156, IPBQA-32157 | TestOauthSettingsMenu | Auth: backend API tests |
-| Configure Initial Users without admin | IPBQA-31407 | TestInitialUsersWithoutAdminUser | User mgmt: ACL tests (TestACLUserManagementAndRepositoryRoles) |
-| Active Directory Groups | IPBQA-23052 | ADGroupsTest | Auth: backend API tests; Group parsing: requires EUMS (N/A) |
-| LDAP filter | IPBQA-29211 | TestLDAPFilter | Auth: backend API tests |
-| Username validation | EPBDS-10893, IPBQA-31196 | — | User mgmt: ACL tests (duplicate user validation) |
-| Validate user email address | EPBDS-12554, IPBQA-32118 | TestUserEmailValidation | User mgmt: ACL tests (email editing) |
 
 ---
 
