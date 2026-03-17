@@ -71,7 +71,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
         repositoryTabTemplate = new WebElement(page, "xpath=//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]", "repositoryTab");
         deleteRepositoryBtnTemplate = new WebElement(page, "xpath=//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]//button[contains(@class,'ant-tabs-tab-remove')]", "deleteRepositoryBtn");
-        repositoryTypeOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option') and not(ancestor::div[contains(@class,'dropdown-hidden')])]", "repoTypeOptions");
+        repositoryTypeOptions = createElementList("xpath=//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'ant-select-dropdown-hidden'))]//div[contains(@class,'ant-select-item') and contains(@class,'ant-select-item-option') and not(contains(@class,'ant-select-item-option-content'))]", "repoTypeOptions");
     }
 
     public void deleteRepository(String repositoryName, User user) {
