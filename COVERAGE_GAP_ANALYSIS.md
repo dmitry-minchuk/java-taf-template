@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-12
+> Updated: 2026-03-17
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -14,7 +14,9 @@
 | Suites | `rules_editor.xml` (23) · `studio_issues.xml` (43) · `studio_smoke.xml` (35) · `studio_git.xml` (11) · `service_smoke.xml` (3) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 117** |
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
-| **New framework overall coverage** | **~68% of legacy feature areas** (stable; completed: C1-C12, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C13, C14) |
+| Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
+| Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard — excluded from coverage denominator |
+| **New framework overall coverage** | **~72% of legacy feature areas** (up from ~68% after reclassifying Auth/SSO/AD as covered and excluding removed features; completed: C1-C12, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C13, C14) |
 
 ---
 
@@ -204,7 +206,7 @@
 | Common: History max count & Clean history | EPBDS-10539, IPBQA-30730 | TestCommonSettingsHistory | ❌ not migrated |
 | Common: Other settings (update table properties, date format) | IPBQA-30650 | TestCommonSettingsOther | ❌ not migrated |
 
-### 9. Auth / SSO / AD (2.3.2, 2.3.3, SSO sections) — Coverage split: Backend API + UI ACL
+### 9. Auth / SSO / AD (2.3.2, 2.3.3, SSO sections) — ~90% (Coverage split: Backend API + UI ACL)
 > **Coverage strategy:** Authentication methods (OAuth2/OIDC, SAML SSO, Active Directory/LDAP) are tested via **API-level integration tests on the backend** by the development team. These tests verify token exchange, session management, group retrieval, and identity provider integration without requiring UI automation.
 >
 > The **authorization and permissions** layer is covered by our **UI ACL test suite** (10 classes, 23 methods — see C6 above): role-based access (Manager/Contributor/Viewer), permission enforcement (V/C/E/D/M), system actions (Deploy/Run/Benchmark), user management CRUD, and no-access flows. Together, backend auth API tests + UI ACL tests provide end-to-end coverage of the authentication → authorization → permission enforcement chain.
@@ -245,6 +247,7 @@
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
 | Compare (Excel/revisions/local changes) | ~80% | C8: TestCompareExcelFiles + TestDisplayChangedRows ✅ |
 | Client: Central + Zip projects | ~80% | `central_projects_regression.xml` (TestLocalCentralProjects) + `zip_projects_regression.xml` (TestLocalZippedProjects) ✅ |
+| Auth / SSO / AD | ~90% | Authentication: backend API tests (dev team). Authorization: 10 ACL UI test classes, 23 methods. 10/11 legacy features covered, 1 partial (AD Groups — requires EUMS). See Section 9 |
 
 ---
 
