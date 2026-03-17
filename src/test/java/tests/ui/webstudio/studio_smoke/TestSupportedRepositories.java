@@ -27,7 +27,11 @@ public class TestSupportedRepositories extends BaseTest {
 
     // Deployment repositories have the same types as design (Local was removed)
     private static final List<String> DEPLOYMENT_REPOSITORY_TYPES = Arrays.asList(
-            "Database JDBC", "Database JNDI", "AWS S3", "Azure Blob Storage", "Git");
+            "Database JDBC",
+            "Database JNDI",
+            "AWS S3",
+            "Azure Blob Storage",
+            "Git");
 
     @Test
     @TestCaseId("IPBQA-29276")
