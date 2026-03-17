@@ -82,9 +82,7 @@ public class TestSearchOnProjectLevel extends BaseTest {
         assertThat(search.isTableFound("SalaryCalc")).isTrue();
 
         // 1.4 Search in another project
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage = new EditorPage();
-        search = editorPage.getSearchFilterComponent();
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectExample1BankRating);
         search.typeSearchAndEnter("MONEY");
         search.waitForSearchResult();
@@ -108,9 +106,7 @@ public class TestSearchOnProjectLevel extends BaseTest {
         assertThat(search.isTableFound("BalanceQualityIndexCalculation")).isTrue();
 
         // 1.6 Search by tag, then view table
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage = new EditorPage();
-        search = editorPage.getSearchFilterComponent();
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectSearchingByTag);
         search.typeSearchAndEnter("testingFirst");
         search.waitForSearchResult();
@@ -124,9 +120,7 @@ public class TestSearchOnProjectLevel extends BaseTest {
         search.waitForSearchResult();
         assertThat(search.getResultCounterText()).isEqualTo("No results found");
 
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage = new EditorPage();
-        search = editorPage.getSearchFilterComponent();
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectSearchingByTag);
         search.typeSearchAndEnter("''");
         search.waitForSearchResult();
@@ -255,9 +249,7 @@ public class TestSearchOnProjectLevel extends BaseTest {
         assertThat(search.isTableFound("BankRatingCalculation")).isTrue();
 
         // 2.8 Search by Tags property
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage = new EditorPage();
-        search = editorPage.getSearchFilterComponent();
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectSearchingByTag);
         search.openAdvancedSearch();
         search.searchByProperty("Tags", "secondRule,searching");
@@ -266,9 +258,7 @@ public class TestSearchOnProjectLevel extends BaseTest {
         assertThat(search.isTableFound("RulTab")).isTrue();
 
         // 2.9 Simple search with scope switching
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage = new EditorPage();
-        search = editorPage.getSearchFilterComponent();
+        editorPage.getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectSpreadsheetSalary);
         search.openAdvancedSearch();
         search.setScope("Current Project");
@@ -290,6 +280,7 @@ public class TestSearchOnProjectLevel extends BaseTest {
         // 2.10 View table and edit cell
         search.clickViewTable("BalanceQualityIndexCalculation");
         editorPage.getCenterTable().editCell(3, 1, "Step 1");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.getEditorToolbarPanelComponent().clickSave();
     }
 }

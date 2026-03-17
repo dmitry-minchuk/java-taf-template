@@ -42,7 +42,7 @@ public class SearchFilterComponent extends BaseComponent {
         searchName = new WebElement(page, "xpath=//input[@id='searchQuery']", "searchName");
         openSearchDropdown = new WebElement(page, "xpath=//span[@id='searchInput']//a", "openSearchDropdown");
         selectScope = new WebElement(page, "xpath=//select[@id='searchScopeSelection']", "selectScope");
-        selectType = new WebElement(page, "xpath=//a[@id='multiselect-select']", "selectType");
+        selectType = new WebElement(page, "xpath=//input[@id='multiselect-select']", "selectType");
         outsideSelectTableType = new WebElement(page, "xpath=//div[@id='advancedSearch']//label[text()='Table Type']", "outsideSelectTableType");
         searchBtn = new WebElement(page, "xpath=//div[@id='advancedSearch']//input[@value='Search']", "searchBtn");
         closeSearchBtn = new WebElement(page, "xpath=//span[contains(@class,'jquery-popup-close-icon')]", "closeSearchBtn");
@@ -127,24 +127,23 @@ public class SearchFilterComponent extends BaseComponent {
     }
 
     public SearchFilterComponent clickViewTable(String tableName) {
-        viewTableTemplate.format(tableName).click();
+        viewTableTemplate.format(tableName).getLocator().first().click();
         return this;
     }
 
     public List<String> getTableNamesInSearchResults() {
         return tableNameCells.stream().map(e -> {
-            String tableHeaderFull = e.getText().replace("\n", " ");
-            String[] text = tableHeaderFull.split(" ");
-            text = Arrays.stream(text)
-                    .map(s -> s.replaceAll("[^a-zA-Z0-9<>]", ""))
-                    .toArray(String[]::new);
-            if (text.length >= 3 && !text[2].contains("<")) {
-                return text[2];
-            } else if (text.length == 1) {
-                return text[0];
-            } else {
-                return text[1];
+            String tableHeaderFull = e.getText().replace("\n", " ").trim();
+            // Table name is the last word before the opening parenthesis
+            int parenIndex = tableHeaderFull.indexOf("(");
+            if (parenIndex > 0) {
+                String beforeParen = tableHeaderFull.substring(0, parenIndex).trim();
+                String[] parts = beforeParen.split("\\s+");
+                return parts[parts.length - 1].replaceAll("[^a-zA-Z0-9]", "");
             }
+            // No parenthesis — standalone name (e.g. Datatype tables)
+            String[] parts = tableHeaderFull.split("\\s+");
+            return parts[parts.length - 1].replaceAll("[^a-zA-Z0-9]", "");
         }).collect(Collectors.toList());
     }
 
