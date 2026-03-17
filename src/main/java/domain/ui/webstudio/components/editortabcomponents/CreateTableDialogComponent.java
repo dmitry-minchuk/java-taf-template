@@ -11,6 +11,7 @@ public class CreateTableDialogComponent extends BaseComponent {
     private WebElement parameterTypeSelect;
     private WebElement parameterNameInput;
     private WebElement saveButton;
+    private WebElement categorySelection;
 
     public CreateTableDialogComponent(WebElement root) {
         super(root);
@@ -24,6 +25,7 @@ public class CreateTableDialogComponent extends BaseComponent {
         parameterTypeSelect = createScopedElement("xpath=(.//span[contains(@id,'paramTable')]//tbody//tr)[1]//select", "parameterTypeSelect");
         parameterNameInput = createScopedElement("xpath=(.//span[contains(@id,'paramTable')]//tbody//tr)[1]//input[contains(@id,':pname')]", "parameterNameInput");
         saveButton = createScopedElement("xpath=.//input[@value='Save']", "saveButton");
+        categorySelection = createScopedElement("xpath=.//select[@id='sheet']", "categorySelection");
     }
 
     public CreateTableDialogComponent selectType(String type) {
@@ -43,9 +45,17 @@ public class CreateTableDialogComponent extends BaseComponent {
     }
 
     public CreateTableDialogComponent addParameter(String type, String name) {
-        parameterTypeSelect.selectByVisibleText(type);
+        if (type != null && !type.isEmpty()) {
+            parameterTypeSelect.selectByVisibleText(type);
+        }
         parameterNameInput.fill(name);
         nextButton.click();
+        return this;
+    }
+
+    public CreateTableDialogComponent setCategorySelection(String category) {
+        categorySelection.waitForVisible();
+        categorySelection.selectByVisibleText(category);
         return this;
     }
 

@@ -151,4 +151,65 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
                 .as("Contributor should also see Edit button (E permission)")
                 .isTrue();
     }
+
+    @Test
+    @TestCaseId("EPBDS-15712")
+    @Description("ACL: Run and Benchmark visible for Manager — system actions available to all users (BRD TR2)")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testRunAndBenchmarkVisibleForManager() {
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+
+        // ============ Admin setup: create project and Manager user ============
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
+
+        EditorPage editorPage = new EditorPage();
+        UsersPageComponent usersComponent = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToUsersPage();
+
+        String username = StringUtil.generateUniqueName("manager_run");
+        usersComponent.clickAddUser()
+                .setUsername(username)
+                .setPassword(username)
+                .saveUser();
+
+        usersComponent.clickEditUser(username)
+                .clickAddRoleBtn()
+                .setRoleRepository(0, "Design")
+                .setRole(0, "Manager")
+                .saveUser();
+
+        // ============ Login as Manager ============
+        editorPage.openUserMenu().signOut();
+        editorPage = loginService.login(new UserData(username, username));
+
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+
+        WaitUtil.waitForCondition(
+                () -> repositoryPage.getAllVisibleProjectsInTable().contains(projectName),
+                10000, 500, "Waiting for project to appear for manager"
+        );
+
+        repositoryPage.refresh();
+        repositoryPage.unlockAllProjects();
+        editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(projectName, "Bank Rating");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .expandFolderInTree("Algorithm Tests")
+                .selectItemInFolder("Algorithm Tests", "BankRatingTest");
+
+        EditorToolbarPanelComponent toolbar = editorPage.getEditorToolbarPanelComponent();
+
+        assertThat(toolbar.isRunButtonVisible())
+                .as("Manager should see Run button (system action, available to all users)")
+                .isTrue();
+        assertThat(toolbar.isBenchmarkButtonVisible())
+                .as("Manager should see Benchmark button (system action, available to all users)")
+                .isTrue();
+        // Manager also has Edit
+        assertThat(toolbar.getEditTableBtn().isVisible(2000))
+                .as("Manager should also see Edit button (E permission)")
+                .isTrue();
+    }
 }

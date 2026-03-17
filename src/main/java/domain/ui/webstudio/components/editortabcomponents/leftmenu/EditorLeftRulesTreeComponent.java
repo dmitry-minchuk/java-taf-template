@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EditorLeftRulesTreeComponent extends BaseComponent {
 
@@ -20,6 +21,12 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
     private WebElement filterOptionTemplate;
     private WebElement tableIconTemplate;
     private List<EditorTreeFolderComponent> folders;
+    private List<WebElement> categoryLabels;
+    private List<WebElement> leafNodes;
+    private WebElement advancedFilterBtn;
+    private WebElement hideUtilityTablesCheckbox;
+    private WebElement applyAdvancedFilterBtn;
+    private WebElement closeAdvancedFilterBtn;
 
     public EditorLeftRulesTreeComponent() {
         super(LocalDriverPool.getPage());
@@ -37,6 +44,47 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         filterOptionTemplate = createScopedElement("xpath=.//ul[@class='dropdown-menu link-dropdown-menu']/li/a[text()='%s']", "filterOptionLink");
         tableIconTemplate = createScopedElement("xpath=.//div//a//span[text()='%s']/parent::*/parent::*/parent::*//img", "tableIconTemplate");
         folders = createScopedComponentList(EditorTreeFolderComponent.class, "xpath=(.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-colps')]) | (.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-colps')] and contains(@class, 'rf-tr-nd-exp')]) | (.//div[@id='rulesTree']//div[./div/span[contains(@class,'rf-trn-hnd-exp')] and contains(@class, 'rf-tr-nd-exp')])", "treeFolders");
+        categoryLabels = createScopedElementList("xpath=.//div[@id='rulesTree']//span[@class='rf-trn-lbl']/span", "categoryLabels");
+        leafNodes = createScopedElementList("xpath=.//div[div/span[@class='rf-trn-hnd-lf rf-trn-hnd']]", "leafNodes");
+        advancedFilterBtn = createScopedElement("xpath=.//div[@id='rulesTreeViewForm:rulesTreeView']//a[@title='Filter']", "advancedFilterBtn");
+        hideUtilityTablesCheckbox = new WebElement(page, "xpath=//input[@id='filterForm:hideUtilityTables']", "hideUtilityTablesCheckbox");
+        applyAdvancedFilterBtn = new WebElement(page, "xpath=//form[@id='filterForm']//input[@value='Apply']", "applyAdvancedFilterBtn");
+        closeAdvancedFilterBtn = new WebElement(page, "xpath=//div[@id='modalTreeFilter_header_controls']//img[@class='close']", "closeAdvancedFilterBtn");
+    }
+
+    public String getViewFilterValue() {
+        waitUntilSpinnerLoaded();
+        return viewFilterLink.getText();
+    }
+
+    public List<String> getCategoriesVisible() {
+        waitUntilSpinnerLoaded();
+        return categoryLabels.stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getAllEndNodesNames() {
+        waitUntilSpinnerLoaded();
+        return leafNodes.stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+    }
+
+    public EditorLeftRulesTreeComponent setAdvancedFilter(boolean hideUtilityTables) {
+        advancedFilterBtn.click();
+        if (hideUtilityTables != hideUtilityTablesCheckbox.isChecked()) {
+            hideUtilityTablesCheckbox.click();
+        }
+        applyAdvancedFilterBtn.click();
+        return this;
+    }
+
+    public boolean isHideUtilityTables() {
+        advancedFilterBtn.click();
+        boolean value = hideUtilityTablesCheckbox.isChecked();
+        closeAdvancedFilterBtn.click();
+        return value;
     }
 
     public EditorLeftRulesTreeComponent setViewFilter(FilterOptions filterOption) {

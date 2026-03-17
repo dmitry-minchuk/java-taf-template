@@ -56,6 +56,7 @@ public class EditorPage extends BasePage {
     private WebElement addDependenciesLink;
     private WebElement manageDependenciesBtn;
     private WebElement refreshBtn;
+    private SearchFilterComponent searchFilterComponent;
 
     public EditorPage() {
         super();
@@ -99,6 +100,7 @@ public class EditorPage extends BasePage {
         addDependenciesLink = new WebElement(getPage(), "xpath=//div[@id='content']//a[contains(text(),'Click to add dependencies')]", "addDependenciesLink");
         manageDependenciesBtn = new WebElement(getPage(), "xpath=//div[@id='content']//a[@title='Manage Dependencies']//img", "manageDependenciesBtn");
         refreshBtn = new WebElement(getPage(), "xpath=//a[@id='refreshBtn']", "refreshBtn");
+        searchFilterComponent = new SearchFilterComponent();
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {

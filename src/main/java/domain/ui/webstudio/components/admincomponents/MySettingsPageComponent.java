@@ -33,7 +33,7 @@ public class MySettingsPageComponent extends BaseComponent {
         showFormulasCheckbox = createScopedElement("xpath=.//input[@id='showFormulas']", "showFormulasCheckbox");
 
         defaultOrderDropdown = createScopedElement("xpath=.//div[./label[@title='Default Order']]/following-sibling::div//div[contains(@class,'ant-select-content')]", "defaultOrderDropdown");
-        defaultOrderSelectedItem = createScopedElement("xpath=.//input[@id='treeView']/ancestor::div[contains(@class,'ant-select')]//span[@class='ant-select-selection-item']", "defaultOrderSelectedItem");
+        defaultOrderSelectedItem = createScopedElement("xpath=.//input[@id='treeView']/ancestor::div[contains(@class,'ant-select')]//div[contains(@class,'ant-select-content')]", "defaultOrderSelectedItem");
 
         testsPerPageDropdown = createScopedElement("xpath=.//div[./label[@title='Tests Per Page']]/following-sibling::div//div[contains(@class,'ant-select-content')]", "testsPerPageDropdown");
         selectOptionTemplate =  new WebElement(page,"xpath=//div[@class='rc-virtual-list-holder-inner' and not(ancestor::div[contains(@class,'dropdown-hidden')])]/div[@title='%s']", "selectOptionTemplate");
