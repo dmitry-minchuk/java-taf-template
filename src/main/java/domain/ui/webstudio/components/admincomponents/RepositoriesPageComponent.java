@@ -31,6 +31,7 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement applyChangesBtn;
     private WebElement designRepoActiveTab;
     private WebElement typeOption;
+    private WebElement repositoryTabTemplate;
     private WebElement deleteRepositoryBtnTemplate;
     private List<WebElement> repositoryTypeOptions;
 
@@ -68,15 +69,16 @@ public class RepositoriesPageComponent extends BaseComponent {
         designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
         // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
         typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
+        repositoryTabTemplate = new WebElement(page, "xpath=//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]", "repositoryTab");
         deleteRepositoryBtnTemplate = new WebElement(page, "xpath=//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]//button[contains(@class,'ant-tabs-tab-remove')]", "deleteRepositoryBtn");
         repositoryTypeOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option') and not(ancestor::div[contains(@class,'dropdown-hidden')])]", "repoTypeOptions");
     }
 
-    public RepositoriesPageComponent deleteRepository(String repositoryName) {
-        page.onDialog(dialog -> dialog.accept());
-        deleteRepositoryBtnTemplate.format(repositoryName).hover();
+    public void deleteRepository(String repositoryName, User user) {
+        repositoryTabTemplate.format(repositoryName).hover();
         deleteRepositoryBtnTemplate.format(repositoryName).click();
-        return this;
+        getModalOkBtn().waitForVisible().click();
+        new LoginPage().login(UserService.getUser(user), DEFAULT_TIMEOUT_MS * 1000L);
     }
 
     public RepositoriesPageComponent clickDesignRepositoriesTab() {

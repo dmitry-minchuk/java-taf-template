@@ -49,18 +49,23 @@ public class TestAddDeleteDesignRepository extends BaseTest {
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProjectFromTemplateWithSelectRepo(nameProjectDesign1, "Sample Project", "Design1");
 
-        // Navigate to Admin → Repositories, delete first additional repo, add new one (becomes Design2)
+        // Navigate to Admin → Repositories, delete first additional repo
         adminPage = editorPage.openUserMenu().navigateToAdministration();
         repositories = adminPage.navigateToRepositoriesPage();
-        repositories.deleteRepository("Design1");
-        repositories.addDesignRepository();
+        repositories.deleteRepository("Design1", User.ADMIN);
+
+        // After delete + relogin, navigate back to Admin → Repositories and add new one (becomes Design2)
+        editorPage = new EditorPage();
+        adminPage = editorPage.openUserMenu().navigateToAdministration();
+        repositories = adminPage.navigateToRepositoriesPage();
+        repositories.addDesignRepository("Design1");
         repositories.applyChangesAndRelogin(User.ADMIN);
 
-        // Create project in Design2
+        // Create project in new Design1
         editorPage = new EditorPage();
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProjectFromTemplateWithSelectRepo(nameProjectDesign2, "Empty Project", "Design2");
+        repositoryPage.createProjectFromTemplateWithSelectRepo(nameProjectDesign2, "Empty Project", "Design1");
 
         // Verify no errors in application logs
         LogsUtil.inspectLogFile(AppContainerPool.get());
