@@ -29,25 +29,8 @@
     <test name="TestOpenApiErrorMessages"><classes><class name="tests.ui.webstudio.studio_issues.TestOpenApiErrorMessages"/></classes></test>
     <test name="TestGenerateOpenApiDefaultDate"><classes><class name="tests.ui.webstudio.studio_issues.TestGenerateOpenApiDefaultDate"/></classes></test>
     <test name="TestCompareScreenForOpenApiFiles"><classes><class name="tests.ui.webstudio.studio_issues.TestCompareScreenForOpenApiFiles"/></classes></test>
-    <test name="TestImportOpenApiReconciliationMode"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiReconciliationMode"/></classes></test>
-    <test name="TestImportOpenApiModuleNamesValidation"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiModuleNamesValidation"/></classes></test>
-    <test name="TestImportModuleNamesRetentionOnModeSwitching"><classes><class name="tests.ui.webstudio.rules_editor.TestImportModuleNamesRetentionOnModeSwitching"/></classes></test>
-    <test name="TestImportTablesGenerationOverwriteWarning"><classes><class name="tests.ui.webstudio.rules_editor.TestImportTablesGenerationOverwriteWarning"/></classes></test>
-    <test name="TestImportOpenApiDialogDefaultStateForNonOpenApiProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiDialogDefaultStateForNonOpenApiProject"/></classes></test>
-    <test name="TestImportTablesGenerationForNonOpenApiProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportTablesGenerationForNonOpenApiProject"/></classes></test>
-    <test name="TestImportPathValidationErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestImportPathValidationErrors"/></classes></test>
-    <test name="TestImportNewModulesWithPathEditingAndMixedScenarios"><classes><class name="tests.ui.webstudio.rules_editor.TestImportNewModulesWithPathEditingAndMixedScenarios"/></classes></test>
-    <test name="TestImportCycleThroughModesForOpenApiProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportCycleThroughModesForOpenApiProject"/></classes></test>
-    <test name="TestImportForProjectCreatedFromTwoOpenApiFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestImportForProjectCreatedFromTwoOpenApiFiles"/></classes></test>
-    <test name="TestImportTablesGenerationForCorporateRatingProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportTablesGenerationForCorporateRatingProject"/></classes></test>
-    <test name="TestLocalChangesAfterTablesGenerationReImport"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesAfterTablesGenerationReImport"/></classes></test>
-    <test name="TestLocalChangesAfterReImportForTemplateProject"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesAfterReImportForTemplateProject"/></classes></test>
-    <test name="TestNoLocalChangesAfterReconciliationImport"><classes><class name="tests.ui.webstudio.rules_editor.TestNoLocalChangesAfterReconciliationImport"/></classes></test>
-    <test name="TestNoNewRecordWhenRegeneratingFromSameFile"><classes><class name="tests.ui.webstudio.rules_editor.TestNoNewRecordWhenRegeneratingFromSameFile"/></classes></test>
-    <test name="TestNewRecordWhenRegeneratingFromDifferentFile"><classes><class name="tests.ui.webstudio.rules_editor.TestNewRecordWhenRegeneratingFromDifferentFile"/></classes></test>
-    <test name="TestOpenApiReconciliationDatatypeErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationDatatypeErrors"/></classes></test>
-    <test name="TestOpenApiReconciliationDependentProject"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationDependentProject"/></classes></test>
-    <test name="TestOpenApiReconciliationSpreadsheetErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationSpreadsheetErrors"/></classes></test>
-    <test name="TestOpenApiReconciliationMultipleMergedFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationMultipleMergedFiles"/></classes></test>
+    <test name="TestDisplayChangedRowsCompareScreens"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsCompareScreens"/></classes></test>
+    <test name="TestDisplayChangedRowsResolveConflicts"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsResolveConflicts"/></classes></test>
+    <test name="TestDisplayChangedRowsTableStructure"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsTableStructure"/></classes></test>
 
 </suite>

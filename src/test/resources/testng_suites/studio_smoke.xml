@@ -29,13 +29,6 @@
     <test name="CreateDataTypeTableTest"><classes><class name="tests.ui.webstudio.studio_smoke.CreateDataTypeTableTest"/></classes></test>
     <test name="TestRepositoryBrowsingFilterStatus"><classes><class name="tests.ui.webstudio.repository.TestRepositoryBrowsingFilterStatus"/></classes></test>
     <test name="TestRepositoryTableActionsOpenClose"><classes><class name="tests.ui.webstudio.repository.TestRepositoryTableActions"/></classes></test>
-    <test name="TestCreateProjectFromOpenApiDefaultFormValues"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiDefaultFormValues"/></classes></test>
-    <test name="TestCreateProjectFromOpenApiJsonFile"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiJsonFile"/></classes></test>
-    <test name="TestCreateProjectFromOpenApiYamlWithCustomModuleNames"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiYamlWithCustomModuleNames"/></classes></test>
-    <test name="TestCreateProjectFromOpenApiFormValidation"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiFormValidation"/></classes></test>
-    <test name="TestDeleteOpenApiFileRemovesProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestDeleteOpenApiFileRemovesProperties"/></classes></test>
-    <test name="TestCreateDataTablesFromOpenApiGetMethodWithRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodWithRuntime"/></classes></test>
-    <test name="TestCreateDataTablesFromOpenApiGetMethodNoRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodNoRuntime"/></classes></test>
     <test name="TestMultipleDesignRepositoriesWithPostgres"><classes><class name="tests.ui.webstudio.repository.TestMultipleDesignRepositoriesWithPostgres"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnection"/></classes></test>
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>
