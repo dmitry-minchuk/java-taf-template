@@ -155,6 +155,10 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
         return deployBtn.isVisible();
     }
 
+    public boolean isDeployBtnVisible(int millis) {
+        return deployBtn.isVisible(millis);
+    }
+
     public boolean isAddFolderBtnVisible() {
         return addFolderBtn.isVisible();
     }

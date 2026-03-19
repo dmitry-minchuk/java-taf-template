@@ -80,7 +80,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
         RepositoryContentButtonsPanelComponent buttonsPanel =
                 repositoryPage.getRepositoryContentButtonsPanelComponent();
 
-        assertThat(buttonsPanel.isDeployBtnVisible())
+        assertThat(buttonsPanel.isDeployBtnVisible(5000))
                 .as("Admin should see Deploy button when deploy repo is configured (BRD TR2)")
                 .isTrue();
     }
@@ -143,7 +143,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
         RepositoryContentButtonsPanelComponent buttonsPanel =
                 repositoryPage.getRepositoryContentButtonsPanelComponent();
 
-        assertThat(buttonsPanel.isDeployBtnVisible())
+        assertThat(buttonsPanel.isDeployBtnVisible(5000))
                 .as("Contributor with Deploy repo access should see Deploy button (BRD TR2)")
                 .isTrue();
 
@@ -274,7 +274,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
         RepositoryContentButtonsPanelComponent buttonsPanel =
                 repositoryPage.getRepositoryContentButtonsPanelComponent();
 
-        assertThat(buttonsPanel.isDeployBtnVisible())
+        assertThat(buttonsPanel.isDeployBtnVisible(5000))
                 .as("Viewer(design) + Contributor(deploy) should see Deploy — minimum combo per BRD TR2")
                 .isTrue();
 

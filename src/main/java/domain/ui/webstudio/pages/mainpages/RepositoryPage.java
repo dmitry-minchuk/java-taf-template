@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Getter
 public class RepositoryPage extends BasePage {
@@ -250,6 +251,7 @@ public class RepositoryPage extends BasePage {
 
     public List<String> getAllVisibleProjectsInTable() {
         List<String> projectNames = new ArrayList<>();
+        WaitUtil.waitForCondition(() ->  !projectsTable.getRows().isEmpty(), 5000, 250, "Waiting for projects to load");
         for (int i = 1; i <= projectsTable.getRows().size(); i++) {
             TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(i);
             if (!row.isVisible(100)) continue;
