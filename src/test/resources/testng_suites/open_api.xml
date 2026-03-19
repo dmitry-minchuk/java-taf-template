@@ -1,0 +1,40 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite verbose="1" name="WebStudio OpenApi Tests" annotations="JDK" parallel="tests" thread-count="2">
+
+    <listeners>
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
+        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
+    </listeners>
+
+    <!-- OpenAPI: Create project tests (moved from studio_smoke.xml) -->
+    <test name="TestCreateProjectFromOpenApiDefaultFormValues"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiDefaultFormValues"/></classes></test>
+    <test name="TestCreateProjectFromOpenApiJsonFile"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiJsonFile"/></classes></test>
+    <test name="TestCreateProjectFromOpenApiYamlWithCustomModuleNames"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiYamlWithCustomModuleNames"/></classes></test>
+    <test name="TestCreateProjectFromOpenApiFormValidation"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiFormValidation"/></classes></test>
+    <test name="TestDeleteOpenApiFileRemovesProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestDeleteOpenApiFileRemovesProperties"/></classes></test>
+    <test name="TestCreateDataTablesFromOpenApiGetMethodWithRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodWithRuntime"/></classes></test>
+    <test name="TestCreateDataTablesFromOpenApiGetMethodNoRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodNoRuntime"/></classes></test>
+
+    <!-- OpenAPI: Import tests (moved from studio_issues.xml) -->
+    <test name="TestImportOpenApiReconciliationMode"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiReconciliationMode"/></classes></test>
+    <test name="TestImportOpenApiModuleNamesValidation"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiModuleNamesValidation"/></classes></test>
+    <test name="TestImportModuleNamesRetentionOnModeSwitching"><classes><class name="tests.ui.webstudio.rules_editor.TestImportModuleNamesRetentionOnModeSwitching"/></classes></test>
+    <test name="TestImportTablesGenerationOverwriteWarning"><classes><class name="tests.ui.webstudio.rules_editor.TestImportTablesGenerationOverwriteWarning"/></classes></test>
+    <test name="TestImportOpenApiDialogDefaultStateForNonOpenApiProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiDialogDefaultStateForNonOpenApiProject"/></classes></test>
+    <test name="TestImportTablesGenerationForNonOpenApiProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportTablesGenerationForNonOpenApiProject"/></classes></test>
+    <test name="TestImportPathValidationErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestImportPathValidationErrors"/></classes></test>
+    <test name="TestImportNewModulesWithPathEditingAndMixedScenarios"><classes><class name="tests.ui.webstudio.rules_editor.TestImportNewModulesWithPathEditingAndMixedScenarios"/></classes></test>
+    <test name="TestImportCycleThroughModesForOpenApiProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportCycleThroughModesForOpenApiProject"/></classes></test>
+    <test name="TestImportForProjectCreatedFromTwoOpenApiFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestImportForProjectCreatedFromTwoOpenApiFiles"/></classes></test>
+    <test name="TestImportTablesGenerationForCorporateRatingProject"><classes><class name="tests.ui.webstudio.rules_editor.TestImportTablesGenerationForCorporateRatingProject"/></classes></test>
+    <test name="TestLocalChangesAfterTablesGenerationReImport"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesAfterTablesGenerationReImport"/></classes></test>
+    <test name="TestLocalChangesAfterReImportForTemplateProject"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesAfterReImportForTemplateProject"/></classes></test>
+    <test name="TestNoLocalChangesAfterReconciliationImport"><classes><class name="tests.ui.webstudio.rules_editor.TestNoLocalChangesAfterReconciliationImport"/></classes></test>
+    <test name="TestNoNewRecordWhenRegeneratingFromSameFile"><classes><class name="tests.ui.webstudio.rules_editor.TestNoNewRecordWhenRegeneratingFromSameFile"/></classes></test>
+    <test name="TestNewRecordWhenRegeneratingFromDifferentFile"><classes><class name="tests.ui.webstudio.rules_editor.TestNewRecordWhenRegeneratingFromDifferentFile"/></classes></test>
+    <test name="TestOpenApiReconciliationDatatypeErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationDatatypeErrors"/></classes></test>
+    <test name="TestOpenApiReconciliationDependentProject"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationDependentProject"/></classes></test>
+    <test name="TestOpenApiReconciliationSpreadsheetErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationSpreadsheetErrors"/></classes></test>
+    <test name="TestOpenApiReconciliationMultipleMergedFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationMultipleMergedFiles"/></classes></test>
+
+</suite>
