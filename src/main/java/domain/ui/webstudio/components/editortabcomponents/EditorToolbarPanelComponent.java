@@ -209,8 +209,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     public void navigateToProjectRoot(String projectName) {
         WaitUtil.retryOnException(() -> {
             breadcrumbsProjectToggle.click();
-            WaitUtil.sleep(250, "Waiting for project dropdown to open");
-            breadcrumbsDropdownItemTemplate.format(projectName).click(100);
+            breadcrumbsDropdownItemTemplate.format(projectName).waitForVisible();
+            breadcrumbsDropdownItemTemplate.format(projectName).click();
             return true;
         }, 5000, 500, "Trying to navigate to project root" + projectName);
         WaitUtil.sleep(500, "Waiting for project view to load");
@@ -566,7 +566,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             WaitUtil.retryOnException(() -> {
                 breadcrumbsModuleToggle.click();
                 breadcrumbsDropdownItemTemplate.format(moduleName).waitForVisible();
-                breadcrumbsDropdownItemTemplate.format(moduleName).click(100);
+                breadcrumbsDropdownItemTemplate.format(moduleName).click();
                 return true;
             }, 5000, 500, "Selecting module " + moduleName + " from breadcrumb");
         } else if (!actualProject.equals(projectName)) {
@@ -579,8 +579,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     public void selectProjectBreadcrumbs(String projectName) {
         WaitUtil.retryOnException(() -> {
             breadcrumbsProjectToggle.click();
-            WaitUtil.sleep(250, "Waiting for project dropdown to open");
-            breadcrumbsDropdownItemTemplate.format(projectName).click(100);
+            breadcrumbsDropdownItemTemplate.format(projectName).waitForVisible();
+            breadcrumbsDropdownItemTemplate.format(projectName).click();
             return true;
         }, 5000, 500, "Selecting project " + projectName + " from breadcrumb");
         WaitUtil.sleep(500, "Waiting for project view to load");
