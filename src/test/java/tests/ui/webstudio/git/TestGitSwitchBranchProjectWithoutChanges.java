@@ -37,9 +37,10 @@ public class TestGitSwitchBranchProjectWithoutChanges extends BaseTest {
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, TEMPLATE_NAME);
         repositoryPage.refresh();
 
-        // Copy project (auto-generated branch name)
+        // Copy project with short branch name to avoid UI overlap in dropdown
         CopyProjectDialogComponent copyDialog = repositoryPage.clickCopyProjectInTable(PROJECT_NAME);
-        String copyBranchName = copyDialog.getNewBranchName();
+        String copyBranchName = "copy";
+        copyDialog.setNewBranchName(copyBranchName);
         copyDialog.clickCopyButton();
 
         // Switch to Editor tab and select project
