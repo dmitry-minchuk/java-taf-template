@@ -37,16 +37,19 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
     }
 
     public RepositoryContentTabPropertiesComponent selectPropertiesTab() {
+        waitUntilSpinnerLoaded();
         propertiesTab.click();
         return propertiesTabComponent;
     }
 
     public RepositoryContentRevisionsTabComponent selectRevisionsTab() {
+        waitUntilSpinnerLoaded();
         revisionsTab.click();
         return revisionsTabComponent;
     }
 
     public ElementsTabComponent selectElementsTab() {
+        waitUntilSpinnerLoaded();
         elementsTab.click();
         return elementsTabComponent;
     }
