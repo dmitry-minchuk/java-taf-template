@@ -66,6 +66,7 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     }
 
     public void clickImportAndOverride() {
+        importAndOverrideBtn.waitForVisible();
         importAndOverrideBtn.click();
         WaitUtil.sleep(500, "Waiting for import action to process");
     }
@@ -132,6 +133,6 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     }
 
     public void waitForVisible() {
-        WaitUtil.waitForCondition(this::isVisible, 10000, 250, "Waiting for OpenAPI Module Settings dialog to appear");
+        importAndOverrideBtn.waitForVisible(10000);
     }
 }
