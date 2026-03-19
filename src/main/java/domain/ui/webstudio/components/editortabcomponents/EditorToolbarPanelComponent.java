@@ -524,7 +524,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
         @Override
         public ITraceWindow expandItemInTree(int position) {
+            int itemsBefore = visibleItemsFromTree.size();
             traceExpanderTemplate.format(position + 1).click();
+            WaitUtil.waitForCondition(() -> visibleItemsFromTree.size() > itemsBefore,
+                    5000, 200, "Waiting for tree node to expand");
             return this;
         }
 
