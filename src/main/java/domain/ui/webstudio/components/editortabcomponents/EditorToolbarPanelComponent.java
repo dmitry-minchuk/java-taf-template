@@ -217,10 +217,16 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void switchBranch(String branchName) {
-        breadcrumbsModuleBranch.click();
-        breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
-        breadcrumbsDropdownItemTemplate.format(branchName).click();
-        WaitUtil.sleep(1000, "Waiting for branch switch to complete");
+        WaitUtil.retryOnException(() -> {
+            breadcrumbsModuleBranch.click();
+            breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
+            breadcrumbsDropdownItemTemplate.format(branchName).click();
+            WaitUtil.sleep(1000, "Waiting for branch switch to complete");
+            if (!getCurrentBranch().trim().equals(branchName)) {
+                throw new RuntimeException("Branch did not switch to " + branchName + ", current: " + getCurrentBranch().trim());
+            }
+            return true;
+        }, 10000, 500, "Switching branch to " + branchName);
     }
 
     public String getCurrentBranch() {
