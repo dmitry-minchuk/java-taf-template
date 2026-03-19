@@ -221,7 +221,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             breadcrumbsModuleBranch.click();
             breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
             breadcrumbsDropdownItemTemplate.format(branchName).click();
-            WaitUtil.sleep(1000, "Waiting for branch switch to complete");
+            waitUntilSpinnerLoaded();
             if (!getCurrentBranch().trim().equals(branchName)) {
                 throw new RuntimeException("Branch did not switch to " + branchName + ", current: " + getCurrentBranch().trim());
             }

@@ -170,7 +170,8 @@ public class DeployInfrastructureService {
         oracleContainer = new OracleContainer(
                 ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_CONTAINER_IMAGE))
                 .withNetwork(network)
-                .withNetworkAliases("oracle");
+                .withNetworkAliases("oracle")
+                .withStartupTimeout(Duration.ofMinutes(5));
         oracleContainer.start();
         LOGGER.info("Oracle started. In-network JDBC URL: {}", getOracleJdbcUrl());
     }
