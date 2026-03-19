@@ -57,7 +57,22 @@
       "Bash(xargs:*)",
       "Bash(mvn clean compile test-compile:*)",
       "mcp__playwright__playwright_console_logs",
-      "WebFetch(domain:jira.eisgroup.com)"
+      "WebFetch(domain:jira.eisgroup.com)",
+      "Bash(done)",
+      "Bash(2)",
+      "Bash(docker run:*)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_fill_form",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker network:*)",
+      "Bash(/tmp/openl-deploy.properties:*)",
+      "Read(//tmp/**)",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_run_code"
     ],
     "deny": []
   }
