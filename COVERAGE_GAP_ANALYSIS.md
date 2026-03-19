@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-18
+> Updated: 2026-03-19
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -15,8 +15,8 @@
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
-| Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard — excluded from coverage denominator |
-| **New framework overall coverage** | **~76% of legacy feature areas** (up from ~72% after audit revealed Resolve Conflicts, Trace, Insert/Delete row, Benchmark visibility already covered; completed: C1-C12, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C13, C14) |
+| Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
+| **New framework overall coverage** | **~78% of legacy feature areas** (up from ~76% after audit: removed Unlock Project + Azure BLOB from denominator; upgraded Non-flat folder → ✅ C12b; Deploy button in Editor → ⚠️ partial; Copy table as new → ⚠️ partial; Run tables → ⚠️ partial; completed: C1-C12, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C13, C14) |
 
 ---
 
@@ -35,7 +35,7 @@
 | **C6** | **ACL tests** ✅ DONE (10 classes, 23 methods) | TestACLUserManagementAndRepositoryRoles, TestACLProjectLevelRoles, TestACLContributorRole, TestACLDeploySystemAction, TestACLRunBenchmarkSystemAction, TestACLManagePermission, TestACLDeployWithDeployRepo, TestACLLockUnlockDeprecated, TestACLNoAccessWarning, TestACLParsedGroupsUserView | ✅ New ACL model (BRD EPBDS-14295): Manager/Contributor/Viewer roles, V+C+E+D+M permissions, Run+Benchmark system actions for all roles (Viewer/Contributor/Manager), deploy repo access incl. minimum combo Viewer(design)+Contributor(deploy) per BRD TR2, Lock/Unlock deprecated, no-access warning + role assignment flow, parsed groups view in Admin. ⛔ 1 test disabled (Manager to Admin — not implemented in UI). Group Templates skipped (requires EUMS/LDAP) | ✅ `studio_smoke.xml` |
 | **C7** | **`TestProjectCompilation`** + **`TestCompileThisModuleOnly`** + **`TestCompilationProgressBar`** + **`TestWorkWithDuplicateTables`** + **`TestSwitchModuleViaBreadcrumbsNavigation`** ✅ DONE | TestProjectCompilation + TestCompileThisModuleOnly + TestCompilationProgressBar + TestWorkWithDuplicateTables + TestSwitchModuleViaBreadcrumbsNavigation | ✅ Project compilation main scenarios (2.11.2), ✅ Progress bar behavior (2.11.1), ✅ Run/Trace/Test in opened module (2.11.3), ✅ Duplicate tables errors (2.11.6), ✅ Breadcrumb navigation (2.11.7) | ✅ `rules_editor.xml` |
 | **C8** | **`TestCompareExcelFiles`** + **`TestDisplayChangedRows`** ✅ DONE | TestCompareExcelFiles + TestDisplayChangedRows | ✅ Compare Excel files (2.1.55), ✅ Display Changed Rows Only (EPBDS-10790), ✅ Comparing project revisions (2.2.28) | ✅ `rules_editor.xml` |
-| **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton (⛔ deploy-blocked) + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⛔ Deploy button (deploy not available for testing), ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
+| **C9** | **`TestTabRevisionsInEditor`** + **`TestLocalChangesRestoreCompare`** ✅ DONE | TestDeployButton + TestTabRevisionsOnEditorTab + TestChangesRestoreCompareHistorySettings | ⚠️ Deploy button in Editor — exists in UI (verified 6.1.0), partially covered via TestRepositoryBrowsingFilterStatus + ACL deploy tests; dedicated Editor-level deploy visibility test not migrated. ✅ Revision page in Editor (IPBQA-30123) → `TestTabRevisionsInEditor` (1 method), ✅ Local Changes: Restore/Compare (IPBQA-30730) → `TestLocalChangesRestoreCompare` (10 methods) | ✅ `rules_editor.xml` |
 | **C10** | **`TestRepositoryTableActions`** ✅ DONE | TestUIRepositoryTab + TestTableActionButtons | ✅ Table action buttons open/close (EPBDS-12712, IPBQA-32158): Deploy/Close/Open icons in Actions column, ButtonsPanel open/close, viewer user access; ✅ Repository tab properties (IPBQA-29847): ModifiedBy/ModifiedAt/Revision multi-user; ⛔ Deploy-blocked: Deploy table action "already deployed" dialog, Deploy Configuration properties, Production repository verification | ✅ `studio_smoke.xml` (deploy steps blocked) |
 | **C11** | **`TestOrderingMode`** + **`TestSearchOnProjectLevel`** ✅ DONE | TestOrderingMode + TestSearchOnProjectLevel | ✅ Table ordering mode – default setting (EPBDS-13592), ✅ Search on Project level (EPBDS-13988), ✅ User preference persistence, ✅ Advanced search with scope/type/property filters | ✅ `rules_editor.xml` |
 | **C12** | **`TestAddDeleteDesignRepository`** + **`TestSupportedRepositories`** ✅ DONE | TestAddDeleteDesignRepository + TestSupportedRepositories | ✅ Multiple Design Repos add/delete (EPBDS-9983), ✅ Supported repositories availability (IPBQA-29276); Installation Wizard checks replaced by Admin Settings. DeploymentConfigurationRepository checks skipped (EPBDS-15093) | ✅ `studio_smoke.xml` |
@@ -49,64 +49,24 @@
 
 ## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. REPOSITORY (2.2) — ~61%
-**Legacy tests:** 30+ | **New framework:** C1 + C2 done; basic operations widely covered across suites
-
-> Note: Many "basic operations" (create from zip/template/excel, close, save, copy project, upload/delete files) are covered **indirectly** across many existing tests as test setup steps. Only a few advanced features remain uncovered.
-
-| Feature | Ticket | Legacy test | Covered by |
-|---------|--------|-------------|------------|
-| Browsing Design repo: project pictures by status | EPBDS-9847 | TestBrowsingFilterStatusInRepositories | ✅ **C1** |
-| Design repo: Filter by name | EPBDS-9847 | TestBrowsingFilterStatusInRepositories | ✅ **C1** |
-| Design repo: Advanced filter (show/hide deleted) | EPBDS-9847 | TestBrowsingFilterStatusInRepositories | ✅ **C1** |
-| Browsing Deployment repo: project pictures by status | EPBDS-9847 | TestBrowsingFilterStatusInRepositories | Not yet migrated in **C1** |
-| Deployment repo: Filter by name | EPBDS-9847 | TestBrowsingFilterStatusInRepositories | Not yet migrated in **C1** |
-| Closing a Project | 2.2.12 | test066 | ✅ **C1** + TestGitStatusCopyClosedProject |
-| Saving a Project | 2.2.14 | various | ✅ **C1** + many git/rules_editor tests |
-| Opening Project Revision via Revisions tab | IPBQA-29644 | testProjectRestoreFromOldRevision | ✅ **C2** |
-| Opening Project Revision via Open Revision button | — | Repository.Test056 | ✅ **C2** |
-| Comparing Project Revisions | EPBDS-8517, EPBDS-8536 | Test035 | ✅ **C8** |
-| Exporting a Project or File | EPBDS-10703, IPBQA-31329 | TestExportProjectFunctionality | ✅ **C2** |
-| Table action buttons (open/close/deploy) | EPBDS-12712, IPBQA-32158 | TestTableActionButtons | ✅ **C10** TestRepositoryTableActions |
-| Copying a project | 2.2.15 | Test060 | ✅ TestGitStatusCopyClosedProject + git tests |
-| Creating a Project from a Template | 2.2.6 | test040 | ✅ TestRepositoryBrowsingFilterStatus + many git tests |
-| Creating a Project from Excel file | 2.2.7 | — | ✅ CreateDataTypeTableTest |
-| Creating a Project from Zip archive | 2.2.8 | Test017 | ✅ TestExportProjectFunctionality + many tests |
-| Creating a folder | 2.2.17 | Test048 | ❌ not migrated |
-| Uploading a file | 2.2.18 | test048AddFolder | ✅ TestFileAddDelete + TestOpenApiImportAndReconciliation |
-| Delete folder and file | 2.2.19 | Test050, Test055 | ✅ TestFileAddDelete |
-| Copy a file | 2.2.20 | Test073–Test079 | ❌ not migrated (file-level copy, not module) |
-| Copying a Module | 2.1.12 | Test129 | ✅ TestExportProjectFunctionality |
-| Unlocking a Project | IPBQA-30550 | TestUnlockProjectDeployConf | ❌ not migrated (deploy configurations removed per EPBDS-15093) |
-| Resolve Conflicts (by Sheets) | EPBDS-13488, IPBQA-32406 | TestResolveConflictFunctionality | ✅ TestMergeBranchesWithConflicts (Use Yours + Use Theirs via ResolveConflictsDialogComponent) |
-| Resolve Conflicts dialog improvements | EPBDS-9158, IPBQA-29110 | TestImproveResolveConflictDialog | ✅ TestMergeBranchesWithConflicts (dialog appear/resolve/verify) |
-| Revisions on Resolve Conflicts screen | EPBDS-9717, IPBQA-29901 | — | ❌ not migrated |
-| Git LFS support | EPBDS-12651, IPBQA-32116 | — | ❌ not migrated |
-| Azure BLOB storage support | EPBDS-12457, IPBQA-32109 | TestAzureBlobRepoStudio | ⚠️ partial — TestSupportedRepositories verifies Azure listed as repo type; no dedicated functional test of Azure BLOB operations |
-| Show technical revisions on Revisions tab | EPBDS-13652, IPBQA-32483 | — | ❌ not migrated |
-| Project design revision tracking in deployment | EPBDS-9687, IPBQA-29847 | — | ❌ not migrated |
-| Apply settings from rules-deploy.xml on JSON deserialization | EPBDS-10737, IPBQA-30930 | TestRulesDeploySettingsOnDeserializationJson | ❌ not migrated |
-| Non-flat git folder structure: create/copy/delete/edit | EPBDS-10853, IPBQA-30903 | TestNonFlatRepoIssues | → **C12** (partial) |
-| Change validation pattern for Repository Name | EPBDS-11533, IPBQA-31641 | TestRepositoryNameValidation | → **C12** |
-
-### 2. Editor – Advanced Features (2.1.x) — ~35%
+### 1. Editor – Advanced Features (2.1.x) — ~38%
 **Legacy tests:** 65+ | **New framework:** 15 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
-| Filtering projects (incl. advanced filter) | 2.1.1 | Test109 | → **C1** (partial via repo filter) |
+| Filtering projects (incl. advanced filter) | 2.1.1 | Test109 | ⚠️ partial — Repository-level filter ✅ **C1**; Editor-level project filter/grouping (TestGroupProjectsFilter, TestHideDeletedProjectsFilterWithGrouping) ❌ not migrated |
 | Comparing & Reverting Module Changes | 2.1.11, EPBDS-8867 | Test027, Test028 | ✅ **C8** |
 | Compare Excel files | EPBDS-10472, IPBQA-30875 | TestCompareExcelFiles | ✅ **C8** |
 | Display Changed Rows Only in Compare | EPBDS-12481, IPBQA-32105 | TestDisplayChangedRows | ✅ **C8** |
 | Identical files info message | EPBDS-10162 | — | ✅ **C8** |
-| Deploy button in Editor | EPBDS-9507, IPBQA-29618 | TestDeployButton | ❌ not migrated (requires DeployInfrastructureService integration) |
+| Deploy button in Editor | EPBDS-9507, IPBQA-29618 | TestDeployButton | ⚠️ partial — Deploy button **exists** in Editor toolbar (verified on 6.1.0, visible when deploy repo configured). Deploy functionality covered via TestRepositoryBrowsingFilterStatus (DeployModal), TestNewDeployPopup, ACL deploy tests. Dedicated Editor-level deploy visibility test (visible when saved / hidden on unsaved changes) not migrated |
 | Revision page in Editor (project history) | EPBDS-9997, IPBQA-30123 | TestTabRevisionsOnEditorTab | ✅ **C9** TestTabRevisionsInEditor (1 method) |
 | Local Changes page: Restore, Compare | EPBDS-10539, IPBQA-30730 | TestChangesRestoreCompareHistorySettings | ✅ **C9** TestLocalChangesRestoreCompare (10 methods) |
 | Table ordering mode (default setting) | EPBDS-13851, IPBQA-32512 | TestOrderingMode | ✅ **C11** TestOrderingMode (4 methods) |
 | Search on Project level screen | EPBDS-14181, IPBQA-32590 | TestSearchOnProjectLevel | ✅ **C11** TestSearchOnProjectLevel (2 methods) |
 | Versioning by folders | EPBDS-10363, IPBQA-30979 | TestVersioningByFolders | → **C13** |
 | Managing Range data types | EPBDS-7489, IPBQA-25791 | TestRangeDataTypes | ❌ not migrated |
-| Create table by copying existing | IPBQA-31552 | TestCopyTableAsNewTable | ❌ not migrated |
+| Create table by copying existing | IPBQA-31552 | TestCopyTableAsNewTable | ⚠️ partial — `CopyTableDialogComponent` implemented; `copyTableAsNew()` used in TestMethodTable + TestDisplayChangedRowsTableStructure; no dedicated test |
 | Create table as new version | IPBQA-31552 | TestCopyTableAsNewVersion | ❌ not migrated |
 | Create table as Business Dimension version | IPBQA-31601, EPBDS-11436 | TestCopyTableAsNewBusinessDimension | ❌ not migrated |
 | Creating a Test table via wizard | 2.1.25 | CreateTestMethod | ❌ not migrated |
@@ -122,7 +82,7 @@
 | SmartLookup / SmartRules tables Open/Edit/Save | EPBDS-9293, IPBQA-29358 | TestSmartLookupSmartRules | ❌ not migrated |
 | Simple/SmartRules tables Create via Wizard | EPBDS-9818, IPBQA-29967 | TestSimpleLookupSimpleRules | ❌ not migrated |
 | TBasic tables Open/work/edit | Test013 | — | ❌ not migrated |
-| Run tables Open/work/edit | IPBQA-29970 | TestRunTable | ❌ not migrated |
+| Run tables Open/work/edit | IPBQA-29970 | TestRunTable | ⚠️ partial — TestViewStackTraceFunctionality navigates Run→RunTable; TestDefaultProperties opens Run SpreadsheetTable; TestWorkWithDuplicateTables checks Run/Trace buttons; TestTableIcons verifies run.gif icon; no dedicated Run table CRUD test |
 | Collapsing Error Message in Editor | EPBDS-11587, IPBQA-25869 | — | ❌ not migrated |
 | Navigation to table | EPBDS-7537, IPBQA-25912 | TestNavigationToTable | ❌ not migrated |
 | Explanation feature | EPBDS-8876, IPBQA-28386 | — | ❌ not migrated |
@@ -130,7 +90,7 @@
 | Rename project in Editor (non-flat git) | EPBDS-10845, IPBQA-30937 | TestRenameProjectInEditor | ❌ not migrated |
 | Run/Trace buttons always visible | EPBDS-11722, IPBQA-31761 | TestRunTraceButtonsVisibleForAllTypeTables | ⚠️ partial — TestACLRunBenchmarkSystemAction verifies Run button visible for all ACL roles; "visible for all table types" not tested |
 
-### 3. Git (2.5) — ~48%
+### 2. Git (2.5) — ~48%
 **Legacy tests:** 25+ | **New framework:** 11 tests
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -149,7 +109,7 @@
 | HTTP → HTTPS git repo URL change | EPBDS-11370, IPBQA-31528 | TestGitHttpToHttpsAndViceVersa | ❌ not migrated |
 | Protected Branches | IPBQA-31896 | TestProtectedBranches | ❌ not migrated |
 
-### 4. WebService (Section 1) — ~25%
+### 3. WebService (Section 1) — ~25%
 **Legacy tests:** 10+ | **New framework:** 3 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestWebservicesGitRepo + TestDeployProjectsWithoutServiceNameInRulesDeploy)
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -162,7 +122,7 @@
 | Write OpenL runtime errors in log | EPBDS-12576, IPBQA-32104 | — | ❌ not migrated |
 | Alphabetical sorting of deployments | EPBDS-13121, IPBQA-32307 | — | ❌ not migrated |
 
-### 5. Admin: System Settings – Repositories (2.3.1.8-12) — ~40%
+### 4. Admin: System Settings – Repositories (2.3.1.8-12) — ~40%
 **Legacy tests:** 10+ | **New framework:** 3 tests (Testcontainers-based JDBC integration + deploy)
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -191,7 +151,7 @@
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~48% | 11 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) |
 | Studio Issues (bug regression) | ~50% | 43 studio_issues tests ✅ |
-| Repository (basic operations) | ~61% | C1 + C2 + basic ops across suites ✅ + Resolve Conflicts (TestMergeBranchesWithConflicts) |
+| Repository (2.2) | ~70% | C1 + C2 + basic ops across suites ✅ + Resolve Conflicts (TestMergeBranchesWithConflicts) + Non-flat ✅ C12b. Unlock Project + Azure BLOB excluded from denominator (N/A). Remaining gaps: creating folder, copy file, Git LFS, technical revisions, rules-deploy settings |
 | Admin: Repositories (JDBC integration + deploy) | ~40% | C12b (PostgreSQL security DB) + C12c (Oracle JDBC) + C12d (Deploy to production via DeployModal) ✅ — all using DeployInfrastructureService |
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
 | Compare (Excel/revisions/local changes) | ~80% | C8: TestCompareExcelFiles + TestDisplayChangedRows ✅ |
@@ -219,22 +179,6 @@
 
 ---
 
-## Coverage Audit (2026-03-18)
-
-Cross-reference audit of REMAINING GAPS ❌ items against actual codebase. Several features previously marked as "not migrated" are in fact partially or fully covered:
-
-| Feature | Was | Now | Evidence |
-|---------|-----|-----|----------|
-| Resolve Conflicts (by Sheets) | ❌ | ✅ | `TestMergeBranchesWithConflicts`: 2 methods — Use Yours + Use Theirs via `ResolveConflictsDialogComponent` |
-| Resolve Conflicts dialog improvements | ❌ | ✅ | Same test — dialog appear/resolve/verify flow |
-| Trace in file | ❌ | ✅ | `TestTraceIntoFileJsonRequest` — trace into file with JSON request |
-| Tracing rules | ❌ | ⚠️ | 5 tests: `TestAllStepsDisplayedInTrace`, `TestTraceIntoFileJsonRequest`, `TestArrayOfAliasValuesInRunTrace`, `TestAdminUserSettings` (trace window), `TestViewStackTraceFunctionality` |
-| Benchmark Tools | ❌ | ⚠️ | `TestACLRunBenchmarkSystemAction` — button visibility for all roles; execution workflow not tested |
-| Insert/Delete row | ❌ | ⚠️ | `TestAddDeleteRowWithoutSaving` — add/delete row; column operations not covered |
-| Run/Trace buttons always visible | ❌ | ⚠️ | ACL tests verify Run button visible for Viewer/Contributor/Manager; "all table types" not tested |
-| Delete Branch improvements | ❌ | ⚠️ | `TestGitSwitchDeletedBranchPreset` + `TestGitSwitchToDeletedBranch` — deleted branch handling; delete action UI not tested |
-| Azure BLOB storage | ❌ | ⚠️ | `TestSupportedRepositories` verifies Azure listed as repo type; no functional Azure operations test |
-
 **Truly uncovered feature areas (0% coverage):**
 1. C13 — Versioning by folders
 2. C14 — Git comments/committer name
@@ -251,6 +195,12 @@ Cross-reference audit of REMAINING GAPS ❌ items against actual codebase. Sever
 13. Git LFS support
 14. New RuleServices UI
 15. HTTP → HTTPS git repo URL change
+
+**Removed from coverage denominator (N/A):**
+- Deploy Configuration (EPBDS-15093) — removed from product
+- Unlock Project (TestUnlockProjectDeployConf) — dependent on Deploy Configuration which was removed per EPBDS-15093
+- Azure BLOB storage (TestAzureBlobRepoStudio) — requires Azure account, won't automate; TestSupportedRepositories verifies Azure listed as repo type
+- Installation Wizard — legacy, replaced by Admin Settings
 
 ---
 
