@@ -38,8 +38,11 @@ public class TestGenerateOpenApiDefaultDate extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
+                .expandFolderInTree("Projects");
+        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree(projectName);
+        repositoryPage.waitUntilSpinnerLoaded();
 
         assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("openapi.json"))
                 .as("openapi.json should appear in the repository tree after generating the OpenAPI schema")
