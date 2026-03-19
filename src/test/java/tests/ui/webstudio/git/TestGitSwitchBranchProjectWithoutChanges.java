@@ -53,8 +53,10 @@ public class TestGitSwitchBranchProjectWithoutChanges extends BaseTest {
                 .setDescription("2")
                 .clickUpdateButton();
 
-        // Switch back to copy branch with unsaved changes
-        editorPage.getEditorToolbarPanelComponent().switchBranch(copyBranchName);
+        // Try switching branch with unsaved changes — confirmation modal expected
+        editorPage.getEditorToolbarPanelComponent().selectBranchInDropdown(copyBranchName);
+        editorPage.clickModalOkBtn();
+        editorPage.waitUntilSpinnerLoaded();
 
         // Switch to master branch
         editorPage.getEditorToolbarPanelComponent().switchBranch(MASTER_BRANCH);

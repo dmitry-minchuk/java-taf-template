@@ -46,6 +46,11 @@ public abstract class BasePage extends CorePage {
         closableMessage = new WebElement(page, "xpath=//div[contains(@class, 'message closable')]", "closableMessage");
     }
 
+    public void clickModalOkBtn() {
+        modalOkBtn.waitForVisible();
+        modalOkBtn.click();
+    }
+
     public void closeAllMessages() {
         try {
             LOGGER.info("Messages currently open: {}", messages.size());

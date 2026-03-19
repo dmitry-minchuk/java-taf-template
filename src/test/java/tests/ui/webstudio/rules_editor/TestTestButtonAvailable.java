@@ -83,6 +83,7 @@ public class TestTestButtonAvailable extends BaseTest {
 
         editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameExample3Project);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(nameExample3Project, "AutoPolicyTests2");
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")

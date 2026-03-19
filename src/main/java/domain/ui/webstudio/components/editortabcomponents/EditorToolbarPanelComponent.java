@@ -85,6 +85,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // All actions locators (for deprecated feature checks)
     private WebElement allTopToolbarLinks;
     private WebElement allMoreMenuLinks;
+    private WebElement confirmationModalOkBtn;
 
     public EditorToolbarPanelComponent() {
         super(LocalDriverPool.getPage());
@@ -229,6 +230,12 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         }, 10000, 500, "Switching branch to " + branchName);
     }
 
+    public void selectBranchInDropdown(String branchName) {
+        breadcrumbsModuleBranch.click();
+        breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
+        breadcrumbsDropdownItemTemplate.format(branchName).click();
+    }
+
     public String getCurrentBranch() {
         return breadcrumbsModuleBranch.getText();
     }
@@ -282,7 +289,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public IMoreMenu clickMore() {
-        WaitUtil.sleep(1000, "Waiting before clicking More dropdown");
+        waitUntilSpinnerLoaded();
         moreBtn.click();
         WaitUtil.sleep(500, "Waiting for More dropdown to open");
         return new MoreMenu();
