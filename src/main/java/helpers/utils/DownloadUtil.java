@@ -22,6 +22,8 @@ public class DownloadUtil {
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(
         ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT)
     );
+    private static final int RETRY_TIMEOUT_MS = 30000;
+    private static final int RETRY_INTERVAL_MS = 1000;
     
     public static File downloadFile(Locator trigger) {
         return downloadFile(trigger, getDefaultTimeout());
@@ -40,71 +42,70 @@ public class DownloadUtil {
     private static File downloadFileLocal(Locator trigger, int timeoutMs) {
         Page page = LocalDriverPool.getPage();
 
-        Download download = page.waitForDownload(
-                new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);
-        
-        LOGGER.info("Download started: {}", download.suggestedFilename());
-        
-        try (InputStream inputStream = download.createReadStream()) {
-            String fileName = download.suggestedFilename();
-            if (fileName == null || fileName.isEmpty()) {
-                fileName = "download_" + UUID.randomUUID();
-            }
-            
-            File tempFile = File.createTempFile("playwright_download_", "_" + sanitizeFileName(fileName));
-            
-            try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-                byte[] buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+        return WaitUtil.retryOnException(() -> {
+            Download download = page.waitForDownload(new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);
+
+            LOGGER.info("Download started: {}", download.suggestedFilename());
+
+            try (InputStream inputStream = download.createReadStream()) {
+                String fileName = download.suggestedFilename();
+                if (fileName == null || fileName.isEmpty()) {
+                    fileName = "download_" + UUID.randomUUID();
                 }
+
+                File tempFile = File.createTempFile("playwright_download_", "_" + sanitizeFileName(fileName));
+
+                try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                LOGGER.info("Download completed in LOCAL mode: {} (size: {} bytes)", tempFile.getName(), tempFile.length());
+                return tempFile;
+
+            } catch (Exception e) {
+                LOGGER.error("Failed to download file in LOCAL mode: {}", e.getMessage());
+                throw new RuntimeException("LOCAL download failed: " + e.getMessage(), e);
             }
-            
-            LOGGER.info("Download completed in LOCAL mode: {} (size: {} bytes)", 
-                tempFile.getName(), tempFile.length());
-            return tempFile;
-            
-        } catch (Exception e) {
-            LOGGER.error("Failed to download file in LOCAL mode: {}", e.getMessage());
-            throw new RuntimeException("LOCAL download failed: " + e.getMessage(), e);
-        }
+        }, RETRY_TIMEOUT_MS, RETRY_INTERVAL_MS, "Download file in LOCAL mode");
     }
     
     private static File downloadFileFromContainer(Locator trigger, int timeoutMs) {
         Page page = DockerDriverPool.getPage();
 
-        try {
-            Download download = page.waitForDownload(
-                    new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);
+        return WaitUtil.retryOnException(() -> {
+            Download download = page.waitForDownload(new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);
 
             LOGGER.info("Download started in container: {}", download.suggestedFilename());
 
-            String fileName = download.suggestedFilename();
-            if (fileName == null || fileName.isEmpty()) {
-                fileName = "download_" + UUID.randomUUID();
-            }
-
-            File tempFile = File.createTempFile("playwright_container_download_",
-                "_" + sanitizeFileName(fileName));
-
-            try (InputStream inputStream = download.createReadStream();
-                 FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-                byte[] buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+            try (InputStream inputStream = download.createReadStream()) {
+                String fileName = download.suggestedFilename();
+                if (fileName == null || fileName.isEmpty()) {
+                    fileName = "download_" + UUID.randomUUID();
                 }
+
+                File tempFile = File.createTempFile("playwright_container_download_", "_" + sanitizeFileName(fileName));
+
+                try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                LOGGER.info("Download completed in DOCKER mode: {} (size: {} bytes)", tempFile.getName(), tempFile.length());
+                return tempFile;
+
+            } catch (Exception e) {
+                LOGGER.error("Failed to download file in DOCKER mode: {}", e.getMessage());
+                throw new RuntimeException("DOCKER download failed: " + e.getMessage(), e);
             }
 
-            LOGGER.info("Download completed in DOCKER mode: {} (size: {} bytes)",
-                tempFile.getName(), tempFile.length());
-            return tempFile;
-
-        } catch (Exception e) {
-            LOGGER.error("Failed to download file in DOCKER mode: {}", e.getMessage());
-            throw new RuntimeException("DOCKER download failed: " + e.getMessage(), e);
-        }
+        }, RETRY_TIMEOUT_MS, RETRY_INTERVAL_MS, "Download file in DOCKER mode");
     }
     
     private static boolean isDockerMode() {
