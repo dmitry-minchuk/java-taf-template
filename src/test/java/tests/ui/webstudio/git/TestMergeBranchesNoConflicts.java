@@ -96,6 +96,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
+        repositoryPage.getSaveChangesComponent().getCommentField().fill("Deleted Module4 from branch");
         repositoryPage.getSaveChangesComponent().getSaveBtn().click();
 
         repositoryPage.getLeftRepositoryTreeComponent()
@@ -369,7 +370,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
 
         List<String> expectedComments = List.of(
                 "Merge branch 'MyBranch'",
-                "Project NoConflicts is saved.",
+                "Deleted Module4 from branch",
                 "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
@@ -383,8 +384,19 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
             actualComments.add(revisionsTab.getRevisionDescription(i));
         }
         assertThat(actualComments)
-                .as("Revision history in master should contain all expected comments")
+                .as("Revision history in master should contain all expected comments including custom comment")
                 .containsExactlyInAnyOrderElementsOf(expectedComments);
+
+        // Verify custom comment is present (proves git comment customization works)
+        assertThat(actualComments)
+                .as("Custom comment 'Deleted Module4 from branch' should appear in revision history")
+                .anyMatch(c -> c.equals("Deleted Module4 from branch"));
+
+        // Verify committer name is populated in revision history
+        String committer = revisionsTab.getRevisionModifiedBy(1);
+        assertThat(committer)
+                .as("Revision committer name should be present and non-empty")
+                .isNotEmpty();
 
         propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         propertiesTab.selectBranch(BRANCH_NAME);

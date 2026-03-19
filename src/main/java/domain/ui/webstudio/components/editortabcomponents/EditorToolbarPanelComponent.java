@@ -773,6 +773,18 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         copyDialog.clickCopy();
     }
 
+    public void copyTableAsNewVersion(String version) {
+        CopyTableDialogComponent copyDialog = clickCopy();
+        copyDialog.selectCopyAs("New Version").setVersion(version);
+        copyDialog.clickCopy();
+    }
+
+    public void copyTableAsBusinessDimension(String propertyLabel, String propertyValue) {
+        CopyTableDialogComponent copyDialog = clickCopy();
+        copyDialog.selectCopyAs("New Business Dimension Version").setTextProperty(propertyLabel, propertyValue);
+        copyDialog.clickCopy();
+    }
+
     public void removeCurrentTable() {
         LocalDriverPool.getPage().onDialog(Dialog::accept);
         clickRemove();

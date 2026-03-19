@@ -272,14 +272,32 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
                 .contains("Cannot open two projects with the same name");
         repositoryPage.closeClosableMessage();
 
-        // Step 9.2: Switch to Editor tab, open ProjectDesign1Repo, verify project name is editable
+        // Step 9.2: Switch to Editor tab, rename project in non-flat git repo, then rename back
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectDesign1);
         EditProjectDialogComponent editDialog = editorPage.openEditProjectDialog(nameProjectDesign1);
-        editDialog.setProjectName("Check");
-        assertThat(editDialog.getProjectName()).isEqualTo("Check");
+        String renamedProject = nameProjectDesign1 + "_Renamed";
+        editDialog.setProjectName(renamedProject);
+        assertThat(editDialog.getProjectName()).isEqualTo(renamedProject);
         assertThat(editDialog.isUpdateButtonEnabled()).isTrue();
-        editDialog.clickCancelButton();
+        editDialog.clickUpdateButton();
+        editorPage.waitUntilSpinnerLoaded();
+
+        // Verify renamed project is reflected in editor
+        editDialog = editorPage.openEditProjectDialog(renamedProject);
+        assertThat(editDialog.getProjectName())
+                .as("Project should be renamed to new name in non-flat git repo")
+                .isEqualTo(renamedProject);
+
+        // Rename back to original so subsequent steps are not affected
+        editDialog.setProjectName(nameProjectDesign1);
+        editDialog.clickUpdateButton();
+        editorPage.waitUntilSpinnerLoaded();
+
+        // Save to return project to "No Changes" state after rename
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
 
         // Step 10: Switch to ProjectDesignRepo via breadcrumbs — verify Edit Project dialog opens
         // Legacy asserted project name field was absent for flat repos; new UI always shows it

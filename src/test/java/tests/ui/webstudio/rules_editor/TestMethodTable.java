@@ -94,8 +94,9 @@ public class TestMethodTable extends BaseTest {
     }
 
     private void testTableCopyAndManagement(EditorPage editorPage) {
+        // Copy as New Table
         editorPage.getEditorToolbarPanelComponent().copyTableAsNew("getGreetings2", "");
-        
+
         // Verify both tables exist in rules tree
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings2");
@@ -103,12 +104,27 @@ public class TestMethodTable extends BaseTest {
         // Select and remove the copied table
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings2");
         editorPage.getEditorToolbarPanelComponent().removeCurrentTable();
-        
+
         // Verify tree state after removal
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Method");
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTableAbsent("Method", "getGreetings2");
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
+
+        // Copy as New Version — name field is disabled (inherited), only version is editable
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsNewVersion("v2");
+        editorPage.waitUntilSpinnerLoaded();
+        editorPage.getProblemsPanelComponent().checkNoProblems();
+
+        // Copy as New Business Dimension Version — must set a property to enable Copy button
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Method")
+                .selectItemInFolder("Method", "getGreetings");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("LOB", "test");
+        editorPage.waitUntilSpinnerLoaded();
+        editorPage.getProblemsPanelComponent().checkNoProblems();
     }
 }

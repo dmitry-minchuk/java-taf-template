@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-19
+> Updated: 2026-03-19 (Tier 1 coverage push)
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -16,7 +16,7 @@
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
 | Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
-| **New framework overall coverage** | **~78% of legacy feature areas** (up from ~76% after audit: removed Unlock Project + Azure BLOB from denominator; upgraded Non-flat folder → ✅ C12b; Deploy button in Editor → ⚠️ partial; Copy table as new → ⚠️ partial; Run tables → ⚠️ partial; completed: C1-C12, C12b, C12c, C12d, ACL full, OpenAPI full; next priority: C13, C14) |
+| **New framework overall coverage** | **~81% of legacy feature areas** (up from ~78%: +5 features covered — Copy as New Version ✅, Copy as BD Version ✅, Undo/Redo ✅, Rename project in non-flat git ✅, Creating folder ✅; C14 partially done (2/3 ✅); completed: C1-C12, C12b, C12c, C12d, C14 partial, ACL full, OpenAPI full; next priority: C13, remaining C14 comment generation) |
 
 ---
 
@@ -26,7 +26,7 @@
 
 | ID | Test to Create | Legacy class | Atomic features covered | Priority |
 |----|----------------|--------------|-------------------------|----------|
-| **C1** | **`TestRepositoryBrowsingFilterStatus`** ✅ DONE | TestBrowsingFilterStatusInRepositories | ✅ Status lifecycle (2.2.1), ✅ Filter by name (2.2.2), ✅ Advanced filter show/hide deleted (2.2.3), ✅ Closing a project (2.2.12), ✅ Saving a project (2.2.14), ✅ Multi-user locking; Deployment repo status (2.2.4), Deployment filter (2.2.5), Production repo browsing — not yet migrated | `repository.xml` |
+| **C1** | **`TestRepositoryBrowsingFilterStatus`** ✅ DONE | TestBrowsingFilterStatusInRepositories | ✅ Status lifecycle (2.2.1), ✅ Filter by name (2.2.2), ✅ Advanced filter show/hide deleted (2.2.3), ✅ Closing a project (2.2.12), ✅ Saving a project (2.2.14), ✅ Multi-user locking, ✅ Creating a folder inside project; Deployment repo status (2.2.4), Deployment filter (2.2.5), Production repo browsing — not yet migrated | `repository.xml` |
 | **C2** | ~~TestRepositoryExportAndRevisions~~ → **`TestExportProjectFunctionality`** ✅ DONE | TestExportProjectFunctionality | ✅ Export project/file (2.2.29), ✅ Opening project revision via Revisions tab (2.2.11), ✅ Revision selection, ✅ Multi-user export | ✅ `rules_editor.xml` |
 | **C3** | **`TestOpenApiImportAndReconciliation`** ✅ DONE | TestOpenApiImport | ✅ Reconciliation mode (2.8.4), ✅ Tables Generation mode (2.8.2), ✅ Module settings warning dialog (2.8.6), ✅ Same module names validation (2.8.6), ✅ Module name retention on mode switch (1.1), ✅ Overwrite warning (3-3.2), ✅ Non-OpenAPI project defaults (8-8.2), ✅ Tables generation for non-OpenAPI project (10-10.1), ✅ Path validation errors (12-13), ✅ New modules + path editing (4-5.2), ✅ Mode cycling (6-6.3), ✅ Two-file project (7), ✅ Corporate Rating template (14) | ✅ `rules_editor.xml` |
 | **C3b** | **`TestOpenApiImportLocalChanges`** ✅ DONE | TestOpenApiImportLocalChanges | ✅ Local Changes history after re-generation (Step 1), ✅ Template project + Compare window (Step 2-2.2), ✅ No Local Changes after Reconciliation mode import (Step 3), ✅ No new record for same file content (Step 4), ✅ New record for different file (Step 5) | ✅ `rules_editor.xml` |
@@ -43,13 +43,13 @@
 | **C12c** | **`TestDeploymentConfigurationRepositoryConnection`** ✅ DONE | TestDeploymentConfigurationRepositoryConnection | ✅ Deployment Repository via Oracle JDBC (IPBQA-27365), ✅ Oracle container via Testcontainers + DeployInfrastructureService, ✅ Deploy project to Oracle JDBC deployment repo, ✅ Verify deployed data in Oracle DB | ✅ `studio_smoke.xml` |
 | **C12d** | **`TestNewDeployPopup`** ✅ DONE | TestNewDeployPopup (IPBQA-30049) | ✅ Deploy project to production via DeployModal (new UI, replaces legacy Deploy Configuration), ✅ Deploy dependent projects with auto-resolved dependencies, ✅ Edit table + save + redeploy, ✅ WS REST verification via GetWsServicesMethod API. Uses DeployInfrastructureService (Postgres + WS container). Note: Legacy Deploy Configuration was removed from WebStudio (EPBDS-15093, commit ff754010d0) | ✅ `studio_smoke.xml` |
 | **C13** | TestVersioningByFolders | TestVersioningByFolders | Versioning by folders (EPBDS-10363), Table properties across versions, Property inheritance per version | 🟢 LOW |
-| **C14** | TestGitCommentAndCommitter | TestGitCustomizeCommentFields + TestGitCommitterName + TestGitCommentsGenerationOnProjectName | Customized Comment fields (EPBDS-8371), Committer's name (EPBDS-8362), Comments generation on project name (EPBDS-8460) | 🟢 LOW |
+| **C14** | ~~TestGitCommentAndCommitter~~ ✅ DONE (merged into TestMergeBranchesNoConflicts) | TestGitCustomizeCommentFields + TestGitCommitterName + TestGitCommentsGenerationOnProjectName | ✅ Custom comment fields (EPBDS-8371) — custom comment set + verified in revisions; ✅ Committer's name (EPBDS-8362) — verified via getRevisionModifiedBy(); ⚠️ Comments generation on project name (EPBDS-8460) — auto-generated comments verified but no dedicated test | ✅ `studio_git.xml` |
 
 ---
 
 ## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. Editor – Advanced Features (2.1.x) — ~38%
+### 1. Editor – Advanced Features (2.1.x) — ~45%
 **Legacy tests:** 65+ | **New framework:** 15 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
@@ -66,16 +66,16 @@
 | Search on Project level screen | EPBDS-14181, IPBQA-32590 | TestSearchOnProjectLevel | ✅ **C11** TestSearchOnProjectLevel (2 methods) |
 | Versioning by folders | EPBDS-10363, IPBQA-30979 | TestVersioningByFolders | → **C13** |
 | Managing Range data types | EPBDS-7489, IPBQA-25791 | TestRangeDataTypes | ❌ not migrated |
-| Create table by copying existing | IPBQA-31552 | TestCopyTableAsNewTable | ⚠️ partial — `CopyTableDialogComponent` implemented; `copyTableAsNew()` used in TestMethodTable + TestDisplayChangedRowsTableStructure; no dedicated test |
-| Create table as new version | IPBQA-31552 | TestCopyTableAsNewVersion | ❌ not migrated |
-| Create table as Business Dimension version | IPBQA-31601, EPBDS-11436 | TestCopyTableAsNewBusinessDimension | ❌ not migrated |
+| Create table by copying existing | IPBQA-31552 | TestCopyTableAsNewTable | ✅ `CopyTableDialogComponent` implemented; `copyTableAsNew()` used in TestMethodTable + TestDisplayChangedRowsTableStructure |
+| Create table as new version | IPBQA-31552 | TestCopyTableAsNewVersion | ✅ `copyTableAsNewVersion()` added to TestMethodTable.testTableCopyAndManagement — verifies New Version copy dialog + no compilation errors |
+| Create table as Business Dimension version | IPBQA-31601, EPBDS-11436 | TestCopyTableAsNewBusinessDimension | ✅ `copyTableAsBusinessDimension()` added to TestMethodTable.testTableCopyAndManagement — verifies BD Version copy dialog + no compilation errors |
 | Creating a Test table via wizard | 2.1.25 | CreateTestMethod | ❌ not migrated |
 | Creating a Test table with ID column | RulesEditor.Test100 | — | ❌ not migrated |
 | Editing Comma-Separated Array of values (DDL) | EPBDS-7508, IPBQA-25824 | TestEditingCommaSeparatedArrayValues | ❌ not migrated |
 | Tracing rules | test113, test115 | TracingRunTables/* | ⚠️ partial — TestAllStepsDisplayedInTrace, TestTraceIntoFileJsonRequest, TestArrayOfAliasValuesInRunTrace, TestAdminUserSettings (trace window), TestViewStackTraceFunctionality cover core trace scenarios; dedicated TracingRunTables suite not migrated |
 | Trace in file | EPBDS-7715, IPBQA-25978 | TestTraceInFileFunctionality | ✅ TestTraceIntoFileJsonRequest (trace into file with JSON request) |
 | Benchmark Tools | test037 | — | ⚠️ partial — TestACLRunBenchmarkSystemAction verifies Benchmark button visibility for all roles (Viewer/Contributor/Manager); benchmark execution workflow not tested |
-| Edit table: Undo/Redo | test001, test002 | — | ❌ not migrated |
+| Edit table: Undo/Redo | test001, test002 | — | ✅ TestAddDeleteRowWithoutSaving — undo reverts cell edit, redo restores it |
 | Edit table: Insert/Delete row, column | 2.1.49, 2.1.50 | MainActionsInsertRemoveRow | ⚠️ partial — TestAddDeleteRowWithoutSaving covers add/delete row; Insert/Delete column not covered |
 | Edit table: Bold/Italic/Underline / fill color | 2.1.52, 2.1.53 | MainActionsFont | ❌ not migrated |
 | History – Recently visited table | 2.1.58 | test038 | ❌ not migrated |
@@ -87,17 +87,17 @@
 | Navigation to table | EPBDS-7537, IPBQA-25912 | TestNavigationToTable | ❌ not migrated |
 | Explanation feature | EPBDS-8876, IPBQA-28386 | — | ❌ not migrated |
 | Refresh button | EPBDS-8869, IPBQA-28382 | TestRefreshButton | ❌ not migrated |
-| Rename project in Editor (non-flat git) | EPBDS-10845, IPBQA-30937 | TestRenameProjectInEditor | ❌ not migrated |
+| Rename project in Editor (non-flat git) | EPBDS-10845, IPBQA-30937 | TestRenameProjectInEditor | ✅ TestMultipleDesignRepositoriesWithPostgres step 9.2 — rename project in non-flat Git repo via EditProjectDialog, verify rename persists, rename back |
 | Run/Trace buttons always visible | EPBDS-11722, IPBQA-31761 | TestRunTraceButtonsVisibleForAllTypeTables | ⚠️ partial — TestACLRunBenchmarkSystemAction verifies Run button visible for all ACL roles; "visible for all table types" not tested |
 
-### 2. Git (2.5) — ~48%
+### 2. Git (2.5) — ~55%
 **Legacy tests:** 25+ | **New framework:** 11 tests
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
-| Customized Comment fields | EPBDS-8783, IPBQA-27845 | TestGitCustomizeCommentFields | → **C14** |
-| Committer's name verification | EPBDS-8631, IPBQA-27640 | TestGitCommitterName | → **C14** |
-| Comments generation on project name entering | EPBDS-8547, IPBQA-27497 | TestGitCommentsGenerationOnProjectName | → **C14** |
+| Customized Comment fields | EPBDS-8783, IPBQA-27845 | TestGitCustomizeCommentFields | ✅ TestMergeBranchesNoConflicts — custom comment set via SaveChangesComponent.commentField, verified in revision history |
+| Committer's name verification | EPBDS-8631, IPBQA-27640 | TestGitCommitterName | ✅ TestMergeBranchesNoConflicts — committer name verified via getRevisionModifiedBy() in revision history |
+| Comments generation on project name entering | EPBDS-8547, IPBQA-27497 | TestGitCommentsGenerationOnProjectName | ⚠️ partial — auto-generated comments verified in TestMergeBranchesNoConflicts revision history (e.g. "Project X is saved.", "Project X is created."); dedicated project-name-in-comment generation test not migrated |
 | Configure Git repo using dev sources | EPBDS-8527, IPBQA-27456 | TestGitConfigureUseDevSources | ❌ not migrated |
 | Changes committed outside Webstudio | EPBDS-8839, IPBQA-27179 | — | ❌ not migrated |
 | Copy branch functionality | EPBDS-11160, IPBQA-27264 | — | ❌ not migrated |
@@ -149,9 +149,9 @@
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
 | Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
-| Git (core operations) | ~48% | 11 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) |
+| Git (core operations) | ~55% | 11 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts |
 | Studio Issues (bug regression) | ~50% | 43 studio_issues tests ✅ |
-| Repository (2.2) | ~70% | C1 + C2 + basic ops across suites ✅ + Resolve Conflicts (TestMergeBranchesWithConflicts) + Non-flat ✅ C12b. Unlock Project + Azure BLOB excluded from denominator (N/A). Remaining gaps: creating folder, copy file, Git LFS, technical revisions, rules-deploy settings |
+| Repository (2.2) | ~75% | C1 + C2 + basic ops across suites ✅ + Resolve Conflicts (TestMergeBranchesWithConflicts) + Non-flat ✅ C12b + Folder creation ✅ C1. Unlock Project + Azure BLOB excluded from denominator (N/A). Remaining gaps: copy file, Git LFS, technical revisions, rules-deploy settings |
 | Admin: Repositories (JDBC integration + deploy) | ~40% | C12b (PostgreSQL security DB) + C12c (Oracle JDBC) + C12d (Deploy to production via DeployModal) ✅ — all using DeployInfrastructureService |
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
 | Compare (Excel/revisions/local changes) | ~80% | C8: TestCompareExcelFiles + TestDisplayChangedRows ✅ |
@@ -175,26 +175,21 @@
 | ~~🟡 5~~ | ~~**C11** TestEditorOrderingAndSearch~~ | ~~2 editor features → TestOrderingMode (4 methods) + TestSearchOnProjectLevel (2 methods)~~ | ✅ DONE |
 | ~~🟡 6~~ | ~~**C12** TestDesignRepositoryManagement~~ | ~~4 repo features → TestAddDeleteDesignRepository + TestSupportedRepositories~~ | ✅ DONE |
 | 🟢 7 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
-| 🟢 8 | **C14** TestGitCommentAndCommitter | 3 git comment features → 1 test | Low |
+| ~~🟢 8~~ | ~~**C14** TestGitCommentAndCommitter~~ | ~~3 git comment features → 1 test~~ | ✅ DONE (merged into TestMergeBranchesNoConflicts: custom comment + committer name; 1 partial — comment generation) |
 
 ---
 
 **Truly uncovered feature areas (0% coverage):**
 1. C13 — Versioning by folders
-2. C14 — Git comments/committer name
-3. Protected Branches
-4. Swagger UI / JSON / YAML
-5. SmartRules/SmartLookup CRUD (Open/Edit/Save/Create Wizard)
-6. Admin Common Settings (history max count, date format)
-7. Edit table: Bold/Italic/Underline/fill color
-8. Edit table: Undo/Redo
-9. Copy table as new version / Business Dimension version
-10. Rename project in Editor (non-flat git)
-11. Creating a folder (in repository)
-12. Copy a file (file-level, not module)
-13. Git LFS support
-14. New RuleServices UI
-15. HTTP → HTTPS git repo URL change
+2. Protected Branches
+3. Swagger UI / JSON / YAML
+4. SmartRules/SmartLookup CRUD (Open/Edit/Save/Create Wizard)
+5. Admin Common Settings (history max count, date format)
+6. Edit table: Bold/Italic/Underline/fill color
+7. Copy a file (file-level, not module)
+8. Git LFS support
+9. New RuleServices UI
+10. HTTP → HTTPS git repo URL change
 
 **Removed from coverage denominator (N/A):**
 - Deploy Configuration (EPBDS-15093) — removed from product

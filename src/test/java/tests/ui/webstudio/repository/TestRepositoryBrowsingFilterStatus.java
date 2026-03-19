@@ -341,7 +341,23 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
                 .as("After clearing filter all projects should be visible again")
                 .isGreaterThanOrEqualTo(2);
 
-        // Step 19: Production repository browsing
+        // ===== Step 19: Create a folder inside the project =====
+        repositoryPage.refresh();
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_1);
+        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isAddFolderBtnVisible())
+                .as("Add Folder button should be visible for opened project")
+                .isTrue();
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickAddFolderBtn();
+        repositoryPage.getAddFolderDialogComponent().setFolderName("TestFolder").clickAdd();
+        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.getLeftRepositoryTreeComponent().expandFolderInTree(PROJECT_1);
+        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestFolder"))
+                .as("Created folder should be visible in project tree")
+                .isTrue();
+
+        // Step 20: Production repository browsing
         // Legacy steps used a separate "Production" tab/tree (#prodTree) to browse deployed projects.
         // Deploy Configuration was removed (EPBDS-15093). Production tab UI locators
         // are not yet mapped in the new framework — requires separate investigation.

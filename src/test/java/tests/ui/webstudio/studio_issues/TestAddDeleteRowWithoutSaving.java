@@ -36,7 +36,20 @@ public class TestAddDeleteRowWithoutSaving extends BaseTest {
         TableComponent table = editorPage.getCenterTable();
         table.clickCell(5, 2);
         editorPage.getEditorTableActionsPanelComponent().clickInsertRowAfter();
-        table.editCell(6, 1, "444", false);
+        table.editCell(6, 1, "444", true);
+
+        // Undo — verify the edit is reverted
+        editorPage.getEditorTableActionsPanelComponent().undoClickChanges();
+        assertThat(StringUtils.normalizeSpace(table.getCellText(6, 1)))
+                .as("Cell should be empty after undo")
+                .isEmpty();
+
+        // Redo — verify the edit is restored
+        editorPage.getEditorTableActionsPanelComponent().redoClickChanges();
+        assertThat(table.getCellText(6, 1))
+                .as("Cell should contain '444' after redo")
+                .contains("444");
+
         editorPage.getEditorTableActionsPanelComponent().clickRemoveRow();
         assertThat(StringUtils.normalizeSpace(table.getCellText(6, 1))).isEmpty();
         assertThat(table.getCellText(6, 2)).isEqualTo("0%");
