@@ -98,6 +98,7 @@ public class TestTestButtonAvailable extends BaseTest {
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "VehiclePremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineVehiclePremium VehiclePremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
 
         assertThat(editorPage.getEditorToolbarPanelComponent().getTestButtonText())
                 .as("Test button should show 'Test 6' after copying module and adding tests")

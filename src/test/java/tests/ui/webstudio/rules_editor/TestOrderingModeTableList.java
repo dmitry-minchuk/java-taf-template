@@ -51,6 +51,7 @@ public class TestOrderingModeTableList extends BaseTest {
         editorPage.getCenterTable().editCell(5, 1, "1");
         editorPage.getCenterTable().editCell(5, 2, "1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
 
         // Verify ordering changed after edit
         nodesNames = editorPage.getEditorLeftRulesTreeComponent().getAllEndNodesNames();

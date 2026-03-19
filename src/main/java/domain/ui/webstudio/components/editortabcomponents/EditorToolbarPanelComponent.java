@@ -289,7 +289,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public IMoreMenu clickMore() {
-        waitUntilSpinnerLoaded();
+        WaitUtil.sleep(1000, "Waiting before clicking More dropdown");
         moreBtn.click();
         WaitUtil.sleep(500, "Waiting for More dropdown to open");
         return new MoreMenu();

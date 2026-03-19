@@ -2,6 +2,7 @@ package tests.ui.webstudio.git;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
+import com.microsoft.playwright.Dialog;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
@@ -53,9 +54,9 @@ public class TestGitSwitchBranchProjectWithoutChanges extends BaseTest {
                 .setDescription("2")
                 .clickUpdateButton();
 
-        // Try switching branch with unsaved changes — confirmation modal expected
+        // Switch branch with unsaved changes — accept browser alert
+        LocalDriverPool.getPage().onDialog(Dialog::accept);
         editorPage.getEditorToolbarPanelComponent().selectBranchInDropdown(copyBranchName);
-        editorPage.clickModalOkBtn();
         editorPage.waitUntilSpinnerLoaded();
 
         // Switch to master branch
