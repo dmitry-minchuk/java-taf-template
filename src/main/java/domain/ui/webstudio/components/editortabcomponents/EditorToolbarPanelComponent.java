@@ -252,7 +252,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public ITraceWindow clickTraceExpectTraceWindow() {
         traceBtn.waitForVisible();
-        Page popup = page.waitForPopup(() -> traceBtn.click());
+        Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceBtn.click());
         popup.waitForLoadState();
         popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
         return new TraceWindow(popup);
