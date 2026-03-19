@@ -19,18 +19,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestAllStepsDisplayedInTrace extends BaseTest {
 
     private final List<String> EXPECTED_TRACE_TREE_ITEMS = Arrays.asList(
-            "$Formula$Coverage_ID = null",
-            "$Formula$UnitArea = null",
-            "$Formula$Coverage_Name = null",
-            "$Formula$Coverage_Level = null",
-            "$Formula$Coverage_Previous_Time = null",
-            "$Formula$Coverage_Previous_Revision = null",
-            "$Formula$Coverage_Rules = null",
-            "$Formula$Applicable_Strategy_Rules = null",
-            "$Formula$Inactive_Rules = null",
-            "$Formula$FeeCurrentPA = {}",
-            "$Formula$Coverage_Active_Rules_Amounts = {}",
-            "$Formula$Coverage_Inactive_Rules_Amounts = {}"
+            "$Coverage_ID = null",
+            "$UnitArea = null",
+            "$Coverage_Name = null",
+            "$Coverage_Level = null",
+            "$Coverage_Previous_Time = null",
+            "$Coverage_Previous_Revision = null",
+            "$Coverage_Rules = null",
+            "$Applicable_Strategy_Rules = null",
+            "$Inactive_Rules = null",
+            "$FeeCurrentPA = {}",
+            "$Coverage_Active_Rules_Amounts = {}",
+            "$Coverage_Inactive_Rules_Amounts = {}"
     );
 
     @Test

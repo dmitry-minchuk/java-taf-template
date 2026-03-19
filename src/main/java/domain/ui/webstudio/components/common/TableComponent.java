@@ -51,6 +51,7 @@ public class TableComponent extends BaseComponent {
 
     public void editCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
         doubleClickCell(rowIndex, columnIndex);
+        inputLocator.waitForVisible();
 
         inputLocator.press("Control+A");
         inputLocator.press("Delete");
