@@ -162,6 +162,17 @@ public class EditorPage extends BasePage {
         refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 
+    /**
+     * Click a table link in the Table Dependencies view.
+     * The Table Dependencies view must be opened first via More -> Table Dependencies.
+     */
+    public void clickTableInDependenciesView(String tableName) {
+        WebElement tableLink = new WebElement(getPage(),
+                "xpath=//div[@id='content']//a[contains(text(),'" + tableName + "')]", "dependencyTableLink_" + tableName);
+        tableLink.click();
+        WaitUtil.sleep(1000, "Waiting for table to open from dependencies view");
+    }
+
     public ManageDependenciesDialogComponent openManageDependenciesDialog() {
         if (addDependenciesLink.isVisible(2000)) {
             addDependenciesLink.click();

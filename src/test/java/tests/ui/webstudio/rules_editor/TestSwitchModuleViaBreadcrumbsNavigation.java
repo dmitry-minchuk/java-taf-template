@@ -18,6 +18,8 @@ import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import domain.ui.webstudio.components.common.CreateNewProjectComponent;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
@@ -75,5 +77,36 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
                 .isLessThanOrEqualTo(10000);
 
         LogsUtil.inspectLogFile(AppContainerPool.get());
+    }
+
+    @Test
+    @TestCaseId("EPBDS-12366")
+    @Description("EPBDS-12366: Breadcrumbs must show correct module after navigating from Table Dependencies view")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testBreadcrumbsCorrectAfterTableDependencyNavigation() {
+        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        String projectName = "Example3_" + System.currentTimeMillis();
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, "Example 3 - Auto Policy");
+
+        editorPage = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent()
+                .selectModule(projectName, "AutoPolicyTests");
+
+        // Open Table Dependencies from More menu
+        editorPage.getEditorToolbarPanelComponent().clickMore().clickTableDependencies();
+
+        // Click on a table that belongs to a DIFFERENT module (AutoPolicyCalculation)
+        editorPage.clickTableInDependenciesView("DetermineDriverPremium");
+
+        // EPBDS-12366: Breadcrumbs must show the correct module (AutoPolicyCalculation), not the previously opened one (AutoPolicyTests)
+        String breadcrumbModule = editorPage.getEditorToolbarPanelComponent().getBreadcrumbsModuleName().trim();
+        assertThat(breadcrumbModule)
+                .as("EPBDS-12366: Breadcrumb module must reflect the actual module of the opened table, not the previously selected module")
+                .isEqualTo("AutoPolicyCalculation");
     }
 }
