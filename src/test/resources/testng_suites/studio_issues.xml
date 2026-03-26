@@ -32,5 +32,7 @@
     <test name="TestDisplayChangedRowsCompareScreens"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsCompareScreens"/></classes></test>
     <test name="TestDisplayChangedRowsResolveConflicts"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsResolveConflicts"/></classes></test>
     <test name="TestDisplayChangedRowsTableStructure"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsTableStructure"/></classes></test>
+    <test name="TestIncorrectTableNameWithLineBreak"><classes><class name="tests.ui.webstudio.studio_issues.TestIncorrectTableNameWithLineBreak"/></classes></test>
+    <test name="TestConstructorNotFoundInDependentTable"><classes><class name="tests.ui.webstudio.studio_issues.TestConstructorNotFoundInDependentTable"/></classes></test>
 
 </suite>
