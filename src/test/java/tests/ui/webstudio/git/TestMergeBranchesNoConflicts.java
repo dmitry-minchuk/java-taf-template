@@ -398,6 +398,18 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .as("Revision committer name should be present and non-empty")
                 .isNotEmpty();
 
+        // EPBDS-8488: Verify merge commit author is WebStudio user, not .gitconfig value
+        // Find the "Merge branch" revision and verify its committer matches the WebStudio admin user
+        for (int i = 1; i <= revisionsTab.getRevisionsCount(); i++) {
+            if (revisionsTab.getRevisionDescription(i).contains("Merge branch")) {
+                String mergeCommitter = revisionsTab.getRevisionModifiedBy(i);
+                assertThat(mergeCommitter)
+                        .as("EPBDS-8488: Merge commit author must be WebStudio user, not .gitconfig value")
+                        .isEqualTo(committer);
+                break;
+            }
+        }
+
         propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         propertiesTab.selectBranch(BRANCH_NAME);
         revisionsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectRevisionsTab();
