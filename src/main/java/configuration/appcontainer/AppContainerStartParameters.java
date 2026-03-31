@@ -69,6 +69,7 @@ public enum AppContainerStartParameters {
                 config.put("production-repository.tag-prefix", "Rules_");
                 config.put("production-repository.login", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_LOGIN_RULESERVICE));
                 config.put("production-repository.password", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_TOKEN_RULESERVICE));
+                break;
             case SERVICE_FILE_PARAMS:
                 config.putAll(EMPTY.getParameterMap());
                 config.put("ruleservice.deployer.enabled", "true");
