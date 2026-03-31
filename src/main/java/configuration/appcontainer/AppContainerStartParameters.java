@@ -17,15 +17,6 @@ public enum AppContainerStartParameters {
     SERVICE_PARAMS,
     SERVICE_FILE_PARAMS;
 
-    public String getDockerImageName() {
-        return switch (this) {
-            case SERVICE_PARAMS, SERVICE_FILE_PARAMS ->
-                    ProjectConfiguration.getProperty(PropertyNameSpace.WS_DOCKER_IMAGE_NAME);
-            default ->
-                    ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
-        };
-    }
-
     public Map<String, String> getParameterMap() {
         Map<String, String> config = new HashMap<>();
         switch (this) {
