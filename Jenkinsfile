@@ -160,6 +160,7 @@ pipeline {
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.imageName} \\
+                                            -Dws_docker_image_name=${suite.imageName} \\
                                             -Dgit.token.ruleservice=${GIT_TOKEN_RULESERVICE} \\
                                             -Dgit.password=${GIT_PASSWORD} \\
                                             -Dtestng.dtd.http=true \\
