@@ -52,9 +52,6 @@ def functionalJobList = [
                          new Job("studio_git", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("service_smoke", image_hub_registry + ws, "", anyAvailableNode),
                          new Job("open_api", image_hub_registry + studio, "", anyAvailableNode)
-
-                         // Example for future SAML tests - pinned to specific configured node:
-                         // new Job("studio_saml", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel),
                          ]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
@@ -89,14 +86,11 @@ pipeline {
                                 docker.withRegistry(protocol_prefix + image_hub_registry) {
                                   def studio_image = docker.image(studio)
                                   def ws_image = docker.image(ws)
-//                                   def demo_image = docker.image(demo)
                                   sh "docker system prune -f"
                                   sh "docker image rm -f ghcr.io/${studio_image.imageName()}"
                                   sh "docker image rm -f ghcr.io/${ws_image.imageName()}"
-//                                   sh "docker image rm -f ghcr.io/${demo_image.imageName()}"
                                   sh "docker pull ${studio_image.imageName()}"  // Always pulling latest image here :x
                                   sh "docker pull ${ws_image.imageName()}"  // Always pulling latest image here :x
-//                                   sh "docker pull ${demo_image.imageName()}"
                                 }
                             }
                         }]

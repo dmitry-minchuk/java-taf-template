@@ -72,7 +72,18 @@
       "Bash(/tmp/openl-deploy.properties:*)",
       "Read(//tmp/**)",
       "mcp__plugin_playwright_playwright__browser_evaluate",
-      "mcp__plugin_playwright_playwright__browser_run_code"
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "Bash(git:*)",
+      "mcp__jira-mcp__jira_create_issue",
+      "mcp__jira-mcp__jira_add_worklog",
+      "mcp__jira-mcp__jira_transition_issue",
+      "Bash(jps)",
+      "Bash(jstack 88105)",
+      "Bash(docker ps:*)",
+      "Bash(curl:*)",
+      "Bash(sort -t_ -k2)",
+      "Bash(sort -t- -k3 -n)",
+      "Bash(sort -t- -k3)"
     ],
     "deny": []
   }
