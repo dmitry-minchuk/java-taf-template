@@ -19,13 +19,12 @@ public class AppContainerFactory {
     protected static final Logger LOGGER = LogManager.getLogger(AppContainerFactory.class);
     private final static Integer APP_PORT = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
     private final static String DEPLOYED_APP_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
-    private final static String DOCKER_IMAGE_NAME = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
-
     public static AppContainerData createContainer(String containerName,
                                                    Network network,
                                                    Map<String, String> envVars,
-                                                   Map<String, String> filesToCopy) {
-        GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(DOCKER_IMAGE_NAME));
+                                                   Map<String, String> filesToCopy,
+                                                   String dockerImageName) {
+        GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(dockerImageName));
         container.addExposedPort(APP_PORT);
         container.withNetwork(network);
         container.withNetworkAliases(containerName);
@@ -36,6 +35,13 @@ public class AppContainerFactory {
                     container.withCopyFileToContainer(getMountableFile(hostPath), containerPath));
         container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH)
                 .forStatusCode(200)
+                // withReadTimeout prevents indefinite hang when files are copied to a running container:
+                // TestContainers copies files after container starts, OpenL detects them and recompiles
+                // rules, which blocks the HTTP server. Without a read timeout, the TCP connection
+                // succeeds but HttpURLConnection.getResponseCode() hangs forever on parseHTTPHeader.
+                // A read timeout causes SocketTimeoutException -> IOException -> TestContainers retries
+                // the health check until OpenL finishes recompiling and the server responds again.
+                .withReadTimeout(Duration.ofSeconds(20))
                 .withStartupTimeout(Duration.ofMinutes(5)));
         LOGGER.info("Starting app container: {}", containerName);
         container.start();
@@ -48,8 +54,15 @@ public class AppContainerFactory {
     private static MountableFile getMountableFile(String resourcePath) {
         File file = new File(resourcePath);
         Path path = file.toPath();
-        // Use file mode 0666 (owner rw, group rw, others rw) to ensure
-        // container users (e.g. openl uid=1000) can read AND write copied files.
+        if (file.isDirectory()) {
+            // Directories need execute bit to be traversable (0755).
+            // MountableFile.forHostPath applies fileMode to ALL TAR entries, including
+            // subdirectory entries inside the archive. Using 0666 on directories removes
+            // the execute bit, making them inaccessible inside the container.
+            return MountableFile.forHostPath(path, 0755);
+        }
+        // Files use 0666 (owner rw, group rw, others rw) so that container users
+        // (e.g. openl uid=1000) can read AND write them.
         // WebStudio's Migrator writes back to .properties after migration.
         return MountableFile.forHostPath(path, 0666);
     }
