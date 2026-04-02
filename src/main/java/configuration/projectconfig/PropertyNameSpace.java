@@ -27,6 +27,8 @@ public enum PropertyNameSpace {
     DB_POSTGRES_JAR_MAVEN_PATH("db.postgres.jar.maven.path"),
     DB_ORACLE_CONTAINER_IMAGE("db.oracle.container.image"),
     DB_ORACLE_JAR_MAVEN_PATH("db.oracle.jar.maven.path"),
+    DB_MSSQL_CONTAINER_IMAGE("db.mssql.container.image"),
+    DB_MSSQL_JAR_MAVEN_PATH("db.mssql.jar.maven.path"),
     WS_DOCKER_IMAGE_NAME("ws_docker_image_name");
 
     private String value;

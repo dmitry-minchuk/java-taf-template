@@ -31,6 +31,7 @@
     <test name="TestRepositoryTableActionsOpenClose"><classes><class name="tests.ui.webstudio.repository.TestRepositoryTableActions"/></classes></test>
     <test name="TestMultipleDesignRepositoriesWithPostgres"><classes><class name="tests.ui.webstudio.repository.TestMultipleDesignRepositoriesWithPostgres"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnection"/></classes></test>
+    <test name="TestDeploymentConfigurationRepositoryConnectionMsSql"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionMsSql"/></classes></test>
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>
     <test name="TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_smoke.TestAddDeleteDesignRepository"/></classes></test>
     <test name="TestSupportedRepositories"><classes><class name="tests.ui.webstudio.studio_smoke.TestSupportedRepositories"/></classes></test>

@@ -6,6 +6,7 @@ import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -24,10 +25,15 @@ public class DeployInfrastructureService {
 
     private static final Logger LOGGER = LogManager.getLogger(DeployInfrastructureService.class);
     private static final int WS_PORT = 8080;
+    private static final int MSSQL_PORT = 1433;
     private static final String POSTGRES_ALIAS = "postgres";
     private static final String POSTGRES_JDBC_URL = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/openl?currentSchema=repository";
+    private static final String ORACLE_ALIAS = "oracle";
+    private static final String MSSQL_ALIAS = "sqlserver";
+    private static final String MSSQL_DB_NAME = "openl";
+    private static final String MSSQL_PASSWORD = "Openl_Strong_Password_123!";
 
-    public enum DbType { POSTGRES, ORACLE }
+    public enum DbType { POSTGRES, ORACLE, MSSQL }
     public enum PostgresMode { PRODUCTION_REPO, SECURITY_DB }
 
     private final DbType dbType;
@@ -37,6 +43,7 @@ public class DeployInfrastructureService {
     private Network network;
     private PostgreSQLContainer<?> postgresContainer;
     private OracleContainer oracleContainer;
+    private MSSQLServerContainer<?> msSqlContainer;
     private GenericContainer<?> wsContainer;
 
     private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs) {
@@ -59,8 +66,10 @@ public class DeployInfrastructureService {
             } else {
                 startPostgres();
             }
-        } else {
+        } else if (dbType == DbType.ORACLE) {
             startOracle();
+        } else {
+            startMsSql();
         }
 
         if (withWs) {
@@ -81,6 +90,10 @@ public class DeployInfrastructureService {
             LOGGER.info("Stopping Oracle container...");
             oracleContainer.stop();
         }
+        if (msSqlContainer != null && msSqlContainer.isRunning()) {
+            LOGGER.info("Stopping MS SQL container...");
+            msSqlContainer.stop();
+        }
     }
 
     public Map<String, String> getFilesToCopy() {
@@ -91,8 +104,10 @@ public class DeployInfrastructureService {
                 files.put(createProductionRepoProperties().toAbsolutePath().toString(),
                         "/opt/openl/shared/.properties");
             }
-        } else {
+        } else if (dbType == DbType.ORACLE) {
             files.put(getOracleJarPath(), "/opt/openl/lib/ojdbc11.jar");
+        } else {
+            files.put(getMsSqlJarPath(), "/opt/openl/lib/mssql-jdbc.jar");
         }
         return files;
     }
@@ -107,12 +122,31 @@ public class DeployInfrastructureService {
 
     public String getOracleJdbcUrl() {
         if (oracleContainer == null) throw new IllegalStateException("Oracle not started");
-        return "jdbc:oracle:thin:@oracle:1521/" + oracleContainer.getDatabaseName();
+        return "jdbc:oracle:thin:@" + ORACLE_ALIAS + ":1521/" + oracleContainer.getDatabaseName();
     }
 
     public PostgreSQLContainer<?> getPostgresContainer() {
         if (postgresContainer == null) throw new IllegalStateException("PostgreSQL not started");
         return postgresContainer;
+    }
+
+    public MSSQLServerContainer<?> getMsSqlContainer() {
+        if (msSqlContainer == null) throw new IllegalStateException("MS SQL not started");
+        return msSqlContainer;
+    }
+
+    public String getMsSqlJdbcUrl() {
+        if (msSqlContainer == null) throw new IllegalStateException("MS SQL not started");
+        return "jdbc:sqlserver://" + MSSQL_ALIAS + ":" + MSSQL_PORT
+                + ";databaseName=" + MSSQL_DB_NAME
+                + ";encrypt=false;trustServerCertificate=true;";
+    }
+
+    public String getMsSqlHostJdbcUrl() {
+        if (msSqlContainer == null) throw new IllegalStateException("MS SQL not started");
+        return "jdbc:sqlserver://" + msSqlContainer.getHost() + ":" + msSqlContainer.getMappedPort(MSSQL_PORT)
+                + ";databaseName=" + MSSQL_DB_NAME
+                + ";encrypt=false;trustServerCertificate=true;";
     }
 
     public Map<String, String> getContainerConfig() {
@@ -122,6 +156,10 @@ public class DeployInfrastructureService {
             config.put("db.url", pgJdbcUrl);
             config.put("db.user", postgresContainer.getUsername());
             config.put("db.password", postgresContainer.getPassword());
+        } else if (dbType == DbType.MSSQL) {
+            config.put("db.url", getMsSqlJdbcUrl());
+            config.put("db.user", msSqlContainer.getUsername());
+            config.put("db.password", msSqlContainer.getPassword());
         }
         return config;
     }
@@ -170,10 +208,36 @@ public class DeployInfrastructureService {
         oracleContainer = new OracleContainer(
                 ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_CONTAINER_IMAGE))
                 .withNetwork(network)
-                .withNetworkAliases("oracle")
+                .withNetworkAliases(ORACLE_ALIAS)
                 .withStartupTimeout(Duration.ofMinutes(5));
         oracleContainer.start();
         LOGGER.info("Oracle started. In-network JDBC URL: {}", getOracleJdbcUrl());
+    }
+
+    private void startMsSql() {
+        LOGGER.info("Starting MS SQL container...");
+        msSqlContainer = new MSSQLServerContainer<>(
+                DockerImageName.parse(ProjectConfiguration.getProperty(PropertyNameSpace.DB_MSSQL_CONTAINER_IMAGE)))
+                .acceptLicense()
+                .withPassword(MSSQL_PASSWORD)
+                .withNetwork(network)
+                .withNetworkAliases(MSSQL_ALIAS)
+                .withStartupTimeout(Duration.ofMinutes(5));
+        msSqlContainer.start();
+        createMsSqlDatabase();
+        LOGGER.info("MS SQL started. In-network JDBC URL: {}", getMsSqlJdbcUrl());
+    }
+
+    private void createMsSqlDatabase() {
+        try (var conn = java.sql.DriverManager.getConnection(
+                msSqlContainer.getJdbcUrl(),
+                msSqlContainer.getUsername(),
+                msSqlContainer.getPassword());
+             var stmt = conn.createStatement()) {
+            stmt.execute("IF DB_ID('" + MSSQL_DB_NAME + "') IS NULL CREATE DATABASE " + MSSQL_DB_NAME);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create MS SQL database '" + MSSQL_DB_NAME + "'", e);
+        }
     }
 
     private void startWsContainer() {
@@ -229,6 +293,11 @@ public class DeployInfrastructureService {
                 + ProjectConfiguration.getProperty(PropertyNameSpace.DB_ORACLE_JAR_MAVEN_PATH);
     }
 
+    private String getMsSqlJarPath() {
+        return System.getProperty("user.home") + "/"
+                + ProjectConfiguration.getProperty(PropertyNameSpace.DB_MSSQL_JAR_MAVEN_PATH);
+    }
+
     // ==================== Builder ====================
 
     public static class Builder {
@@ -250,6 +319,11 @@ public class DeployInfrastructureService {
 
         public Builder withOracle() {
             this.dbType = DbType.ORACLE;
+            return this;
+        }
+
+        public Builder withMsSql() {
+            this.dbType = DbType.MSSQL;
             return this;
         }
 
