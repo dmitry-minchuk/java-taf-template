@@ -30,7 +30,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Migrated from: Repository/TestDeploymentConfigurationRepositoryConnection.java
+ * Migrated from: Repository/TestDeploymentConfigurationRepositoryConnectionOracle.java
  * Ticket: IPBQA-27365
  *
  * Only the JDBC method is migrated — it verifies Oracle JDBC integration as a
@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * All containers share a Docker network (created here and registered in NetworkPool).
  * Oracle is accessible via Docker DNS alias "oracle" — no host.docker.internal dependency.
  */
-public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
+public class TestDeploymentConfigurationRepositoryConnectionOracle extends BaseTest {
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
@@ -75,7 +75,7 @@ public class TestDeploymentConfigurationRepositoryConnection extends BaseTest {
     @TestCaseId("IPBQA-27365")
     @Description("Deployment Configuration Repository — connect via Oracle JDBC and deploy a project")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testDeploymentConfigurationRepositoryConnectionJDBC() {
+    public void testDeploymentConfigurationRepositoryConnectionOracleJDBC() {
         // Step 1: Login and navigate to Admin → Repositories
         EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();

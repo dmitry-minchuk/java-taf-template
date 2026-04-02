@@ -83,7 +83,8 @@
       "Bash(curl:*)",
       "Bash(sort -t_ -k2)",
       "Bash(sort -t- -k3 -n)",
-      "Bash(sort -t- -k3)"
+      "Bash(sort -t- -k3)",
+      "mcp__jira-mcp__jira_get_transitions"
     ],
     "deny": []
   }
