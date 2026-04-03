@@ -149,7 +149,7 @@ public abstract class BaseTest implements ITest {
             if (!configAnnotation.copyFileFromPath().isEmpty() && !configAnnotation.copyFileToContainerPath().isEmpty()) {
                 filesToCopy.put(configAnnotation.copyFileFromPath(), configAnnotation.copyFileToContainerPath());
             }
-            String dockerImageName = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
+            String dockerImageName = ProjectConfiguration.getProperty(configAnnotation.dockerImageProperty());
             AppContainerPool.setAppContainer(appContainerName, network, containerConfig, filesToCopy.isEmpty() ? null : filesToCopy, dockerImageName);
         } else {
             AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME));

@@ -3,6 +3,14 @@ package helpers.service;
 import configuration.network.NetworkPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
+import io.minio.BucketExistsArgs;
+import io.minio.GetBucketVersioningArgs;
+import io.minio.ListObjectsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.StatObjectArgs;
+import io.minio.StatObjectResponse;
+import io.minio.messages.VersioningConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
@@ -18,8 +26,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
 
 public class DeployInfrastructureService {
 
@@ -32,24 +43,34 @@ public class DeployInfrastructureService {
     private static final String MSSQL_ALIAS = "sqlserver";
     private static final String MSSQL_DB_NAME = "openl";
     private static final String MSSQL_PASSWORD = "Openl_Strong_Password_123!";
+    private static final String MINIO_ALIAS = "minio";
+    private static final int MINIO_PORT = 9000;
+    private static final String MINIO_ROOT_USER = "minio";
+    private static final String MINIO_ROOT_PASSWORD = "minio123";
+    private static final String MINIO_REGION = "us-west-2";
 
-    public enum DbType { POSTGRES, ORACLE, MSSQL }
+    public enum DbType { NONE, POSTGRES, ORACLE, MSSQL }
     public enum PostgresMode { PRODUCTION_REPO, SECURITY_DB }
 
     private final DbType dbType;
     private final PostgresMode postgresMode;
     private final boolean withWs;
+    private final boolean withMinio;
 
     private Network network;
     private PostgreSQLContainer<?> postgresContainer;
     private OracleContainer oracleContainer;
     private MSSQLServerContainer<?> msSqlContainer;
     private GenericContainer<?> wsContainer;
+    private GenericContainer<?> minioContainer;
+    private MinioClient minioClient;
+    private String bucketName;
 
-    private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs) {
+    private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs, boolean withMinio) {
         this.dbType = dbType;
         this.postgresMode = postgresMode;
         this.withWs = withWs;
+        this.withMinio = withMinio;
     }
 
     public static Builder builder() {
@@ -68,8 +89,13 @@ public class DeployInfrastructureService {
             }
         } else if (dbType == DbType.ORACLE) {
             startOracle();
-        } else {
+        } else if (dbType == DbType.MSSQL) {
             startMsSql();
+        }
+
+        if (withMinio) {
+            startMinioContainer();
+            initializeMinioClient();
         }
 
         if (withWs) {
@@ -94,20 +120,27 @@ public class DeployInfrastructureService {
             LOGGER.info("Stopping MS SQL container...");
             msSqlContainer.stop();
         }
+        if (minioContainer != null && minioContainer.isRunning()) {
+            LOGGER.info("Stopping Minio container...");
+            minioContainer.stop();
+        }
     }
 
     public Map<String, String> getFilesToCopy() {
         Map<String, String> files = new HashMap<>();
-        if (dbType == DbType.POSTGRES) {
-            files.put(getPostgresJarPath(), "/opt/openl/lib/postgresql.jar");
-            if (postgresMode == PostgresMode.PRODUCTION_REPO) {
-                files.put(createProductionRepoProperties().toAbsolutePath().toString(),
-                        "/opt/openl/shared/.properties");
+        switch (dbType) {
+            case POSTGRES -> {
+                files.put(getPostgresJarPath(), "/opt/openl/lib/postgresql.jar");
+                if (postgresMode == PostgresMode.PRODUCTION_REPO) {
+                    files.put(createProductionRepoProperties().toAbsolutePath().toString(),
+                            "/opt/openl/shared/.properties");
+                }
             }
-        } else if (dbType == DbType.ORACLE) {
-            files.put(getOracleJarPath(), "/opt/openl/lib/ojdbc11.jar");
-        } else {
-            files.put(getMsSqlJarPath(), "/opt/openl/lib/mssql-jdbc.jar");
+            case ORACLE -> files.put(getOracleJarPath(), "/opt/openl/lib/ojdbc11.jar");
+            case MSSQL -> files.put(getMsSqlJarPath(), "/opt/openl/lib/mssql-jdbc.jar");
+            case NONE -> {
+                return files;
+            }
         }
         return files;
     }
@@ -162,6 +195,81 @@ public class DeployInfrastructureService {
             config.put("db.password", msSqlContainer.getPassword());
         }
         return config;
+    }
+
+    public String createBucket() {
+        ensureMinioEnabled();
+        bucketName = "openl-test-" + UUID.randomUUID().toString().replace("-", "");
+        try {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            return bucketName;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create Minio bucket '" + bucketName + "'", e);
+        }
+    }
+
+    public Map<String, String> getMinioRuleServiceConfig(String classpathJarMode) {
+        ensureBucketCreated();
+
+        Map<String, String> config = new HashMap<>();
+        config.put("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0");
+        config.put("ruleservice.deployer.enabled", "true");
+        config.put("production-repository.factory", "repo-aws-s3");
+        config.put("production-repository.service-endpoint", getMinioInNetworkEndpoint());
+        config.put("production-repository.bucket-name", bucketName);
+        config.put("production-repository.region-name", MINIO_REGION);
+        config.put("production-repository.access-key", MINIO_ROOT_USER);
+        config.put("production-repository.secret-key", MINIO_ROOT_PASSWORD);
+        config.put("production-repository.listener-timer-period", "2");
+        config.put("ruleservice.datasource.deploy.classpath.jars", classpathJarMode);
+        return config;
+    }
+
+    public Map<String, String> getRuleServiceConfig(String classpathJarMode) {
+        return getMinioRuleServiceConfig(classpathJarMode);
+    }
+
+    public boolean isBucketEmpty() {
+        return snapshotObjects().isEmpty();
+    }
+
+    public boolean bucketExists() {
+        ensureBucketCreated();
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check Minio bucket existence for '" + bucketName + "'", e);
+        }
+    }
+
+    public boolean isBucketVersioningEnabled() {
+        ensureBucketCreated();
+        try {
+            VersioningConfiguration versioning = minioClient.getBucketVersioning(
+                    GetBucketVersioningArgs.builder().bucket(bucketName).build());
+            return versioning != null && VersioningConfiguration.Status.ENABLED.equals(versioning.status());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read Minio bucket versioning for '" + bucketName + "'", e);
+        }
+    }
+
+    public Map<String, ObjectSnapshot> snapshotObjects() {
+        ensureBucketCreated();
+
+        Map<String, ObjectSnapshot> result = new TreeMap<>();
+        try {
+            var objects = minioClient.listObjects(
+                    ListObjectsArgs.builder().bucket(bucketName).recursive(true).build()).iterator();
+            while (objects.hasNext()) {
+                String objectName = objects.next().get().objectName();
+                StatObjectResponse response = minioClient.statObject(
+                        StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
+                result.put(objectName, ObjectSnapshot.from(response));
+            }
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to snapshot Minio objects for bucket '" + bucketName + "'", e);
+        }
     }
 
     // ==================== Private ====================
@@ -240,6 +348,31 @@ public class DeployInfrastructureService {
         }
     }
 
+    private void startMinioContainer() {
+        LOGGER.info("Starting Minio container...");
+        minioContainer = new GenericContainer<>(
+                DockerImageName.parse(ProjectConfiguration.getProperty(PropertyNameSpace.MINIO_DOCKER_IMAGE_NAME)))
+                .withNetwork(network)
+                .withNetworkAliases(MINIO_ALIAS)
+                .withExposedPorts(MINIO_PORT)
+                .withEnv("MINIO_ROOT_USER", MINIO_ROOT_USER)
+                .withEnv("MINIO_ROOT_PASSWORD", MINIO_ROOT_PASSWORD)
+                .withEnv("MINIO_REGION_NAME", MINIO_REGION)
+                .withCommand("server", "/data", "--console-address", ":9001")
+                .waitingFor(Wait.forHttp("/minio/health/ready")
+                        .forPort(MINIO_PORT)
+                        .forStatusCode(200)
+                        .withStartupTimeout(Duration.ofMinutes(3)));
+        minioContainer.start();
+    }
+
+    private void initializeMinioClient() {
+        minioClient = MinioClient.builder()
+                .endpoint(getMinioHostEndpoint())
+                .credentials(MINIO_ROOT_USER, MINIO_ROOT_PASSWORD)
+                .build();
+    }
+
     private void startWsContainer() {
         LOGGER.info("Starting WebService container...");
         String wsImage = ProjectConfiguration.getProperty(PropertyNameSpace.WS_DOCKER_IMAGE_NAME);
@@ -298,12 +431,58 @@ public class DeployInfrastructureService {
                 + ProjectConfiguration.getProperty(PropertyNameSpace.DB_MSSQL_JAR_MAVEN_PATH);
     }
 
+    private String getMinioHostEndpoint() {
+        ensureMinioContainerStarted();
+        return "http://" + minioContainer.getHost() + ":" + minioContainer.getMappedPort(MINIO_PORT);
+    }
+
+    private String getMinioInNetworkEndpoint() {
+        ensureMinioContainerStarted();
+        return "http://" + MINIO_ALIAS + ":" + MINIO_PORT;
+    }
+
+    private void ensureMinioEnabled() {
+        ensureMinioContainerStarted();
+        if (minioClient == null) {
+            throw new IllegalStateException("Minio infrastructure is not initialized. Configure builder with withMinio() and call start().");
+        }
+    }
+
+    private void ensureMinioContainerStarted() {
+        if (!withMinio || minioContainer == null) {
+            throw new IllegalStateException("Minio infrastructure is not initialized. Configure builder with withMinio() and call start().");
+        }
+    }
+
+    private void ensureBucketCreated() {
+        ensureMinioEnabled();
+        if (bucketName == null || bucketName.isBlank()) {
+            throw new IllegalStateException("Minio bucket is not initialized. Call createBucket() first.");
+        }
+    }
+
     // ==================== Builder ====================
 
+    public record ObjectSnapshot(String versionId, Instant lastModified, long size, String etag) {
+        private static ObjectSnapshot from(StatObjectResponse response) {
+            return new ObjectSnapshot(
+                    response.versionId(),
+                    response.lastModified().toInstant(),
+                    response.size(),
+                    response.etag());
+        }
+    }
+
     public static class Builder {
-        private DbType dbType = DbType.POSTGRES;
+        private DbType dbType = DbType.NONE;
         private PostgresMode postgresMode = PostgresMode.PRODUCTION_REPO;
         private boolean withWs = false;
+        private boolean withMinio = false;
+
+        public Builder withMinio() {
+            this.withMinio = true;
+            return this;
+        }
 
         public Builder withPostgres() {
             this.dbType = DbType.POSTGRES;
@@ -339,7 +518,7 @@ public class DeployInfrastructureService {
             if (withWs && postgresMode == PostgresMode.SECURITY_DB) {
                 throw new IllegalStateException("WS container requires PostgreSQL in PRODUCTION_REPO mode");
             }
-            return new DeployInfrastructureService(dbType, postgresMode, withWs);
+            return new DeployInfrastructureService(dbType, postgresMode, withWs, withMinio);
         }
     }
 }
