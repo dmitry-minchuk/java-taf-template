@@ -6,10 +6,10 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webservice.pages.ServicePage;
+import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public class TestRuleServicesNewUI extends BaseTest {
     ));
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>(Map.of(
-            Paths.get("src/test/resources/TestRuleServicesNewUI").toAbsolutePath().toString(),
+            TestDataUtil.getDirectoryPathFromResources("TestRuleServicesNewUI"),
             "/opt/openl/shared/"
     ));
 
