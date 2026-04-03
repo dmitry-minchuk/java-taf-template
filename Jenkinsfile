@@ -50,6 +50,7 @@ def functionalJobList = [
                          new Job("studio_smoke", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("rules_editor", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_git", image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_api_integration", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("service_smoke", image_hub_registry + ws, "", anyAvailableNode),
                          new Job("open_api", image_hub_registry + studio, "", anyAvailableNode)
                          ]
