@@ -21,6 +21,11 @@ public class TestDataUtil {
         return file.getAbsolutePath();
     }
 
+    public static String getDirectoryPathFromResources(String directoryName) {
+        File directory = getDirectory(directoryName);
+        return directory.getAbsolutePath();
+    }
+
     private static String getRelativePath(File matchingFile, String absoluteHostResourcesPath) {
         String localAbsolutePath = matchingFile.getAbsolutePath();
         String relativePath = "";
@@ -50,6 +55,25 @@ public class TestDataUtil {
         }
     }
 
+    public static File getDirectory(String directoryName) {
+        File resourcesDir = new File(HOST_RESOURCE_PATH);
+        Collection<File> foundDirectories = FileUtils.listFilesAndDirs(resourcesDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        List<File> matchingDirectories = foundDirectories.stream()
+                .filter(file -> !file.equals(resourcesDir))
+                .filter(File::isDirectory)
+                .filter(file -> file.getName().equalsIgnoreCase(directoryName))
+                .toList();
+
+        if (matchingDirectories.size() == 1) {
+            return matchingDirectories.getFirst();
+        } else {
+            throw new RuntimeException(String.format("Directory '%s' not found here %s or found more than one: %s",
+                    directoryName,
+                    HOST_RESOURCE_PATH,
+                    PrintUtil.prettyPrintObjectCollection.apply(matchingDirectories)));
+        }
+    }
+
     public static InputStream getInputStream(String fileName) {
         try {
             File file = getFile(fileName);
@@ -69,4 +93,3 @@ public class TestDataUtil {
         return properties;
     }
 }
-

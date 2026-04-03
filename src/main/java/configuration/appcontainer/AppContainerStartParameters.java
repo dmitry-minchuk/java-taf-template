@@ -14,7 +14,8 @@ public enum AppContainerStartParameters {
     STUDIO_GIT,
     SAML_STUDIO_PARAMS,
     OAUTH_STUDIO_PARAMS,
-    SERVICE_PARAMS;
+    SERVICE_PARAMS,
+    SERVICE_FILE_PARAMS;
 
     public Map<String, String> getParameterMap() {
         Map<String, String> config = new HashMap<>();
@@ -68,6 +69,13 @@ public enum AppContainerStartParameters {
                 config.put("production-repository.tag-prefix", "Rules_");
                 config.put("production-repository.login", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_LOGIN_RULESERVICE));
                 config.put("production-repository.password", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_TOKEN_RULESERVICE));
+                break;
+            case SERVICE_FILE_PARAMS:
+                config.putAll(EMPTY.getParameterMap());
+                config.put("ruleservice.deployer.enabled", "true");
+                config.put("production-repository.factory", "repo-file");
+                config.put("production-repository.uri", "/opt/openl/shared");
+                break;
             case DEFAULT_STUDIO_PARAMS:
             default:
                 config.putAll(EMPTY.getParameterMap());

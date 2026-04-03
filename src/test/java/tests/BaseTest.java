@@ -4,6 +4,8 @@ import com.epam.reportportal.service.ReportPortal;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import configuration.driver.DockerDriverPool;
 import configuration.driver.LocalDriverPool;
 import configuration.network.NetworkPool;
@@ -147,9 +149,10 @@ public abstract class BaseTest implements ITest {
             if (!configAnnotation.copyFileFromPath().isEmpty() && !configAnnotation.copyFileToContainerPath().isEmpty()) {
                 filesToCopy.put(configAnnotation.copyFileFromPath(), configAnnotation.copyFileToContainerPath());
             }
-            AppContainerPool.setAppContainer(appContainerName, network, containerConfig, filesToCopy.isEmpty() ? null : filesToCopy);
+            String dockerImageName = ProjectConfiguration.getProperty(configAnnotation.dockerImageProperty());
+            AppContainerPool.setAppContainer(appContainerName, network, containerConfig, filesToCopy.isEmpty() ? null : filesToCopy, dockerImageName);
         } else {
-            AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null);
+            AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME));
         }
     }
 

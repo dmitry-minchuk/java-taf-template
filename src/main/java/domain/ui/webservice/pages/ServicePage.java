@@ -20,6 +20,15 @@ public class ServicePage extends BasePage {
     private WebElement failedMethods;
     private WebElement kafkaService;
     private WebElement serviceLink;
+    // Deployment locators that work for both linked and plain-text project titles (%1$s = project name)
+    private WebElement deploymentRow;
+    private WebElement deploymentSuccessIcon;
+    private WebElement deploymentFailedIcon;
+    private WebElement deploymentRmiLink;
+    private WebElement deploymentManifestLink;
+    private WebElement deploymentKafka;
+    private WebElement deploymentErrorText;
+    private WebElement projectTitleLink;
 
     // Static elements
     private WebElement deployButton;
@@ -49,6 +58,17 @@ public class ServicePage extends BasePage {
         failedMethods = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//div[@class='errors']", "Failed Methods");
         kafkaService = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::div[contains(@class,'KAFKA')]", "Kafka Service");
         serviceLink = new WebElement(page, "xpath=//h3[a[text()='%s']]/parent::*//a[contains(text(), '%s')]", "Service Link");
+
+        // Deployment locators — work for both <h3><a>name</a></h3> and <h3>name</h3>
+        // Uses %1$s so a single project-name arg is reused across OR branches
+        deploymentRow = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']", "Deployment Row");
+        deploymentSuccessIcon = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']/parent::div[contains(@class,'status-deployed')]/span", "Deployment Success Icon");
+        deploymentFailedIcon = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']/parent::div[contains(@class,'status-failed')]/span", "Deployment Failed Icon");
+        deploymentRmiLink = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']/parent::*//a[normalize-space(text())='RMI']", "Deployment RMI Link");
+        deploymentManifestLink = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']/parent::*//a[contains(text(),'MANIFEST.MF')]", "Deployment Manifest Link");
+        deploymentKafka = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']/parent::div[contains(@class,'KAFKA')]", "Deployment Kafka Badge");
+        deploymentErrorText = new WebElement(page, "xpath=//h3[normalize-space(.)='%1$s']/parent::*//div[contains(@class,'error')]", "Deployment Error Text");
+        projectTitleLink = new WebElement(page, "xpath=//h3/a[normalize-space(text())='%1$s']", "Project Title Link");
 
         // Static elements
         deployButton = new WebElement(page, "xpath=//button[@class='deploy-button']", "Deploy Button");
@@ -112,5 +132,37 @@ public class ServicePage extends BasePage {
     public void deployProject(String filePath) {
         deployButton.waitForVisible();
         fileInput.fill(filePath);
+    }
+
+    public WebElement getDeploymentRow(String projectName) {
+        return deploymentRow.format(projectName);
+    }
+
+    public WebElement getDeploymentSuccessIcon(String projectName) {
+        return deploymentSuccessIcon.format(projectName);
+    }
+
+    public WebElement getDeploymentFailedIcon(String projectName) {
+        return deploymentFailedIcon.format(projectName);
+    }
+
+    public WebElement getDeploymentRmiLink(String projectName) {
+        return deploymentRmiLink.format(projectName);
+    }
+
+    public WebElement getDeploymentManifestLink(String projectName) {
+        return deploymentManifestLink.format(projectName);
+    }
+
+    public WebElement getDeploymentKafka(String projectName) {
+        return deploymentKafka.format(projectName);
+    }
+
+    public WebElement getDeploymentErrorText(String projectName) {
+        return deploymentErrorText.format(projectName);
+    }
+
+    public WebElement getProjectTitleLink(String projectName) {
+        return projectTitleLink.format(projectName);
     }
 }

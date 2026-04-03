@@ -50,11 +50,9 @@ def functionalJobList = [
                          new Job("studio_smoke", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("rules_editor", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_git", image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_api_integration", image_hub_registry + studio, "", anyAvailableNode),
                          new Job("service_smoke", image_hub_registry + ws, "", anyAvailableNode),
                          new Job("open_api", image_hub_registry + studio, "", anyAvailableNode)
-
-                         // Example for future SAML tests - pinned to specific configured node:
-                         // new Job("studio_saml", image_hub_registry + studio, "", jenkinsLabel.slave2SAML.nodeLabel),
                          ]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
@@ -89,14 +87,11 @@ pipeline {
                                 docker.withRegistry(protocol_prefix + image_hub_registry) {
                                   def studio_image = docker.image(studio)
                                   def ws_image = docker.image(ws)
-//                                   def demo_image = docker.image(demo)
                                   sh "docker system prune -f"
                                   sh "docker image rm -f ghcr.io/${studio_image.imageName()}"
                                   sh "docker image rm -f ghcr.io/${ws_image.imageName()}"
-//                                   sh "docker image rm -f ghcr.io/${demo_image.imageName()}"
                                   sh "docker pull ${studio_image.imageName()}"  // Always pulling latest image here :x
                                   sh "docker pull ${ws_image.imageName()}"  // Always pulling latest image here :x
-//                                   sh "docker pull ${demo_image.imageName()}"
                                 }
                             }
                         }]
@@ -160,6 +155,7 @@ pipeline {
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.imageName} \\
+                                            -Dws_docker_image_name=${suite.imageName} \\
                                             -Dgit.token.ruleservice=${GIT_TOKEN_RULESERVICE} \\
                                             -Dgit.password=${GIT_PASSWORD} \\
                                             -Dtestng.dtd.http=true \\

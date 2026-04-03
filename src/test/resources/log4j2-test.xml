@@ -9,6 +9,12 @@
         </ReportPortalLog4j2Appender>
     </Appenders>
     <Loggers>
+        <Logger name="org.testcontainers" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.github.dockerjava" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="ReportPortalAppender"/>
