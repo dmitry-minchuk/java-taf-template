@@ -3,14 +3,6 @@ package helpers.service;
 import configuration.network.NetworkPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
-import io.minio.BucketExistsArgs;
-import io.minio.GetBucketVersioningArgs;
-import io.minio.ListObjectsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.StatObjectArgs;
-import io.minio.StatObjectResponse;
-import io.minio.messages.VersioningConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.GenericContainer;
@@ -21,6 +13,21 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.oracle.OracleContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.BucketVersioningStatus;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.GetBucketVersioningRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.PutBucketVersioningRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,11 +50,11 @@ public class DeployInfrastructureService {
     private static final String MSSQL_ALIAS = "sqlserver";
     private static final String MSSQL_DB_NAME = "openl";
     private static final String MSSQL_PASSWORD = "Openl_Strong_Password_123!";
-    private static final String MINIO_ALIAS = "minio";
-    private static final int MINIO_PORT = 9000;
-    private static final String MINIO_ROOT_USER = "minio";
-    private static final String MINIO_ROOT_PASSWORD = "minio123";
-    private static final String MINIO_REGION = "us-west-2";
+    private static final String S3MOCK_ALIAS = "s3mock";
+    private static final int S3MOCK_HTTP_PORT = 9090;
+    private static final String S3_ACCESS_KEY = "test";
+    private static final String S3_SECRET_KEY = "test";
+    private static final String S3_REGION = "us-east-1";
 
     public enum DbType { NONE, POSTGRES, ORACLE, MSSQL }
     public enum PostgresMode { PRODUCTION_REPO, SECURITY_DB }
@@ -55,22 +62,22 @@ public class DeployInfrastructureService {
     private final DbType dbType;
     private final PostgresMode postgresMode;
     private final boolean withWs;
-    private final boolean withMinio;
+    private final boolean withS3Mock;
 
     private Network network;
     private PostgreSQLContainer<?> postgresContainer;
     private OracleContainer oracleContainer;
     private MSSQLServerContainer<?> msSqlContainer;
     private GenericContainer<?> wsContainer;
-    private GenericContainer<?> minioContainer;
-    private MinioClient minioClient;
+    private GenericContainer<?> s3MockContainer;
+    private S3Client s3Client;
     private String bucketName;
 
-    private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs, boolean withMinio) {
+    private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs, boolean withS3Mock) {
         this.dbType = dbType;
         this.postgresMode = postgresMode;
         this.withWs = withWs;
-        this.withMinio = withMinio;
+        this.withS3Mock = withS3Mock;
     }
 
     public static Builder builder() {
@@ -93,9 +100,9 @@ public class DeployInfrastructureService {
             startMsSql();
         }
 
-        if (withMinio) {
-            startMinioContainer();
-            initializeMinioClient();
+        if (withS3Mock) {
+            startS3MockContainer();
+            initializeS3Client();
         }
 
         if (withWs) {
@@ -120,9 +127,12 @@ public class DeployInfrastructureService {
             LOGGER.info("Stopping MS SQL container...");
             msSqlContainer.stop();
         }
-        if (minioContainer != null && minioContainer.isRunning()) {
-            LOGGER.info("Stopping Minio container...");
-            minioContainer.stop();
+        if (s3MockContainer != null && s3MockContainer.isRunning()) {
+            LOGGER.info("Stopping S3Mock container...");
+            s3MockContainer.stop();
+        }
+        if (s3Client != null) {
+            s3Client.close();
         }
     }
 
@@ -198,35 +208,35 @@ public class DeployInfrastructureService {
     }
 
     public String createBucket() {
-        ensureMinioEnabled();
+        ensureS3MockEnabled();
         bucketName = "openl-test-" + UUID.randomUUID().toString().replace("-", "");
         try {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
             return bucketName;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create Minio bucket '" + bucketName + "'", e);
+            throw new RuntimeException("Failed to create S3 bucket '" + bucketName + "'", e);
         }
     }
 
-    public Map<String, String> getMinioRuleServiceConfig(String classpathJarMode) {
+    public Map<String, String> getS3RuleServiceConfig(String classpathJarMode) {
         ensureBucketCreated();
 
         Map<String, String> config = new HashMap<>();
         config.put("JAVA_OPTS", "-Xms32m -XX:MaxRAMPercentage=50.0");
         config.put("ruleservice.deployer.enabled", "true");
         config.put("production-repository.factory", "repo-aws-s3");
-        config.put("production-repository.service-endpoint", getMinioInNetworkEndpoint());
+        config.put("production-repository.service-endpoint", getS3MockInNetworkEndpoint());
         config.put("production-repository.bucket-name", bucketName);
-        config.put("production-repository.region-name", MINIO_REGION);
-        config.put("production-repository.access-key", MINIO_ROOT_USER);
-        config.put("production-repository.secret-key", MINIO_ROOT_PASSWORD);
+        config.put("production-repository.region-name", S3_REGION);
+        config.put("production-repository.access-key", S3_ACCESS_KEY);
+        config.put("production-repository.secret-key", S3_SECRET_KEY);
         config.put("production-repository.listener-timer-period", "2");
         config.put("ruleservice.datasource.deploy.classpath.jars", classpathJarMode);
         return config;
     }
 
     public Map<String, String> getRuleServiceConfig(String classpathJarMode) {
-        return getMinioRuleServiceConfig(classpathJarMode);
+        return getS3RuleServiceConfig(classpathJarMode);
     }
 
     public boolean isBucketEmpty() {
@@ -236,20 +246,28 @@ public class DeployInfrastructureService {
     public boolean bucketExists() {
         ensureBucketCreated();
         try {
-            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
+            return true;
+        } catch (NoSuchBucketException e) {
+            return false;
+        } catch (S3Exception e) {
+            if (e.statusCode() == 404) {
+                return false;
+            }
+            throw new RuntimeException("Failed to check S3 bucket existence for '" + bucketName + "'", e);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to check Minio bucket existence for '" + bucketName + "'", e);
+            throw new RuntimeException("Failed to check S3 bucket existence for '" + bucketName + "'", e);
         }
     }
 
     public boolean isBucketVersioningEnabled() {
         ensureBucketCreated();
         try {
-            VersioningConfiguration versioning = minioClient.getBucketVersioning(
-                    GetBucketVersioningArgs.builder().bucket(bucketName).build());
-            return versioning != null && VersioningConfiguration.Status.ENABLED.equals(versioning.status());
+            var versioning = s3Client.getBucketVersioning(
+                    GetBucketVersioningRequest.builder().bucket(bucketName).build());
+            return BucketVersioningStatus.ENABLED.equals(versioning.status());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to read Minio bucket versioning for '" + bucketName + "'", e);
+            throw new RuntimeException("Failed to read S3 bucket versioning for '" + bucketName + "'", e);
         }
     }
 
@@ -258,17 +276,17 @@ public class DeployInfrastructureService {
 
         Map<String, ObjectSnapshot> result = new TreeMap<>();
         try {
-            var objects = minioClient.listObjects(
-                    ListObjectsArgs.builder().bucket(bucketName).recursive(true).build()).iterator();
-            while (objects.hasNext()) {
-                String objectName = objects.next().get().objectName();
-                StatObjectResponse response = minioClient.statObject(
-                        StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
+            var objects = s3Client.listObjectsV2Paginator(
+                    ListObjectsV2Request.builder().bucket(bucketName).build()).contents();
+            for (var object : objects) {
+                String objectName = object.key();
+                HeadObjectResponse response = s3Client.headObject(
+                        HeadObjectRequest.builder().bucket(bucketName).key(objectName).build());
                 result.put(objectName, ObjectSnapshot.from(response));
             }
             return result;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to snapshot Minio objects for bucket '" + bucketName + "'", e);
+            throw new RuntimeException("Failed to snapshot S3 objects for bucket '" + bucketName + "'", e);
         }
     }
 
@@ -348,28 +366,26 @@ public class DeployInfrastructureService {
         }
     }
 
-    private void startMinioContainer() {
-        LOGGER.info("Starting Minio container...");
-        minioContainer = new GenericContainer<>(
-                DockerImageName.parse(ProjectConfiguration.getProperty(PropertyNameSpace.MINIO_DOCKER_IMAGE_NAME)))
+    private void startS3MockContainer() {
+        LOGGER.info("Starting S3Mock container...");
+        s3MockContainer = new GenericContainer<>(DockerImageName.parse(getS3MockDockerImage()))
                 .withNetwork(network)
-                .withNetworkAliases(MINIO_ALIAS)
-                .withExposedPorts(MINIO_PORT)
-                .withEnv("MINIO_ROOT_USER", MINIO_ROOT_USER)
-                .withEnv("MINIO_ROOT_PASSWORD", MINIO_ROOT_PASSWORD)
-                .withEnv("MINIO_REGION_NAME", MINIO_REGION)
-                .withCommand("server", "/data", "--console-address", ":9001")
-                .waitingFor(Wait.forHttp("/minio/health/ready")
-                        .forPort(MINIO_PORT)
+                .withNetworkAliases(S3MOCK_ALIAS)
+                .withExposedPorts(S3MOCK_HTTP_PORT)
+                .waitingFor(Wait.forHttp("/favicon.ico")
+                        .forPort(S3MOCK_HTTP_PORT)
                         .forStatusCode(200)
                         .withStartupTimeout(Duration.ofMinutes(3)));
-        minioContainer.start();
+        s3MockContainer.start();
     }
 
-    private void initializeMinioClient() {
-        minioClient = MinioClient.builder()
-                .endpoint(getMinioHostEndpoint())
-                .credentials(MINIO_ROOT_USER, MINIO_ROOT_PASSWORD)
+    private void initializeS3Client() {
+        s3Client = S3Client.builder()
+                .endpointOverride(java.net.URI.create(getS3MockHostEndpoint()))
+                .region(Region.of(S3_REGION))
+                .forcePathStyle(true)
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(S3_ACCESS_KEY, S3_SECRET_KEY)))
                 .build();
     }
 
@@ -431,45 +447,53 @@ public class DeployInfrastructureService {
                 + ProjectConfiguration.getProperty(PropertyNameSpace.DB_MSSQL_JAR_MAVEN_PATH);
     }
 
-    private String getMinioHostEndpoint() {
-        ensureMinioContainerStarted();
-        return "http://" + minioContainer.getHost() + ":" + minioContainer.getMappedPort(MINIO_PORT);
+    private String getS3MockDockerImage() {
+        String configuredImage = ProjectConfiguration.getProperty(PropertyNameSpace.S3MOCK_DOCKER_IMAGE_NAME);
+        if (configuredImage == null || configuredImage.isBlank()) {
+            throw new IllegalStateException("S3Mock docker image is not configured.");
+        }
+        return configuredImage;
     }
 
-    private String getMinioInNetworkEndpoint() {
-        ensureMinioContainerStarted();
-        return "http://" + MINIO_ALIAS + ":" + MINIO_PORT;
+    private String getS3MockHostEndpoint() {
+        ensureS3MockContainerStarted();
+        return "http://" + s3MockContainer.getHost() + ":" + s3MockContainer.getMappedPort(S3MOCK_HTTP_PORT);
     }
 
-    private void ensureMinioEnabled() {
-        ensureMinioContainerStarted();
-        if (minioClient == null) {
-            throw new IllegalStateException("Minio infrastructure is not initialized. Configure builder with withMinio() and call start().");
+    private String getS3MockInNetworkEndpoint() {
+        ensureS3MockContainerStarted();
+        return "http://" + S3MOCK_ALIAS + ":" + S3MOCK_HTTP_PORT;
+    }
+
+    private void ensureS3MockEnabled() {
+        ensureS3MockContainerStarted();
+        if (s3Client == null) {
+            throw new IllegalStateException("S3Mock infrastructure is not initialized. Configure builder with withS3Mock() and call start().");
         }
     }
 
-    private void ensureMinioContainerStarted() {
-        if (!withMinio || minioContainer == null) {
-            throw new IllegalStateException("Minio infrastructure is not initialized. Configure builder with withMinio() and call start().");
+    private void ensureS3MockContainerStarted() {
+        if (!withS3Mock || s3MockContainer == null) {
+            throw new IllegalStateException("S3Mock infrastructure is not initialized. Configure builder with withS3Mock() and call start().");
         }
     }
 
     private void ensureBucketCreated() {
-        ensureMinioEnabled();
+        ensureS3MockEnabled();
         if (bucketName == null || bucketName.isBlank()) {
-            throw new IllegalStateException("Minio bucket is not initialized. Call createBucket() first.");
+            throw new IllegalStateException("S3 bucket is not initialized. Call createBucket() first.");
         }
     }
 
     // ==================== Builder ====================
 
     public record ObjectSnapshot(String versionId, Instant lastModified, long size, String etag) {
-        private static ObjectSnapshot from(StatObjectResponse response) {
+        private static ObjectSnapshot from(HeadObjectResponse response) {
             return new ObjectSnapshot(
                     response.versionId(),
-                    response.lastModified().toInstant(),
-                    response.size(),
-                    response.etag());
+                    response.lastModified(),
+                    response.contentLength(),
+                    response.eTag());
         }
     }
 
@@ -477,10 +501,10 @@ public class DeployInfrastructureService {
         private DbType dbType = DbType.NONE;
         private PostgresMode postgresMode = PostgresMode.PRODUCTION_REPO;
         private boolean withWs = false;
-        private boolean withMinio = false;
+        private boolean withS3Mock = false;
 
-        public Builder withMinio() {
-            this.withMinio = true;
+        public Builder withS3Mock() {
+            this.withS3Mock = true;
             return this;
         }
 
@@ -518,7 +542,7 @@ public class DeployInfrastructureService {
             if (withWs && postgresMode == PostgresMode.SECURITY_DB) {
                 throw new IllegalStateException("WS container requires PostgreSQL in PRODUCTION_REPO mode");
             }
-            return new DeployInfrastructureService(dbType, postgresMode, withWs, withMinio);
+            return new DeployInfrastructureService(dbType, postgresMode, withWs, withS3Mock);
         }
     }
 }

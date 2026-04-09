@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
+public class TestRuleServiceS3DeployClasspathJarProperty extends BaseTest {
 
     private static final String PROJECT_NAME = "Example 3 - Auto Policy Calculation";
     private static final String DATASOURCE_JAR_CONTAINER_PATH = "/opt/openl/app/webapps/ROOT/WEB-INF/lib/Example3-datasource.jar";
-    private static final Path TEST_DATA_DIR = Paths.get("src/test/resources/test_data/TestRuleServiceMinioDeployClasspathJarProperty");
+    private static final Path TEST_DATA_DIR = Paths.get("src/test/resources/test_data/TestRuleServiceS3DeployClasspathJarProperty");
     private static final Path DATASOURCE_JAR_V1 = TEST_DATA_DIR.resolve("Example3-datasource1.jar");
     private static final Path DATASOURCE_JAR_V2 = TEST_DATA_DIR.resolve("Example3-datasource2.jar");
     private static final String VERSION_1 = "1";
@@ -51,7 +51,7 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
         deployInfra = DeployInfrastructureService.builder()
-                .withMinio()
+                .withS3Mock()
                 .build();
         deployInfra.start();
         deployInfra.createBucket();
@@ -69,12 +69,12 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-32605")
-    @Description("Verify Minio S3 deployment behavior for ruleservice.datasource.deploy.classpath.jars modes NEVER, IF_ABSENT, ALWAYS")
+    @Description("Verify S3 repository deployment behavior for ruleservice.datasource.deploy.classpath.jars modes NEVER, IF_ABSENT, ALWAYS")
     @AppContainerConfig(
             startParams = AppContainerStartParameters.EMPTY,
             dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME
     )
-    public void testRuleServiceMinioDeployClasspathJarProperty() {
+    public void testRuleServiceS3DeployClasspathJarProperty() {
         ServicePage servicePage = openServicePage();
         waitForServicesPageLoaded();
 
@@ -82,7 +82,7 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
                 .as("Project should not appear in Rule Services when classpath jar deploy mode is NEVER")
                 .isFalse();
         assertThat(waitForBucketToRemainEmpty(5000))
-                .as("Minio bucket should remain empty while classpath jar deploy mode is NEVER")
+                .as("S3 bucket should remain empty while classpath jar deploy mode is NEVER")
                 .isTrue();
 
         restartRuleService("IF_ABSENT", DATASOURCE_JAR_V1);
@@ -90,7 +90,7 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
         Map<String, DeployInfrastructureService.ObjectSnapshot> initialSnapshot = getDeployObjects(waitForNonEmptyBucketSnapshot());
 
         assertThat(deployInfra.bucketExists())
-                .as("Minio bucket should exist after the first deployment")
+                .as("S3 bucket should exist after the first deployment")
                 .isTrue();
         assertThat(deployInfra.isBucketVersioningEnabled())
                 .as("OpenL S3 repository should enable bucket versioning")
@@ -120,7 +120,7 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
 
     private void configureRuleService(String classpathJarMode, Path datasourceJar) {
         additionalContainerConfig.clear();
-        additionalContainerConfig.putAll(deployInfra.getMinioRuleServiceConfig(classpathJarMode));
+        additionalContainerConfig.putAll(deployInfra.getS3RuleServiceConfig(classpathJarMode));
 
         additionalContainerFiles.clear();
         additionalContainerFiles.put(datasourceJar.toAbsolutePath().toString(), DATASOURCE_JAR_CONTAINER_PATH);
@@ -206,7 +206,7 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
                 },
                 30000,
                 1000,
-                "Waiting for Minio deployment objects to appear"))
+                "Waiting for S3 deployment objects to appear"))
                 .isTrue();
 
         return snapshotRef.get();
@@ -218,7 +218,7 @@ public class TestRuleServiceMinioDeployClasspathJarProperty extends BaseTest {
             if (!deployInfra.isBucketEmpty()) {
                 return false;
             }
-            WaitUtil.sleep(500, "Verifying that Minio bucket stays empty in NEVER mode");
+            WaitUtil.sleep(500, "Verifying that S3 bucket stays empty in NEVER mode");
         }
         return true;
     }

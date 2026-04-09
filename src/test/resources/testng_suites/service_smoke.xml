@@ -11,6 +11,6 @@
     <test name="TestDeployProjectsWithoutServiceNameInRulesDeploy"><classes><class name="tests.ui.webservice.TestDeployProjectsWithoutServiceNameInRulesDeploy"/></classes></test>
     <test name="TestWebservicesGitRepo"><classes><class name="tests.ui.webservice.TestWebservicesGitRepo"/></classes></test>
     <test name="TestRuleServicesNewUI"><classes><class name="tests.ui.webservice.TestRuleServicesNewUI"/></classes></test>
-    <test name="TestRuleServiceMinioDeployClasspathJarProperty"><classes><class name="tests.ui.webservice.TestRuleServiceMinioDeployClasspathJarProperty"/></classes></test>
+    <test name="TestRuleServiceS3DeployClasspathJarProperty"><classes><class name="tests.ui.webservice.TestRuleServiceS3DeployClasspathJarProperty"/></classes></test>
 
 </suite>

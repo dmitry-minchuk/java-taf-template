@@ -29,7 +29,7 @@ public enum PropertyNameSpace {
     DB_ORACLE_JAR_MAVEN_PATH("db.oracle.jar.maven.path"),
     DB_MSSQL_CONTAINER_IMAGE("db.mssql.container.image"),
     DB_MSSQL_JAR_MAVEN_PATH("db.mssql.jar.maven.path"),
-    MINIO_DOCKER_IMAGE_NAME("minio.docker.image"),
+    S3MOCK_DOCKER_IMAGE_NAME("s3mock.docker.image"),
     WS_DOCKER_IMAGE_NAME("ws_docker_image_name");
 
     private String value;
