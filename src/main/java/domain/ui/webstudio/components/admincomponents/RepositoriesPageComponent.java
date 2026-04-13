@@ -26,6 +26,7 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement remoteRepositoryLoginField;
     private WebElement remoteRepositoryPasswordField;
     private WebElement remoteRepositoryBranchField;
+    private WebElement remoteRepositoryProtectedBranchesField;
     private WebElement flatFolderStructureCheckBox;
     private WebElement secureConnectionCheckbox;
     private WebElement applyChangesBtn;
@@ -63,6 +64,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         remoteRepositoryLoginField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_login']", "remoteRepositoryLoginField");
         remoteRepositoryPasswordField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_password']", "remoteRepositoryPasswordField");
         remoteRepositoryBranchField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_branch']", "remoteRepositoryBranchField");
+        remoteRepositoryProtectedBranchesField = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_protectedBranches']", "remoteRepositoryProtectedBranchesField");
         flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
         secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'repositories-tabs')]//div[contains(@class,'ant-tabs-tabpane-active')]//input[@id='settings_secure']", "secureConnectionCheckbox");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
@@ -166,6 +168,16 @@ public class RepositoriesPageComponent extends BaseComponent {
         remoteRepositoryPasswordField.clear();
         remoteRepositoryPasswordField.fillSequentially(password);
         return this;
+    }
+
+    public RepositoriesPageComponent setProtectedBranches(String pattern) {
+        remoteRepositoryProtectedBranchesField.clear();
+        remoteRepositoryProtectedBranchesField.fillSequentially(pattern);
+        return this;
+    }
+
+    public String getProtectedBranches() {
+        return remoteRepositoryProtectedBranchesField.getCurrentInputValue();
     }
 
     public RepositoriesPageComponent setSecureConnection(boolean enabled) {

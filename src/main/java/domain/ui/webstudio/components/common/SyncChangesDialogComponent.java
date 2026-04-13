@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SyncChangesDialogComponent extends BaseComponent {
 
@@ -22,6 +23,7 @@ public class SyncChangesDialogComponent extends BaseComponent {
     private WebElement cancelBtn;
     private WebElement branchSelector;
     private List<WebElement> selectorOptions;
+    private List<WebElement> errorAlerts;
 
     public SyncChangesDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -43,6 +45,8 @@ public class SyncChangesDialogComponent extends BaseComponent {
 
         branchSelector = createScopedElement("xpath=.//input[@id='merge_branches_form_targetBranch']", "branchSelector");
         selectorOptions = createElementList("xpath=.//div[@class='ant-select-item-option-content']", "branchSelector");
+        // Merge error alerts rendered by MergeBranchesStep (receiveError / sendError / mergeError from server 409)
+        errorAlerts = createElementList("xpath=//div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert') and contains(@class,'ant-alert-error')]", "errorAlerts");
     }
 
     public void waitForDialogToAppear() {
@@ -116,5 +120,20 @@ public class SyncChangesDialogComponent extends BaseComponent {
 
     public String getExportButtonTitle() {
         return exportYourChangesBtn.getAttribute("title");
+    }
+
+    public List<String> getErrorMessages() {
+        WaitUtil.sleep(1500, "Waiting for merge check to populate error alerts");
+        return errorAlerts.stream()
+                .map(WebElement::getText)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasErrorMessageContaining(String substring) {
+        return WaitUtil.waitForCondition(
+                () -> getErrorMessages().stream().anyMatch(msg -> msg.contains(substring)),
+                10000, 500, "Waiting for error alert containing: " + substring);
     }
 }
