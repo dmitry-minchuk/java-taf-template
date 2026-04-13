@@ -37,7 +37,7 @@ public class TagsPageComponent extends BaseComponent {
         tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[contains(@class,'ant-table-wrapper tag-table')]//table", "tagsTable");
 
         newTagTypeInput = createScopedElement("xpath=.//input[@name='tag-type' and @placeholder='New Tag Type']", "newTagTypeInput");
-        projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[@class='ant-input']", "projectNameTemplatesTextarea");
+        projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[contains(@class,'ant-input')]", "projectNameTemplatesTextarea");
         saveTemplatesBtn = createScopedElement("xpath=.//button[.//span[text()='Save Templates']]", "saveTemplatesBtn");
         fillTagsForProjectBtn = createScopedElement("xpath=.//button[.//span[text()='Fill Tags for Project']]", "fillTagsForProjectBtn");
     }
@@ -128,7 +128,7 @@ public class TagsPageComponent extends BaseComponent {
     }
 
     public String getProjectNameTemplates() {
-        return projectNameTemplatesTextarea.getAttribute("value");
+        return projectNameTemplatesTextarea.getCurrentInputValue();
     }
 
     public TagsPageComponent saveTemplates() {

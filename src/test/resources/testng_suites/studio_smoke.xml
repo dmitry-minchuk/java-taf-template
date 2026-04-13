@@ -24,6 +24,7 @@
     <test name="TestProjectTagsCreationNonExistingValue"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingValue"/></classes></test>
     <test name="TestProjectTagsCreationNonExistingType"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingType"/></classes></test>
     <test name="TestProjectTagsCreationFromWorkspace"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationFromWorkspace"/></classes></test>
+    <test name="TestFillTagsForProject"><classes><class name="tests.ui.webstudio.studio_smoke.TestFillTagsForProject"/></classes></test>
     <test name="TestTableIcons"><classes><class name="tests.ui.webstudio.studio_smoke.TestTableIcons"/></classes></test>
     <test name="TestFileAddDelete"><classes><class name="tests.ui.webstudio.studio_smoke.TestFileAddDelete"/></classes></test>
     <test name="CreateDataTypeTableTest"><classes><class name="tests.ui.webstudio.studio_smoke.CreateDataTypeTableTest"/></classes></test>
