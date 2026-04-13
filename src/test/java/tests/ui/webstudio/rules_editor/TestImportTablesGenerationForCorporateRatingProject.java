@@ -38,8 +38,7 @@ public class TestImportTablesGenerationForCorporateRatingProject extends BaseTes
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_CORPORATE);
         uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
 
