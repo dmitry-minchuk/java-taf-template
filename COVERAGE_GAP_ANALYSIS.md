@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-03-19 (Tier 1 coverage push)
+> Updated: 2026-04-17 (C13 migrated, regression verified)
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,14 +9,14 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| New framework — total test classes | **118** (all active in suites) |
+| New framework — total test classes | **103** (active in tracked `testng_suites`) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
-| Suites | `rules_editor.xml` (23) · `studio_issues.xml` (43) · `studio_smoke.xml` (35) · `studio_git.xml` (11) · `service_smoke.xml` (3) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 117** |
+| Suites | `rules_editor.xml` (25) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 103** |
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
 | Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
-| **New framework overall coverage** | **~81% of legacy feature areas** (up from ~78%: +5 features covered — Copy as New Version ✅, Copy as BD Version ✅, Undo/Redo ✅, Rename project in non-flat git ✅, Creating folder ✅; C14 partially done (2/3 ✅); completed: C1-C12, C12b, C12c, C12d, C14 partial, ACL full, OpenAPI full; next priority: C13, remaining C14 comment generation) |
+| **New framework overall coverage** | **~82% of legacy feature areas** (gap sync refresh + C13 done: Protected Branches ✅, Swagger UI / JSON / YAML ✅, New RuleServices UI ✅, alphabetical sorting of deployments ✅ were already covered in active suites; completed: C1-C13, C12b, C12c, C12d, C14 partial, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
 
 ---
 
@@ -42,15 +42,15 @@
 | **C12b** | **`TestMultipleDesignRepositoriesWithPostgres`** ✅ DONE | TestMultipleDesignReposGitFlatNonFlatAndJDBC | ✅ Multiple Design Repos: Git flat (Design) + Git non-flat (Design1) (IPBQA-30859), ✅ PostgreSQL JDBC security DB via Testcontainers + DeployInfrastructureService, ✅ Copy project across repos with path-in-repository, ✅ Duplicate project name error, ✅ Edit Project dialog for flat/non-flat | ✅ `studio_smoke.xml` |
 | **C12c** | **`TestDeploymentConfigurationRepositoryConnection`** ✅ DONE | TestDeploymentConfigurationRepositoryConnection | ✅ Deployment Repository via Oracle JDBC (IPBQA-27365), ✅ Oracle container via Testcontainers + DeployInfrastructureService, ✅ Deploy project to Oracle JDBC deployment repo, ✅ Verify deployed data in Oracle DB | ✅ `studio_smoke.xml` |
 | **C12d** | **`TestNewDeployPopup`** ✅ DONE | TestNewDeployPopup (IPBQA-30049) | ✅ Deploy project to production via DeployModal (new UI, replaces legacy Deploy Configuration), ✅ Deploy dependent projects with auto-resolved dependencies, ✅ Edit table + save + redeploy, ✅ WS REST verification via GetWsServicesMethod API. Uses DeployInfrastructureService (Postgres + WS container). Note: Legacy Deploy Configuration was removed from WebStudio (EPBDS-15093, commit ff754010d0) | ✅ `studio_smoke.xml` |
-| **C13** | TestVersioningByFolders | TestVersioningByFolders | Versioning by folders (EPBDS-10363), Table properties across versions, Property inheritance per version | 🟢 LOW |
+| **C13** | **`TestVersioningByFolders`** ✅ DONE | TestVersioningByFolders | ✅ Versioning by folders (EPBDS-10363), ✅ Table properties across versions, ✅ Property inheritance per version | ✅ `rules_editor.xml` |
 | **C14** | ~~TestGitCommentAndCommitter~~ ✅ DONE (merged into TestMergeBranchesNoConflicts) | TestGitCustomizeCommentFields + TestGitCommitterName + TestGitCommentsGenerationOnProjectName | ✅ Custom comment fields (EPBDS-8371) — custom comment set + verified in revisions; ✅ Committer's name (EPBDS-8362) — verified via getRevisionModifiedBy(); ⚠️ Comments generation on project name (EPBDS-8460) — auto-generated comments verified but no dedicated test | ✅ `studio_git.xml` |
 
 ---
 
 ## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. Editor – Advanced Features (2.1.x) — ~45%
-**Legacy tests:** 65+ | **New framework:** 15 (rules_editor) + 24 (studio_issues)
+### 1. Editor – Advanced Features (2.1.x) — ~50%
+**Legacy tests:** 65+ | **New framework:** 16 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -64,7 +64,7 @@
 | Local Changes page: Restore, Compare | EPBDS-10539, IPBQA-30730 | TestChangesRestoreCompareHistorySettings | ✅ **C9** TestLocalChangesRestoreCompare (10 methods) |
 | Table ordering mode (default setting) | EPBDS-13851, IPBQA-32512 | TestOrderingMode | ✅ **C11** TestOrderingMode (4 methods) |
 | Search on Project level screen | EPBDS-14181, IPBQA-32590 | TestSearchOnProjectLevel | ✅ **C11** TestSearchOnProjectLevel (2 methods) |
-| Versioning by folders | EPBDS-10363, IPBQA-30979 | TestVersioningByFolders | → **C13** |
+| Versioning by folders | EPBDS-10363, IPBQA-30979 | TestVersioningByFolders | ✅ **C13** TestVersioningByFolders |
 | Managing Range data types | EPBDS-7489, IPBQA-25791 | TestRangeDataTypes | ❌ not migrated |
 | Create table by copying existing | IPBQA-31552 | TestCopyTableAsNewTable | ✅ `CopyTableDialogComponent` implemented; `copyTableAsNew()` used in TestMethodTable + TestDisplayChangedRowsTableStructure |
 | Create table as new version | IPBQA-31552 | TestCopyTableAsNewVersion | ✅ `copyTableAsNewVersion()` added to TestMethodTable.testTableCopyAndManagement — verifies New Version copy dialog + no compilation errors |
@@ -90,8 +90,8 @@
 | Rename project in Editor (non-flat git) | EPBDS-10845, IPBQA-30937 | TestRenameProjectInEditor | ✅ TestMultipleDesignRepositoriesWithPostgres step 9.2 — rename project in non-flat Git repo via EditProjectDialog, verify rename persists, rename back |
 | Run/Trace buttons always visible | EPBDS-11722, IPBQA-31761 | TestRunTraceButtonsVisibleForAllTypeTables | ⚠️ partial — TestACLRunBenchmarkSystemAction verifies Run button visible for all ACL roles; "visible for all table types" not tested |
 
-### 2. Git (2.5) — ~55%
-**Legacy tests:** 25+ | **New framework:** 11 tests
+### 2. Git (2.5) — ~60%
+**Legacy tests:** 25+ | **New framework:** 12 tests
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -107,20 +107,20 @@
 | Check shortened revision numbers | EPBDS-9649, IPBQA-29690 | — | ❌ not migrated |
 | Changes check interval | EPBDS-8806, IPBQA-28116 | — | ❌ not migrated |
 | HTTP → HTTPS git repo URL change | EPBDS-11370, IPBQA-31528 | TestGitHttpToHttpsAndViceVersa | ❌ not migrated |
-| Protected Branches | IPBQA-31896 | TestProtectedBranches | ❌ not migrated |
+| Protected Branches | IPBQA-31896, EPBDS-15753 | TestProtectedBranches | ✅ TestProtectedBranchMergeProtection |
 
-### 3. WebService (Section 1) — ~25%
-**Legacy tests:** 10+ | **New framework:** 3 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestWebservicesGitRepo + TestDeployProjectsWithoutServiceNameInRulesDeploy)
+### 3. WebService (Section 1) — ~55%
+**Legacy tests:** 10+ | **New framework:** 6 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestDeployProjectsWithoutServiceNameInRulesDeploy + TestWebservicesGitRepo + TestRuleServicesNewUI + TestRuleServiceS3DeployClasspathJarProperty + TestWebservicesSwaggerUi)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
 | Available services list | — | TestWebservicesDisplay | ❌ not migrated |
-| Swagger UI / JSON / YAML | IPBQA-32142, EPBDS-12603 | TestSwaggerUI | ❌ not migrated |
+| Swagger UI / JSON / YAML | IPBQA-32142, EPBDS-12603 | TestSwaggerUI | ✅ TestWebservicesSwaggerUi |
 | Verification of Project Status | EPBDS-9421, IPBQA-29488 | TestProjectStatus | ❌ not migrated |
 | Webservices displayed on tab | EPBDS-8887, IPBQA-28417 | TestWebservicesDisplay | ❌ not migrated |
-| New RuleServices UI | EPBDS-14196, IPBQA-32607 | — | ❌ not migrated |
+| New RuleServices UI | EPBDS-14196, IPBQA-32607 | — | ✅ TestRuleServicesNewUI |
 | Write OpenL runtime errors in log | EPBDS-12576, IPBQA-32104 | — | ❌ not migrated |
-| Alphabetical sorting of deployments | EPBDS-13121, IPBQA-32307 | — | ❌ not migrated |
+| Alphabetical sorting of deployments | EPBDS-13121, IPBQA-32307 | — | ✅ TestWebservicesSwaggerUi |
 
 ### 4. Admin: System Settings – Repositories (2.3.1.8-12) — ~40%
 **Legacy tests:** 10+ | **New framework:** 3 tests (Testcontainers-based JDBC integration + deploy)
@@ -147,10 +147,11 @@
 | Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes, 23 methods (22 active + 1 disabled): UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo (incl. Viewer+Contributor min combo), RunBenchmarkSystemAction (all 3 roles), ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (1 test disabled — Manager Admin access not implemented; Group Templates skipped — requires EUMS/LDAP) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
-| Rules Editor (core) | ~65% | 45 tests in rules_editor package (incl. OpenAPI, Compare, C7, C8) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
+| Rules Editor (core) | ~68% | 46 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
-| Git (core operations) | ~55% | 11 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts |
-| Studio Issues (bug regression) | ~50% | 43 studio_issues tests ✅ |
+| Git (core operations) | ~60% | 12 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts + Protected Branches ✅ |
+| WebService (Section 1) | ~55% | 6 service_smoke tests ✅ including TestRuleServicesNewUI + TestWebservicesSwaggerUi |
+| Studio Issues (bug regression) | ~50% | 28 studio_issues suite tests ✅ |
 | Repository (2.2) | ~75% | C1 + C2 + basic ops across suites ✅ + Resolve Conflicts (TestMergeBranchesWithConflicts) + Non-flat ✅ C12b + Folder creation ✅ C1. Unlock Project + Azure BLOB excluded from denominator (N/A). Remaining gaps: copy file, Git LFS, technical revisions, rules-deploy settings |
 | Admin: Repositories (JDBC integration + deploy) | ~40% | C12b (PostgreSQL security DB) + C12c (Oracle JDBC) + C12d (Deploy to production via DeployModal) ✅ — all using DeployInfrastructureService |
 | OpenAPI | ~95% | C3 + C3b + C4 + C5 + studio_issues ✅ all done |
@@ -174,22 +175,27 @@
 | ~~🟡~~ | ~~**C12d** TestNewDeployPopup~~ | ~~Deploy to production + WS REST verification (IPBQA-30049)~~ | ✅ DONE |
 | ~~🟡 5~~ | ~~**C11** TestEditorOrderingAndSearch~~ | ~~2 editor features → TestOrderingMode (4 methods) + TestSearchOnProjectLevel (2 methods)~~ | ✅ DONE |
 | ~~🟡 6~~ | ~~**C12** TestDesignRepositoryManagement~~ | ~~4 repo features → TestAddDeleteDesignRepository + TestSupportedRepositories~~ | ✅ DONE |
-| 🟢 7 | **C13** TestVersioningByFolders | 3 versioning features → 1 test | Low |
+| ~~🟢 7~~ | ~~**C13** TestVersioningByFolders~~ | ~~3 versioning features → 1 test~~ | ✅ DONE |
 | ~~🟢 8~~ | ~~**C14** TestGitCommentAndCommitter~~ | ~~3 git comment features → 1 test~~ | ✅ DONE (merged into TestMergeBranchesNoConflicts: custom comment + committer name; 1 partial — comment generation) |
 
 ---
 
+## Next Test To Migrate
+
+**Selected next target:** `TestSmartLookupSmartRules`
+
+Why this is the next migration candidate:
+- `C13` is now covered and regression-checked, so the next useful gap is no longer in versioning.
+- `TestSmartLookupSmartRules` covers a still-uncovered and user-visible editor area: opening, editing, and saving SmartLookup / SmartRules tables.
+- It is a better next step than low-signal cosmetic/editor gaps because it exercises real table workflows that are likely to regress.
+
 **Truly uncovered feature areas (0% coverage):**
-1. C13 — Versioning by folders
-2. Protected Branches
-3. Swagger UI / JSON / YAML
-4. SmartRules/SmartLookup CRUD (Open/Edit/Save/Create Wizard)
-5. Admin Common Settings (history max count, date format)
-6. Edit table: Bold/Italic/Underline/fill color
-7. Copy a file (file-level, not module)
-8. Git LFS support
-9. New RuleServices UI
-10. HTTP → HTTPS git repo URL change
+1. SmartRules/SmartLookup CRUD (Open/Edit/Save/Create Wizard)
+2. Admin Common Settings (history max count, date format)
+3. Edit table: Bold/Italic/Underline/fill color
+4. Copy a file (file-level, not module)
+5. Git LFS support
+6. HTTP → HTTPS git repo URL change
 
 **Removed from coverage denominator (N/A):**
 - Deploy Configuration (EPBDS-15093) — removed from product

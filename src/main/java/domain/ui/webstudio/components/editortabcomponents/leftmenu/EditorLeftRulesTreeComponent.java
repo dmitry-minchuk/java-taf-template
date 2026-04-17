@@ -71,6 +71,19 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                 .collect(Collectors.toList());
     }
 
+    public EditorLeftRulesTreeComponent selectVisibleLeafNode(String itemName) {
+        waitUntilSpinnerLoaded();
+        WebElement leafNode = WaitUtil.waitForResult(() -> leafNodes.stream()
+                        .filter(node -> itemName.equals(node.getText()))
+                        .findFirst(),
+                DEFAULT_TIMEOUT_MS,
+                100,
+                "Searching for visible leaf node '" + itemName + "' in editor tree")
+                .orElseThrow(() -> new RuntimeException(String.format("Visible leaf node with name %s not found", itemName)));
+        leafNode.getLocator().evaluate("node => { const link = node.querySelector('a'); if (!link) throw new Error('Leaf link not found'); const href = link.getAttribute('href'); if (!href) throw new Error('Leaf href not found'); window.location.hash = href.replace(/^#/, ''); }");
+        return this;
+    }
+
     public EditorLeftRulesTreeComponent setAdvancedFilter(boolean hideUtilityTables) {
         advancedFilterBtn.click();
         if (hideUtilityTables != hideUtilityTablesCheckbox.isChecked()) {
@@ -128,7 +141,9 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
 
     public boolean isFolderExistsInTree(String folderName) {
         return findTreeFolders().stream()
-                .anyMatch(folder -> folder.getFolderName().equals(folderName));
+                .map(EditorTreeFolderComponent::getFolderName)
+                .filter(name -> name != null && !name.isEmpty())
+                .anyMatch(folderName::equals);
     }
 
     public String getSelectedItemText() {
