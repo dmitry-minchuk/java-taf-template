@@ -4,6 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
+import configuration.projectconfig.PropertyNameSpace;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.utils.TestDataUtil;
@@ -33,7 +34,7 @@ public class TestRuleServicesNewUI extends BaseTest {
     @Test
     @TestCaseId("EPBDS-14196")
     @Description("Verify new Rule Services UI features: configurable title, Show All Deployments filter, Services & Links column")
-    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_FILE_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_FILE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testRuleServicesNewUI() {
         ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
         servicePage.open();

@@ -35,6 +35,7 @@ public class ServicePage extends BasePage {
     private WebElement fileInput;
     private WebElement showAllDeploymentsCheckBox;
     private WebElement apiSelector;
+    private WebElement swaggerUiContainer;
 
     public ServicePage() {
         super();
@@ -75,6 +76,7 @@ public class ServicePage extends BasePage {
         fileInput = new WebElement(page, "xpath=//input[@id='file-input']", "File Input");
         showAllDeploymentsCheckBox = new WebElement(page, "xpath=//input[@id='showAll']", "Show All Deployments Checkbox");
         apiSelector = new WebElement(page, "xpath=//select[@id='select-api']", "API Selector");
+        swaggerUiContainer = new WebElement(page, "#swagger-ui", "Swagger UI Container");
     }
 
     public void open() {
