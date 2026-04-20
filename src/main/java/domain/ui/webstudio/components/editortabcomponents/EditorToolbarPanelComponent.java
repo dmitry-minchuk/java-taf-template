@@ -212,10 +212,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     public void navigateToProjectRoot(String projectName) {
         WaitUtil.retryOnException(() -> {
             breadcrumbsProjectToggle.click();
-            breadcrumbsDropdownItemTemplate.format(projectName).waitForVisible();
+            breadcrumbsDropdownItemTemplate.format(projectName).waitForVisible(3000);
             breadcrumbsDropdownItemTemplate.format(projectName).click();
             return true;
-        }, 5000, 500, "Trying to navigate to project root" + projectName);
+        }, 15000, 500, "Trying to navigate to project root " + projectName);
         WaitUtil.sleep(500, "Waiting for project view to load");
     }
 
