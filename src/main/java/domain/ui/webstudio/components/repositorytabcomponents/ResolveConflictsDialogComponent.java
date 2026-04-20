@@ -34,7 +34,7 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
         uploadMergedRadio = createScopedElement("xpath=.//input[@type='radio' and @value='CUSTOM']", "uploadMergedRadio");
         saveButton = createScopedElement("xpath=.//button[contains(@class, 'ant-btn-primary') and contains(., 'Save and Resolve')]", "saveButton");
         cancelButton = createScopedElement("xpath=.//button[contains(@class, 'ant-btn-default') and contains(., 'Cancel')]", "cancelButton");
-        compareLink = new WebElement(page, "xpath=//div[@class='compare-link']//a", "compareLink");
+        compareLink = new WebElement(page, "button:has-text('Compare File Versions')", "compareLink");
     }
 
     public void waitForDialogToAppear() {
@@ -87,10 +87,19 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
     }
 
     public CompareLocalChangesDialogComponent clickCompareLinkAsPopup() {
+        compareLink.waitForVisible(10000);
         Page popup = page.waitForPopup(() -> {
-            compareLink.click();
+            compareLink.clickForce();
         });
         popup.waitForLoadState();
         return new CompareLocalChangesDialogComponent(popup);
+    }
+
+    // Use for non-Excel (text) file conflicts: Compare opens a nested modal in the same page, not a popup.
+    public CompareLocalChangesDialogComponent clickCompareLinkInCurrentPage() {
+        compareLink.waitForVisible(10000);
+        compareLink.clickForce();
+        WaitUtil.sleep(500, "Waiting for text compare modal to open");
+        return new CompareLocalChangesDialogComponent(page, true);
     }
 }

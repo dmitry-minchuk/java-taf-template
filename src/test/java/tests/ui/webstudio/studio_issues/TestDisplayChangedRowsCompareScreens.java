@@ -207,14 +207,12 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
                 .as("Resolve Conflicts dialog should appear when saving from an old revision while HEAD has advanced")
                 .isTrue();
 
-        // Open text diff popup via Compare link and verify no equal rows checkbox (non-Excel file)
-        CompareLocalChangesDialogComponent compareDialog = resolveConflictsDialog.clickCompareLinkAsPopup();
+        // Open text compare nested modal via Compare link and verify no equal rows checkbox (non-Excel file)
+        CompareLocalChangesDialogComponent compareDialog = resolveConflictsDialog.clickCompareLinkInCurrentPage();
         compareDialog.waitForTextCompareToAppear();
         assertThat(compareDialog.isShowEqualRowsCheckboxVisible())
                 .as("Equal rows checkbox must not be visible for non-Excel (text) file diff in Resolve Conflicts")
                 .isFalse();
-
-        compareDialog.close();
     }
 
     private void validateCompareWindowCells(CompareLocalChangesDialogComponent dialog) {

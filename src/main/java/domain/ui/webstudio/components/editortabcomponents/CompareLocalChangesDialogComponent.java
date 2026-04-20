@@ -51,6 +51,14 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
         initializeElements();
     }
 
+    // Use when the comparison opens inline (nested modal) rather than as a browser popup.
+    // close() becomes a no-op so the caller controls dialog lifecycle.
+    public CompareLocalChangesDialogComponent(Page page, boolean inlineModal) {
+        super(page);
+        this.comparePopup = null;
+        initializeElements();
+    }
+
     private void initializeElements() {
         treeContainer = new WebElement(getPage(), "xpath=//div[@id='diffTreeForm:newTree']", "treeContainer");
         closeBtn = new WebElement(getPage(), "xpath=//input[@value='Close']", "closeBtn");
