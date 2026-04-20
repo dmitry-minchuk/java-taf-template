@@ -76,8 +76,7 @@ public class TestOpenApiReconciliationDatatypeErrors extends BaseTest {
                 .as("childDatatype2 should contain exactly 1 parent mismatch error")
                 .containsExactly("OpenAPI Reconciliation: Parent 'MyDatatype3' of type 'childDatatype2' mismatches to declared schema:\n" +
                         "{\n" +
-                        "  \"$ref\" : \"#/components/schemas/parentDatatype1\",\n" +
-                        "  \"exampleSetFlag\" : false\n" +
+                        "  \"$ref\" : \"#/components/schemas/parentDatatype1\"\n" +
                         "}");
     }
 }
