@@ -106,6 +106,13 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
         return this;
     }
 
+    public CompareLocalChangesDialogComponent waitForTextCompareToAppear() {
+        WaitUtil.waitForCondition(
+                () -> textDiffSections.stream().anyMatch(s -> s.isVisible(500)),
+                10000, 250, "Waiting for text diff sections to appear");
+        return this;
+    }
+
     public List<String> getLeftModulesList() {
         return treeItems.stream().map(WebElement::getText).collect(Collectors.toList());
     }
@@ -222,6 +229,10 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
             showEqualRowsCheckbox.click();
             WaitUtil.sleep(500, "Waiting for equal rows filter to apply");
         }
+    }
+
+    public boolean isShowEqualRowsCheckboxVisible() {
+        return showEqualRowsCheckbox.isVisible(2000);
     }
 
     // ========== Text files compare form ==========

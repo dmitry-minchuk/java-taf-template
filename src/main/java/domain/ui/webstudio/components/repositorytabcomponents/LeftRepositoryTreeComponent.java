@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Optional;
 
 public class LeftRepositoryTreeComponent extends BaseComponent {
 
@@ -82,14 +81,13 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
 
     // Find specific folder in the tree by name
     private RepositoryTreeFolderComponent findFolderInTree(String folderName) {
-        Optional<RepositoryTreeFolderComponent> result = WaitUtil.waitForResult(() -> findTreeFolders().stream()
-                .filter(f -> folderName.equals(f.getFolderName()))
-                .findFirst(), DEFAULT_TIMEOUT_MS, 100,
-                "Searching for folder '" + folderName + "' in repository tree"
-        );
-
-        return result.orElseThrow(() ->
-                new RuntimeException(String.format("Folder with name %s not found", folderName)));
+        return WaitUtil.retryOnException(() -> {
+            WaitUtil.waitForListNotEmpty(() -> folders, 2000, 100, "Waiting for repository tree folders to load");
+            return folders.stream()
+                    .filter(f -> folderName.equals(f.getFolderName()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(String.format("Folder '%s' not found in tree", folderName)));
+        }, 30000, 500, "Searching for folder '" + folderName + "' in repository tree");
     }
 
     // Find all tree folder components dynamically (replaces @FindAll annotation)

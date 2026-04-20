@@ -177,29 +177,44 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
-        // Edit description and save to create first revision
+        // Save desc1 → revision 2
         editorPage.openEditProjectDialog(projectName).setDescription("desc1").clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
 
-        // Open Revisions and open old revision (revision 2 = initial state)
-        editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
-        EditorRevisionsTabComponent revisionsTab = new EditorRevisionsTabComponent();
-        revisionsTab.waitForTableToLoad();
-        revisionsTab.openRevision(2);
-
-        // Edit description again from old revision → triggers conflict on save
+        // Save desc2 → revision 3 (HEAD)
         editorPage.openEditProjectDialog(projectName).setDescription("desc2").clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
         editorPage.waitUntilSpinnerLoaded();
 
-        // Resolve Conflicts dialog should appear; click Compare link to open text diff popup
+        // Open revision 2 (one behind HEAD=rev3) — editing from here causes a conflict
+        editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
+        EditorRevisionsTabComponent revisionsTab = new EditorRevisionsTabComponent();
+        revisionsTab.waitForTableToLoad();
+        revisionsTab.openRevision(2);
+
+        // Edit description from old revision and save → triggers Resolve Conflicts
+        editorPage.openEditProjectDialog(projectName).setDescription("desc3").clickUpdateButton();
+        editorPage.getEditorToolbarPanelComponent().clickSave();
+        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.waitUntilSpinnerLoaded();
+
+        // Resolve Conflicts dialog must appear because we edited from an old revision
         ResolveConflictsDialogComponent resolveConflictsDialog = new ResolveConflictsDialogComponent();
         assertThat(resolveConflictsDialog.isDialogVisible())
-        .as("No Resolve Conflicts dialog should appear - editing old revision overwrites newer revision directly in new WebStudio")
-        .isFalse();
+                .as("Resolve Conflicts dialog should appear when saving from an old revision while HEAD has advanced")
+                .isTrue();
+
+        // Open text diff popup via Compare link and verify no equal rows checkbox (non-Excel file)
+        CompareLocalChangesDialogComponent compareDialog = resolveConflictsDialog.clickCompareLinkAsPopup();
+        compareDialog.waitForTextCompareToAppear();
+        assertThat(compareDialog.isShowEqualRowsCheckboxVisible())
+                .as("Equal rows checkbox must not be visible for non-Excel (text) file diff in Resolve Conflicts")
+                .isFalse();
+
+        compareDialog.close();
     }
 
     private void validateCompareWindowCells(CompareLocalChangesDialogComponent dialog) {
