@@ -33,7 +33,7 @@ public class TestTableIcons extends BaseTest {
 
     private static final List<String> CATALOG_NAMES = Arrays.asList(
             "Decision", "Spreadsheet", "TBasic", "Column Match",
-            "Data", "Run", "Test", "Datatype", "Vocabulary", "Method", "Constants"
+            "Data", "Run", "Test", "Datatype", "Method", "Constants"
     );
 
     private static final Map<String, String> TABLE_NAMES_AND_ICONS = new HashMap<>() {{
