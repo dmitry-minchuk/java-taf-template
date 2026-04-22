@@ -297,7 +297,8 @@ public class TestNewDeployPopup extends BaseTest {
                 },
                 45000, 3000, "Waiting for all services to appear in WS");
 
-        List<String> actual = wsApi.getServiceNames();
+        List<String> actual = WaitUtil.retryOnException(
+                wsApi::getServiceNames, 10000, 1000, "Fetching final WS services list");
         LOGGER.info("WS services: {}", actual);
         for (String project : expectedProjects) {
             assertThat(actual).as("WS should contain service for project '%s'", project)
