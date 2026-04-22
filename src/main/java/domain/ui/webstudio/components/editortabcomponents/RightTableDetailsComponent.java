@@ -175,7 +175,7 @@ public class RightTableDetailsComponent extends BaseComponent {
         clickPropertyValue(propertyName);
         WebElement input = propertyTextInputTemplate.format(propertyName);
         input.clear();
-        input.fill(newValue);
+        input.fillSequentially(newValue);
         WaitUtil.sleep(200, "Waiting after entering property value");
     }
 
