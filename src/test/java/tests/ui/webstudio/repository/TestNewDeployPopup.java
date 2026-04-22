@@ -285,9 +285,15 @@ public class TestNewDeployPopup extends BaseTest {
 
         WaitUtil.waitForCondition(
                 () -> {
-                    List<String> services = wsApi.getServiceNames();
-                    return expectedProjects.stream().allMatch(
-                            project -> services.stream().anyMatch(s -> s.endsWith("_" + project)));
+                    try {
+                        List<String> services = wsApi.getServiceNames();
+                        return expectedProjects.stream().allMatch(
+                                project -> services.stream().anyMatch(s -> s.endsWith("_" + project)));
+                    } catch (Exception e) {
+                        // WS may return an HTML error page while reloading services from PostgreSQL
+                        LOGGER.warn("Transient error polling WS services, will retry: {}", e.getMessage());
+                        return false;
+                    }
                 },
                 45000, 3000, "Waiting for all services to appear in WS");
 
