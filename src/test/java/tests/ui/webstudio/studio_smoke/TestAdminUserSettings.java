@@ -27,7 +27,6 @@ import tests.BaseTest;
 import java.util.List;
 
 import static domain.serviceclasses.constants.User.ADMIN;
-import static domain.ui.webstudio.components.admincomponents.SecurityPageComponent.DefaultGroup.ADMINISTRATORS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestAdminUserSettings extends BaseTest {
@@ -41,13 +40,6 @@ public class TestAdminUserSettings extends BaseTest {
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
         EditorPage editorPage = loginService.login(UserService.getUser(ADMIN));
-        editorPage
-                .openUserMenu()
-                .navigateToAdministration()
-                .navigateToSecurityPage()
-                .selectDefaultGroup(ADMINISTRATORS.getValue())
-                .clickApply();
-        editorPage = loginService.login(UserService.getUser(ADMIN));
         MyProfilePageComponent myProfileComponent = editorPage
                 .openUserMenu()
                 .navigateToAdministration()
@@ -167,17 +159,17 @@ public class TestAdminUserSettings extends BaseTest {
                 .navigateToMyProfilePage();
         Assert.assertEquals(myProfileComponent.getDisplayName(), "Bbb Aaa", "Display name should be updated");
 
-        // Verify user in Users table
+        // Scenario 6: Check default settings (lines 133-143 from original)
+        editorPage.openUserMenu().signOut();
+        UserData adminNewPassword = new UserData("admin", "12345");
+        editorPage = loginService.login(adminNewPassword);
+
+        // Verify user1 display name in Users table (requires admin)
         usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage();
         int user1Row = usersComponent.getUserRow("user1");
         Assert.assertEquals(usersComponent.getFullNameFromRow(user1Row), "Bbb Aaa", "Display name should be updated in users table");
-
-        // Scenario 6: Check default settings (lines 133-143 from original)
-        editorPage.openUserMenu().signOut();
-        UserData adminNewPassword = new UserData("admin", "12345");
-        editorPage = loginService.login(adminNewPassword);
 
         MySettingsPageComponent mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
@@ -279,7 +271,7 @@ public class TestAdminUserSettings extends BaseTest {
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(user1Data);
         mySettingsComponent = editorPage.openUserMenu()
-                .navigateToAdministration()
+                .navigateToMySettings()
                 .navigateToMySettingsPage();
 
         // Verify that user1 has default settings (different from admin's modified settings)

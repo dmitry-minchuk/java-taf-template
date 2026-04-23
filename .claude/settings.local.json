@@ -117,7 +117,9 @@
       "Bash(echo \"Schema created: $?\")",
       "Bash(echo \"WS started: $?\")",
       "Bash(tee /tmp/tndp_run2.log)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(echo \"Container started: $?\")",
+      "Bash(tee /tmp/tuas_run.log)"
     ],
     "deny": []
   }
