@@ -9,6 +9,7 @@ import java.util.List;
 
 public class TableComponent extends BaseComponent {
 
+    private WebElement editorWrapper;
     private WebElement inputLocator;
     private List<PlaywrightTableRowComponent> rows;
     private WebElement propertyValueTemplate;
@@ -24,6 +25,7 @@ public class TableComponent extends BaseComponent {
     }
 
     private void initializeElements() {
+        editorWrapper = new WebElement(page, "xpath=//*[@id='t_te_editorWrapper']", "editorWrapper");
         inputLocator = new WebElement(page, "xpath=//*[@id='_t_te_editorWrapper']", "inputLocator");
         rows = createScopedComponentList(PlaywrightTableRowComponent.class, "xpath=.//tbody/tr", "rowSelectorTemplate");
         propertyValueTemplate = createScopedElement("xpath=//tr/td[text()='%s']/following-sibling::td[1]", "propertyValue");
@@ -51,7 +53,7 @@ public class TableComponent extends BaseComponent {
 
     public void editCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
         doubleClickCell(rowIndex, columnIndex);
-        inputLocator.waitForVisible();
+        editorWrapper.waitForVisible();
 
         inputLocator.press("Control+A");
         inputLocator.press("Delete");
