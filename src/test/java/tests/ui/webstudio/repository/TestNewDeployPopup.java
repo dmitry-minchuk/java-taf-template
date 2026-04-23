@@ -283,7 +283,7 @@ public class TestNewDeployPopup extends BaseTest {
         GetWsServicesMethod wsApi = new GetWsServicesMethod(deployInfra.getWsContainer(), WS_PORT);
         List<String> expectedProjects = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
 
-        WaitUtil.waitForCondition(
+        boolean allServicesAppeared = WaitUtil.waitForCondition(
                 () -> {
                     try {
                         List<String> services = wsApi.getServiceNames();
@@ -296,6 +296,9 @@ public class TestNewDeployPopup extends BaseTest {
                     }
                 },
                 45000, 3000, "Waiting for all services to appear in WS");
+        assertThat(allServicesAppeared)
+                .as("All expected WS services should appear before fetching the final services list")
+                .isTrue();
 
         List<String> actual = WaitUtil.retryOnException(
                 wsApi::getServiceNames, 10000, 1000, "Fetching final WS services list");
