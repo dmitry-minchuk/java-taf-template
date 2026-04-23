@@ -39,8 +39,15 @@ public class RestAssuredFilter implements Filter {
                     prettyResponse.append("Body: ").append(newLine).append(prettyJson);
                 }
 
-        LOGGER.debug(prettyRequest.toString());
-        LOGGER.debug(prettyResponse.toString());
+        int status = response.getStatusCode();
+        boolean isJsonOrEmpty = responseBody.isEmpty() || responseBody.startsWith("[") || responseBody.startsWith("{");
+        if (status >= 400 || !isJsonOrEmpty) {
+            LOGGER.warn(prettyRequest);
+            LOGGER.warn(prettyResponse);
+        } else {
+            LOGGER.debug(prettyRequest.toString());
+            LOGGER.debug(prettyResponse.toString());
+        }
         return response;
     }
 

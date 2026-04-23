@@ -15,6 +15,19 @@
         <Logger name="com.github.dockerjava" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <!-- Set -Dlog.api.level=debug to enable full request/response logging for API calls -->
+        <Logger name="domain.api" level="${sys:log.api.level:-info}" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ReportPortalAppender"/>
+        </Logger>
+        <Logger name="configuration.listeners.RestAssuredFilter" level="${sys:log.api.level:-info}" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ReportPortalAppender"/>
+        </Logger>
+        <Logger name="helpers.utils.WaitUtil" level="${sys:log.api.level:-info}" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ReportPortalAppender"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="ReportPortalAppender"/>

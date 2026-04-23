@@ -12,8 +12,13 @@ public class GetWsServicesMethod extends ApiBaseMethod {
     }
 
     public List<String> getServiceNames() {
-        return callApi(Method.GET, null, true)
-                .jsonPath()
-                .getList("name");
+        io.restassured.response.Response response = callApi(Method.GET, null, true);
+        String body = response.getBody().asString();
+        if (!body.startsWith("[") && !body.startsWith("{")) {
+            LOGGER.warn("GET /admin/services → HTTP {} non-JSON body: {}", response.statusCode(), body);
+        } else {
+            LOGGER.debug("GET /admin/services → HTTP {} body: {}", response.statusCode(), body);
+        }
+        return response.jsonPath().getList("name");
     }
 }
