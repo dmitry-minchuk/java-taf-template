@@ -4,10 +4,10 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
-import domain.ui.webstudio.pages.mainpages.LoginPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
+import helpers.utils.WaitUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -208,6 +208,9 @@ public class RepositoriesPageComponent extends BaseComponent {
     public void applyChangesAndRelogin(User user) {
         applyChangesBtn.click();
         getModalOkBtn().click();
+        WaitUtil.sleep(2000, "Wait for changes to re-login before reloading the page");
+        LocalDriverPool.getPage().reload();
+        WaitUtil.sleep(1000, "Wait for changes to re-login after reloading the page");
         relogin(user);
     }
 

@@ -179,6 +179,7 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     }
 
     public String getSelectedBranch() {
+        branchSelect.waitForVisible();
         return branchSelect.getAttribute("title");
     }
 }
