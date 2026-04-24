@@ -9,8 +9,7 @@ public class NetworkPool {
     private static final ThreadLocal<Network> threadLocalNetwork = new ThreadLocal<Network>();
 
     public static void setNetwork(Network network) {
-        if(threadLocalNetwork.get() == null)
-            threadLocalNetwork.set(network);
+        threadLocalNetwork.set(network);
     }
 
     public static void closeNetwork() {

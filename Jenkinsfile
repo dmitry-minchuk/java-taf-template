@@ -28,12 +28,14 @@ class JenkinsLabel {
 class Job {
     String suiteName
     String imageName
+    String wsImageName
     String containerAppPath
     String nodeToRunOn
 
-    public Job(String suiteName, String imageName, String containerAppPath, String nodeToRunOn) {
+    public Job(String suiteName, String imageName, String wsImageName, String containerAppPath, String nodeToRunOn) {
         this.suiteName = suiteName
         this.imageName = imageName
+        this.wsImageName = wsImageName
         this.containerAppPath = containerAppPath
         this.nodeToRunOn = nodeToRunOn
     }
@@ -46,13 +48,13 @@ def anyAvailableNode = "${jenkinsLabel.master.nodeLabel} || ${jenkinsLabel.slave
 
 def functionalJobList = [
                          // Regular test suites - run on any available node for optimal load balancing
-                         new Job("studio_issues", image_hub_registry + studio, "", anyAvailableNode),
-                         new Job("studio_smoke", image_hub_registry + studio, "", anyAvailableNode),
-                         new Job("rules_editor", image_hub_registry + studio, "", anyAvailableNode),
-                         new Job("studio_git", image_hub_registry + studio, "", anyAvailableNode),
-                         new Job("studio_api_integration", image_hub_registry + studio, "", anyAvailableNode),
-                         new Job("service_smoke", image_hub_registry + ws, "", anyAvailableNode),
-                         new Job("open_api", image_hub_registry + studio, "", anyAvailableNode)
+                         new Job("studio_issues", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_smoke", image_hub_registry + studio, image_hub_registry + ws, "", anyAvailableNode),
+                         new Job("rules_editor", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_git", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_api_integration", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("service_smoke", image_hub_registry + ws, image_hub_registry + ws, "", anyAvailableNode),
+                         new Job("open_api", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode)
                          ]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
@@ -155,7 +157,7 @@ pipeline {
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.imageName} \\
-                                            -Dws_docker_image_name=${suite.imageName} \\
+                                            -Dws_docker_image_name=${suite.wsImageName} \\
                                             -Dgit.token.ruleservice=${GIT_TOKEN_RULESERVICE} \\
                                             -Dgit.password=${GIT_PASSWORD} \\
                                             -Dtestng.dtd.http=true \\

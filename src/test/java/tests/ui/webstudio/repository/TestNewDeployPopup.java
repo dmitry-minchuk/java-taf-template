@@ -284,7 +284,7 @@ public class TestNewDeployPopup extends BaseTest {
                 ? "http://wscontainer:" + WS_PORT
                 : "http://localhost:" + deployInfra.getWsContainer().getMappedPort(WS_PORT);
         List<String> expectedProjects = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
-        final long wsServicesTimeoutMs = 120000;
+        final long wsServicesTimeoutMs = 30000;
         final long wsPollingIntervalMs = 3000;
 
         boolean allServicesAppeared = WaitUtil.waitForCondition(
