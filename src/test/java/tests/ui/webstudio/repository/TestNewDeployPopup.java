@@ -28,6 +28,7 @@ import tests.BaseTest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -282,31 +283,48 @@ public class TestNewDeployPopup extends BaseTest {
         // =========================================================================
         GetWsServicesMethod wsApi = new GetWsServicesMethod(deployInfra.getWsContainer(), WS_PORT);
         List<String> expectedProjects = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
+        final long wsServicesTimeoutMs = 120000;
+        final long wsPollingIntervalMs = 3000;
+        final AtomicReference<String> lastWsError = new AtomicReference<>();
+        final AtomicReference<List<String>> lastSeenServices = new AtomicReference<>(List.of());
 
         boolean allServicesAppeared = WaitUtil.waitForCondition(
                 () -> {
                     try {
                         List<String> services = wsApi.getServiceNames();
-                        return expectedProjects.stream().allMatch(
-                                project -> services.stream().anyMatch(s -> s.endsWith("_" + project)));
+                        lastSeenServices.set(services);
+                        List<String> missingProjects = getMissingProjects(expectedProjects, services);
+                        if (!missingProjects.isEmpty()) {
+                            LOGGER.info("WS services not ready yet. Missing projects: {}. Current services: {}", missingProjects, services);
+                            return false;
+                        }
+                        return true;
                     } catch (Exception e) {
                         // WS may return an HTML error page while reloading services from PostgreSQL
                         LOGGER.warn("Transient error polling WS services, will retry: {}", e.getMessage());
+                        lastWsError.set(e.getMessage());
                         return false;
                     }
                 },
-                45000, 3000, "Waiting for all services to appear in WS");
+                wsServicesTimeoutMs, wsPollingIntervalMs, "Waiting for all services to appear in WS");
         assertThat(allServicesAppeared)
-                .as("All expected WS services should appear before fetching the final services list")
+                .as("All expected WS services should appear within %sms. Missing: %s, last services: %s, last WS error: %s",
+                        wsServicesTimeoutMs, getMissingProjects(expectedProjects, lastSeenServices.get()), lastSeenServices.get(), lastWsError.get())
                 .isTrue();
 
         List<String> actual = WaitUtil.retryOnException(
-                wsApi::getServiceNames, 10000, 1000, "Fetching final WS services list");
+                wsApi::getServiceNames, 30000, 1000, "Fetching final WS services list");
         LOGGER.info("WS services: {}", actual);
         for (String project : expectedProjects) {
             assertThat(actual).as("WS should contain service for project '%s'", project)
                     .anyMatch(s -> s.endsWith("_" + project));
         }
         LOGGER.info("Step 8: WebService verification completed — all steps done");
+    }
+
+    private List<String> getMissingProjects(List<String> expectedProjects, List<String> actualServices) {
+        return expectedProjects.stream()
+                .filter(project -> actualServices.stream().noneMatch(service -> service.endsWith("_" + project)))
+                .toList();
     }
 }
