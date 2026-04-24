@@ -605,7 +605,7 @@ target/logs/app-container-<timestamp>.log
 
 Run with increased logging:
 ```bash
-mvn test -Dexecution.mode=PLAYWRIGHT_LOCAL -Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG
+mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG
 ```
 
 ## Contributing
