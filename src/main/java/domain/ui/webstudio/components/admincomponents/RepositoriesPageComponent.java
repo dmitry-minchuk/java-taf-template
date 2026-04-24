@@ -5,6 +5,7 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
+import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
 
@@ -80,7 +81,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         repositoryTabTemplate.format(repositoryName).hover();
         deleteRepositoryBtnTemplate.format(repositoryName).click();
         getModalOkBtn().waitForVisible().click();
-        new LoginPage().login(UserService.getUser(user), DEFAULT_TIMEOUT_MS * 1000L);
+        relogin(user);
     }
 
     public RepositoriesPageComponent clickDesignRepositoriesTab() {
@@ -207,7 +208,7 @@ public class RepositoriesPageComponent extends BaseComponent {
     public void applyChangesAndRelogin(User user) {
         applyChangesBtn.click();
         getModalOkBtn().click();
-        new LoginPage().login(UserService.getUser(user), DEFAULT_TIMEOUT_MS * 1000L);
+        relogin(user);
     }
 
     public void clickDeploymentRepositoriesTab() {
@@ -228,5 +229,9 @@ public class RepositoriesPageComponent extends BaseComponent {
         addDeploymentRepository();
         remoteRepositoryPathField.fillSequentially(repoUrl);
         applyChangesAndRelogin(user);
+    }
+
+    private void relogin(User user) {
+        new LoginService(page).login(UserService.getUser(user));
     }
 }
