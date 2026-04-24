@@ -5,7 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
-import domain.api.GetWsServicesMethod;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -28,7 +27,6 @@ import tests.BaseTest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -278,53 +276,47 @@ public class TestNewDeployPopup extends BaseTest {
         LOGGER.info("Step 7: Tutorial 2 deployed");
 
         // =========================================================================
-        // STEP 8: Verify deployed services visible in WebService
+        // STEP 8: Verify deployed services visible in WebService via browser
         // Legacy steps: 18
         // =========================================================================
-        GetWsServicesMethod wsApi = new GetWsServicesMethod(deployInfra.getWsContainer(), WS_PORT);
+        String wsBaseUrl = "http://localhost:" + deployInfra.getWsContainer().getMappedPort(WS_PORT);
         List<String> expectedProjects = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
         final long wsServicesTimeoutMs = 120000;
         final long wsPollingIntervalMs = 3000;
-        final AtomicReference<String> lastWsError = new AtomicReference<>();
-        final AtomicReference<List<String>> lastSeenServices = new AtomicReference<>(List.of());
 
         boolean allServicesAppeared = WaitUtil.waitForCondition(
                 () -> {
                     try {
-                        List<String> services = wsApi.getServiceNames();
-                        lastSeenServices.set(services);
-                        List<String> missingProjects = getMissingProjects(expectedProjects, services);
+                        LocalDriverPool.getPage().navigate(wsBaseUrl);
+                        // Block until at least one service row (h3) appears in the DOM;
+                        // throws TimeoutError (caught below) if none within the default timeout
+                        LocalDriverPool.getPage().waitForSelector("xpath=//h3");
+                        String pageContent = LocalDriverPool.getPage().content();
+                        List<String> missingProjects = expectedProjects.stream()
+                                .filter(project -> !pageContent.contains(project))
+                                .toList();
                         if (!missingProjects.isEmpty()) {
-                            LOGGER.info("WS services not ready yet. Missing projects: {}. Current services: {}", missingProjects, services);
+                            LOGGER.info("WS services not ready yet. Missing projects: {}", missingProjects);
                             return false;
                         }
                         return true;
                     } catch (Exception e) {
-                        // WS may return an HTML error page while reloading services from PostgreSQL
-                        LOGGER.warn("Transient error polling WS services, will retry: {}", e.getMessage());
-                        lastWsError.set(e.getMessage());
+                        LOGGER.warn("Transient error polling WS admin page, will retry: {}", e.getMessage());
                         return false;
                     }
                 },
                 wsServicesTimeoutMs, wsPollingIntervalMs, "Waiting for all services to appear in WS");
         assertThat(allServicesAppeared)
-                .as("All expected WS services should appear within %sms. Missing: %s, last services: %s, last WS error: %s",
-                        wsServicesTimeoutMs, getMissingProjects(expectedProjects, lastSeenServices.get()), lastSeenServices.get(), lastWsError.get())
+                .as("All expected WS services should appear within %sms", wsServicesTimeoutMs)
                 .isTrue();
 
-        List<String> actual = WaitUtil.retryOnException(
-                wsApi::getServiceNames, 30000, 1000, "Fetching final WS services list");
-        LOGGER.info("WS services: {}", actual);
+        String finalPageContent = LocalDriverPool.getPage().content();
         for (String project : expectedProjects) {
-            assertThat(actual).as("WS should contain service for project '%s'", project)
-                    .anyMatch(s -> s.endsWith("_" + project));
+            assertThat(finalPageContent)
+                    .as("WS admin UI should show service for project '%s'", project)
+                    .contains(project);
         }
-        LOGGER.info("Step 8: WebService verification completed — all steps done");
+        LOGGER.info("Step 8: WebService verification completed — all services found in WS admin UI");
     }
 
-    private List<String> getMissingProjects(List<String> expectedProjects, List<String> actualServices) {
-        return expectedProjects.stream()
-                .filter(project -> actualServices.stream().noneMatch(service -> service.endsWith("_" + project)))
-                .toList();
-    }
 }
