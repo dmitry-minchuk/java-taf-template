@@ -27,14 +27,14 @@ class JenkinsLabel {
 
 class Job {
     String suiteName
-    String imageName
+    String studioImageName
     String wsImageName
     String containerAppPath
     String nodeToRunOn
 
-    public Job(String suiteName, String imageName, String wsImageName, String containerAppPath, String nodeToRunOn) {
+    public Job(String suiteName, String studioImageName, String wsImageName, String containerAppPath, String nodeToRunOn) {
         this.suiteName = suiteName
-        this.imageName = imageName
+        this.studioImageName = studioImageName
         this.wsImageName = wsImageName
         this.containerAppPath = containerAppPath
         this.nodeToRunOn = nodeToRunOn
@@ -156,7 +156,7 @@ pipeline {
                                             -Drp.attributes="build:${buildNumber};tests_branch:${TESTS_BRANCH}" \\
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
-                                            -Ddocker_image_name=${suite.imageName} \\
+                                            -Ddocker_image_name=${suite.studioImageName} \\
                                             -Dws_docker_image_name=${suite.wsImageName} \\
                                             -Dgit.token.ruleservice=${GIT_TOKEN_RULESERVICE} \\
                                             -Dgit.password=${GIT_PASSWORD} \\
