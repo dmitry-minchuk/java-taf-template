@@ -279,7 +279,10 @@ public class TestNewDeployPopup extends BaseTest {
         // STEP 8: Verify deployed services visible in WebService via browser
         // Legacy steps: 18
         // =========================================================================
-        String wsBaseUrl = "http://localhost:" + deployInfra.getWsContainer().getMappedPort(WS_PORT);
+        boolean isDockerMode = LocalDriverPool.getCurrentExecutionMode() == LocalDriverPool.ExecutionMode.PLAYWRIGHT_DOCKER;
+        String wsBaseUrl = isDockerMode
+                ? "http://wscontainer:" + WS_PORT
+                : "http://localhost:" + deployInfra.getWsContainer().getMappedPort(WS_PORT);
         List<String> expectedProjects = List.of(nameProject, nameDependentProject1, nameDependentProject2, nameProjectTutorial2);
         final long wsServicesTimeoutMs = 120000;
         final long wsPollingIntervalMs = 3000;

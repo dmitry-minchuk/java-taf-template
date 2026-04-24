@@ -209,7 +209,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         applyChangesBtn.click();
         getModalOkBtn().click();
         WaitUtil.sleep(2000, "Wait for changes to re-login before reloading the page");
-        LocalDriverPool.getPage().reload();
+        WaitUtil.retryAction(() -> LocalDriverPool.getPage().reload(), 10000, 1000, "Reload page after applying changes");
         WaitUtil.sleep(1000, "Wait for changes to re-login after reloading the page");
         relogin(user);
     }
