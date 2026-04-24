@@ -61,6 +61,7 @@ public class LogsUtil {
         exclusions.add("Failed to export file version");
         //exclusions.add("Username and Password not accepted");
         exclusions.add("io.grpc.ManagedChannel.shutdown()");
+        exclusions.add("getRulesRootPath");
     }
 
     public static void inspectLogFile(AppContainerData appContainerData) {
