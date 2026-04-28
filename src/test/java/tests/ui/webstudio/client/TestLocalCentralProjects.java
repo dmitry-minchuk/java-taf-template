@@ -23,7 +23,7 @@ public class TestLocalCentralProjects extends BaseTest {
     SoftAssert softAssert;
     private static List<String> projectNames;
 
-    private static final String APP_URL = "http://192.168.50.5:8090";
+    private static final String APP_URL = "http://192.168.50.167:8090";
 
     @BeforeClass
     public void setUp() {
