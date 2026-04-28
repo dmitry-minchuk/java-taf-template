@@ -21,6 +21,9 @@ public class CopyTableDialogComponent extends BaseComponent {
     private WebElement newRadioBtn;
     private WebElement propertyInputTemplate;
     private WebElement propertySelectTemplate;
+    private WebElement propertyMultiselectInputTemplate;
+    private WebElement propertyMultiselectOptionTemplate;
+    private WebElement dialogTitle;
 
     public CopyTableDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -54,6 +57,13 @@ public class CopyTableDialogComponent extends BaseComponent {
         propertySelectTemplate = new WebElement(page,
                 "xpath=//span[@id='copyPropertiesTable']//td[contains(text(), '%s')]/following-sibling::td//select",
                 "propertySelect");
+        propertyMultiselectInputTemplate = new WebElement(page,
+                "xpath=//span[@id='copyPropertiesTable']//tr[./td[contains(text(), '%s')]]//input[contains(@id, 'multiselect-select')]",
+                "propertyMultiselectInput");
+        propertyMultiselectOptionTemplate = new WebElement(page,
+                "xpath=//span[@id='copyPropertiesTable']//tr[./td[contains(text(), '%s')]]//div[contains(@class, 'jquery-multiselect-popup-data')]/label[.//input[@value='%s']]",
+                "propertyMultiselectOption");
+        dialogTitle = createScopedElement("xpath=//form[@id='copyTableForm']//h3[normalize-space()='Name and Properties']", "dialogTitle");
     }
 
     public CopyTableDialogComponent selectCopyAs(String value) {
@@ -89,6 +99,22 @@ public class CopyTableDialogComponent extends BaseComponent {
         WebElement input = propertyInputTemplate.format(propertyLabel);
         input.fill(value);
         input.getLocator().press("Tab");
+        WaitUtil.sleep(500, "Waiting for property value to apply");
+        return this;
+    }
+
+    public CopyTableDialogComponent setProperty(String propertyLabel, String value) {
+        WebElement input = propertyInputTemplate.format(propertyLabel);
+        if (input.getLocator().count() == 1) {
+            input.fill(value);
+            input.getLocator().press("Tab");
+        } else if (propertyMultiselectInputTemplate.format(propertyLabel).getLocator().count() == 1) {
+            propertyMultiselectInputTemplate.format(propertyLabel).click();
+            propertyMultiselectOptionTemplate.format(propertyLabel, value).click();
+            dialogTitle.click();
+        } else {
+            propertySelectTemplate.format(propertyLabel).selectByVisibleText(value);
+        }
         WaitUtil.sleep(500, "Waiting for property value to apply");
         return this;
     }

@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-04-17 (C13 migrated, regression verified)
+> Updated: 2026-04-28 (TestSmartLookupSmartRules migrated, regression verified)
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,14 +9,14 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| New framework — total test classes | **103** (active in tracked `testng_suites`) |
+| New framework — total test classes | **104** (active in tracked `testng_suites`) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
-| Suites | `rules_editor.xml` (25) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 103** |
+| Suites | `rules_editor.xml` (26) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 104** |
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
 | Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
-| **New framework overall coverage** | **~82% of legacy feature areas** (gap sync refresh + C13 done: Protected Branches ✅, Swagger UI / JSON / YAML ✅, New RuleServices UI ✅, alphabetical sorting of deployments ✅ were already covered in active suites; completed: C1-C13, C12b, C12c, C12d, C14 partial, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
+| **New framework overall coverage** | **~82.3% of legacy feature areas** (still rounds to ~82%; + TestSmartLookupSmartRules: SmartRules/SmartLookup open/edit/save, BD version copy, remove table, remove column, create default Test table. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
 
 ---
 
@@ -44,13 +44,14 @@
 | **C12d** | **`TestNewDeployPopup`** ✅ DONE | TestNewDeployPopup (IPBQA-30049) | ✅ Deploy project to production via DeployModal (new UI, replaces legacy Deploy Configuration), ✅ Deploy dependent projects with auto-resolved dependencies, ✅ Edit table + save + redeploy, ✅ WS REST verification via GetWsServicesMethod API. Uses DeployInfrastructureService (Postgres + WS container). Note: Legacy Deploy Configuration was removed from WebStudio (EPBDS-15093, commit ff754010d0) | ✅ `studio_smoke.xml` |
 | **C13** | **`TestVersioningByFolders`** ✅ DONE | TestVersioningByFolders | ✅ Versioning by folders (EPBDS-10363), ✅ Table properties across versions, ✅ Property inheritance per version | ✅ `rules_editor.xml` |
 | **C14** | ~~TestGitCommentAndCommitter~~ ✅ DONE (merged into TestMergeBranchesNoConflicts) | TestGitCustomizeCommentFields + TestGitCommitterName + TestGitCommentsGenerationOnProjectName | ✅ Custom comment fields (EPBDS-8371) — custom comment set + verified in revisions; ✅ Committer's name (EPBDS-8362) — verified via getRevisionModifiedBy(); ⚠️ Comments generation on project name (EPBDS-8460) — auto-generated comments verified but no dedicated test | ✅ `studio_git.xml` |
+| **C15** | **`TestSmartLookupSmartRules`** ✅ DONE | TestSmartLookupSmartRules | ✅ SmartRules table open/content verification, ✅ insert/edit enum column + save/no problems, ✅ remove row, ✅ copy as Business Dimension Version (`Countries=FR`), ✅ remove copied/base table, ✅ SmartLookup open/content verification, ✅ insert row, ✅ remove column, ✅ create default Test table via wizard | ✅ `rules_editor.xml` |
 
 ---
 
 ## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. Editor – Advanced Features (2.1.x) — ~50%
-**Legacy tests:** 65+ | **New framework:** 16 (rules_editor) + 24 (studio_issues)
+### 1. Editor – Advanced Features (2.1.x) — ~52%
+**Legacy tests:** 65+ | **New framework:** 17 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -69,17 +70,17 @@
 | Create table by copying existing | IPBQA-31552 | TestCopyTableAsNewTable | ✅ `CopyTableDialogComponent` implemented; `copyTableAsNew()` used in TestMethodTable + TestDisplayChangedRowsTableStructure |
 | Create table as new version | IPBQA-31552 | TestCopyTableAsNewVersion | ✅ `copyTableAsNewVersion()` added to TestMethodTable.testTableCopyAndManagement — verifies New Version copy dialog + no compilation errors |
 | Create table as Business Dimension version | IPBQA-31601, EPBDS-11436 | TestCopyTableAsNewBusinessDimension | ✅ `copyTableAsBusinessDimension()` added to TestMethodTable.testTableCopyAndManagement — verifies BD Version copy dialog + no compilation errors |
-| Creating a Test table via wizard | 2.1.25 | CreateTestMethod | ❌ not migrated |
+| Creating a Test table via wizard | 2.1.25 | CreateTestMethod | ⚠️ partial — `TestSmartLookupSmartRules` creates a default `MySmartLookupTest`; dedicated standalone CreateTestMethod scenarios not migrated |
 | Creating a Test table with ID column | RulesEditor.Test100 | — | ❌ not migrated |
 | Editing Comma-Separated Array of values (DDL) | EPBDS-7508, IPBQA-25824 | TestEditingCommaSeparatedArrayValues | ❌ not migrated |
 | Tracing rules | test113, test115 | TracingRunTables/* | ⚠️ partial — TestAllStepsDisplayedInTrace, TestTraceIntoFileJsonRequest, TestArrayOfAliasValuesInRunTrace, TestAdminUserSettings (trace window), TestViewStackTraceFunctionality cover core trace scenarios; dedicated TracingRunTables suite not migrated |
 | Trace in file | EPBDS-7715, IPBQA-25978 | TestTraceInFileFunctionality | ✅ TestTraceIntoFileJsonRequest (trace into file with JSON request) |
 | Benchmark Tools | test037 | — | ⚠️ partial — TestACLRunBenchmarkSystemAction verifies Benchmark button visibility for all roles (Viewer/Contributor/Manager); benchmark execution workflow not tested |
 | Edit table: Undo/Redo | test001, test002 | — | ✅ TestAddDeleteRowWithoutSaving — undo reverts cell edit, redo restores it |
-| Edit table: Insert/Delete row, column | 2.1.49, 2.1.50 | MainActionsInsertRemoveRow | ⚠️ partial — TestAddDeleteRowWithoutSaving covers add/delete row; Insert/Delete column not covered |
+| Edit table: Insert/Delete row, column | 2.1.49, 2.1.50 | MainActionsInsertRemoveRow | ✅ TestAddDeleteRowWithoutSaving covers add/delete row; `TestSmartLookupSmartRules` covers insert column before, remove row, insert row after, remove column |
 | Edit table: Bold/Italic/Underline / fill color | 2.1.52, 2.1.53 | MainActionsFont | ❌ not migrated |
 | History – Recently visited table | 2.1.58 | test038 | ❌ not migrated |
-| SmartLookup / SmartRules tables Open/Edit/Save | EPBDS-9293, IPBQA-29358 | TestSmartLookupSmartRules | ❌ not migrated |
+| SmartLookup / SmartRules tables Open/Edit/Save | EPBDS-9293, IPBQA-29358 | TestSmartLookupSmartRules | ✅ `TestSmartLookupSmartRules` migrated (IPBQA-29358): open/content checks, edit/save/no problems, copy as BD version, remove table, create default Test table |
 | Simple/SmartRules tables Create via Wizard | EPBDS-9818, IPBQA-29967 | TestSimpleLookupSimpleRules | ❌ not migrated |
 | TBasic tables Open/work/edit | Test013 | — | ❌ not migrated |
 | Run tables Open/work/edit | IPBQA-29970 | TestRunTable | ⚠️ partial — TestViewStackTraceFunctionality navigates Run→RunTable; TestDefaultProperties opens Run SpreadsheetTable; TestWorkWithDuplicateTables checks Run/Trace buttons; TestTableIcons verifies run.gif icon; no dedicated Run table CRUD test |
@@ -147,7 +148,7 @@
 | Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes, 23 methods (22 active + 1 disabled): UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo (incl. Viewer+Contributor min combo), RunBenchmarkSystemAction (all 3 roles), ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (1 test disabled — Manager Admin access not implemented; Group Templates skipped — requires EUMS/LDAP) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
-| Rules Editor (core) | ~68% | 46 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
+| Rules Editor (core) | ~69% | 47 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13, SmartLookup/SmartRules) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~60% | 12 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts + Protected Branches ✅ |
 | WebService (Section 1) | ~55% | 6 service_smoke tests ✅ including TestRuleServicesNewUI + TestWebservicesSwaggerUi |
@@ -182,15 +183,15 @@
 
 ## Next Test To Migrate
 
-**Selected next target:** `TestSmartLookupSmartRules`
+**Selected next target:** `TestSimpleLookupSimpleRules`
 
 Why this is the next migration candidate:
-- `C13` is now covered and regression-checked, so the next useful gap is no longer in versioning.
-- `TestSmartLookupSmartRules` covers a still-uncovered and user-visible editor area: opening, editing, and saving SmartLookup / SmartRules tables.
-- It is a better next step than low-signal cosmetic/editor gaps because it exercises real table workflows that are likely to regress.
+- `TestSmartLookupSmartRules` is now migrated and regression-checked in `rules_editor.xml`.
+- The next useful editor gap is `TestSimpleLookupSimpleRules`, because it continues the same table-family coverage with SimpleLookup/SimpleRules creation and wizard flows.
+- It is a better next step than low-signal cosmetic/editor gaps because it exercises real table creation/edit/save workflows that are likely to regress.
 
 **Truly uncovered feature areas (0% coverage):**
-1. SmartRules/SmartLookup CRUD (Open/Edit/Save/Create Wizard)
+1. SimpleLookup/SimpleRules Create via Wizard
 2. Admin Common Settings (history max count, date format)
 3. Edit table: Bold/Italic/Underline/fill color
 4. Copy a file (file-level, not module)

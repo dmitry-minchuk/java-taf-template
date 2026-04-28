@@ -46,6 +46,15 @@ public class TableComponent extends BaseComponent {
         return getCell(rowIndex, columnIndex).getInnerText().trim();
     }
 
+    public List<String> getColumn(int columnIndex) {
+        WaitUtil.waitForListNotEmpty(() -> rows, 3000, 250, "Waiting for table rows before getting column " + columnIndex);
+        return rows.stream()
+                .map(PlaywrightTableRowComponent::getCells)
+                .filter(cells -> cells.size() >= columnIndex)
+                .map(cells -> cells.get(columnIndex - 1).getInnerText().trim())
+                .toList();
+    }
+
     public void doubleClickCell(int rowIndex, int columnIndex) {
         WebElement cell = getCell(rowIndex, columnIndex);
         cell.doubleClick();
@@ -55,11 +64,19 @@ public class TableComponent extends BaseComponent {
         doubleClickCell(rowIndex, columnIndex);
         editorWrapper.waitForVisible();
 
-        inputLocator.press("Control+A");
-        inputLocator.press("Delete");
-        inputLocator.fill(text);
-        if (pressEnter) {
-            inputLocator.press("Enter");
+        String editorTag = inputLocator.getLocator().evaluate("el => el.tagName.toLowerCase()").toString();
+        if ("select".equals(editorTag)) {
+            inputLocator.selectByVisibleText(text);
+            if (pressEnter) {
+                inputLocator.press("Enter");
+            }
+        } else {
+            inputLocator.press("Control+A");
+            inputLocator.press("Delete");
+            inputLocator.fill(text);
+            if (pressEnter) {
+                inputLocator.press("Enter");
+            }
         }
         WaitUtil.sleep(250, "Waiting for cell edit to be applied");
     }

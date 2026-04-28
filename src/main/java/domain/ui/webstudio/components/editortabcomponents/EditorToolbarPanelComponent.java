@@ -65,6 +65,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement editTableBtn;
     private WebElement copyTableBtn;
     private WebElement removeBtn;
+    private WebElement createTestBtn;
+    private WebElement nextButtonInCreateTestDialog;
+    private WebElement saveButtonInCreateTestDialog;
     private WebElement factorTextField;
     private WebElement traceDropdownBtn;
     // Run Menu elements
@@ -146,6 +149,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         editTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'editTable')]]", "editBtn");
         copyTableBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./img[contains(@src,'copyTable')]]", "copyBtn");
         removeBtn = createScopedElement("xpath=.//a[@class='toolbarButton' and ./span[@class='delete-icon']]", "removeBtn");
+        createTestBtn = createScopedElement("xpath=.//a[@title='Create a new Test table']", "createTestBtn");
+        nextButtonInCreateTestDialog = new WebElement(page, "xpath=//input[@value='Next']", "nextButtonInCreateTestDialog");
+        saveButtonInCreateTestDialog = new WebElement(page, "xpath=//form[@id='destForm']//input[@value='Save']", "saveButtonInCreateTestDialog");
         traceDropdownBtn = createScopedElement("xpath=.//a[@id='traceLink']//td[@class='arrow']", "traceDropdownBtn");
         // Dropdown/Form elements - page-level (appear outside toolbar after clicks)
         createItemBtn = new WebElement(page, "xpath=//a[@title='Create']", "createItemBtn");
@@ -790,13 +796,20 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void copyTableAsBusinessDimension(String propertyLabel, String propertyValue) {
         CopyTableDialogComponent copyDialog = clickCopy();
-        copyDialog.selectCopyAs("New Business Dimension Version").setTextProperty(propertyLabel, propertyValue);
-        copyDialog.clickCopy();
+        copyDialog.selectCopyAs("New Business Dimension Version").setProperty(propertyLabel, propertyValue).clickCopy();
     }
 
     public void removeCurrentTable() {
         LocalDriverPool.getPage().onDialog(Dialog::accept);
         clickRemove();
+    }
+
+    public void createDefaultTestTable() {
+        createTestBtn.click();
+        nextButtonInCreateTestDialog.waitForVisible(5000);
+        nextButtonInCreateTestDialog.click();
+        saveButtonInCreateTestDialog.click();
+        WaitUtil.sleep(500, "Waiting for created test table to open");
     }
 
     public List<String> getAllVisibleTopToolbarActions() {
