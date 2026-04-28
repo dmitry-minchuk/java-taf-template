@@ -2,6 +2,7 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
@@ -200,8 +201,22 @@ public class WebElement {
 
     // This method does not require clicking by selector - everything will be done automatically if selector implemented as <select>
     public void selectByVisibleText(String text) {
+        isVisible();
         LOGGER.info("Selecting option '{}' in {}", text, elementName);
-        locator.selectOption(text);
+        List<String> optionLabels = locator.locator("option").allTextContents().stream()
+                .map(String::trim)
+                .toList();
+        @SuppressWarnings("unchecked")
+        List<String> optionValues = (List<String>) locator.locator("option")
+                .evaluateAll("options => options.map(option => option.value || '')");
+        if (optionLabels.contains(text)) {
+            locator.selectOption(new SelectOption().setLabel(text));
+        } else if (optionValues.contains(text)) {
+            locator.selectOption(text);
+        } else {
+            throw new IllegalArgumentException("Option '" + text + "' was not found in " + elementName
+                    + ". Labels: " + optionLabels + ". Values: " + optionValues);
+        }
     }
 
     @SuppressWarnings("unchecked")

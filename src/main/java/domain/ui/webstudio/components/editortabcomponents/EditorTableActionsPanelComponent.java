@@ -10,6 +10,7 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
     private WebElement saveChangesBtn;
     private WebElement undoChangesBtn;
     private WebElement redoChangesBtn;
+    private WebElement insertRowBeforeBtn;
     private WebElement insertRowAfterBtn;
     private WebElement removeRowBtn;
     private WebElement insertColumnBeforeBtn;
@@ -29,6 +30,7 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
         saveChangesBtn = createScopedElement("xpath=.//img[@title='Save changes']", "saveChangesBtn");
         undoChangesBtn = createScopedElement("xpath=.//img[@title='Undo changes']", "undoChangesBtn");
         redoChangesBtn = createScopedElement("xpath=.//img[@title='Redo changes']", "redoChangesBtn");
+        insertRowBeforeBtn = createScopedElement("xpath=.//img[@id='t_te_insert_row_before']", "insertRowBeforeBtn");
         insertRowAfterBtn = createScopedElement("xpath=.//img[@title='Insert row after']", "insertRowAfterBtn");
         removeRowBtn = createScopedElement("xpath=.//img[@title='Remove row']", "removeRowBtn");
         insertColumnBeforeBtn = createScopedElement("xpath=.//img[@title='Insert column before']", "insertColumnBeforeBtn");
@@ -56,6 +58,11 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
 
     public void clickInsertRowAfter() {
         insertRowAfterBtn.click();
+        waitWhileTablePanelActionExecuted();
+    }
+
+    public void clickInsertRowBefore() {
+        insertRowBeforeBtn.click();
         waitWhileTablePanelActionExecuted();
     }
 

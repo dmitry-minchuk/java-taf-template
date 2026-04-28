@@ -9,6 +9,7 @@
     <!-- Core rules editor tests -->
     <test name="TestMethodTable"><classes><class name="tests.ui.webstudio.rules_editor.TestMethodTable"/></classes></test>
     <test name="TestSmartLookupSmartRules"><classes><class name="tests.ui.webstudio.rules_editor.TestSmartLookupSmartRules"/></classes></test>
+    <test name="TestSimpleLookupSimpleRules"><classes><class name="tests.ui.webstudio.rules_editor.TestSimpleLookupSimpleRules"/></classes></test>
     <test name="TestViewStackTraceFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestViewStackTraceFunctionality"/></classes></test>
     <test name="TestModuleCategoryInheritedProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestModuleCategoryInheritedProperties"/></classes></test>
     <test name="TestCompareSelectedVersions"><classes><class name="tests.ui.webstudio.rules_editor.TestCompareSelectedVersions"/></classes></test>

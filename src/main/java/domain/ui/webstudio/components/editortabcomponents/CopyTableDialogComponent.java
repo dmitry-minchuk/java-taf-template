@@ -13,6 +13,7 @@ public class CopyTableDialogComponent extends BaseComponent {
     private WebElement nameTextBox;
     private WebElement versionTextBox;
     private WebElement copyButton;
+    private WebElement copyTableForm;
     private WebElement saveToLink;
     private WebElement moduleComboBox;
     private WebElement categoryComboBox;
@@ -41,6 +42,7 @@ public class CopyTableDialogComponent extends BaseComponent {
         nameTextBox = createScopedElement("xpath=//form[@id='copyTableForm']//input[@id='technicalName']", "nameTextBox");
         versionTextBox = createScopedElement("xpath=//span[@id='copyPropertiesTable']//tr[1]//input", "versionTextBox");
         copyButton = createScopedElement("xpath=//form[@id='copyTableForm']//input[@id='copyTableBtn']", "copyButton");
+        copyTableForm = createScopedElement("xpath=//form[@id='copyTableForm']", "copyTableForm");
         saveToLink = createScopedElement("xpath=//form[@id='copyTableForm']//span[@id='save-panel']", "saveToLink");
         
         // Save To dialog elements
@@ -132,6 +134,7 @@ public class CopyTableDialogComponent extends BaseComponent {
 
     public void clickCopy() {
         copyButton.click();
+        copyTableForm.waitForHidden(30000);
     }
 
     public String getName() {
