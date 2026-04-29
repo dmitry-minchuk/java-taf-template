@@ -59,6 +59,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement benchmarkDropdownBtn;
     private WebElement targetTableLink;
     private WebElement availableTestRunsLink;
+    private WebElement availableTestRunsInlineLink;
+    private WebElement availableTestRunsExpandLink;
+    private WebElement availableTestRunsPopup;
     private WebElement tableActionsTestBtn;
     private WebElement tableActionsTestDropdownBtn;
     @Getter
@@ -136,6 +139,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         // Target Table and Test Runs
         targetTableLink = new WebElement(page, "xpath=//section[@id='targetTablesSection']//a", "targetTableLink");
         availableTestRunsLink = new WebElement(page, "xpath=//section[@id='testsSection']", "availableTestRunsLink");
+        availableTestRunsInlineLink = new WebElement(page, "xpath=//section[@id='testsSection']//span//a[not(@title='Other Available Tests/Runs')]", "availableTestRunsInlineLink");
+        availableTestRunsExpandLink = new WebElement(page, "xpath=//section[@id='testsSection']//a[@title='Other Available Tests/Runs']", "availableTestRunsExpandLink");
+        availableTestRunsPopup = new WebElement(page, "xpath=//*[@id='tests-section-available-tests-id']", "availableTestRunsPopup");
         tableActionsTestBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//span[text()='Test']", "tableActionsTestBtn");
         tableActionsTestDropdownBtn = new WebElement(page, "xpath=//div[@id='tableToolbarPanel']//a[.//span[text()='Test']]//td[@class='arrow']", "tableActionsTestDropdownBtn");
 
@@ -765,6 +771,28 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public boolean isAvailableTestRunsLinkVisible() {
         return availableTestRunsLink.isVisible(1000);
+    }
+
+    public String getAvailableTestRunsInlineLinkText() {
+        return availableTestRunsInlineLink.getText().trim();
+    }
+
+    public void clickAvailableTestRunsInlineLink() {
+        availableTestRunsInlineLink.click();
+        WaitUtil.sleep(500, "Waiting for navigation to Test/Run table");
+    }
+
+    public boolean isAvailableTestRunsExpandLinkVisible() {
+        return availableTestRunsExpandLink.isVisible(1000);
+    }
+
+    public void clickAvailableTestRunsExpandLink() {
+        availableTestRunsExpandLink.click();
+        WaitUtil.sleep(300, "Waiting for popup with all Tests/Runs to appear");
+    }
+
+    public String getAvailableTestRunsPopupText() {
+        return availableTestRunsPopup.getText().trim().replaceAll("\\s*\\n\\s*", "\n");
     }
 
     // ========== Table Actions Test Button ==========

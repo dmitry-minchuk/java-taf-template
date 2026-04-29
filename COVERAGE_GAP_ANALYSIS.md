@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-04-29 (TestRangeDataTypes migrated, regression verified)
+> Updated: 2026-04-29 (TestNavigationToTable migrated, regression verified)
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,14 +9,14 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| New framework — total test classes | **106** (active in tracked `testng_suites`) |
+| New framework — total test classes | **107** (active in tracked `testng_suites`) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
-| Suites | `rules_editor.xml` (28) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 106** |
+| Suites | `rules_editor.xml` (29) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 107** |
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
 | Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
-| **New framework overall coverage** | **~83.3% of legacy feature areas** (+ TestRangeDataTypes: Range Editor open/close across Decision/SimpleLookup/SimpleRules/SmartLookup/SmartRules/Data/Run/Test/Vocabulary/Constants tables. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
+| **New framework overall coverage** | **~83.6% of legacy feature areas** (+ TestNavigationToTable: navigation to Test/Run tables via 'Available Tests/Runs' panel for 16 source tables (8 types × Test/Run), absent-panel case, multi-result popup expansion. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
 
 ---
 
@@ -51,8 +51,8 @@
 
 ## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. Editor – Advanced Features (2.1.x) — ~55%
-**Legacy tests:** 65+ | **New framework:** 18 (rules_editor) + 24 (studio_issues)
+### 1. Editor – Advanced Features (2.1.x) — ~58%
+**Legacy tests:** 65+ | **New framework:** 19 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -86,7 +86,7 @@
 | TBasic tables Open/work/edit | Test013 | — | ❌ not migrated |
 | Run tables Open/work/edit | IPBQA-29970 | TestRunTable | ⚠️ partial — TestViewStackTraceFunctionality navigates Run→RunTable; TestDefaultProperties opens Run SpreadsheetTable; TestWorkWithDuplicateTables checks Run/Trace buttons; TestTableIcons verifies run.gif icon; no dedicated Run table CRUD test |
 | Collapsing Error Message in Editor | EPBDS-11587, IPBQA-25869 | — | ❌ not migrated |
-| Navigation to table | EPBDS-7537, IPBQA-25912 | TestNavigationToTable | ❌ not migrated |
+| Navigation to table | EPBDS-7537, IPBQA-25912 | TestNavigationToTable | ✅ TestNavigationToTable — 'Available Tests/Runs' panel: navigation from 8 source-table types to corresponding Test/Run, absent-panel case (SpreadsheetTable4), multi-result popup expansion (SpreadsheetTable3). Note: 4 legacy `assertThat(boolean.equals(...))` no-op assertions on inline-link/TargetTable text were not preserved as proper checks because the legacy never actually validated them at runtime |
 | Explanation feature | EPBDS-8876, IPBQA-28386 | — | ❌ not migrated |
 | Refresh button | EPBDS-8869, IPBQA-28382 | TestRefreshButton | ❌ not migrated |
 | Rename project in Editor (non-flat git) | EPBDS-10845, IPBQA-30937 | TestRenameProjectInEditor | ✅ TestMultipleDesignRepositoriesWithPostgres step 9.2 — rename project in non-flat Git repo via EditProjectDialog, verify rename persists, rename back |
@@ -149,7 +149,7 @@
 | Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes, 23 methods (22 active + 1 disabled): UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo (incl. Viewer+Contributor min combo), RunBenchmarkSystemAction (all 3 roles), ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (1 test disabled — Manager Admin access not implemented; Group Templates skipped — requires EUMS/LDAP) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
-| Rules Editor (core) | ~73% | 49 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
+| Rules Editor (core) | ~75% | 50 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~60% | 12 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts + Protected Branches ✅ |
 | WebService (Section 1) | ~55% | 6 service_smoke tests ✅ including TestRuleServicesNewUI + TestWebservicesSwaggerUi |
@@ -184,15 +184,15 @@
 
 ## Next Test To Migrate
 
-**Selected next target:** `TestNavigationToTable`
+**Selected next target:** `TestRefreshButton`
 
 Why this is the next migration candidate:
-- `TestRangeDataTypes` is now migrated and regression-checked in `rules_editor.xml`.
-- `TestNavigationToTable` (EPBDS-7537, IPBQA-25912) covers in-editor navigation between linked tables — a functional workflow path with no current coverage in the new framework.
-- Better than the remaining 0%-coverage candidates: Admin Common Settings is settings-only, font formatting is cosmetic, Copy-a-file is simple but low-value, Git LFS / HTTP→HTTPS need special infra/repo URL changes — each is lower-signal than navigation flow.
+- `TestNavigationToTable` is now migrated and regression-checked in `rules_editor.xml`.
+- `TestRefreshButton` (EPBDS-8869, IPBQA-28382) covers the editor Refresh button — a functional Rules Editor feature with no current coverage and a small, focused scope, ideal to keep velocity.
+- It is a better next step than the larger 0%-coverage gaps (Admin Common Settings, font formatting, Copy-a-file, Git LFS, HTTP→HTTPS) because Refresh is a single-feature in-editor flow that exercises real backend reload paths, while remaining items are infra-heavy or cosmetic.
 
 **Truly uncovered feature areas (0% coverage):**
-1. Navigation to table (EPBDS-7537)
+1. Refresh button (EPBDS-8869)
 2. Admin Common Settings (history max count, date format)
 3. Edit table: Bold/Italic/Underline/fill color
 4. Copy a file (file-level, not module)
