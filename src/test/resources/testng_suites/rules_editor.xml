@@ -30,6 +30,7 @@
     <test name="TestCompareExcelFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestCompareExcelFiles"/></classes></test>
     <test name="TestTabRevisionsInEditor"><classes><class name="tests.ui.webstudio.rules_editor.TestTabRevisionsInEditor"/></classes></test>
     <test name="TestSearchOnProjectLevel"><classes><class name="tests.ui.webstudio.rules_editor.TestSearchOnProjectLevel"/></classes></test>
+    <test name="TestRangeDataTypes"><classes><class name="tests.ui.webstudio.rules_editor.TestRangeDataTypes"/></classes></test>
 
     <!-- Split: TestLocalChangesRestoreCompare → 2 classes -->
     <test name="TestLocalChangesCoreMechanics"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesCoreMechanics"/></classes></test>

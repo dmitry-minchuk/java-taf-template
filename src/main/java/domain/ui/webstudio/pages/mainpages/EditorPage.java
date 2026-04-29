@@ -1,6 +1,7 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.WebElement;
+import domain.ui.webstudio.components.common.RangeEditorComponent;
 import domain.ui.webstudio.components.common.SaveChangesComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TableComponent;
@@ -57,6 +58,7 @@ public class EditorPage extends BasePage {
     private WebElement manageDependenciesBtn;
     private WebElement refreshBtn;
     private SearchFilterComponent searchFilterComponent;
+    private RangeEditorComponent rangeEditorComponent;
 
     public EditorPage() {
         super();
@@ -101,6 +103,7 @@ public class EditorPage extends BasePage {
         manageDependenciesBtn = new WebElement(getPage(), "xpath=//div[@id='content']//a[@title='Manage Dependencies']//img", "manageDependenciesBtn");
         refreshBtn = new WebElement(getPage(), "xpath=//a[@id='refreshBtn']", "refreshBtn");
         searchFilterComponent = new SearchFilterComponent();
+        rangeEditorComponent = createScopedComponent(RangeEditorComponent.class, "xpath=//div[@class='range']", "rangeEditorComponent");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {
