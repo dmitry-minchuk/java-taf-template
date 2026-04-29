@@ -32,6 +32,7 @@
     <test name="TestSearchOnProjectLevel"><classes><class name="tests.ui.webstudio.rules_editor.TestSearchOnProjectLevel"/></classes></test>
     <test name="TestRangeDataTypes"><classes><class name="tests.ui.webstudio.rules_editor.TestRangeDataTypes"/></classes></test>
     <test name="TestNavigationToTable"><classes><class name="tests.ui.webstudio.rules_editor.TestNavigationToTable"/></classes></test>
+    <test name="TestRefreshButton"><classes><class name="tests.ui.webstudio.rules_editor.TestRefreshButton"/></classes></test>
 
     <!-- Split: TestLocalChangesRestoreCompare → 2 classes -->
     <test name="TestLocalChangesCoreMechanics"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesCoreMechanics"/></classes></test>
