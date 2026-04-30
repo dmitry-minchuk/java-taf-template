@@ -1,6 +1,7 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.WebElement;
+import domain.ui.webstudio.components.common.MultiselectArrayEditorComponent;
 import domain.ui.webstudio.components.common.RangeEditorComponent;
 import domain.ui.webstudio.components.common.SaveChangesComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
@@ -59,6 +60,7 @@ public class EditorPage extends BasePage {
     private WebElement refreshBtn;
     private SearchFilterComponent searchFilterComponent;
     private RangeEditorComponent rangeEditorComponent;
+    private MultiselectArrayEditorComponent multiselectArrayEditorComponent;
 
     public EditorPage() {
         super();
@@ -104,6 +106,7 @@ public class EditorPage extends BasePage {
         refreshBtn = new WebElement(getPage(), "xpath=//a[@id='refreshBtn']", "refreshBtn");
         searchFilterComponent = new SearchFilterComponent();
         rangeEditorComponent = createScopedComponent(RangeEditorComponent.class, "xpath=//div[@class='range']", "rangeEditorComponent");
+        multiselectArrayEditorComponent = createScopedComponent(MultiselectArrayEditorComponent.class, "xpath=//div[@class='multiselect_container']", "multiselectArrayEditorComponent");
     }
 
     public EditorToolbarPanelComponent getEditorToolbarPanelComponent() {

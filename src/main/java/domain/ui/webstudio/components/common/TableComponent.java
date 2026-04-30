@@ -57,6 +57,17 @@ public class TableComponent extends BaseComponent {
 
     public void doubleClickCell(int rowIndex, int columnIndex) {
         WebElement cell = getCell(rowIndex, columnIndex);
+        // OpenL keeps a floating keyboard-catcher input (`_t_te_editorWrapper`) over the
+        // currently selected cell. It intercepts pointer events for the underlying <td>,
+        // making a real dblclick on the same cell impossible. A single click on any other
+        // cell moves the overlay away (selection follows the click), restoring dblclick on
+        // the original cell.
+        String cssClass = cell.getLocator().getAttribute("class");
+        if (cssClass != null && cssClass.contains("te_selected")) {
+            int anchorRow = rowIndex == 1 ? 2 : 1;
+            int anchorCol = columnIndex == 1 ? 2 : 1;
+            clickCell(anchorRow, anchorCol);
+        }
         cell.doubleClick();
     }
 

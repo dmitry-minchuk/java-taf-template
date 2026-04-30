@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-04-29 (TestRefreshButton migrated, regression verified)
+> Updated: 2026-04-30 (TestEditingCommaSeparatedArrayValues migrated, regression verified)
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,14 +9,14 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| New framework — total test classes | **108** (active in tracked `testng_suites`) |
+| New framework — total test classes | **109** (active in tracked `testng_suites`) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
-| Suites | `rules_editor.xml` (30) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 108** |
+| Suites | `rules_editor.xml` (31) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 109** |
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
 | Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
-| **New framework overall coverage** | **~83.9% of legacy feature areas** (+ TestRefreshButton: detect filesystem-level project changes outside WebStudio (bad → good xlsx swap inside the user-workspace) via Refresh button; new `AppContainerFileService` helper for `copyFileToContainer`. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
+| **New framework overall coverage** | **~84.2% of legacy feature areas** (+ TestEditingCommaSeparatedArrayValues: 2 methods — `testVerifyNoInfiniteLoading` (empty-element edit '1,,2,3' must not break the project) + `testEditingCommaSeparatedArrayValues` (multiselect popup across 8 source-table types: Decision/SimpleLookup, SimpleRules, SmartLookup, SmartRules, Spreadsheet, TBasic, Method + Data/DataDDL with Select All / Deselect All / Done / Save and text-input fallback). New `MultiselectArrayEditorComponent`, anchor-click logic in `TableComponent.doubleClickCell`. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button, Comma-Separated Array of values, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
 
 ---
 
@@ -51,8 +51,8 @@
 
 ## 🟡 REMAINING GAPS (< 60% coverage)
 
-### 1. Editor – Advanced Features (2.1.x) — ~60%
-**Legacy tests:** 65+ | **New framework:** 20 (rules_editor) + 24 (studio_issues)
+### 1. Editor – Advanced Features (2.1.x) — ~62%
+**Legacy tests:** 65+ | **New framework:** 21 (rules_editor) + 24 (studio_issues)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
@@ -73,7 +73,7 @@
 | Create table as Business Dimension version | IPBQA-31601, EPBDS-11436 | TestCopyTableAsNewBusinessDimension | ✅ `copyTableAsBusinessDimension()` added to TestMethodTable.testTableCopyAndManagement — verifies BD Version copy dialog + no compilation errors |
 | Creating a Test table via wizard | 2.1.25 | CreateTestMethod | ⚠️ partial — `TestSmartLookupSmartRules` creates `MySmartLookupTest`; `TestSimpleLookupSimpleRules` creates `SimpleLEx2Test`; dedicated standalone CreateTestMethod scenarios not migrated |
 | Creating a Test table with ID column | RulesEditor.Test100 | — | ❌ not migrated |
-| Editing Comma-Separated Array of values (DDL) | EPBDS-7508, IPBQA-25824 | TestEditingCommaSeparatedArrayValues | ❌ not migrated |
+| Editing Comma-Separated Array of values (DDL) | EPBDS-7508, IPBQA-25824 | TestEditingCommaSeparatedArrayValues | ✅ TestEditingCommaSeparatedArrayValues — 2 methods (incl. EPBDS-13232 empty-element regression). Multiselect popup verified for Data/DataDDL + 8 reference table types (Decision/SimpleLookup, SimpleRules, SmartLookup, SmartRules, Spreadsheet, TBasic, Method) with Select All / Deselect All / Done / Save and text-input fallback. Note: legacy step 1.9 used a "Formula Editor" right-click toggle that no longer exists in current WebStudio (Data Table cells have no `oncontextmenu`); the equivalent semantics — direct text entry into the cell editor input — is preserved via `TableComponent.editCell` |
 | Tracing rules | test113, test115 | TracingRunTables/* | ⚠️ partial — TestAllStepsDisplayedInTrace, TestTraceIntoFileJsonRequest, TestArrayOfAliasValuesInRunTrace, TestAdminUserSettings (trace window), TestViewStackTraceFunctionality cover core trace scenarios; dedicated TracingRunTables suite not migrated |
 | Trace in file | EPBDS-7715, IPBQA-25978 | TestTraceInFileFunctionality | ✅ TestTraceIntoFileJsonRequest (trace into file with JSON request) |
 | Benchmark Tools | test037 | — | ⚠️ partial — TestACLRunBenchmarkSystemAction verifies Benchmark button visibility for all roles (Viewer/Contributor/Manager); benchmark execution workflow not tested |
@@ -149,7 +149,7 @@
 | Admin: User management + ACL (BRD EPBDS-14295) | ~95% | 10 ACL test classes, 23 methods (22 active + 1 disabled): UserManagement, ProjectLevelRoles, ContributorRole, DeploySystemAction, DeployWithDeployRepo (incl. Viewer+Contributor min combo), RunBenchmarkSystemAction (all 3 roles), ManagePermission, LockUnlockDeprecated, NoAccessWarning, ParsedGroupsUserView ✅ (1 test disabled — Manager Admin access not implemented; Group Templates skipped — requires EUMS/LDAP) |
 | User Settings / Profile | ~75% | TestAdminUserSettings ✅ |
 | Tags (basic creation + validation only) | ~25% | TestProjectTagsCreation* ✅ (3 tests) — filtering, grouping, auto-fill not yet migrated |
-| Rules Editor (core) | ~76% | 51 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
+| Rules Editor (core) | ~78% | 52 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button, Comma-Separated Array of values) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~60% | 12 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts + Protected Branches ✅ |
 | WebService (Section 1) | ~55% | 6 service_smoke tests ✅ including TestRuleServicesNewUI + TestWebservicesSwaggerUi |
@@ -184,20 +184,18 @@
 
 ## Next Test To Migrate
 
-**Selected next target:** `TestEditingCommaSeparatedArrayValues`
+**Selected next target:** `TestNavigationToTable` already done; next functional Rules-Editor candidate is **`TestRangeDataTypes` already done**; next 0%-coverage editor feature with sufficient signal is **`Admin Common Settings`** (history max count, date format) or **`Copy a file`** (file-level operations). Need to discuss next priority.
 
-Why this is the next migration candidate:
-- `TestRefreshButton` is now migrated (incl. new `AppContainerFileService` helper for filesystem-level injection) and regression-checked in `rules_editor.xml`.
-- `TestEditingCommaSeparatedArrayValues` (EPBDS-7508, IPBQA-25824) — Rules Editor feature for editing comma-separated DDL array values; functional cell-editing flow with no current coverage. Reuses already-migrated table-editing patterns from Smart/Simple Lookup tests.
-- Better than remaining 0%-coverage candidates: Admin Common Settings is settings-only, font formatting is cosmetic, Copy-a-file is simple but low-value, Git LFS / HTTP→HTTPS need special infra/repo URL changes.
+Why these are the next migration candidates:
+- `TestEditingCommaSeparatedArrayValues` is now migrated with all 2 legacy methods + new `MultiselectArrayEditorComponent` and anchor-click fix in `TableComponent.doubleClickCell`.
+- Remaining 0%-coverage items are smaller in scope: Admin Common Settings (settings UI), font formatting (cosmetic), Copy-a-file (file ops), Git LFS / HTTP→HTTPS (need special infra).
 
 **Truly uncovered feature areas (0% coverage):**
-1. Editing Comma-Separated Array of values (DDL) (EPBDS-7508)
-2. Admin Common Settings (history max count, date format)
-3. Edit table: Bold/Italic/Underline/fill color
-4. Copy a file (file-level, not module)
-5. Git LFS support
-6. HTTP → HTTPS git repo URL change
+1. Admin Common Settings (history max count, date format)
+2. Edit table: Bold/Italic/Underline/fill color
+3. Copy a file (file-level, not module)
+4. Git LFS support
+5. HTTP → HTTPS git repo URL change
 
 **Removed from coverage denominator (N/A):**
 - Deploy Configuration (EPBDS-15093) — removed from product
