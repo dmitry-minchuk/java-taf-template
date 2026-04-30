@@ -86,3 +86,5 @@ promptfoo/results/
 promptfoo/*.log
 promptfoo/package-lock.json
 /.factorypath
+.playwright-mcp/
+.claude/
