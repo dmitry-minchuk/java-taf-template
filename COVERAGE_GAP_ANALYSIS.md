@@ -1,6 +1,6 @@
 # Coverage Gap Analysis: Legacy → New Framework
 
-> Updated: 2026-04-30 (TestEditingCommaSeparatedArrayValues migrated, regression verified)
+> Updated: 2026-05-01 (TestProjectStatus migrated, regression verified)
 > Based on: `OpenL covered features - UI-Autotest.csv` traceability matrix
 
 ## Statistics
@@ -9,14 +9,14 @@
 |--------|-------|
 | Total features in matrix | 317 |
 | Covered by legacy autotests | 277 (93.4%) |
-| New framework — total test classes | **109** (active in tracked `testng_suites`) |
+| New framework — total test classes | **110** (active in tracked `testng_suites`) |
 | Deleted legacy artifacts | `TestButtonDeployAvailableDeployConfiguration` (deleted — Deploy Configuration removed from WebStudio per EPBDS-15093), `DeployConfigurationTabsComponent` (deleted) |
-| Suites | `rules_editor.xml` (31) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (6) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 109** |
+| Suites | `rules_editor.xml` (31) · `studio_issues.xml` (28) · `studio_smoke.xml` (30) · `studio_git.xml` (12) · `service_smoke.xml` (7) · `central_projects_regression.xml` (1) · `zip_projects_regression.xml` (1) · **Total: 110** |
 | ACL functionality | New ACL model (BRD EPBDS-14295): 10 test classes, 23 methods (22 active + 1 disabled) covering Manager/Contributor/Viewer roles, V/C/E/D/M permissions, Run+Benchmark system actions for all roles, deploy repo access (incl. Viewer+Contributor minimum combo per BRD TR2), lock/unlock deprecated, no-access warning, parsed groups view. 1 test disabled — Manager Administration access not yet implemented in UI |
 | Multi-container infra tests | 3 tests using `DeployInfrastructureService`: TestNewDeployPopup (Postgres + WS), TestDeploymentConfigurationRepositoryConnection (Oracle), TestMultipleDesignRepositoriesWithPostgres (Postgres security DB) |
 | Auth/SSO/AD coverage strategy | Authentication (OAuth2, SAML, AD, LDAP) tested via backend API by dev team. Authorization/permissions tested via UI ACL tests (10 classes, 23 methods). 11 legacy auth features reclassified: ~10 covered (backend API + UI ACL), ~1 partial (AD Groups requires EUMS). See Section 9 |
 | Removed from product (N/A) | Deploy Configuration (EPBDS-15093), Unlock Project (deploy config dependent), Installation Wizard, Azure BLOB storage (requires Azure account — won't automate) — excluded from coverage denominator |
-| **New framework overall coverage** | **~84.2% of legacy feature areas** (+ TestEditingCommaSeparatedArrayValues: 2 methods — `testVerifyNoInfiniteLoading` (empty-element edit '1,,2,3' must not break the project) + `testEditingCommaSeparatedArrayValues` (multiselect popup across 8 source-table types: Decision/SimpleLookup, SimpleRules, SmartLookup, SmartRules, Spreadsheet, TBasic, Method + Data/DataDDL with Select All / Deselect All / Done / Save and text-input fallback). New `MultiselectArrayEditorComponent`, anchor-click logic in `TableComponent.doubleClickCell`. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button, Comma-Separated Array of values, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
+| **New framework overall coverage** | **~84.5% of legacy feature areas** (+ TestProjectStatus: failed/success deployment status on Web Services page, validated via existing `ServicePage`; uses `repo-zip` factory override on top of `SERVICE_FILE_PARAMS`. Completed: C1-C13, C12b, C12c, C12d, C14 partial, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button, Comma-Separated Array of values, Project Status, ACL full, OpenAPI full; remaining notable git gap: C14 comment-generation check) |
 
 ---
 
@@ -111,14 +111,14 @@
 | HTTP → HTTPS git repo URL change | EPBDS-11370, IPBQA-31528 | TestGitHttpToHttpsAndViceVersa | ❌ not migrated |
 | Protected Branches | IPBQA-31896, EPBDS-15753 | TestProtectedBranches | ✅ TestProtectedBranchMergeProtection |
 
-### 3. WebService (Section 1) — ~55%
-**Legacy tests:** 10+ | **New framework:** 6 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestDeployProjectsWithoutServiceNameInRulesDeploy + TestWebservicesGitRepo + TestRuleServicesNewUI + TestRuleServiceS3DeployClasspathJarProperty + TestWebservicesSwaggerUi)
+### 3. WebService (Section 1) — ~65%
+**Legacy tests:** 10+ | **New framework:** 7 tests (`service_smoke.xml`: TestWebservicesDeployUI + TestDeployProjectsWithoutServiceNameInRulesDeploy + TestWebservicesGitRepo + TestRuleServicesNewUI + TestRuleServiceS3DeployClasspathJarProperty + TestWebservicesSwaggerUi + TestProjectStatus)
 
 | Feature | Ticket | Legacy test | Covered by |
 |---------|--------|-------------|------------|
 | Available services list | — | TestWebservicesDisplay | ❌ not migrated |
 | Swagger UI / JSON / YAML | IPBQA-32142, EPBDS-12603 | TestSwaggerUI | ✅ TestWebservicesSwaggerUi |
-| Verification of Project Status | EPBDS-9421, IPBQA-29488 | TestProjectStatus | ❌ not migrated |
+| Verification of Project Status | EPBDS-9421, IPBQA-29488 | TestProjectStatus | ✅ TestProjectStatus — failed/success deployments verified via ServicePage with `repo-zip` factory; 9-line legacy error list reduced to substring assertions on 3 unique error fragments (`Identifier 'price'`, `Field 'price'... type 'Vehicle'`, `AirbagType`) — robust to OpenL major-version error-list changes |
 | Webservices displayed on tab | EPBDS-8887, IPBQA-28417 | TestWebservicesDisplay | ❌ not migrated |
 | New RuleServices UI | EPBDS-14196, IPBQA-32607 | — | ✅ TestRuleServicesNewUI |
 | Write OpenL runtime errors in log | EPBDS-12576, IPBQA-32104 | — | ❌ not migrated |
@@ -152,7 +152,7 @@
 | Rules Editor (core) | ~78% | 52 tracked rules-editor scenarios in active suites (incl. OpenAPI, Compare, C7, C8, C13, SmartLookup/SmartRules, SimpleLookup/SimpleRules, Range data types, Navigation to table, Refresh button, Comma-Separated Array of values) ✅ + trace coverage: TestTraceIntoFileJsonRequest, TestAllStepsDisplayedInTrace, TestArrayOfAliasValuesInRunTrace, TestViewStackTraceFunctionality |
 | Single/Multi Mode (compilation) | ~100% | C7: 5 test classes, 9 methods ✅ |
 | Git (core operations) | ~60% | 12 git tests ✅ + Resolve Conflicts covered by TestMergeBranchesWithConflicts (Use Yours/Theirs) + Custom comments + Committer name verification in TestMergeBranchesNoConflicts + Protected Branches ✅ |
-| WebService (Section 1) | ~55% | 6 service_smoke tests ✅ including TestRuleServicesNewUI + TestWebservicesSwaggerUi |
+| WebService (Section 1) | ~65% | 7 service_smoke tests ✅ including TestRuleServicesNewUI + TestWebservicesSwaggerUi + TestProjectStatus |
 | Studio Issues (bug regression) | ~50% | 28 studio_issues suite tests ✅ |
 | Repository (2.2) | ~75% | C1 + C2 + basic ops across suites ✅ + Resolve Conflicts (TestMergeBranchesWithConflicts) + Non-flat ✅ C12b + Folder creation ✅ C1. Unlock Project + Azure BLOB excluded from denominator (N/A). Remaining gaps: copy file, Git LFS, technical revisions, rules-deploy settings |
 | Admin: Repositories (JDBC integration + deploy) | ~40% | C12b (PostgreSQL security DB) + C12c (Oracle JDBC) + C12d (Deploy to production via DeployModal) ✅ — all using DeployInfrastructureService |
