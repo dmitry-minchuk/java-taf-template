@@ -57,10 +57,12 @@ public class ExportProjectDialogComponent extends BaseComponent {
     }
 
     public void clickExport() {
+        exportBtn.waitForVisible();
         exportBtn.click();
     }
 
     public File clickExportAndDownload() {
+        exportBtn.waitForVisible();
         File downloadedFile = DownloadUtil.downloadFile(exportBtn.getLocator());
         LOGGER.info("Downloaded file: {} (size: {} bytes)", downloadedFile.getName(), downloadedFile.length());
         return downloadedFile;
