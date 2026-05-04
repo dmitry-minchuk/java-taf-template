@@ -6,6 +6,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
+import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
@@ -118,25 +119,33 @@ public class TestOrderingModeDefaults extends BaseTest {
         assertThat(editorPage.getEditorLeftRulesTreeComponent().getCategoriesVisible())
                 .contains("Calculaiton", "Calculation", "Model", "Test");
 
-        // 2.5 Verification that the default "Default Order:" is different for another user (openl_1)
-        editorPage.openUserMenu().signOut();
-        loginService = new LoginService(LocalDriverPool.getPage());
-        editorPage = loginService.login(new UserData("openl_1", "openl_1"));
-
-        // Fill profile for openl_1 (required for first login)
-        adminPage = editorPage.openUserMenu().navigateToMyProfile();
-        adminPage.navigateToMyProfilePage()
+        // 2.5 Verification that the default "Default Order:" is different for another user.
+        // The legacy Keycloak setup pre-provisioned an openl_1 account; without that
+        // infrastructure we now create a regular user via the admin UI and reuse it here.
+        UsersPageComponent usersPage = editorPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToUsersPage();
+        usersPage.clickAddUser()
+                .setUsername("user1")
+                .setEmail("user1@example.com")
                 .setFirstName("First Name")
                 .setLastName("Last Name")
-                .setEmail("openl_1@mail.com")
-                .saveProfile();
+                .setPassword("user1")
+                .clickAddRoleBtn()
+                .setRoleRepository(0, "Design")
+                .setRole(0, "Manager")
+                .saveUser();
 
-        // Check default order for openl_1 — should still be "By Excel Sheet" (default)
+        editorPage.openUserMenu().signOut();
+        loginService = new LoginService(LocalDriverPool.getPage());
+        editorPage = loginService.login(new UserData("user1", "user1"));
+
+        // Check default order for user1 — should still be "By Excel Sheet" (default)
         adminPage = editorPage.openUserMenu().navigateToMySettings();
         mySettings = adminPage.navigateToMySettingsPage();
         assertThat(mySettings.getDefaultOrder()).isEqualTo("By Excel Sheet");
 
-        // 2.6 Change default order for openl_1 to "By Type"
+        // 2.6 Change default order for user1 to "By Type"
         mySettings.setDefaultOrder("By Type");
         mySettings.saveSettings();
 
