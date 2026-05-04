@@ -34,7 +34,7 @@ public class TagsPageComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[contains(@class,'ant-table-wrapper tag-table')]//table", "tagsTable");
+        tagsTable = createScopedComponent(TableComponent.class, "xpath=.//div[contains(@class,'ant-table-wrapper')]//table", "tagsTable");
 
         newTagTypeInput = createScopedElement("xpath=.//input[@name='tag-type' and @placeholder='New Tag Type']", "newTagTypeInput");
         projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[contains(@class,'ant-input')]", "projectNameTemplatesTextarea");
