@@ -65,7 +65,8 @@ public class TableComponent extends BaseComponent {
         String cssClass = cell.getLocator().getAttribute("class");
         if (cssClass != null && cssClass.contains("te_selected")) {
             int anchorRow = rowIndex == 1 ? 2 : 1;
-            int anchorCol = columnIndex == 1 ? 2 : 1;
+            List<WebElement> anchorCells = rows.get(anchorRow - 1).getCells();
+            int anchorCol = anchorCells.size() > 1 && columnIndex == 1 ? 2 : 1;
             clickCell(anchorRow, anchorCol);
         }
         cell.doubleClick();
