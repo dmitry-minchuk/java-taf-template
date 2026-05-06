@@ -91,6 +91,25 @@ public class StringUtil {
         }
     }
     
+    /**
+     * Collapses any run of whitespace (spaces, tabs, newlines) into a single space and trims.
+     * If the result exceeds {@code maxLength}, it is truncated and an ellipsis is appended.
+     * Intended for log lines that would otherwise span many lines (e.g. raw textContent of
+     * a multi-line UI block).
+     */
+    public static String oneLine(String value, int maxLength) {
+        if (value == null) return "null";
+        String collapsed = value.replaceAll("\\s+", " ").trim();
+        if (maxLength > 0 && collapsed.length() > maxLength) {
+            return collapsed.substring(0, maxLength - 1) + "…";
+        }
+        return collapsed;
+    }
+
+    public static String oneLine(String value) {
+        return oneLine(value, 300);
+    }
+
     public static String sanitizeFileName(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
             return "unnamed";

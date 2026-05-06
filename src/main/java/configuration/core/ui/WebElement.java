@@ -123,9 +123,15 @@ public class WebElement {
     }
     
     public String getText() {
+        return getText(true);
+    }
+
+    public String getText(boolean log) {
         isVisible();
         String text = locator.textContent();
-        LOGGER.info("Getting text from {}: '{}'", elementName, text);
+        if (log) {
+            LOGGER.info("Getting text from {}: '{}'", elementName, text);
+        }
         return text;
     }
 

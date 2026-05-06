@@ -89,21 +89,13 @@ public class TestLocalCentralProjects extends BaseTest {
                         .clickTestDropdown()
                         .runTests();
                 editorPage.waitUntilSpinnerLoaded();
-
-                if(!editorPage.getTestResultValidationComponent().isTestTablePassed()) {
-                    List<String> failedTests = editorPage.getTestResultValidationComponent().getAllFailedTests();
-
-                    StringBuilder testFailureDetails = new StringBuilder();
-                    testFailureDetails.append(String.format("\nTest failures detected in project: %s", nameProject));
-                    testFailureDetails.append(String.format("\nFAILED TESTS (%d):\n", failedTests.size()));
-                    for (int i = 0; i < failedTests.size(); i++) {
-                        testFailureDetails.append(String.format("  %d. %s\n", i + 1, failedTests.get(i)));
-                    }
-
-                    String testTableResults = testFailureDetails.toString();
-                    softAssert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
-                    Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), testTableResults);
-                    LOGGER.error("TEST FAILURES DETECTED: {}", testTableResults);
+                String contextMsg = String.format("project=%s", nameProject);
+                try {
+                    editorPage.getTestResultValidationComponent().assertNoTestFailures(contextMsg);
+                } catch (AssertionError e) {
+                    softAssert.fail(e.getMessage());
+                    LOGGER.error("TEST FAILURES DETECTED: {}", e.getMessage());
+                    throw e;
                 }
             }
         }

@@ -4,6 +4,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.common.TableComponent;
+import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
@@ -22,6 +23,12 @@ public class TestResultValidationComponent extends BaseComponent {
     private List<WebElement> testResultRowElementsLinksList;
     private List<WebElement> testResultBadgeErrors;
     private WebElement currentModuleOnlyCheckbox;
+
+    private WebElement resultPageHeader;
+    private WebElement failuresOnlyInlineCheckbox;
+    private List<WebElement> resultTableBodyRows;
+    private List<WebElement> caseErrorIconsLenient;
+    private List<WebElement> failedTestNameLinksLenient;
 
     public TestResultValidationComponent() {
         super(LocalDriverPool.getPage());
@@ -44,6 +51,20 @@ public class TestResultValidationComponent extends BaseComponent {
         testResultRowElementsLinksList = createScopedElementList("xpath=.//a[@class='testError']", "testResultRowElementsLinksList");
         testResultBadgeErrors = createScopedElementList("xpath=.//span[@class='badge badge-error']", "testResultBadgeError");
         currentModuleOnlyCheckbox = new WebElement(page, "xpath=//input[@id='currentModuleOnly']", "currentModuleOnlyCheckbox");
+
+        resultPageHeader = createScopedElement("xpath=.//h1[contains(@class,'page-header')]", "resultPageHeader");
+        failuresOnlyInlineCheckbox = createScopedElement(
+                "xpath=.//h1[contains(@class,'page-header')]//input[@type='checkbox' and contains(@onchange,'failuresOnly')]",
+                "failuresOnlyInlineCheckbox");
+        resultTableBodyRows = createScopedElementList(
+                "xpath=.//table[contains(@class,'table')]//tbody/tr",
+                "resultTableBodyRows");
+        caseErrorIconsLenient = createScopedElementList(
+                "xpath=.//tbody//span[contains(@class,'case-error')]",
+                "caseErrorIconsLenient");
+        failedTestNameLinksLenient = createScopedElementList(
+                "xpath=.//a[contains(@class,'testError')]",
+                "failedTestNameLinksLenient");
     }
 
     public TableComponent getResultTable() {
@@ -129,6 +150,70 @@ public class TestResultValidationComponent extends BaseComponent {
 
     public boolean isCurrentModuleOnlyEnabled() {
         return currentModuleOnlyCheckbox.isEnabled();
+    }
+
+    public boolean isFailuresOnlyFilterChecked() {
+        return failuresOnlyInlineCheckbox.isVisible() && failuresOnlyInlineCheckbox.isChecked();
+    }
+
+    public void setFailuresOnlyFilter(boolean enabled) {
+        WaitUtil.waitForCondition(failuresOnlyInlineCheckbox::isVisible, 10000, 200,
+                "Waiting for inline 'Failures Only' checkbox to be visible");
+        if (failuresOnlyInlineCheckbox.isChecked() == enabled) return;
+        failuresOnlyInlineCheckbox.click();
+        WaitUtil.waitForCondition(() -> failuresOnlyInlineCheckbox.isChecked() == enabled,
+                5000, 100, "Waiting for 'Failures Only' filter to switch to " + enabled);
+        waitUntilSpinnerLoaded();
+    }
+
+    public List<String> getFailedTestNamesLenient() {
+        return failedTestNameLinksLenient.stream()
+                .map(e -> e.getText().trim())
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .toList();
+    }
+
+    public void assertNoTestFailures(String contextMsg) {
+        boolean headerReady = WaitUtil.waitForCondition(
+                () -> resultPageHeader.isVisible() && resultPageHeader.getText(false).contains("Tests:"),
+                30000, 200,
+                "Waiting for test results page header to render");
+        String headerText = resultPageHeader.isVisible()
+                ? StringUtil.oneLine(resultPageHeader.getText(false))
+                : "<not visible>";
+        if (!headerReady) {
+            throw new AssertionError(String.format(
+                    "Test results page did not render (header='%s'). %s", headerText, contextMsg));
+        }
+
+        setFailuresOnlyFilter(false);
+        WaitUtil.isListNotEmpty(() -> resultTableBodyRows, 5000, 100,
+                "Waiting for test result rows to render with filter off");
+        if (resultTableBodyRows.isEmpty()) {
+            throw new AssertionError(String.format(
+                    "Tests did not produce any rendered rows (likely did not execute). header='%s'. %s",
+                    headerText, contextMsg));
+        }
+
+        setFailuresOnlyFilter(true);
+
+        int failingRows = resultTableBodyRows.size();
+        int caseErrorIcons = caseErrorIconsLenient.size();
+        int failedNameLinks = failedTestNameLinksLenient.size();
+
+        if (failingRows == 0 && caseErrorIcons == 0 && failedNameLinks == 0) {
+            return;
+        }
+
+        List<String> failedTestNames = getFailedTestNamesLenient();
+        throw new AssertionError(String.format(
+                "Test failures detected. %s%n" +
+                        "Failed test tables (%d): %s%n" +
+                        "Indicators -> rows=%d, caseErrors=%d, failedLinks=%d%n" +
+                        "Header: %s",
+                contextMsg, failedTestNames.size(), failedTestNames,
+                failingRows, caseErrorIcons, failedNameLinks, headerText));
     }
 
     public List<String> getAllFailedTests() {

@@ -121,7 +121,9 @@
       "Bash(echo \"Container started: $?\")",
       "Bash(tee /tmp/tuas_run.log)",
       "Bash(mvn -f /Users/dmitryminchuk/Projects/java-taf-template/pom.xml test -Dtest=TestGitBranchSwitching#testGitBranchSwitching -DfailIfNoTests=false)",
-      "Bash(tee /tmp/test_git_branch.log)"
+      "Bash(tee /tmp/test_git_branch.log)",
+      "Bash(mkdir -p /Users/dmitryminchuk/Projects/java-taf-template/src/test/resources/test_data/TestProjectStatus)",
+      "Bash(cp \"/Users/dmitryminchuk/Projects/eis/openl-tests/src/main/resources/ServiceProjects/TestProjectStatus/Example 3 - Auto Policy Calculation-failure.zip\" \"/Users/dmitryminchuk/Projects/eis/openl-tests/src/main/resources/ServiceProjects/TestProjectStatus/Example 3 - Auto Policy Calculation-success.zip\" /Users/dmitryminchuk/Projects/java-taf-template/src/test/resources/test_data/TestProjectStatus/)"
     ],
     "deny": []
   }
