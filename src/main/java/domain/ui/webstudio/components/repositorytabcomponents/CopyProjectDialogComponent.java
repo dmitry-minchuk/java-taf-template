@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
+import com.microsoft.playwright.Dialog;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
@@ -26,6 +27,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
     private WebElement repositorySelect;
     private WebElement projectFolderField;
     private List<WebElement> errors;
+    private String expectedNewBranchName;
 
     public CopyProjectDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -55,12 +57,13 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     public CopyProjectDialogComponent setNewBranchName(String branchName) {
         LOGGER.info("Setting new branch name: {}", branchName);
-        newBranchNameField.fill(branchName);
+        expectedNewBranchName = branchName;
+        fillNewBranchName(branchName);
         return this;
     }
 
     public String getNewBranchName() {
-        return newBranchNameField.getAttribute("value");
+        return newBranchNameField.getCurrentInputValue();
     }
 
     public CopyProjectDialogComponent setNewProjectName(String projectName) {
@@ -133,8 +136,13 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     public void clickCopyButton(boolean waitForDialogToClose) {
         LOGGER.info("Clicking Copy button");
+        ensureExpectedNewBranchName();
+        // The hidden copy submit triggers a window.confirm "Are you sure you want to change the branch?".
+        // Playwright dismisses unhandled dialogs by default, which silently cancels the AJAX submit and
+        // makes the dialog fall back to the auto-generated branch name. Register accept BEFORE clicking.
+        LocalDriverPool.getPage().onceDialog(Dialog::accept);
         copyButton.click();
-        if(waitForDialogToClose)
+        if (waitForDialogToClose)
             waitForDialogToClose();
     }
 
@@ -172,5 +180,34 @@ public class CopyProjectDialogComponent extends BaseComponent {
     public List<String> waitForErrors(int timeoutMs) {
         WaitUtil.waitForCondition(() -> !errors.isEmpty(), timeoutMs, 100, "Waiting for copy dialog errors to appear");
         return getErrors();
+    }
+
+    private void fillNewBranchName(String branchName) {
+        boolean branchNameSet = WaitUtil.retryAction(() -> {
+            newBranchNameField.waitForVisible();
+            newBranchNameField.fill(branchName);
+            String actualBranchName = getNewBranchName();
+            if (!branchName.equals(actualBranchName)) {
+                throw new RuntimeException(String.format(
+                        "Expected new branch name '%s', but field value is '%s'",
+                        branchName,
+                        actualBranchName
+                ));
+            }
+        }, 5000, 200, "Setting and verifying new branch name");
+
+        if (!branchNameSet) {
+            throw new RuntimeException("Failed to set new branch name to '" + branchName + "'");
+        }
+    }
+
+    private void ensureExpectedNewBranchName() {
+        if (expectedNewBranchName == null) {
+            return;
+        }
+
+        if (!expectedNewBranchName.equals(getNewBranchName())) {
+            fillNewBranchName(expectedNewBranchName);
+        }
     }
 }

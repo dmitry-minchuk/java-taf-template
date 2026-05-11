@@ -55,8 +55,6 @@ public class TestGitSwitchBranchProjectWithoutChanges extends BaseTest {
                 .setDescription("2")
                 .clickUpdateButton();
 
-        // Switch branch with unsaved changes — accept browser alert
-        LocalDriverPool.getPage().onDialog(Dialog::accept);
         editorPage.getEditorToolbarPanelComponent().selectBranchInDropdown(copyBranchName);
         editorPage.waitUntilSpinnerLoaded();
 
