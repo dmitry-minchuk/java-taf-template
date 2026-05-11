@@ -141,7 +141,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
         copyButton.click();
         if (waitForDialogToClose) {
             waitForDialogToClose();
-            WaitUtil.sleep(1000, "Extra wait for clickCopyButton() method");
         }
     }
 
@@ -183,9 +182,11 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     private void fillNewBranchName(String branchName) {
         boolean branchNameSet = WaitUtil.retryAction(() -> {
+            WaitUtil.sleep(1000, "Extra wait for fillNewBranchName() method (before filling new branch name)");
             newBranchNameField.waitForVisible();
             newBranchNameField.clear();
             newBranchNameField.fillSequentially(branchName);
+            WaitUtil.sleep(1000, "Extra wait for fillNewBranchName() method (after filling new branch name)");
             String actualBranchName = getNewBranchName();
             if (!branchName.equals(actualBranchName)) {
                 throw new RuntimeException(String.format(
