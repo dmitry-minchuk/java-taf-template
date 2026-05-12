@@ -20,8 +20,6 @@ import org.testng.asserts.SoftAssert;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,63 +30,18 @@ public class TestGenesisProjectsApi {
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
     private static final int TEST_SUMMARY_POLL_TIMEOUT_MS = 10 * 60 * 1_000;
 
-    static {
-        publishLaunchDescription();
-    }
-
     private SoftAssert softAssert;
 
     public enum GenesisGroup {
-        GROUP_1_RATING_CLAIM(AppContainerStartParameters.GENESIS_GROUP_1_PARAMS, "rating + claim",
-                List.of("openl-rating", "openl-claim")),
-        GROUP_2_POLICY_BUNDLE(AppContainerStartParameters.GENESIS_GROUP_2_PARAMS, "policy bundle",
-                List.of("openl-policy", "openl-policy-life", "openl-financials"));
+        GROUP_1_RATING_CLAIM(AppContainerStartParameters.GENESIS_GROUP_1_PARAMS, "rating + claim"),
+        GROUP_2_POLICY_BUNDLE(AppContainerStartParameters.GENESIS_GROUP_2_PARAMS, "policy bundle");
 
         final AppContainerStartParameters startParams;
         final String label;
-        final List<String> repos;
 
-        GenesisGroup(AppContainerStartParameters startParams, String label, List<String> repos) {
+        GenesisGroup(AppContainerStartParameters startParams, String label) {
             this.startParams = startParams;
             this.label = label;
-            this.repos = repos;
-        }
-    }
-
-    private static void publishLaunchDescription() {
-        if (System.getProperty("rp.description") != null) {
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("## Genesis Projects — API Validation").append("\n\n");
-        sb.append("End-to-end check that every project across the selected design repositories ")
-                .append("opens, lists modules and passes its test tables. Driven entirely via WebStudio REST ")
-                .append("(no UI).").append("\n\n");
-        sb.append("**Started:** ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
-        sb.append("**Container image:** `").append(safeProp(PropertyNameSpace.DOCKER_IMAGE_NAME)).append("`").append("\n");
-        sb.append("**Branch:** `").append(safeProp(PropertyNameSpace.GITLAB_BRANCH)).append("`").append("\n");
-        sb.append("**User:** `").append(safeProp(PropertyNameSpace.GITLAB_USER)).append("`").append("\n\n");
-        sb.append("### Repository groups").append("\n\n");
-        for (GenesisGroup group : GenesisGroup.values()) {
-            sb.append("**").append(group.label).append("**").append("\n");
-            for (String repo : group.repos) {
-                sb.append("- ").append(repo).append("\n");
-            }
-            sb.append("\n");
-        }
-        sb.append("### Per project").append("\n");
-        sb.append("- `PATCH /rest/projects/{id}` → status=OPENED").append("\n");
-        sb.append("- `GET /rest/projects/{id}/modules`").append("\n");
-        sb.append("- `POST /rest/projects/{id}/tests/run` + polled `GET …/tests/summary` (JSESSIONID kept across calls)").append("\n");
-        System.setProperty("rp.description", sb.toString());
-    }
-
-    private static String safeProp(PropertyNameSpace prop) {
-        try {
-            String v = ProjectConfiguration.getProperty(prop);
-            return v == null ? "(unset)" : v;
-        } catch (RuntimeException e) {
-            return "(unset)";
         }
     }
 
