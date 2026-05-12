@@ -50,11 +50,11 @@ def functionalJobList = [
                          // Regular test suites - run on any available node for optimal load balancing
                          new Job("studio_issues", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_smoke", image_hub_registry + studio, image_hub_registry + ws, "", anyAvailableNode),
-                         new Job("rules_editor", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
+                         new Job("studio_rules_editor", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_git", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_api_integration", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("service_smoke", image_hub_registry + ws, image_hub_registry + ws, "", anyAvailableNode),
-                         new Job("open_api", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode)
+                         new Job("studio_open_api", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode)
                          ]
 def jenkinsLabelList = [jenkinsLabel.master.nodeLabel, jenkinsLabel.slave1.nodeLabel, jenkinsLabel.slave2SAML.nodeLabel]
 
