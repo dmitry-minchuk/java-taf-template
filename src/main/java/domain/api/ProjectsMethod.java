@@ -18,6 +18,10 @@ public class ProjectsMethod extends AuthorizedApiMethod {
         return callApi(Method.GET, authorizedRequest(), fullApiUrl + "?name=" + encodedProjectName, true);
     }
 
+    public Response getAllProjects(int size) {
+        return callApi(Method.GET, authorizedRequest(), fullApiUrl + "?size=" + size, true);
+    }
+
     public Response openProject(String projectId) {
         return callApi(Method.PATCH,
                 authorizedJsonRequest(Map.of("status", "OPENED")),

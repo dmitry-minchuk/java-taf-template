@@ -24,6 +24,15 @@ public class AppContainerFactory {
                                                    Map<String, String> envVars,
                                                    Map<String, String> filesToCopy,
                                                    String dockerImageName) {
+        return createContainer(containerName, network, envVars, filesToCopy, dockerImageName, Duration.ofMinutes(5));
+    }
+
+    public static AppContainerData createContainer(String containerName,
+                                                   Network network,
+                                                   Map<String, String> envVars,
+                                                   Map<String, String> filesToCopy,
+                                                   String dockerImageName,
+                                                   Duration startupTimeout) {
         GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(dockerImageName));
         container.addExposedPort(APP_PORT);
         container.withNetwork(network);
@@ -42,8 +51,8 @@ public class AppContainerFactory {
                 // A read timeout causes SocketTimeoutException -> IOException -> TestContainers retries
                 // the health check until OpenL finishes recompiling and the server responds again.
                 .withReadTimeout(Duration.ofSeconds(20))
-                .withStartupTimeout(Duration.ofMinutes(5)));
-        LOGGER.info("Starting app container: {}", containerName);
+                .withStartupTimeout(startupTimeout));
+        LOGGER.info("Starting app container: {} (startup timeout: {})", containerName, startupTimeout);
         container.start();
 
         LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
