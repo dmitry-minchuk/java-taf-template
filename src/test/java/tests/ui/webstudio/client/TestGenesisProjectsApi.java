@@ -189,8 +189,97 @@ public class TestGenesisProjectsApi {
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
         Integer total = summary.jsonPath().getInt("numberOfTests");
         LOGGER.info("Project [{}] tests: total={}, failures={}", projectName, total, failures);
-        softAssert.assertEquals(failures, Integer.valueOf(0),
-                String.format("Project [%s] has %d test failures (of %d total)", projectName, failures, total));
+        if (failures != null && failures > 0) {
+            String detail = buildFailureReport(projectName, total, failures, summary.jsonPath());
+            LOGGER.error(detail);
+            softAssert.fail(detail);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private String buildFailureReport(String projectName, int total, int failures, JsonPath summaryJson) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Project [%s] has %d test failures (of %d total)", projectName, failures, total));
+        List<Map<String, Object>> testCases = summaryJson.getList("testCases");
+        if (testCases == null || testCases.isEmpty()) {
+            return sb.toString();
+        }
+        for (Map<String, Object> testCase : testCases) {
+            Integer caseFailures = toInt(testCase.get("numberOfFailures"));
+            if (caseFailures == null || caseFailures == 0) {
+                continue;
+            }
+            String caseName = String.valueOf(testCase.get("name"));
+            Integer caseTotal = toInt(testCase.get("numberOfTests"));
+            sb.append(String.format("%n  TestCase [%s] — %d/%d failed", caseName, caseFailures, caseTotal == null ? 0 : caseTotal));
+            List<Map<String, Object>> testUnits = (List<Map<String, Object>>) testCase.get("testUnits");
+            if (testUnits == null) continue;
+            for (Map<String, Object> unit : testUnits) {
+                String status = String.valueOf(unit.get("status"));
+                if (status == null || !status.toUpperCase().contains("FAIL") && !status.equalsIgnoreCase("ERROR")) {
+                    continue;
+                }
+                appendFailedUnit(sb, unit);
+            }
+        }
+        return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void appendFailedUnit(StringBuilder sb, Map<String, Object> unit) {
+        String description = stringOrNull(unit.get("description"));
+        String id = stringOrNull(unit.get("id"));
+        String status = stringOrNull(unit.get("status"));
+        sb.append(String.format("%n    Unit [%s] status=%s",
+                description != null ? description : id, status));
+
+        List<Map<String, Object>> params = (List<Map<String, Object>>) unit.get("parameters");
+        if (params != null && !params.isEmpty()) {
+            sb.append("%n      input: ".formatted());
+            sb.append(params.stream().map(this::formatParamValue).collect(java.util.stream.Collectors.joining(", ")));
+        }
+        List<Map<String, Object>> assertions = (List<Map<String, Object>>) unit.get("testAssertions");
+        if (assertions != null) {
+            for (Map<String, Object> assertion : assertions) {
+                String aStatus = stringOrNull(assertion.get("status"));
+                if (aStatus != null && !aStatus.toUpperCase().contains("FAIL") && !aStatus.equalsIgnoreCase("ERROR")) {
+                    continue;
+                }
+                String aDesc = stringOrNull(assertion.get("description"));
+                Object expected = assertion.get("expectedValue");
+                Object actual = assertion.get("actualValue");
+                sb.append(String.format("%n      assertion[%s]: expected=%s actual=%s",
+                        aDesc != null ? aDesc : "-", expected, actual));
+            }
+        }
+        List<Map<String, Object>> errors = (List<Map<String, Object>>) unit.get("errors");
+        if (errors != null && !errors.isEmpty()) {
+            for (Map<String, Object> err : errors) {
+                String severity = stringOrNull(err.get("severity"));
+                String summary = stringOrNull(err.get("summary"));
+                sb.append(String.format("%n      error[%s]: %s", severity, summary));
+            }
+        }
+    }
+
+    private String formatParamValue(Map<String, Object> param) {
+        Object name = param.get("name");
+        Object value = param.get("value");
+        return String.valueOf(name) + "=" + String.valueOf(value);
+    }
+
+    private String stringOrNull(Object o) {
+        return o == null ? null : String.valueOf(o);
+    }
+
+    private Integer toInt(Object o) {
+        if (o == null) return null;
+        if (o instanceof Number n) return n.intValue();
+        try {
+            return Integer.parseInt(String.valueOf(o));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private Response pollTestsSummary(String projectId, String projectName) {
