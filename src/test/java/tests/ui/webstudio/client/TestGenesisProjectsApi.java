@@ -288,7 +288,8 @@ public class TestGenesisProjectsApi {
         Response last = null;
         int consecutive404 = 0;
         while (System.currentTimeMillis() < deadline) {
-            last = client.getTestsSummary(projectId, false, 100);
+            // Quiet during polling — 202/409 are normal "still running" signals.
+            last = client.getTestsSummary(projectId, false, 100, false);
             int code = last.getStatusCode();
             if (code == 200) {
                 return last;
@@ -306,8 +307,8 @@ public class TestGenesisProjectsApi {
                 sleepInterruptible();
                 continue;
             }
-            LOGGER.warn("Unexpected test summary status {} for project [{}], stopping poll",
-                    code, projectName);
+            LOGGER.warn("Unexpected test summary status {} for project [{}]: {}",
+                    code, projectName, last.getBody().asString());
             return last;
         }
         return last;

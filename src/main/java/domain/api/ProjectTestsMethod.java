@@ -14,9 +14,13 @@ public class ProjectTestsMethod extends AuthorizedApiMethod {
     }
 
     public Response getTestsSummary(String projectId, boolean failuresOnly, int failuresLimit) {
+        return getTestsSummary(projectId, failuresOnly, failuresLimit, true);
+    }
+
+    public Response getTestsSummary(String projectId, boolean failuresOnly, int failuresLimit, boolean withLogs) {
         int boundedLimit = Math.max(1, failuresLimit);
         return callApi(Method.GET, authorizedRequest(),
                 fullApiUrl + "/" + projectId + "/tests/summary?failuresOnly=" + failuresOnly + "&failures=" + boundedLimit,
-                true);
+                withLogs);
     }
 }
