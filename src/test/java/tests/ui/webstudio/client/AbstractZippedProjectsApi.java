@@ -185,20 +185,14 @@ public abstract class AbstractZippedProjectsApi {
         Assert.assertEquals(modulesResp.getStatusCode(), 200,
                 String.format("List modules failed for project %s in group %s",
                         projectName, groupLabel));
-        List<Map<String, Object>> modules = extractModuleList(modulesResp);
+        List<?> modules = modulesResp.jsonPath().getList("$");
         if (modules.isEmpty()) {
             LOGGER.info("Project [{}] has no modules — skipping test run", projectName);
             return;
         }
-        String firstModuleName = String.valueOf(modules.get(0).get("name"));
 
         checkCompilation(projectName);
-        runProjectTests(projectId, projectName, firstModuleName);
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> extractModuleList(Response response) {
-        return (List<Map<String, Object>>) (List<?>) response.jsonPath().getList("$");
+        runProjectTests(projectId, projectName);
     }
 
     @SuppressWarnings("unchecked")
@@ -249,8 +243,8 @@ public abstract class AbstractZippedProjectsApi {
         Assert.fail(detail);
     }
 
-    private void runProjectTests(String projectId, String projectName, String fromModule) {
-        Response runResponse = new ProjectTestsMethod().runAllTests(projectId, fromModule);
+    private void runProjectTests(String projectId, String projectName) {
+        Response runResponse = new ProjectTestsMethod().runAllTests(projectId);
         int runStatus = runResponse.getStatusCode();
         if (runStatus == 404 || runStatus == 204) {
             LOGGER.info("Project [{}] has no Test tables — skipping test execution", projectName);
