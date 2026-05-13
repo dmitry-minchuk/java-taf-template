@@ -258,6 +258,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         List<String> failureBlocks = new ArrayList<>();
         int aggregateTotal = 0;
         int aggregateFailures = 0;
+        int aggregateApiErrors = 0;
         int modulesWithTests = 0;
         for (Map<String, Object> module : modules) {
             String moduleName = String.valueOf(module.get("name"));
@@ -265,19 +266,26 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             if (r == null) continue;
             aggregateTotal += r.total;
             aggregateFailures += r.failures;
+            aggregateApiErrors += r.apiErrors;
             if (r.total > 0 || r.failures > 0) modulesWithTests++;
             if (r.failureBlock != null) failureBlocks.add(r.failureBlock);
         }
-        if (modulesWithTests == 0) {
+        if (modulesWithTests == 0 && aggregateApiErrors == 0) {
             LOGGER.info("Project [{}]: no Test tables in any module", projectName);
             return;
         }
-        LOGGER.info("Project [{}] aggregate: total={}, failures={} (across {} module(s) with tests)",
-                projectName, aggregateTotal, aggregateFailures, modulesWithTests);
-        if (aggregateFailures > 0) {
+        LOGGER.info("Project [{}] aggregate: total={}, failures={}, apiErrors={} (across {} module(s) with tests)",
+                projectName, aggregateTotal, aggregateFailures, aggregateApiErrors, modulesWithTests);
+        if (aggregateFailures > 0 || aggregateApiErrors > 0) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Project [%s] has %d test failures (of %d total) across %d module(s) in group [%s]",
-                    projectName, aggregateFailures, aggregateTotal, modulesWithTests, groupLabel));
+            sb.append(String.format("Project [%s] in group [%s]:", projectName, groupLabel));
+            if (aggregateFailures > 0) {
+                sb.append(String.format(" %d test failure(s) of %d total across %d module(s) with tests;",
+                        aggregateFailures, aggregateTotal, modulesWithTests));
+            }
+            if (aggregateApiErrors > 0) {
+                sb.append(String.format(" %d API/server error(s);", aggregateApiErrors));
+            }
             appendZipPaths(sb);
             for (String block : failureBlocks) {
                 sb.append("\n").append(block);
@@ -296,11 +304,25 @@ public abstract class AbstractZippedProjectsApi implements ITest {
     private static final class ModuleResult {
         final int total;
         final int failures;
+        final int apiErrors;
         final String failureBlock;
 
-        ModuleResult(int total, int failures, String failureBlock) {
+        static ModuleResult empty() {
+            return new ModuleResult(0, 0, 0, null);
+        }
+
+        static ModuleResult testFailures(int total, int failures, String detail) {
+            return new ModuleResult(total, failures, 0, detail);
+        }
+
+        static ModuleResult apiError(String detail) {
+            return new ModuleResult(0, 0, 1, detail);
+        }
+
+        private ModuleResult(int total, int failures, int apiErrors, String failureBlock) {
             this.total = total;
             this.failures = failures;
+            this.apiErrors = apiErrors;
             this.failureBlock = failureBlock;
         }
     }
@@ -365,47 +387,47 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         int runStatus = runResponse.getStatusCode();
         if (runStatus == 404 || runStatus == 204) {
             LOGGER.info("Project [{}] module [{}] has no Test tables — skipping", projectName, moduleName);
-            return new ModuleResult(0, 0, null);
+            return ModuleResult.empty();
         }
         if (runStatus != 200 && runStatus != 202) {
             String msg = String.format("Failed to start tests for project [%s] module [%s]: HTTP %d — %s%s",
                     projectName, moduleName, runStatus, runResponse.getBody().asString(),
                     serverBugNote(runStatus));
             LOGGER.error(msg);
-            return new ModuleResult(0, 1, msg);
+            return ModuleResult.apiError(msg);
         }
 
         Response summary = pollTestsSummary(projectId, projectName);
         if (summary == null) {
             String msg = String.format("Test summary timed out for project [%s] module [%s]", projectName, moduleName);
             LOGGER.error(msg);
-            return new ModuleResult(0, 1, msg);
+            return ModuleResult.apiError(msg);
         }
         if (summary.getStatusCode() == 404) {
             LOGGER.info("Project [{}] module [{}] reports no test execution task", projectName, moduleName);
-            return new ModuleResult(0, 0, null);
+            return ModuleResult.empty();
         }
         if (summary.getStatusCode() != 200) {
             String msg = String.format("Tests summary returned HTTP %d for project [%s] module [%s]: %s%s",
                     summary.getStatusCode(), projectName, moduleName, summary.getBody().asString(),
                     serverBugNote(summary.getStatusCode()));
             LOGGER.error(msg);
-            return new ModuleResult(0, 1, msg);
+            return ModuleResult.apiError(msg);
         }
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
         Integer total = summary.jsonPath().getInt("numberOfTests");
         int f = failures == null ? 0 : failures;
         int t = total == null ? 0 : total;
         if (t == 0 && f == 0) {
-            return new ModuleResult(0, 0, null);
+            return ModuleResult.empty();
         }
         LOGGER.info("Project [{}] module [{}] tests: total={}, failures={}", projectName, moduleName, t, f);
         if (f > 0) {
             String detail = buildFailureReportForModule(projectName, moduleName, t, f, summary.jsonPath());
             LOGGER.error(detail);
-            return new ModuleResult(t, f, detail);
+            return ModuleResult.testFailures(t, f, detail);
         }
-        return new ModuleResult(t, 0, null);
+        return ModuleResult.testFailures(t, 0, null);
     }
 
     private String buildFailureReportForModule(String projectName, String moduleName,
