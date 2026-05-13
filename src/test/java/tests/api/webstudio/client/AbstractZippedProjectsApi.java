@@ -60,6 +60,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
     private final String groupLabel;
     private final Map<String, Map<String, Object>> projectsByName = new LinkedHashMap<>();
     private final List<String> uploadedProjectNames = new ArrayList<>();
+    private final List<String> uploadFailures = new ArrayList<>();
     private final ThreadLocal<String> currentTestName = new ThreadLocal<>();
 
     protected AbstractZippedProjectsApi(List<File> zipsInGroup, String groupLabel) {
@@ -82,34 +83,39 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             LOGGER.info("Uploading [{}] from {}", name, zip.getName());
             Response upload = new RepositoryProjectsMethod().uploadProject(DESIGN_REPO, name, zip);
             if (upload.getStatusCode() >= 300) {
-                // Don't kill the whole group on a single bad zip — log and continue.
-                // Common case: two zips in a deployment folder export the same business name,
-                // server accepts the first and rejects the second with 4xx/5xx.
-                LOGGER.warn("Upload failed for zip {} (project name [{}]): HTTP {} — {}",
-                        zip.getName(), name, upload.getStatusCode(), upload.getBody().asString());
+                String msg = String.format("Upload failed for %s (project name [%s]): HTTP %d — %s",
+                        zip.getAbsolutePath(), name, upload.getStatusCode(), upload.getBody().asString());
+                LOGGER.warn(msg);
+                uploadFailures.add(msg);
                 continue;
             }
             if (!uploadedProjectNames.contains(name)) {
                 uploadedProjectNames.add(name);
             }
         }
+
         if (uploadedProjectNames.isEmpty()) {
-            throw new IllegalStateException(String.format(
-                    "All uploads failed for group [%s] — no projects to validate", groupLabel));
+            // Don't throw here — let @Test fail with a clean message instead of
+            // surfacing an IllegalStateException via setUp / @BeforeClass.
+            LOGGER.warn("Group [{}]: all {} upload(s) failed; @Test will fail with details",
+                    groupLabel, zipsInGroup.size());
+            return;
         }
 
         Response listResponse = new ProjectsMethod().getAllProjects(500);
         if (listResponse.getStatusCode() != 200) {
-            throw new IllegalStateException(String.format(
-                    "Failed to list projects for group [%s]: HTTP %d — %s",
-                    groupLabel, listResponse.getStatusCode(), listResponse.getBody().asString()));
+            LOGGER.warn("Failed to list projects for group [{}]: HTTP {} — {}",
+                    groupLabel, listResponse.getStatusCode(), listResponse.getBody().asString());
+            uploadFailures.add(String.format("GET /rest/projects returned HTTP %d: %s",
+                    listResponse.getStatusCode(), listResponse.getBody().asString()));
+            return;
         }
         List<Map<String, Object>> projects = extractProjects(listResponse);
         for (Map<String, Object> project : projects) {
             projectsByName.put(String.valueOf(project.get("name")), project);
         }
         LOGGER.info("Group [{}]: uploaded {} zip(s), {} project(s) visible via API",
-                groupLabel, zipsInGroup.size(), projectsByName.size());
+                groupLabel, uploadedProjectNames.size(), projectsByName.size());
     }
 
     @AfterClass(alwaysRun = true)
@@ -139,7 +145,17 @@ public abstract class AbstractZippedProjectsApi implements ITest {
 
     @Test
     public void testZippedGroup() {
-        List<String> failures = new ArrayList<>();
+        if (uploadedProjectNames.isEmpty()) {
+            StringBuilder sb = new StringBuilder(String.format(
+                    "Group [%s] — no projects to validate (all %d upload(s) failed):",
+                    groupLabel, zipsInGroup.size()));
+            appendZipPaths(sb);
+            for (String f : uploadFailures) {
+                sb.append("\n\n").append(f);
+            }
+            Assert.fail(sb.toString());
+        }
+        List<String> failures = new ArrayList<>(uploadFailures);
         for (String projectName : uploadedProjectNames) {
             Map<String, Object> project = projectsByName.get(projectName);
             if (project == null) {
@@ -154,7 +170,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         }
         if (!failures.isEmpty()) {
             StringBuilder sb = new StringBuilder(String.format(
-                    "Group [%s] — %d/%d project(s) failed:",
+                    "Group [%s] — %d issue(s) of %d project(s):",
                     groupLabel, failures.size(), uploadedProjectNames.size()));
             appendZipPaths(sb);
             for (String f : failures) {
