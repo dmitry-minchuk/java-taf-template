@@ -22,7 +22,6 @@ import org.testng.ITest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
@@ -121,40 +120,48 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         }
     }
 
-    @DataProvider(name = "zippedProjects")
-    public Object[][] zippedProjects() {
-        return uploadedProjectNames.stream()
-                .map(name -> new Object[]{name})
-                .toArray(Object[][]::new);
-    }
-
     @BeforeMethod(alwaysRun = true)
-    public void recordTestName(Method method, Object[] params) {
-        // Return ONLY the parameter value (project name) from ITest. ReportPortal
-        // uses this directly so each row shows the project name as its name.
-        // IntelliJ's TestNG tree appends "[param]" on top, which makes that view
-        // show "<project>[<project>]" — visual duplication is local-IDE only and
-        // doesn't affect RP/CI triage, which is the main consumer of these names.
-        if (params != null && params.length > 0 && params[0] != null) {
-            currentTestName.set(String.valueOf(params[0]));
-        } else {
-            currentTestName.set(method.getName());
-        }
+    public void recordTestName(Method method) {
+        // One @Test row per group. The displayed name lists all projects that
+        // were uploaded into this group's container, matching the legacy UI test
+        // shape: testLocalZippedProjects[proj1, proj2, proj3].
+        String params = uploadedProjectNames.isEmpty()
+                ? "no-projects"
+                : String.join(", ", uploadedProjectNames);
+        currentTestName.set(method.getName() + "[" + params + "]");
     }
 
     @Override
     public String getTestName() {
         String n = currentTestName.get();
-        return n != null ? n : "testZippedProject";
+        return n != null ? n : "testZippedGroup";
     }
 
-    @Test(dataProvider = "zippedProjects")
-    public void testZippedProject(String projectName) {
-        Map<String, Object> project = projectsByName.get(projectName);
-        Assert.assertNotNull(project, String.format(
-                "Project [%s] was uploaded but not visible in GET /rest/projects for group [%s]",
-                projectName, groupLabel));
-        validateProject(project);
+    @Test
+    public void testZippedGroup() {
+        List<String> failures = new ArrayList<>();
+        for (String projectName : uploadedProjectNames) {
+            Map<String, Object> project = projectsByName.get(projectName);
+            if (project == null) {
+                failures.add(String.format("Project [%s] was uploaded but not visible in GET /rest/projects", projectName));
+                continue;
+            }
+            try {
+                validateProject(project);
+            } catch (AssertionError e) {
+                failures.add(e.getMessage());
+            }
+        }
+        if (!failures.isEmpty()) {
+            StringBuilder sb = new StringBuilder(String.format(
+                    "Group [%s] — %d/%d project(s) failed:",
+                    groupLabel, failures.size(), uploadedProjectNames.size()));
+            appendZipPaths(sb);
+            for (String f : failures) {
+                sb.append("\n\n").append(f);
+            }
+            Assert.fail(sb.toString());
+        }
     }
 
     /**
@@ -245,10 +252,18 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             StringBuilder sb = new StringBuilder();
             sb.append(String.format("Project [%s] has %d test failures (of %d total) across %d module(s) in group [%s]",
                     projectName, aggregateFailures, aggregateTotal, modulesWithTests, groupLabel));
+            appendZipPaths(sb);
             for (String block : failureBlocks) {
                 sb.append("\n").append(block);
             }
             Assert.fail(sb.toString());
+        }
+    }
+
+    private void appendZipPaths(StringBuilder sb) {
+        sb.append("\nProjects location:");
+        for (File zip : zipsInGroup) {
+            sb.append("\n  ").append(zip.getAbsolutePath());
         }
     }
 
@@ -308,7 +323,8 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Compilation errors detected in project: %s%n", projectName));
         sb.append(String.format("Group: %s%n", groupLabel));
-        sb.append(String.format("ERRORS (%d):%n", errors.size()));
+        appendZipPaths(sb);
+        sb.append(String.format("%nERRORS (%d):%n", errors.size()));
         for (int i = 0; i < errors.size(); i++) {
             sb.append(String.format("  %d. %s%n", i + 1, errors.get(i)));
         }
