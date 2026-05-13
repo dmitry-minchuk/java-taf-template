@@ -13,88 +13,81 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.annotations.AfterMethod;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
-import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
-public class TestGenesisProjectsApi {
-    private static final Logger LOGGER = LogManager.getLogger(TestGenesisProjectsApi.class);
+public abstract class AbstractStudioCentralProjectsApi {
+    protected static final Logger LOGGER = LogManager.getLogger(AbstractStudioCentralProjectsApi.class);
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(60);
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
     private static final int TEST_SUMMARY_POLL_TIMEOUT_MS = 10 * 60 * 1_000;
 
-    private SoftAssert softAssert;
+    private final Map<String, Map<String, Object>> projectsByName = new LinkedHashMap<>();
 
-    public enum GenesisGroup {
-        GROUP_1_RATING_CLAIM(AppContainerStartParameters.GENESIS_GROUP_1_PARAMS, "rating + claim"),
-        GROUP_2_POLICY_BUNDLE(AppContainerStartParameters.GENESIS_GROUP_2_PARAMS, "policy bundle");
+    protected abstract AppContainerStartParameters params();
 
-        final AppContainerStartParameters startParams;
-        final String label;
+    protected abstract String groupLabel();
 
-        GenesisGroup(AppContainerStartParameters startParams, String label) {
-            this.startParams = startParams;
-            this.label = label;
+    @BeforeClass
+    public void setUp() {
+        startContainer();
+        AuthorizedApiMethod.startSession();
+
+        LOGGER.info("Listing projects for group [{}] — triggers lazy git clone if not yet done...", groupLabel());
+        Response listResponse = new ProjectsMethod().getAllProjects(500);
+        if (listResponse.getStatusCode() != 200) {
+            throw new IllegalStateException(String.format(
+                    "Failed to list projects for group [%s]: HTTP %d — %s",
+                    groupLabel(), listResponse.getStatusCode(), listResponse.getBody().asString()));
         }
+        List<Map<String, Object>> projects = extractProjects(listResponse);
+        for (Map<String, Object> project : projects) {
+            projectsByName.put(String.valueOf(project.get("name")), project);
+        }
+        LOGGER.info("Found {} projects in group [{}]", projectsByName.size(), groupLabel());
     }
 
-    @DataProvider(name = "GenesisGroups")
-    public Object[][] genesisGroups() {
-        return new Object[][]{
-                {GenesisGroup.GROUP_1_RATING_CLAIM},
-                {GenesisGroup.GROUP_2_POLICY_BUNDLE}
-        };
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void tearDown(Method method) {
+    @AfterClass(alwaysRun = true)
+    public void tearDown() {
         AuthorizedApiMethod.clearSession();
         if (AppContainerPool.get() != null) {
             AppContainerPool.closeAppContainer();
         }
     }
 
-    @Test(dataProvider = "GenesisGroups")
-    public void testGenesisGroup(GenesisGroup group) {
-        softAssert = new SoftAssert();
-        startContainer(group);
-        AuthorizedApiMethod.startSession();
-
-        LOGGER.info("Triggering lazy git clone for group [{}] — this may take up to an hour...", group.label);
-        Response listResponse = new ProjectsMethod().getAllProjects(500);
-        softAssert.assertEquals(listResponse.getStatusCode(), 200,
-                String.format("List projects failed for group %s", group.label));
-
-        if (listResponse.getStatusCode() != 200) {
-            softAssert.assertAll();
-            return;
-        }
-
-        List<Map<String, Object>> projects = extractProjects(listResponse);
-        LOGGER.info("Found {} projects in group [{}]", projects.size(), group.label);
-
-        for (Map<String, Object> project : projects) {
-            validateProject(project);
-        }
-
-        softAssert.assertAll();
+    @DataProvider(name = "studioCentralProjects")
+    public Object[][] studioCentralProjects() {
+        return projectsByName.keySet().stream()
+                .map(name -> new Object[]{name})
+                .toArray(Object[][]::new);
     }
 
-    private void startContainer(GenesisGroup group) {
-        String containerName = StringUtil.generateUniqueName("genesis_" + group.name().toLowerCase());
-        Map<String, String> envVars = group.startParams.getParameterMap();
+    @Test(dataProvider = "studioCentralProjects")
+    public void testStudioCentralProject(String projectName) {
+        Map<String, Object> project = projectsByName.get(projectName);
+        Assert.assertNotNull(project, "Project not found in discovered set: " + projectName);
+        validateProject(project);
+    }
+
+    private void startContainer() {
+        AppContainerStartParameters startParams = params();
+        String containerName = StringUtil.generateUniqueName("studio_central_" + startParams.name().toLowerCase());
+        Map<String, String> envVars = startParams.getParameterMap();
         envVars.forEach((k, v) -> LOGGER.info("[{}] -> [{}]", k, v));
         String dockerImage = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
 
         LOGGER.info("Starting WebStudio container for group [{}]. First boot clones design repos and may take up to {} minutes.",
-                group.label, CONTAINER_STARTUP_TIMEOUT.toMinutes());
+                groupLabel(), CONTAINER_STARTUP_TIMEOUT.toMinutes());
         AtomicBoolean done = new AtomicBoolean(false);
         long started = System.currentTimeMillis();
         Thread heartbeat = new Thread(() -> {
@@ -104,12 +97,12 @@ public class TestGenesisProjectsApi {
                     if (done.get()) return;
                     long elapsedSec = (System.currentTimeMillis() - started) / 1000;
                     LOGGER.info("...still cloning/booting [{}] — elapsed {}m {}s",
-                            group.label, elapsedSec / 60, elapsedSec % 60);
+                            groupLabel(), elapsedSec / 60, elapsedSec % 60);
                 }
             } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
-        }, "genesis-warmup-heartbeat");
+        }, "studio-central-warmup-heartbeat");
         heartbeat.setDaemon(true);
         heartbeat.start();
         try {
@@ -138,20 +131,17 @@ public class TestGenesisProjectsApi {
 
         if (!"OPENED".equalsIgnoreCase(status)) {
             Response open = new ProjectsMethod().openProject(projectId);
-            softAssert.assertTrue(open.getStatusCode() < 300,
+            Assert.assertTrue(open.getStatusCode() < 300,
                     String.format("Failed to open project %s: HTTP %d — %s",
                             projectName, open.getStatusCode(), open.getBody().asString()));
         }
 
         Response modulesResp = new ProjectModulesMethod(projectId).listModules();
-        softAssert.assertEquals(modulesResp.getStatusCode(), 200,
+        Assert.assertEquals(modulesResp.getStatusCode(), 200,
                 String.format("List modules failed for project %s", projectName));
-        if (modulesResp.getStatusCode() != 200) {
-            return;
-        }
         List<?> modules = modulesResp.jsonPath().getList("$");
         if (modules.isEmpty()) {
-            LOGGER.info("Project [{}] has no modules — skipping compile/test checks", projectName);
+            LOGGER.info("Project [{}] has no modules — skipping test run", projectName);
             return;
         }
 
@@ -165,34 +155,27 @@ public class TestGenesisProjectsApi {
             LOGGER.info("Project [{}] has no Test tables — skipping test execution", projectName);
             return;
         }
-        softAssert.assertTrue(runStatus == 200 || runStatus == 202,
+        Assert.assertTrue(runStatus == 200 || runStatus == 202,
                 String.format("Failed to start tests for project %s: HTTP %d — %s",
                         projectName, runStatus, runResponse.getBody().asString()));
-        if (runStatus != 200 && runStatus != 202) {
-            return;
-        }
 
         Response summary = pollTestsSummary(projectId, projectName);
-        if (summary == null) {
-            softAssert.fail(String.format("Test summary timed out for project [%s]", projectName));
-            return;
-        }
+        Assert.assertNotNull(summary, String.format("Test summary timed out for project [%s]", projectName));
         if (summary.getStatusCode() == 404) {
             LOGGER.info("Project [{}] reports no test execution task — likely no Test tables", projectName);
             return;
         }
-        if (summary.getStatusCode() != 200) {
-            softAssert.fail(String.format("Tests summary returned HTTP %d for project [%s]: %s",
-                    summary.getStatusCode(), projectName, summary.getBody().asString()));
-            return;
-        }
+        Assert.assertEquals(summary.getStatusCode(), 200,
+                String.format("Tests summary returned HTTP %d for project [%s]: %s",
+                        summary.getStatusCode(), projectName, summary.getBody().asString()));
+
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
         Integer total = summary.jsonPath().getInt("numberOfTests");
         LOGGER.info("Project [{}] tests: total={}, failures={}", projectName, total, failures);
         if (failures != null && failures > 0) {
             String detail = buildFailureReport(projectName, total, failures, summary.jsonPath());
             LOGGER.error(detail);
-            softAssert.fail(detail);
+            Assert.fail(detail);
         }
     }
 
@@ -215,8 +198,10 @@ public class TestGenesisProjectsApi {
             List<Map<String, Object>> testUnits = (List<Map<String, Object>>) testCase.get("testUnits");
             if (testUnits == null) continue;
             for (Map<String, Object> unit : testUnits) {
-                String status = String.valueOf(unit.get("status"));
-                if (status == null || !status.toUpperCase().contains("FAIL") && !status.equalsIgnoreCase("ERROR")) {
+                String status = stringOrNull(unit.get("status"));
+                if (status == null) continue;
+                String up = status.toUpperCase();
+                if (!up.contains("FAIL") && !up.equals("ERROR")) {
                     continue;
                 }
                 appendFailedUnit(sb, unit);
@@ -235,15 +220,18 @@ public class TestGenesisProjectsApi {
 
         List<Map<String, Object>> params = (List<Map<String, Object>>) unit.get("parameters");
         if (params != null && !params.isEmpty()) {
-            sb.append("%n      input: ".formatted());
-            sb.append(params.stream().map(this::formatParamValue).collect(java.util.stream.Collectors.joining(", ")));
+            sb.append(String.format("%n      input: "));
+            sb.append(params.stream().map(this::formatParamValue).collect(Collectors.joining(", ")));
         }
         List<Map<String, Object>> assertions = (List<Map<String, Object>>) unit.get("testAssertions");
         if (assertions != null) {
             for (Map<String, Object> assertion : assertions) {
                 String aStatus = stringOrNull(assertion.get("status"));
-                if (aStatus != null && !aStatus.toUpperCase().contains("FAIL") && !aStatus.equalsIgnoreCase("ERROR")) {
-                    continue;
+                if (aStatus != null) {
+                    String up = aStatus.toUpperCase();
+                    if (!up.contains("FAIL") && !up.equals("ERROR")) {
+                        continue;
+                    }
                 }
                 String aDesc = stringOrNull(assertion.get("description"));
                 Object expected = assertion.get("expectedValue");
@@ -288,7 +276,6 @@ public class TestGenesisProjectsApi {
         Response last = null;
         int consecutive404 = 0;
         while (System.currentTimeMillis() < deadline) {
-            // Quiet during polling — 202/409 are normal "still running" signals.
             last = client.getTestsSummary(projectId, false, 100, false);
             int code = last.getStatusCode();
             if (code == 200) {

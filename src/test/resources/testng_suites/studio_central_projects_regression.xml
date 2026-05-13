@@ -2,11 +2,17 @@
 <suite verbose="1" name="Central Projects" annotations="JDK" parallel="tests" thread-count="1">
 
     <listeners>
-        <listener class-name="configuration.listeners.GenesisLaunchDescriptionListener"/>
+        <listener class-name="configuration.listeners.StudioCentralLaunchDescriptionListener"/>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="TestLocalCentralProjects"><classes><class name="tests.ui.webstudio.client.TestGenesisProjectsApi"/></classes></test>
+    <test name="Group 1: rating + claim">
+        <classes><class name="tests.ui.webstudio.client.TestStudioCentralGroupRatingClaim"/></classes>
+    </test>
+
+    <test name="Group 2: policy bundle">
+        <classes><class name="tests.ui.webstudio.client.TestStudioCentralGroupPolicyBundle"/></classes>
+    </test>
 
 </suite>

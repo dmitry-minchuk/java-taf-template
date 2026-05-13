@@ -7,7 +7,7 @@ import org.testng.IExecutionListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class GenesisLaunchDescriptionListener implements IExecutionListener {
+public class StudioCentralLaunchDescriptionListener implements IExecutionListener {
 
     @Override
     public void onExecutionStart() {
@@ -22,7 +22,7 @@ public class GenesisLaunchDescriptionListener implements IExecutionListener {
 
     private static String buildDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append("## Genesis Projects — API Validation").append("\n\n");
+        sb.append("## Studio Central Projects — API Validation").append("\n\n");
         sb.append("End-to-end check that every project across the selected design repositories ")
                 .append("opens, lists modules and passes its test tables. Driven entirely via WebStudio REST (no UI).")
                 .append("\n\n");
