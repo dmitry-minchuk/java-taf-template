@@ -1,4 +1,4 @@
-package tests.api;
+package tests.api.webstudio.integration;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;

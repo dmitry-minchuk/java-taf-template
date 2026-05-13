@@ -1,4 +1,4 @@
-package tests.ui.webstudio.client;
+package tests.api.webstudio.client;
 
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;

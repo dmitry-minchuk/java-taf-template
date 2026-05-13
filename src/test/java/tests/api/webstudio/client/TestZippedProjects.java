@@ -1,4 +1,4 @@
-package tests.ui.webstudio.client;
+package tests.api.webstudio.client;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;

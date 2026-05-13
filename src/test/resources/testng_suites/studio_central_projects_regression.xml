@@ -7,11 +7,11 @@
     </listeners>
 
     <test name="Group 1: rating + claim">
-        <classes><class name="tests.ui.webstudio.client.TestStudioCentralGroupRatingClaim"/></classes>
+        <classes><class name="tests.api.webstudio.client.TestStudioCentralGroupRatingClaim"/></classes>
     </test>
 
     <test name="Group 2: policy bundle">
-        <classes><class name="tests.ui.webstudio.client.TestStudioCentralGroupPolicyBundle"/></classes>
+        <classes><class name="tests.api.webstudio.client.TestStudioCentralGroupPolicyBundle"/></classes>
     </test>
 
 </suite>
