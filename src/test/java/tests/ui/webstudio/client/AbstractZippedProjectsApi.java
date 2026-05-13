@@ -18,10 +18,14 @@ import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
+import org.testng.ITest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 import java.io.File;
 import java.time.Duration;
@@ -40,7 +44,7 @@ import java.util.stream.Collectors;
  * Subclasses are created dynamically via {@link TestZippedProjects} {@code @Factory},
  * one instance per discovered group on disk.
  */
-public abstract class AbstractZippedProjectsApi {
+public abstract class AbstractZippedProjectsApi implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(AbstractZippedProjectsApi.class);
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(10);
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 500;
@@ -57,6 +61,7 @@ public abstract class AbstractZippedProjectsApi {
     private final String groupLabel;
     private final Map<String, Map<String, Object>> projectsByName = new LinkedHashMap<>();
     private final List<String> uploadedProjectNames = new ArrayList<>();
+    private final ThreadLocal<String> currentTestName = new ThreadLocal<>();
 
     protected AbstractZippedProjectsApi(List<File> zipsInGroup, String groupLabel) {
         this.zipsInGroup = zipsInGroup;
@@ -121,6 +126,21 @@ public abstract class AbstractZippedProjectsApi {
         return uploadedProjectNames.stream()
                 .map(name -> new Object[]{name})
                 .toArray(Object[][]::new);
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    public void recordTestName(Method method, Object[] params) {
+        if (params != null && params.length > 0 && params[0] != null) {
+            currentTestName.set(method.getName() + "[" + params[0] + "]");
+        } else {
+            currentTestName.set(method.getName());
+        }
+    }
+
+    @Override
+    public String getTestName() {
+        String n = currentTestName.get();
+        return n != null ? n : "testZippedProject";
     }
 
     @Test(dataProvider = "zippedProjects")
