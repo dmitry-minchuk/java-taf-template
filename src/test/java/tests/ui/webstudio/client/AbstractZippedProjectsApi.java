@@ -185,14 +185,63 @@ public abstract class AbstractZippedProjectsApi {
         Assert.assertEquals(modulesResp.getStatusCode(), 200,
                 String.format("List modules failed for project %s in group %s",
                         projectName, groupLabel));
-        List<?> modules = modulesResp.jsonPath().getList("$");
+        List<Map<String, Object>> modules = extractModuleList(modulesResp);
         if (modules.isEmpty()) {
             LOGGER.info("Project [{}] has no modules — skipping test run", projectName);
             return;
         }
 
         checkCompilation(projectName);
-        runProjectTests(projectId, projectName);
+
+        // Iterate each module independently so the server can scope compile+execution
+        // to one module at a time. Tests are module-local in OpenL; running per module
+        // mirrors what the user does in the UI (clicking modules one by one), and lets
+        // us aggregate per-module results into one project-level report.
+        List<String> failureBlocks = new ArrayList<>();
+        int aggregateTotal = 0;
+        int aggregateFailures = 0;
+        int modulesWithTests = 0;
+        for (Map<String, Object> module : modules) {
+            String moduleName = String.valueOf(module.get("name"));
+            ModuleResult r = runTestsForModule(projectId, projectName, moduleName);
+            if (r == null) continue;
+            aggregateTotal += r.total;
+            aggregateFailures += r.failures;
+            if (r.total > 0 || r.failures > 0) modulesWithTests++;
+            if (r.failureBlock != null) failureBlocks.add(r.failureBlock);
+        }
+        if (modulesWithTests == 0) {
+            LOGGER.info("Project [{}]: no Test tables in any module", projectName);
+            return;
+        }
+        LOGGER.info("Project [{}] aggregate: total={}, failures={} (across {} module(s) with tests)",
+                projectName, aggregateTotal, aggregateFailures, modulesWithTests);
+        if (aggregateFailures > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("Project [%s] has %d test failures (of %d total) across %d module(s) in group [%s]",
+                    projectName, aggregateFailures, aggregateTotal, modulesWithTests, groupLabel));
+            for (String block : failureBlocks) {
+                sb.append("\n").append(block);
+            }
+            Assert.fail(sb.toString());
+        }
+    }
+
+    private static final class ModuleResult {
+        final int total;
+        final int failures;
+        final String failureBlock;
+
+        ModuleResult(int total, int failures, String failureBlock) {
+            this.total = total;
+            this.failures = failures;
+            this.failureBlock = failureBlock;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> extractModuleList(Response response) {
+        return (List<Map<String, Object>>) (List<?>) response.jsonPath().getList("$");
     }
 
     @SuppressWarnings("unchecked")
@@ -243,51 +292,67 @@ public abstract class AbstractZippedProjectsApi {
         Assert.fail(detail);
     }
 
-    private void runProjectTests(String projectId, String projectName) {
-        Response runResponse = new ProjectTestsMethod().runAllTests(projectId);
+    private ModuleResult runTestsForModule(String projectId, String projectName, String moduleName) {
+        Response runResponse = new ProjectTestsMethod().runAllTests(projectId, moduleName);
         int runStatus = runResponse.getStatusCode();
         if (runStatus == 404 || runStatus == 204) {
-            LOGGER.info("Project [{}] has no Test tables — skipping test execution", projectName);
-            return;
+            LOGGER.info("Project [{}] module [{}] has no Test tables — skipping", projectName, moduleName);
+            return new ModuleResult(0, 0, null);
         }
-        Assert.assertTrue(runStatus == 200 || runStatus == 202,
-                String.format("Failed to start tests for project %s: HTTP %d — %s",
-                        projectName, runStatus, runResponse.getBody().asString()));
+        if (runStatus != 200 && runStatus != 202) {
+            String msg = String.format("Failed to start tests for project [%s] module [%s]: HTTP %d — %s",
+                    projectName, moduleName, runStatus, runResponse.getBody().asString());
+            LOGGER.error(msg);
+            return new ModuleResult(0, 1, msg);
+        }
 
         Response summary = pollTestsSummary(projectId, projectName);
-        Assert.assertNotNull(summary, String.format("Test summary timed out for project [%s]", projectName));
-        if (summary.getStatusCode() == 404) {
-            LOGGER.info("Project [{}] reports no test execution task — likely no Test tables", projectName);
-            return;
+        if (summary == null) {
+            String msg = String.format("Test summary timed out for project [%s] module [%s]", projectName, moduleName);
+            LOGGER.error(msg);
+            return new ModuleResult(0, 1, msg);
         }
-        Assert.assertEquals(summary.getStatusCode(), 200,
-                String.format("Tests summary returned HTTP %d for project [%s]: %s",
-                        summary.getStatusCode(), projectName, summary.getBody().asString()));
-
+        if (summary.getStatusCode() == 404) {
+            LOGGER.info("Project [{}] module [{}] reports no test execution task", projectName, moduleName);
+            return new ModuleResult(0, 0, null);
+        }
+        if (summary.getStatusCode() != 200) {
+            String msg = String.format("Tests summary returned HTTP %d for project [%s] module [%s]: %s",
+                    summary.getStatusCode(), projectName, moduleName, summary.getBody().asString());
+            LOGGER.error(msg);
+            return new ModuleResult(0, 1, msg);
+        }
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
         Integer total = summary.jsonPath().getInt("numberOfTests");
-        LOGGER.info("Project [{}] tests: total={}, failures={}", projectName, total, failures);
-        if (failures != null && failures > 0) {
-            String detail = buildFailureReport(projectName, total, failures, summary.jsonPath());
-            LOGGER.error(detail);
-            Assert.fail(detail);
+        int f = failures == null ? 0 : failures;
+        int t = total == null ? 0 : total;
+        if (t == 0 && f == 0) {
+            return new ModuleResult(0, 0, null);
         }
+        LOGGER.info("Project [{}] module [{}] tests: total={}, failures={}", projectName, moduleName, t, f);
+        if (f > 0) {
+            String detail = buildFailureReportForModule(projectName, moduleName, t, f, summary.jsonPath());
+            LOGGER.error(detail);
+            return new ModuleResult(t, f, detail);
+        }
+        return new ModuleResult(t, 0, null);
+    }
+
+    private String buildFailureReportForModule(String projectName, String moduleName,
+                                               int total, int failures, JsonPath summaryJson) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Module [%s] — %d/%d failed", moduleName, failures, total));
+        appendTestCases(sb, summaryJson);
+        return sb.toString();
     }
 
     @SuppressWarnings("unchecked")
-    private String buildFailureReport(String projectName, int total, int failures, JsonPath summaryJson) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Project [%s] has %d test failures (of %d total) in group [%s]",
-                projectName, failures, total, groupLabel));
+    private void appendTestCases(StringBuilder sb, JsonPath summaryJson) {
         List<Map<String, Object>> testCases = summaryJson.getList("testCases");
-        if (testCases == null || testCases.isEmpty()) {
-            return sb.toString();
-        }
+        if (testCases == null || testCases.isEmpty()) return;
         for (Map<String, Object> testCase : testCases) {
             Integer caseFailures = toInt(testCase.get("numberOfFailures"));
-            if (caseFailures == null || caseFailures == 0) {
-                continue;
-            }
+            if (caseFailures == null || caseFailures == 0) continue;
             String caseName = String.valueOf(testCase.get("name"));
             Integer caseTotal = toInt(testCase.get("numberOfTests"));
             sb.append(String.format("%n  TestCase [%s] — %d/%d failed",
@@ -298,13 +363,10 @@ public abstract class AbstractZippedProjectsApi {
                 String status = stringOrNull(unit.get("status"));
                 if (status == null) continue;
                 String up = status.toUpperCase();
-                if (!up.contains("FAIL") && !up.equals("ERROR")) {
-                    continue;
-                }
+                if (!up.contains("FAIL") && !up.equals("ERROR")) continue;
                 appendFailedUnit(sb, unit);
             }
         }
-        return sb.toString();
     }
 
     @SuppressWarnings("unchecked")
