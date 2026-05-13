@@ -145,39 +145,43 @@ public abstract class AbstractZippedProjectsApi implements ITest {
 
     @Test
     public void testZippedGroup() {
-        if (uploadedProjectNames.isEmpty()) {
-            StringBuilder sb = new StringBuilder(String.format(
-                    "Group [%s] — no projects to validate (all %d upload(s) failed):",
-                    groupLabel, zipsInGroup.size()));
-            appendZipPaths(sb);
-            for (String f : uploadFailures) {
-                sb.append("\n\n").append(f);
-            }
-            Assert.fail(sb.toString());
-        }
-        List<String> failures = new ArrayList<>(uploadFailures);
+        List<String> validationFailures = new ArrayList<>();
         for (String projectName : uploadedProjectNames) {
             Map<String, Object> project = projectsByName.get(projectName);
             if (project == null) {
-                failures.add(String.format("Project [%s] was uploaded but not visible in GET /rest/projects", projectName));
+                validationFailures.add(String.format(
+                        "Project [%s] was uploaded but not visible in GET /rest/projects", projectName));
                 continue;
             }
             try {
                 validateProject(project);
             } catch (AssertionError e) {
-                failures.add(e.getMessage());
+                validationFailures.add(e.getMessage());
             }
         }
-        if (!failures.isEmpty()) {
-            StringBuilder sb = new StringBuilder(String.format(
-                    "Group [%s] — %d issue(s) of %d project(s):",
-                    groupLabel, failures.size(), uploadedProjectNames.size()));
-            appendZipPaths(sb);
-            for (String f : failures) {
+        if (uploadFailures.isEmpty() && validationFailures.isEmpty()) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Group [%s] — %d/%d zip(s) failed to upload, %d/%d uploaded project(s) failed validation",
+                groupLabel,
+                uploadFailures.size(), zipsInGroup.size(),
+                validationFailures.size(), uploadedProjectNames.size()));
+        appendZipPaths(sb);
+        if (!uploadFailures.isEmpty()) {
+            sb.append("\n\nUpload errors:");
+            for (String f : uploadFailures) {
+                sb.append("\n  ").append(f.replace("\n", "\n  "));
+            }
+        }
+        if (!validationFailures.isEmpty()) {
+            sb.append("\n\nValidation failures:");
+            for (String f : validationFailures) {
                 sb.append("\n\n").append(f);
             }
-            Assert.fail(sb.toString());
         }
+        Assert.fail(sb.toString());
     }
 
     /**
