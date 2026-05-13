@@ -5,6 +5,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.api.AuthorizedApiMethod;
+import domain.api.CompileMethod;
 import domain.api.ProjectModulesMethod;
 import domain.api.ProjectTestsMethod;
 import domain.api.ProjectsMethod;
@@ -31,6 +32,8 @@ public abstract class AbstractStudioCentralProjectsApi {
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(60);
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
     private static final int TEST_SUMMARY_POLL_TIMEOUT_MS = 10 * 60 * 1_000;
+    private static final int COMPILE_POLL_INTERVAL_MS = 1_500;
+    private static final int COMPILE_POLL_TIMEOUT_MS = 3 * 60 * 1_000;
 
     private final Map<String, Map<String, Object>> projectsByName = new LinkedHashMap<>();
 
@@ -145,7 +148,55 @@ public abstract class AbstractStudioCentralProjectsApi {
             return;
         }
 
+        checkCompilation(projectName);
         runProjectTests(projectId, projectName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkCompilation(String projectName) {
+        CompileMethod compile = new CompileMethod();
+        long deadline = System.currentTimeMillis() + COMPILE_POLL_TIMEOUT_MS;
+        Response last = null;
+        while (System.currentTimeMillis() < deadline) {
+            last = compile.getCompileProgress(-1L, -1, false);
+            if (last.getStatusCode() != 200) {
+                LOGGER.warn("Compile progress returned HTTP {} for project [{}]: {}",
+                        last.getStatusCode(), projectName, last.getBody().asString());
+                return;
+            }
+            Boolean completed = last.jsonPath().getBoolean("compilationCompleted");
+            if (Boolean.TRUE.equals(completed)) {
+                break;
+            }
+            sleepInterruptible(COMPILE_POLL_INTERVAL_MS);
+        }
+        if (last == null) {
+            return;
+        }
+        Integer errorsCount = toInt(last.jsonPath().get("errorsCount"));
+        List<Map<String, Object>> messages = last.jsonPath().getList("messages");
+        List<String> errors = new java.util.ArrayList<>();
+        if (messages != null) {
+            for (Map<String, Object> msg : messages) {
+                String severity = stringOrNull(msg.get("severity"));
+                if (severity != null && severity.equalsIgnoreCase("ERROR")) {
+                    String summary = stringOrNull(msg.get("summary"));
+                    errors.add(summary != null ? summary : "(empty)");
+                }
+            }
+        }
+        if (errors.isEmpty() && (errorsCount == null || errorsCount == 0)) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Compilation errors detected in project: %s%n", projectName));
+        sb.append(String.format("ERRORS (%d):%n", errors.size()));
+        for (int i = 0; i < errors.size(); i++) {
+            sb.append(String.format("  %d. %s%n", i + 1, errors.get(i)));
+        }
+        String detail = sb.toString();
+        LOGGER.error(detail);
+        Assert.fail(detail);
     }
 
     private void runProjectTests(String projectId, String projectName) {
@@ -302,8 +353,12 @@ public abstract class AbstractStudioCentralProjectsApi {
     }
 
     private void sleepInterruptible() {
+        sleepInterruptible(TEST_SUMMARY_POLL_INTERVAL_MS);
+    }
+
+    private void sleepInterruptible(long millis) {
         try {
-            Thread.sleep(TEST_SUMMARY_POLL_INTERVAL_MS);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
