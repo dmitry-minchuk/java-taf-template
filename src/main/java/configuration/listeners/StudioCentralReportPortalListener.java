@@ -33,22 +33,29 @@ public class StudioCentralReportPortalListener extends BaseTestNGListener {
 
     private static String buildDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append("**Studio Central Projects — API Validation**").append("\n\n");
+        sb.append("### Studio Central Projects — API Validation").append("\n\n");
         sb.append("End-to-end check that every project across the selected design repositories ")
                 .append("opens, lists modules and passes its test tables. Driven entirely via WebStudio REST (no UI).")
                 .append("\n\n");
-        sb.append("- **Started:** ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
-        sb.append("- **Container image:** `").append(safeProp(PropertyNameSpace.DOCKER_IMAGE_NAME)).append("`").append("\n");
-        sb.append("- **Branch:** `").append(safeProp(PropertyNameSpace.GITLAB_BRANCH)).append("`").append("\n");
-        sb.append("- **User:** `").append(safeProp(PropertyNameSpace.GITLAB_USER)).append("`").append("\n\n");
-        sb.append("**Repository groups**").append("\n\n");
-        sb.append("- _rating + claim_: openl-rating, openl-claim").append("\n");
-        sb.append("- _policy bundle_: openl-policy, openl-policy-life, openl-financials").append("\n\n");
-        sb.append("**Per project flow**").append("\n\n");
-        sb.append("- `PATCH /rest/projects/{id}` → status=OPENED").append("\n");
-        sb.append("- `GET /rest/projects/{id}/modules`").append("\n");
-        sb.append("- `GET /rest/compile/progress/-1/-1` → fail on ERROR-severity messages").append("\n");
-        sb.append("- `POST /rest/projects/{id}/tests/run` + polled `GET …/tests/summary` (JSESSIONID kept across calls)").append("\n");
+        sb.append("### Run metadata").append("\n\n");
+        sb.append("- **Started:** `").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("`\n");
+        sb.append("- **Container image:** `").append(safeProp(PropertyNameSpace.DOCKER_IMAGE_NAME)).append("`\n");
+        sb.append("- **Branch:** `").append(safeProp(PropertyNameSpace.GITLAB_BRANCH)).append("`\n");
+        sb.append("- **User:** `").append(safeProp(PropertyNameSpace.GITLAB_USER)).append("`\n\n");
+        sb.append("### Repository groups").append("\n\n");
+        sb.append("- **rating + claim**\n");
+        sb.append("  - openl-rating\n");
+        sb.append("  - openl-claim\n");
+        sb.append("- **policy bundle**\n");
+        sb.append("  - openl-policy\n");
+        sb.append("  - openl-policy-life\n");
+        sb.append("  - openl-financials\n\n");
+        sb.append("### Per project flow").append("\n\n");
+        sb.append("- All projects are bulk-opened in `@BeforeClass` so cross-project dependencies can resolve\n");
+        sb.append("- `PATCH /rest/projects/{id}` → status=OPENED (per project, to make it current in session)\n");
+        sb.append("- `GET /rest/projects/{id}/modules`\n");
+        sb.append("- `GET /rest/compile/progress/-1/-1` → fail on ERROR-severity messages\n");
+        sb.append("- `POST /rest/projects/{id}/tests/run` + polled `GET …/tests/summary` (JSESSIONID kept across calls)\n");
         return sb.toString();
     }
 

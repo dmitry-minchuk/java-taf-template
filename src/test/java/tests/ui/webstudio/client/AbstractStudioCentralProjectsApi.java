@@ -58,6 +58,41 @@ public abstract class AbstractStudioCentralProjectsApi {
             projectsByName.put(String.valueOf(project.get("name")), project);
         }
         LOGGER.info("Found {} projects in group [{}]", projectsByName.size(), groupLabel());
+
+        openAllProjects();
+    }
+
+    /**
+     * Bulk-open every discovered project so cross-project dependencies resolve before
+     * any per-project compilation/test check runs. A project that depends on another
+     * CLOSED project would otherwise fail to compile.
+     */
+    private void openAllProjects() {
+        ProjectsMethod projects = new ProjectsMethod();
+        int opened = 0;
+        int alreadyOpen = 0;
+        int failed = 0;
+        for (Map.Entry<String, Map<String, Object>> entry : projectsByName.entrySet()) {
+            String name = entry.getKey();
+            Map<String, Object> project = entry.getValue();
+            String status = String.valueOf(project.get("status"));
+            String id = String.valueOf(project.get("id"));
+            if ("OPENED".equalsIgnoreCase(status)) {
+                alreadyOpen++;
+                continue;
+            }
+            Response resp = projects.openProject(id);
+            if (resp.getStatusCode() < 300) {
+                opened++;
+                project.put("status", "OPENED");
+            } else {
+                failed++;
+                LOGGER.warn("Failed to open project [{}]: HTTP {} — {}",
+                        name, resp.getStatusCode(), resp.getBody().asString());
+            }
+        }
+        LOGGER.info("Bulk-open for group [{}]: opened={}, alreadyOpen={}, failed={}",
+                groupLabel(), opened, alreadyOpen, failed);
     }
 
     @AfterClass(alwaysRun = true)
@@ -129,15 +164,14 @@ public abstract class AbstractStudioCentralProjectsApi {
     private void validateProject(Map<String, Object> project) {
         String projectId = String.valueOf(project.get("id"));
         String projectName = String.valueOf(project.get("name"));
-        String status = String.valueOf(project.get("status"));
-        LOGGER.info("Validating project [{}] (id={}, status={})", projectName, projectId, status);
+        LOGGER.info("Validating project [{}] (id={})", projectName, projectId);
 
-        if (!"OPENED".equalsIgnoreCase(status)) {
-            Response open = new ProjectsMethod().openProject(projectId);
-            Assert.assertTrue(open.getStatusCode() < 300,
-                    String.format("Failed to open project %s: HTTP %d — %s",
-                            projectName, open.getStatusCode(), open.getBody().asString()));
-        }
+        // Re-anchor "current project" in session even if already OPENED — compile/progress
+        // and tests endpoints read the current project from session state.
+        Response open = new ProjectsMethod().openProject(projectId);
+        Assert.assertTrue(open.getStatusCode() < 300,
+                String.format("Failed to set project %s as current: HTTP %d — %s",
+                        projectName, open.getStatusCode(), open.getBody().asString()));
 
         Response modulesResp = new ProjectModulesMethod(projectId).listModules();
         Assert.assertEquals(modulesResp.getStatusCode(), 200,
