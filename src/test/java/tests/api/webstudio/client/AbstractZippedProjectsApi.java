@@ -318,8 +318,9 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         while (System.currentTimeMillis() < deadline) {
             last = compile.getCompileProgress(-1L, -1, false);
             if (last.getStatusCode() != 200) {
-                LOGGER.warn("Compile progress returned HTTP {} for project [{}]: {}",
-                        last.getStatusCode(), projectName, last.getBody().asString());
+                LOGGER.warn("Compile progress returned HTTP {} for project [{}]: {}{}",
+                        last.getStatusCode(), projectName, last.getBody().asString(),
+                        serverBugNote(last.getStatusCode()));
                 return;
             }
             Boolean completed = last.jsonPath().getBoolean("compilationCompleted");
@@ -367,8 +368,9 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             return new ModuleResult(0, 0, null);
         }
         if (runStatus != 200 && runStatus != 202) {
-            String msg = String.format("Failed to start tests for project [%s] module [%s]: HTTP %d — %s",
-                    projectName, moduleName, runStatus, runResponse.getBody().asString());
+            String msg = String.format("Failed to start tests for project [%s] module [%s]: HTTP %d — %s%s",
+                    projectName, moduleName, runStatus, runResponse.getBody().asString(),
+                    serverBugNote(runStatus));
             LOGGER.error(msg);
             return new ModuleResult(0, 1, msg);
         }
@@ -384,8 +386,9 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             return new ModuleResult(0, 0, null);
         }
         if (summary.getStatusCode() != 200) {
-            String msg = String.format("Tests summary returned HTTP %d for project [%s] module [%s]: %s",
-                    summary.getStatusCode(), projectName, moduleName, summary.getBody().asString());
+            String msg = String.format("Tests summary returned HTTP %d for project [%s] module [%s]: %s%s",
+                    summary.getStatusCode(), projectName, moduleName, summary.getBody().asString(),
+                    serverBugNote(summary.getStatusCode()));
             LOGGER.error(msg);
             return new ModuleResult(0, 1, msg);
         }
@@ -482,6 +485,23 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         return String.valueOf(name) + "=" + String.valueOf(value);
     }
 
+    /**
+     * Appends a clarifying note when WebStudio returns a 5xx. Typical causes
+     * are server-side issues (e.g. an exception inside the tests/summary
+     * mapper) or a project that depends on classes/datatypes not available
+     * in this WebStudio build (NoClassDefFoundError on a custom calculation
+     * step). Either way it's not a test-framework issue — the test surfaces
+     * the response body verbatim so investigators can route it correctly.
+     */
+    private static String serverBugNote(int statusCode) {
+        if (statusCode >= 500 && statusCode < 600) {
+            return "\n[NOTE] HTTP " + statusCode + " comes from the OpenL server — either a server-side issue "
+                    + "or this project is incompatible with the current WebStudio build (missing classes, "
+                    + "unexpected internal state). Not a test-framework problem.";
+        }
+        return "";
+    }
+
     private String stringOrNull(Object o) {
         return o == null ? null : String.valueOf(o);
     }
@@ -520,8 +540,8 @@ public abstract class AbstractZippedProjectsApi implements ITest {
                 sleepInterruptible(TEST_SUMMARY_POLL_INTERVAL_MS);
                 continue;
             }
-            LOGGER.warn("Unexpected test summary status {} for project [{}]: {}",
-                    code, projectName, last.getBody().asString());
+            LOGGER.warn("Unexpected test summary status {} for project [{}]: {}{}",
+                    code, projectName, last.getBody().asString(), serverBugNote(code));
             return last;
         }
         return last;
