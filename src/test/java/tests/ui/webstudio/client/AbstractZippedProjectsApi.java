@@ -130,8 +130,13 @@ public abstract class AbstractZippedProjectsApi implements ITest {
 
     @BeforeMethod(alwaysRun = true)
     public void recordTestName(Method method, Object[] params) {
+        // Return ONLY the parameter value (project name) from ITest. ReportPortal
+        // uses this directly so each row shows the project name as its name.
+        // IntelliJ's TestNG tree appends "[param]" on top, which makes that view
+        // show "<project>[<project>]" — visual duplication is local-IDE only and
+        // doesn't affect RP/CI triage, which is the main consumer of these names.
         if (params != null && params.length > 0 && params[0] != null) {
-            currentTestName.set(method.getName() + "[" + params[0] + "]");
+            currentTestName.set(String.valueOf(params[0]));
         } else {
             currentTestName.set(method.getName());
         }
