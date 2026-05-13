@@ -10,6 +10,7 @@ import domain.api.ProjectModulesMethod;
 import domain.api.ProjectTestsMethod;
 import domain.api.ProjectsMethod;
 import domain.api.RepositoryProjectsMethod;
+import domain.api.UsersMethod;
 import helpers.utils.StringUtil;
 import helpers.utils.ZipProjectNameReader;
 import io.restassured.path.json.JsonPath;
@@ -66,6 +67,7 @@ public abstract class AbstractZippedProjectsApi {
     public void setUp() {
         startContainer();
         AuthorizedApiMethod.startSession();
+        configureCommitIdentity();
 
         for (File zip : zipsInGroup) {
             String name = ZipProjectNameReader.readProjectName(zip);
@@ -115,6 +117,21 @@ public abstract class AbstractZippedProjectsApi {
                 "Project [%s] was uploaded but not visible in GET /rest/projects for group [%s]",
                 projectName, groupLabel));
         validateProject(project);
+    }
+
+    /**
+     * Set first/last name + email for the authenticated admin. Without this,
+     * the local design-repo's JGit commits fail with
+     * "Name of PersonIdent must not be null" the first time a project is created.
+     * The legacy UI test handled this via the "Configure Commit Info" modal.
+     */
+    private void configureCommitIdentity() {
+        Response resp = new UsersMethod().setCurrentUserInfo(
+                "Test", "Automation", "test-automation@openl.local", "Test Automation");
+        if (resp.getStatusCode() >= 300) {
+            LOGGER.warn("Could not set admin commit identity (HTTP {}): {}",
+                    resp.getStatusCode(), resp.getBody().asString());
+        }
     }
 
     private void startContainer() {

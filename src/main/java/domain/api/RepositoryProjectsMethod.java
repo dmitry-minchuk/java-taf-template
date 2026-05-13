@@ -28,9 +28,14 @@ public class RepositoryProjectsMethod extends AuthorizedApiMethod {
      * @param zipFile     ZIP archive
      */
     public Response uploadProject(String repoName, String projectName, File zipFile) {
+        // Pre-encode the path segment ourselves AND disable RestAssured's url-encoding,
+        // otherwise RestAssured re-encodes the percent sign in our %20 sequences
+        // (e.g. "GCI Rating" → "GCI%20Rating" → over-the-wire "GCI%2520Rating", 400).
         String encodedName = URLEncoder.encode(projectName, StandardCharsets.UTF_8).replace("+", "%20");
         String url = fullApiUrl + "/" + repoName + "/projects/" + encodedName;
-        RequestSpecification spec = authorizedRequest().multiPart("template", zipFile);
+        RequestSpecification spec = authorizedRequest()
+                .urlEncodingEnabled(false)
+                .multiPart("template", zipFile);
         return callApi(Method.PUT, spec, url, true);
     }
 }
