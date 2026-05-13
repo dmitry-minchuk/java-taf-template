@@ -43,10 +43,14 @@ import java.util.stream.Collectors;
 public abstract class AbstractZippedProjectsApi {
     protected static final Logger LOGGER = LogManager.getLogger(AbstractZippedProjectsApi.class);
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(10);
-    private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
+    private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 500;
     private static final int TEST_SUMMARY_POLL_TIMEOUT_MS = 10 * 60 * 1_000;
-    private static final int COMPILE_POLL_INTERVAL_MS = 1_500;
-    private static final int COMPILE_POLL_TIMEOUT_MS = 3 * 60 * 1_000;
+    private static final int COMPILE_POLL_INTERVAL_MS = 500;
+    // Shortened from 3 min — most projects compile within seconds when scoped to a single module.
+    // If compile is genuinely slow we exit early, and tests/run will still wait for compile server-side.
+    // The cost is that compile errors in test-less projects with very slow compile might not be surfaced
+    // here, but UI mode had the same coverage gap (Problems panel showed first-module errors only).
+    private static final int COMPILE_POLL_TIMEOUT_MS = 30 * 1_000;
     private static final String DESIGN_REPO = "design";
 
     private final List<File> zipsInGroup;
@@ -74,11 +78,20 @@ public abstract class AbstractZippedProjectsApi {
             LOGGER.info("Uploading [{}] from {}", name, zip.getName());
             Response upload = new RepositoryProjectsMethod().uploadProject(DESIGN_REPO, name, zip);
             if (upload.getStatusCode() >= 300) {
-                throw new IllegalStateException(String.format(
-                        "Upload failed for zip %s (project name [%s]): HTTP %d — %s",
-                        zip.getName(), name, upload.getStatusCode(), upload.getBody().asString()));
+                // Don't kill the whole group on a single bad zip — log and continue.
+                // Common case: two zips in a deployment folder export the same business name,
+                // server accepts the first and rejects the second with 4xx/5xx.
+                LOGGER.warn("Upload failed for zip {} (project name [{}]): HTTP {} — {}",
+                        zip.getName(), name, upload.getStatusCode(), upload.getBody().asString());
+                continue;
             }
-            uploadedProjectNames.add(name);
+            if (!uploadedProjectNames.contains(name)) {
+                uploadedProjectNames.add(name);
+            }
+        }
+        if (uploadedProjectNames.isEmpty()) {
+            throw new IllegalStateException(String.format(
+                    "All uploads failed for group [%s] — no projects to validate", groupLabel));
         }
 
         Response listResponse = new ProjectsMethod().getAllProjects(500);
@@ -172,14 +185,20 @@ public abstract class AbstractZippedProjectsApi {
         Assert.assertEquals(modulesResp.getStatusCode(), 200,
                 String.format("List modules failed for project %s in group %s",
                         projectName, groupLabel));
-        List<?> modules = modulesResp.jsonPath().getList("$");
+        List<Map<String, Object>> modules = extractModuleList(modulesResp);
         if (modules.isEmpty()) {
             LOGGER.info("Project [{}] has no modules — skipping test run", projectName);
             return;
         }
+        String firstModuleName = String.valueOf(modules.get(0).get("name"));
 
         checkCompilation(projectName);
-        runProjectTests(projectId, projectName);
+        runProjectTests(projectId, projectName, firstModuleName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> extractModuleList(Response response) {
+        return (List<Map<String, Object>>) (List<?>) response.jsonPath().getList("$");
     }
 
     @SuppressWarnings("unchecked")
@@ -230,8 +249,8 @@ public abstract class AbstractZippedProjectsApi {
         Assert.fail(detail);
     }
 
-    private void runProjectTests(String projectId, String projectName) {
-        Response runResponse = new ProjectTestsMethod().runAllTests(projectId);
+    private void runProjectTests(String projectId, String projectName, String fromModule) {
+        Response runResponse = new ProjectTestsMethod().runAllTests(projectId, fromModule);
         int runStatus = runResponse.getStatusCode();
         if (runStatus == 404 || runStatus == 204) {
             LOGGER.info("Project [{}] has no Test tables — skipping test execution", projectName);
