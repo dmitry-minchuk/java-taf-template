@@ -1,23 +1,34 @@
 package configuration.listeners;
 
+import com.epam.reportportal.listeners.ListenerParameters;
+import com.epam.reportportal.service.ReportPortal;
+import com.epam.reportportal.testng.BaseTestNGListener;
+import com.epam.reportportal.testng.TestNGService;
+import com.epam.reportportal.utils.properties.PropertiesLoader;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
-import org.testng.IExecutionListener;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class StudioCentralLaunchDescriptionListener implements IExecutionListener {
+/**
+ * Drop-in replacement for ReportPortalTestNGListener that injects a dynamic markdown
+ * launch description before the Launch is created. Use in studio_central_projects_regression.xml
+ * instead of com.epam.reportportal.testng.ReportPortalTestNGListener.
+ */
+public class StudioCentralReportPortalListener extends BaseTestNGListener {
 
-    @Override
-    public void onExecutionStart() {
-        if (System.getProperty("rp.description") == null) {
-            System.setProperty("rp.description", buildDescription());
-        }
+    public StudioCentralReportPortalListener() {
+        super(new TestNGService(buildReportPortal()));
     }
 
-    @Override
-    public void onExecutionFinish() {
+    private static ReportPortal buildReportPortal() {
+        ListenerParameters params = new ListenerParameters(PropertiesLoader.load());
+        String existing = params.getDescription();
+        if (existing == null || existing.isEmpty()) {
+            params.setDescription(buildDescription());
+        }
+        return ReportPortal.builder().withParameters(params).build();
     }
 
     private static String buildDescription() {
