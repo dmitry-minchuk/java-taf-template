@@ -15,7 +15,11 @@ public enum AppContainerStartParameters {
     SAML_STUDIO_PARAMS,
     OAUTH_STUDIO_PARAMS,
     SERVICE_PARAMS,
-    SERVICE_FILE_PARAMS;
+    SERVICE_FILE_PARAMS,
+    STUDIO_CENTRAL_GROUP_1_PARAMS,
+    STUDIO_CENTRAL_GROUP_2_PARAMS;
+
+    private static final String STUDIO_CENTRAL_BASE = "https://dev2eisgengit02.exigengroup.com/gitlab/genesis/";
 
     public Map<String, String> getParameterMap() {
         Map<String, String> config = new HashMap<>();
@@ -41,6 +45,19 @@ public enum AppContainerStartParameters {
                 config.put("repository.design.login", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_LOGIN));
                 config.put("repository.design.password", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_PASSWORD));
                 config.put("repository.design.uri", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_URL));
+                break;
+            case STUDIO_CENTRAL_GROUP_1_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                config.put("design-repository-configs", "rating,claim");
+                config.putAll(studioCentralRepoConfig("rating", "openl-rating"));
+                config.putAll(studioCentralRepoConfig("claim", "openl-claim"));
+                break;
+            case STUDIO_CENTRAL_GROUP_2_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                config.put("design-repository-configs", "policy,policy_life,financials");
+                config.putAll(studioCentralRepoConfig("policy", "openl-policy"));
+                config.putAll(studioCentralRepoConfig("policy_life", "openl-policy-life"));
+                config.putAll(studioCentralRepoConfig("financials", "openl-financials"));
                 break;
             case SAML_STUDIO_PARAMS:
                 config.putAll(EMPTY.getParameterMap());
@@ -84,5 +101,17 @@ public enum AppContainerStartParameters {
                 break;
         }
         return config;
+    }
+
+    private static Map<String, String> studioCentralRepoConfig(String id, String repoName) {
+        Map<String, String> entries = new HashMap<>();
+        entries.put("repository." + id + ".name", repoName);
+        entries.put("repository." + id + ".$ref", "repo-git");
+        entries.put("repository." + id + ".uri", STUDIO_CENTRAL_BASE + repoName + ".git");
+        entries.put("repository." + id + ".local-repository-path", "${openl.home}/repositories/" + id);
+        entries.put("repository." + id + ".branch", ProjectConfiguration.getProperty(PropertyNameSpace.GITLAB_BRANCH));
+        entries.put("repository." + id + ".login", ProjectConfiguration.getProperty(PropertyNameSpace.GITLAB_USER));
+        entries.put("repository." + id + ".password", ProjectConfiguration.getProperty(PropertyNameSpace.GITLAB_PASSWORD));
+        return entries;
     }
 }

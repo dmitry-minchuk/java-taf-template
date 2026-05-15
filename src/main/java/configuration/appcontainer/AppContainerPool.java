@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testcontainers.containers.Network;
 
+import java.time.Duration;
 import java.util.Map;
 
 public class AppContainerPool {
@@ -18,6 +19,19 @@ public class AppContainerPool {
                                        String dockerImageName) {
         if(threadLocalAppContainer.get() == null) {
             threadLocalAppContainer.set(AppContainerFactory.createContainer(containerName, network, envVars, filesToCopy, dockerImageName));
+            if (network != null)
+                WaitUtil.sleep(3000, "Wait 3 seconds for DNS propagation in Docker's embedded DNS server");
+        }
+    }
+
+    public static void setAppContainer(String containerName,
+                                       Network network,
+                                       Map<String, String> envVars,
+                                       Map<String, String> filesToCopy,
+                                       String dockerImageName,
+                                       Duration startupTimeout) {
+        if(threadLocalAppContainer.get() == null) {
+            threadLocalAppContainer.set(AppContainerFactory.createContainer(containerName, network, envVars, filesToCopy, dockerImageName, startupTimeout));
             if (network != null)
                 WaitUtil.sleep(3000, "Wait 3 seconds for DNS propagation in Docker's embedded DNS server");
         }

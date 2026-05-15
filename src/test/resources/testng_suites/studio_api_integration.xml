@@ -6,7 +6,7 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="TestProjectRunRestApi"><classes><class name="tests.api.TestProjectRunRestApi"/></classes></test>
-    <test name="TestProjectModulesRestApi"><classes><class name="tests.api.TestProjectModulesRestApi"/></classes></test>
+    <test name="TestProjectRunRestApi"><classes><class name="tests.api.webstudio.integration.TestProjectRunRestApi"/></classes></test>
+    <test name="TestProjectModulesRestApi"><classes><class name="tests.api.webstudio.integration.TestProjectModulesRestApi"/></classes></test>
 
 </suite>

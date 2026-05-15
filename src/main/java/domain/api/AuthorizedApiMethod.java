@@ -6,6 +6,7 @@ import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import helpers.service.UserService;
 import io.restassured.RestAssured;
+import io.restassured.filter.session.SessionFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
@@ -13,12 +14,27 @@ import java.util.List;
 
 public abstract class AuthorizedApiMethod extends ApiBaseMethod {
 
+    private static final ThreadLocal<SessionFilter> SESSION_FILTER = new ThreadLocal<>();
+
     protected AuthorizedApiMethod(String path) {
         super(path);
     }
 
+    public static void startSession() {
+        SESSION_FILTER.set(new SessionFilter());
+    }
+
+    public static void clearSession() {
+        SESSION_FILTER.remove();
+    }
+
     protected RequestSpecification authorizedRequest() {
-        RequestSpecification specification = RestAssured.given();
+        RequestSpecification specification = RestAssured.given().header("Accept", "application/json");
+
+        SessionFilter sessionFilter = SESSION_FILTER.get();
+        if (sessionFilter != null) {
+            specification.filter(sessionFilter);
+        }
 
         List<Cookie> cookies = extractBrowserSessionCookies();
         if (!cookies.isEmpty()) {

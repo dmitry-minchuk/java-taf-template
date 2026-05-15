@@ -1,11 +1,11 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="Local Zipped Projects" annotations="JDK" parallel="tests" thread-count="1">
+<suite verbose="1" name="Local Zipped Projects" annotations="JDK" parallel="methods" thread-count="2">
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
-        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
+        <listener class-name="configuration.listeners.ZippedProjectsReportPortalListener"/>
     </listeners>
 
-    <test name="TestLocalZippedProjects"><classes><class name="tests.ui.webstudio.client.TestLocalZippedProjects"/></classes></test>
+    <test name="TestZippedProjects"><classes><class name="tests.api.webstudio.client.TestZippedProjects"/></classes></test>
 
 </suite>
