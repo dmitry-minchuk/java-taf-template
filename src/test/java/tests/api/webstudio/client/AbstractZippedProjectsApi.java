@@ -278,7 +278,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
                 projectName, aggregateTotal, aggregateFailures, aggregateApiErrors, modulesWithTests);
         if (aggregateFailures > 0 || aggregateApiErrors > 0) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Project [%s] in group [%s]:", projectName, groupLabel));
+            sb.append(String.format("Project [%s]:", projectName));
             if (aggregateFailures > 0) {
                 sb.append(String.format(" %d test failure(s) of %d total across %d module(s) with tests;",
                         aggregateFailures, aggregateTotal, modulesWithTests));
@@ -286,7 +286,6 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             if (aggregateApiErrors > 0) {
                 sb.append(String.format(" %d API/server error(s);", aggregateApiErrors));
             }
-            appendZipPaths(sb);
             for (String block : failureBlocks) {
                 sb.append("\n").append(block);
             }
@@ -370,16 +369,12 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Compilation errors detected in project: %s%n", projectName));
-        sb.append(String.format("Group: %s%n", groupLabel));
-        appendZipPaths(sb);
-        sb.append(String.format("%nERRORS (%d):%n", errors.size()));
+        sb.append(String.format("Compilation errors detected in project: %s", projectName));
+        sb.append(String.format("%nERRORS (%d):", errors.size()));
         for (int i = 0; i < errors.size(); i++) {
-            sb.append(String.format("  %d. %s%n", i + 1, errors.get(i)));
+            sb.append(String.format("%n  %d. %s", i + 1, errors.get(i)));
         }
-        String detail = sb.toString();
-        LOGGER.error(detail);
-        Assert.fail(detail);
+        Assert.fail(sb.toString());
     }
 
     private ModuleResult runTestsForModule(String projectId, String projectName, String moduleName) {
@@ -393,14 +388,12 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             String msg = String.format("Failed to start tests for project [%s] module [%s]: HTTP %d — %s%s",
                     projectName, moduleName, runStatus, runResponse.getBody().asString(),
                     serverBugNote(runStatus));
-            LOGGER.error(msg);
             return ModuleResult.apiError(msg);
         }
 
         Response summary = pollTestsSummary(projectId, projectName);
         if (summary == null) {
             String msg = String.format("Test summary timed out for project [%s] module [%s]", projectName, moduleName);
-            LOGGER.error(msg);
             return ModuleResult.apiError(msg);
         }
         if (summary.getStatusCode() == 404) {
@@ -411,7 +404,6 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             String msg = String.format("Tests summary returned HTTP %d for project [%s] module [%s]: %s%s",
                     summary.getStatusCode(), projectName, moduleName, summary.getBody().asString(),
                     serverBugNote(summary.getStatusCode()));
-            LOGGER.error(msg);
             return ModuleResult.apiError(msg);
         }
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
@@ -424,7 +416,6 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         LOGGER.info("Project [{}] module [{}] tests: total={}, failures={}", projectName, moduleName, t, f);
         if (f > 0) {
             String detail = buildFailureReportForModule(projectName, moduleName, t, f, summary.jsonPath());
-            LOGGER.error(detail);
             return ModuleResult.testFailures(t, f, detail);
         }
         return ModuleResult.testFailures(t, 0, null);

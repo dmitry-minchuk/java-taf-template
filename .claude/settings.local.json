@@ -169,7 +169,27 @@
       "Bash(unzip -l \"/Users/dmitryminchuk/Projects/eis/client_projects/customers_projects_test_automation_6.x/Bankers/CI/Rating/Current version/AAEB CI Rating.zip\")",
       "Bash(rm -rf bo_inspect)",
       "Bash(mkdir bo_inspect)",
-      "Bash(unzip -q \"/Users/dmitryminchuk/Projects/eis/client_projects/customers_projects_test_automation_6.x/DATE_FIX/BO-Auto-Dispathing-fixed.zip\" -d bo_inspect)"
+      "Bash(unzip -q \"/Users/dmitryminchuk/Projects/eis/client_projects/customers_projects_test_automation_6.x/DATE_FIX/BO-Auto-Dispathing-fixed.zip\" -d bo_inspect)",
+      "mcp__plugin_playwright_playwright__browser_network_requests",
+      "mcp__plugin_playwright_playwright__browser_network_request",
+      "mcp__jira-mcp__jira_add_comment",
+      "mcp__plugin_playwright_playwright__browser_select_option",
+      "Bash(mvn --version)",
+      "Bash(rm -rf xlsx_unzip)",
+      "Bash(mkdir xlsx_unzip)",
+      "Bash(unzip -q \"/Users/dmitryminchuk/Projects/java-taf-template/src/test/resources/test_data/TestAddDeleteEditProperties/TestAddDeleteEditProperties.xlsx\" -d xlsx_unzip)",
+      "Skill(jira-work-tickets)",
+      "Bash(brew list *)",
+      "Bash(sudo -n ln -sf /opt/homebrew/bin/pdftoppm /usr/local/bin/pdftoppm)",
+      "Bash(ln -sf /opt/homebrew/bin/pdftoppm /usr/local/bin/pdftoppm)",
+      "Read(//usr/local/bin/**)",
+      "Bash(mkdir -p ~/.local/bin)",
+      "Bash(ln -sf /opt/homebrew/bin/pdftoppm ~/.local/bin/pdftoppm)",
+      "Bash(ln -sf /opt/homebrew/bin/pdftotext ~/.local/bin/pdftotext)",
+      "Bash(ln -sf /opt/homebrew/bin/pdfinfo ~/.local/bin/pdfinfo)",
+      "Read(//Users/dmitryminchuk/.local/bin/**)",
+      "Skill(skill-creator:skill-creator)",
+      "Bash(cd *)"
     ],
     "deny": []
   }
