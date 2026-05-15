@@ -78,6 +78,7 @@ src/main/resources/jmeter/jmeterReport.jtl
 # Configuration files with sensitive data
 src/test/resources/config.properties
 src/test/resources/reportportal.properties
+.env
 
 # Promptfoo (MCP/AI Testing)
 promptfoo/node_modules/

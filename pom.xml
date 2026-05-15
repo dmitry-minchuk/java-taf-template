@@ -13,7 +13,7 @@
         <!-- Playwright version -->
         <playwright.version>1.52.0</playwright.version>
         <testng.version>7.11.0</testng.version>
-        <log4j.version>2.25.3</log4j.version>
+        <log4j.version>2.25.4</log4j.version>
         <rest.assured.version>5.5.1</rest.assured.version>
         <json.version>20250107</json.version>
         <apache.commons.version>2.18.0</apache.commons.version>
@@ -179,7 +179,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.5</version>
+            <version>42.7.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>

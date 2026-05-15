@@ -1,4 +1,4 @@
-package tests.api;
+package tests.api.webstudio.integration;
 
 import domain.api.ProjectsMethod;
 import io.restassured.response.Response;
