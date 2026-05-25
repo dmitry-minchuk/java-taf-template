@@ -1,0 +1,9 @@
+<project>
+  <name>RunAllTestTable</name>
+  <modules>
+    <module>
+      <name>Rules</name>
+      <rules-root path="RunAllTestTable.xlsx"/>
+    </module>
+  </modules>
+</project>

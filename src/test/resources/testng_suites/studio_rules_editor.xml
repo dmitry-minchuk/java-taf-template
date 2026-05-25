@@ -34,6 +34,7 @@
     <test name="TestNavigationToTable"><classes><class name="tests.ui.webstudio.rules_editor.TestNavigationToTable"/></classes></test>
     <test name="TestRefreshButton"><classes><class name="tests.ui.webstudio.rules_editor.TestRefreshButton"/></classes></test>
     <test name="TestEditingCommaSeparatedArrayValues"><classes><class name="tests.ui.webstudio.rules_editor.TestEditingCommaSeparatedArrayValues"/></classes></test>
+    <test name="TestRunContextualMenuRunAll"><classes><class name="tests.ui.webstudio.rules_editor.TestRunContextualMenuRunAll"/></classes></test>
 
     <!-- Split: TestLocalChangesRestoreCompare → 2 classes -->
     <test name="TestLocalChangesCoreMechanics"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesCoreMechanics"/></classes></test>
