@@ -8,5 +8,6 @@
 
     <test name="TestProjectRunRestApi"><classes><class name="tests.api.webstudio.integration.TestProjectRunRestApi"/></classes></test>
     <test name="TestProjectModulesRestApi"><classes><class name="tests.api.webstudio.integration.TestProjectModulesRestApi"/></classes></test>
+    <test name="TestProtectedBranchBypassSettingApi"><classes><class name="tests.api.webstudio.integration.TestProtectedBranchBypassSettingApi"/></classes></test>
 
 </suite>
