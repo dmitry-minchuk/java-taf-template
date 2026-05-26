@@ -9,6 +9,12 @@ import java.util.Map;
 public enum AppContainerStartParameters {
     EMPTY,
     DEFAULT_STUDIO_PARAMS,
+    /**
+     * DEFAULT_STUDIO_PARAMS + `security.allow-bypass-protected-branches=true`.
+     * Use for tests that need eligible Managers to merge into protected branches without
+     * triggering the application-restarting PATCH on /web/admin/settings/authentication.
+     */
+    STUDIO_BYPASS_ENABLED_PARAMS,
     SINGLE_USER_STUDIO_PARAMS,
     DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
@@ -92,6 +98,14 @@ public enum AppContainerStartParameters {
                 config.put("ruleservice.deployer.enabled", "true");
                 config.put("production-repository.factory", "repo-file");
                 config.put("production-repository.uri", "/opt/openl/shared");
+                break;
+            case STUDIO_BYPASS_ENABLED_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                config.put("security.allow-bypass-protected-branches", "true");
+                // Protect `release-**` only (matches `release-EPBDS-...`). `master` stays
+                // unprotected so admin setup steps (initial upload, branch creation) are not
+                // themselves blocked by the bypass guard.
+                config.put("repository.design.protected-branches", "release-**");
                 break;
             case DEFAULT_STUDIO_PARAMS:
             default:

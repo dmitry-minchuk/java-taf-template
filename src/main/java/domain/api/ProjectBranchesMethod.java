@@ -31,4 +31,14 @@ public class ProjectBranchesMethod extends AuthorizedApiMethod {
         return callApi(Method.PATCH, authorizedJsonRequest(Map.of("branch", branchName)),
                 fullApiUrl + "/" + projectId, true);
     }
+
+    /**
+     * PATCH /rest/projects/{id} body {"comment":"..."} — when the project has pending modifications
+     * (e.g. after createTable / updateTable), this triggers the equivalent of "Save" in the UI:
+     * stages the workspace changes as a git commit on the project's current branch.
+     */
+    public Response commit(String projectId, String comment) {
+        return callApi(Method.PATCH, authorizedJsonRequest(Map.of("comment", comment)),
+                fullApiUrl + "/" + projectId, true);
+    }
 }
