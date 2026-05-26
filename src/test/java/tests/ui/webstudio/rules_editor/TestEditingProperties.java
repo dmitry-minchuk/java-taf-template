@@ -96,9 +96,7 @@ public class TestEditingProperties extends BaseTest {
             tableDetails.clickSaveBtn();
         }
 
-        assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
-                .as("Property '%s' should have value '%s'", propertyTableName, newValue)
-                .isEqualTo(newValue);
+        waitForPropertyValue(editorPage, propertyTableName, newValue);
     }
 
     private void editAndCheckCheckboxProperty(EditorPage editorPage, String propertyName, String propertyTableName, String... values) {
@@ -106,10 +104,7 @@ public class TestEditingProperties extends BaseTest {
         tableDetails.editCheckboxProperty(propertyName, values);
         tableDetails.clickSaveBtn();
 
-        String expectedValue = String.join(",", values);
-        assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
-                .as("Property '%s' should have value '%s'", propertyTableName, expectedValue)
-                .isEqualTo(expectedValue);
+        waitForPropertyValue(editorPage, propertyTableName, String.join(",", values));
     }
 
     private void editAndCheckBooleanProperty(EditorPage editorPage, String propertyName, String propertyTableName, boolean value) {
@@ -117,9 +112,7 @@ public class TestEditingProperties extends BaseTest {
         tableDetails.editBooleanProperty(propertyName, value);
         tableDetails.clickSaveBtn();
 
-        assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
-                .as("Property '%s' should have value '%s'", propertyTableName, value)
-                .isEqualTo(String.valueOf(value));
+        waitForPropertyValue(editorPage, propertyTableName, String.valueOf(value));
     }
 
     private void editAndCheckDropdownProperty(EditorPage editorPage, String propertyName, String propertyTableName, String value) {
@@ -127,9 +120,30 @@ public class TestEditingProperties extends BaseTest {
         tableDetails.editDropdownProperty(propertyName, value);
         tableDetails.clickSaveBtn();
 
+        waitForPropertyValueIgnoringCase(editorPage, propertyTableName, value);
+    }
+
+    // The center table re-renders asynchronously after clickSaveBtn (RichFaces Ajax → React reconciliation).
+    // The static 500ms sleep inside clickSaveBtn is not always enough on a loaded CI runner — poll the
+    // value until it matches or the timeout expires, then make the final assertion for a readable diff.
+    private void waitForPropertyValue(EditorPage editorPage, String propertyTableName, String expectedValue) {
+        WaitUtil.waitForCondition(
+                () -> expectedValue.equals(editorPage.getCenterTable().getPropertyValue(propertyTableName)),
+                10_000, 200,
+                String.format("Waiting for property '%s' to become '%s'", propertyTableName, expectedValue));
         assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
-                .as("Property '%s' should have value '%s'", propertyTableName, value)
-                .isEqualToIgnoringCase(value);
+                .as("Property '%s' should have value '%s'", propertyTableName, expectedValue)
+                .isEqualTo(expectedValue);
+    }
+
+    private void waitForPropertyValueIgnoringCase(EditorPage editorPage, String propertyTableName, String expectedValue) {
+        WaitUtil.waitForCondition(
+                () -> expectedValue.equalsIgnoreCase(editorPage.getCenterTable().getPropertyValue(propertyTableName)),
+                10_000, 200,
+                String.format("Waiting for property '%s' to become '%s' (case-insensitive)", propertyTableName, expectedValue));
+        assertThat(editorPage.getCenterTable().getPropertyValue(propertyTableName))
+                .as("Property '%s' should have value '%s'", propertyTableName, expectedValue)
+                .isEqualToIgnoringCase(expectedValue);
     }
 
     private String formatDate(String dateValue) {
