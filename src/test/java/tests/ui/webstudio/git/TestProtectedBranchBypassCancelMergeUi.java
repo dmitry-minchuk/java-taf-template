@@ -13,24 +13,25 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
+import helpers.utils.WaitUtil;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.MERGE_SUCCESS_TOAST;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARGET;
 
 /**
- * EPBDS-15960 sections G/H — UI bypass merge flow as a Manager with
- * {@code security.allow-bypass-protected-branches=ON}: in-dialog warning,
- * secondary confirmation modal, "Merge Successful" toast.
+ * EPBDS-15960 H.3: clicking Cancel on the bypass confirmation modal closes
+ * the confirmation, leaves the Sync dialog in its pre-Send state, and does
+ * NOT merge — the bypass warning is still shown, and a subsequent click on
+ * "Send your updates" still produces the same confirmation modal.
  */
-public class TestProtectedBranchBypassManagerMergeUi extends BaseTest {
+public class TestProtectedBranchBypassCancelMergeUi extends BaseTest {
 
-    private static final String PROJECT_NAME = "BypassMergeUiProject";
-    private static final String MANAGER_LOGIN = "manager_15960";
-    private static final String MANAGER_PASSWORD = "manager_15960";
+    private static final String PROJECT_NAME = "BypassCancelUiProject";
+    private static final String MANAGER_LOGIN = "manager_15960_cancel";
+    private static final String MANAGER_PASSWORD = "manager_15960_cancel";
 
     @AfterMethod(alwaysRun = true)
     public void deleteManagerUser() {
@@ -42,10 +43,11 @@ public class TestProtectedBranchBypassManagerMergeUi extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-15960")
-    @Description("Sections G/H: Manager merging into a protected branch with bypass=ON sees "
-            + "the in-dialog warning, the secondary confirmation modal, and a Merge Successful toast.")
+    @Description("H.3: Cancel on the bypass confirmation modal aborts the merge — the modal "
+            + "closes, no Merge Successful toast appears, and the Sync dialog is still showing "
+            + "the bypass warning so the user can retry or close it manually.")
     @AppContainerConfig(startParams = AppContainerStartParameters.STUDIO_BYPASS_ENABLED_PARAMS)
-    public void testManagerBypassMergeFlowUi() {
+    public void testCancelOnBypassConfirmAbortsTheMerge() {
         ProtectedBranchBypassFixture.provisionProjectAndUser(
                 PROJECT_NAME, MANAGER_LOGIN, MANAGER_PASSWORD, "MANAGER");
 
@@ -55,38 +57,40 @@ public class TestProtectedBranchBypassManagerMergeUi extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.refresh();
-
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
                 .selectItemInFolder("Projects", PROJECT_NAME);
-
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProjectAndWait();
+
         SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
-        helpers.utils.WaitUtil.waitForCondition(() -> {
+        WaitUtil.waitForCondition(() -> {
             repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
             return syncDialog.isVisible();
         }, 15_000, 1_000, "Click Sync until the merge dialog appears");
         syncDialog.selectBranch(PROTECTED_TARGET);
 
-        assertThat(syncDialog.isBypassWarningVisible())
-                .as("G.1 — Sync dialog must show the bypass warning for a protected target")
-                .isTrue();
-        assertThat(syncDialog.getBypassWarningText())
-                .as("G.2 — bypass warning must name the protected branch")
-                .contains("Bypass branch protection?")
-                .contains(PROTECTED_TARGET);
-
         syncDialog.clickSendYourUpdates();
         BypassConfirmDialogComponent confirmDialog = repositoryPage.getBypassConfirmDialogComponent()
                 .waitForDialogToAppear();
-        assertThat(confirmDialog.getTitle())
-                .as("H.1 — confirmation modal title")
-                .isEqualTo("Bypass branch protection?");
+        confirmDialog.clickCancel();
 
-        confirmDialog.clickConfirmBypassAndMerge();
-        assertThat(confirmDialog.isMergeSuccessNoticeVisible())
-                .as("H.2 — '%s' toast after confirming bypass", MERGE_SUCCESS_TOAST)
+        assertThat(confirmDialog.waitForDialogToDisappear())
+                .as("H.3 — confirmation modal disappears after Cancel")
                 .isTrue();
-    }
+        assertThat(confirmDialog.isMergeSuccessNoticeAbsent())
+                .as("H.3 — Cancel must not produce a Merge Successful toast")
+                .isTrue();
+        assertThat(syncDialog.isVisible())
+                .as("H.3 — Sync dialog is still open after Cancel so the user can retry or close")
+                .isTrue();
+        assertThat(syncDialog.isBypassWarningVisible())
+                .as("H.3 — bypass warning is still rendered, target is still protected")
+                .isTrue();
 
+        // Re-click Send to confirm the bypass flow is not in a stuck state after Cancel.
+        syncDialog.clickSendYourUpdates();
+        assertThat(repositoryPage.getBypassConfirmDialogComponent().waitForDialogToAppear().getTitle())
+                .as("H.3 — re-click Send after Cancel re-opens the same confirmation modal")
+                .isEqualTo("Bypass branch protection?");
+    }
 }

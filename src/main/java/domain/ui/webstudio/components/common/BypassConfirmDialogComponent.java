@@ -26,14 +26,20 @@ public class BypassConfirmDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
+        // Anchor inside the ant-modal whose title is "Bypass branch protection?" — that
+        // scopes Cancel + Confirm to this specific confirmation, away from the parent
+        // Sync dialog and any other modals.
+        String modalRoot = "//div[contains(@class,'ant-modal') and "
+                + ".//div[contains(@class,'ant-modal-title') and "
+                + "normalize-space(text())='Bypass branch protection?']]";
         confirmBtn = new WebElement(LocalDriverPool.getPage(),
-                "xpath=//button[.//span[normalize-space(text())='Confirm bypass and merge']]",
+                "xpath=" + modalRoot + "//button[.//span[normalize-space(text())='Confirm bypass and merge']]",
                 "bypassConfirmBtn");
         cancelBtn = new WebElement(LocalDriverPool.getPage(),
-                "xpath=//button[.//span[normalize-space(text())='Confirm bypass and merge']]/preceding-sibling::button[1]",
+                "xpath=" + modalRoot + "//button[normalize-space(.)='Cancel']",
                 "bypassCancelBtn");
         title = new WebElement(LocalDriverPool.getPage(),
-                "xpath=//div[contains(@class,'ant-modal-title') and normalize-space(text())='Bypass branch protection?']",
+                "xpath=" + modalRoot + "//div[contains(@class,'ant-modal-title')]",
                 "bypassConfirmTitle");
         mergeSuccessNotice = new WebElement(LocalDriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-notification')]//*[normalize-space(text())='Merge Successful']",
@@ -47,6 +53,17 @@ public class BypassConfirmDialogComponent extends BaseComponent {
 
     public boolean isVisible() {
         return confirmBtn.isVisible();
+    }
+
+    /** Waits for the modal to disappear (with the modal's animation grace period) and
+     *  returns true if it did so within that window, false otherwise. */
+    public boolean waitForDialogToDisappear() {
+        try {
+            confirmBtn.waitForHidden(2_000);
+            return true;
+        } catch (RuntimeException e) {
+            return !confirmBtn.isVisible(200);
+        }
     }
 
     public String getTitle() {
@@ -69,6 +86,16 @@ public class BypassConfirmDialogComponent extends BaseComponent {
             return true;
         } catch (RuntimeException e) {
             return false;
+        }
+    }
+
+    /** True if the success toast is NOT visible within a short window (negative assertion). */
+    public boolean isMergeSuccessNoticeAbsent() {
+        try {
+            mergeSuccessNotice.waitForHidden(2_000);
+            return true;
+        } catch (RuntimeException e) {
+            return !mergeSuccessNotice.isVisible(200);
         }
     }
 }
