@@ -117,8 +117,9 @@ public class LocalDriverPool {
     }
     
     private static Browser launchBrowser(Playwright playwright, String browserName) {
+        boolean headless = Boolean.parseBoolean(System.getProperty("headless", "false"));
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
-                .setHeadless(false) // Phase 1: Run in headed mode for debugging
+                .setHeadless(headless) // -Dheadless=true for CI / unattended local runs
                 .setSlowMo(0) // No slow motion for normal execution
                 .setDevtools(false); // Disable devtools by default
         
