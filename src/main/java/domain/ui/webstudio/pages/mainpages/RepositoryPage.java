@@ -57,6 +57,7 @@ public class RepositoryPage extends BasePage {
     private WebElement inlineMessage;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
+    private BypassConfirmDialogComponent bypassConfirmDialogComponent;
     private ResolveConflictsDialogComponent resolveConflictsDialogComponent;
     private ConfirmDeleteDialogComponent confirmDeleteDialogComponent;
     private ConfirmUndeleteDialogComponent confirmUndeleteDialogComponent;
@@ -98,6 +99,7 @@ public class RepositoryPage extends BasePage {
         updateFileDialogComponent = createScopedComponent(UpdateFileDialogComponent.class, "xpath=//div[@id='modalUpdateFile_container']", "updateFileDialogComponent");
         saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "xpath=//div[@id='modalSave_container']", "Save Changes Component");
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
+        bypassConfirmDialogComponent = new BypassConfirmDialogComponent();
         resolveConflictsDialogComponent = createScopedComponent(ResolveConflictsDialogComponent.class, "xpath=//div[@role='dialog' and .//span[text()='Resolve Conflicts']]", "resolveConflictsDialogComponent");
         confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
         addFolderDialogComponent = createScopedComponent(AddFolderDialogComponent.class, "xpath=//div[@id='modalNewFolder_container']", "addFolderDialogComponent");

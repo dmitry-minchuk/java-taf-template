@@ -17,5 +17,6 @@
     <test name="TestMergeBranchesNoConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesNoConflicts"/></classes></test>
     <test name="TestMergeBranchesWithConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesWithConflicts"/></classes></test>
     <test name="TestProtectedBranchMergeProtection"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchMergeProtection"/></classes></test>
+    <test name="TestProtectedBranchBypassManagerMergeUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassManagerMergeUi"/></classes></test>
 
 </suite>

@@ -24,6 +24,7 @@ public class SyncChangesDialogComponent extends BaseComponent {
     private WebElement branchSelector;
     private List<WebElement> selectorOptions;
     private List<WebElement> errorAlerts;
+    private WebElement bypassWarningAlert;
 
     public SyncChangesDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -43,14 +44,22 @@ public class SyncChangesDialogComponent extends BaseComponent {
         cannotExportMessage = createScopedElement("xpath=.//div[@id='mergeBranchesForm:cannotExportMessage']", "cannotExportMessage");
         cancelBtn = createScopedElement("xpath=.//span[@aria-label='close']", "cancelBtn");
 
-        branchSelector = createScopedElement("xpath=.//input[@id='merge_branches_form_targetBranch']", "branchSelector");
+        branchSelector = createScopedElement(
+                "xpath=.//div[@class='ant-select-content' and .//input[@id='merge_branches_form_targetBranch']]",
+                "branchSelector");
         selectorOptions = createElementList("xpath=.//div[@class='ant-select-item-option-content']", "branchSelector");
-        // Merge error alerts rendered by MergeBranchesStep (receiveError / sendError / mergeError from server 409)
         errorAlerts = createElementList("xpath=//div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert') and contains(@class,'ant-alert-error')]", "errorAlerts");
+        bypassWarningAlert = new WebElement(LocalDriverPool.getPage(),
+                "xpath=//div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert-warning')]",
+                "bypassWarningAlert");
     }
 
     public void waitForDialogToAppear() {
         WaitUtil.waitForCondition(() -> dialogHeader.isVisible(), 5000, 100, "Waiting for Sync dialog to appear");
+    }
+
+    public boolean isVisible() {
+        return dialogHeader.isVisible(1000);
     }
 
     public SyncChangesDialogComponent clickImportTheirChanges() {
@@ -135,5 +144,20 @@ public class SyncChangesDialogComponent extends BaseComponent {
         return WaitUtil.waitForCondition(
                 () -> getErrorMessages().stream().anyMatch(msg -> msg.contains(substring)),
                 10000, 500, "Waiting for error alert containing: " + substring);
+    }
+
+    public boolean isBypassWarningVisible() {
+        return WaitUtil.waitForCondition(() -> bypassWarningAlert.isVisible(), 5000, 200,
+                "Waiting for bypass warning alert");
+    }
+
+    public String getBypassWarningText() {
+        return bypassWarningAlert.getText().trim();
+    }
+
+    public SyncChangesDialogComponent clickSendYourUpdates() {
+        LOGGER.info("Clicking 'Send your updates' button");
+        exportYourChangesBtn.click();
+        return this;
     }
 }
