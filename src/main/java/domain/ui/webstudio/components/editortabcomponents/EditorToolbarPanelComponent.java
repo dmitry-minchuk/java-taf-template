@@ -515,7 +515,11 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         public ITraceWindow clickTraceInsideMenu(boolean isPopupExpected) {
             traceInsideMenuBtn.waitForVisible();
             if (isPopupExpected) {
-                Page popup = page.waitForPopup(() -> traceInsideMenuBtn.click());
+                // EPBDS-15551 made the trace popup chain async: click → JSF Ajax `fetchParamsForTrace`
+                // (execute="@form") → /web/projects/{id} fetch → CustomEvent → React window.open.
+                // On loaded CI agents this can exceed the default 10s timeout — match the 60s
+                // already used by clickTraceExpectTraceWindow.
+                Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceInsideMenuBtn.click());
                 popup.waitForLoadState();
                 popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
                 return new TraceWindow(popup);
