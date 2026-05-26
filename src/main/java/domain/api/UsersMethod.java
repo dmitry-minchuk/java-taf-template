@@ -26,4 +26,21 @@ public class UsersMethod extends AuthorizedApiMethod {
         body.put("displayName", displayName);
         return callApi(Method.PUT, authorizedJsonRequest(body), fullApiUrl + "/info", true);
     }
+
+    public Response createUser(String username, String password) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("username", username);
+        body.put("displayName", username);
+        body.put("firstName", username);
+        body.put("lastName", username);
+        body.put("email", username + "@example.com");
+        Map<String, Object> pwd = new LinkedHashMap<>();
+        pwd.put("password", password);
+        body.put("internalPassword", pwd);
+        return callApi(Method.PUT, authorizedJsonRequest(body), fullApiUrl, true);
+    }
+
+    public Response deleteUser(String username) {
+        return callApi(Method.DELETE, authorizedRequest(), fullApiUrl + "/" + username, true);
+    }
 }
