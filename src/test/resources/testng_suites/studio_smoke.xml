@@ -36,5 +36,6 @@
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>
     <test name="TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_smoke.TestAddDeleteDesignRepository"/></classes></test>
     <test name="TestSupportedRepositories"><classes><class name="tests.ui.webstudio.studio_smoke.TestSupportedRepositories"/></classes></test>
+    <test name="TestProtectedBranchBypassSecuritySettingsUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
 
 </suite>
