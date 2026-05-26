@@ -15,6 +15,13 @@ public enum AppContainerStartParameters {
      * triggering the application-restarting PATCH on /web/admin/settings/authentication.
      */
     STUDIO_BYPASS_ENABLED_PARAMS,
+    /**
+     * Like STUDIO_BYPASS_ENABLED_PARAMS but the protected matcher is `*EPBDS-15818*`, so BOTH
+     * the dev branch (EPBDS-15818_dev) and the release branch (release-EPBDS-15818) are
+     * protected. Used by EPBDS-15960 H.6 to assert the "both branches are protected" copy.
+     * `master` stays unprotected so the admin REST setup is not blocked.
+     */
+    STUDIO_BYPASS_BOTH_PROTECTED_PARAMS,
     SINGLE_USER_STUDIO_PARAMS,
     DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
@@ -106,6 +113,13 @@ public enum AppContainerStartParameters {
                 // unprotected so admin setup steps (initial upload, branch creation) are not
                 // themselves blocked by the bypass guard.
                 config.put("repository.design.protected-branches", "release-**");
+                break;
+            case STUDIO_BYPASS_BOTH_PROTECTED_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                config.put("security.allow-bypass-protected-branches", "true");
+                // `*EPBDS-15818*` matches both EPBDS-15818_dev and release-EPBDS-15818, so the
+                // merge crosses two protected branches; `master` stays unprotected for setup.
+                config.put("repository.design.protected-branches", "*EPBDS-15818*");
                 break;
             case DEFAULT_STUDIO_PARAMS:
             default:
