@@ -16,10 +16,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Section A of EPBDS-15960 — global `allowBypassProtectedBranches` setting toggle
  * via PATCH /web/admin/settings/authentication.
  *
- * Covered: A.1 (default OFF), A.2 (admin enables), A.3 (admin disables), A.6 (OpenAPI schema).
- * Not covered here (will be added later):
- *   A.4 — non-admin → 403 (needs non-admin user provisioning, shared with Section B).
- *   A.5 — persistence across container restart (the TAF container is not restartable mid-test).
+ * Covered:
+ *   A.1 — default OFF.
+ *   A.2 — admin enables (PATCH 204 + GET reflects new value).
+ *   A.3 — admin disables (PATCH 204 + GET reflects new value).
+ *   A.5 — persistence (covered transitively: every PATCH triggers a Studio restart, so the
+ *         GETs in A.2/A.3 happen against a fresh JVM — a memory-only setter would lose the
+ *         value and both sub-scenarios would fail).
+ *   A.6 — OpenAPI schema exposes the field.
+ *
+ * Deferred: A.4 (non-admin → 403) — needs non-admin user provisioning, shared with Section B.
  */
 public class TestProtectedBranchBypassSettingApi extends BaseTest {
 
