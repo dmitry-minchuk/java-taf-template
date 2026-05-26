@@ -19,5 +19,6 @@
     <test name="TestProtectedBranchMergeProtection"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchMergeProtection"/></classes></test>
     <test name="TestProtectedBranchBypassManagerMergeUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassManagerMergeUi"/></classes></test>
     <test name="TestProtectedBranchBypassCancelMergeUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassCancelMergeUi"/></classes></test>
+    <test name="TestProtectedBranchBypassContributorBlockedUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassContributorBlockedUi"/></classes></test>
 
 </suite>
