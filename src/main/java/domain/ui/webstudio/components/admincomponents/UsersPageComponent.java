@@ -102,6 +102,14 @@ public class UsersPageComponent extends BaseComponent {
         errorDescription = new WebElement(page, "xpath=//div[contains(@class,'ant-notification-notice-error')]//div[contains(@class,'ant-notification-notice-description')]", "errorDescription");
     }
 
+    // Locate an action button (edit/delete) anywhere in the user's row — the Actions column index
+    // shifts between auth modes (oauth2/SAML add a Groups column), so anchor on the row, not a cell.
+    private com.microsoft.playwright.Locator rowActionButton(int row, String icon) {
+        return usersTable.getCell(row, COL_USERNAME).getLocator()
+                .locator("xpath=ancestor::tr[1]")
+                .locator("button:has(svg[data-icon='" + icon + "'])");
+    }
+
     public int getUserRow(String username) {
         WaitUtil.waitForCondition(() -> getAllUsernames().contains(username), DEFAULT_TIMEOUT_MS, 100, "Waiting for user '" + username + "' to appear in users table");
         int rowCount = usersTable.getRowsCount();
@@ -150,14 +158,12 @@ public class UsersPageComponent extends BaseComponent {
 
     public boolean areActionsAvailableForUser(String username) {
         int row = getUserRow(username);
-        WebElement actionsCell = usersTable.getCell(row, COL_ACTIONS);
-        return actionsCell.getLocator().locator("button >> svg[data-icon='edit']").isVisible() &&
-               actionsCell.getLocator().locator("button >> svg[data-icon='delete']").isVisible();
+        return rowActionButton(row, "edit").isVisible() && rowActionButton(row, "delete").isVisible();
     }
 
     public UsersPageComponent clickEditUser(String username) {
         int row = getUserRow(username);
-        usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='edit']").first().click();
+        rowActionButton(row, "edit").first().click();
         drawer.waitForVisible(3000);
         WaitUtil.sleep(150, "Waiting for user edit drawer to fully open");
         return this;
@@ -166,7 +172,7 @@ public class UsersPageComponent extends BaseComponent {
     public void clickDeleteUser(String username) {
         int usersBefore = usersTable.getRowsCount();
         int row = getUserRow(username);
-        usersTable.getCell(row, COL_ACTIONS).getLocator().locator("button >> svg[data-icon='delete']").first().click();
+        rowActionButton(row, "delete").first().click();
         getModalOkBtn().click();
         WaitUtil.waitForCondition(() -> {
             int usersAfter = usersTable.getRowsCount();

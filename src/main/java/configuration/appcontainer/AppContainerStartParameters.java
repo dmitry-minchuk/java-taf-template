@@ -36,6 +36,12 @@ public enum AppContainerStartParameters {
      * {@code preferred_username}; the {@code groups} claim becomes the user's group authorities.
      */
     STUDIO_OIDC_BYPASS_PARAMS,
+    /**
+     * Studio in OIDC (oauth2) mode against the ephemeral Keycloak ({@code KeycloakInfrastructureService}),
+     * without the bypass/protected-branch keys. Used by the PLAYWRIGHT_DOCKER test for the Admin
+     * 'Users' view with an OAuth2 external user management system (IPBQA-32789).
+     */
+    STUDIO_OIDC_PARAMS,
     SINGLE_USER_STUDIO_PARAMS,
     DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
@@ -153,6 +159,18 @@ public enum AppContainerStartParameters {
                 config.put("security.oauth2.attribute.groups", "groups");
                 config.put("security.allow-bypass-protected-branches", "true");
                 config.put("repository.design.protected-branches", "release-**");
+                break;
+            case STUDIO_OIDC_PARAMS:
+                config.putAll(EMPTY.getParameterMap());
+                config.put("webstudio.configured", "true");
+                config.put("user.mode", "oauth2");
+                config.put("security.administrators", "admin");
+                config.put("security.oauth2.client-id", "openlstudio");
+                config.put("security.oauth2.client-secret", "openlstudiosecret");
+                config.put("security.oauth2.issuer-uri", "http://keycloak:8080/realms/openlstudio");
+                config.put("security.oauth2.scope", "openid,profile,email");
+                config.put("security.oauth2.attribute.username", "preferred_username");
+                config.put("security.oauth2.attribute.groups", "groups");
                 break;
             case DEFAULT_STUDIO_PARAMS:
             default:

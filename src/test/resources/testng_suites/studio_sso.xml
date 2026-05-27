@@ -10,5 +10,6 @@
     </listeners>
 
     <test name="TestProtectedBranchBypassGroupMembershipUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassGroupMembershipUi"/></classes></test>
+    <test name="TestUsersViewRolesOauth2Ui"><classes><class name="tests.ui.webstudio.sso.TestUsersViewRolesOauth2Ui"/></classes></test>
 
 </suite>

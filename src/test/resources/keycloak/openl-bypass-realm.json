@@ -27,6 +27,15 @@
       "email": "groupmgr@openl.example",
       "credentials": [ { "type": "password", "value": "groupmgr", "temporary": false } ],
       "groups": [ "/bypass-managers" ]
+    },
+    {
+      "username": "studiouser",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Studio",
+      "lastName": "User",
+      "email": "studiouser@openl.example",
+      "credentials": [ { "type": "password", "value": "studiouser", "temporary": false } ]
     }
   ],
   "clients": [
