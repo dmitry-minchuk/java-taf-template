@@ -23,6 +23,12 @@ public enum AppContainerStartParameters {
      */
     STUDIO_BYPASS_BOTH_PROTECTED_PARAMS,
     /**
+     * Protected {@code release-**} with the bypass setting left OFF (default). Used by
+     * EPBDS-15960 H.8 to assert that an eligible Manager gets the same blocked path as a
+     * contributor (no bypass warning, no confirm modal) when the global setting is disabled.
+     */
+    STUDIO_PROTECTED_NO_BYPASS_PARAMS,
+    /**
      * Studio in OIDC (oauth2) mode wired to the ephemeral Keycloak from
      * {@code KeycloakInfrastructureService} (issuer {@code http://keycloak:8080/realms/openlstudio}),
      * with the protected-branch bypass enabled. Used by the PLAYWRIGHT_DOCKER SSO test that
@@ -128,6 +134,11 @@ public enum AppContainerStartParameters {
                 // `*EPBDS-15818*` matches both EPBDS-15818_dev and release-EPBDS-15818, so the
                 // merge crosses two protected branches; `master` stays unprotected for setup.
                 config.put("repository.design.protected-branches", "*EPBDS-15818*");
+                break;
+            case STUDIO_PROTECTED_NO_BYPASS_PARAMS:
+                config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
+                // Bypass setting intentionally left OFF (default); only the protected matcher is set.
+                config.put("repository.design.protected-branches", "release-**");
                 break;
             case STUDIO_OIDC_BYPASS_PARAMS:
                 config.putAll(EMPTY.getParameterMap());
