@@ -11,5 +11,6 @@
 
     <test name="TestProtectedBranchBypassGroupMembershipUi"><classes><class name="tests.ui.webstudio.sso.TestProtectedBranchBypassGroupMembershipUi"/></classes></test>
     <test name="TestUsersViewRolesOauth2Ui"><classes><class name="tests.ui.webstudio.sso.TestUsersViewRolesOauth2Ui"/></classes></test>
+    <test name="TestUsersViewRolesSamlUi"><classes><class name="tests.ui.webstudio.sso.TestUsersViewRolesSamlUi"/></classes></test>
 
 </suite>

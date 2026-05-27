@@ -42,6 +42,13 @@ public enum AppContainerStartParameters {
      * 'Users' view with an OAuth2 external user management system (IPBQA-32789).
      */
     STUDIO_OIDC_PARAMS,
+    /**
+     * Studio in SAML mode against the ephemeral Keycloak SAML client {@code webstudio}
+     * (IdP metadata at {@code /realms/openlstudio/protocol/saml/descriptor}). Used by the
+     * PLAYWRIGHT_DOCKER test for the Admin 'Users' view with a SAML external user management
+     * system (IPBQA-32788). NameID = username; email/first/last come from SAML attribute mappers.
+     */
+    STUDIO_SAML_PARAMS,
     SINGLE_USER_STUDIO_PARAMS,
     DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
@@ -171,6 +178,25 @@ public enum AppContainerStartParameters {
                 config.put("security.oauth2.scope", "openid,profile,email");
                 config.put("security.oauth2.attribute.username", "preferred_username");
                 config.put("security.oauth2.attribute.groups", "groups");
+                break;
+            case STUDIO_SAML_PARAMS:
+                config.putAll(EMPTY.getParameterMap());
+                config.put("webstudio.configured", "true");
+                config.put("user.mode", "saml");
+                config.put("security.administrators", "admin");
+                config.put("security.saml.entity-id", "webstudio");
+                config.put("security.saml.saml-server-metadata-url",
+                        "http://keycloak:8080/realms/openlstudio/protocol/saml/descriptor");
+                // Reuse the SP keypair already defined for SAML_STUDIO_PARAMS (no duplication).
+                Map<String, String> samlSp = SAML_STUDIO_PARAMS.getParameterMap();
+                config.put("security.saml.local-key", samlSp.get("security.saml.local-key"));
+                config.put("security.saml.local-certificate", samlSp.get("security.saml.local-certificate"));
+                config.put("security.saml.attribute.first-name", "urn:oid:2.5.4.42");
+                config.put("security.saml.attribute.last-name", "urn:oid:2.5.4.4");
+                config.put("security.saml.attribute.email", "urn:oid:0.9.2342.19200300.100.1.3");
+                // Studio uses the user's display name as the Git commit author (PersonIdent);
+                // a SAML user with no display-name attribute would commit with a null name.
+                config.put("security.saml.attribute.display-name", "urn:oid:2.16.840.1.113730.3.1.241");
                 break;
             case DEFAULT_STUDIO_PARAMS:
             default:

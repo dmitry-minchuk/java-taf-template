@@ -53,12 +53,13 @@ public class AppContainerFactory {
 
     private static org.testcontainers.containers.wait.strategy.WaitStrategy buildHttpWaitStrategy(
             Map<String, String> envVars, Duration startupTimeout) {
-        // In oauth2/SSO mode the root path 302-redirects to the external IdP (e.g. keycloak:8080),
+        // In oauth2/saml SSO mode the root path 302-redirects to the external IdP (e.g. keycloak:8080),
         // a network alias the host running the wait check cannot resolve — HttpURLConnection would
         // follow the redirect and throw UnknownHostException. Wait on a static, permit-all resource
         // that responds without redirecting instead, accepting any non-server-error status.
-        boolean oauth2 = envVars != null && "oauth2".equals(envVars.get("user.mode"));
-        if (oauth2) {
+        String userMode = envVars == null ? null : envVars.get("user.mode");
+        boolean externalAuth = "oauth2".equals(userMode) || "saml".equals(userMode);
+        if (externalAuth) {
             return Wait.forHttp("/favicon.ico")
                     .forStatusCodeMatching(code -> code >= 200 && code < 500)
                     .withReadTimeout(Duration.ofSeconds(20))

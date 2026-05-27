@@ -1,8 +1,10 @@
 package domain.ui.webstudio.pages.mainpages;
 
+import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.pages.BasePage;
+import helpers.utils.WaitUtil;
 
 /**
  * The Keycloak login form the browser lands on after Studio (in oauth2 mode) redirects
@@ -35,7 +37,18 @@ public class KeycloakLoginPage extends BasePage {
         usernameField.fillSequentially(username);
         passwordField.fillSequentially(password);
         loginButton.click();
-        LocalDriverPool.getPage().waitForLoadState();
+        // Wait until the browser is back on Studio (SAML uses an extra POST-binding auto-submit,
+        // so the session is only established once we leave the IdP) and the Studio session cookie
+        // is set — REST setup that reuses the browser session depends on it.
+        Page page = LocalDriverPool.getPage();
+        WaitUtil.waitForCondition(() -> {
+            page.waitForLoadState();
+            String url = page.url();
+            boolean onStudio = url != null && !url.contains("/realms/") && !url.contains("keycloak");
+            boolean hasSession = page.context().cookies().stream()
+                    .anyMatch(c -> "JSESSIONID".equalsIgnoreCase(c.name));
+            return onStudio && hasSession;
+        }, 20000, 250, "Waiting for SSO login to land back on Studio with a session cookie");
         return new EditorPage();
     }
 }
