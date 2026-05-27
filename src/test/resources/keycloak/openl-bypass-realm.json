@@ -1,0 +1,61 @@
+{
+  "realm": "openlstudio",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "groups": [
+    { "name": "bypass-managers", "path": "/bypass-managers" }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "OpenL",
+      "lastName": "Admin",
+      "email": "admin@openl.example",
+      "credentials": [ { "type": "password", "value": "admin", "temporary": false } ]
+    },
+    {
+      "username": "groupmgr",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Group",
+      "lastName": "Manager",
+      "email": "groupmgr@openl.example",
+      "credentials": [ { "type": "password", "value": "groupmgr", "temporary": false } ],
+      "groups": [ "/bypass-managers" ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "openlstudio",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "openlstudiosecret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [ "*" ],
+      "webOrigins": [ "*" ],
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "claim.name": "groups"
+          }
+        }
+      ]
+    }
+  ]
+}
