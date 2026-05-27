@@ -1,4 +1,4 @@
-package tests.ui.webstudio.git;
+package tests.ui.webstudio.sso;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
@@ -9,6 +9,7 @@ import domain.api.AclProjectsMethod;
 import domain.api.AuthorizedApiMethod;
 import domain.api.GroupsMethod;
 import domain.api.ProjectBranchesMethod;
+import tests.ui.webstudio.git.ProtectedBranchBypassFixture;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;

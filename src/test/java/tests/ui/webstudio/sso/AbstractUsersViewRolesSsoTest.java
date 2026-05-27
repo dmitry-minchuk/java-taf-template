@@ -61,7 +61,10 @@ public abstract class AbstractUsersViewRolesSsoTest extends BaseTest {
 
     /** Manager→Viewer role-assignment-and-access flow, identical across auth modes. */
     protected void runUsersViewRoleFlow() {
-        uploadProjectAsAdmin();
+        // Admin signs in via SSO and uploads the project using the live browser session — this
+        // works for both oauth2 and saml (saml issues no bearer token for programmatic REST).
+        ssoLogin("admin", "admin");
+        uploadProjectViaBrowserSession();
 
         // 1. External user logs in once via SSO so Studio syncs them into its user table.
         ssoLogin(EXTERNAL_USER, EXTERNAL_USER);
@@ -86,15 +89,13 @@ public abstract class AbstractUsersViewRolesSsoTest extends BaseTest {
         assertThat(viewerToolbar.isExportBtnVisible()).as("Viewer still sees the Export action").isTrue();
     }
 
-    private void uploadProjectAsAdmin() {
-        AuthorizedApiMethod.setBearerToken(keycloak.getAccessToken("admin", "admin"));
-        try {
-            File zip = new File(TestDataUtil.getFilePathFromResources(PROJECT_ZIP));
-            Response upload = new RepositoryProjectsMethod().uploadProject(DESIGN_REPO, PROJECT_NAME, zip);
-            assertThat(upload.getStatusCode()).as("upload project %s", PROJECT_NAME).isLessThan(300);
-        } finally {
-            AuthorizedApiMethod.clearBearerToken();
-        }
+    private void uploadProjectViaBrowserSession() {
+        // No bearer — AuthorizedApiMethod falls back to the live Playwright session cookies
+        // (the admin SSO session established just before this call).
+        AuthorizedApiMethod.clearBearerToken();
+        File zip = new File(TestDataUtil.getFilePathFromResources(PROJECT_ZIP));
+        Response upload = new RepositoryProjectsMethod().uploadProject(DESIGN_REPO, PROJECT_NAME, zip);
+        assertThat(upload.getStatusCode()).as("upload project %s", PROJECT_NAME).isLessThan(300);
     }
 
     private void assignProjectRole(String role, boolean addNewRow) {
