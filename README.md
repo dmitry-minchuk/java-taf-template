@@ -548,6 +548,32 @@ The framework integrates with Report Portal for enhanced test reporting:
 - **Application Logs**: Container logs attached to test results
 - **Execution Info**: Debug information about driver state
 
+### GitHub Actions ReportPortal Import
+
+When tests run outside the company VPN, direct ReportPortal publishing can be disabled and replayed later from Jenkins:
+
+```bash
+mvn clean test \
+  -Drp.enable=false \
+  -Dexecution.mode=PLAYWRIGHT_DOCKER \
+  -Dsuite=studio_smoke \
+  -Drp.export.dir=target/rp-export
+```
+
+The run writes a portable export under `target/rp-export` and the GitHub Actions workflow uploads it together with Surefire reports, screenshots, videos, logs, and downloads.
+
+From Jenkins inside the VPN:
+
+```bash
+bash scripts/reportportal-import/import-rp-export.sh \
+  --export-dir path/to/target/rp-export \
+  --rp-endpoint http://10.23.172.185:8080 \
+  --rp-project OpenL_Tests \
+  --rp-api-key "$RP_API_KEY"
+```
+
+Use `Jenkinsfile.reportportal-import` for the manual Jenkins job that downloads GitHub Actions artifacts and imports every `rp-export` manifest it finds.
+
 ### Debug Information
 
 ```java

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t%X{threadId}] [%p] %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.testcontainers" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.github.dockerjava" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="domain.api" level="${sys:log.api.level:-info}" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="configuration.listeners.RestAssuredFilter" level="${sys:log.api.level:-info}" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="helpers.utils.WaitUtil" level="${sys:log.api.level:-info}" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

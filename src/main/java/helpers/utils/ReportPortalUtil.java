@@ -1,6 +1,5 @@
 package helpers.utils;
 
-import com.epam.reportportal.service.ReportPortal;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.ScreenshotType;
 import configuration.driver.LocalDriverPool;
@@ -16,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class ReportPortalUtil {
     
@@ -50,7 +48,8 @@ public class ReportPortalUtil {
             if (screenshotBytes != null) {
                 File screenshotFile = saveScreenshotToFile(screenshotBytes, testName);
                 if (screenshotFile != null) {
-                    ReportPortal.emitLog(description, "ERROR", new Date(), screenshotFile);
+                    ReportPortalArtifactUtil.recordAttachment(description, "ERROR", screenshotFile);
+                    ReportPortalArtifactUtil.emitLog(description, "ERROR", screenshotFile);
                     LOGGER.info("Screenshot attached to ReportPortal: {}", screenshotFile.getName());
                 }
             }
@@ -83,7 +82,8 @@ public class ReportPortalUtil {
     public static void attachCustomScreenshot(String testName, String description) {
         File screenshotFile = captureScreenshot(testName, true);
         if (screenshotFile != null) {
-            ReportPortal.emitLog(description, "INFO", new Date(), screenshotFile);
+            ReportPortalArtifactUtil.recordAttachment(description, "INFO", screenshotFile);
+            ReportPortalArtifactUtil.emitLog(description, "INFO", screenshotFile);
             LOGGER.info("Custom screenshot attached to ReportPortal: {}", screenshotFile.getName());
         }
     }
@@ -156,7 +156,8 @@ public class ReportPortalUtil {
                 
                 try {
                     Files.write(tempFile.toPath(), videoBytes);
-                    ReportPortal.emitLog("Test Failure Video", "ERROR", new Date(), tempFile);
+                    ReportPortalArtifactUtil.recordAttachment("Test Failure Video", "ERROR", tempFile);
+                    ReportPortalArtifactUtil.emitLog("Test Failure Video", "ERROR", tempFile);
                     LOGGER.info("Video attached to ReportPortal for test: {} (size: {} bytes)", testName, videoBytes.length);
                 } finally {
                     // Clean up temp file after ReportPortal processes it
@@ -178,7 +179,8 @@ public class ReportPortalUtil {
             
             File tempFile = createTempFile("page-content-", ".html", content);
             if (tempFile != null) {
-                ReportPortal.emitLog(description, "INFO", new Date(), tempFile);
+                ReportPortalArtifactUtil.recordAttachment(description, "INFO", tempFile);
+                ReportPortalArtifactUtil.emitLog(description, "INFO", tempFile);
                 LOGGER.info("Page content attached to ReportPortal: {}", tempFile.getName());
             }
             
@@ -195,7 +197,8 @@ public class ReportPortalUtil {
             
             File tempFile = createTempFile("browser-logs-", ".txt", logs);
             if (tempFile != null) {
-                ReportPortal.emitLog(description, "INFO", new Date(), tempFile);
+                ReportPortalArtifactUtil.recordAttachment(description, "INFO", tempFile);
+                ReportPortalArtifactUtil.emitLog(description, "INFO", tempFile);
                 LOGGER.info("Browser logs attached to ReportPortal: {}", tempFile.getName());
             }
             
@@ -206,7 +209,8 @@ public class ReportPortalUtil {
     
     public static void attachDownloadedFile(File downloadedFile, String description) {
         if (downloadedFile != null && downloadedFile.exists()) {
-            ReportPortal.emitLog(description, "INFO", new Date(), downloadedFile);
+            ReportPortalArtifactUtil.recordAttachment(description, "INFO", downloadedFile);
+            ReportPortalArtifactUtil.emitLog(description, "INFO", downloadedFile);
             LOGGER.info("Downloaded file attached to ReportPortal: {}", downloadedFile.getName());
         } else {
             LOGGER.warn("Cannot attach downloaded file - file does not exist: {}", 
@@ -220,7 +224,8 @@ public class ReportPortalUtil {
             File testDataFile = new File(filePath);
             
             if (testDataFile.exists()) {
-                ReportPortal.emitLog(description, "INFO", new Date(), testDataFile);
+                ReportPortalArtifactUtil.recordAttachment(description, "INFO", testDataFile);
+                ReportPortalArtifactUtil.emitLog(description, "INFO", testDataFile);
                 LOGGER.info("Test data file attached to ReportPortal: {}", testDataFile.getName());
             } else {
                 LOGGER.warn("Test data file not found: {}", filePath);
@@ -244,7 +249,8 @@ public class ReportPortalUtil {
             
             File tempFile = createTempFile("execution-info-", ".txt", executionInfo);
             if (tempFile != null) {
-                ReportPortal.emitLog("Test Execution Information", "INFO", new Date(), tempFile);
+                ReportPortalArtifactUtil.recordAttachment("Test Execution Information", "INFO", tempFile);
+                ReportPortalArtifactUtil.emitLog("Test Execution Information", "INFO", tempFile);
                 LOGGER.info("Execution info attached to ReportPortal: {}", tempFile.getName());
             }
             
