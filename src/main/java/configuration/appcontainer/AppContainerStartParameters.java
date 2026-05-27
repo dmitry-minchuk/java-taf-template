@@ -22,6 +22,14 @@ public enum AppContainerStartParameters {
      * `master` stays unprotected so the admin REST setup is not blocked.
      */
     STUDIO_BYPASS_BOTH_PROTECTED_PARAMS,
+    /**
+     * Studio in OIDC (oauth2) mode wired to the ephemeral Keycloak from
+     * {@code KeycloakInfrastructureService} (issuer {@code http://keycloak:8080/realms/openlstudio}),
+     * with the protected-branch bypass enabled. Used by the PLAYWRIGHT_DOCKER SSO test that
+     * verifies a group-derived Manager role (EPBDS-15960 Z.6). Username maps from
+     * {@code preferred_username}; the {@code groups} claim becomes the user's group authorities.
+     */
+    STUDIO_OIDC_BYPASS_PARAMS,
     SINGLE_USER_STUDIO_PARAMS,
     DEPLOY_STUDIO_PARAMS,
     STUDIO_GIT,
@@ -120,6 +128,20 @@ public enum AppContainerStartParameters {
                 // `*EPBDS-15818*` matches both EPBDS-15818_dev and release-EPBDS-15818, so the
                 // merge crosses two protected branches; `master` stays unprotected for setup.
                 config.put("repository.design.protected-branches", "*EPBDS-15818*");
+                break;
+            case STUDIO_OIDC_BYPASS_PARAMS:
+                config.putAll(EMPTY.getParameterMap());
+                config.put("webstudio.configured", "true");
+                config.put("user.mode", "oauth2");
+                config.put("security.administrators", "admin");
+                config.put("security.oauth2.client-id", "openlstudio");
+                config.put("security.oauth2.client-secret", "openlstudiosecret");
+                config.put("security.oauth2.issuer-uri", "http://keycloak:8080/realms/openlstudio");
+                config.put("security.oauth2.scope", "openid,profile,email");
+                config.put("security.oauth2.attribute.username", "preferred_username");
+                config.put("security.oauth2.attribute.groups", "groups");
+                config.put("security.allow-bypass-protected-branches", "true");
+                config.put("repository.design.protected-branches", "release-**");
                 break;
             case DEFAULT_STUDIO_PARAMS:
             default:

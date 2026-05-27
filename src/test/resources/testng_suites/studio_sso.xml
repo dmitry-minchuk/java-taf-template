@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- PLAYWRIGHT_DOCKER suite: SSO / external-IdP UI tests. The browser runs inside the
+     Docker network so it can reach Keycloak by the same alias as Studio and the token issuer.
+     Run with: mvn test -Dsurefire.suiteXmlFiles=...studio_sso.xml -Dexecution.mode=PLAYWRIGHT_DOCKER -Djava.net.preferIPv4Stack=true -->
+<suite verbose="1" name="WebStudio SSO Tests" annotations="JDK" parallel="tests" thread-count="1">
+
+    <listeners>
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
+        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
+    </listeners>
+
+    <test name="TestProtectedBranchBypassGroupMembershipUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassGroupMembershipUi"/></classes></test>
+
+</suite>

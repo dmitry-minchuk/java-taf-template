@@ -15,6 +15,8 @@ import java.util.List;
 public abstract class AuthorizedApiMethod extends ApiBaseMethod {
 
     private static final ThreadLocal<SessionFilter> SESSION_FILTER = new ThreadLocal<>();
+    // OIDC/oauth2 mode: REST setup authenticates with a bearer token instead of basic auth.
+    private static final ThreadLocal<String> BEARER_TOKEN = new ThreadLocal<>();
 
     protected AuthorizedApiMethod(String path) {
         super(path);
@@ -28,8 +30,21 @@ public abstract class AuthorizedApiMethod extends ApiBaseMethod {
         SESSION_FILTER.remove();
     }
 
+    public static void setBearerToken(String token) {
+        BEARER_TOKEN.set(token);
+    }
+
+    public static void clearBearerToken() {
+        BEARER_TOKEN.remove();
+    }
+
     protected RequestSpecification authorizedRequest() {
         RequestSpecification specification = RestAssured.given().header("Accept", "application/json");
+
+        String bearer = BEARER_TOKEN.get();
+        if (bearer != null) {
+            return specification.header("Authorization", "Bearer " + bearer);
+        }
 
         SessionFilter sessionFilter = SESSION_FILTER.get();
         if (sessionFilter != null) {

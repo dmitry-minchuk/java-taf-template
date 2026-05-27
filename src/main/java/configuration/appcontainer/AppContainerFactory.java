@@ -42,7 +42,29 @@ public class AppContainerFactory {
         if(filesToCopy != null)
             filesToCopy.forEach((hostPath, containerPath) ->
                     container.withCopyFileToContainer(getMountableFile(hostPath), containerPath));
-        container.waitingFor(Wait.forHttp(DEPLOYED_APP_PATH)
+        container.waitingFor(buildHttpWaitStrategy(envVars, startupTimeout));
+        LOGGER.info("Starting app container: {} (startup timeout: {})", containerName, startupTimeout);
+        container.start();
+
+        LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
+        LOGGER.info(String.format("App Url accessible from the Browser container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
+        return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
+    }
+
+    private static org.testcontainers.containers.wait.strategy.WaitStrategy buildHttpWaitStrategy(
+            Map<String, String> envVars, Duration startupTimeout) {
+        // In oauth2/SSO mode the root path 302-redirects to the external IdP (e.g. keycloak:8080),
+        // a network alias the host running the wait check cannot resolve — HttpURLConnection would
+        // follow the redirect and throw UnknownHostException. Wait on a static, permit-all resource
+        // that responds without redirecting instead, accepting any non-server-error status.
+        boolean oauth2 = envVars != null && "oauth2".equals(envVars.get("user.mode"));
+        if (oauth2) {
+            return Wait.forHttp("/favicon.ico")
+                    .forStatusCodeMatching(code -> code >= 200 && code < 500)
+                    .withReadTimeout(Duration.ofSeconds(20))
+                    .withStartupTimeout(startupTimeout);
+        }
+        return Wait.forHttp(DEPLOYED_APP_PATH)
                 .forStatusCode(200)
                 // withReadTimeout prevents indefinite hang when files are copied to a running container:
                 // TestContainers copies files after container starts, OpenL detects them and recompiles
@@ -51,13 +73,7 @@ public class AppContainerFactory {
                 // A read timeout causes SocketTimeoutException -> IOException -> TestContainers retries
                 // the health check until OpenL finishes recompiling and the server responds again.
                 .withReadTimeout(Duration.ofSeconds(20))
-                .withStartupTimeout(startupTimeout));
-        LOGGER.info("Starting app container: {} (startup timeout: {})", containerName, startupTimeout);
-        container.start();
-
-        LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
-        LOGGER.info(String.format("App Url accessible from the Browser container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
-        return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
+                .withStartupTimeout(startupTimeout);
     }
 
     private static MountableFile getMountableFile(String resourcePath) {
