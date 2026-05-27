@@ -22,6 +22,7 @@ public class RightTableDetailsComponent extends BaseComponent {
     private WebElement propertyValueTextTemplate;
     private WebElement propertyRowTemplate;
     private WebElement goToPropertiesTableArrowTemplate;
+    private WebElement loadedTableNameTemplate;
 
     // Property rows list
     private List<WebElement> propertyRows;
@@ -60,6 +61,7 @@ public class RightTableDetailsComponent extends BaseComponent {
         propertyValueTextTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueText");
         propertyRowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[./td[normalize-space(text())='%s']]", "propertyRow");
         goToPropertiesTableArrowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[2]//a", "goToPropertiesTableArrow");
+        loadedTableNameTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[td[normalize-space()='Name']]/td[normalize-space()='%s']", "loadedTableName");
 
         // Property rows list
         propertyRows = createScopedElementList("xpath=.//div[@id='propsTable']//table[1]//tr[./td[@class='table-data-name']]", "propertyRows");
@@ -106,6 +108,12 @@ public class RightTableDetailsComponent extends BaseComponent {
 
     public String getPropertyValue(String propertyName) {
         return propertyValueTextTemplate.format(propertyName).getText().trim();
+    }
+
+    // Panel reloads asynchronously after table selection; wait until it reflects the target table
+    public RightTableDetailsComponent waitForTableLoaded(String tableName) {
+        loadedTableNameTemplate.format(tableName).waitForVisible(DEFAULT_TIMEOUT_MS);
+        return this;
     }
 
     public WebElement getPropertyRow(String propertyName) {

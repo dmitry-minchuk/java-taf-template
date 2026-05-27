@@ -111,66 +111,60 @@ public class TestModuleCategoryInheritedProperties extends BaseTest {
 
         editorPage.getEditorLeftRulesTreeComponent()
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "MyRules1");
+                .expandFolderInTree("Decision");
+        selectTable(editorPage, "Decision", "MyRules1");
         verifyPropertiesInTableDetails(editorPage, valuesModuleProperties);
 
         verifyBlueArrowWork(editorPage);
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MyRules7");
+        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Spreadsheet");
+        selectTable(editorPage, "Spreadsheet", "MyRules7");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Auto Type Discovery"))
                 .contains("true");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Test")
-                .selectItemInFolder("Test", "MyRules2Test");
+        editorPage.getEditorLeftRulesTreeComponent().expandFolderInTree("Test");
+        selectTable(editorPage, "Test", "MyRules2Test");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Precision"))
                 .contains("1");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Decision", "MyRules2");
+        selectTable(editorPage, "Decision", "MyRules2");
         verifyPropertiesInTableDetails(editorPage, valuesModuleOverwrittenByTableProperties);
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Test", "MyRules1Test");
+        selectTable(editorPage, "Test", "MyRules1Test");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Precision"))
                 .contains("2");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Decision", "MyRules3");
+        selectTable(editorPage, "Decision", "MyRules3");
         verifyPropertiesInTableDetails(editorPage, valuesCategoryProperties);
 
         verifyBlueArrowWork(editorPage);
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Spreadsheet", "MyRules9");
+        selectTable(editorPage, "Spreadsheet", "MyRules9");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Auto Type Discovery"))
                 .contains("false");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Test", "MyRules4Test");
+        selectTable(editorPage, "Test", "MyRules4Test");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Precision"))
                 .contains("3");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Decision", "MyRules4");
+        selectTable(editorPage, "Decision", "MyRules4");
         verifyPropertiesInTableDetails(editorPage, valuesCategoryOverwrittenByTableProperties);
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Spreadsheet", "MyRules8");
+        selectTable(editorPage, "Spreadsheet", "MyRules8");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Auto Type Discovery"))
                 .contains("true");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Test", "MyRules3Test");
+        selectTable(editorPage, "Test", "MyRules3Test");
         assertThat(editorPage.getRightTableDetailsComponent().getPropertyValue("Precision"))
                 .contains("4");
 
-        editorPage.getEditorLeftRulesTreeComponent()
-                .selectItemInFolder("Decision", "MyRules5");
+        selectTable(editorPage, "Decision", "MyRules5");
         verifyPropertiesInTableDetails(editorPage, valuesCategoryProperties);
+    }
+
+    private void selectTable(EditorPage editorPage, String folder, String tableName) {
+        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder(folder, tableName);
+        editorPage.getRightTableDetailsComponent().waitForTableLoaded(tableName);
     }
 
     private void verifyPropertiesInTableDetails(EditorPage editorPage, Map<String, String> expectedValues) {

@@ -80,32 +80,49 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     }
 
     public EditorMainContentProblemsPanelComponent expandProblemDescription(int elementPosition) {
+        // Click until shown: a concurrent panel reload on table switch can undo a single click
         WaitUtil.waitForCondition(() -> {
             try {
-                if (errorMessages.size() > elementPosition) {
-                    errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='stacktrace-hidden']").click();
+                if (errorMessages.size() <= elementPosition) {
+                    return false;
+                }
+                Locator error = errorMessages.get(elementPosition).getLocator();
+                if (error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible()) {
                     return true;
                 }
-                return false;
-            } catch (IndexOutOfBoundsException e) {
+                Locator toggle = error.locator("xpath=.//div[@class='stacktrace-hidden']");
+                if (toggle.count() == 0) {
+                    return false;
+                }
+                toggle.first().click();
+                return error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible();
+            } catch (Exception e) {
                 return false;
             }
-        }, 10000, 250, "Waiting for error message at position " + elementPosition + " and expanding description");
+        }, 10000, 250, "Waiting for problem description at position " + elementPosition + " to expand");
         return this;
     }
 
     public EditorMainContentProblemsPanelComponent hideProblemDescription(int elementPosition) {
         WaitUtil.waitForCondition(() -> {
             try {
-                if (errorMessages.size() > elementPosition) {
-                    errorMessages.get(elementPosition).getLocator().locator("xpath=.//div[@class='arrow-top']//div[@class='stacktrace-showed']").click();
+                if (errorMessages.size() <= elementPosition) {
+                    return false;
+                }
+                Locator error = errorMessages.get(elementPosition).getLocator();
+                if (!error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible()) {
                     return true;
                 }
-                return false;
-            } catch (IndexOutOfBoundsException e) {
+                Locator toggle = error.locator("xpath=.//div[@class='arrow-top']//div[@class='stacktrace-showed']");
+                if (toggle.count() == 0) {
+                    return false;
+                }
+                toggle.first().click();
+                return !error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible();
+            } catch (Exception e) {
                 return false;
             }
-        }, 10000, 250, "Waiting for error message at position " + elementPosition + " and hiding description");
+        }, 10000, 250, "Waiting for problem description at position " + elementPosition + " to hide");
         return this;
     }
 

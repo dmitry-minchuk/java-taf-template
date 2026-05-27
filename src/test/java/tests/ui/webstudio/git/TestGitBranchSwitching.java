@@ -74,8 +74,13 @@ public class TestGitBranchSwitching extends BaseTest {
         // Return to Repository tab
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
+        // Repository tab keeps a cached view; refresh so it reflects the branch switched in the editor
+        repositoryPage.refresh();
+
         // Verify current branch is master in Properties Tab
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(PROJECT_NAME);
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_NAME);
         propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
         assertThat(propertiesTab.getSelectedBranch())
                 .as("Current branch should be " + MASTER_BRANCH_NAME)

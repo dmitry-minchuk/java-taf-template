@@ -303,7 +303,11 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void cancelUser() {
-        cancelBtn.click();
-        drawer.waitForHidden(3000);
+        // A post-save error notification overlaps the drawer's Cancel button; Escape closes the drawer regardless
+        WaitUtil.retryOnException(() -> {
+            page.keyboard().press("Escape");
+            drawer.waitForHidden(2000);
+            return true;
+        }, 10000, 500, "Closing user drawer via Escape");
     }
 }
