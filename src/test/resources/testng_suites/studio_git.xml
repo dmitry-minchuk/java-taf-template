@@ -22,5 +22,6 @@
     <test name="TestProtectedBranchBypassContributorBlockedUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassContributorBlockedUi"/></classes></test>
     <test name="TestProtectedBranchBypassBothProtectedUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassBothProtectedUi"/></classes></test>
     <test name="TestProtectedBranchBypassIdempotentRetryUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassIdempotentRetryUi"/></classes></test>
+    <test name="TestProtectedBranchBypassLegacyEditorUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassLegacyEditorUi"/></classes></test>
 
 </suite>
