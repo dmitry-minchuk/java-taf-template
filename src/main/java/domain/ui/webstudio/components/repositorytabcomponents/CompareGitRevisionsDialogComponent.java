@@ -43,6 +43,7 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
 
     public CompareGitRevisionsDialogComponent(Page comparePopup) {
         super(comparePopup);
+        comparePopup.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
         this.comparePopup = comparePopup;
         initializeElements();
     }
@@ -93,10 +94,18 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     // ========== Revision and Compare ==========
 
     public void selectRevision(int index) {
-        List<String> options = revisionSelect.getSelectVisibleTextValues();
-        if (options.size() > 1) {
-            revisionSelect.getLocator().selectOption(new com.microsoft.playwright.options.SelectOption().setIndex(index));
+        boolean populated = WaitUtil.waitForCondition(
+                () -> revisionSelect.getSelectVisibleTextValues().size() > index,
+                DEFAULT_TIMEOUT_MS,
+                200,
+                "Waiting for revision dropdown to have at least " + (index + 1) + " options"
+        );
+        if (!populated) {
+            throw new IllegalStateException(
+                    "Revision dropdown never populated enough to pick index " + index
+                            + "; available: " + revisionSelect.getSelectVisibleTextValues());
         }
+        revisionSelect.getLocator().selectOption(new com.microsoft.playwright.options.SelectOption().setIndex(index));
     }
 
     public void clickCompareBtn() {
