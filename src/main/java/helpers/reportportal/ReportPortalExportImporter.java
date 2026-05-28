@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,16 +50,47 @@ public class ReportPortalExportImporter {
 
         ReportPortalClient client = createClient(options);
         String launchUuid = startLaunch(client, options, manifest, tests);
-        boolean hasFailures = false;
+        boolean launchHasFailures = false;
 
+        Map<String, Map<String, List<TestExport>>> bySuite = new LinkedHashMap<>();
         for (TestExport test : tests) {
-            String itemUuid = startTestItem(client, launchUuid, test);
-            sendLogs(client, test.exportDir(), launchUuid, itemUuid, test);
-            finishTestItem(client, itemUuid, launchUuid, test);
-            hasFailures |= !"PASSED".equals(test.status());
+            bySuite.computeIfAbsent(test.suite(), s -> new LinkedHashMap<>())
+                    .computeIfAbsent(test.className(), c -> new ArrayList<>())
+                    .add(test);
         }
 
-        finishLaunch(client, launchUuid, hasFailures ? "FAILED" : "PASSED");
+        for (Map.Entry<String, Map<String, List<TestExport>>> suiteEntry : bySuite.entrySet()) {
+            String suiteName = suiteEntry.getKey();
+            Map<String, List<TestExport>> byClass = suiteEntry.getValue();
+            List<TestExport> suiteTests = byClass.values().stream().flatMap(List::stream).toList();
+
+            String suiteUuid = startContainerItem(client, launchUuid, null, "SUITE", suiteName, null, suiteTests);
+            boolean suiteHasFailures = false;
+
+            for (Map.Entry<String, List<TestExport>> classEntry : byClass.entrySet()) {
+                String className = classEntry.getKey();
+                List<TestExport> classTests = classEntry.getValue();
+                String classSimpleName = className.substring(className.lastIndexOf('.') + 1);
+
+                String classUuid = startContainerItem(client, launchUuid, suiteUuid, "TEST", classSimpleName, className, classTests);
+                boolean classHasFailures = false;
+
+                for (TestExport test : classTests) {
+                    String stepUuid = startStepItem(client, launchUuid, classUuid, test);
+                    sendLogs(client, test.exportDir(), launchUuid, stepUuid, test);
+                    finishStepItem(client, stepUuid, launchUuid, test);
+                    classHasFailures |= !"PASSED".equals(test.status());
+                }
+
+                finishContainerItem(client, classUuid, launchUuid, classTests, classHasFailures);
+                suiteHasFailures |= classHasFailures;
+            }
+
+            finishContainerItem(client, suiteUuid, launchUuid, suiteTests, suiteHasFailures);
+            launchHasFailures |= suiteHasFailures;
+        }
+
+        finishLaunch(client, launchUuid, launchHasFailures ? "FAILED" : "PASSED");
         System.out.printf("Imported %d test item(s) into ReportPortal launch %s%n", tests.size(), launchUuid);
     }
 
@@ -88,19 +120,36 @@ public class ReportPortalExportImporter {
         return response.getId();
     }
 
-    private static String startTestItem(ReportPortalClient client, String launchUuid, TestExport test) {
+    private static String startContainerItem(ReportPortalClient client, String launchUuid, String parentUuid,
+                                              String type, String name, String codeRef, List<TestExport> children) {
+        StartTestItemRQ request = new StartTestItemRQ();
+        request.setLaunchUuid(launchUuid);
+        request.setName(name);
+        if (codeRef != null) {
+            request.setCodeRef(codeRef);
+        }
+        request.setType(type);
+        request.setStartTime(children.stream().map(TestExport::startedAt).min(Date::compareTo).orElse(new Date()));
+
+        ItemCreatedRS response = parentUuid == null
+                ? client.startTestItem(request).blockingGet()
+                : client.startTestItem(parentUuid, request).blockingGet();
+        return response.getId();
+    }
+
+    private static String startStepItem(ReportPortalClient client, String launchUuid, String parentUuid, TestExport test) {
         StartTestItemRQ request = new StartTestItemRQ();
         request.setLaunchUuid(launchUuid);
         request.setName(test.displayName());
         request.setCodeRef(test.className() + "." + test.methodName());
         request.setDescription(test.description());
-        request.setType("TEST");
+        request.setType("STEP");
         request.setStartTime(test.startedAt());
         if (!test.testCaseId().isBlank()) {
             request.setTestCaseId(test.testCaseId());
         }
 
-        ItemCreatedRS response = client.startTestItem(request).blockingGet();
+        ItemCreatedRS response = client.startTestItem(parentUuid, request).blockingGet();
         return response.getId();
     }
 
@@ -143,12 +192,29 @@ public class ReportPortalExportImporter {
         return log;
     }
 
-    private static void finishTestItem(ReportPortalClient client, String itemUuid, String launchUuid, TestExport test) {
+    private static void finishStepItem(ReportPortalClient client, String itemUuid, String launchUuid, TestExport test) {
         FinishTestItemRQ request = new FinishTestItemRQ();
         request.setLaunchUuid(launchUuid);
         request.setStatus(test.status());
         request.setEndTime(test.finishedAt());
         client.finishTestItem(itemUuid, request).blockingGet();
+    }
+
+    private static void finishContainerItem(ReportPortalClient client, String itemUuid, String launchUuid,
+                                             List<TestExport> children, boolean hasFailures) {
+        FinishTestItemRQ request = new FinishTestItemRQ();
+        request.setLaunchUuid(launchUuid);
+        request.setStatus(hasFailures ? "FAILED" : "PASSED");
+        request.setEndTime(children.stream().map(TestExport::finishedAt).max(Date::compareTo).orElse(new Date()));
+        client.finishTestItem(itemUuid, request).blockingGet();
+    }
+
+    private static String normalizeSuiteName(String rawSuite) {
+        if (rawSuite == null || rawSuite.isBlank()) {
+            return "default";
+        }
+        String stripped = rawSuite.startsWith("OpenL GHA ") ? rawSuite.substring("OpenL GHA ".length()) : rawSuite;
+        return stripped.replaceFirst("-\\d{2}$", "");
     }
 
     private static void finishLaunch(ReportPortalClient client, String launchUuid, String status) {
@@ -272,6 +338,7 @@ public class ReportPortalExportImporter {
 
     private record TestExport(
             Path exportDir,
+            String suite,
             String className,
             String methodName,
             String displayName,
@@ -287,6 +354,7 @@ public class ReportPortalExportImporter {
         static TestExport from(Path exportDir, Path testDir, Map<String, Object> metadata, Map<String, Object> result) throws IOException {
             return new TestExport(
                     exportDir,
+                    normalizeSuiteName(stringValue(metadata, "suite", "")),
                     stringValue(metadata, "className", ""),
                     stringValue(metadata, "methodName", ""),
                     stringValue(metadata, "displayName", stringValue(metadata, "methodName", "")),
