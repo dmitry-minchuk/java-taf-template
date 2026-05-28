@@ -6,6 +6,7 @@ pipeline {
         string(name: 'WORKFLOW_NAME', defaultValue: 'OpenL Tests', description: 'Workflow name to use when GITHUB_RUN_ID is empty')
         string(name: 'GITHUB_RUN_ID', defaultValue: '', description: 'GitHub Actions run id. Empty means latest completed run for WORKFLOW_NAME')
         string(name: 'ARTIFACT_PATTERN', defaultValue: 'openl-tests-*', description: 'Artifact name pattern to download')
+        string(name: 'GITHUB_TOKEN_CREDENTIALS_ID', defaultValue: 'github-actions-token', description: 'Jenkins secret text credentials id for GitHub CLI')
         string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests branch to checkout for importer code')
         string(name: 'RP_ENDPOINT', defaultValue: 'http://10.23.172.185:8080', description: 'ReportPortal endpoint visible from Jenkins')
         string(name: 'RP_PROJECT', defaultValue: 'OpenL_Tests', description: 'ReportPortal project')
@@ -26,31 +27,33 @@ pipeline {
 
         stage('Download GitHub Artifacts') {
             steps {
-                withEnv([
-                        "GITHUB_REPO=${params.GITHUB_REPO}",
-                        "WORKFLOW_NAME=${params.WORKFLOW_NAME}",
-                        "GITHUB_RUN_ID=${params.GITHUB_RUN_ID}",
-                        "ARTIFACT_PATTERN=${params.ARTIFACT_PATTERN}"
-                ]) {
-                    sh '''#!/usr/bin/env bash
-                        set -euo pipefail
-                        rm -rf gh-artifacts
-                        mkdir -p gh-artifacts
+                withCredentials([string(credentialsId: params.GITHUB_TOKEN_CREDENTIALS_ID, variable: 'GH_TOKEN')]) {
+                    withEnv([
+                            "GITHUB_REPO=${params.GITHUB_REPO}",
+                            "WORKFLOW_NAME=${params.WORKFLOW_NAME}",
+                            "GITHUB_RUN_ID=${params.GITHUB_RUN_ID}",
+                            "ARTIFACT_PATTERN=${params.ARTIFACT_PATTERN}"
+                    ]) {
+                        sh '''#!/usr/bin/env bash
+                            set -euo pipefail
+                            rm -rf gh-artifacts
+                            mkdir -p gh-artifacts
 
-                        if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
-                          RUN_ID="${GITHUB_RUN_ID}"
-                        else
-                          RUN_ID="$(gh run list --repo "${GITHUB_REPO}" --workflow "${WORKFLOW_NAME}" --status completed --limit 1 --json databaseId --jq '.[0].databaseId')"
-                        fi
+                            if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
+                              RUN_ID="${GITHUB_RUN_ID}"
+                            else
+                              RUN_ID="$(gh run list --repo "${GITHUB_REPO}" --workflow "${WORKFLOW_NAME}" --status completed --limit 1 --json databaseId --jq '.[0].databaseId')"
+                            fi
 
-                        if [[ -z "${RUN_ID}" || "${RUN_ID}" == "null" ]]; then
-                          echo "No completed GitHub Actions run found for workflow '${WORKFLOW_NAME}' in repo '${GITHUB_REPO}'" >&2
-                          exit 1
-                        fi
+                            if [[ -z "${RUN_ID}" || "${RUN_ID}" == "null" ]]; then
+                              echo "No completed GitHub Actions run found for workflow '${WORKFLOW_NAME}' in repo '${GITHUB_REPO}'" >&2
+                              exit 1
+                            fi
 
-                        echo "Downloading artifacts from GitHub run ${RUN_ID}"
-                        gh run download "${RUN_ID}" --repo "${GITHUB_REPO}" --pattern "${ARTIFACT_PATTERN}" --dir gh-artifacts
-                    '''
+                            echo "Downloading artifacts from GitHub run ${RUN_ID}"
+                            gh run download "${RUN_ID}" --repo "${GITHUB_REPO}" --pattern "${ARTIFACT_PATTERN}" --dir gh-artifacts
+                        '''
+                    }
                 }
             }
         }
