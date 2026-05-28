@@ -1,6 +1,5 @@
 package tests;
 
-import com.epam.reportportal.service.ReportPortal;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
@@ -11,6 +10,7 @@ import configuration.driver.LocalDriverPool;
 import configuration.network.NetworkPool;
 import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
+import helpers.utils.ReportPortalArtifactUtil;
 import helpers.utils.ReportPortalUtil;
 import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
@@ -23,9 +23,9 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +61,7 @@ public abstract class BaseTest implements ITest {
     public void beforeMethod(ITestResult result) {
         // Set unique test name for DataProvider iterations (for ReportPortal)
         setUniqueTestName(result);
+        ReportPortalArtifactUtil.startTest(result, getTestName());
 
         switch (EXECUTION_MODE) {
             case PLAYWRIGHT_LOCAL -> {
@@ -79,15 +80,19 @@ public abstract class BaseTest implements ITest {
 
     @AfterMethod
     public void afterMethod(ITestResult result) {
-        switch (EXECUTION_MODE) {
-            case PLAYWRIGHT_LOCAL -> {
-                // PLAYWRIGHT PHASE 1: Local Playwright cleanup
-                cleanupPlaywrightLocalTest(result);
+        try {
+            switch (EXECUTION_MODE) {
+                case PLAYWRIGHT_LOCAL -> {
+                    // PLAYWRIGHT PHASE 1: Local Playwright cleanup
+                    cleanupPlaywrightLocalTest(result);
+                }
+                case PLAYWRIGHT_DOCKER -> {
+                    // PLAYWRIGHT PHASE 3: Docker-aware Playwright cleanup
+                    cleanupPlaywrightDockerTest(result);
+                }
             }
-            case PLAYWRIGHT_DOCKER -> {
-                // PLAYWRIGHT PHASE 3: Docker-aware Playwright cleanup
-                cleanupPlaywrightDockerTest(result);
-            }
+        } finally {
+            ReportPortalArtifactUtil.finishTest(result);
         }
     }
 
@@ -212,7 +217,7 @@ public abstract class BaseTest implements ITest {
     }
 
     private void cleanupPlaywrightLocalTest(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
+        String testName = getTestName();
 
         if (result.getStatus() == ITestResult.FAILURE) {
             // Enhanced ReportPortal logging with ReportPortalUtil
@@ -221,7 +226,9 @@ public abstract class BaseTest implements ITest {
             ReportPortalUtil.attachExecutionInfo();
 
             // Log application logs (same as Selenium mode)
-            ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
+            File appLog = LogsUtil.saveAppLogs(AppContainerPool.get());
+            ReportPortalArtifactUtil.recordAttachment("Application LOG", "INFO", appLog);
+            ReportPortalArtifactUtil.emitLog("Application LOG", "INFO", appLog);
         }
 
         // Close Playwright
@@ -237,7 +244,7 @@ public abstract class BaseTest implements ITest {
     }
 
     private void cleanupPlaywrightDockerTest(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
+        String testName = getTestName();
 
         if (result.getStatus() == ITestResult.FAILURE) {
             // Enhanced ReportPortal logging with ReportPortalUtil
@@ -249,7 +256,9 @@ public abstract class BaseTest implements ITest {
             ReportPortalUtil.attachVideoOnFailure(testName);
 
             // Log application logs (same as Selenium mode)
-            ReportPortal.emitLog("Application LOG", "INFO", new Date(), LogsUtil.saveAppLogs(AppContainerPool.get()));
+            File appLog = LogsUtil.saveAppLogs(AppContainerPool.get());
+            ReportPortalArtifactUtil.recordAttachment("Application LOG", "INFO", appLog);
+            ReportPortalArtifactUtil.emitLog("Application LOG", "INFO", appLog);
         }
 
         // Close Playwright Docker (page already closed by video attachment if failure occurred)

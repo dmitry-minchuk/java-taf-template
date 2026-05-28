@@ -119,6 +119,7 @@ public class EditorPage extends BasePage {
     }
 
     public TableComponent getCenterTable() {
+        waitUntilSpinnerLoaded();
         WaitUtil.waitForCondition(
                 () -> centerTable.isVisible(),
                 5000, 250,

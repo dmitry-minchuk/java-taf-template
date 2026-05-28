@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'GITHUB_REPO', defaultValue: 'dmitry-minchuk/java-taf-template', description: 'GitHub repository with workflow artifacts')
+        string(name: 'WORKFLOW_NAME', defaultValue: 'OpenL Tests', description: 'Workflow name to use when GITHUB_RUN_ID is empty')
+        string(name: 'GITHUB_RUN_ID', defaultValue: '', description: 'GitHub Actions run id. Empty means latest completed run for WORKFLOW_NAME')
+        string(name: 'ARTIFACT_PATTERN', defaultValue: 'openl-tests-*', description: 'Artifact name pattern to download')
+        string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests branch to checkout for importer code')
+        string(name: 'RP_ENDPOINT', defaultValue: 'http://10.23.172.185:8080', description: 'ReportPortal endpoint visible from Jenkins')
+        string(name: 'RP_PROJECT', defaultValue: 'OpenL_Tests', description: 'ReportPortal project')
+        string(name: 'RP_API_KEY_CREDENTIALS_ID', defaultValue: 'reportportal-api-key', description: 'Jenkins secret text credentials id')
+    }
+
+    stages {
+        stage('Checkout Importer') {
+            steps {
+                checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: params.TESTS_BRANCH]],
+                        extensions: [[$class: 'CloneOption', noTags: true, shallow: true, depth: 20, timeout: 30]],
+                        userRemoteConfigs: [[url: 'https://github.com/dmitry-minchuk/java-taf-template.git']]
+                ])
+            }
+        }
+
+        stage('Download GitHub Artifacts') {
+            steps {
+                sh '''#!/usr/bin/env bash
+                    set -euo pipefail
+                    rm -rf gh-artifacts
+                    mkdir -p gh-artifacts
+
+                    if [[ -n "${GITHUB_RUN_ID}" ]]; then
+                      RUN_ID="${GITHUB_RUN_ID}"
+                    else
+                      RUN_ID="$(gh run list --repo "${GITHUB_REPO}" --workflow "${WORKFLOW_NAME}" --status completed --limit 1 --json databaseId --jq '.[0].databaseId')"
+                    fi
+
+                    echo "Downloading artifacts from GitHub run ${RUN_ID}"
+                    gh run download "${RUN_ID}" --repo "${GITHUB_REPO}" --pattern "${ARTIFACT_PATTERN}" --dir gh-artifacts
+                '''
+            }
+        }
+
+        stage('Import To ReportPortal') {
+            steps {
+                withCredentials([string(credentialsId: params.RP_API_KEY_CREDENTIALS_ID, variable: 'RP_API_KEY')]) {
+                    sh '''#!/usr/bin/env bash
+                        set -euo pipefail
+                        mapfile -t EXPORT_DIRS < <(find gh-artifacts -name manifest.json -exec dirname {} \\; | sort)
+                        if [[ "${#EXPORT_DIRS[@]}" -eq 0 ]]; then
+                          echo "No rp-export manifest files found under gh-artifacts" >&2
+                          exit 1
+                        fi
+
+                        for export_dir in "${EXPORT_DIRS[@]}"; do
+                          echo "Importing ${export_dir}"
+                          bash scripts/reportportal-import/import-rp-export.sh \
+                            --export-dir "${export_dir}" \
+                            --rp-endpoint "${RP_ENDPOINT}" \
+                            --rp-project "${RP_PROJECT}" \
+                            --rp-api-key "${RP_API_KEY}"
+                        done
+                    '''
+                }
+            }
+        }
+    }
+}

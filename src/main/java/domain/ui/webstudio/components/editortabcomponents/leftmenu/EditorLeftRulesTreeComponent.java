@@ -115,7 +115,13 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
             try {
                 filterOptionTemplate.format(filterOption.getValue()).click();
             } catch (Exception ignored) {}
-            return viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase());
+            try {
+                waitUntilSpinnerLoaded();
+                return viewFilterLink.getText().toLowerCase().contains(filterOption.getValue().toLowerCase());
+            } catch (Exception e) {
+                // viewFilterLink can be momentarily detached while @form :rulesTree re-renders
+                return false;
+            }
         }, 15000, 200, "Waiting for filter '" + filterOption.getValue() + "' to be applied");
         return this;
     }

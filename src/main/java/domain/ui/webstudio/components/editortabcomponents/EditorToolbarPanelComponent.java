@@ -278,7 +278,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void clickExport() {
         exportBtn.click();
-        WaitUtil.sleep(500, "Waiting for export dialog to open");
+        new ExportProjectDialogComponent().waitForDialogToAppear();
     }
     
     public CopyTableDialogComponent clickCopy() {
