@@ -13,21 +13,32 @@ on:
         default: "main"
 
 jobs:
-  test:
-    name: ${{ matrix.suite }}
+  discover-tests:
+    name: Discover test shards
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+
+    steps:
+      - name: Checkout tests
+        uses: actions/checkout@v4
+
+      - name: Generate test matrix
+        id: matrix
+        run: |
+          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --shards 20)"
+          echo "matrix=${MATRIX}" >> "${GITHUB_OUTPUT}"
+          echo "${MATRIX}"
+
+  test-shard:
+    name: ${{ matrix.display }}
+    needs: discover-tests
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
       fail-fast: false
-      matrix:
-        suite:
-          - studio_issues
-          - studio_smoke
-          - studio_rules_editor
-          - studio_git
-          - studio_sso
-          - service_smoke
-          - studio_open_api
+      max-parallel: 20
+      matrix: ${{ fromJson(needs.discover-tests.outputs.matrix) }}
 
     steps:
       - name: Checkout tests
@@ -40,7 +51,14 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Run suite
+      - name: Generate TestNG shard suite
+        run: |
+          python3 scripts/github-actions/generate-testng-suite.py \
+            --classes "${{ matrix.classes }}" \
+            --output "generated-testng/${{ matrix.display }}.xml" \
+            --suite-name "OpenL GHA ${{ matrix.display }}"
+
+      - name: Run shard
         env:
           GIT_TOKEN_RULESERVICE: ${{ secrets.GIT_TOKEN_RULESERVICE }}
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
@@ -52,14 +70,14 @@ jobs:
             -Dlog4j.configurationFile=src/test/resources/log4j2-gha.xml \
             -Dexecution.mode=PLAYWRIGHT_DOCKER \
             -Djava.net.preferIPv4Stack=true \
-            -Dsuite=${{ matrix.suite }} \
+            -DsuiteXmlFile=generated-testng/${{ matrix.display }}.xml \
             -Ddocker_image_name=ghcr.io/openl-tablets/webstudio:${{ inputs.application_version }} \
             -Dws_docker_image_name=ghcr.io/openl-tablets/ws:${{ inputs.application_version }}-all \
             -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
             -Dgit.password="${GIT_PASSWORD}" \
             -Drp.project=OpenL_Tests \
-            -Drp.launch=${{ matrix.suite }} \
-            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}" \
+            -Drp.launch=gha-parallel-${{ matrix.display }} \
+            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID};shard:${{ matrix.display }}" \
             -Drp.export.dir=target/rp-export
 
       - name: Fail on failed TestNG results
@@ -74,7 +92,69 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: openl-tests-${{ matrix.suite }}
+          name: openl-tests-${{ matrix.display }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            target/rp-export/**
+            target/surefire-reports/**
+            target/screenshots/**
+            target/videos/**
+            target/logs/**
+            target/downloads/**
+            generated-testng/**
+
+  studio-git:
+    name: studio_git
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout tests
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run studio_git sequentially
+        env:
+          GIT_TOKEN_RULESERVICE: ${{ secrets.GIT_TOKEN_RULESERVICE }}
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+          BUILD_LABEL: ${{ inputs.application_version }}
+          TESTS_BRANCH: ${{ inputs.tests_branch }}
+        run: |
+          mvn clean test \
+            -Drp.enable=false \
+            -Dlog4j.configurationFile=src/test/resources/log4j2-gha.xml \
+            -Dexecution.mode=PLAYWRIGHT_DOCKER \
+            -Djava.net.preferIPv4Stack=true \
+            -Dsuite=studio_git \
+            -Ddocker_image_name=ghcr.io/openl-tablets/webstudio:${{ inputs.application_version }} \
+            -Dws_docker_image_name=ghcr.io/openl-tablets/ws:${{ inputs.application_version }}-all \
+            -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
+            -Dgit.password="${GIT_PASSWORD}" \
+            -Drp.project=OpenL_Tests \
+            -Drp.launch=studio_git \
+            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID};shard:studio_git" \
+            -Drp.export.dir=target/rp-export
+
+      - name: Fail on failed TestNG results
+        if: always()
+        run: |
+          if [ -f target/surefire-reports/testng-results.xml ] && grep -Eq 'failed="[1-9]|skipped="[1-9]' target/surefire-reports/testng-results.xml; then
+            echo "TestNG reported failed or skipped tests"
+            exit 1
+          fi
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openl-tests-studio_git
           if-no-files-found: ignore
           retention-days: 14
           path: |

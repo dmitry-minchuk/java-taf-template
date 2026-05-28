@@ -32,6 +32,7 @@
         <maven.surefire.plugin>3.5.3</maven.surefire.plugin>
 
         <suite>sample_ui_suite</suite>
+        <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
     </properties>
 
     <dependencies>
@@ -229,7 +230,7 @@
                 <version>${maven.surefire.plugin}</version>
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>${project.build.directory}/test-classes/testng_suites/${suite}.xml</suiteXmlFile>
+                        <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
                     </suiteXmlFiles>
 
                     <!-- Uncomment it if you don't want your build to be failed in case of test errors -->
