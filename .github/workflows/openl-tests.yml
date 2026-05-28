@@ -104,8 +104,8 @@ jobs:
             target/downloads/**
             generated-testng/**
 
-  studio-git:
-    name: studio_git
+  studio-git-remote:
+    name: studio_git_remote
     runs-on: ubuntu-latest
     timeout-minutes: 180
 
@@ -120,7 +120,14 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Run studio_git sequentially
+      - name: Generate remote Git TestNG suite
+        run: |
+          python3 scripts/github-actions/generate-testng-suite.py \
+            --classes "tests.ui.webstudio.git.TestGitSwitchToDeletedBranch,tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset" \
+            --output "generated-testng/studio_git_remote.xml" \
+            --suite-name "OpenL GHA studio_git_remote"
+
+      - name: Run remote Git tests sequentially
         env:
           GIT_TOKEN_RULESERVICE: ${{ secrets.GIT_TOKEN_RULESERVICE }}
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
@@ -132,14 +139,14 @@ jobs:
             -Dlog4j.configurationFile=src/test/resources/log4j2-gha.xml \
             -Dexecution.mode=PLAYWRIGHT_DOCKER \
             -Djava.net.preferIPv4Stack=true \
-            -Dsuite=studio_git \
+            -DsuiteXmlFile=generated-testng/studio_git_remote.xml \
             -Ddocker_image_name=ghcr.io/openl-tablets/webstudio:${{ inputs.application_version }} \
             -Dws_docker_image_name=ghcr.io/openl-tablets/ws:${{ inputs.application_version }}-all \
             -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
             -Dgit.password="${GIT_PASSWORD}" \
             -Drp.project=OpenL_Tests \
-            -Drp.launch=studio_git \
-            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID};shard:studio_git" \
+            -Drp.launch=studio_git_remote \
+            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID};shard:studio_git_remote" \
             -Drp.export.dir=target/rp-export
 
       - name: Fail on failed TestNG results
@@ -154,7 +161,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: openl-tests-studio_git
+          name: openl-tests-studio_git_remote
           if-no-files-found: ignore
           retention-days: 14
           path: |
@@ -164,3 +171,4 @@ jobs:
             target/videos/**
             target/logs/**
             target/downloads/**
+            generated-testng/**

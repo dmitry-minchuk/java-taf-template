@@ -11,8 +11,14 @@ LISTENERS = [
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate a TestNG suite for a comma-separated class list.")
-    parser.add_argument("--classes", required=True, help="Comma-separated fully qualified test class names.")
+    parser = argparse.ArgumentParser(
+        description="Generate a TestNG suite for a comma-separated class list."
+    )
+    parser.add_argument(
+        "--classes",
+        required=True,
+        help="Comma-separated fully qualified test class names.",
+    )
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--suite-name", default="GitHub Actions Dynamic Shard")
     args = parser.parse_args()
@@ -21,13 +27,16 @@ def main() -> None:
     if not class_names:
         raise SystemExit("No test classes were provided")
 
-    suite = ET.Element("suite", {
-        "verbose": "1",
-        "name": args.suite_name,
-        "annotations": "JDK",
-        "parallel": "false",
-        "thread-count": "1",
-    })
+    suite = ET.Element(
+        "suite",
+        {
+            "verbose": "1",
+            "name": args.suite_name,
+            "annotations": "JDK",
+            "parallel": "false",
+            "thread-count": "1",
+        },
+    )
     listeners = ET.SubElement(suite, "listeners")
     for listener_class in LISTENERS:
         ET.SubElement(listeners, "listener", {"class-name": listener_class})
