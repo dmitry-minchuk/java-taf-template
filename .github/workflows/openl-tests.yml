@@ -25,7 +25,7 @@ jobs:
           - studio_smoke
           - studio_rules_editor
           - studio_git
-          - studio_api_integration
+          - studio_sso
           - service_smoke
           - studio_open_api
 
