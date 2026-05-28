@@ -142,7 +142,7 @@ public class ReportPortalExportImporter {
         request.setLaunchUuid(launchUuid);
         request.setName(test.displayName());
         request.setCodeRef(test.className() + "." + test.methodName());
-        request.setDescription(test.description());
+        request.setDescription(stepDescription(test));
         request.setType("STEP");
         request.setStartTime(test.startedAt());
         if (!test.testCaseId().isBlank()) {
@@ -153,9 +153,19 @@ public class ReportPortalExportImporter {
         return response.getId();
     }
 
+    private static String stepDescription(TestExport test) {
+        String base = test.description();
+        if ("PASSED".equals(test.status()) || test.errorMessage() == null || test.errorMessage().isBlank()) {
+            return base;
+        }
+        String header = base == null || base.isBlank() ? "" : base + System.lineSeparator() + System.lineSeparator();
+        return header + "Error:" + System.lineSeparator() + test.errorMessage();
+    }
+
     private static void sendLogs(ReportPortalClient client, Path exportDir, String launchUuid, String itemUuid, TestExport test) throws IOException {
+        Date inRangeLogTime = inRangeTime(test);
         if (test.errorMessage() != null && !test.errorMessage().isBlank()) {
-            SaveLogRQ error = baseLog(launchUuid, itemUuid, "ERROR", test.finishedAt(),
+            SaveLogRQ error = baseLog(launchUuid, itemUuid, "ERROR", inRangeLogTime,
                     test.errorMessage() + System.lineSeparator() + nullToBlank(test.stackTrace()));
             client.log(error).blockingGet();
         }
@@ -170,7 +180,7 @@ public class ReportPortalExportImporter {
                     launchUuid,
                     itemUuid,
                     stringValue(attachment, "level", "INFO"),
-                    parseDate(stringValue(attachment, "createdAt", null), test.finishedAt()),
+                    parseDate(stringValue(attachment, "createdAt", null), inRangeLogTime),
                     stringValue(attachment, "message", file.getFileName().toString())
             );
             SaveLogRQ.File rpFile = new SaveLogRQ.File();
@@ -180,6 +190,12 @@ public class ReportPortalExportImporter {
             log.setFile(rpFile);
             client.log(HttpRequestUtils.buildLogMultiPartRequest(List.of(log))).blockingGet();
         }
+    }
+
+    private static Date inRangeTime(TestExport test) {
+        long start = test.startedAt().getTime();
+        long end = test.finishedAt().getTime();
+        return new Date(end > start ? start + (end - start) / 2 : start);
     }
 
     private static SaveLogRQ baseLog(String launchUuid, String itemUuid, String level, Date time, String message) {
