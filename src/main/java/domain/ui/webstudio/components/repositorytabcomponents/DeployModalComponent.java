@@ -103,7 +103,7 @@ public class DeployModalComponent extends BaseComponent {
     }
 
     public boolean isSuccessNotificationVisible() {
-        return successNotification.isVisible(5000);
+        return successNotification.isVisible(DEFAULT_TIMEOUT_MS);
     }
 
     public boolean isErrorMessageDisplayed() {

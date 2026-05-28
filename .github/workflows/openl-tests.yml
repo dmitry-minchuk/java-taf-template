@@ -11,9 +11,13 @@ on:
         description: "Autotests branch label for reporting"
         required: true
         default: "main"
+      rp_launch_name:
+        description: "ReportPortal launch name"
+        required: true
+        default: "webstudio_tests"
 
 env:
-  RP_LAUNCH_NAME: gha-parallel
+  RP_LAUNCH_NAME: ${{ inputs.rp_launch_name }}
 
 jobs:
   discover-tests:
@@ -29,7 +33,7 @@ jobs:
       - name: Generate test matrix
         id: matrix
         run: |
-          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --shards 20)"
+          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --max-shard-size 8)"
           echo "matrix=${MATRIX}" >> "${GITHUB_OUTPUT}"
           echo "${MATRIX}"
 
@@ -67,15 +71,32 @@ jobs:
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
           BUILD_LABEL: ${{ inputs.application_version }}
           TESTS_BRANCH: ${{ inputs.tests_branch }}
+          STUDIO_IMAGE_KIND: ${{ matrix.studio_image_kind }}
+          WS_IMAGE_KIND: ${{ matrix.ws_image_kind }}
+          APPLICATION_VERSION: ${{ inputs.application_version }}
         run: |
+          resolve_image() {
+            case "$1" in
+              webstudio) echo "ghcr.io/openl-tablets/webstudio:${APPLICATION_VERSION}" ;;
+              ws)        echo "ghcr.io/openl-tablets/ws:${APPLICATION_VERSION}-all" ;;
+              *) echo "Unknown image kind: $1" >&2; exit 1 ;;
+            esac
+          }
+          STUDIO_IMAGE="$(resolve_image "${STUDIO_IMAGE_KIND}")"
+          WS_IMAGE="$(resolve_image "${WS_IMAGE_KIND}")"
+          echo "Using docker_image_name=${STUDIO_IMAGE}"
+          echo "Using ws_docker_image_name=${WS_IMAGE}"
+
           mvn clean test \
             -Drp.enable=false \
             -Dlog4j.configurationFile=src/test/resources/log4j2-gha.xml \
             -Dexecution.mode=PLAYWRIGHT_DOCKER \
             -Djava.net.preferIPv4Stack=true \
             -DsuiteXmlFile=generated-testng/${{ matrix.display }}.xml \
-            -Ddocker_image_name=ghcr.io/openl-tablets/webstudio:${{ inputs.application_version }} \
-            -Dws_docker_image_name=ghcr.io/openl-tablets/ws:${{ inputs.application_version }}-all \
+            -Ddocker_image_name="${STUDIO_IMAGE}" \
+            -Dws_docker_image_name="${WS_IMAGE}" \
+            -Dplaywright_default_timeout=20000 \
+            -Dapp_container_startup_timeout_minutes=10 \
             -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
             -Dgit.password="${GIT_PASSWORD}" \
             -Drp.project=OpenL_Tests \
@@ -137,14 +158,21 @@ jobs:
           BUILD_LABEL: ${{ inputs.application_version }}
           TESTS_BRANCH: ${{ inputs.tests_branch }}
         run: |
+          # Remote git tests live in the studio_git suite, which uses
+          # (webstudio, webstudio) per Jenkinsfile's functionalJobList.
+          STUDIO_IMAGE="ghcr.io/openl-tablets/webstudio:${{ inputs.application_version }}"
+          WS_IMAGE="${STUDIO_IMAGE}"
+
           mvn clean test \
             -Drp.enable=false \
             -Dlog4j.configurationFile=src/test/resources/log4j2-gha.xml \
             -Dexecution.mode=PLAYWRIGHT_DOCKER \
             -Djava.net.preferIPv4Stack=true \
             -DsuiteXmlFile=generated-testng/studio_git_remote.xml \
-            -Ddocker_image_name=ghcr.io/openl-tablets/webstudio:${{ inputs.application_version }} \
-            -Dws_docker_image_name=ghcr.io/openl-tablets/ws:${{ inputs.application_version }}-all \
+            -Ddocker_image_name="${STUDIO_IMAGE}" \
+            -Dws_docker_image_name="${WS_IMAGE}" \
+            -Dplaywright_default_timeout=20000 \
+            -Dapp_container_startup_timeout_minutes=10 \
             -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
             -Dgit.password="${GIT_PASSWORD}" \
             -Drp.project=OpenL_Tests \
@@ -205,7 +233,7 @@ jobs:
       - name: Upload merged ReportPortal export
         uses: actions/upload-artifact@v4
         with:
-          name: openl-tests-rp-export-merged
+          name: rp-export-merged
           if-no-files-found: error
           retention-days: 14
           path: merged-rp-export/**

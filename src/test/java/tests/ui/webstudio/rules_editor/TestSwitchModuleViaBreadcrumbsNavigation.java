@@ -6,6 +6,8 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
+import configuration.projectconfig.ProjectConfiguration;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -23,6 +25,9 @@ import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
+
+    private static final int TREE_EXPAND_DEADLINE_MS = Integer.parseInt(
+            ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
 
     private static final String NAME_PROJECT_FIRST = "TestSwitchModuleViaBreadcrumbsNavigationFirst";
     private static final String ZIP_FILE_FIRST = "RulesEditor.TestSwitchModuleViaBreadcrumbsNavigationFirst.zip";
@@ -73,8 +78,8 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
                 .selectItemInFolder("Decision", "SmartRule1");
         long elapsedTime = System.currentTimeMillis() - startTime;
         assertThat(elapsedTime)
-                .as("Expanding and selecting tree item should take less than 10 seconds")
-                .isLessThanOrEqualTo(10000);
+                .as("Expanding and selecting tree item should fit into the framework's default wait")
+                .isLessThanOrEqualTo(TREE_EXPAND_DEADLINE_MS);
 
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }

@@ -19,12 +19,15 @@ public class AppContainerFactory {
     protected static final Logger LOGGER = LogManager.getLogger(AppContainerFactory.class);
     private final static Integer APP_PORT = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.DEFAULT_APP_PORT));
     private final static String DEPLOYED_APP_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.DEPLOYED_APP_PATH);
+    private static final Duration DEFAULT_STARTUP_TIMEOUT = Duration.ofMinutes(
+            Long.parseLong(ProjectConfiguration.getProperty(PropertyNameSpace.APP_CONTAINER_STARTUP_TIMEOUT_MINUTES)));
+
     public static AppContainerData createContainer(String containerName,
                                                    Network network,
                                                    Map<String, String> envVars,
                                                    Map<String, String> filesToCopy,
                                                    String dockerImageName) {
-        return createContainer(containerName, network, envVars, filesToCopy, dockerImageName, Duration.ofMinutes(5));
+        return createContainer(containerName, network, envVars, filesToCopy, dockerImageName, DEFAULT_STARTUP_TIMEOUT);
     }
 
     public static AppContainerData createContainer(String containerName,

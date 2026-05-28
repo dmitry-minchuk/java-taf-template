@@ -5,7 +5,7 @@ pipeline {
         string(name: 'GITHUB_REPO', defaultValue: 'dmitry-minchuk/java-taf-template', description: 'GitHub repository with workflow artifacts')
         string(name: 'WORKFLOW_NAME', defaultValue: 'OpenL Tests', description: 'Workflow name to use when GITHUB_RUN_ID is empty')
         string(name: 'GITHUB_RUN_ID', defaultValue: '', description: 'GitHub Actions run id. Empty means latest completed run for WORKFLOW_NAME')
-        string(name: 'ARTIFACT_PATTERN', defaultValue: 'openl-tests-rp-export-merged', description: 'Artifact name pattern to download')
+        string(name: 'ARTIFACT_PATTERN', defaultValue: 'rp-export-merged', description: 'Artifact name pattern to download')
         string(name: 'GITHUB_TOKEN_CREDENTIALS_ID', defaultValue: 'github-actions-token', description: 'Jenkins secret text credentials id for GitHub CLI')
         string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests branch to checkout for importer code')
         string(name: 'RP_ENDPOINT', defaultValue: 'http://10.23.172.185:8080', description: 'ReportPortal endpoint visible from Jenkins')
