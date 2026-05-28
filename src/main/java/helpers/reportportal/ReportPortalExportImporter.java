@@ -3,6 +3,7 @@ package helpers.reportportal;
 import com.epam.reportportal.listeners.ListenerParameters;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
+import com.epam.reportportal.utils.http.HttpRequestUtils;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
@@ -127,7 +128,7 @@ public class ReportPortalExportImporter {
             rpFile.setContent(Files.readAllBytes(file));
             rpFile.setContentType(contentType(file));
             log.setFile(rpFile);
-            client.log(log).blockingGet();
+            client.log(HttpRequestUtils.buildLogMultiPartRequest(List.of(log))).blockingGet();
         }
     }
 
