@@ -12,6 +12,9 @@ on:
         required: true
         default: "main"
 
+env:
+  RP_LAUNCH_NAME: gha-parallel
+
 jobs:
   discover-tests:
     name: Discover test shards
@@ -76,8 +79,8 @@ jobs:
             -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
             -Dgit.password="${GIT_PASSWORD}" \
             -Drp.project=OpenL_Tests \
-            -Drp.launch=gha-parallel-${{ matrix.display }} \
-            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID};shard:${{ matrix.display }}" \
+            -Drp.launch="${RP_LAUNCH_NAME}" \
+            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}" \
             -Drp.export.dir=target/rp-export
 
       - name: Fail on failed TestNG results
@@ -145,8 +148,8 @@ jobs:
             -Dgit.token.ruleservice="${GIT_TOKEN_RULESERVICE}" \
             -Dgit.password="${GIT_PASSWORD}" \
             -Drp.project=OpenL_Tests \
-            -Drp.launch=studio_git_remote \
-            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID};shard:studio_git_remote" \
+            -Drp.launch="${RP_LAUNCH_NAME}" \
+            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}" \
             -Drp.export.dir=target/rp-export
 
       - name: Fail on failed TestNG results
@@ -172,3 +175,37 @@ jobs:
             target/logs/**
             target/downloads/**
             generated-testng/**
+
+  merge-reportportal-export:
+    name: Merge ReportPortal export
+    needs:
+      - test-shard
+      - studio-git-remote
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tests
+        uses: actions/checkout@v4
+
+      - name: Download shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: openl-tests-*
+          path: downloaded-artifacts
+          merge-multiple: false
+
+      - name: Merge ReportPortal exports
+        run: |
+          python3 scripts/github-actions/merge-rp-exports.py \
+            --input-root downloaded-artifacts \
+            --output-dir merged-rp-export \
+            --launch-name "${RP_LAUNCH_NAME}"
+
+      - name: Upload merged ReportPortal export
+        uses: actions/upload-artifact@v4
+        with:
+          name: openl-tests-rp-export-merged
+          if-no-files-found: error
+          retention-days: 14
+          path: merged-rp-export/**

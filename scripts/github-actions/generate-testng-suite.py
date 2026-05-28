@@ -6,6 +6,7 @@ from pathlib import Path
 
 LISTENERS = [
     "configuration.listeners.AnnotationTransformer",
+    "configuration.listeners.ReportPortalExportListener",
     "com.epam.reportportal.testng.ReportPortalTestNGListener",
 ]
 

@@ -35,14 +35,15 @@ public class ReportPortalExportImporter {
 
     public static void main(String[] args) throws IOException {
         Options options = Options.parse(args);
-        Map<String, Object> manifest = readMap(options.exportDir.resolve("manifest.json"));
-        List<TestExport> tests = readTests(options.exportDir);
+        List<Map<String, Object>> manifests = readManifests(options.exportDirs);
+        Map<String, Object> manifest = manifests.getFirst();
+        List<TestExport> tests = readTests(options.exportDirs);
         if (tests.isEmpty()) {
-            throw new IllegalStateException("No exported tests found in " + options.exportDir);
+            throw new IllegalStateException("No exported tests found in " + options.exportDirs);
         }
 
         if (options.dryRun) {
-            System.out.printf("Dry run: %d test item(s) found in %s%n", tests.size(), options.exportDir);
+            System.out.printf("Dry run: %d test item(s) found in %d export dir(s)%n", tests.size(), options.exportDirs.size());
             return;
         }
 
@@ -52,7 +53,7 @@ public class ReportPortalExportImporter {
 
         for (TestExport test : tests) {
             String itemUuid = startTestItem(client, launchUuid, test);
-            sendLogs(client, options.exportDir, launchUuid, itemUuid, test);
+            sendLogs(client, test.exportDir(), launchUuid, itemUuid, test);
             finishTestItem(client, itemUuid, launchUuid, test);
             hasFailures |= !"PASSED".equals(test.status());
         }
@@ -157,21 +158,31 @@ public class ReportPortalExportImporter {
         client.finishLaunch(launchUuid, request).blockingGet();
     }
 
-    private static List<TestExport> readTests(Path exportDir) throws IOException {
-        Path testsRoot = exportDir.resolve("tests");
-        if (!Files.exists(testsRoot)) {
-            return List.of();
+    private static List<Map<String, Object>> readManifests(List<Path> exportDirs) throws IOException {
+        List<Map<String, Object>> manifests = new ArrayList<>();
+        for (Path exportDir : exportDirs) {
+            manifests.add(readMap(exportDir.resolve("manifest.json")));
         }
+        return manifests;
+    }
 
+    private static List<TestExport> readTests(List<Path> exportDirs) throws IOException {
         List<TestExport> tests = new ArrayList<>();
-        try (var paths = Files.walk(testsRoot)) {
-            for (Path metadataPath : paths.filter(path -> path.getFileName().toString().equals("metadata.json")).toList()) {
-                Path testDir = metadataPath.getParent();
-                Path resultPath = testDir.resolve("result.json");
-                if (!Files.exists(resultPath)) {
-                    continue;
+        for (Path exportDir : exportDirs) {
+            Path testsRoot = exportDir.resolve("tests");
+            if (!Files.exists(testsRoot)) {
+                continue;
+            }
+
+            try (var paths = Files.walk(testsRoot)) {
+                for (Path metadataPath : paths.filter(path -> path.getFileName().toString().equals("metadata.json")).toList()) {
+                    Path testDir = metadataPath.getParent();
+                    Path resultPath = testDir.resolve("result.json");
+                    if (!Files.exists(resultPath)) {
+                        continue;
+                    }
+                    tests.add(TestExport.from(exportDir, testDir, readMap(metadataPath), readMap(resultPath)));
                 }
-                tests.add(TestExport.from(testDir, readMap(metadataPath), readMap(resultPath)));
             }
         }
         tests.sort(Comparator.comparing(TestExport::startedAt));
@@ -260,6 +271,7 @@ public class ReportPortalExportImporter {
     }
 
     private record TestExport(
+            Path exportDir,
             String className,
             String methodName,
             String displayName,
@@ -272,8 +284,9 @@ public class ReportPortalExportImporter {
             String stackTrace,
             List<Map<String, Object>> attachments
     ) {
-        static TestExport from(Path testDir, Map<String, Object> metadata, Map<String, Object> result) throws IOException {
+        static TestExport from(Path exportDir, Path testDir, Map<String, Object> metadata, Map<String, Object> result) throws IOException {
             return new TestExport(
+                    exportDir,
                     stringValue(metadata, "className", ""),
                     stringValue(metadata, "methodName", ""),
                     stringValue(metadata, "displayName", stringValue(metadata, "methodName", "")),
@@ -289,9 +302,10 @@ public class ReportPortalExportImporter {
         }
     }
 
-    private record Options(Path exportDir, String endpoint, String apiKey, String project, String launchName, boolean dryRun) {
+    private record Options(List<Path> exportDirs, String endpoint, String apiKey, String project, String launchName, boolean dryRun) {
         static Options parse(String[] args) {
             Map<String, String> values = new java.util.HashMap<>();
+            List<Path> exportDirs = new ArrayList<>();
             for (int i = 0; i < args.length; i++) {
                 if ("--dry-run".equals(args[i])) {
                     values.put("dry-run", "true");
@@ -301,12 +315,21 @@ public class ReportPortalExportImporter {
                     if (i + 1 >= args.length || args[i + 1].startsWith("--")) {
                         throw new IllegalArgumentException("Missing value for " + args[i]);
                     }
-                    values.put(args[i].substring(2), args[++i]);
+                    String key = args[i].substring(2);
+                    String value = args[++i];
+                    if ("export-dir".equals(key)) {
+                        exportDirs.add(Path.of(value));
+                    } else {
+                        values.put(key, value);
+                    }
                 }
             }
             boolean dryRun = Boolean.parseBoolean(values.getOrDefault("dry-run", "false"));
+            if (exportDirs.isEmpty()) {
+                throw new IllegalArgumentException("At least one --export-dir is required");
+            }
             return new Options(
-                    Path.of(required(values, "export-dir")),
+                    List.copyOf(exportDirs),
                     dryRun ? values.get("rp-endpoint") : required(values, "rp-endpoint"),
                     dryRun ? values.get("rp-api-key") : required(values, "rp-api-key"),
                     dryRun ? values.get("rp-project") : required(values, "rp-project"),

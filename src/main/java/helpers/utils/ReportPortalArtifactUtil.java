@@ -51,24 +51,32 @@ public final class ReportPortalArtifactUtil {
 
         Method method = result.getMethod().getConstructorOrMethod().getMethod();
         org.testng.ITestContext testContext = result.getTestContext();
-        String suiteName = testContext != null ? testContext.getSuite().getName() : "ad-hoc";
-        String testName = testContext != null ? testContext.getName() : method.getDeclaringClass().getSimpleName();
-        TestContext context = new TestContext(
-                suiteName,
-                testName,
-                method.getDeclaringClass().getName(),
-                method.getName(),
-                displayName
-        );
+        TestContext context = contextFor(result, method, displayName);
         CURRENT_TEST.set(context);
 
+        writeMetadata(result, method, context);
+    }
+
+    public static void recordTestResultIfMissing(ITestResult result) {
+        Method method = result.getMethod().getConstructorOrMethod().getMethod();
+        TestContext context = contextFor(result, method, displayName(result));
+        if (Files.exists(context.testDirectory().resolve("result.json"))) {
+            return;
+        }
+
+        writeRunManifest();
+        writeMetadata(result, method, context);
+        writeResult(result, context);
+    }
+
+    private static void writeMetadata(ITestResult result, Method method, TestContext context) {
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("suite", context.suiteName);
         metadata.put("test", context.testName);
         metadata.put("className", context.className);
         metadata.put("methodName", context.methodName);
         metadata.put("displayName", context.displayName);
-        metadata.put("startedAt", Instant.ofEpochMilli(result.getStartMillis()).toString());
+        metadata.put("startedAt", instant(result.getStartMillis()).toString());
 
         TestCaseId testCaseId = method.getAnnotation(TestCaseId.class);
         if (testCaseId != null) {
@@ -89,10 +97,15 @@ public final class ReportPortalArtifactUtil {
             return;
         }
 
+        writeResult(result, context);
+        CURRENT_TEST.remove();
+    }
+
+    private static void writeResult(ITestResult result, TestContext context) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("status", statusName(result.getStatus()));
-        payload.put("startedAt", Instant.ofEpochMilli(result.getStartMillis()).toString());
-        payload.put("finishedAt", Instant.ofEpochMilli(result.getEndMillis()).toString());
+        payload.put("startedAt", instant(result.getStartMillis()).toString());
+        payload.put("finishedAt", instant(result.getEndMillis()).toString());
         payload.put("durationMs", Math.max(0, result.getEndMillis() - result.getStartMillis()));
 
         Throwable throwable = result.getThrowable();
@@ -103,7 +116,6 @@ public final class ReportPortalArtifactUtil {
         }
 
         writeJson(context.testDirectory().resolve("result.json"), payload);
-        CURRENT_TEST.remove();
     }
 
     public static File recordAttachment(String message, String level, File source) {
@@ -202,6 +214,40 @@ public final class ReportPortalArtifactUtil {
             }
         }
         return "";
+    }
+
+    private static TestContext contextFor(ITestResult result, Method method, String displayName) {
+        org.testng.ITestContext testContext = result.getTestContext();
+        String suiteName = testContext != null ? testContext.getSuite().getName() : "ad-hoc";
+        String testName = testContext != null ? testContext.getName() : method.getDeclaringClass().getSimpleName();
+        return new TestContext(
+                suiteName,
+                testName,
+                method.getDeclaringClass().getName(),
+                method.getName(),
+                displayName
+        );
+    }
+
+    private static String displayName(ITestResult result) {
+        String methodName = result.getMethod().getMethodName();
+        Object[] parameters = result.getParameters();
+        if (parameters == null || parameters.length == 0) {
+            return methodName;
+        }
+
+        StringBuilder name = new StringBuilder(methodName).append("[");
+        for (int i = 0; i < parameters.length; i++) {
+            if (i > 0) {
+                name.append(", ");
+            }
+            name.append(parameters[i] == null ? "null" : StringUtil.sanitizeFileName(parameters[i].toString()));
+        }
+        return name.append("]").toString();
+    }
+
+    private static Instant instant(long epochMillis) {
+        return epochMillis > 0 ? Instant.ofEpochMilli(epochMillis) : Instant.now();
     }
 
     private record TestContext(String suiteName, String testName, String className, String methodName, String displayName) {
