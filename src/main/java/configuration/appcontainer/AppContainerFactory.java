@@ -47,11 +47,33 @@ public class AppContainerFactory {
                     container.withCopyFileToContainer(getMountableFile(hostPath), containerPath));
         container.waitingFor(buildHttpWaitStrategy(envVars, startupTimeout));
         LOGGER.info("Starting app container: {} (startup timeout: {})", containerName, startupTimeout);
-        container.start();
+        try {
+            container.start();
+        } catch (RuntimeException startupFailure) {
+            dumpContainerLogs(container, containerName);
+            throw startupFailure;
+        }
 
         LOGGER.info(String.format("App Localhost accessible url for %s: http://localhost:%s%s", containerName, container.getMappedPort(APP_PORT), DEPLOYED_APP_PATH));
         LOGGER.info(String.format("App Url accessible from the Browser container: http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
         return new AppContainerData(container, String.format("http://%s:%s%s", containerName, APP_PORT, DEPLOYED_APP_PATH));
+    }
+
+    private static void dumpContainerLogs(GenericContainer<?> container, String containerName) {
+        try {
+            String logs = container.getLogs();
+            if (logs == null || logs.isBlank()) {
+                LOGGER.warn("Container {} produced no logs before startup failure", containerName);
+                return;
+            }
+            LOGGER.error("=== Container {} stdout/stderr (startup failed) ===", containerName);
+            for (String line : logs.split("\\r?\\n")) {
+                LOGGER.error("[{}] {}", containerName, line);
+            }
+            LOGGER.error("=== End of {} logs ===", containerName);
+        } catch (RuntimeException dumpFailure) {
+            LOGGER.warn("Could not retrieve logs from container {}: {}", containerName, dumpFailure.getMessage());
+        }
     }
 
     private static org.testcontainers.containers.wait.strategy.WaitStrategy buildHttpWaitStrategy(
