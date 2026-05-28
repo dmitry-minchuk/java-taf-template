@@ -50,9 +50,12 @@ public final class ReportPortalArtifactUtil {
         writeRunManifest();
 
         Method method = result.getMethod().getConstructorOrMethod().getMethod();
+        org.testng.ITestContext testContext = result.getTestContext();
+        String suiteName = testContext != null ? testContext.getSuite().getName() : "ad-hoc";
+        String testName = testContext != null ? testContext.getName() : method.getDeclaringClass().getSimpleName();
         TestContext context = new TestContext(
-                result.getTestContext().getSuite().getName(),
-                result.getTestContext().getName(),
+                suiteName,
+                testName,
                 method.getDeclaringClass().getName(),
                 method.getName(),
                 displayName

@@ -44,6 +44,7 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
     public void clickSaveChanges() {
         saveChangesBtn.click();
         waitWhileTablePanelActionExecuted();
+        waitUntilSpinnerLoaded();
     }
 
     public void undoClickChanges() {

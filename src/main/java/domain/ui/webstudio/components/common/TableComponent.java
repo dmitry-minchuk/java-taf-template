@@ -73,8 +73,12 @@ public class TableComponent extends BaseComponent {
     }
 
     public void editCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
-        doubleClickCell(rowIndex, columnIndex);
-        editorWrapper.waitForVisible();
+        waitUntilSpinnerLoaded();
+        WaitUtil.retryOnException(() -> {
+            doubleClickCell(rowIndex, columnIndex);
+            editorWrapper.waitForVisible(2000);
+            return true;
+        }, 10000, 500, "Activating cell editor for cell [" + rowIndex + "," + columnIndex + "]");
 
         String editorTag = inputLocator.getLocator().evaluate("el => el.tagName.toLowerCase()").toString();
         if ("select".equals(editorTag)) {

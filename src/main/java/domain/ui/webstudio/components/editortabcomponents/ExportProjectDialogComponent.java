@@ -38,6 +38,8 @@ public class ExportProjectDialogComponent extends BaseComponent {
 
     public void waitForDialogToAppear() {
         revisionDropdown.waitForVisible(5000);
+        waitUntilSpinnerLoaded();
+        exportBtn.waitForVisible(5000);
     }
 
     public boolean isDialogVisible() {
@@ -62,7 +64,7 @@ public class ExportProjectDialogComponent extends BaseComponent {
     }
 
     public File clickExportAndDownload() {
-        exportBtn.waitForVisible();
+        waitForDialogToAppear();
         File downloadedFile = DownloadUtil.downloadFile(exportBtn.getLocator());
         LOGGER.info("Downloaded file: {} (size: {} bytes)", downloadedFile.getName(), downloadedFile.length());
         return downloadedFile;
