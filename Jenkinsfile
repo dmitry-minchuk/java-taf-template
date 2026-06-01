@@ -143,6 +143,21 @@ pipeline {
                                         userRemoteConfigs: [[url: openlTestsGitIrl]]
                                 ])
                                 env.BUILD_NUMBER = buildNumber
+                                // Testcontainers hard-codes a 2-min pull timeout — too short for ~700MB Keycloak on a cold agent.
+                                if (suite.suiteName == "studio_sso") {
+                                    sh '''
+                                        for i in 1 2 3; do
+                                            if docker pull quay.io/keycloak/keycloak:26.0; then
+                                                echo "Keycloak image cached after $i attempt(s)"
+                                                exit 0
+                                            fi
+                                            echo "Pull attempt $i failed, retrying in 10s..." >&2
+                                            sleep 10
+                                        done
+                                        echo "Failed to pull Keycloak image after 3 attempts" >&2
+                                        exit 1
+                                    '''
+                                }
                                 // We need this because variables defined in Jenkins Global Properties are not straightfully accessible from Java and have to put them into the Maven process
                                 withMaven() {
                                     sh("bash -lc 'git branch'")
