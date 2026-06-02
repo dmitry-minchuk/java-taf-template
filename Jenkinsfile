@@ -125,7 +125,8 @@ pipeline {
         stage('Run Test Suites') {
             steps {
                 script {
-                    def buildNumber = params.APPLICATION_GIT_COMMIT_HASH_VERSION
+                    // No `def`: binding-level so it survives CPS in parallel closures (else RP "build" attr is empty).
+                    buildNumber = params.APPLICATION_GIT_COMMIT_HASH_VERSION
                     if (!buildNumber || buildNumber.trim().isEmpty()) {
                         def currentDate = new Date()
                         buildNumber = currentDate.format("MMM_dd_yyyy_HH_mm", TimeZone.getTimeZone('UTC'))
