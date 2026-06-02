@@ -144,6 +144,8 @@ pipeline {
                                         userRemoteConfigs: [[url: openlTestsGitIrl]]
                                 ])
                                 env.BUILD_NUMBER = buildNumber
+                                env.TESTS_BRANCH = params.TESTS_BRANCH
+                                echo "RP attributes will be: build:${env.BUILD_NUMBER};tests_branch:${env.TESTS_BRANCH}"
                                 // Testcontainers hard-codes a 2-min pull timeout — too short for ~700MB Keycloak on a cold agent.
                                 if (suite.suiteName == "studio_sso") {
                                     sh '''
@@ -169,7 +171,7 @@ pipeline {
                                             -Drp.project=OpenL_Tests \\
                                             -Drp.launch=${suite.suiteName} \\
                                             -Drp.uuid=${RP_UUID} \\
-                                            -Drp.attributes="build:${buildNumber};tests_branch:${TESTS_BRANCH}" \\
+                                            -Drp.attributes="build:${env.BUILD_NUMBER};tests_branch:${env.TESTS_BRANCH}" \\
                                             -Dsuite=${suite.suiteName} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.studioImageName} \\
