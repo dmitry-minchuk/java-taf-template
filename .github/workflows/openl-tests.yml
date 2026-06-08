@@ -1,4 +1,5 @@
 name: OpenL Tests
+run-name: "OpenL Tests [${{ inputs.application_version }}]"
 
 on:
   workflow_dispatch:
