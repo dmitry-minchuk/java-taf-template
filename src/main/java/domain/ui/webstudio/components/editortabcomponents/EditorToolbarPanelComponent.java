@@ -616,7 +616,6 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             new EditorLeftProjectModuleSelectorComponent(new WebElement(page, "xpath=//div[@id='projects']")).selectModule(projectName, moduleName);
         }
         page.waitForLoadState(LoadState.NETWORKIDLE);
-        waitUntilSpinnerLoaded();
     }
 
     public void selectProjectBreadcrumbs(String projectName) {
