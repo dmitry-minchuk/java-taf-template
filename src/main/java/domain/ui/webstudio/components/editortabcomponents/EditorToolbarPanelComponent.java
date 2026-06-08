@@ -717,9 +717,13 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void setTopPanelWithinCurrentModuleOnly(boolean value) {
         topPanelWithinCurrentModuleOnly.waitForVisible();
+        WaitUtil.waitForCondition(topPanelWithinCurrentModuleOnly::isEnabled,
+                5000, 100, "Waiting for top panel WithinCurrentModuleOnly to become enabled");
         if (value != topPanelWithinCurrentModuleOnly.isChecked()) {
             topPanelWithinCurrentModuleOnly.click();
         }
+        WaitUtil.waitForCondition(() -> topPanelWithinCurrentModuleOnly.isChecked() == value,
+                5000, 100, "Waiting for top panel WithinCurrentModuleOnly to switch to " + value);
     }
 
     // ========== Run/Trace/Benchmark Dropdown Arrows ==========
