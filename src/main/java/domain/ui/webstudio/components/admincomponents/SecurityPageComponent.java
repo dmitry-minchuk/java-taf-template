@@ -62,7 +62,7 @@ public class SecurityPageComponent extends BaseComponent {
     }
 
     public boolean isAllowBypassVisible() {
-        return allowBypassCheckbox.isVisible();
+        return allowBypassCheckbox.isVisible(DEFAULT_TIMEOUT_MS);
     }
 
     public boolean isAllowBypassChecked() {
@@ -71,7 +71,7 @@ public class SecurityPageComponent extends BaseComponent {
     }
 
     public boolean isAllowBypassTooltipIconVisible() {
-        return allowBypassTooltipIcon.isVisible();
+        return allowBypassTooltipIcon.isVisible(DEFAULT_TIMEOUT_MS);
     }
 
     public SecurityPageComponent toggleAllowBypass() {

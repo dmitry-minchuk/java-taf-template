@@ -1,5 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
@@ -45,6 +47,11 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
         saveChangesBtn.click();
         waitWhileTablePanelActionExecuted();
         waitUntilSpinnerLoaded();
+        // On slow CI the spinner hides before RichFaces finishes the table-fragment rebuild — a follow-up doubleClickCell would open the popup over stale state.
+        try {
+            page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(5000));
+        } catch (RuntimeException ignored) {
+        }
     }
 
     public void undoClickChanges() {
