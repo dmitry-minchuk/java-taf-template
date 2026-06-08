@@ -8,7 +8,7 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-/** GET / PUT on {@code /rest/projects/{projectId}/resources/{path}}. */
+/** GET / PUT on {@code /rest/projects/{projectId}/files/{path}}. */
 public class ProjectResourcesMethod extends AuthorizedApiMethod {
 
     public ProjectResourcesMethod() {
@@ -31,6 +31,6 @@ public class ProjectResourcesMethod extends AuthorizedApiMethod {
             if (encoded.length() > 0) encoded.append('/');
             encoded.append(URLEncoder.encode(segment, StandardCharsets.UTF_8).replace("+", "%20"));
         }
-        return fullApiUrl + "/" + projectId + "/resources/" + encoded;
+        return fullApiUrl + "/" + projectId + "/files/" + encoded;
     }
 }
