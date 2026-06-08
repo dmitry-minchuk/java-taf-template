@@ -86,6 +86,7 @@ public class SearchFilterComponent extends BaseComponent {
     }
 
     public SearchFilterComponent searchByTableType(String... types) {
+        waitUntilSpinnerLoaded();
         selectType.click();
         for (String type : types) {
             WebElement checkbox = selectTableTypeCheckboxTemplate.format(type);

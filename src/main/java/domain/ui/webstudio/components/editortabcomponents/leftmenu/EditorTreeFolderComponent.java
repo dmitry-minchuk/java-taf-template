@@ -53,6 +53,7 @@ public class EditorTreeFolderComponent extends BaseComponent {
 
     public void selectItem(String itemName) {
         itemTemplate.format(itemName).click();
+        waitUntilSpinnerLoaded();
     }
 
     public WebElement getItem(String itemName) {

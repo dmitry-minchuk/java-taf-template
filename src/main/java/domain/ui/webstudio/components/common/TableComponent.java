@@ -56,6 +56,7 @@ public class TableComponent extends BaseComponent {
     }
 
     public void doubleClickCell(int rowIndex, int columnIndex) {
+        waitUntilSpinnerLoaded();
         WebElement cell = getCell(rowIndex, columnIndex);
         // OpenL keeps a floating keyboard-catcher input (`_t_te_editorWrapper`) over the
         // currently selected cell. It intercepts pointer events for the underlying <td>,
