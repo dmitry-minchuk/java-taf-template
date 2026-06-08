@@ -44,12 +44,14 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
     }
 
     public void clickSaveChanges() {
+        page.evaluate("() => { window.__teTableVersion = document.querySelector('.te_table') ? document.querySelector('.te_table').innerHTML.length : 0; }");
         saveChangesBtn.click();
         waitWhileTablePanelActionExecuted();
         waitUntilSpinnerLoaded();
-        // On slow CI the spinner hides before RichFaces finishes the table-fragment rebuild — a follow-up doubleClickCell would open the popup over stale state.
         try {
-            page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(5000));
+            page.waitForFunction(
+                    "() => { const t = document.querySelector('.te_table'); return !t || t.innerHTML.length !== window.__teTableVersion; }",
+                    new Page.WaitForFunctionOptions().setTimeout(5000));
         } catch (RuntimeException ignored) {
         }
     }
