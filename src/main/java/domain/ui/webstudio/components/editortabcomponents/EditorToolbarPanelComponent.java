@@ -565,6 +565,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             traceExpanderTemplate.format(position + 1).click();
             WaitUtil.waitForCondition(() -> visibleItemsFromTree.size() > itemsBefore,
                     5000, 200, "Waiting for tree node to expand");
+            WaitUtil.waitForStableSize(() -> visibleItemsFromTree.size(),
+                    5000, 200, "Waiting for trace tree to finish loading");
             return this;
         }
 

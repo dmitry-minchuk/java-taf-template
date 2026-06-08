@@ -76,6 +76,22 @@ public class WaitUtil {
         return Optional.empty();
     }
 
+    public static void waitForStableSize(Supplier<Integer> sizeSupplier, long timeoutMs, long pollingIntervalMs, String description) {
+        LOGGER.info("Waiting for stable size (timeout: {}ms, polling: {}ms): {}", timeoutMs, pollingIntervalMs, description);
+        long endTime = System.currentTimeMillis() + timeoutMs;
+        int lastSize = sizeSupplier.get();
+        while (System.currentTimeMillis() < endTime) {
+            sleep(pollingIntervalMs, "Polling for stable size: " + description);
+            int currentSize = sizeSupplier.get();
+            if (currentSize == lastSize) {
+                LOGGER.info("Size stabilized at {} : {}", currentSize, description);
+                return;
+            }
+            lastSize = currentSize;
+        }
+        LOGGER.warn("Size did not stabilize after {}ms (last: {}): {}", timeoutMs, lastSize, description);
+    }
+
     public static boolean retryAction(CheckedRunnable action, long timeoutMs, long pollingIntervalMs, String description) {
         LOGGER.info("Retrying action with polling (timeout: {}ms, polling: {}ms): {}", timeoutMs, pollingIntervalMs, description);
         long endTime = System.currentTimeMillis() + timeoutMs;
