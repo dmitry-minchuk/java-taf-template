@@ -44,16 +44,17 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
     }
 
     public void clickSaveChanges() {
-        page.evaluate("() => { window.__teTableVersion = document.querySelector('.te_table') ? document.querySelector('.te_table').innerHTML.length : 0; }");
-        saveChangesBtn.click();
+        try {
+            page.waitForResponse(
+                    response -> true,
+                    () -> saveChangesBtn.click()
+            );
+        } catch (RuntimeException e) {
+            LOGGER.debug("No response captured after save click: {}", e.getMessage());
+        }
         waitWhileTablePanelActionExecuted();
         waitUntilSpinnerLoaded();
-        try {
-            page.waitForFunction(
-                    "() => { const t = document.querySelector('.te_table'); return !t || t.innerHTML.length !== window.__teTableVersion; }",
-                    new Page.WaitForFunctionOptions().setTimeout(5000));
-        } catch (RuntimeException ignored) {
-        }
+        page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(5000));
     }
 
     public void undoClickChanges() {

@@ -601,8 +601,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // ========== Breadcrumb Module Navigation ==========
 
     public void selectBreadcrumbModule(String projectName, String moduleName) {
-        String actualProject = breadcrumbsProjectToggle.isVisible(1000) ? breadcrumbsProjectToggle.getText() : "";
-        String actualModule = breadcrumbsModuleToggle.isVisible(1000) ? breadcrumbsModuleToggle.getText() : "";
+        waitUntilSpinnerLoaded();
+        String actualProject = breadcrumbsProjectToggle.isVisible(5000) ? breadcrumbsProjectToggle.getText() : "";
+        String actualModule = breadcrumbsModuleToggle.isVisible(5000) ? breadcrumbsModuleToggle.getText() : "";
 
         if (actualProject.equals(projectName) && !actualModule.equals(moduleName)) {
             WaitUtil.retryOnException(() -> {
@@ -681,7 +682,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void clickTopPanelTestDropdown() {
+        waitUntilSpinnerLoaded();
         testDropdownBtn.click();
+        waitForTopPanelWithinCurrentModuleOnlyToStabilize();
     }
 
     public void clickTopPanelRunTestBtn() {
@@ -716,14 +719,39 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void setTopPanelWithinCurrentModuleOnly(boolean value) {
-        topPanelWithinCurrentModuleOnly.waitForVisible();
-        WaitUtil.waitForCondition(topPanelWithinCurrentModuleOnly::isEnabled,
-                5000, 100, "Waiting for top panel WithinCurrentModuleOnly to become enabled");
-        if (value != topPanelWithinCurrentModuleOnly.isChecked()) {
-            topPanelWithinCurrentModuleOnly.click();
-        }
-        WaitUtil.waitForCondition(() -> topPanelWithinCurrentModuleOnly.isChecked() == value,
-                5000, 100, "Waiting for top panel WithinCurrentModuleOnly to switch to " + value);
+        WaitUtil.retryAction(() -> {
+            topPanelWithinCurrentModuleOnly.waitForVisible();
+            if (!topPanelWithinCurrentModuleOnly.isEnabled()) {
+                throw new RuntimeException("Top panel WithinCurrentModuleOnly is disabled");
+            }
+            if (value) {
+                topPanelWithinCurrentModuleOnly.check();
+            } else {
+                topPanelWithinCurrentModuleOnly.uncheck();
+            }
+            page.waitForFunction(
+                    "() => new Promise(resolve => setTimeout(() => {" +
+                            " const cb = document.querySelector('#testModuleOnlyField');" +
+                            " resolve(!!cb && cb.checked === " + value + " && !cb.disabled);" +
+                            "}, 750))",
+                    null,
+                    new Page.WaitForFunctionOptions().setTimeout(1200));
+        }, 10000, 250, "Setting top panel WithinCurrentModuleOnly to " + value);
+    }
+
+    private void waitForTopPanelWithinCurrentModuleOnlyToStabilize() {
+        page.waitForFunction(
+                "() => new Promise(resolve => {" +
+                        " const cb = document.querySelector('#testModuleOnlyField');" +
+                        " if (!cb) { resolve(false); return; }" +
+                        " const state = cb.checked + ':' + cb.disabled;" +
+                        " setTimeout(() => {" +
+                        "   const current = document.querySelector('#testModuleOnlyField');" +
+                        "   resolve(!!current && (current.checked + ':' + current.disabled) === state);" +
+                        " }, 750);" +
+                        "})",
+                null,
+                new Page.WaitForFunctionOptions().setTimeout(10000));
     }
 
     // ========== Run/Trace/Benchmark Dropdown Arrows ==========
