@@ -21,6 +21,12 @@ DEFAULT_EXCLUDED_CLASSES = {
     "tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset",
 }
 
+DEFAULT_CLASS_WEIGHTS = {
+    # This test is much longer than a regular class on GHA. Treat it as a full
+    # shard so the remaining rules_editor tests can finish in parallel.
+    "tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation": 8,
+}
+
 # Mirrors the (studioImageName, wsImageName) pairs from Jenkinsfile's
 # functionalJobList. The "kind" picks which docker image template the
 # workflow resolves at run time: "webstudio" -> webstudio:VERSION,
@@ -52,11 +58,42 @@ def read_suite_classes(suite_dir: Path, suite: str, excluded: set[str]) -> list[
 def shard_within_suite(classes: list[str], max_shard_size: int) -> list[list[str]]:
     if not classes:
         return []
-    shard_count = max(1, math.ceil(len(classes) / max_shard_size))
-    shards: list[list[str]] = [[] for _ in range(shard_count)]
-    for index, name in enumerate(classes):
-        shards[index % shard_count].append(name)
-    return [shard for shard in shards if shard]
+
+    weights = {name: DEFAULT_CLASS_WEIGHTS.get(name, 1) for name in classes}
+    if all(weight == 1 for weight in weights.values()):
+        shard_count = max(1, math.ceil(len(classes) / max_shard_size))
+        unweighted_shards: list[list[str]] = [[] for _ in range(shard_count)]
+        for index, name in enumerate(classes):
+            unweighted_shards[index % shard_count].append(name)
+        return [shard for shard in unweighted_shards if shard]
+
+    shard_count = max(
+        1,
+        math.ceil(len(classes) / max_shard_size),
+        math.ceil(sum(weights.values()) / max_shard_size),
+    )
+    weighted_shards: list[list[str]] = [[] for _ in range(shard_count)]
+    shard_weights = [0] * shard_count
+    weighted_classes = sorted(
+        enumerate(classes), key=lambda item: (-weights[item[1]], item[0])
+    )
+    for _, name in weighted_classes:
+        candidates = [
+            index
+            for index, shard in enumerate(weighted_shards)
+            if len(shard) < max_shard_size
+        ]
+        target_index = min(
+            candidates,
+            key=lambda index: (
+                shard_weights[index],
+                len(weighted_shards[index]),
+                index,
+            ),
+        )
+        weighted_shards[target_index].append(name)
+        shard_weights[target_index] += weights[name]
+    return [shard for shard in weighted_shards if shard]
 
 
 def main() -> None:
@@ -70,7 +107,10 @@ def main() -> None:
         "--max-shard-size",
         default=8,
         type=int,
-        help="Upper bound on the number of test classes per shard within a single suite.",
+        help=(
+            "Upper bound on the number of test classes per shard within a single "
+            "suite; weighted classes can also increase the shard count."
+        ),
     )
     parser.add_argument("--suites", nargs="*", default=DEFAULT_PARALLEL_SUITES)
     parser.add_argument(
