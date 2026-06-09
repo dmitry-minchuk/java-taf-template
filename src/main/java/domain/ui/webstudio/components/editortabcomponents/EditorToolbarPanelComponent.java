@@ -8,6 +8,7 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftProjectModuleSelectorComponent;
+import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -602,8 +603,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void selectBreadcrumbModule(String projectName, String moduleName) {
         waitUntilSpinnerLoaded();
-        String actualProject = breadcrumbsProjectToggle.isVisible(5000) ? breadcrumbsProjectToggle.getText() : "";
-        String actualModule = breadcrumbsModuleToggle.isVisible(5000) ? breadcrumbsModuleToggle.getText() : "";
+        String actualProject = breadcrumbsProjectToggle.isVisible(5000) ? breadcrumbsProjectToggle.getText().trim() : "";
+        String actualModule = breadcrumbsModuleToggle.isVisible(5000) ? breadcrumbsModuleToggle.getText().trim() : "";
 
         if (actualProject.equals(projectName) && !actualModule.equals(moduleName)) {
             WaitUtil.retryOnException(() -> {
@@ -616,7 +617,17 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             navigateToProjectRoot(projectName);
             new EditorLeftProjectModuleSelectorComponent(new WebElement(page, "xpath=//div[@id='projects']")).selectModule(projectName, moduleName);
         }
+        WaitUtil.waitForCondition(
+                () -> moduleName.equals(getBreadcrumbsModuleName().trim()),
+                10000,
+                250,
+                "Waiting for breadcrumb module to become " + moduleName);
         page.waitForLoadState(LoadState.NETWORKIDLE);
+        waitUntilSpinnerLoaded();
+        new ProblemsPanelComponent(new WebElement(page, "xpath=//div[@id='bottom']"))
+                .waitForCompilationToComplete(60000, 250);
+        new EditorLeftRulesTreeComponent(new WebElement(page, "xpath=//div[@id='left']"))
+                .waitForTreeFoldersToLoad();
     }
 
     public void selectProjectBreadcrumbs(String projectName) {
@@ -630,11 +641,11 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public String getBreadcrumbsProjectName() {
-        return breadcrumbsProjectToggle.isVisible(1000) ? breadcrumbsProjectToggle.getText() : "";
+        return breadcrumbsProjectToggle.isVisible(1000) ? breadcrumbsProjectToggle.getText().trim() : "";
     }
 
     public String getBreadcrumbsModuleName() {
-        return breadcrumbsModuleToggle.isVisible(1000) ? breadcrumbsModuleToggle.getText() : "";
+        return breadcrumbsModuleToggle.isVisible(1000) ? breadcrumbsModuleToggle.getText().trim() : "";
     }
 
     public void clickBreadcrumbsCategory() {

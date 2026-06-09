@@ -71,6 +71,11 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                 .collect(Collectors.toList());
     }
 
+    public EditorLeftRulesTreeComponent waitForTreeFoldersToLoad() {
+        findTreeFolders();
+        return this;
+    }
+
     public EditorLeftRulesTreeComponent selectVisibleLeafNode(String itemName) {
         waitUntilSpinnerLoaded();
         WebElement leafNode = WaitUtil.waitForResult(() -> leafNodes.stream()

@@ -88,13 +88,15 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
                 }
                 Locator error = errorMessages.get(elementPosition).getLocator();
                 if (error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible()) {
-                    return true;
+                    WaitUtil.sleep(250, "Waiting for expanded problem description to stabilize");
+                    return error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible();
                 }
                 Locator toggle = error.locator("xpath=.//div[@class='stacktrace-hidden']");
                 if (toggle.count() == 0) {
                     return false;
                 }
                 toggle.first().click();
+                WaitUtil.sleep(250, "Waiting for problem description to expand");
                 return error.locator("xpath=.//span[@class='stacktrace-panels']").isVisible();
             } catch (Exception e) {
                 return false;

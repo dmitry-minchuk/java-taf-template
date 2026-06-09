@@ -109,8 +109,16 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
     }
 
     public CompareLocalChangesDialogComponent waitForDialogToAppear() {
-        WaitUtil.sleep(1500, "Waiting for Local Changes Compare dialog to appear");
-        treeContainer.waitForVisible(5000);
+        WaitUtil.waitForCondition(
+                () -> treeContainer.isVisible(1000),
+                15000,
+                250,
+                "Waiting for Local Changes Compare dialog tree to appear");
+        WaitUtil.waitForListNotEmpty(
+                () -> treeItems,
+                15000,
+                250,
+                "Waiting for Local Changes Compare tree items to load");
         return this;
     }
 
