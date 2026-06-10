@@ -116,6 +116,7 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
 
         repoCompareDialog.setShowEqualRows(true);
         repoCompareDialog.clickCompareBtn();
+        repoCompareDialog.openTreeNode("Limit");
         repoCompareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
         validateRepositoryCompareWindowCells(repoCompareDialog);
         assertThat(repoCompareDialog.getNumberOfRows(1))

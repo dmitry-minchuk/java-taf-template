@@ -1,6 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
@@ -20,9 +21,11 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     private WebElement revisionSelect;
     private WebElement compareBtnInPopup;
     private WebElement showEqualRowsCheckbox;
-    private WebElement treeContainer;
+    private WebElement treeNodeLabels;
     // Template: %s = nodeName
     private WebElement treeNodeExpanderTemplate;
+    // Template: %s = nodeName
+    private WebElement treeNodeClosedExpanderTemplate;
     // Template: %s = nodeName
     private WebElement treeNodeLinkTemplate;
     // Template: %s = idSuffix e.g. "1_te_c-7:5"
@@ -30,6 +33,7 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     // Template: %s = fragment number
     private WebElement editorRowsTemplate;
     private Page comparePopup;
+    private String lastOpenedTreeNodeName;
 
     public CompareGitRevisionsDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -61,19 +65,25 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
         showEqualRowsCheckbox = new WebElement(getPage(),
                 "xpath=//input[contains(@id,'compareForm:compareBtn')]/preceding-sibling::input[@type='checkbox'][1]",
                 "showEqualRowsCheckbox");
-        treeContainer = new WebElement(getPage(), "xpath=//span[@class='rf-trn-cnt']", "treeContainer");
+        treeNodeLabels = new WebElement(getPage(),
+                "xpath=//span[contains(@class,'rf-trn-lbl')]",
+                "treeNodeLabels");
         treeNodeExpanderTemplate = new WebElement(getPage(),
-                "xpath=//div[@class='rf-trn' and .//span[contains(@class,'rf-trn-lbl') and (text()='%s')]]/span[1]",
+                "xpath=//div[contains(@class,'rf-trn') and .//span[contains(@class,'rf-trn-lbl') and normalize-space(.)='%s']]/span[1]",
                 "treeNodeExpanderTemplate");
+        treeNodeClosedExpanderTemplate = new WebElement(getPage(),
+                "xpath=//div[contains(@class,'rf-trn') and .//span[contains(@class,'rf-trn-lbl') and normalize-space(.)='%s']]" +
+                        "/span[contains(@class,'rf-trn-hnd-colps')]",
+                "treeNodeClosedExpanderTemplate");
         treeNodeLinkTemplate = new WebElement(getPage(),
-                "xpath=//span[contains(@class,'rf-trn-lbl') and (text()='%s')]",
+                "xpath=//span[contains(@class,'rf-trn-lbl') and normalize-space(.)='%s']",
                 "treeNodeLinkTemplate");
-        // idSuffix pattern: "1_te_c-7:5" — uses ends-with to avoid substring collisions (e.g. c-2:1 vs c-2:10)
+        // idSuffix pattern: "1_te_c-7:5" - uses ends-with to avoid substring collisions (e.g. c-2:1 vs c-2:10)
         cellTemplate = new WebElement(getPage(),
                 "xpath=//td[(contains(@id,'diffTreeForm') or contains(@id,'compareRevisionsForm')) and (substring(@id, string-length(@id) - string-length('%1$s') + 1) = '%1$s')]",
                 "cellTemplate");
         editorRowsTemplate = new WebElement(getPage(),
-                "xpath=//div[@id='diffTreeForm:editor%s_te_table']//tr[./td]",
+                "xpath=//div[@id='diffTreeForm:editor%1$s_te_table' or @id='compareRevisionsForm:editor%1$s_te_table']//tr[./td]",
                 "editorRowsTemplate");
     }
 
@@ -111,25 +121,49 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     public void clickCompareBtn() {
         compareBtnInPopup.waitForVisible(5000);
         compareBtnInPopup.click();
-        WaitUtil.sleep(1000, "Waiting for comparison results to load");
-        if (!treeContainer.isVisible(3000)) {
-            compareBtnInPopup.click();
-            WaitUtil.sleep(1000, "Retry waiting for comparison tree");
+        WaitUtil.sleep(1000, "Waiting for repository comparison Ajax request to start");
+        waitUntilSpinnerLoaded();
+        try {
+            getPage().waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(5000));
+        } catch (RuntimeException e) {
+            LOGGER.debug("No network idle state after repository compare click: {}", e.getMessage());
         }
+        waitForComparisonTreeToLoad();
     }
 
     // ========== Tree navigation ==========
 
     public void openTreeNode(String nodeName) {
+        waitForComparisonTreeToLoad();
         treeNodeExpanderTemplate.format(nodeName).waitForVisible(5000);
-        treeNodeExpanderTemplate.format(nodeName).click();
-        WaitUtil.sleep(500, "Waiting for repo tree node to expand: " + nodeName);
+        if (treeNodeClosedExpanderTemplate.format(nodeName).isVisible(500)) {
+            treeNodeClosedExpanderTemplate.format(nodeName).click();
+        }
+        lastOpenedTreeNodeName = nodeName;
+        WaitUtil.sleep(250, "Waiting for repo tree node to expand: " + nodeName);
     }
 
     public void clickTreeNode(String nodeName) {
-        treeNodeLinkTemplate.format(nodeName).waitForVisible(3000);
-        treeNodeLinkTemplate.format(nodeName).click();
+        WaitUtil.retryOnException(() -> {
+            if (!treeNodeLinkTemplate.format(nodeName).isVisible(500) && lastOpenedTreeNodeName != null) {
+                openTreeNode(lastOpenedTreeNodeName);
+            }
+            treeNodeLinkTemplate.format(nodeName).waitForVisible(5000);
+            treeNodeLinkTemplate.format(nodeName).click();
+            return true;
+        }, 15000, 250, "Clicking repo tree node: " + nodeName);
         WaitUtil.sleep(500, "Waiting after clicking repo tree node: " + nodeName);
+    }
+
+    private void waitForComparisonTreeToLoad() {
+        boolean loaded = WaitUtil.waitForCondition(
+                () -> treeNodeLabels.getLocator().count() > 0,
+                15000,
+                250,
+                "Waiting for repository compare tree items to load");
+        if (!loaded) {
+            throw new IllegalStateException("Repository compare tree items did not load");
+        }
     }
 
     // ========== Cell highlighting ==========
@@ -150,6 +184,11 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     // ========== Row counting (repository-specific locator) ==========
 
     public int getNumberOfRows(int fragment) {
+        WaitUtil.waitForCondition(
+                () -> editorRowsTemplate.format(String.valueOf(fragment)).getLocator().count() > 0,
+                10000,
+                250,
+                "Waiting for repository comparison rows to appear for fragment " + fragment);
         return editorRowsTemplate.format(String.valueOf(fragment)).getLocator().count();
     }
 
