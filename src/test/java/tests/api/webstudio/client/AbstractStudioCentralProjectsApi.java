@@ -5,8 +5,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.api.AuthorizedApiMethod;
-import domain.api.CompileMethod;
-import domain.api.ProjectModulesMethod;
+import domain.api.ProjectStatusMethod;
 import domain.api.ProjectTestsMethod;
 import domain.api.ProjectsMethod;
 import helpers.utils.StringUtil;
@@ -33,7 +32,8 @@ public abstract class AbstractStudioCentralProjectsApi {
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
     private static final int TEST_SUMMARY_POLL_TIMEOUT_MS = 10 * 60 * 1_000;
     private static final int COMPILE_POLL_INTERVAL_MS = 1_500;
-    private static final int COMPILE_POLL_TIMEOUT_MS = 3 * 60 * 1_000;
+    // Safety net only: tests/run already awaits compilation server-side before it returns.
+    private static final int COMPILE_POLL_TIMEOUT_MS = 60 * 1_000;
 
     private final Map<String, Map<String, Object>> projectsByName = new LinkedHashMap<>();
 
@@ -166,93 +166,50 @@ public abstract class AbstractStudioCentralProjectsApi {
         String projectName = String.valueOf(project.get("name"));
         LOGGER.info("Validating project [{}] (id={})", projectName, projectId);
 
-        // Re-anchor "current project" in session even if already OPENED — compile/progress
-        // and tests endpoints read the current project from session state.
+        // Re-anchor "current project" in session even if already OPENED.
         Response open = new ProjectsMethod().openProject(projectId);
         Assert.assertTrue(open.getStatusCode() < 300,
                 String.format("Failed to set project %s as current: HTTP %d — %s",
                         projectName, open.getStatusCode(), open.getBody().asString()));
 
-        Response modulesResp = new ProjectModulesMethod(projectId).listModules();
-        Assert.assertEquals(modulesResp.getStatusCode(), 200,
-                String.format("List modules failed for project %s", projectName));
-        List<?> modules = modulesResp.jsonPath().getList("$");
-        if (modules.isEmpty()) {
-            LOGGER.info("Project [{}] has no modules — skipping test run", projectName);
-            return;
-        }
-
-        checkCompilation(projectName);
-        runProjectTests(projectId, projectName);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void checkCompilation(String projectName) {
-        CompileMethod compile = new CompileMethod();
-        long deadline = System.currentTimeMillis() + COMPILE_POLL_TIMEOUT_MS;
-        Response last = null;
-        while (System.currentTimeMillis() < deadline) {
-            last = compile.getCompileProgress(-1L, -1, false);
-            if (last.getStatusCode() != 200) {
-                LOGGER.warn("Compile progress returned HTTP {} for project [{}]: {}",
-                        last.getStatusCode(), projectName, last.getBody().asString());
-                return;
-            }
-            Boolean completed = last.jsonPath().getBoolean("compilationCompleted");
-            if (Boolean.TRUE.equals(completed)) {
-                break;
-            }
-            sleepInterruptible(COMPILE_POLL_INTERVAL_MS);
-        }
-        if (last == null) {
-            return;
-        }
-        Integer errorsCount = toInt(last.jsonPath().get("errorsCount"));
-        List<Map<String, Object>> messages = last.jsonPath().getList("messages");
-        List<String> errors = new java.util.ArrayList<>();
-        if (messages != null) {
-            for (Map<String, Object> msg : messages) {
-                String severity = stringOrNull(msg.get("severity"));
-                if (severity != null && severity.equalsIgnoreCase("ERROR")) {
-                    String summary = stringOrNull(msg.get("summary"));
-                    errors.add(summary != null ? summary : "(empty)");
-                }
-            }
-        }
-        if (errors.isEmpty() && (errorsCount == null || errorsCount == 0)) {
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Compilation errors detected in project: %s%n", projectName));
-        sb.append(String.format("ERRORS (%d):%n", errors.size()));
-        for (int i = 0; i < errors.size(); i++) {
-            sb.append(String.format("  %d. %s%n", i + 1, errors.get(i)));
-        }
-        String detail = sb.toString();
-        LOGGER.error(detail);
-        Assert.fail(detail);
-    }
-
-    private void runProjectTests(String projectId, String projectName) {
+        // tests/run opens a module, awaits compilation server-side, then runs all tests — so it is
+        // also the compile trigger (a plain open leaves compileState 'idle'). 404 means the project
+        // has no module to open/compile.
         Response runResponse = new ProjectTestsMethod().runAllTests(projectId);
         int runStatus = runResponse.getStatusCode();
         if (runStatus == 404 || runStatus == 204) {
-            LOGGER.info("Project [{}] has no Test tables — skipping test execution", projectName);
+            LOGGER.info("Project [{}] has no modules to compile/run — skipping", projectName);
             return;
         }
         Assert.assertTrue(runStatus == 200 || runStatus == 202,
-                String.format("Failed to start tests for project %s: HTTP %d — %s",
+                String.format("Failed to compile/run tests for project %s: HTTP %d — %s",
                         projectName, runStatus, runResponse.getBody().asString()));
+
+        // Compilation is finished by the time tests/run returns; /status now reports the real state
+        // (replaces the removed /modules + /compile/progress endpoints).
+        Response statusResp = awaitCompilation(projectId);
+        Assert.assertEquals(statusResp.getStatusCode(), 200,
+                String.format("Project status failed for project %s: HTTP %d — %s",
+                        projectName, statusResp.getStatusCode(), statusResp.getBody().asString()));
+        JsonPath status = statusResp.jsonPath();
+        String compileState = status.getString("compileState");
+        int compileErrors = intOrZero(status.get("compilation.messages.errors"));
+        if ("errors".equalsIgnoreCase(compileState) || compileErrors > 0) {
+            String detail = buildCompileErrorReport(projectName, status);
+            LOGGER.error(detail);
+            Assert.fail(detail);
+        }
 
         Response summary = pollTestsSummary(projectId, projectName);
         Assert.assertNotNull(summary, String.format("Test summary timed out for project [%s]", projectName));
-        if (summary.getStatusCode() == 404) {
-            LOGGER.info("Project [{}] reports no test execution task — likely no Test tables", projectName);
+        int code = summary.getStatusCode();
+        if (code == 404) {
+            LOGGER.info("Project [{}] has no Test tables — compile validated, nothing to run", projectName);
             return;
         }
-        Assert.assertEquals(summary.getStatusCode(), 200,
+        Assert.assertEquals(code, 200,
                 String.format("Tests summary returned HTTP %d for project [%s]: %s",
-                        summary.getStatusCode(), projectName, summary.getBody().asString()));
+                        code, projectName, summary.getBody().asString()));
 
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
         Integer total = summary.jsonPath().getInt("numberOfTests");
@@ -262,6 +219,50 @@ public abstract class AbstractStudioCentralProjectsApi {
             LOGGER.error(detail);
             Assert.fail(detail);
         }
+    }
+
+    // Poll /status until the project reaches a terminal compile state (ok/warnings/errors).
+    private Response awaitCompilation(String projectId) {
+        ProjectStatusMethod statusApi = new ProjectStatusMethod();
+        long deadline = System.currentTimeMillis() + COMPILE_POLL_TIMEOUT_MS;
+        Response last = null;
+        while (System.currentTimeMillis() < deadline) {
+            last = statusApi.getStatus(projectId, false);
+            if (last.getStatusCode() == 200) {
+                String state = last.jsonPath().getString("compileState");
+                if (state != null && !state.equalsIgnoreCase("idle") && !state.equalsIgnoreCase("compiling")) {
+                    return last;
+                }
+            }
+            sleepInterruptible(COMPILE_POLL_INTERVAL_MS);
+        }
+        return last;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String buildCompileErrorReport(String projectName, JsonPath status) {
+        List<Map<String, Object>> items = status.getList("compilation.messages.items");
+        List<String> errors = new java.util.ArrayList<>();
+        if (items != null) {
+            for (Map<String, Object> msg : items) {
+                if ("ERROR".equalsIgnoreCase(stringOrNull(msg.get("severity")))) {
+                    String summary = stringOrNull(msg.get("summary"));
+                    errors.add(summary != null ? summary : "(empty)");
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Compilation errors detected in project: %s%n", projectName));
+        sb.append(String.format("ERRORS (%d):%n", errors.size()));
+        for (int i = 0; i < errors.size(); i++) {
+            sb.append(String.format("  %d. %s%n", i + 1, errors.get(i)));
+        }
+        return sb.toString();
+    }
+
+    private int intOrZero(Object o) {
+        Integer v = toInt(o);
+        return v == null ? 0 : v;
     }
 
     @SuppressWarnings("unchecked")
@@ -284,11 +285,7 @@ public abstract class AbstractStudioCentralProjectsApi {
             if (testUnits == null) continue;
             for (Map<String, Object> unit : testUnits) {
                 String status = stringOrNull(unit.get("status"));
-                if (status == null) continue;
-                String up = status.toUpperCase();
-                if (!up.contains("FAIL") && !up.equals("ERROR")) {
-                    continue;
-                }
+                if (status == null || status.equalsIgnoreCase("TR_OK")) continue;
                 appendFailedUnit(sb, unit);
             }
         }
@@ -312,11 +309,8 @@ public abstract class AbstractStudioCentralProjectsApi {
         if (assertions != null) {
             for (Map<String, Object> assertion : assertions) {
                 String aStatus = stringOrNull(assertion.get("status"));
-                if (aStatus != null) {
-                    String up = aStatus.toUpperCase();
-                    if (!up.contains("FAIL") && !up.equals("ERROR")) {
-                        continue;
-                    }
+                if (aStatus != null && aStatus.equalsIgnoreCase("TR_OK")) {
+                    continue;
                 }
                 String aDesc = stringOrNull(assertion.get("description"));
                 Object expected = assertion.get("expectedValue");
