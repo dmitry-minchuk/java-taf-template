@@ -59,7 +59,8 @@ public class ExportProjectDialogComponent extends BaseComponent {
     }
 
     public void clickExport() {
-        exportBtn.waitForVisible();
+        waitUntilSpinnerLoaded();
+        exportBtn.waitForVisible(10000);
         exportBtn.click();
     }
 

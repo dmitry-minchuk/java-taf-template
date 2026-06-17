@@ -266,8 +266,12 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public ITraceWindow clickTraceExpectTraceWindow() {
+        waitUntilSpinnerLoaded();
         traceBtn.waitForVisible();
-        Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceBtn.click());
+        // Retry the click+wait: on slow CI the first click can land before the rule is runnable, so no popup opens.
+        Page popup = WaitUtil.retryOnException(
+                () -> page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(30000), () -> traceBtn.click()),
+                65000, 1000, "Opening Trace popup window");
         popup.waitForLoadState();
         popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
         return new TraceWindow(popup);

@@ -69,6 +69,12 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
                 .anyMatch(folder -> folder.getItem(itemName).isVisible(250));
     }
 
+    // Polls until the item renders — the tree may still be repainting after a tab switch on slow CI.
+    public boolean waitForItemInTree(String itemName, int timeoutMs) {
+        return WaitUtil.waitForCondition(() -> isItemExistsInTree(itemName), timeoutMs, 500,
+                "Waiting for item '" + itemName + "' to appear in repository tree");
+    }
+
     public boolean isFolderExistsInTree(String folderName) {
         return findTreeFolders().stream()
                 .anyMatch(folder -> folder.getFolderName().equals(folderName));
