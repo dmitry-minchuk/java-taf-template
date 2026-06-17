@@ -25,7 +25,8 @@ import java.util.Set;
  */
 public class TestZippedProjects extends AbstractZippedProjectsApi {
 
-    private static final String ROOT_DIR = "/Users/dmitryminchuk/Projects/eis/client_projects/customers_projects_test_automation_6.x";
+    private static final String ROOT_DIR = System.getProperty("zip.projects.root",
+            "/Users/dmitryminchuk/Projects/eis/client_projects/customers_projects_test_automation_6.x");
     private static final String EXT = ".zip";
     private static final String DEPLOYMENT_SUFFIX = "deployment";
 
