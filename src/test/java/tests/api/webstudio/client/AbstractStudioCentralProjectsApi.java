@@ -14,11 +14,14 @@ import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
+import org.testng.ITest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,7 +29,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public abstract class AbstractStudioCentralProjectsApi {
+public abstract class AbstractStudioCentralProjectsApi implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(AbstractStudioCentralProjectsApi.class);
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(60);
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
@@ -36,6 +39,8 @@ public abstract class AbstractStudioCentralProjectsApi {
     private static final int COMPILE_POLL_TIMEOUT_MS = 60 * 1_000;
 
     private final Map<String, Map<String, Object>> projectsByName = new LinkedHashMap<>();
+    // Per-invocation test name so ReportPortal shows the project instead of the bare method name.
+    private final ThreadLocal<String> currentTestName = new ThreadLocal<>();
 
     protected abstract AppContainerStartParameters params();
 
@@ -101,6 +106,18 @@ public abstract class AbstractStudioCentralProjectsApi {
         if (AppContainerPool.get() != null) {
             AppContainerPool.closeAppContainer();
         }
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    public void recordTestName(Method method, Object[] params) {
+        String projectName = (params != null && params.length > 0) ? String.valueOf(params[0]) : "";
+        currentTestName.set(method.getName() + "[" + projectName + "]");
+    }
+
+    @Override
+    public String getTestName() {
+        String n = currentTestName.get();
+        return n != null ? n : "testStudioCentralProject";
     }
 
     @DataProvider(name = "studioCentralProjects")
