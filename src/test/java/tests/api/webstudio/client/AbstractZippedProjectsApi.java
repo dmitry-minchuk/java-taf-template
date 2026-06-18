@@ -118,6 +118,39 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         }
         LOGGER.info("Group [{}]: uploaded {} zip(s), {} project(s) visible via API",
                 groupLabel, uploadedProjectNames.size(), projectsByName.size());
+
+        // Open every uploaded project before validating, so cross-project dependencies inside a
+        // deployment group resolve regardless of validation order. Otherwise a project validated
+        // before its dependency fails with "Dependency 'X' is not found" even though X is in the group.
+        openAllProjects();
+    }
+
+    private void openAllProjects() {
+        ProjectsMethod projects = new ProjectsMethod();
+        int opened = 0;
+        int alreadyOpen = 0;
+        int failed = 0;
+        for (Map.Entry<String, Map<String, Object>> entry : projectsByName.entrySet()) {
+            String name = entry.getKey();
+            Map<String, Object> project = entry.getValue();
+            String status = String.valueOf(project.get("status"));
+            String id = String.valueOf(project.get("id"));
+            if ("OPENED".equalsIgnoreCase(status)) {
+                alreadyOpen++;
+                continue;
+            }
+            Response resp = projects.openProject(id);
+            if (resp.getStatusCode() < 300) {
+                opened++;
+                project.put("status", "OPENED");
+            } else {
+                failed++;
+                LOGGER.warn("Failed to open project [{}]: HTTP {} — {}",
+                        name, resp.getStatusCode(), resp.getBody().asString());
+            }
+        }
+        LOGGER.info("Bulk-open for group [{}]: opened={}, alreadyOpen={}, failed={}",
+                groupLabel, opened, alreadyOpen, failed);
     }
 
     @AfterClass(alwaysRun = true)
