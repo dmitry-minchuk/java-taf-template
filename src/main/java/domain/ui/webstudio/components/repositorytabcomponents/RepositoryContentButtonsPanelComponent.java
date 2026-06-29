@@ -66,6 +66,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     /** Click "Open" and wait for the toolbar to swap into the opened state (Close visible). */
     public void openProjectAndWait() {
         openBtn.click();
+        waitUntilSpinnerLoaded(); // opening navigates to the repository page; let it settle before waiting for Close
         closeBtn.waitForVisible();
     }
 

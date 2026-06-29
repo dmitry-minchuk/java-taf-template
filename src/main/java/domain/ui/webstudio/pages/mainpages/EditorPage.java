@@ -57,6 +57,10 @@ public class EditorPage extends BasePage {
     private WebElement dependenciesHeader;
     private WebElement addDependenciesLink;
     private WebElement manageDependenciesBtn;
+    private WebElement dependencyGraphSearch;
+    private WebElement dependencyGraphSearchInput;
+    private WebElement dependencyGraphOptionTemplate;
+    private WebElement dependencyGraphOpenInEditorBtn;
     private WebElement refreshBtn;
     private SearchFilterComponent searchFilterComponent;
     private RangeEditorComponent rangeEditorComponent;
@@ -103,6 +107,10 @@ public class EditorPage extends BasePage {
         dependenciesHeader = new WebElement(getPage(), "xpath=//div[@id='content']//span[text()='Dependencies']", "dependenciesHeader");
         addDependenciesLink = new WebElement(getPage(), "xpath=//div[@id='content']//a[contains(text(),'Click to add dependencies')]", "addDependenciesLink");
         manageDependenciesBtn = new WebElement(getPage(), "xpath=//div[@id='content']//a[@title='Manage Dependencies']//img", "manageDependenciesBtn");
+        dependencyGraphSearch = new WebElement(getPage(), "xpath=//div[@data-testid='table-graph-search']", "dependencyGraphSearch");
+        dependencyGraphSearchInput = new WebElement(getPage(), "xpath=//div[@data-testid='table-graph-search']//input", "dependencyGraphSearchInput");
+        dependencyGraphOptionTemplate = new WebElement(getPage(), "xpath=//div[contains(@class,'ant-select-item-option-content') and normalize-space(.)='%s']", "dependencyGraphOptionTemplate");
+        dependencyGraphOpenInEditorBtn = new WebElement(getPage(), "xpath=//button[normalize-space(.)='Open in editor']", "dependencyGraphOpenInEditorBtn");
         refreshBtn = new WebElement(getPage(), "xpath=//a[@id='refreshBtn']", "refreshBtn");
         searchFilterComponent = new SearchFilterComponent();
         rangeEditorComponent = createScopedComponent(RangeEditorComponent.class, "xpath=//div[@class='range']", "rangeEditorComponent");
@@ -170,14 +178,16 @@ public class EditorPage extends BasePage {
     }
 
     /**
-     * Click a table link in the Table Dependencies view.
-     * The Table Dependencies view must be opened first via More -> Table Dependencies.
+     * Open a table from the Table Dependencies graph (React/cytoscape graph, EPBDS-15473):
+     * find it via the search box, then open it via the node panel's "Open in editor" button.
+     * The graph must be opened first via More -> Table Dependencies.
      */
     public void clickTableInDependenciesView(String tableName) {
-        WebElement tableLink = new WebElement(getPage(),
-                "xpath=//div[@id='content']//a[contains(text(),'" + tableName + "')]", "dependencyTableLink_" + tableName);
-        tableLink.click();
-        WaitUtil.sleep(1000, "Waiting for table to open from dependencies view");
+        dependencyGraphSearch.click(); // open the antd Select so its search input becomes active
+        dependencyGraphSearchInput.fill(tableName);
+        dependencyGraphOptionTemplate.format(tableName).click();
+        dependencyGraphOpenInEditorBtn.click();
+        WaitUtil.sleep(1000, "Waiting for table to open from dependency graph");
     }
 
     public ManageDependenciesDialogComponent openManageDependenciesDialog() {

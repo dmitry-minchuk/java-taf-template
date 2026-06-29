@@ -450,6 +450,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
         @Override
         public ChangesDialogComponent clickChanges() {
+            waitUntilSpinnerLoaded(); // loadingPanel can still intercept the click right after a save under CI load
             changesBtn.click();
             WaitUtil.sleep(1500, "Waiting for Changes dialog to open");
             return new ChangesDialogComponent();
