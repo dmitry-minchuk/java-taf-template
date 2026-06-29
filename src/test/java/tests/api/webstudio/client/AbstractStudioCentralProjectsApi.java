@@ -9,6 +9,7 @@ import domain.api.ProjectStatusMethod;
 import domain.api.ProjectTestsMethod;
 import domain.api.ProjectsMethod;
 import helpers.utils.StringUtil;
+import helpers.utils.WaitUtil;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,9 @@ import java.util.stream.Collectors;
 public abstract class AbstractStudioCentralProjectsApi implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(AbstractStudioCentralProjectsApi.class);
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(60);
+    // Design repos are cloned lazily on first boot and can take a very long time; poll the project list until populated.
+    private static final Duration CLONE_PROJECTS_TIMEOUT = Duration.ofMinutes(90);
+    private static final long CLONE_POLL_INTERVAL_MS = 20_000;
     private static final int TEST_SUMMARY_POLL_INTERVAL_MS = 2_000;
     private static final int TEST_SUMMARY_POLL_TIMEOUT_MS = 10 * 60 * 1_000;
     private static final int COMPILE_POLL_INTERVAL_MS = 1_500;
@@ -51,20 +55,46 @@ public abstract class AbstractStudioCentralProjectsApi implements ITest {
         startContainer();
         AuthorizedApiMethod.startSession();
 
-        LOGGER.info("Listing projects for group [{}] — triggers lazy git clone if not yet done...", groupLabel());
-        Response listResponse = new ProjectsMethod().getAllProjects(500);
-        if (listResponse.getStatusCode() != 200) {
-            throw new IllegalStateException(String.format(
-                    "Failed to list projects for group [%s]: HTTP %d — %s",
-                    groupLabel(), listResponse.getStatusCode(), listResponse.getBody().asString()));
-        }
-        List<Map<String, Object>> projects = extractProjects(listResponse);
+        List<Map<String, Object>> projects = waitForClonedProjects();
         for (Map<String, Object> project : projects) {
             projectsByName.put(String.valueOf(project.get("name")), project);
         }
         LOGGER.info("Found {} projects in group [{}]", projectsByName.size(), groupLabel());
 
         openAllProjects();
+    }
+
+    /**
+     * The container reports "ready" (HTTP up) before the lazy first-boot git clone of the design repos finishes,
+     * so reading the project list once returns nothing. Poll it until the clone has produced projects.
+     */
+    private List<Map<String, Object>> waitForClonedProjects() {
+        long deadline = System.currentTimeMillis() + CLONE_PROJECTS_TIMEOUT.toMillis();
+        LOGGER.info("Waiting for the lazy git clone to produce projects for group [{}] (up to {} min)...",
+                groupLabel(), CLONE_PROJECTS_TIMEOUT.toMinutes());
+        int attempt = 0;
+        while (true) {
+            attempt++;
+            Response resp = new ProjectsMethod().getAllProjects(500);
+            if (resp.getStatusCode() == 200) {
+                List<Map<String, Object>> projects = extractProjects(resp);
+                if (!projects.isEmpty()) {
+                    LOGGER.info("Clone produced {} project(s) for group [{}] after {} attempt(s)",
+                            projects.size(), groupLabel(), attempt);
+                    return projects;
+                }
+                LOGGER.info("...clone not finished for group [{}] — 0 projects yet (attempt {})", groupLabel(), attempt);
+            } else {
+                LOGGER.info("...project listing not ready for group [{}]: HTTP {} (attempt {})",
+                        groupLabel(), resp.getStatusCode(), attempt);
+            }
+            if (System.currentTimeMillis() >= deadline) {
+                throw new IllegalStateException(String.format(
+                        "No projects appeared for group [%s] within %d min — the design-repo clone did not complete.",
+                        groupLabel(), CLONE_PROJECTS_TIMEOUT.toMinutes()));
+            }
+            WaitUtil.sleep(CLONE_POLL_INTERVAL_MS, "waiting for the design-repo clone to produce projects");
+        }
     }
 
     /**
