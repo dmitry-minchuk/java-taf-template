@@ -27,7 +27,7 @@ public class LoginPage extends BasePage {
         usernameField = new WebElement(page, "xpath=//input[@id='username']", "usernameField");
         passwordField = new WebElement(page, "xpath=//input[@id='password']", "passwordField");
         loginButton = new WebElement(page, "xpath=//button[@type='submit']", "loginButton");
-        loginErrorMessage = new WebElement(page, "xpath=//*[@class='error' or @id='input-error']", "loginErrorMessage");
+        loginErrorMessage = new WebElement(page, "xpath=//div[contains(@class,'ant-alert-error')]", "loginErrorMessage");
     }
 
     public EditorPage login(UserData user) {
@@ -42,11 +42,20 @@ public class LoginPage extends BasePage {
         return new EditorPage();
     }
 
+    /** True if the Studio login form is shown within the timeout (e.g. after sign-out). */
+    public boolean isLoginFormDisplayed(int timeoutInMillis) {
+        return usernameField.isVisible(timeoutInMillis);
+    }
+
     public String getLoginErrorMessage() {
         return loginErrorMessage.waitForVisible(DEFAULT_TIMEOUT_MS).getText();
     }
 
     public boolean isLoginErrorDisplayed() {
         return loginErrorMessage.isVisible();
+    }
+
+    public boolean isLoginErrorDisplayed(int timeoutInMillis) {
+        return loginErrorMessage.isVisible(timeoutInMillis);
     }
 }

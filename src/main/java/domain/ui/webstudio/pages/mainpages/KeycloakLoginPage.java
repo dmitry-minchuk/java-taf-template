@@ -32,6 +32,11 @@ public class KeycloakLoginPage extends BasePage {
         usernameField.waitForVisible();
     }
 
+    /** True if the IdP login form is shown within the timeout (no live SSO session to re-authenticate). */
+    public boolean isLoginFormDisplayed(int timeoutInMillis) {
+        return usernameField.isVisible(timeoutInMillis);
+    }
+
     public EditorPage login(String username, String password) {
         waitForLoginForm();
         usernameField.fillSequentially(username);

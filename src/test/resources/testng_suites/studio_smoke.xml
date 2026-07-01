@@ -37,5 +37,6 @@
     <test name="TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_smoke.TestAddDeleteDesignRepository"/></classes></test>
     <test name="TestSupportedRepositories"><classes><class name="tests.ui.webstudio.studio_smoke.TestSupportedRepositories"/></classes></test>
     <test name="TestProtectedBranchBypassSecuritySettingsUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
+    <test name="TestSingleModeAuthUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeAuthUi"/></classes></test>
 
 </suite>

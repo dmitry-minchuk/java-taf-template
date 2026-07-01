@@ -1,22 +1,14 @@
 package tests.ui.webstudio.sso;
 
-import configuration.driver.LocalDriverPool;
 import domain.api.AuthorizedApiMethod;
 import domain.api.RepositoryProjectsMethod;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
-import domain.ui.webstudio.pages.mainpages.KeycloakLoginPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.KeycloakInfrastructureService;
 import helpers.utils.TestDataUtil;
 import io.restassured.response.Response;
-import org.testng.ITestResult;
-import org.testng.SkipException;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import tests.BaseTest;
 
 import java.io.File;
 
@@ -29,35 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * re-logs in via SSO the repository access matches the role. Subclasses only differ by the
  * Studio auth-mode container ({@code @AppContainerConfig}); the IdP is the same Keycloak.
  */
-public abstract class AbstractUsersViewRolesSsoTest extends BaseTest {
+public abstract class AbstractUsersViewRolesSsoTest extends AbstractSsoUiTest {
 
     protected static final String DESIGN_REPO = "design";
     protected static final String PROJECT_NAME = "SsoUsersViewProject";
     protected static final String PROJECT_ZIP = "RulesEditor.TestSearchOnProjectLevel.Example1BankRating.zip";
     protected static final String EXTERNAL_USER = "studiouser";
-
-    protected final KeycloakInfrastructureService keycloak = new KeycloakInfrastructureService();
-
-    @Override
-    @BeforeMethod
-    public void beforeMethod(ITestResult result) {
-        if (!"PLAYWRIGHT_DOCKER".equalsIgnoreCase(System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL"))) {
-            throw new SkipException("External-auth Users-view test requires -Dexecution.mode=PLAYWRIGHT_DOCKER "
-                    + "(browser must share the Docker network with Keycloak).");
-        }
-        keycloak.start();
-        super.beforeMethod(result);
-    }
-
-    @Override
-    @AfterMethod
-    public void afterMethod(ITestResult result) {
-        try {
-            super.afterMethod(result);
-        } finally {
-            keycloak.stop();
-        }
-    }
 
     /** Manager→Viewer role-assignment-and-access flow, identical across auth modes. */
     protected void runUsersViewRoleFlow() {
@@ -110,13 +79,6 @@ public abstract class AbstractUsersViewRolesSsoTest extends BaseTest {
             users.clickAddRoleBtn().setProject(0, PROJECT_NAME);
         }
         users.setProjectRole(0, role).saveUser();
-    }
-
-    /** Clears the browser session so the next SSO login starts fresh (switches IdP user). */
-    protected EditorPage ssoLogin(String username, String password) {
-        LocalDriverPool.getBrowserContext().clearCookies();
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-        return new KeycloakLoginPage().login(username, password);
     }
 
     private RepositoryPage goToRepository() {

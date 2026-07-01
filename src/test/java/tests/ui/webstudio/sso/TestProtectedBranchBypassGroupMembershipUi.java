@@ -16,14 +16,8 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.KeycloakLoginPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
-import helpers.service.KeycloakInfrastructureService;
 import helpers.utils.WaitUtil;
-import org.testng.ITestResult;
-import org.testng.SkipException;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.DEV_BRANCH;
@@ -42,37 +36,12 @@ import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARG
  * {@code http://keycloak:8080/realms/openlstudio} is identical for all three (parallel-safe,
  * no host port in the SSO path). Hence the browser must run inside the network — PLAYWRIGHT_DOCKER.
  */
-public class TestProtectedBranchBypassGroupMembershipUi extends BaseTest {
+public class TestProtectedBranchBypassGroupMembershipUi extends AbstractSsoUiTest {
 
     private static final String PROJECT_NAME = "BypassGroupUiProject";
     private static final String BYPASS_GROUP = "bypass-managers";
     private static final String GROUP_USER = "groupmgr";
     private static final String GROUP_USER_PASSWORD = "groupmgr";
-
-    private final KeycloakInfrastructureService keycloak = new KeycloakInfrastructureService();
-
-    @Override
-    @BeforeMethod
-    public void beforeMethod(ITestResult result) {
-        if (!isDockerExecutionMode()) {
-            throw new SkipException("SSO bypass test requires -Dexecution.mode=PLAYWRIGHT_DOCKER "
-                    + "(browser must share the Docker network with Keycloak).");
-        }
-        // Start Keycloak first so it registers the shared network that the Studio container
-        // and the Playwright browser container then join (via NetworkPool in super).
-        keycloak.start();
-        super.beforeMethod(result);
-    }
-
-    @Override
-    @AfterMethod
-    public void afterMethod(ITestResult result) {
-        try {
-            super.afterMethod(result);
-        } finally {
-            keycloak.stop();
-        }
-    }
 
     @Test
     @TestCaseId("EPBDS-15960")
@@ -138,9 +107,5 @@ public class TestProtectedBranchBypassGroupMembershipUi extends BaseTest {
         assertThat(confirmDialog.isMergeSuccessNoticeVisible())
                 .as("Z.6 — confirming bypass merges successfully for a group-derived Manager")
                 .isTrue();
-    }
-
-    private static boolean isDockerExecutionMode() {
-        return "PLAYWRIGHT_DOCKER".equalsIgnoreCase(System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL"));
     }
 }

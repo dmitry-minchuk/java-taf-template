@@ -70,15 +70,20 @@
       "clientId": "webstudio",
       "enabled": true,
       "protocol": "saml",
+      "fullScopeAllowed": true,
+      "standardFlowEnabled": true,
       "frontchannelLogout": true,
       "redirectUris": [ "*" ],
       "attributes": {
         "saml.assertion.signature": "true",
         "saml.server.signature": "true",
         "saml.client.signature": "false",
+        "saml.encrypt": "false",
+        "saml.authnstatement": "true",
         "saml.force.post.binding": "true",
+        "saml.signature.algorithm": "RSA_SHA256",
         "saml_name_id_format": "username",
-        "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#"
+        "saml_force_name_id_format": "true"
       },
       "protocolMappers": [
         {
