@@ -547,6 +547,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         ITraceWindow selectItemInTree(int position);
         List<String> getVisibleItemsFromTree();
         TableComponent getCenterTable();
+        boolean isNodeDetailsErrorDisplayed(int timeoutInMillis);
+        boolean isReturnedResultSectionDisplayed(int timeoutInMillis);
+        String getTraceViewText();
         void close();
     }
 
@@ -556,6 +559,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         private WebElement traceNodeTitleTemplate;
         private List<WebElement> visibleItemsFromTree;
         private TableComponent centerTable;
+        private WebElement traceView;
+        private WebElement nodeDetailsError;
+        private WebElement returnedResultHeader;
 
         public TraceWindow(Page tracePage) {
             super(tracePage);
@@ -563,6 +569,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             traceNodeTitleTemplate = new WebElement(tracePage, "xpath=(//div[@role='treeitem']//span[contains(@class,'ant-tree-node-content-wrapper')])[%d]", "traceNodeTitleTemplate");
             visibleItemsFromTree = createElementList("xpath=//span[contains(@class,'trace-node-title')]", "visibleItemsFromTree");
             centerTable = createScopedComponent(TableComponent.class, "xpath=//table[@class='te_table']", "centerTable");
+            traceView = new WebElement(tracePage, "xpath=//div[@id='trace-view']", "traceView");
+            nodeDetailsError = new WebElement(tracePage, "xpath=//div[@id='trace-view']//*[contains(text(),'Failed to load node details')]", "nodeDetailsError");
+            returnedResultHeader = new WebElement(tracePage, "xpath=//div[@id='trace-view']//*[normalize-space(text())='Returned Result']", "returnedResultHeader");
         }
 
         @Override
@@ -592,6 +601,21 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         @Override
         public TableComponent getCenterTable() {
             return centerTable;
+        }
+
+        @Override
+        public boolean isNodeDetailsErrorDisplayed(int timeoutInMillis) {
+            return nodeDetailsError.isVisible(timeoutInMillis);
+        }
+
+        @Override
+        public boolean isReturnedResultSectionDisplayed(int timeoutInMillis) {
+            return returnedResultHeader.isVisible(timeoutInMillis);
+        }
+
+        @Override
+        public String getTraceViewText() {
+            return traceView.getText();
         }
 
         @Override

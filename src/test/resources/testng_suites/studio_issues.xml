@@ -34,5 +34,7 @@
     <test name="TestDisplayChangedRowsTableStructure"><classes><class name="tests.ui.webstudio.studio_issues.TestDisplayChangedRowsTableStructure"/></classes></test>
     <test name="TestIncorrectTableNameWithLineBreak"><classes><class name="tests.ui.webstudio.studio_issues.TestIncorrectTableNameWithLineBreak"/></classes></test>
     <test name="TestConstructorNotFoundInDependentTable"><classes><class name="tests.ui.webstudio.studio_issues.TestConstructorNotFoundInDependentTable"/></classes></test>
+    <test name="TestTraceSpecialCharsDisplay"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceSpecialCharsDisplay"/></classes></test>
+    <test name="TestTraceSpreadsheetNodeDetails"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceSpreadsheetNodeDetails"/></classes></test>
 
 </suite>
