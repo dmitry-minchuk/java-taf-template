@@ -1,4 +1,6 @@
-package tests.api.webstudio.client;
+package tests.api.webstudio.client.preconfig;
+
+import tests.api.webstudio.client.base.AbstractPreconfigProjectsApi;
 
 import helpers.service.PreconfigSourcesService;
 import helpers.service.PreconfigSourcesService.PreconfigProject;

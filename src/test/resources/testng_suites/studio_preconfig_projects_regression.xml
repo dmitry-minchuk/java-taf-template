@@ -6,6 +6,6 @@
         <listener class-name="configuration.listeners.PreconfigProjectsReportPortalListener"/>
     </listeners>
 
-    <test name="TestPreconfigProjects"><classes><class name="tests.api.webstudio.client.TestPreconfigProjects"/></classes></test>
+    <test name="TestPreconfigProjects"><classes><class name="tests.api.webstudio.client.preconfig.TestPreconfigProjects"/></classes></test>
 
 </suite>

@@ -1,4 +1,4 @@
-package tests.api.webstudio.client;
+package tests.api.webstudio.client.base;
 
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  *   @Test per project → validate (open, compile-status, run tests + summary)
  *   @AfterClass      → stop container
  *
- * Subclasses are created dynamically via {@link TestZippedProjects} {@code @Factory},
+ * Subclasses are created dynamically via {@link tests.api.webstudio.client.zip.TestZippedProjects} {@code @Factory},
  * one instance per discovered group on disk.
  *
  * Validation uses the 6.1.x project API: {@code GET /rest/projects/{id}/status}

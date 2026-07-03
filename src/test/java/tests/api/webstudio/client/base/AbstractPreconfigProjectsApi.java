@@ -1,4 +1,4 @@
-package tests.api.webstudio.client;
+package tests.api.webstudio.client.base;
 
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
@@ -39,7 +39,7 @@ import java.util.Map;
  *                  service is served by ruleservice (GET /admin/services is 200 and lists it)
  *   @AfterClass  → stop all containers
  *
- * Subclasses are created dynamically via {@link TestPreconfigProjects} {@code @Factory}, one
+ * Subclasses are created dynamically via {@link tests.api.webstudio.client.preconfig.TestPreconfigProjects} {@code @Factory}, one
  * instance per OpenL project discovered in the local Mercurial preconfig clones. The compile
  * part mirrors {@link AbstractZippedProjectsApi}; the deploy part goes through
  * {@code POST /rest/deployments} (same operation as the UI DeployModal) and asserts the

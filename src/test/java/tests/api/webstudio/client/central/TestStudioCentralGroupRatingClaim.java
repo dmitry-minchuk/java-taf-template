@@ -1,4 +1,6 @@
-package tests.api.webstudio.client;
+package tests.api.webstudio.client.central;
+
+import tests.api.webstudio.client.base.AbstractStudioCentralProjectsApi;
 
 import configuration.appcontainer.AppContainerStartParameters;
 

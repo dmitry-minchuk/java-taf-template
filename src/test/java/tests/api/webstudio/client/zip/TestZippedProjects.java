@@ -1,4 +1,6 @@
-package tests.api.webstudio.client;
+package tests.api.webstudio.client.zip;
+
+import tests.api.webstudio.client.base.AbstractZippedProjectsApi;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
