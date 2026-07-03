@@ -259,6 +259,123 @@ The Docker WS image deploys the application to `webapps/ROOT` (root context `/`)
 - **REST method call**: `GET /{deploymentName}/{projectName}/{method}` (no `/REST/` prefix when only RESTFUL publisher is active, which is the default)
 - **Service names** in the API follow the format `{deploymentName}_{projectName}`
 
+## Client Projects Regressions (zip / central / preconfig)
+
+Three sibling regressions live in `tests/api/webstudio/client` and validate real customer/product
+OpenL content against a fresh WebStudio container per case. All three are API-driven (no UI),
+share the same compile-validation flow (`open → POST /rest/projects/{id}/tests/run` as the compile
+trigger → `GET /rest/projects/{id}/status`, JSESSIONID kept across calls) and report to
+ReportPortal with one test entry per project/group via `@Factory` + `ITest`.
+
+| | Zip regression | Central-studio regression | Preconfig regression |
+|---|---|---|---|
+| Test / suite | `TestZippedProjects` / `studio_zip_projects_regression.xml` | `TestStudioCentralGroup*` / `studio_central_projects_regression.xml` | `TestPreconfigProjects` / `studio_preconfig_projects_regression.xml` |
+| Content | Static ZIP snapshots of customer projects (`client_projects/customers_projects_test_automation_6.x`) | Live Genesis client projects (openl-rating/claim/policy/policy-life/financials) | Live EIS product preconfigurations (benefits/commercial/personal policy, claims) |
+| Source | Local folder tree; `*deployment`-suffixed folders group interdependent zips into one container | EIS GitLab git repos mounted by Studio itself as design repositories (`STUDIO_CENTRAL_GROUP_*_PARAMS`, creds in `.env`) | Local **Mercurial** clones under `Projects/eis/preconfigs` (vno-hg.exigengroup.com; creds in `~/.hgrc`), synced by `hg pull -u` before discovery |
+| Unit of test | ZIP group (deployment folder) or single zip | Studio instance per repo group, projects interdependent (bulk-open first) | Single OpenL project (`<module>/src/main/openl`), all independent |
+| Validation | Upload + compile + run Test tables | Compile + run Test tables (Studio clones repos itself — the test polls until the lazy clone finishes) | Upload + compile + **deploy** (`POST /rest/deployments`) + service served by **ruleservice** (`GET ws:/admin/services`) |
+| Extra infra | — | — | `DeployInfrastructureService` per project: PostgreSQL production repo + ruleservice (WS) container |
+
+### Preconfig regression infrastructure
+
+#### One-time prerequisites (no manual cloning)
+
+The suite is a self-contained harness: on every run it **clones the 4 needed repos itself if they
+are missing** (first run downloads ~1.5 GB), otherwise pulls the latest changes (`hg pull -u`),
+then builds what needs building and runs the validation. Only 4 of the ~190 repos on vno-hg are
+used — the preconfig products that contain OpenL rules; `*-central`/`*-contrib` are byte-identical
+mirrors, `eis-preconfig-commercial-claim` has no OpenL content, `openl-mapper/pub/tests` are
+unrelated, and `vnoeisgrok02.exigengroup.com/source` is just OpenGrok (a code browser over the
+same sources).
+
+What a fresh machine needs before the first run:
+
+```bash
+# 1. Mercurial + auth for vno-hg (~/.hgrc)
+brew install mercurial
+cat >> ~/.hgrc <<'EOF'
+[auth]
+vnohg.prefix = vno-hg.exigengroup.com
+vnohg.username = dminchuk
+vnohg.password = <your-password>
+vnohg.schemes = http https
+EOF
+
+# 2. Corporate Nexus creds in ~/.m2/settings.xml (GENESIS / GENESIS_STAGING servers,
+#    profile genesis-v20 active) — used by the Maven stage for jar-dependent projects.
+```
+
+Manual clone (optional — the suite clones missing repos automatically on the first run; use this
+only if you want to pre-fetch them yourself or debug hg access):
+
+```bash
+mkdir -p ~/Projects/eis/preconfigs && cd ~/Projects/eis/preconfigs
+for r in eis-preconfig-benefits-policy \
+         eis-preconfig-commercial-policy \
+         eis-preconfig-personal-claims \
+         eis-preconfig-personalpolicy; do
+  hg clone "http://vno-hg.exigengroup.com/hg/$r"
+done
+```
+
+Knobs: `-Dpreconfig.repos.root` (clone location, default `~/Projects/eis/preconfigs`),
+`-Dpreconfig.hg.base.url`, `-Dpreconfig.hg.sync=false` (offline — use local copies as-is).
+
+#### Running
+
+```bash
+# Full regression (set rp.launch=preconfig_projects_regression in reportportal.properties first)
+mvn -B test -Dsuite=studio_preconfig_projects_regression
+
+# One project only (substring match on repo/module), no hg sync — handy for debugging
+mvn test -Dtest=TestPreconfigProjects -Dpreconfig.module.filter=di-std-openl-rules -Dpreconfig.hg.sync=false
+```
+
+#### Scope: 32 projects, two preparation paths
+
+Discovery finds 32 `src/main/openl` projects across the 4 repos:
+
+- **9 dependency-free** (3 in benefits-policy, 6 in personalpolicy) — zipped straight from the hg
+  sources, no build needed.
+- **23 jar-dependent** (`<classpath>` in rules.xml or `<dependency>` entries in the module pom) —
+  their Java domain types (e.g. `PackageInfo`, `ExtDimension`) live in JARs, so the suite runs a
+  Maven stage per module: `mvn install -pl <module> -am` (the openl-maven-plugin produces the
+  deployable ZIP), then `dependency:copy-dependencies -DincludeScope=provided -DexcludeTransitive=true`
+  and repacks those **direct** provided JARs into the ZIP's `lib/` — the exact shape of the
+  historical preconfig snapshots. (The transitive provided tree is ~400 JARs of the whole EIS
+  platform — neither needed nor wanted; the direct ones are enough for OpenL to compile.)
+
+Requirements for the Maven stage: corporate Nexus access in `~/.m2/settings.xml`
+(GENESIS/GENESIS_STAGING servers, profile `genesis-v20` active) with a valid password — the same
+account as for vno-hg. Disable the jar-dependent half with
+`-Dpreconfig.include.jar.dependent=false` (e.g. no Nexus reachable); those projects are then
+skipped with a log line each.
+
+EIS preconfigs are Maven multi-module Mercurial repositories; the OpenL project lives in
+`<module>/src/main/openl` (`rules.xml`, `rules/*.xlsx`, `rules-deploy.xml` with a RESTFUL
+publisher). Studio cannot mount hg as a design repository, so `PreconfigSourcesService`:
+
+1. runs `hg pull -u` on every clone under `-Dpreconfig.repos.root` (default
+   `/Users/dmitryminchuk/Projects/eis/preconfigs`; a failed pull falls back to the local copy),
+2. discovers every `src/main/openl/rules.xml`, extracts the project name and the
+   `rules-deploy.xml` service name,
+3. zips each project flat (rules.xml at zip root — the shape `PUT /rest/repos/{repo}/projects/{name}` accepts).
+
+Per discovered project, `AbstractPreconfigProjectsApi` starts a **trio** of containers on one
+Docker network: WebStudio (`DEPLOY_STUDIO_PARAMS` + production-repo `.properties` copied into the
+container), PostgreSQL as the `production` repository, and the ruleservice image watching that
+repository. The test then uploads, compiles (fails on any ERROR message), deploys via
+`POST /rest/deployments`, and polls `GET /admin/services` on the ruleservice until the service
+declared in `rules-deploy.xml` is served.
+
+Notes:
+- Jar-dependent projects (23 of 32) get an automatic Maven stage (see "Scope" above): build via
+  openl-maven-plugin + repack with direct provided JARs. Dependency-free ones (9 of 32) are
+  zipped straight from sources.
+- Repos with no OpenL content (eis-preconfig-commercial-claim) are excluded from `HG_REPOS`.
+- Run: `mvn -B test -Dsuite=studio_preconfig_projects_regression` with
+  `rp.launch=preconfig_projects_regression` in `reportportal.properties`.
+
 ## Configuration
 
 ### Core Configuration (`src/test/resources/config.properties`)

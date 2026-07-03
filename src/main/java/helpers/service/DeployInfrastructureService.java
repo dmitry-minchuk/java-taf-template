@@ -134,6 +134,14 @@ public class DeployInfrastructureService {
         if (s3Client != null) {
             s3Client.close();
         }
+        if (network != null) {
+            // Without this the per-test bridge networks accumulate for the whole run and Docker's
+            // address pool runs dry ("all predefined address pools have been fully subnetted")
+            // after ~30 tests — Ryuk only reaps networks when the JVM exits.
+            LOGGER.info("Removing test network...");
+            network.close();
+            network = null;
+        }
     }
 
     public Map<String, String> getFilesToCopy() {
