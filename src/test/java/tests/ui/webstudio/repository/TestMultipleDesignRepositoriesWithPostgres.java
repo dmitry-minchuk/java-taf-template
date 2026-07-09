@@ -310,31 +310,28 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage = new RepositoryPage();
 
-        // Step 11: Delete and Erase ProjectDesignRepo
-        // Show deleted projects BEFORE deleting, so deleted project stays visible for Erase
-        repositoryPage.setShowDeletedProjects(true);
+        // Step 11: Permanently delete ProjectDesignRepo (single-step React modal, no archive/erase)
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectOpenedItemInFolder("Projects", nameProjectDesign);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        // After delete, project is in "deleted" state but still visible (showDeleted=true) — Erase button appears
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickEraseBtn();
-        assertThat(repositoryPage.getConfirmEraseDialogComponent().isAlsoDeleteFromRepositoryVisible())
-                .as("Erase dialog for flat Git repo should show 'also delete from repository' checkbox")
-                .isTrue();
-        repositoryPage.getConfirmEraseDialogComponent().clickErase();
+        repositoryPage.getProjectDeleteConfirmModalComponent()
+                .waitForVisible()
+                .enterDeletionComment("Removed by automated regression test")
+                .acknowledgePermanentDeletion()
+                .clickDelete();
+        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.refresh();
 
-        // Step 12: Delete and Erase ProjectDesign1Repo
+        // Step 12: Permanently delete ProjectDesign1Repo
         repositoryPage.getLeftRepositoryTreeComponent()
                 .selectOpenedItemInFolder("Projects", nameProjectDesign1);
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        // Same as above — deleted project stays visible, Erase button appears
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickEraseBtn();
-        assertThat(repositoryPage.getConfirmEraseDialogComponent().isAlsoDeleteFromRepositoryVisible())
-                .as("Erase dialog for non-flat Git repo should show 'also delete from repository' checkbox")
-                .isTrue();
-
+        repositoryPage.getProjectDeleteConfirmModalComponent()
+                .waitForVisible()
+                .enterDeletionComment("Removed by automated regression test")
+                .acknowledgePermanentDeletion()
+                .clickDelete();
+        repositoryPage.waitUntilSpinnerLoaded();
     }
 
     private void verifyPostgresContainsOpenLTables() {

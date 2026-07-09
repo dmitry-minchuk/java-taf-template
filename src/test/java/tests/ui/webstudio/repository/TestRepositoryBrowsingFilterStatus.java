@@ -225,57 +225,10 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
                 .as("Open button should appear for closed project")
                 .isTrue();
 
-        // ===== Step 13: Delete (archive) project → not visible when "hide deleted" active =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
-
-        assertThat(repositoryPage.getAllVisibleProjectsInTable())
-                .as("Archived project should not be visible when 'Hide deleted' filter is active")
-                .doesNotContain(PROJECT_1);
-
-        // ===== Step 14: Advanced filter — show deleted → project visible with Archived status =====
-        repositoryPage.setShowDeletedProjects(true);
-
-        assertThat(repositoryPage.getAllVisibleProjectsInTable())
-                .as("Archived project should be visible when 'Show deleted' filter is active")
-                .anyMatch(name -> name.contains(PROJECT_1));
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Deleted project status should be 'Archived'")
-                .isEqualTo("Archived");
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isUndeleteBtnVisible())
-                .as("Undelete button should be visible for archived project")
-                .isTrue();
-
-        // ===== Step 15: Undelete → status back to "Closed" =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUndeleteBtn();
-        repositoryPage.getConfirmUndeleteDialogComponent().clickUndelete();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'Closed' after undelete")
-                .isEqualTo("Closed");
-
-        // ===== Step 16: Open project → status "No Changes" =====
+        // ===== Step 13: Open the closed project → status "No Changes" =====
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
         repositoryPage.waitUntilSpinnerLoaded();
         repositoryPage.refresh();
-
-        // Restore filter to hide deleted
-        repositoryPage.setShowDeletedProjects(false);
 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
@@ -357,7 +310,23 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
                 .as("Created folder should be visible in project tree")
                 .isTrue();
 
-        // Step 20: Production repository browsing
+        // ===== Step 20: Permanent delete removes the project (no archive/undelete) =====
+        repositoryPage.getLeftRepositoryTreeComponent()
+                .expandFolderInTree("Projects")
+                .selectItemInFolder("Projects", PROJECT_1);
+        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
+        repositoryPage.getProjectDeleteConfirmModalComponent()
+                .waitForVisible()
+                .enterDeletionComment("Removed by automated regression test")
+                .acknowledgePermanentDeletion()
+                .clickDelete();
+        repositoryPage.refresh();
+
+        assertThat(repositoryPage.getAllVisibleProjectsInTable())
+                .as("Permanently deleted project must not be listed after deletion")
+                .doesNotContain(PROJECT_1);
+
+        // Step 21: Production repository browsing
         // Legacy steps used a separate "Production" tab/tree (#prodTree) to browse deployed projects.
         // Deploy Configuration was removed (EPBDS-15093). Production tab UI locators
         // are not yet mapped in the new framework — requires separate investigation.
