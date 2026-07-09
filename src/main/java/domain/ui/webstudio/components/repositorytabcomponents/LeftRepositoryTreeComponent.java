@@ -69,6 +69,11 @@ public class LeftRepositoryTreeComponent extends BaseComponent {
                 .anyMatch(folder -> folder.getItem(itemName).isVisible(250));
     }
 
+    public boolean isProjectPresentInTree(String projectName) {
+        return page.locator(String.format(
+                "xpath=//div[@id='projectTree']//span[normalize-space()='%s']", projectName)).count() > 0;
+    }
+
     // Polls until the item renders — the tree may still be repainting after a tab switch on slow CI.
     public boolean waitForItemInTree(String itemName, int timeoutMs) {
         return WaitUtil.waitForCondition(() -> isItemExistsInTree(itemName), timeoutMs, 500,

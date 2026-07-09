@@ -67,6 +67,7 @@ public class RepositoryPage extends BasePage {
     private ExportProjectDialogComponent exportProjectDialogComponent;
     private ConfirmEraseDialogComponent confirmEraseDialogComponent;
     private AddFolderDialogComponent addFolderDialogComponent;
+    private ProjectDeleteConfirmModalComponent projectDeleteConfirmModalComponent;
 
     public RepositoryPage() {
         super();
@@ -101,13 +102,14 @@ public class RepositoryPage extends BasePage {
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
         bypassConfirmDialogComponent = new BypassConfirmDialogComponent();
         resolveConflictsDialogComponent = createScopedComponent(ResolveConflictsDialogComponent.class, "xpath=//div[@role='dialog' and .//span[text()='Resolve Conflicts']]", "resolveConflictsDialogComponent");
-        confirmDeleteDialogComponent = createScopedComponent(ConfirmDeleteDialogComponent.class, "xpath=//div[@id='modalDeleteNode_container']", "confirmDeleteDialogComponent");
+        confirmDeleteDialogComponent = new ConfirmDeleteDialogComponent();
         addFolderDialogComponent = createScopedComponent(AddFolderDialogComponent.class, "xpath=//div[@id='modalNewFolder_container']", "addFolderDialogComponent");
         confirmUndeleteDialogComponent = createScopedComponent(ConfirmUndeleteDialogComponent.class, "xpath=//div[@id='modalUndeleteProject_container']", "confirmUndeleteDialogComponent");
         confirmCloseProjectDialogComponent = createScopedComponent(ConfirmCloseProjectDialogComponent.class, "xpath=//div[@id='modalCloseProject_container']", "confirmCloseProjectDialogComponent");
         fileChangedWarningComponent = createScopedComponent(FileChangedWarningComponent.class, "xpath=//div[@id='fileChanged_content']", "fileChangedWarningComponent");
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
         confirmEraseDialogComponent = createScopedComponent(ConfirmEraseDialogComponent.class, "xpath=//div[@id='modalEraseProject_container']", "confirmEraseDialogComponent");
+        projectDeleteConfirmModalComponent = new ProjectDeleteConfirmModalComponent();
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
@@ -181,6 +183,11 @@ public class RepositoryPage extends BasePage {
 
     public void refresh() {
         refreshBtn.click(DEFAULT_TIMEOUT_MS);
+    }
+
+    public void reloadPage() {
+        page.reload();
+        waitUntilSpinnerLoaded();
     }
 
     public void createProjectFromWorkSpace(String projectName, String repository, boolean selectAllProjects) {

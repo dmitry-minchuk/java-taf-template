@@ -45,9 +45,6 @@ public class TestDeleteOpenApiFileRemovesProperties extends BaseTest {
 
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
         repositoryPage.waitUntilSpinnerLoaded();
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
