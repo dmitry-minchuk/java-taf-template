@@ -43,6 +43,10 @@ public class TestAddAndDeleteProperty extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "MyRules2");
 
+        // Known-failing (product bug EPBDS-15705): the Table Details panel / table view disappears
+        // after ~7 properties are added sequentially, so reading the 8th property (lob) times out.
+        // Confirmed by hand in the browser (lob alone saves fine; it breaks cumulatively at the 8th).
+        // Red until EPBDS-15705 is fixed.
         addAndCheckProperty(editorPage, "Category", "category", "MyCategory");
         addAndCheckProperty(editorPage, "Description", "description", "TestDescription");
         addAndCheckProperty(editorPage, "Tags", "tags", "Tag1,Tag2");

@@ -33,6 +33,10 @@ public class EditorLeftProjectModuleSelectorComponent extends BaseComponent {
     }
 
     public void selectProject(String projectName) {
+        // Wait for the tree to finish loading before searching for the project: after heavy flows
+        // (branch copy, multi-user switch) the #projects tree re-renders and the link can appear
+        // later than the default element timeout, which made the direct selectProject flaky in CI.
+        waitUntilSpinnerLoaded();
         WebElement projectLink = projectNameTemplate.format(projectName);
         projectLink.waitForVisible();
         projectLink.click();
