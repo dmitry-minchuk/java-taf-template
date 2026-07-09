@@ -23,7 +23,7 @@ public class TestUploadModulePreservesExistingUi extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-16227")
-    @Description("Regression guard for EPBDS-16227: uploading a new Excel module must not drop the project's existing modules from the module list. On image 6.3.1-756c03 the existing module is preserved (defect does not reproduce here); this test stays green and will fail on any build where EPBDS-16227 is present.")
+    @Description("Regression guard for EPBDS-16227 (existing modules disappearing when a new Excel module is uploaded). This generic single-module scenario keeps the existing module on both 6.3.1-756c03 and 6.3.1-1185c961 and does NOT reproduce the reported defect, which needs a specific multi-module project. Kept as a green guard for the upload-preserves-modules invariant.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testUploadingExcelKeepsExistingModules() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");

@@ -43,6 +43,7 @@
     <test name="TestSupportedRepositories"><classes><class name="tests.ui.webstudio.studio_smoke.TestSupportedRepositories"/></classes></test>
     <test name="TestProtectedBranchBypassSecuritySettingsUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
     <test name="TestSingleModeAuthUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeAuthUi"/></classes></test>
+    <test name="TestSingleModeProfileEditUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeProfileEditUi"/></classes></test>
     <test name="TestPersonalAccessTokenMultiUserUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestPersonalAccessTokenMultiUserUi"/></classes></test>
 
 </suite>
