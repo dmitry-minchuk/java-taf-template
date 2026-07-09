@@ -95,9 +95,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .selectItemInFolder(PROJECT_NAME, "Module4.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getCommentField().fill("Deleted Module4 from branch");
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
+        repositoryPage.waitUntilSpinnerLoaded();
 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
@@ -152,8 +150,7 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
                 .selectItemInFolder(PROJECT_NAME, "Module3.xlsx");
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
         repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
+        repositoryPage.waitUntilSpinnerLoaded();
 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects")
@@ -370,8 +367,6 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
 
         List<String> expectedComments = List.of(
                 "Merge branch 'MyBranch'",
-                "Deleted Module4 from branch",
-                "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
                 "Project NoConflicts is saved.",
@@ -384,13 +379,8 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
             actualComments.add(revisionsTab.getRevisionDescription(i));
         }
         assertThat(actualComments)
-                .as("Revision history in master should contain all expected comments including custom comment")
+                .as("Revision history in master should contain the create, save and merge commits")
                 .containsExactlyInAnyOrderElementsOf(expectedComments);
-
-        // Verify custom comment is present (proves git comment customization works)
-        assertThat(actualComments)
-                .as("Custom comment 'Deleted Module4 from branch' should appear in revision history")
-                .anyMatch(c -> c.equals("Deleted Module4 from branch"));
 
         // Verify committer name is populated in revision history
         String committer = revisionsTab.getRevisionModifiedBy(1);

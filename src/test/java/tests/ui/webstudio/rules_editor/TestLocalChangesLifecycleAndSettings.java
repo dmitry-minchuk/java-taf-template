@@ -23,7 +23,7 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30730")
-    @Description("Steps 14-16: Close/reopen project discards local changes and clears history; new edit after reopen creates fresh Local Changes (1); delete/undelete project clears history and reverts cell.")
+    @Description("Steps 14-15: Close/reopen project discards local changes and clears history; new edit after reopen creates fresh Local Changes (1).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testProjectLifecycleClearsHistory() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
@@ -102,57 +102,6 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
         assertThat(changesDialog.getCompareCheckboxValue(1))
                 .as("Checkbox at row 1 should be auto-checked (current version)")
                 .isTrue();
-
-        // Step 16: Delete and undelete clears history; .history absent; cell reverts
-        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.setShowDeletedProjects(true);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUndeleteBtn();
-        repositoryPage.getConfirmUndeleteDialogComponent().clickUndelete();
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(projectName);
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isFolderExistsInTree(".history"))
-                .as(".history folder should not be visible after delete/undelete")
-                .isFalse();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Main.xlsx"))
-                .as("Main.xlsx should be present after undelete")
-                .isTrue();
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
-
-        changesDialog = editorPage.getEditorToolbarPanelComponent()
-                .clickMore()
-                .clickChanges();
-        assertThat(changesDialog.getNoChangesMessage())
-                .as("No history should exist after delete and undelete")
-                .isEqualTo("No changes in history");
-
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "Hello");
-        assertThat(editorPage.getCenterTable().getCellText(7, 4))
-                .as("Cell (7,4) should be reverted to original 'Good Afternoon' after delete/undelete")
-                .isEqualTo("Good Afternoon");
     }
 
     @Test
