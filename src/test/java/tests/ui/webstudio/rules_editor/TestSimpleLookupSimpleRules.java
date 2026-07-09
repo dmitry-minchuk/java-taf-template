@@ -51,6 +51,10 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         rulesTree.expandFolderInTree("Decision")
                 .checkRulesTableAbsent("Decision", "SimpleREx1");
 
+        // Known-failing (product bug EPBDS-16239): the Create Table wizard cannot advance from
+        // "Construct a table" for a multi-row Simple Rules table with 2+ parameters — the step-2
+        // server response is truncated (ERR_INCOMPLETE_CHUNKED_ENCODING), so save() times out.
+        // Confirmed by hand in the browser (a single-row table advances fine). Red until 16239 is fixed.
         editorPage.getEditorToolbarPanelComponent().clickCreateTable();
         CreateTableDialogComponent createTableDialog = editorPage.getCreateTableDialogComponent();
         createTableDialog.selectType("Simple Rules Table")
