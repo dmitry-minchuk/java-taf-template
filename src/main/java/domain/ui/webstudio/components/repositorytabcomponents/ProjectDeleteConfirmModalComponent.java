@@ -10,6 +10,7 @@ public class ProjectDeleteConfirmModalComponent extends BaseComponent {
     private WebElement acknowledgeCheckbox;
     private WebElement deleteBtn;
     private WebElement cancelBtn;
+    private WebElement messageBody;
 
     public ProjectDeleteConfirmModalComponent() {
         super(LocalDriverPool.getPage());
@@ -26,6 +27,12 @@ public class ProjectDeleteConfirmModalComponent extends BaseComponent {
                 "xpath=" + modalRoot + "//button[contains(@class,'ant-btn-dangerous')]", "projectDeleteConfirmBtn");
         cancelBtn = new WebElement(LocalDriverPool.getPage(),
                 "xpath=" + modalRoot + "//button[normalize-space(.)='Cancel']", "projectDeleteCancelBtn");
+        messageBody = new WebElement(LocalDriverPool.getPage(),
+                "xpath=" + modalRoot + "//div[contains(@class,'ant-modal-body')]", "projectDeleteMessageBody");
+    }
+
+    public String getMessage() {
+        return messageBody.getText().trim();
     }
 
     public ProjectDeleteConfirmModalComponent waitForVisible() {
@@ -50,6 +57,10 @@ public class ProjectDeleteConfirmModalComponent extends BaseComponent {
     public void clickDelete() {
         deleteBtn.click();
         deleteBtn.waitForHidden(5000);
+    }
+
+    public void attemptDelete() {
+        deleteBtn.click();
     }
 
     public void clickCancel() {
