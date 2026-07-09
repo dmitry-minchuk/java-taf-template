@@ -34,6 +34,8 @@
     <test name="TestPermanentDeleteAfterRefreshUi"><classes><class name="tests.ui.webstudio.repository.TestPermanentDeleteAfterRefreshUi"/></classes></test>
     <test name="TestProjectDeleteClosedProjectNameUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteClosedProjectNameUi"/></classes></test>
     <test name="TestProjectDeleteUnsavedEditUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteUnsavedEditUi"/></classes></test>
+    <test name="TestDeleteCommentTemplateUi"><classes><class name="tests.ui.webstudio.repository.TestDeleteCommentTemplateUi"/></classes></test>
+    <test name="TestUploadModulePreservesExistingUi"><classes><class name="tests.ui.webstudio.repository.TestUploadModulePreservesExistingUi"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionOracle"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnectionMsSql"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionMsSql"/></classes></test>
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>

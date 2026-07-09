@@ -30,6 +30,8 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement remoteRepositoryProtectedBranchesField;
     private WebElement flatFolderStructureCheckBox;
     private WebElement secureConnectionCheckbox;
+    private WebElement customizeCommentsCheckbox;
+    private WebElement deleteMessageTemplateLabel;
     private WebElement applyChangesBtn;
     private WebElement designRepoActiveTab;
     private WebElement typeOption;
@@ -68,6 +70,8 @@ public class RepositoriesPageComponent extends BaseComponent {
         remoteRepositoryProtectedBranchesField = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_protectedBranches']", "remoteRepositoryProtectedBranchesField");
         flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
         secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_secure']", "secureConnectionCheckbox");
+        customizeCommentsCheckbox = createScopedElement("xpath=.//input[@id='settings_useCustomComments']", "customizeCommentsCheckbox");
+        deleteMessageTemplateLabel = createScopedElement("xpath=.//label[contains(.,'Delete project') or contains(.,'Delete Project') or contains(.,'Erase project')]", "deleteMessageTemplateLabel");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
         designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
         // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
@@ -97,6 +101,14 @@ public class RepositoriesPageComponent extends BaseComponent {
     public RepositoriesPageComponent setRepositoryPath(String path) {
         remoteRepositoryPathField.fillSequentially(path);
         return this;
+    }
+
+    public void enableCustomizeComments() {
+        customizeCommentsCheckbox.check();
+    }
+
+    public boolean isDeleteMessageTemplatePresent() {
+        return deleteMessageTemplateLabel.isVisible(2000);
     }
 
     public void addDesignRepository() {
