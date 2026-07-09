@@ -542,65 +542,85 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     // Interface for Playwright Trace Window
+    // EPBDS-16195 reworked Trace into an interactive step debugger. The debugger opens SUSPENDED
+    // (paused at the start); the call tree, traced table and node details are only populated while
+    // suspended. Resuming to the end ("Completed") clears everything, so inspection is done in the
+    // suspended state. Selectors use the stable data-testid attributes of the new debugger UI.
     public interface ITraceWindow {
-        ITraceWindow expandItemInTree(int position);
-        ITraceWindow selectItemInTree(int position);
-        List<String> getVisibleItemsFromTree();
-        TableComponent getCenterTable();
+        String getStatus();
+        List<String> getCallTreeTitles();
+        ITraceWindow selectTreeNode(int position);
+        ITraceWindow stepOver();
+        ITraceWindow resume();
+        String getDetailsText();
+        String getTracedTableText();
         boolean isNodeDetailsErrorDisplayed(int timeoutInMillis);
-        boolean isReturnedResultSectionDisplayed(int timeoutInMillis);
-        String getTraceViewText();
+        boolean areDetailsDisplayed(int timeoutInMillis);
         void close();
     }
 
-    // Implementation for Playwright Trace Window
+    // Implementation for the reworked step-debugger Trace window (EPBDS-16195).
     public class TraceWindow extends BasePage implements ITraceWindow {
-        private WebElement traceExpanderTemplate;
-        private WebElement traceNodeTitleTemplate;
-        private List<WebElement> visibleItemsFromTree;
-        private TableComponent centerTable;
-        private WebElement traceView;
-        private WebElement nodeDetailsError;
-        private WebElement returnedResultHeader;
+        private static final String TREE_NODE = "//*[@data-testid='trace-tree']//div[starts-with(@data-testid,'tree-frame-') or starts-with(@data-testid,'tree-step-')]";
+        private final List<WebElement> callTreeNodes;
+        private final WebElement callTreeNodeTemplate;
+        private final WebElement status;
+        private final WebElement tracedTable;
+        private final WebElement details;
+        private final WebElement nodeDetailsError;
+        private final WebElement resumeBtn;
+        private final WebElement stepOverBtn;
 
         public TraceWindow(Page tracePage) {
             super(tracePage);
-            traceExpanderTemplate = new WebElement(tracePage, "xpath=(//div[@role='treeitem']//span[contains(@class,'ant-tree-switcher') and not(contains(@class,'ant-tree-switcher-noop'))])[%d]", "traceExpanderTemplate");
-            traceNodeTitleTemplate = new WebElement(tracePage, "xpath=(//div[@role='treeitem']//span[contains(@class,'ant-tree-node-content-wrapper')])[%d]", "traceNodeTitleTemplate");
-            visibleItemsFromTree = createElementList("xpath=//span[contains(@class,'trace-node-title')]", "visibleItemsFromTree");
-            centerTable = createScopedComponent(TableComponent.class, "xpath=//table[@class='te_table']", "centerTable");
-            traceView = new WebElement(tracePage, "xpath=//div[@id='trace-view']", "traceView");
-            nodeDetailsError = new WebElement(tracePage, "xpath=//div[@id='trace-view']//*[contains(text(),'Failed to load node details')]", "nodeDetailsError");
-            returnedResultHeader = new WebElement(tracePage, "xpath=//div[@id='trace-view']//*[normalize-space(text())='Returned Result']", "returnedResultHeader");
+            callTreeNodes = createElementList("xpath=" + TREE_NODE, "callTreeNodes");
+            callTreeNodeTemplate = new WebElement(tracePage, "xpath=(" + TREE_NODE + ")[%d]", "callTreeNode");
+            status = new WebElement(tracePage, "xpath=//*[@data-testid='debug-status']", "debugStatus");
+            tracedTable = new WebElement(tracePage, "xpath=//*[@data-testid='trace-table']", "tracedTable");
+            details = new WebElement(tracePage, "xpath=//*[@data-testid='debug-details']", "debugDetails");
+            nodeDetailsError = new WebElement(tracePage, "xpath=//*[@data-testid='debug-details' and contains(.,'Failed to load node details')]", "nodeDetailsError");
+            resumeBtn = new WebElement(tracePage, "xpath=//*[@data-testid='debug-resume']", "resumeBtn");
+            stepOverBtn = new WebElement(tracePage, "xpath=//*[@data-testid='debug-step-over']", "stepOverBtn");
         }
 
         @Override
-        public ITraceWindow expandItemInTree(int position) {
-            int itemsBefore = visibleItemsFromTree.size();
-            traceExpanderTemplate.format(position + 1).click();
-            WaitUtil.waitForCondition(() -> visibleItemsFromTree.size() > itemsBefore,
-                    5000, 200, "Waiting for tree node to expand");
-            WaitUtil.waitForStableSize(() -> visibleItemsFromTree.size(),
-                    5000, 200, "Waiting for trace tree to finish loading");
+        public String getStatus() {
+            return status.getText().trim();
+        }
+
+        @Override
+        public List<String> getCallTreeTitles() {
+            WaitUtil.waitForCondition(() -> !callTreeNodes.isEmpty(), 10000, 200, "Waiting for trace call-tree nodes to appear");
+            return callTreeNodes.stream().map(n -> n.getText().replaceAll("\\s+", " ").trim()).toList();
+        }
+
+        @Override
+        public ITraceWindow selectTreeNode(int position) {
+            callTreeNodeTemplate.format(position + 1).click();
+            WaitUtil.waitForCondition(() -> details.isVisible(1000), 5000, 200, "Waiting for node details to load");
             return this;
         }
 
         @Override
-        public ITraceWindow selectItemInTree(int position) {
-            traceNodeTitleTemplate.format(position + 1).click();
-            WaitUtil.waitForCondition(() -> centerTable.isVisible(), 5000, 200, "Waiting for trace table to appear in right panel");
+        public ITraceWindow stepOver() {
+            stepOverBtn.click();
             return this;
         }
 
         @Override
-        public List<String> getVisibleItemsFromTree() {
-            WaitUtil.waitForCondition(() -> !visibleItemsFromTree.isEmpty(), 10000, 200, "Waiting for trace tree items to appear");
-            return visibleItemsFromTree.stream().map(i -> i.getText().trim()).toList();
+        public ITraceWindow resume() {
+            resumeBtn.click();
+            return this;
         }
 
         @Override
-        public TableComponent getCenterTable() {
-            return centerTable;
+        public String getDetailsText() {
+            return details.getText();
+        }
+
+        @Override
+        public String getTracedTableText() {
+            return tracedTable.getText();
         }
 
         @Override
@@ -609,13 +629,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         }
 
         @Override
-        public boolean isReturnedResultSectionDisplayed(int timeoutInMillis) {
-            return returnedResultHeader.isVisible(timeoutInMillis);
-        }
-
-        @Override
-        public String getTraceViewText() {
-            return traceView.getText();
+        public boolean areDetailsDisplayed(int timeoutInMillis) {
+            return details.isVisible(timeoutInMillis);
         }
 
         @Override

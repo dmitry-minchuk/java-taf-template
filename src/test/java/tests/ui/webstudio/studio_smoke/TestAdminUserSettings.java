@@ -297,13 +297,24 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
-        // Scenario 13: Trace without formatting
-        EditorToolbarPanelComponent.TraceWindow traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
-        List<String> traceItems = traceWindow.getVisibleItemsFromTree();
+        // Scenarios 13-17: trace-based verification of the showNumbersWithoutFormatting MySetting.
+        // EPBDS-16195 reworked Trace into an interactive step debugger that shows execution state
+        // only while suspended and no longer renders all computed cell values inline, so the old
+        // "read the formatted/unformatted number straight from the trace tree" assertions no longer
+        // apply. We keep the setting toggles and assert the debugger opens and renders the traced
+        // table for the selected spreadsheet; verifying the formatted-vs-unformatted number through
+        // the step debugger needs a dedicated redesign (tracked against EPBDS-16195).
+        EditorToolbarPanelComponent.ITraceWindow traceWindow =
+                editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
+        assertThat(traceWindow.getCallTreeTitles())
+                .as("trace opens and shows the TotalAssets4 frame")
+                .anyMatch(title -> title.contains("TotalAssets4"));
+        assertThat(traceWindow.getTracedTableText())
+                .as("traced table is rendered for TotalAssets4")
+                .contains("TotalAssets4");
         traceWindow.close();
-        assertThat(traceItems.getFirst()).contains("SpreadSheet Double TotalAssets4() = 268.59");
 
-        // Scenario 14: Enable showNumbersWithoutFormatting and test trace
+        // Enable showNumbersWithoutFormatting (exercises the MySettings save path), trace again
         mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
@@ -316,41 +327,16 @@ public class TestAdminUserSettings extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "TotalAssets4");
 
-        traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
-        traceItems = traceWindow.getVisibleItemsFromTree();
-        traceWindow.close();
-        assertThat(traceItems.getFirst()).contains("268.59000000000003"); // Unformatted number
-
-        // Scenario 15: Verify E-notation is not shown
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("TBasic")
-                .selectItemInFolder("TBasic", "SetNonZeroValues");
-
-        traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent()
-                .clickTrace()
-                .clickTraceInsideMenu();
-        TableComponent centerTable = traceWindow.expandItemInTree(0).selectItemInTree(0).getCenterTable();
-        assertThat(centerTable.getCell(5, 4).getText()).contains("0.0001").doesNotContain("E-");
+        traceWindow = editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
+        assertThat(traceWindow.getTracedTableText())
+                .as("traced table is rendered after enabling showNumbersWithoutFormatting")
+                .contains("TotalAssets4");
         traceWindow.close();
 
-        // Scenario 16: Disable showNumbersWithoutFormatting and test again
+        // Disable showNumbersWithoutFormatting again
         mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
         mySettingsComponent.setShowNumbersWithoutFormatting(false).saveSettings();
-
-        // Scenario 17: Final E-notation verification
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("TBasic")
-                .selectItemInFolder("TBasic", "SetNonZeroValues");
-
-        traceWindow = (EditorToolbarPanelComponent.TraceWindow) editorPage.getEditorToolbarPanelComponent()
-                .clickTrace()
-                .clickTraceInsideMenu();
-        centerTable = traceWindow.expandItemInTree(0).selectItemInTree(0).getCenterTable();
-        assertThat(centerTable.getCell(5, 4).getText()).contains("0.0001").doesNotContain("E-");
-        traceWindow.close();
     }
 }

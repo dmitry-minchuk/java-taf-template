@@ -46,35 +46,21 @@ public class TestTraceSpecialCharsDisplay extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", TRACED_TABLE);
 
-        // callTheMessage has no parameters, so Trace opens the trace popup directly (no params menu).
+        // callTheMessage has no parameters, so Trace opens the step debugger directly (no params menu).
         EditorToolbarPanelComponent.ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
                 .clickTraceExpectTraceWindow();
 
-        List<String> treeNodes = traceWindow.expandItemInTree(0).getVisibleItemsFromTree();
-        assertThat(treeNodes)
-                .as("trace tree shows the root spreadsheet node and its Call step")
+        assertThat(traceWindow.getCallTreeTitles())
+                .as("call tree shows the traced spreadsheet frame and its Call step")
                 .hasSizeGreaterThanOrEqualTo(2);
-        treeNodes.forEach(node -> {
-            assertThat(node)
-                    .as("trace tree node shows the raw special characters: %s", node)
-                    .contains(VALUE_CORE)
-                    .contains(VALUE_TAIL);
-            LITERAL_ENTITIES.forEach(entity -> assertThat(node)
-                    .as("trace tree node must not show the literal entity %s: %s", entity, node)
-                    .doesNotContain(entity));
-        });
 
-        traceWindow.selectItemInTree(0);
-        assertThat(traceWindow.isReturnedResultSectionDisplayed(10000))
-                .as("Returned Result section is displayed for the selected node")
-                .isTrue();
-        String traceViewText = traceWindow.getTraceViewText();
-        assertThat(traceViewText)
-                .as("trace view (details + Traced Table) shows the raw special characters")
+        String tracedTable = traceWindow.getTracedTableText();
+        assertThat(tracedTable)
+                .as("Traced Table shows the raw special characters")
                 .contains(VALUE_CORE)
                 .contains(VALUE_TAIL);
-        LITERAL_ENTITIES.forEach(entity -> assertThat(traceViewText)
-                .as("trace view must not show the literal entity %s anywhere", entity)
+        LITERAL_ENTITIES.forEach(entity -> assertThat(tracedTable)
+                .as("Traced Table must not show the literal entity %s", entity)
                 .doesNotContain(entity));
         traceWindow.close();
     }

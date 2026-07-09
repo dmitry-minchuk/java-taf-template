@@ -39,27 +39,24 @@ public class TestTraceSpreadsheetNodeDetails extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", TRACED_TABLE);
 
-        // MyRule has no parameters, so Trace opens the trace popup directly (no params menu).
+        // MyRule has no parameters, so Trace opens the step debugger directly (no params menu).
         EditorToolbarPanelComponent.ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
                 .clickTraceExpectTraceWindow();
 
-        assertThat(traceWindow.getVisibleItemsFromTree())
-                .as("trace tree shows the traced spreadsheet node")
+        assertThat(traceWindow.getCallTreeTitles())
+                .as("call tree shows the traced spreadsheet frame")
                 .anyMatch(node -> node.contains(TRACED_TABLE));
 
-        traceWindow.selectItemInTree(0);
+        traceWindow.selectTreeNode(0);
 
         assertThat(traceWindow.isNodeDetailsErrorDisplayed(3000))
                 .as("'Failed to load node details.' must not be shown for the SpreadsheetResult node")
                 .isFalse();
-        assertThat(traceWindow.isReturnedResultSectionDisplayed(10000))
-                .as("node details (Returned Result section) are displayed to the user")
+        assertThat(traceWindow.areDetailsDisplayed(10000))
+                .as("node details are displayed to the user")
                 .isTrue();
-        assertThat(traceWindow.getCenterTable().isVisible())
-                .as("the Traced Table is displayed for the selected node")
-                .isTrue();
-        assertThat(traceWindow.getTraceViewText())
-                .as("no StackOverflowError is surfaced in the trace view")
+        assertThat(traceWindow.getDetailsText())
+                .as("no StackOverflowError is surfaced in the trace details")
                 .doesNotContain("StackOverflowError");
         traceWindow.close();
     }

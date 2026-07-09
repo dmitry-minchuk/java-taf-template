@@ -5,6 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
+import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
@@ -18,19 +19,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestAllStepsDisplayedInTrace extends BaseTest {
 
-    private final List<String> EXPECTED_TRACE_TREE_ITEMS = Arrays.asList(
-            "$Coverage_ID = null",
-            "$UnitArea = null",
-            "$Coverage_Name = null",
-            "$Coverage_Level = null",
-            "$Coverage_Previous_Time = null",
-            "$Coverage_Previous_Revision = null",
-            "$Coverage_Rules = null",
-            "$Applicable_Strategy_Rules = null",
-            "$Inactive_Rules = null",
-            "$FeeCurrentPA = {}",
-            "$Coverage_Active_Rules_Amounts = {}",
-            "$Coverage_Inactive_Rules_Amounts = {}"
+    // Step names as shown in the Traced Table "Step" column (no $ prefix; $ only appears in
+    // formulas that reference another step).
+    private final List<String> EXPECTED_STEPS = Arrays.asList(
+            "Coverage_ID",
+            "UnitArea",
+            "Coverage_Name",
+            "Coverage_Level",
+            "Coverage_Previous_Time",
+            "Coverage_Previous_Revision",
+            "Coverage_Rules",
+            "Applicable_Strategy_Rules",
+            "Inactive_Rules",
+            "FeeCurrentPA",
+            "Coverage_Active_Rules_Amounts",
+            "Coverage_Inactive_Rules_Amounts"
     );
 
     @Test
@@ -46,12 +49,15 @@ public class TestAllStepsDisplayedInTrace extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "DetermineCoverageFeeOrTax2");
 
-        List<String> visibleItemsFromTree = editorPage.getEditorToolbarPanelComponent()
+        EditorToolbarPanelComponent.ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .setFactorTextField("123")
-                .clickTraceInsideMenu()
-                .expandItemInTree(0)
-                .getVisibleItemsFromTree();
-        assertThat(visibleItemsFromTree.subList(1, 13)).containsAll(EXPECTED_TRACE_TREE_ITEMS);
+                .clickTraceInsideMenu();
+
+        String tracedTable = traceWindow.getTracedTableText();
+        EXPECTED_STEPS.forEach(step -> assertThat(tracedTable)
+                .as("Traced Table must list step %s (EPBDS-8215: no steps are dropped)", step)
+                .contains(step));
+        traceWindow.close();
     }
 }
