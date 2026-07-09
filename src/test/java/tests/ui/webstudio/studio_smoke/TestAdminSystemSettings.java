@@ -181,8 +181,8 @@ public class TestAdminSystemSettings extends BaseTest {
                                          String expectedErrorMessage) {
         systemSettings.setTestThreadCount(invalidValue);
         systemSettings.clickApplyButton();
-        // Known-failing regression for EPBDS-16235: an invalid Test Run Thread Count is accepted
-        // with no validation error. Asserts the correct behaviour; stays red until EPBDS-16235 is fixed.
+        // Known-failing regression for EPBDS-15704: an invalid Test Run Thread Count is accepted
+        // with no validation error. Asserts the correct behaviour; stays red until EPBDS-15704 is fixed.
         assertThat(systemSettings.getAllMessages()).contains(expectedErrorMessage);
     }
 }

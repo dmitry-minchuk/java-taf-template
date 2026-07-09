@@ -91,9 +91,9 @@ public class TestAdminNotifications extends BaseTest {
                 .as("an empty notification must not be shown").isTrue();
 
         notificationComponent.sendNotification("   ");
-        // Known-failing regression for EPBDS-16236: a whitespace-only notification is displayed
+        // Known-failing regression for EPBDS-15703: a whitespace-only notification is displayed
         // instead of being rejected like an empty one. Asserts the correct behaviour; stays red
-        // until EPBDS-16236 is fixed.
+        // until EPBDS-15703 is fixed.
         assertThat(notificationComponent.isNotificationVisible()).isFalse();
     }
 }
