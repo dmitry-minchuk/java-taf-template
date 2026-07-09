@@ -15,5 +15,6 @@
     <test name="TestSamlLogoutUi"><classes><class name="tests.ui.webstudio.sso.TestSamlLogoutUi"/></classes></test>
     <test name="TestOidcLogoutUi"><classes><class name="tests.ui.webstudio.sso.TestOidcLogoutUi"/></classes></test>
     <test name="TestAdAuthUi"><classes><class name="tests.ui.webstudio.ad.TestAdAuthUi"/></classes></test>
+    <test name="TestPersonalAccessTokenAdUi"><classes><class name="tests.ui.webstudio.ad.TestPersonalAccessTokenAdUi"/></classes></test>
 
 </suite>

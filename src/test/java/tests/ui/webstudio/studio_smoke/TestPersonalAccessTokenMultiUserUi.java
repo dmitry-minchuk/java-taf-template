@@ -1,0 +1,57 @@
+package tests.ui.webstudio.studio_smoke;
+
+import com.epam.reportportal.annotations.Description;
+import com.epam.reportportal.annotations.TestCaseId;
+import configuration.annotations.AppContainerConfig;
+import configuration.appcontainer.AppContainerStartParameters;
+import configuration.driver.LocalDriverPool;
+import domain.api.PersonalAccessTokenApiMethod;
+import domain.serviceclasses.constants.User;
+import domain.ui.webstudio.components.admincomponents.PersonalAccessTokenPageComponent;
+import domain.ui.webstudio.pages.mainpages.AdminPage;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import helpers.service.LoginService;
+import helpers.service.UserService;
+import org.testng.annotations.Test;
+import tests.BaseTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class TestPersonalAccessTokenMultiUserUi extends BaseTest {
+
+    private static final String TOKEN_NAME = "aqa-pat";
+
+    @Test
+    @TestCaseId("EPBDS-16168")
+    @Description("Multi-user mode: a personal access token created in the UI authenticates a REST call, and revoking it removes access.")
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void testPersonalAccessTokenAuthenticatesRestInMultiUserMode() {
+        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
+        PersonalAccessTokenPageComponent tokensPage = adminPage.navigateToPersonalAccessTokensPage();
+
+        String token = tokensPage.createToken(TOKEN_NAME, "No expiration");
+        assertThat(token)
+                .as("Generated token should carry the OpenL PAT prefix")
+                .startsWith("openl_pat_");
+        assertThat(tokensPage.isTokenListed(TOKEN_NAME))
+                .as("Created token should appear in the tokens list")
+                .isTrue();
+
+        PersonalAccessTokenApiMethod restApi = new PersonalAccessTokenApiMethod();
+        assertThat(restApi.getProfileStatusWithToken(token))
+                .as("PAT must authenticate a REST call in multi-user mode")
+                .isEqualTo(200);
+        assertThat(restApi.getProfileStatusWithoutAuthorization())
+                .as("REST call without a token must be unauthorized")
+                .isEqualTo(401);
+
+        tokensPage.revokeToken(TOKEN_NAME);
+        assertThat(tokensPage.isTokenListed(TOKEN_NAME))
+                .as("Revoked token should be removed from the list")
+                .isFalse();
+        assertThat(restApi.getProfileStatusWithToken(token))
+                .as("Revoked token must no longer authenticate a REST call")
+                .isEqualTo(401);
+    }
+}

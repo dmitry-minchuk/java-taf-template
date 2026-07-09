@@ -7,6 +7,7 @@ import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.NotificationPageComponent;
+import domain.ui.webstudio.components.admincomponents.PersonalAccessTokenPageComponent;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.admincomponents.SecurityPageComponent;
 import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
@@ -30,7 +31,8 @@ public class AdminPage extends BasePage {
     private RepositoriesPageComponent repositoriesPageComponent;
     private NotificationPageComponent notificationPageComponent;
     private TagsPageComponent tagsPageComponent;
-    
+    private PersonalAccessTokenPageComponent personalAccessTokenPageComponent;
+
     private WebElement adminNavigation;
     private WebElement contentContainer;
 
@@ -56,6 +58,7 @@ public class AdminPage extends BasePage {
         repositoriesPageComponent = new RepositoriesPageComponent(contentContainer);
         notificationPageComponent = new NotificationPageComponent(contentContainer);
         tagsPageComponent = new TagsPageComponent(contentContainer);
+        personalAccessTokenPageComponent = new PersonalAccessTokenPageComponent(contentContainer);
     }
 
     public EmailPageComponent navigateToEmailPage() {
@@ -81,6 +84,11 @@ public class AdminPage extends BasePage {
     public MyProfilePageComponent navigateToMyProfilePage() {
         adminNavigationComponent.clickMyProfile();
         return myProfilePageComponent;
+    }
+
+    public PersonalAccessTokenPageComponent navigateToPersonalAccessTokensPage() {
+        adminNavigationComponent.clickPersonalAccessTokens();
+        return personalAccessTokenPageComponent;
     }
 
     public MySettingsPageComponent navigateToMySettingsPage() {

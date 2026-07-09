@@ -63,6 +63,10 @@ public class AdminNavigationComponent extends BaseComponent {
         clickNavigationItem(NavigationItem.TAGS);
     }
 
+    public void clickPersonalAccessTokens() {
+        clickNavigationItem(NavigationItem.PERSONAL_ACCESS_TOKENS);
+    }
+
     @Getter
     public enum NavigationItem {
         MY_PROFILE("My Profile"),
@@ -73,7 +77,8 @@ public class AdminNavigationComponent extends BaseComponent {
         USERS("Users"),
         MAIL("Mail"),
         NOTIFICATION("Notification"),
-        TAGS("Tags");
+        TAGS("Tags"),
+        PERSONAL_ACCESS_TOKENS("Personal Access Tokens");
 
         private final String value;
 
