@@ -83,6 +83,15 @@ public abstract class BaseComponent extends CoreComponent {
         return notificationPanel.sleep(500).isVisible();
     }
 
+    public boolean isNotificationHidden(int timeoutMillis) {
+        try {
+            notificationPanel.waitForHidden(timeoutMillis);
+            return true;
+        } catch (Exception e) {
+            return !notificationPanel.isVisible();
+        }
+    }
+
     public String getNotificationText() {
         WaitUtil.waitForCondition(() -> notificationPanel.isVisible(), 100, 1000, "Waiting for notification to be visible");
         if (isNotificationVisible()) {

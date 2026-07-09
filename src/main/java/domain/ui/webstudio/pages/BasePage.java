@@ -107,6 +107,10 @@ public abstract class BasePage extends CorePage {
         return notificationPanel.sleep(500).isVisible();
     }
 
+    public boolean isNotificationVisible(int timeoutMillis) {
+        return notificationPanel.isVisible(timeoutMillis);
+    }
+
     public String getNotificationText() {
         WaitUtil.waitForCondition(() -> notificationPanel.isVisible(), 100, 1000, "Waiting for notification to be visible");
         if (isNotificationVisible()) {

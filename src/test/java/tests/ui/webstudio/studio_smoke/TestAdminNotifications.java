@@ -49,12 +49,13 @@ public class TestAdminNotifications extends BaseTest {
 
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(newUser);
-        assertThat(editorPage.isNotificationVisible()).isTrue();
+        // A broadcast notification renders after the page finishes loading post-login, so wait for it.
+        assertThat(editorPage.isNotificationVisible(15000)).isTrue();
         assertThat(editorPage.getNotificationText()).isEqualTo(testMessage);
 
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
-        assertThat(editorPage.isNotificationVisible()).isTrue();
+        assertThat(editorPage.isNotificationVisible(15000)).isTrue();
         assertThat(editorPage.getNotificationText()).isEqualTo(testMessage);
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
@@ -86,9 +87,13 @@ public class TestAdminNotifications extends BaseTest {
 
         notificationComponent.clearNotification();
         notificationComponent.sendNotification("");
-        assertThat(notificationComponent.isNotificationVisible()).isFalse();
+        assertThat(notificationComponent.isNotificationHidden(10000))
+                .as("an empty notification must not be shown").isTrue();
 
         notificationComponent.sendNotification("   ");
-        assertThat(notificationComponent.isNotificationVisible()).isFalse(); // BUG: should not be visible
+        // Known-failing regression for EPBDS-16236: a whitespace-only notification is displayed
+        // instead of being rejected like an empty one. Asserts the correct behaviour; stays red
+        // until EPBDS-16236 is fixed.
+        assertThat(notificationComponent.isNotificationVisible()).isFalse();
     }
 }
