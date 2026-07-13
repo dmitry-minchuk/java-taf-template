@@ -18,6 +18,7 @@ import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.DbVerificationUtil;
+import helpers.utils.WaitUtil;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -221,11 +222,17 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         assertThat(propsTab.getRepository()).isEqualTo("Design1");
         assertThat(propsTab.getStatus()).isEqualTo("Closed");
 
-        // Step 7.1: Try to open the closed project — shows closable error at top of page
+        // Step 7.1: Try to open the closed project — the duplicate-name error now surfaces as a
+        // React toast notification (ant-notification); its text lives in the notice description,
+        // so match the whole notice rather than the legacy top-of-page closable message.
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        assertThat(repositoryPage.getClosableMessageText())
-                .contains("Cannot open two projects with the same name");
-        repositoryPage.closeClosableMessage();
+        assertThat(WaitUtil.waitForCondition(
+                () -> LocalDriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
+                        + "[contains(normalize-space(.),'Cannot open two projects with the same name')]").count() > 0,
+                10000, 500, "Waiting for the duplicate-name error notification"))
+                .as("Opening a second project with the same name must be blocked with an error notification")
+                .isTrue();
+        repositoryPage.closeAllMessages();
 
         // Step 8: Try to copy again to Design1 with /copied/ path — should show duplicate error
         repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
@@ -266,11 +273,16 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         assertThat(propsTab.getRepository()).isEqualTo("Design");
         assertThat(propsTab.getStatus()).isEqualTo("Closed");
 
-        // Step 9.1: Open closed copy — shows closable error at top of page
+        // Step 9.1: Open closed copy — the duplicate-name error surfaces as a React toast notification
+        // whose text lives in the notice description; match the whole notice.
         repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        assertThat(repositoryPage.getClosableMessageText())
-                .contains("Cannot open two projects with the same name");
-        repositoryPage.closeClosableMessage();
+        assertThat(WaitUtil.waitForCondition(
+                () -> LocalDriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
+                        + "[contains(normalize-space(.),'Cannot open two projects with the same name')]").count() > 0,
+                10000, 500, "Waiting for the duplicate-name error notification"))
+                .as("Opening a second project with the same name must be blocked with an error notification")
+                .isTrue();
+        repositoryPage.closeAllMessages();
 
         // Step 9.2: Switch to Editor tab, rename project in non-flat git repo, then rename back
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);

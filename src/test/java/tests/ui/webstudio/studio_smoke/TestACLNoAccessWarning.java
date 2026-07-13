@@ -73,10 +73,10 @@ public class TestACLNoAccessWarning extends BaseTest {
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
 
-        Locator totalProjectsHeader = LocalDriverPool.getPage()
-                .locator("xpath=//h1[contains(text(),'Total projects: 0')]");
-        assertThat(totalProjectsHeader.isVisible())
-                .as("Editor should show 'Total projects: 0' for user with no roles")
+        Locator emptyWorkspaceMessage = LocalDriverPool.getPage()
+                .locator("xpath=//*[contains(text(),'No Projects in the Workspace')]");
+        assertThat(emptyWorkspaceMessage.isVisible())
+                .as("Editor should show the empty-workspace message for a user with no roles")
                 .isTrue();
 
         // ============ STEP 3: Verify no Administration menu item ============
