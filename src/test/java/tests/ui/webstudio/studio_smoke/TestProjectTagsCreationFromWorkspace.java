@@ -6,6 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
+import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -62,14 +63,24 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
                 .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt2")
                 .clickSave();
 
+        // Orphan the two workspace projects so they can be re-imported via "Create from Workspace".
+        // Changing the original repo's path no longer orphans them: workspace projects are bound to
+        // their design repository by id, so the projects stay associated across a path change
+        // (this is the behavior after EPBDS-16228 fixed workspace-to-repository linking). The
+        // reliable way to produce a workspace orphan is to remove the repository they belong to,
+        // so add a second design repository (Design1) as the import target, then delete Design.
+        RepositoriesPageComponent reposPage = repositoryPage.openUserMenu()
+                .navigateToAdministration()
+                .navigateToRepositoriesPage();
+        reposPage.addDesignRepository();
+        reposPage.applyChangesAndRelogin(User.ADMIN);
         repositoryPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToRepositoriesPage()
-                .setRepositoryPath("/opt/openl/local/repositories/design1")
-                .applyChangesAndRelogin(User.ADMIN);
+                .deleteRepository("Design", User.ADMIN);
 
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.createProjectFromWorkSpace(null, null, true);
+        repositoryPage.createProjectFromWorkSpace(null, "Design1", true);
 
         Assert.assertEquals(tagsPopup.getSelectedTagForType(TAG_TYPE_NAME), "[None]", "Tag value should be empty for new project");
         Assert.assertEquals(tagsPopup.getSelectedTagForType(TAG_TYPE_EXT), "[None]", "Tag value should be empty for new project");
