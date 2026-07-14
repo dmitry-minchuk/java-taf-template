@@ -2,6 +2,7 @@ package configuration.core.ui;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import configuration.projectconfig.ProjectConfiguration;
@@ -112,20 +113,63 @@ public class WebElement {
         waitForAppReady(page, OVERLAY_IDLE_TIMEOUT_MS);
     }
 
+    /**
+     * Runs a pointer/keyboard interaction that can transiently fail while the app is doing a background
+     * refresh / recompile: the target keeps re-rendering ("element ... detached from the DOM", "not
+     * stable") or the loading overlay flickers back up mid-action ("intercepts pointer events").
+     * Playwright already retries within a single call up to its own timeout, but on loaded CI that
+     * window can be shorter than the recompile, so we additionally re-wait for the app to go idle and
+     * retry the whole interaction until it lands or the overlay-idle budget is spent. Non-churn failures
+     * (element genuinely absent, bad selector) are rethrown at once so real defects still fail fast, and
+     * when there is no churn the action runs exactly once with zero overhead (EPBDS-16261).
+     */
+    private void retryOnReRenderChurn(Runnable action) {
+        long deadline = System.currentTimeMillis() + OVERLAY_IDLE_TIMEOUT_MS;
+        while (true) {
+            try {
+                action.run();
+                return;
+            } catch (PlaywrightException e) {
+                if (System.currentTimeMillis() >= deadline || !isTransientReRenderChurn(e)) {
+                    throw e;
+                }
+                LOGGER.debug("{}: background re-render churn, re-waiting app-ready and retrying ({})",
+                        elementName, firstLine(e.getMessage()));
+                waitForAppReady();
+            }
+        }
+    }
+
+    private static boolean isTransientReRenderChurn(PlaywrightException e) {
+        String m = e.getMessage();
+        return m != null && (m.contains("detached from the DOM")
+                || m.contains("intercepts pointer events")
+                || m.contains("element is not stable")
+                || m.contains("element is not visible"));
+    }
+
+    private static String firstLine(String message) {
+        if (message == null) {
+            return "";
+        }
+        int nl = message.indexOf('\n');
+        return (nl >= 0 ? message.substring(0, nl) : message).trim();
+    }
+
     // Core Actions
 
     public void click() {
         waitForAppReady();
         isVisible();
         LOGGER.info("Clicking {} ", elementName);
-        locator.click();
+        retryOnReRenderChurn(locator::click);
     }
 
     public void click(int timeoutInMillis) {
         waitForAppReady();
         isVisible(timeoutInMillis);
         LOGGER.info("Clicking with increased timeout {} ", elementName);
-        locator.click(new Locator.ClickOptions().setTimeout(timeoutInMillis));
+        retryOnReRenderChurn(() -> locator.click(new Locator.ClickOptions().setTimeout(timeoutInMillis)));
     }
 
     public void clickForce() {
@@ -142,7 +186,7 @@ public class WebElement {
         waitForAppReady();
         isVisible();
         LOGGER.info("Double clicking {} ", elementName);
-        locator.dblclick();
+        retryOnReRenderChurn(locator::dblclick);
         return this;
     }
 
@@ -150,15 +194,15 @@ public class WebElement {
         waitForAppReady();
         isVisible();
         LOGGER.info("Pressing {} on {}", key, elementName);
-        locator.press(key);
+        retryOnReRenderChurn(() -> locator.press(key));
         return this;
     }
-    
+
     public WebElement fill(String text) {
         waitForAppReady();
         isVisible();
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
-        locator.fill(text);
+        retryOnReRenderChurn(() -> locator.fill(text));
         return this;
     }
 
@@ -166,7 +210,7 @@ public class WebElement {
         waitForAppReady();
         isVisible();
         LOGGER.info("Filling Sequentially {} with text: '{}'", elementName, text);
-        locator.pressSequentially(text);
+        retryOnReRenderChurn(() -> locator.pressSequentially(text));
         return this;
     }
     
@@ -244,13 +288,13 @@ public class WebElement {
     public void check() {
         waitForAppReady();
         isVisible();
-        locator.check();
+        retryOnReRenderChurn(locator::check);
     }
 
     public void uncheck() {
         waitForAppReady();
         isVisible();
-        locator.uncheck();
+        retryOnReRenderChurn(locator::uncheck);
     }
     
     // Selection methods for dropdowns
@@ -267,9 +311,9 @@ public class WebElement {
         List<String> optionValues = (List<String>) locator.locator("option")
                 .evaluateAll("options => options.map(option => option.value || '')");
         if (optionLabels.contains(text)) {
-            locator.selectOption(new SelectOption().setLabel(text));
+            retryOnReRenderChurn(() -> locator.selectOption(new SelectOption().setLabel(text)));
         } else if (optionValues.contains(text)) {
-            locator.selectOption(text);
+            retryOnReRenderChurn(() -> locator.selectOption(text));
         } else {
             throw new IllegalArgumentException("Option '" + text + "' was not found in " + elementName
                     + ". Labels: " + optionLabels + ". Values: " + optionValues);
@@ -313,7 +357,7 @@ public class WebElement {
         waitForAppReady();
         LOGGER.info("Clearing {}", elementName);
         locator.isVisible();
-        locator.clear();
+        retryOnReRenderChurn(locator::clear);
     }
 
     public void clearByKeyCombination() {
@@ -352,7 +396,7 @@ public class WebElement {
         }
         
         clear();
-        locator.fill(text);
+        retryOnReRenderChurn(() -> locator.fill(text));
     }
     
     // File upload method for input[type=file] elements  
@@ -395,7 +439,7 @@ public class WebElement {
     public WebElement hover() {
         waitForAppReady();
         LOGGER.info("Hovering over {}", elementName);
-        locator.hover();
+        retryOnReRenderChurn(locator::hover);
         return this;
     }
     
