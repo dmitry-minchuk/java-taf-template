@@ -75,7 +75,7 @@ public class RepositoryPage extends BasePage {
     }
 
     private void initializeComponents() {
-        createProjectLink = new WebElement(page, "xpath=//div[@id='top']//a[contains(text(), 'Create Project')]", "createProjectLink");
+        createProjectLink = new WebElement(page, "[data-testid=projects-new]", "createProjectLink");
         refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
 
         filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
@@ -86,8 +86,8 @@ public class RepositoryPage extends BasePage {
 
         createNewProjectComponent = createScopedComponent(CreateNewProjectComponent.class, "xpath=//div[@id='modalNewProject_container']", "createNewProjectComponent");
         tabSwitcherComponent = createScopedComponent(TabSwitcherComponent.class, "xpath=//ul[@role='menu' and contains(@class,'ant-menu-horizontal')]", "tabSwitcherComponent");
-        configureCommitInfoComponentShade = new WebElement(page, "xpath=//div[@id='modalConfigureCommitInfo_shade']", "modalShade");
-        configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@id='modalConfigureCommitInfo_container']", "configureCommitInfoComponent");
+        configureCommitInfoComponentShade = new WebElement(page, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "modalShade");
+        configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoComponent");
         leftRepositoryTreeComponent = createScopedComponent(LeftRepositoryTreeComponent.class, "xpath=//div[@id='left']", "leftRepositoryTreeComponent");
         repositoryContentButtonsPanelComponent = createScopedComponent(RepositoryContentButtonsPanelComponent.class, "xpath=//div[@class='nav-panel']", "repositoryContentButtonsPanelComponent");
         repositoryContentTabSwitcherComponent = createScopedComponent(RepositoryContentTabSwitcherComponent.class, "xpath=//div[@id='nodeTabPanel']", "repositoryContentTabSwitcherComponent");
@@ -134,17 +134,7 @@ public class RepositoryPage extends BasePage {
                 zipComponent.createProjectZipArchive(sourceName, projectName);
                 break;
             case TEMPLATE:
-                TemplateTabComponent templateComponent = createNewProjectComponent.selectTab(projectType);
-                if (finalize) {
-                    templateComponent.createProjectFromTemplate(projectName, sourceName);
-                } else {
-                    if (!sourceName.isEmpty()) {
-                        templateComponent.selectProjectTemplate(sourceName);
-                    }
-                    if (!projectName.isEmpty()) {
-                        templateComponent.setProjectName(projectName);
-                    }
-                }
+                createNewProjectComponent.createProjectFromTemplate(sourceName, projectName, finalize);
                 break;
             case OPEN_API:
                 OpenApiComponent openApiComponent = createNewProjectComponent.selectTab(projectType);
@@ -159,7 +149,6 @@ public class RepositoryPage extends BasePage {
         if(finalize) {
             fillCommitInfo();
             waitUntilSpinnerLoaded();
-            refreshBtn.click(10000);
         }
     }
 

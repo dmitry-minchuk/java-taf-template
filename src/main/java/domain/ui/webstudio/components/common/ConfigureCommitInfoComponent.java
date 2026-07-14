@@ -5,13 +5,14 @@ import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import net.datafaker.Faker;
 
+// React "Configure Git Commit Info" modal (build 032c60a664ce+). Fields are #firstName / #lastName /
+// #email / #displayName; footer has Cancel / Save (primary, no data-testid).
 public class ConfigureCommitInfoComponent extends BaseComponent {
 
     private WebElement emailField;
     private WebElement firstNameField;
     private WebElement lastNameField;
-    private WebElement displayNameDropdown;
-    private WebElement otherDisplayNameField;
+    private WebElement displayNameField;
     private WebElement saveBtn;
     private WebElement cancelBtn;
 
@@ -26,21 +27,21 @@ public class ConfigureCommitInfoComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        emailField = createScopedElement("xpath=.//input[@id='commit-user-email']", "emailField");
-        firstNameField = createScopedElement("xpath=.//input[@id='commit-user-firstname']", "firstNameField");
-        lastNameField = createScopedElement("xpath=.//input[@id='commit-user-lastname']", "lastNameField");
-        displayNameDropdown = createScopedElement("xpath=.//select[@name='commit-user-display-name-select-box']", "displayNameDropdown");
-        otherDisplayNameField = createScopedElement("xpath=.//input[@id='commit-user-display-name']", "otherDisplayNameField");
-        saveBtn = createScopedElement("xpath=.//input[@id='save-commit-info']", "saveBtn");
-        cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "cancelBtn");
+        emailField = createScopedElement("xpath=.//input[@id='email']", "emailField");
+        firstNameField = createScopedElement("xpath=.//input[@id='firstName']", "firstNameField");
+        lastNameField = createScopedElement("xpath=.//input[@id='lastName']", "lastNameField");
+        displayNameField = createScopedElement("xpath=.//input[@id='displayName']", "displayNameField");
+        saveBtn = createScopedElement("xpath=.//div[contains(@class,'ant-modal-footer')]//button[.//span[normalize-space()='Save']]", "saveBtn");
+        cancelBtn = createScopedElement("xpath=.//div[contains(@class,'ant-modal-footer')]//button[.//span[normalize-space()='Cancel']]", "cancelBtn");
     }
 
     public void fillCommitInfoWithRandomData() {
         Faker faker = new Faker();
-        if(emailField.isVisible(500))
-            emailField.sendKeys(faker.internet().emailAddress());
-        firstNameField.sendKeys(faker.name().firstName());
-        lastNameField.sendKeys(faker.name().lastName());
+        firstNameField.fill(faker.name().firstName());
+        lastNameField.fill(faker.name().lastName());
+        // Email and Display Name are required in the React modal — fill unconditionally (fill() waits).
+        emailField.fill(faker.internet().emailAddress());
+        displayNameField.fill(faker.name().fullName());
         saveBtn.click();
     }
 }

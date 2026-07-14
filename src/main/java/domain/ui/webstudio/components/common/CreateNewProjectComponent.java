@@ -22,6 +22,15 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement tabTemplate;
     private WebElement closeDialogBtn;
 
+    // React "Create project" wizard (build 032c60a664ce+): page-level data-testid controls.
+    private WebElement methodTemplate;
+    private WebElement nextBtn;
+    private WebElement cancelBtn;
+    private WebElement submitBtn;
+    private WebElement nameField;
+    private WebElement templateGroup; // format(groupKey): templates/examples/tutorials
+    private WebElement templateItem;  // format(templateName): visible label
+
     public CreateNewProjectComponent() {
         super(LocalDriverPool.getPage());
         initializeElements();
@@ -40,6 +49,42 @@ public class CreateNewProjectComponent extends BaseComponent {
         workspaceTabComponent = createScopedComponent(WorkspaceComponent.class, "xpath=.//form[@name='uploadWorkspaceProjectForm']", "workspaceTabComponent");
         openApiComponent = createScopedComponent(OpenApiComponent.class, "xpath=.//form[@name='openAPIProjectForm']", "openApiComponent");
         closeDialogBtn = createScopedElement("xpath=.//img[@class='close']", "closeDialogBtn");
+
+        methodTemplate = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-template]", "methodTemplate");
+        nextBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-next]", "newProjectNext");
+        cancelBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-cancel]", "newProjectCancel");
+        submitBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-submit]", "newProjectSubmit");
+        nameField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-name]", "newProjectName");
+        templateGroup = new WebElement(LocalDriverPool.getPage(), "[data-testid=template-group-%s]", "templateGroup");
+        templateItem = new WebElement(LocalDriverPool.getPage(), "xpath=//div[@data-testid='new-project-template']//button[.//span[normalize-space()='%s']]", "templateItem");
+    }
+
+    // Full create-from-template path in the React wizard (method -> Next -> group -> item -> name -> Create).
+    public void createProjectFromTemplate(String templateName, String projectName) {
+        createProjectFromTemplate(templateName, projectName, true);
+    }
+
+    // submit=false opens the wizard and fills the form without pressing Create (partial flows).
+    public void createProjectFromTemplate(String templateName, String projectName, boolean submit) {
+        methodTemplate.click();
+        nextBtn.click();
+        if (templateName != null && !templateName.isEmpty()) {
+            templateGroup.format(groupOf(templateName)).click();
+            templateItem.format(templateName).click();
+        }
+        if (projectName != null && !projectName.isEmpty()) {
+            nameField.fill(projectName);
+        }
+        if (submit) {
+            submitBtn.click();
+        }
+    }
+
+    // Predefined templates are grouped Templates / Examples / Tutorials in the React wizard.
+    private static String groupOf(String templateName) {
+        if (templateName.startsWith("Example")) return "examples";
+        if (templateName.startsWith("Tutorial")) return "tutorials";
+        return "templates";
     }
 
     @SuppressWarnings("unchecked")

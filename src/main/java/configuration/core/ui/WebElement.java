@@ -142,10 +142,15 @@ public class WebElement {
 
     private static boolean isTransientReRenderChurn(PlaywrightException e) {
         String m = e.getMessage();
-        return m != null && (m.contains("detached from the DOM")
-                || m.contains("intercepts pointer events")
+        if (m == null) {
+            return false;
+        }
+        // The loading overlay flickering back up is transient; a real blocking modal (ant-modal-wrap)
+        // is NOT — scope the pointer-intercept case to the overlay so genuine modal blocks fail fast.
+        boolean overlayIntercept = m.contains("intercepts pointer events") && m.contains("loading-overlay");
+        return m.contains("detached from the DOM")
                 || m.contains("element is not stable")
-                || m.contains("element is not visible"));
+                || overlayIntercept;
     }
 
     private static String firstLine(String message) {
