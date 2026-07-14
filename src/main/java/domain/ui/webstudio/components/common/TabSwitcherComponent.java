@@ -46,7 +46,8 @@ public class TabSwitcherComponent extends BaseComponent {
     @Getter
     public enum TabName {
         EDITOR("Editor"),
-        REPOSITORY("Repository");
+        // Renamed from "Repository" to "Projects" in the React nav (build 032c60a664ce+).
+        REPOSITORY("Projects");
 
         private String value;
 
