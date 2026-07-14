@@ -22,6 +22,11 @@ public class WebElement {
     
     protected final static Logger LOGGER = LogManager.getLogger(WebElement.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
+    // React full-screen click shield raised while the app loader is busy (EPBDS-16241 / EPBDS-16261).
+    // It has pointer-events:auto and covers the whole viewport, so any pointer interaction started
+    // while it is up is intercepted and times out. We wait for it to detach before interacting.
+    public static final String LOADING_OVERLAY_SELECTOR = "[data-testid=loading-overlay]";
+    private static final int OVERLAY_IDLE_TIMEOUT_MS = resolveOverlayIdleTimeout();
     private final int timeoutInMilliseconds;
     @Getter
     private final Page page;
@@ -70,15 +75,54 @@ public class WebElement {
     }
     
     
+    // Smart wait: block until the app is idle (no full-screen loading overlay) before interacting.
+
+    private static int resolveOverlayIdleTimeout() {
+        try {
+            return Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.OVERLAY_IDLE_TIMEOUT));
+        } catch (RuntimeException e) {
+            return 60000;
+        }
+    }
+
+    /**
+     * Waits until the React full-screen loading overlay is not present in the DOM, i.e. the app has
+     * finished the background repository refresh / module recompile that would otherwise intercept
+     * pointer events. Returns immediately when the overlay is absent, so it is cheap on every call and
+     * only spends real time on genuinely heavy recompiles (large client projects). Never throws — if the
+     * overlay is still up after the timeout we proceed and let Playwright's own actionability retry.
+     */
+    public static void waitForAppReady(Page page, long timeoutMs) {
+        try {
+            page.waitForFunction(
+                    "() => !document.querySelector('" + LOADING_OVERLAY_SELECTOR + "')",
+                    null,
+                    new Page.WaitForFunctionOptions().setTimeout(timeoutMs));
+        } catch (RuntimeException ignored) {
+            LOGGER.debug("Loading overlay still present after {}ms; proceeding and relying on actionability retry", timeoutMs);
+        }
+    }
+
+    /** Overload using the configured overlay-idle timeout — for explicit use from page objects/components. */
+    public static void waitForAppReady(Page page) {
+        waitForAppReady(page, OVERLAY_IDLE_TIMEOUT_MS);
+    }
+
+    private void waitForAppReady() {
+        waitForAppReady(page, OVERLAY_IDLE_TIMEOUT_MS);
+    }
+
     // Core Actions
 
     public void click() {
+        waitForAppReady();
         isVisible();
         LOGGER.info("Clicking {} ", elementName);
         locator.click();
     }
 
     public void click(int timeoutInMillis) {
+        waitForAppReady();
         isVisible(timeoutInMillis);
         LOGGER.info("Clicking with increased timeout {} ", elementName);
         locator.click(new Locator.ClickOptions().setTimeout(timeoutInMillis));
@@ -95,6 +139,7 @@ public class WebElement {
     }
 
     public WebElement doubleClick() {
+        waitForAppReady();
         isVisible();
         LOGGER.info("Double clicking {} ", elementName);
         locator.dblclick();
@@ -102,6 +147,7 @@ public class WebElement {
     }
 
     public WebElement press(String key) {
+        waitForAppReady();
         isVisible();
         LOGGER.info("Pressing {} on {}", key, elementName);
         locator.press(key);
@@ -109,6 +155,7 @@ public class WebElement {
     }
     
     public WebElement fill(String text) {
+        waitForAppReady();
         isVisible();
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
         locator.fill(text);
@@ -116,6 +163,7 @@ public class WebElement {
     }
 
     public WebElement fillSequentially(String text) {
+        waitForAppReady();
         isVisible();
         LOGGER.info("Filling Sequentially {} with text: '{}'", elementName, text);
         locator.pressSequentially(text);
@@ -194,11 +242,13 @@ public class WebElement {
     }
 
     public void check() {
+        waitForAppReady();
         isVisible();
         locator.check();
     }
 
     public void uncheck() {
+        waitForAppReady();
         isVisible();
         locator.uncheck();
     }
@@ -207,6 +257,7 @@ public class WebElement {
 
     // This method does not require clicking by selector - everything will be done automatically if selector implemented as <select>
     public void selectByVisibleText(String text) {
+        waitForAppReady();
         isVisible();
         LOGGER.info("Selecting option '{}' in {}", text, elementName);
         List<String> optionLabels = locator.locator("option").allTextContents().stream()
@@ -259,6 +310,7 @@ public class WebElement {
     // Utility methods
     
     public void clear() {
+        waitForAppReady();
         LOGGER.info("Clearing {}", elementName);
         locator.isVisible();
         locator.clear();
@@ -287,6 +339,7 @@ public class WebElement {
     }
     
     public void sendKeys(CharSequence... keysToSend) {
+        waitForAppReady();
         String text = String.join("", keysToSend);
         LOGGER.info("Sending keys '{}' to {}", text, elementName);
         
@@ -340,6 +393,7 @@ public class WebElement {
     // Interaction methods
     
     public WebElement hover() {
+        waitForAppReady();
         LOGGER.info("Hovering over {}", elementName);
         locator.hover();
         return this;

@@ -45,6 +45,8 @@ public abstract class BaseComponent extends CoreComponent {
                     new Page.WaitForFunctionOptions().setTimeout(5000));
         } catch (RuntimeException ignored) {
         }
+        // Also wait out the new React full-screen loading overlay (EPBDS-16241 replaced #loadingPanel).
+        WebElement.waitForAppReady(page);
     }
 
     public void closeAllMessages() {

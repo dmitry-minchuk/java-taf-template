@@ -101,6 +101,8 @@ public abstract class BasePage extends CorePage {
 
     public void waitUntilSpinnerLoaded() {
         contentLoadingSpinner.waitForHidden(DEFAULT_TIMEOUT_MS * 100L);
+        // Also wait out the new React full-screen loading overlay (EPBDS-16241 replaced #loadingPanel).
+        WebElement.waitForAppReady(page);
     }
 
     public boolean isNotificationVisible() {
