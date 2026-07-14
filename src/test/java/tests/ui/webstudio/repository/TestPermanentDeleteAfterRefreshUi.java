@@ -57,19 +57,14 @@ public class TestPermanentDeleteAfterRefreshUi extends BaseTest {
         RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getProjectDeleteConfirmModalComponent()
-                .waitForVisible()
+        repositoryPage.deleteProject(projectName)
                 .enterDeletionComment("Removed by automated regression test")
                 .acknowledgePermanentDeletion()
                 .clickDelete();
 
         repositoryPage.reloadPage();
 
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isProjectPresentInTree(projectName))
+        assertThat(repositoryPage.isProjectPresent(projectName))
                 .as("Permanently deleted project '%s' must not reappear after a page refresh", projectName)
                 .isFalse();
     }

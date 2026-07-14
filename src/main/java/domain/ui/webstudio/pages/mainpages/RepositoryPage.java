@@ -31,6 +31,10 @@ public class RepositoryPage extends BasePage {
     // top menu elements:
     private WebElement refreshBtn;
     private WebElement createProjectLink;
+    // React projects list (build 032c60a664ce+): rows are <tr data-testid=project-row-...> with
+    // per-row action buttons keyed by aria-label. Format placeholders with the project name.
+    private WebElement projectRowByName;
+    private WebElement projectActionByName;
     private WebElement filterByNameInput;
     private WebElement clearFilterBtn;
     private WebElement advancedFilterBtn;
@@ -77,6 +81,8 @@ public class RepositoryPage extends BasePage {
     private void initializeComponents() {
         createProjectLink = new WebElement(page, "[data-testid=projects-new]", "createProjectLink");
         refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
+        projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
+        projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
 
         filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
         clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
@@ -177,6 +183,27 @@ public class RepositoryPage extends BasePage {
     public void reloadPage() {
         page.reload();
         waitUntilSpinnerLoaded();
+    }
+
+    // --- React projects list actions (build 032c60a664ce+) ---
+
+    public boolean isProjectPresent(String projectName) {
+        return projectRowByName.format(projectName).isVisible(DEFAULT_TIMEOUT_MS);
+    }
+
+    // Clicks the row's Delete action and returns the (already React) confirm modal, ready to fill.
+    public ProjectDeleteConfirmModalComponent deleteProject(String projectName) {
+        projectActionByName.format(projectName, "Delete").click();
+        return projectDeleteConfirmModalComponent.waitForVisible();
+    }
+
+    // Opened projects expose "Close"; closed ones expose "Open".
+    public void openProject(String projectName) {
+        projectActionByName.format(projectName, "Open").click();
+    }
+
+    public void closeProject(String projectName) {
+        projectActionByName.format(projectName, "Close").click();
     }
 
     public void createProjectFromWorkSpace(String projectName, String repository, boolean selectAllProjects) {
