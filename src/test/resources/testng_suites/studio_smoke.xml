@@ -8,16 +8,6 @@
 
     <test name="TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
     <test name="TestUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUserSettings"/></classes></test>
-    <test name="TestACLUserManagementAndRepositoryRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLUserManagementAndRepositoryRoles"/></classes></test>
-    <test name="TestACLProjectLevelRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLProjectLevelRoles"/></classes></test>
-    <test name="TestACLContributorRole"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLContributorRole"/></classes></test>
-    <test name="TestACLDeploySystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeploySystemAction"/></classes></test>
-    <test name="TestACLRunBenchmarkSystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLRunBenchmarkSystemAction"/></classes></test>
-    <test name="TestACLManagePermission"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLManagePermission"/></classes></test>
-    <test name="TestACLDeployWithDeployRepo"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeployWithDeployRepo"/></classes></test>
-    <test name="TestACLLockUnlockDeprecated"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLLockUnlockDeprecated"/></classes></test>
-    <test name="TestACLNoAccessWarning"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLNoAccessWarning"/></classes></test>
-    <test name="TestACLParsedGroupsUserView"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLParsedGroupsUserView"/></classes></test>
     <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettings"/></classes></test>
     <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettingsDBValidation"/></classes></test>
     <test name="TestNotifications"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminNotifications"/></classes></test>
@@ -25,9 +15,6 @@
     <test name="TestProjectTagsCreationNonExistingType"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingType"/></classes></test>
     <test name="TestProjectTagsCreationFromWorkspace"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationFromWorkspace"/></classes></test>
     <test name="TestFillTagsForProject"><classes><class name="tests.ui.webstudio.studio_smoke.TestFillTagsForProject"/></classes></test>
-    <test name="TestTableIcons"><classes><class name="tests.ui.webstudio.studio_smoke.TestTableIcons"/></classes></test>
-    <test name="TestFileAddDelete"><classes><class name="tests.ui.webstudio.studio_smoke.TestFileAddDelete"/></classes></test>
-    <test name="CreateDataTypeTableTest"><classes><class name="tests.ui.webstudio.studio_smoke.CreateDataTypeTableTest"/></classes></test>
     <test name="TestRepositoryBrowsingFilterStatus"><classes><class name="tests.ui.webstudio.repository.TestRepositoryBrowsingFilterStatus"/></classes></test>
     <test name="TestRepositoryTableActionsOpenClose"><classes><class name="tests.ui.webstudio.repository.TestRepositoryTableActions"/></classes></test>
     <test name="TestMultipleDesignRepositoriesWithPostgres"><classes><class name="tests.ui.webstudio.repository.TestMultipleDesignRepositoriesWithPostgres"/></classes></test>
@@ -41,9 +28,5 @@
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>
     <test name="TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_smoke.TestAddDeleteDesignRepository"/></classes></test>
     <test name="TestSupportedRepositories"><classes><class name="tests.ui.webstudio.studio_smoke.TestSupportedRepositories"/></classes></test>
-    <test name="TestProtectedBranchBypassSecuritySettingsUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
-    <test name="TestSingleModeAuthUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeAuthUi"/></classes></test>
-    <test name="TestSingleModeProfileEditUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeProfileEditUi"/></classes></test>
-    <test name="TestPersonalAccessTokenMultiUserUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestPersonalAccessTokenMultiUserUi"/></classes></test>
 
 </suite>

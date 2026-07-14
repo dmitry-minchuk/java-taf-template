@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite verbose="1" name="WebStudio ACL Tests" annotations="JDK" parallel="tests" thread-count="2">
+
+    <listeners>
+        <listener class-name="configuration.listeners.AnnotationTransformer"/>
+        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
+    </listeners>
+
+    <test name="TestACLUserManagementAndRepositoryRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLUserManagementAndRepositoryRoles"/></classes></test>
+    <test name="TestACLProjectLevelRoles"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLProjectLevelRoles"/></classes></test>
+    <test name="TestACLContributorRole"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLContributorRole"/></classes></test>
+    <test name="TestACLDeploySystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeploySystemAction"/></classes></test>
+    <test name="TestACLRunBenchmarkSystemAction"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLRunBenchmarkSystemAction"/></classes></test>
+    <test name="TestACLManagePermission"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLManagePermission"/></classes></test>
+    <test name="TestACLDeployWithDeployRepo"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLDeployWithDeployRepo"/></classes></test>
+    <test name="TestACLLockUnlockDeprecated"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLLockUnlockDeprecated"/></classes></test>
+    <test name="TestACLNoAccessWarning"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLNoAccessWarning"/></classes></test>
+    <test name="TestACLParsedGroupsUserView"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLParsedGroupsUserView"/></classes></test>
+
+</suite>

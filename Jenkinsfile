@@ -50,6 +50,7 @@ def functionalJobList = [
                          // Regular test suites - run on any available node for optimal load balancing
                          new Job("studio_issues", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_smoke", image_hub_registry + studio, image_hub_registry + ws, "", anyAvailableNode),
+                         new Job("studio_acl", image_hub_registry + studio, image_hub_registry + ws, "", anyAvailableNode),
                          new Job("studio_rules_editor", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_git", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),
                          new Job("studio_sso", image_hub_registry + studio, image_hub_registry + studio, "", anyAvailableNode),

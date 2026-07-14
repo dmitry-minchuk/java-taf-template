@@ -36,5 +36,8 @@
     <test name="TestConstructorNotFoundInDependentTable"><classes><class name="tests.ui.webstudio.studio_issues.TestConstructorNotFoundInDependentTable"/></classes></test>
     <test name="TestTraceSpecialCharsDisplay"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceSpecialCharsDisplay"/></classes></test>
     <test name="TestTraceSpreadsheetNodeDetails"><classes><class name="tests.ui.webstudio.studio_issues.TestTraceSpreadsheetNodeDetails"/></classes></test>
+    <test name="TestTableIcons"><classes><class name="tests.ui.webstudio.studio_smoke.TestTableIcons"/></classes></test>
+    <test name="TestFileAddDelete"><classes><class name="tests.ui.webstudio.studio_smoke.TestFileAddDelete"/></classes></test>
+    <test name="CreateDataTypeTableTest"><classes><class name="tests.ui.webstudio.studio_smoke.CreateDataTypeTableTest"/></classes></test>
 
 </suite>
