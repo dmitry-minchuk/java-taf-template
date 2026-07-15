@@ -23,6 +23,9 @@ public class ProjectDetailPage extends BasePage {
     private WebElement fileDeleteBtn;
     private WebElement fileDeleteConfirmOk;
     private WebElement filesUploadInput;
+    private WebElement filesNewFolderBtn;
+    private WebElement folderPathInput;
+    private WebElement folderSubmitBtn;
     // History tab
     private WebElement revisionEntries;     // one per revision (revision-comment-<hash>)
 
@@ -42,6 +45,9 @@ public class ProjectDetailPage extends BasePage {
         fileDeleteBtn = new WebElement(page, "[data-testid=file-delete]", "fileDeleteBtn");
         fileDeleteConfirmOk = new WebElement(page, "xpath=//div[contains(@class,'ant-popover')]//button[.//span[normalize-space()='OK']]", "fileDeleteConfirmOk");
         filesUploadInput = new WebElement(page, "[data-testid=files-upload-input]", "filesUploadInput");
+        filesNewFolderBtn = new WebElement(page, "[data-testid=files-new-folder]", "filesNewFolderBtn");
+        folderPathInput = new WebElement(page, "[data-testid=files-folder-path]", "folderPathInput");
+        folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
     }
 
     public ProjectDetailPage openOverviewTab() {
@@ -92,6 +98,21 @@ public class ProjectDetailPage extends BasePage {
         filesUploadInput.setInputFiles(filePath);
         waitUntilSpinnerLoaded();
         return this;
+    }
+
+    // Creates a folder (or path/to/folder) in the project via the Files tab.
+    public ProjectDetailPage createFolder(String folderPath) {
+        openFilesTab();
+        filesNewFolderBtn.click();
+        folderPathInput.fill(folderPath);
+        folderSubmitBtn.click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
+    // Folders and files are both tree nodes, so this also answers "is this folder present?".
+    public boolean isFolderPresent(String folderName) {
+        return fileNodeByName.format(folderName).isVisible(DEFAULT_TIMEOUT_MS);
     }
 
     public ProjectDetailPage reloadPage() {
