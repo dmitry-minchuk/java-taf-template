@@ -198,7 +198,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void clickSave() {
-        saveBtn.click();
+        // Committing recompiles and briefly re-renders this JSF toolbar button, so it must be
+        // clicked resiliently (see WebElement.clickWhenSettled).
+        saveBtn.clickWhenSettled();
     }
 
     public void clickSync() {
@@ -224,7 +226,8 @@ public class EditorToolbarPanelComponent extends BaseComponent {
 
     public void navigateToProjectRoot(String projectName) {
         WaitUtil.retryOnException(() -> {
-            breadcrumbsProjectToggle.click();
+            // The breadcrumb re-renders during the post-save recompile; click it resiliently.
+            breadcrumbsProjectToggle.clickWhenSettled();
             breadcrumbsDropdownItemTemplate.format(projectName).waitForVisible(3000);
             breadcrumbsDropdownItemTemplate.format(projectName).click();
             return true;

@@ -109,6 +109,27 @@ public class WebElement {
         waitForAppReady(page, OVERLAY_IDLE_TIMEOUT_MS);
     }
 
+    /**
+     * Stronger form of {@link #waitForAppReady}: waits until the loading overlay has been ABSENT
+     * continuously for a short quiet window, i.e. the background refresh / recompile has truly finished
+     * re-rendering. A single absent instant is not enough during a commit — the overlay flickers, so
+     * {@link #waitForAppReady} can return mid-recompile while JSF nodes are still detaching. Never throws.
+     */
+    public static void waitForAppIdle(Page page, long timeoutMs) {
+        try {
+            page.evaluate("() => { window.__openlIdleSince = 0; }");
+            page.waitForFunction(
+                    "() => { const now = performance.now();" +
+                    " if (document.querySelector('" + LOADING_OVERLAY_SELECTOR + "')) { window.__openlIdleSince = 0; return false; }" +
+                    " if (!window.__openlIdleSince) { window.__openlIdleSince = now; return false; }" +
+                    " return (now - window.__openlIdleSince) >= 750; }",
+                    null,
+                    new Page.WaitForFunctionOptions().setTimeout(timeoutMs));
+        } catch (RuntimeException ignored) {
+            LOGGER.debug("App still busy after {}ms; proceeding and relying on actionability retry", timeoutMs);
+        }
+    }
+
     private void waitForAppReady() {
         waitForAppReady(page, OVERLAY_IDLE_TIMEOUT_MS);
     }
@@ -185,6 +206,17 @@ public class WebElement {
     public void clickForce(int timeoutInMillis) {
         LOGGER.info("Force clicking {} with timeout (bypassing visibility checks)", elementName);
         locator.click(new Locator.ClickOptions().setForce(true).setTimeout(timeoutInMillis));
+    }
+
+    // For JSF buttons that trigger a commit/recompile and re-render themselves during it: the JSF
+    // toolbar re-renders on its own a4j cycle (not tracked by the React overlay), so no overlay wait
+    // reliably catches a "stable" instant and a normal click's actionability thrashes the churn. A
+    // human just clicks once and the onclick fires. So: wait for the app to settle, then dispatch the
+    // click event straight to the element's onclick handler (no actionability/visibility checks).
+    public void clickWhenSettled() {
+        waitForAppIdle(page, OVERLAY_IDLE_TIMEOUT_MS);
+        LOGGER.info("Dispatching click (after app settled) {}", elementName);
+        locator.dispatchEvent("click");
     }
 
     public WebElement doubleClick() {

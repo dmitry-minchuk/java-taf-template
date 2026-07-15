@@ -27,4 +27,9 @@ public class SaveChangesComponent extends BaseComponent {
         saveBtn = createScopedElement("xpath=.//input[@value='Save']", "Save Button");
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "Cancel Button");
     }
+
+    // The commit recompile re-renders this dialog's Save button; click it resiliently.
+    public void clickSave() {
+        saveBtn.clickWhenSettled();
+    }
 }
