@@ -17,32 +17,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestProjectDeleteClosedProjectNameUi extends BaseTest {
 
-    private static final String PROJECTS_FOLDER = "Projects";
-
     @Test
     @TestCaseId("EPBDS-16231")
-    @Description("Known-failing regression for EPBDS-16231: the Confirm Delete dialog for a CLOSED project must show the plain project name, not the name with a hash appended. Stays red until EPBDS-16231 is fixed.")
+    @Description("EPBDS-16231: the Confirm Delete dialog for a CLOSED project shows the plain project name, not the name with a hash appended. Fixed in the React projects UI (032c60a664ce) — now passes.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testConfirmDeleteShowsCleanNameForClosedProject() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
         RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
+        repositoryPage.closeProject(projectName);
         repositoryPage.waitUntilSpinnerLoaded();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isOpenBtnVisible())
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Open"))
                 .as("Precondition: the project must be in Closed state before the Confirm Delete check")
                 .isTrue();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        ProjectDeleteConfirmModalComponent deleteModal =
-                repositoryPage.getProjectDeleteConfirmModalComponent().waitForVisible();
+        ProjectDeleteConfirmModalComponent deleteModal = repositoryPage.deleteProject(projectName);
 
         assertThat(deleteModal.getMessage())
                 .as("Confirm Delete dialog for a closed project must not append a hash to the project name")

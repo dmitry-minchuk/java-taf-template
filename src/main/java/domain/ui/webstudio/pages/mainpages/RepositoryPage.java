@@ -189,6 +189,11 @@ public class RepositoryPage extends BasePage {
         return projectRowByName.format(projectName).isVisible(DEFAULT_TIMEOUT_MS);
     }
 
+    // A closed project exposes the "Open" row action; an opened one exposes "Close".
+    public boolean isProjectActionAvailable(String projectName, String actionLabel) {
+        return projectActionByName.format(projectName, actionLabel).isVisible(DEFAULT_TIMEOUT_MS);
+    }
+
     // Clicks the row's Delete action and returns the (already React) confirm modal, ready to fill.
     public ProjectDeleteConfirmModalComponent deleteProject(String projectName) {
         projectActionByName.format(projectName, "Delete").click();
