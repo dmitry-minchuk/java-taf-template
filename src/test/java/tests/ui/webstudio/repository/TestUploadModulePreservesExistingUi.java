@@ -7,6 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import helpers.utils.TestDataUtil;
@@ -17,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestUploadModulePreservesExistingUi extends BaseTest {
 
-    private static final String PROJECTS_FOLDER = "Projects";
     private static final String UPLOAD_MODULE = "TestMergeBranchesNoConflicts_Module5.xlsx";
     private static final String EXISTING_MODULE = "Main";
 
@@ -30,16 +30,10 @@ public class TestUploadModulePreservesExistingUi extends BaseTest {
         RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(UPLOAD_MODULE))
-                .clickUploadButton();
-        repositoryPage.waitUntilSpinnerLoaded();
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(projectName);
+        projectDetail.uploadFile(TestDataUtil.getFilePathFromResources(UPLOAD_MODULE));
 
-        EditorPage editorPage = repositoryPage.getTabSwitcherComponent()
+        EditorPage editorPage = projectDetail.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         assertThat(editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
