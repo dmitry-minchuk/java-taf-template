@@ -26,6 +26,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     // React "Create project" wizard (build 032c60a664ce+): page-level data-testid controls.
     private WebElement methodTemplate;
     private WebElement methodExcel;
+    private WebElement methodArchive;
     private WebElement nextBtn;
     private WebElement cancelBtn;
     private WebElement submitBtn;
@@ -33,6 +34,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement templateGroup; // format(groupKey): templates/examples/tutorials
     private WebElement templateItem;  // format(templateName): visible label
     private WebElement excelUpload;   // file input on the "From Excel files" step
+    private WebElement archiveUpload; // file input on the "From archive" (.zip) step
 
     public CreateNewProjectComponent() {
         super(LocalDriverPool.getPage());
@@ -55,6 +57,7 @@ public class CreateNewProjectComponent extends BaseComponent {
 
         methodTemplate = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-template]", "methodTemplate");
         methodExcel = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-excel]", "methodExcel");
+        methodArchive = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-archive]", "methodArchive");
         nextBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-next]", "newProjectNext");
         cancelBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-cancel]", "newProjectCancel");
         submitBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-submit]", "newProjectSubmit");
@@ -62,6 +65,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         templateGroup = new WebElement(LocalDriverPool.getPage(), "[data-testid=template-group-%s]", "templateGroup");
         templateItem = new WebElement(LocalDriverPool.getPage(), "xpath=//div[@data-testid='new-project-template']//button[.//span[normalize-space()='%s']]", "templateItem");
         excelUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-excel-upload]", "excelUpload");
+        archiveUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-upload]", "archiveUpload");
     }
 
     // Full create-from-template path in the React wizard (method -> Next -> group -> item -> name -> Create).
@@ -97,6 +101,17 @@ public class CreateNewProjectComponent extends BaseComponent {
         methodExcel.click();
         nextBtn.click();
         excelUpload.setInputFiles(TestDataUtil.getFilePathFromResources(excelFileName));
+        if (projectName != null && !projectName.isEmpty()) {
+            nameField.fill(projectName);
+        }
+        submitBtn.click();
+    }
+
+    // Create-from-archive path in the React wizard (method -> Next -> upload .zip -> name -> Create).
+    public void createProjectFromZip(String zipFileName, String projectName) {
+        methodArchive.click();
+        nextBtn.click();
+        archiveUpload.setInputFiles(TestDataUtil.getFilePathFromResources(zipFileName));
         if (projectName != null && !projectName.isEmpty()) {
             nameField.fill(projectName);
         }

@@ -135,8 +135,7 @@ public class RepositoryPage extends BasePage {
                 createNewProjectComponent.createProjectFromExcel(sourceName, projectName);
                 break;
             case ZIP_ARCHIVE:
-                ZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(projectType);
-                zipComponent.createProjectZipArchive(sourceName, projectName);
+                createNewProjectComponent.createProjectFromZip(sourceName, projectName);
                 break;
             case TEMPLATE:
                 createNewProjectComponent.createProjectFromTemplate(sourceName, projectName, finalize);
