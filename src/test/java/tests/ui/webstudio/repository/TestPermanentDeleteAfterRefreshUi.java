@@ -6,8 +6,8 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.ElementsTabComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestPermanentDeleteAfterRefreshUi extends BaseTest {
 
-    private static final String PROJECTS_FOLDER = "Projects";
     private static final String SAMPLE_TEMPLATE = "Sample Project";
     private static final String SAMPLE_MODULE_FILE = "Main.xlsx";
 
@@ -29,21 +28,12 @@ public class TestPermanentDeleteAfterRefreshUi extends BaseTest {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, SAMPLE_TEMPLATE);
         RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(projectName);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        repositoryPage.getRepositoryContentTabSwitcherComponent().selectElementsTab()
-                .deleteElement(SAMPLE_MODULE_FILE);
+        projectDetail.openFilesTab().deleteFile(SAMPLE_MODULE_FILE);
+        projectDetail.reloadPage();
 
-        repositoryPage.reloadPage();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        ElementsTabComponent elementsTabAfterRefresh = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectElementsTab();
-
-        assertThat(elementsTabAfterRefresh.isElementPresent(SAMPLE_MODULE_FILE))
+        assertThat(projectDetail.openFilesTab().isFilePresent(SAMPLE_MODULE_FILE))
                 .as("Deleted file '%s' must not reappear after a page refresh", SAMPLE_MODULE_FILE)
                 .isFalse();
     }

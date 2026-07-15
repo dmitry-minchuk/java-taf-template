@@ -197,6 +197,12 @@ public class RepositoryPage extends BasePage {
         return projectDeleteConfirmModalComponent.waitForVisible();
     }
 
+    // Opens the React project-detail view (Overview/Files/History/...) by clicking the project row.
+    public ProjectDetailPage openProjectDetail(String projectName) {
+        projectRowByName.format(projectName).click();
+        return new ProjectDetailPage();
+    }
+
     // Opened projects expose "Close"; closed ones expose "Open".
     public void openProject(String projectName) {
         projectActionByName.format(projectName, "Open").click();
