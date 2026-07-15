@@ -132,8 +132,7 @@ public class RepositoryPage extends BasePage {
         createProjectLink.click();
         switch (projectType) {
             case EXCEL_FILES:
-                ExcelFilesComponent excelComponent = createNewProjectComponent.selectTab(projectType);
-                excelComponent.createProjectFromExcelFile(sourceName, projectName);
+                createNewProjectComponent.createProjectFromExcel(sourceName, projectName);
                 break;
             case ZIP_ARCHIVE:
                 ZipArchiveComponent zipComponent = createNewProjectComponent.selectTab(projectType);
