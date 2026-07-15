@@ -8,7 +8,6 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorRevisionsTabComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentRevisionsTabComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
@@ -50,10 +49,15 @@ public class TestTabRevisionsInEditor extends BaseTest {
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
-        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        // The immediate post-save recompile keeps re-rendering the JSF toolbar/breadcrumb; a reload
+        // settles it on the static welcome view, then a tab round-trip re-enters the editor with the
+        // projects tree (arriving on the Editor tab shows the tree, as later in this test).
+        editorPage.reloadPage();
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
         editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
 
@@ -69,12 +73,8 @@ public class TestTabRevisionsInEditor extends BaseTest {
                 .isEqualTo("Project " + projectName + " is created.");
 
         // Compare editor revisions count with repository revisions count
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentRevisionsTabComponent repoRevisionsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectRevisionsTab();
-        int repositoryRevisionCount = repoRevisionsTab.getRevisionsCount();
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        int repositoryRevisionCount = repositoryPage.openProjectDetail(projectName).getRevisionsCount();
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
@@ -96,17 +96,15 @@ public class TestTabRevisionsInEditor extends BaseTest {
                 .as("Revision count should still be 2 after module navigation")
                 .isEqualTo(2);
 
+        // Viewing revisions in the editor leaves a lingering loading overlay that blocks the tab bar; a
+        // reload clears it to a stable state before switching to the Projects tab.
+        editorPage.reloadPage();
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
+        repositoryPage.closeProject(projectName);
         repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
+        repositoryPage.openProject(projectName);
         repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.waitUntilAppIdle();
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");

@@ -128,6 +128,15 @@ public class EditorPage extends BasePage {
         getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
     }
 
+    // A full reload rebuilds the editor in one stable render. Use it after a Save, when the React shell
+    // keeps re-rendering the JSF toolbar/breadcrumb on its recompile cycle and in-page navigation clicks
+    // can't land; the reload naturally waits for the server-side recompile and preserves the workspace.
+    public EditorPage reloadPage() {
+        page.reload();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
     public TableComponent getCenterTable() {
         waitUntilSpinnerLoaded();
         WaitUtil.waitForCondition(

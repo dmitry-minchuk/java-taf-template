@@ -76,6 +76,10 @@ public class ProjectDetailPage extends BasePage {
 
     public int getRevisionsCount() {
         openHistoryTab();
+        // The History tab loads its revision list asynchronously after the spinner clears, so wait for
+        // the first entry to render before counting (every project has at least the creation revision).
+        // waitForVisible would trip strict mode on the multi-match, so wait on the first entry directly.
+        revisionEntries.getLocator().first().waitFor();
         return revisionEntries.getLocator().count();
     }
 
