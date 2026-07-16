@@ -95,7 +95,7 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         String projectName = "Example3_" + System.currentTimeMillis();
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, "Example 3 - Auto Policy");
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, "Example 3 - Auto Policy Calculation");
 
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
