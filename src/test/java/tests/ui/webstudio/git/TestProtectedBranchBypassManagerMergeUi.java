@@ -52,18 +52,18 @@ public class TestProtectedBranchBypassManagerMergeUi extends BaseTest {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
+        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
+        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.refresh();
+        repositoryPage.openProject(PROJECT_NAME);
+        EditorPage editor = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editor.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProjectAndWait();
         SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
         helpers.utils.WaitUtil.waitForCondition(() -> {
-            repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
+            editor.getEditorToolbarPanelComponent().clickSync();
             return syncDialog.isVisible();
         }, 15_000, 1_000, "Click Sync until the merge dialog appears");
         syncDialog.selectBranch(PROTECTED_TARGET);
