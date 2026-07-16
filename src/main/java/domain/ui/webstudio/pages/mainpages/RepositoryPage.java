@@ -35,6 +35,7 @@ public class RepositoryPage extends BasePage {
     // per-row action buttons keyed by aria-label. Format placeholders with the project name.
     private WebElement projectRowByName;
     private WebElement projectActionByName;
+    private WebElement discardCloseConfirmBtn;
     private WebElement filterByNameInput;
     private WebElement clearFilterBtn;
     private WebElement advancedFilterBtn;
@@ -83,6 +84,7 @@ public class RepositoryPage extends BasePage {
         refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
         projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
+        discardCloseConfirmBtn = new WebElement(page, "[data-testid=discard-close-confirm]", "discardCloseConfirmBtn");
 
         filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
         clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
@@ -216,6 +218,15 @@ public class RepositoryPage extends BasePage {
         return new ProjectDetailPage();
     }
 
+    // Return to the projects list from a project-detail view (the detail has no row actions), so callers
+    // can chain list operations (open/close/delete) after inspecting a project's detail.
+    public RepositoryPage openProjectsList() {
+        java.net.URI current = java.net.URI.create(page.url());
+        page.navigate(current.getScheme() + "://" + current.getAuthority() + "/projects");
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
     // Opened projects expose "Close"; closed ones expose "Open".
     public void openProject(String projectName) {
         projectActionByName.format(projectName, "Open").click();
@@ -223,6 +234,11 @@ public class RepositoryPage extends BasePage {
 
     public void closeProject(String projectName) {
         projectActionByName.format(projectName, "Close").click();
+        // Closing a project with uncommitted local changes prompts a "Discard unsaved changes?" confirm.
+        if (discardCloseConfirmBtn.isVisible(3000)) {
+            discardCloseConfirmBtn.click();
+        }
+        waitUntilSpinnerLoaded();
     }
 
     public void createProjectFromWorkSpace(String projectName, String repository, boolean selectAllProjects) {

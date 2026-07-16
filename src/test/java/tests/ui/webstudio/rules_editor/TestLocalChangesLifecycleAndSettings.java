@@ -41,26 +41,15 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
-        repositoryPage.getConfirmCloseProjectDialogComponent().clickClose();
-        repositoryPage.waitUntilSpinnerLoaded();
+        // Close discards the uncommitted change (confirmed via the "Discard unsaved changes?" prompt).
+        repositoryPage.closeProject(projectName);
+        repositoryPage.waitUntilAppIdle();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(projectName);
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isFolderExistsInTree(".history"))
+        assertThat(repositoryPage.openProjectDetail(projectName).openFilesTab().isFolderPresent(".history"))
                 .as(".history folder should not be visible in repository after project close")
                 .isFalse();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
+        repositoryPage.openProjectsList().openProject(projectName);
         repositoryPage.waitUntilSpinnerLoaded();
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
