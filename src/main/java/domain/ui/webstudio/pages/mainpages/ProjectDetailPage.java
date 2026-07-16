@@ -2,6 +2,7 @@ package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 
@@ -16,6 +17,15 @@ public class ProjectDetailPage extends BasePage {
     private WebElement overviewTab;
     private WebElement filesTab;
     private WebElement historyTab;
+    private WebElement branchesTab;
+    // Branches tab (only interactive when the project is OPEN): create/merge/delete per branch row
+    private WebElement branchesCurrentLabel;    // the current-branch name
+    private WebElement branchesCreateBtn;
+    private WebElement branchNewNameField;
+    private WebElement branchCreateSubmitBtn;
+    private WebElement branchRowByName;          // format(name) → branch-commit-<name> (row presence)
+    private WebElement branchMergeByName;        // format(name) → branch-merge-<name>
+    private SyncUpdatesDialogComponent syncUpdatesDialogComponent;
     // Header
     private WebElement projectStatus;       // React status: Local / Opened / Editing / Closed / ...
     // Files tab: a file tree on the left, a preview panel with per-file actions on the right
@@ -41,6 +51,14 @@ public class ProjectDetailPage extends BasePage {
         overviewTab = new WebElement(page, "xpath=//div[@data-node-key='overview']", "overviewTab");
         filesTab = new WebElement(page, "xpath=//div[@data-node-key='files']", "filesTab");
         historyTab = new WebElement(page, "xpath=//div[@data-node-key='history']", "historyTab");
+        branchesTab = new WebElement(page, "xpath=//div[@data-node-key='branches']", "branchesTab");
+        branchesCurrentLabel = new WebElement(page, "[data-testid=branches-current]", "branchesCurrentLabel");
+        branchesCreateBtn = new WebElement(page, "[data-testid=branches-create]", "branchesCreateBtn");
+        branchNewNameField = new WebElement(page, "[data-testid=branches-new-name]", "branchNewNameField");
+        branchCreateSubmitBtn = new WebElement(page, "[data-testid=branches-create-submit]", "branchCreateSubmitBtn");
+        branchRowByName = new WebElement(page, "xpath=//*[@data-testid='branch-commit-%s']", "branchRow");
+        branchMergeByName = new WebElement(page, "xpath=//*[@data-testid='branch-merge-%s']", "branchMergeBtn");
+        syncUpdatesDialogComponent = new SyncUpdatesDialogComponent();
         projectStatus = new WebElement(page, "[data-testid^=\"status-\"]", "projectStatus");
         revisionEntries = new WebElement(page, "xpath=//*[starts-with(@data-testid,'revision-comment-')]", "revisionEntries");
         fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
@@ -69,6 +87,43 @@ public class ProjectDetailPage extends BasePage {
         historyTab.click();
         waitUntilSpinnerLoaded();
         return this;
+    }
+
+    // --- Branches tab (React project-detail; create/merge controls require the project to be OPEN) ---
+
+    public ProjectDetailPage openBranchesTab() {
+        branchesTab.click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
+    // Creates a branch off the current one via the "New branch" dialog (leaves "switch to new branch" at its
+    // default). Mirrors the legacy CopyProjectDialogComponent.setNewBranchName flow.
+    public ProjectDetailPage createBranch(String branchName) {
+        openBranchesTab();
+        branchesCreateBtn.click();
+        branchNewNameField.fill(branchName);
+        branchCreateSubmitBtn.click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
+    public boolean isBranchPresent(String branchName) {
+        openBranchesTab();
+        return branchRowByName.format(branchName).isVisible(DEFAULT_TIMEOUT_MS);
+    }
+
+    public String getCurrentBranch() {
+        openBranchesTab();
+        return branchesCurrentLabel.getText().trim();
+    }
+
+    // Opens the "Sync updates" dialog for merging the current branch with the given target branch (the target
+    // is implicit in the branch row's Merge action).
+    public SyncUpdatesDialogComponent openMergeDialog(String targetBranch) {
+        openBranchesTab();
+        branchMergeByName.format(targetBranch).click();
+        return syncUpdatesDialogComponent.waitForVisible();
     }
 
     // Reads the value assigned for a tag type from the Overview TAGS section (each tag renders as an
