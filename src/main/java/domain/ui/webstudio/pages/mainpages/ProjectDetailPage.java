@@ -1,10 +1,14 @@
 package domain.ui.webstudio.pages.mainpages;
 
+import com.microsoft.playwright.Locator;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // React project-detail view (/projects/<id>) introduced in build 032c60a664ce: Overview / Files /
 // History / Branches / Publish tabs. Reached from the projects list via RepositoryPage.openProjectDetail.
@@ -146,6 +150,20 @@ public class ProjectDetailPage extends BasePage {
     // "No Changes" / "In Editing" wording, so migrated tests must assert against the React values.
     public String getStatus() {
         return projectStatus.getText().trim();
+    }
+
+    // Revision comments on the History tab (each revision-comment-<hash>), newest first. Replaces the
+    // legacy RepositoryContentRevisionsTabComponent.getRevisionDescription(i) loop.
+    public List<String> getRevisionDescriptions() {
+        openHistoryTab();
+        Locator entries = revisionEntries.getLocator();
+        entries.first().waitFor();
+        List<String> descriptions = new ArrayList<>();
+        int count = entries.count();
+        for (int i = 0; i < count; i++) {
+            descriptions.add(entries.nth(i).textContent().trim());
+        }
+        return descriptions;
     }
 
     public int getRevisionsCount() {

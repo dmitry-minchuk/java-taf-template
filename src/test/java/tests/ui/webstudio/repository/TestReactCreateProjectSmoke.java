@@ -5,6 +5,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
@@ -58,5 +59,17 @@ public class TestReactCreateProjectSmoke extends BaseTest {
         assertThat(repositoryPage.getAllVisibleProjectsInTable())
                 .as("getAllVisibleProjectsInTable should list the created project from the React rows")
                 .contains(projectName);
+    }
+
+    @Test
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void historyShowsCreationRevision() {
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
+        RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(projectName);
+        assertThat(projectDetail.getRevisionDescriptions())
+                .as("History tab should list the project-creation revision comment")
+                .anyMatch(d -> d.contains("is created"));
     }
 }
