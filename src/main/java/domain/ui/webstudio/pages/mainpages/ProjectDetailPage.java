@@ -53,6 +53,7 @@ public class ProjectDetailPage extends BasePage {
     private WebElement revisionCompareSubmit;   // submit in the "Compare" modal (opens the diff tab)
     // Overview tab: assigned tags render as ant-tags "<type> → <value>" in the TAGS section
     private WebElement tagValueForType;     // format(tagType) → the value span
+    private WebElement overviewRight;       // the right column of the Overview tab (Status/Repository/Path/Branch/Revision/Last change/Comment)
 
     public ProjectDetailPage() {
         super();
@@ -87,6 +88,7 @@ public class ProjectDetailPage extends BasePage {
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path]", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
         tagValueForType = new WebElement(page, "xpath=//*[@data-testid='overview-left']//span[contains(@class,'ant-tag')][./span[1][normalize-space()='%s']]/span[last()]", "tagValueForType");
+        overviewRight = new WebElement(page, "[data-testid=overview-right]", "overviewRight");
     }
 
     public ProjectDetailPage openOverviewTab() {
@@ -173,6 +175,31 @@ public class ProjectDetailPage extends BasePage {
     // "No Changes" / "In Editing" wording, so migrated tests must assert against the React values.
     public String getStatus() {
         return projectStatus.getText().trim();
+    }
+
+    // The React Overview-right column concatenates its labelled fields into one text blob
+    // ("...Revision<hash>Last change<author><date>Comment<text>"). Extracts the value between two labels.
+    private String extractOverviewField(String label, String nextLabel) {
+        openOverviewTab();
+        String blob = overviewRight.getText();
+        int start = blob.indexOf(label);
+        if (start < 0) {
+            return "";
+        }
+        start += label.length();
+        int end = blob.indexOf(nextLabel, start);
+        return (end < 0 ? blob.substring(start) : blob.substring(start, end)).trim();
+    }
+
+    // Replaces the legacy Properties-tab getRevision() — the React Overview shows the FULL commit hash.
+    public String getOverviewRevision() {
+        return extractOverviewField("Revision", "Last change");
+    }
+
+    // Replaces the legacy Properties-tab getModifiedBy()+getModifiedAt() — the React Overview combines the
+    // author and timestamp into a single "Last change" field (e.g. "Sheldon SawaynJul 16, 2026 6:04 PM").
+    public String getOverviewLastChange() {
+        return extractOverviewField("Last change", "Comment");
     }
 
     // Revision comments on the History tab (each revision-comment-<hash>), newest first. Replaces the

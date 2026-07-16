@@ -7,12 +7,11 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
-import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
@@ -28,6 +27,7 @@ import tests.BaseTest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,8 +37,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   EPBDS-12712 / IPBQA-32158 — Table action buttons (open/close/deploy) in repository projects table
  *   IPBQA-29847               — Repository tab properties (ModifiedBy, ModifiedAt, Revision) multi-user verification
  *
- * Deploy automation: uses DeployInfrastructureService with PostgreSQL production repository.
- * Deploy Configuration entity was removed (EPBDS-15093) — deployment is done directly via DeployModal.
+ * React repository (build 032c60a664ce+): the projects table exposes per-row action buttons
+ * (project-action-{open,close,copy,export,delete,deploy}-<id>, aria-label Open/Close/...); status lives in
+ * the project-detail header/Overview (not a table column), so status is read via getProjectStatusFromDetail /
+ * ProjectDetailPage.getStatus (React words: "Opened"/"Closed", not the legacy "No Changes"/"Closed").
+ * The Overview-right column carries Revision (full commit hash) and a combined "Last change" (author+timestamp).
+ * Deploy automation: DeployInfrastructureService with a PostgreSQL production repository (DEPLOY_STUDIO_PARAMS).
  */
 public class TestRepositoryTableActions extends BaseTest {
 
@@ -66,32 +70,28 @@ public class TestRepositoryTableActions extends BaseTest {
 
     private static final String TEMPLATE_NAME = "Sample Project";
 
-    // Table action button titles — actual @title attributes of <a> tags in Actions column
-    private static final String TABLE_ACTION_OPEN   = "Open project";
-    private static final String TABLE_ACTION_CLOSE  = "Close project";
-    private static final String TABLE_ACTION_DEPLOY = "Deploy project";
+    // React project statuses (project-detail header). Legacy "No Changes" is now "Opened".
+    private static final String STATUS_OPENED = "Opened";
+    private static final String STATUS_CLOSED = "Closed";
 
-    // Status values (from legacy: ProjectStatus constants)
-    private static final String STATUS_NO_CHANGES = "No Changes";
-    private static final String STATUS_CLOSED     = "Closed";
+    // React row action aria-labels
+    private static final String ACTION_OPEN  = "Open";
+    private static final String ACTION_CLOSE = "Close";
 
-    // Test data file names (unique across all test resources, per naming convention)
     private static final String MAIN_XLS  = "TestRepositoryTableActions.Main.xls";
     private static final String RULES_XLS = "TestRepositoryTableActions.rules.xls";
 
-    // Second user credentials for testRepositoryTabProperties
     private static final String SECOND_USER          = "repo_table_second_user";
     private static final String SECOND_USER_PASSWORD = "Test123!";
     private static final String SECOND_USER_FIRST    = "Second";
     private static final String SECOND_USER_LAST     = "User";
 
-    // Viewer user credentials for testTableActionButtons
     private static final String VIEWER_USER          = "repo_table_viewer_user";
     private static final String VIEWER_USER_PASSWORD = "Test123!";
 
     @Test
     @TestCaseId("EPBDS-12712")
-    @Description("Repository table action buttons: open/close/deploy icons in Actions column; ButtonsPanel open/close; viewer user access")
+    @Description("Repository table action buttons: open/close/deploy row actions; viewer user access")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testTableActionButtons() {
         String projectName1 = "TestTableActionButtons_P1_" + System.currentTimeMillis();
@@ -117,123 +117,101 @@ public class TestRepositoryTableActions extends BaseTest {
                 .saveUser();
         UserData viewerUser = new UserData(VIEWER_USER, VIEWER_USER_PASSWORD);
 
-        // ===== Navigate to Repository and create project1 from template =====
+        // ===== Create project1 from template =====
         editorPage = new EditorPage();
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName1, TEMPLATE_NAME);
 
-        // ===== Deploy project1 via right panel Deploy button =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
+        // ===== Deploy project1 via row Deploy action =====
+        DeployModalComponent deployModal = repositoryPage.clickDeploy(projectName1);
         String deploymentName = StringUtil.generateUniqueName("Deploy");
         deployModal.deployWithAllFields(null, deploymentName, "First deploy");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy should succeed with success notification")
                 .isTrue();
         repositoryPage.closeAllMessages();
-        repositoryPage.refresh();
 
-        // ===== Verify Deploy table action button in Actions column =====
-        // After deploy, the projects table should show a Deploy action icon for the project.
-        // TABLE_ACTION_DEPLOY title comes from <a[@title]> in the Actions column of the projects table.
-        assertThat(repositoryPage.isTableActionButtonPresent(projectName1, TABLE_ACTION_DEPLOY))
-                .as("'Deploy' table action button should be present in projects table when deploy repo is configured")
+        // ===== Verify Deploy row action present after deploy =====
+        assertThat(repositoryPage.isDeployAvailable(projectName1))
+                .as("'Deploy' row action should be present when a deploy repo is configured")
                 .isTrue();
 
-        // ===== Close project1 via table action button → status becomes "Closed" =====
-        assertThat(repositoryPage.isTableActionButtonPresent(projectName1, TABLE_ACTION_CLOSE))
-                .as("'Close project' table action button should be present for open project")
+        // ===== Close project1 via row action → status "Closed" =====
+        assertThat(repositoryPage.isProjectActionAvailable(projectName1, ACTION_CLOSE))
+                .as("'Close' row action should be present for open project")
                 .isTrue();
-        repositoryPage.clickTableActionButton(projectName1, TABLE_ACTION_CLOSE);
-        assertThat(repositoryPage.getProjectStatusFromTable(projectName1))
-                .as("Project status in table should be 'Closed' after clicking Close table action")
+        repositoryPage.closeProject(projectName1);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName1))
+                .as("Project status should be 'Closed' after Close row action")
                 .isEqualTo(STATUS_CLOSED);
 
-        // ===== Open project1 via table action button → status becomes "No Changes" =====
-        assertThat(repositoryPage.isTableActionButtonPresent(projectName1, TABLE_ACTION_OPEN))
-                .as("'Open project' table action button should be present for closed project")
+        // ===== Open project1 via row action → status "Opened" =====
+        assertThat(repositoryPage.isProjectActionAvailable(projectName1, ACTION_OPEN))
+                .as("'Open' row action should be present for closed project")
                 .isTrue();
-        repositoryPage.clickTableActionButton(projectName1, TABLE_ACTION_OPEN);
-        handleOpenProjectDialog(repositoryPage);
-        assertThat(repositoryPage.getProjectStatusFromTable(projectName1))
-                .as("Project status in table should be 'No Changes' after clicking Open table action")
-                .isEqualTo(STATUS_NO_CHANGES);
+        repositoryPage.openProject(projectName1);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName1))
+                .as("Project status should be 'Opened' after Open row action")
+                .isEqualTo(STATUS_OPENED);
 
-        // ===== Click Deploy table action for already-deployed project → DeployModal opens for redeploy =====
-        repositoryPage.clickTableActionButton(projectName1, TABLE_ACTION_DEPLOY);
-        deployModal = repositoryPage.getDeployModalComponent();
+        // ===== Redeploy via Deploy row action → DeployModal opens → cancel =====
+        deployModal = repositoryPage.clickDeploy(projectName1);
         assertThat(deployModal.isModalVisible())
-                .as("Clicking Deploy table action should open DeployModal for redeploy")
+                .as("Clicking Deploy row action should open DeployModal for redeploy")
                 .isTrue();
         deployModal.clickCancel();
 
-        // ===== Create project2 from Excel file =====
+        // ===== Create project2 from Excel, verify status via detail =====
         repositoryPage.createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName2, MAIN_XLS);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName2))
+                .as("Newly created Excel project status should be 'Opened'")
+                .isEqualTo(STATUS_OPENED);
 
-        // ===== Select project2 in tree and verify status "No Changes" via Properties tab =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName2);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Newly created Excel project status should be 'No Changes'")
-                .isEqualTo(STATUS_NO_CHANGES);
-
-        // ===== Close project2 via ButtonsPanel → status "Closed" =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'Closed' after ButtonsPanel Close")
+        // ===== Close project2 via row action → "Closed" =====
+        repositoryPage.closeProject(projectName2);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName2))
+                .as("Project2 status should be 'Closed' after Close")
                 .isEqualTo(STATUS_CLOSED);
 
-        // ===== Open project2 via ButtonsPanel → status "No Changes" =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        handleOpenProjectDialog(repositoryPage);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'No Changes' after ButtonsPanel Open")
-                .isEqualTo(STATUS_NO_CHANGES);
+        // ===== Open project2 via row action → "Opened" =====
+        repositoryPage.openProject(projectName2);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName2))
+                .as("Project2 status should be 'Opened' after Open")
+                .isEqualTo(STATUS_OPENED);
 
-        // ===== Create project3 from template (for viewer user test) =====
+        // ===== Create project3 from template (for viewer test) =====
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName3, TEMPLATE_NAME);
 
         // ===== Logout admin → login as viewer =====
         editorPage = new EditorPage();
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(viewerUser);
-
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        // ===== Viewer: Open project3 via table action button (project3 is "Closed" for viewer) =====
-        assertThat(repositoryPage.isTableActionButtonPresent(projectName3, TABLE_ACTION_OPEN))
-                .as("'Open project' table action button should be present for viewer on closed project")
+        // ===== Viewer: Open project3 (closed in the viewer's workspace) =====
+        assertThat(repositoryPage.isProjectActionAvailable(projectName3, ACTION_OPEN))
+                .as("'Open' row action should be present for viewer on closed project")
                 .isTrue();
-        repositoryPage.clickTableActionButton(projectName3, TABLE_ACTION_OPEN);
-        handleOpenProjectDialog(repositoryPage);
-        assertThat(repositoryPage.getProjectStatusFromTable(projectName3))
-                .as("Project status in table should be 'No Changes' after viewer clicks Open table action")
-                .isEqualTo(STATUS_NO_CHANGES);
+        repositoryPage.openProject(projectName3);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName3))
+                .as("Project3 status should be 'Opened' after viewer Open")
+                .isEqualTo(STATUS_OPENED);
 
-        // ===== Viewer: Close project3 via table action button =====
-        assertThat(repositoryPage.isTableActionButtonPresent(projectName3, TABLE_ACTION_CLOSE))
-                .as("'Close project' table action button should be present for viewer on open project")
+        // ===== Viewer: Close project3 =====
+        assertThat(repositoryPage.isProjectActionAvailable(projectName3, ACTION_CLOSE))
+                .as("'Close' row action should be present for viewer on open project")
                 .isTrue();
-        repositoryPage.clickTableActionButton(projectName3, TABLE_ACTION_CLOSE);
-        assertThat(repositoryPage.getProjectStatusFromTable(projectName3))
-                .as("Project status in table should be 'Closed' after viewer clicks Close table action")
+        repositoryPage.closeProject(projectName3);
+        assertThat(repositoryPage.getProjectStatusFromDetail(projectName3))
+                .as("Project3 status should be 'Closed' after viewer Close")
                 .isEqualTo(STATUS_CLOSED);
     }
 
     @Test
     @TestCaseId("IPBQA-29847")
-    @Description("Repository tab Properties: ModifiedBy, ModifiedAt, Revision verified across multi-user project modifications")
+    @Description("Repository project properties: Last change (author+date) and Revision verified across multi-user modifications")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testRepositoryTabProperties() {
         String projectName = "TestRepositoryTabProperties_" + System.currentTimeMillis();
@@ -241,7 +219,7 @@ public class TestRepositoryTableActions extends BaseTest {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        // ===== Create second user (contributor access) with known names =====
+        // ===== Create second user (contributor access) =====
         editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToUsersPage()
@@ -257,171 +235,86 @@ public class TestRepositoryTableActions extends BaseTest {
                 .saveUser();
         UserData secondUser = new UserData(SECOND_USER, SECOND_USER_PASSWORD);
 
-        // ===== Navigate to Repository and create project from template as admin (firstUser) =====
-        // createProject() internally calls fillCommitInfo() which may show the commit info dialog.
-        // After creation, the profile reflects the actual commit author name (filled by the dialog or pre-existing).
+        // ===== Create project from template as admin =====
         editorPage = new EditorPage();
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
 
-        // ===== Read admin's actual commit author name from My Profile after project creation =====
-        // The commit info dialog (if it appeared) updates the profile. We read what is now there.
-        // If firstName+lastName are empty → username is used as commit author.
-        editorPage = new EditorPage();
-        MyProfilePageComponent myProfile = editorPage.openUserMenu()
-                .navigateToAdministration()
-                .navigateToMyProfilePage();
-        String adminFirstName = myProfile.getFirstName();
-        String adminLastName = myProfile.getLastName();
-        String firstLastFirstUser;
-        if (adminFirstName.isEmpty() && adminLastName.isEmpty()) {
-            firstLastFirstUser = myProfile.getUsername();
-        } else {
-            firstLastFirstUser = adminFirstName.trim();
-        }
-
-        // ===== Navigate back to Repository and select project =====
-        editorPage = new EditorPage();
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-
-        // ===== Select project in tree, verify Properties tab =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-
-        // Assert ModifiedBy = admin's actual commit author name
-        assertThat(propertiesTab.getModifiedBy())
-                .as("ModifiedBy should equal admin's commit author name after project creation")
-                .isEqualTo(firstLastFirstUser);
-
-        // Assert ModifiedAt contains today/yesterday/tomorrow (timezone tolerance — same as legacy)
-        String creationProjectTime = propertiesTab.getModifiedAt();
-        assertThat(containsValidDate(creationProjectTime))
-                .as("ModifiedAt should contain a valid current date, but was: " + creationProjectTime)
+        // ===== Verify Overview after creation: last-change (author+date) + revision present =====
+        // React couples the commit author to the fill-commit-info dialog (random data on first create), NOT to
+        // My Profile, so the exact author name is not asserted; the multi-user check below verifies that the
+        // Last-change record CHANGES when a different user modifies the project.
+        ProjectDetailPage detail = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        String creationLastChange = detail.getOverviewLastChange();
+        assertThat(creationLastChange)
+                .as("Overview 'Last change' (author + timestamp) should be present after creation")
+                .isNotEmpty();
+        assertThat(containsValidDate(creationLastChange))
+                .as("Overview 'Last change' should contain a valid current date, but was: " + creationLastChange)
                 .isTrue();
+        assertThat(detail.getOverviewRevision())
+                .as("Overview Revision (commit hash) should be present")
+                .isNotEmpty();
+        repositoryPage.openProjectsList();
 
-        // Assert Revision length == 6
-        assertThat(propertiesTab.getRevision().length())
-                .as("Revision ID should be 6 characters long")
-                .isEqualTo(6);
-
-        // ===== Logout admin =====
+        // ===== Logout admin → login secondUser → open project, upload a file, save =====
         editorPage = new EditorPage();
         editorPage.openUserMenu().signOut();
-
-        // ===== Login as secondUser =====
         editorPage = loginService.login(secondUser);
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        // ===== Second user: select project, open it, upload file, save changes =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        handleOpenProjectDialog(repositoryPage);
+        repositoryPage.openProject(projectName);
+        repositoryPage.openProjectDetail(projectName)
+                .openFilesTab()
+                .uploadFile(TestDataUtil.getFilePathFromResources(RULES_XLS));
+        repositoryPage.openProjectsList().saveProjectWithCommitInfo(projectName, "Second user upload");
 
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(RULES_XLS))
-                .clickUploadButton();
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.fillCommitInfo();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
-
-        // ===== Read secondUser's actual commit author name from My Profile after save =====
-        editorPage = new EditorPage();
-        MyProfilePageComponent secondUserProfile = editorPage.openUserMenu()
-                .navigateToMyProfile()
-                .navigateToMyProfilePage();
-        String secondFirstName = secondUserProfile.getFirstName();
-        String firstLastSecondUser = secondFirstName.isEmpty() ? secondUserProfile.getUsername() : secondFirstName;
-
-        // ===== Navigate back to Repository and re-select project =====
+        // ===== Verify Overview updated by secondUser (record changed, date valid, revision present) =====
         editorPage = new EditorPage();
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-
-        // ===== Re-select project and verify Properties updated by secondUser =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-
-        // Assert ModifiedBy = second user's actual commit author name
-        assertThat(propertiesTab.getModifiedBy())
-                .as("ModifiedBy should equal second user's commit author name after modification")
-                .isEqualTo(firstLastSecondUser);
-
-        // Assert ModifiedAt contains today/yesterday/tomorrow
-        String modifiedAt = propertiesTab.getModifiedAt();
-        assertThat(containsValidDate(modifiedAt))
-                .as("ModifiedAt should contain a valid current date after modification, but was: " + modifiedAt)
+        detail = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        String modifiedLastChange = detail.getOverviewLastChange();
+        assertThat(containsValidDate(modifiedLastChange))
+                .as("Overview 'Last change' should contain a valid current date after modification")
                 .isTrue();
+        assertThat(modifiedLastChange)
+                .as("Overview 'Last change' should change after the second user's modification (multi-user)")
+                .isNotEqualTo(creationLastChange);
+        assertThat(detail.getOverviewRevision())
+                .as("Overview Revision should be present after modification")
+                .isNotEmpty();
+        repositoryPage.openProjectsList();
 
-        // Assert ModifiedAt changed from creation time
-        assertThat(modifiedAt)
-                .as("ModifiedAt should have changed after second user's modification")
-                .isNotEqualTo(creationProjectTime);
-
-        // ===== Deploy project and verify deploy button is available =====
-        // NOTE: Legacy Deploy Configuration entity was removed (EPBDS-15093).
-        // Deployment now works directly via DeployModal.
-        // Legacy steps 1-10 (Deploy Configuration CRUD) are obsolete and skipped.
-
-        // Logout secondUser → Login as admin (firstUser)
+        // ===== Logout secondUser → login admin → deploy → verify Overview still valid =====
         editorPage = new EditorPage();
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
-
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
 
-        // Deploy project via DeployModal
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
-        String deploymentName = StringUtil.generateUniqueName("Deploy");
-        deployModal.deployWithAllFields(null, deploymentName, "Deploy for properties verification");
+        DeployModalComponent deployModal = repositoryPage.clickDeploy(projectName);
+        deployModal.deployWithAllFields(null, StringUtil.generateUniqueName("Deploy"), "Deploy for properties verification");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy should succeed with success notification")
                 .isTrue();
         repositoryPage.closeAllMessages();
 
-        // Verify project properties after deploy — ModifiedBy still reflects last save author
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String postDeployModifiedAt = propertiesTab.getModifiedAt();
-        assertThat(containsValidDate(postDeployModifiedAt))
-                .as("ModifiedAt should still be a valid date after deploy")
+        detail = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        assertThat(containsValidDate(detail.getOverviewLastChange()))
+                .as("Overview 'Last change' should still contain a valid date after deploy")
                 .isTrue();
-        assertThat(propertiesTab.getRevision().length())
-                .as("Revision should still be 6 characters after deploy")
-                .isEqualTo(6);
+        assertThat(detail.getOverviewRevision())
+                .as("Overview Revision should still be present after deploy")
+                .isNotEmpty();
     }
 
-    private void handleOpenProjectDialog(RepositoryPage repositoryPage) {
-        if (repositoryPage.getConfirmOpeningDialogBtn().isVisible(1000)) {
-            repositoryPage.getConfirmOpeningDialogBtn().click();
-            repositoryPage.getConfirmOpeningDialogShade().waitForHidden(3000);
-        }
-    }
-
-    // Same date validation logic as legacy: Extensions.getCurrentDate/getYesterdayDate/getTomorrowDate("MM/dd/yyyy")
+    // React renders dates as "MMM d, yyyy h:mm a" (e.g. "Jul 16, 2026 6:04 PM"); accept today/yesterday/tomorrow
+    // (timezone tolerance, same intent as the legacy MM/dd/yyyy check).
     private boolean containsValidDate(String value) {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
         String today     = LocalDate.now().format(fmt);
         String yesterday = LocalDate.now().minusDays(1).format(fmt);
         String tomorrow  = LocalDate.now().plusDays(1).format(fmt);

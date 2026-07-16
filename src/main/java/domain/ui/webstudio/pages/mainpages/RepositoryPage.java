@@ -226,6 +226,14 @@ public class RepositoryPage extends BasePage {
         return new ProjectDetailPage();
     }
 
+    // React has no status column in the projects table — status lives in the project detail. This reads it
+    // and returns to the list so callers can keep using row actions. (Legacy getProjectStatusFromTable.)
+    public String getProjectStatusFromDetail(String projectName) {
+        String status = openProjectDetail(projectName).getStatus();
+        openProjectsList();
+        return status;
+    }
+
     // Return to the projects list from a project-detail view (the detail has no row actions), so callers
     // can chain list operations (open/close/delete) after inspecting a project's detail.
     public RepositoryPage openProjectsList() {
@@ -278,6 +286,16 @@ public class RepositoryPage extends BasePage {
     public void saveProject(String projectName, String comment) {
         projectActionByName.format(projectName, "Save").click();
         saveProjectDialogComponent.waitForVisible().setComment(comment).submit();
+        waitUntilSpinnerLoaded();
+    }
+
+    // Like saveProject, but also handles the "Configure Git Commit Info" modal raised on a user's FIRST commit
+    // (the save dialog stays open behind it until the identity is filled).
+    public void saveProjectWithCommitInfo(String projectName, String comment) {
+        projectActionByName.format(projectName, "Save").click();
+        saveProjectDialogComponent.waitForVisible().setComment(comment).clickSubmit();
+        fillCommitInfo();
+        saveProjectDialogComponent.waitForSubmitHidden();
         waitUntilSpinnerLoaded();
     }
 

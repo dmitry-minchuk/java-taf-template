@@ -44,6 +44,16 @@ public class SaveProjectDialogComponent extends BaseComponent {
         submitBtn.waitForHidden(10000);
     }
 
+    // Click Submit without waiting for the dialog to close — a user's first commit raises the "Configure Git
+    // Commit Info" modal on top, so the caller fills that before the save dialog finalizes.
+    public void clickSubmit() {
+        submitBtn.click();
+    }
+
+    public void waitForSubmitHidden() {
+        submitBtn.waitForHidden(10000);
+    }
+
     public void cancel() {
         cancelBtn.click();
     }
