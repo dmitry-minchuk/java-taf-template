@@ -9,7 +9,6 @@ import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -65,21 +64,16 @@ public class TestACLDeploySystemAction extends BaseTest {
         );
 
         // ============ Verify Deploy button NOT visible ============
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent buttonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isDeployBtnVisible())
-                .as("Viewer with Design-only access should NOT see Deploy button — no deploy repo access (BRD TR2)")
+        assertThat(repositoryPage.isDeployAvailable(projectName))
+                .as("Viewer with Design-only access should NOT see Deploy — no deploy repo access (BRD TR2)")
                 .isFalse();
         // Viewer still has read-only access
-        assertThat(buttonsPanel.isExportBtnVisible())
-                .as("Viewer should still see Export button").isTrue();
-        assertThat(buttonsPanel.isCopyBtnVisible())
-                .as("Viewer should NOT see Copy button").isFalse();
-        assertThat(buttonsPanel.isDeleteBtnVisible())
-                .as("Viewer should NOT see Delete button").isFalse();
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Export"))
+                .as("Viewer should still see Export").isTrue();
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Copy"))
+                .as("Viewer should NOT see Copy").isFalse();
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Delete"))
+                .as("Viewer should NOT see Delete").isFalse();
     }
 
     @Test
@@ -125,13 +119,8 @@ public class TestACLDeploySystemAction extends BaseTest {
         );
 
         // ============ Verify Deploy NOT visible for Viewer (needs Edit on deploy repo) ============
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent buttonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isDeployBtnVisible())
-                .as("Viewer role is NOT enough on deploy repo — Deploy button must NOT be visible (BRD TR2)")
+        assertThat(repositoryPage.isDeployAvailable(projectName))
+                .as("Viewer role is NOT enough on deploy repo — Deploy must NOT be visible (BRD TR2)")
                 .isFalse();
     }
 
