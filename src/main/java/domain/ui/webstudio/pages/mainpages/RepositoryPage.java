@@ -75,6 +75,7 @@ public class RepositoryPage extends BasePage {
     private ConfirmEraseDialogComponent confirmEraseDialogComponent;
     private AddFolderDialogComponent addFolderDialogComponent;
     private ProjectDeleteConfirmModalComponent projectDeleteConfirmModalComponent;
+    private SaveProjectDialogComponent saveProjectDialogComponent;
 
     public RepositoryPage() {
         super();
@@ -122,6 +123,7 @@ public class RepositoryPage extends BasePage {
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
         confirmEraseDialogComponent = createScopedComponent(ConfirmEraseDialogComponent.class, "xpath=//div[@id='modalEraseProject_container']", "confirmEraseDialogComponent");
         projectDeleteConfirmModalComponent = new ProjectDeleteConfirmModalComponent();
+        saveProjectDialogComponent = new SaveProjectDialogComponent();
 
         confirmOpeningDialogBtn = new WebElement(page, "//div[@id='modalOpenProject_container' and not(ancestor::div[contains(@style, 'display: none;')])]//input[@value='Open Project']", "confirmOpeningDialogBtn");
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
@@ -252,6 +254,15 @@ public class RepositoryPage extends BasePage {
         copyProjectNameField.fill(newProjectName);
         copyProjectSubmitBtn.click();
         fillCommitInfo();
+        waitUntilSpinnerLoaded();
+    }
+
+    // Commits a project's uncommitted local changes via the row "Save" action → "Save project" dialog
+    // (the Save action only appears while the project has local changes). Replaces the legacy
+    // buttons-panel Save + SaveChangesComponent flow.
+    public void saveProject(String projectName, String comment) {
+        projectActionByName.format(projectName, "Save").click();
+        saveProjectDialogComponent.waitForVisible().setComment(comment).submit();
         waitUntilSpinnerLoaded();
     }
 
