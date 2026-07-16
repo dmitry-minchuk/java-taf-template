@@ -84,11 +84,14 @@ public class ProjectDetailPage extends BasePage {
     }
 
     // Selecting a file reveals the preview panel with its delete action; deletion is confirmed via a popconfirm.
+    // The tree node is removed asynchronously after the popconfirm, so wait it out before returning — otherwise
+    // a following isFilePresent check races the removal and still sees the node.
     public ProjectDetailPage deleteFile(String fileName) {
         fileNodeByName.format(fileName).click();
         fileDeleteBtn.click();
         fileDeleteConfirmOk.click();
         waitUntilSpinnerLoaded();
+        fileNodeByName.format(fileName).waitForHidden(DEFAULT_TIMEOUT_MS);
         return this;
     }
 
