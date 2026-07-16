@@ -7,102 +7,58 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
-import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.*;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// Migrated to the React repository UI (build 032c60a664ce): the conflict is created by editing the same
+// spreadsheet cell on two branches (React has no updateFile content-replacement), merges run through the
+// Branches-tab Sync dialog (openMergeDialog + Send/Receive), and conflicts are settled in the React
+// "Resolve Conflicts" dialog (Use yours / Use theirs).
 public class TestMergeBranchesWithConflicts extends BaseTest {
 
-    private static final String PROJECT_NAME = "TestMergeBranchesWithConflicts";
+    private static final String PROJECT_NAME = "MergeConflicts";
     private static final String BRANCH_1 = "Branch1";
     private static final String BRANCH_2 = "Branch2";
     private static final String MASTER_BRANCH = "master";
-    private static final String MODULE_NAME = "TestMergeBranchesWithConflicts_Initial";
-    private static final String TABLE_NAME = "mySpr";
-    private static final String SPREADSHEET_TYPE = "Spreadsheet";
+    private static final String MODULE_NAME = "Module1";
+    private static final String SPREADSHEET = "Spreadsheet";
+    private static final String TABLE_NAME = "MySpr1";
+    private static final String BRANCH_1_VALUE = "Branch1Value";
+    private static final String BRANCH_2_VALUE = "Branch2Value";
 
     @Test
     @TestCaseId("IPBQA-32850")
     @Description("Git - Merge branches with conflicts: Export with Use Yours resolution")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testMergeBranchesWithConflictsExportUseYours() {
-        // Setup: Login and create project with conflicting branches
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
-        EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = createProjectWithConflictingBranches();
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        createProjectWithConflictingBranches(repositoryPage, editorPage);
+        // On Branch2, send our updates to Branch1 -> conflict -> keep ours (Branch2).
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.openMergeDialog(BRANCH_1).clickSend();
+        repositoryPage.getResolveConflictsDialogComponent().waitForDialogToAppear();
+        assertThat(repositoryPage.getResolveConflictsDialogComponent().isDialogVisible())
+                .as("Resolve Conflicts dialog should appear on a conflicting export").isTrue();
+        repositoryPage.getResolveConflictsDialogComponent().resolveConflictUseYours();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
 
-        // Navigate to Branch2 and initiate sync with Branch1
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        propertiesTab.selectBranch(BRANCH_2);
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
-        SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(BRANCH_1);
-
-        // Conflict expected: attempt to export changes from Branch2 to Branch1
-        syncDialog.clickExportYourChanges();
-
-        // Resolve conflict: Use Yours (Branch2 version)
-        ResolveConflictsDialogComponent conflictDialog = repositoryPage.getResolveConflictsDialogComponent();
-        conflictDialog.waitForDialogToAppear();
-        assertThat(conflictDialog.isDialogVisible())
-                .as("Resolve Conflicts dialog should appear after export with conflicts")
-                .isTrue();
-        conflictDialog.resolveConflictUseYours();
-
-        // Verify: Branch1 now contains Branch2's version
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
-        editorPage.getEditorToolbarPanelComponent().switchBranch(BRANCH_1);
-
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, MODULE_NAME);
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree(SPREADSHEET_TYPE)
-                .selectItemInFolder(SPREADSHEET_TYPE, TABLE_NAME);
-
-        String cellContentBranch1 = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellContentBranch1)
-                .as("Branch1 should contain Branch2's version after 'Use Yours' resolution")
-                .contains("InitialSteps_Branch2");
-
-        // Verify: Branch2 still contains its original version
-        editorPage.getEditorToolbarPanelComponent().switchBranch(BRANCH_2);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, MODULE_NAME);
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree(SPREADSHEET_TYPE)
-                .selectItemInFolder(SPREADSHEET_TYPE, TABLE_NAME);
-
-        String cellContentBranch2 = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellContentBranch2)
-                .as("Branch2 should still contain its original version")
-                .contains("InitialSteps_Branch2");
+        // Branch1 now holds Branch2's version ("use yours" = the branch we merged from).
+        assertThat(readSpreadsheetCell(editorPage, BRANCH_1))
+                .as("Branch1 should hold Branch2's version after 'Use yours'").contains(BRANCH_2_VALUE);
+        assertThat(readSpreadsheetCell(editorPage, BRANCH_2))
+                .as("Branch2 keeps its own version").contains(BRANCH_2_VALUE);
     }
 
     @Test
@@ -110,153 +66,83 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
     @Description("Git - Merge branches with conflicts: Import with Use Theirs resolution")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testMergeBranchesWithConflictsImportUseTheirs() {
-        // Setup: Login and create project with conflicting branches
+        EditorPage editorPage = createProjectWithConflictingBranches();
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+
+        // On Branch2, receive Branch1's updates -> conflict -> take theirs (Branch1).
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.openMergeDialog(BRANCH_1).clickReceive();
+        repositoryPage.getResolveConflictsDialogComponent().waitForDialogToAppear();
+        assertThat(repositoryPage.getResolveConflictsDialogComponent().isDialogVisible())
+                .as("Resolve Conflicts dialog should appear on a conflicting import").isTrue();
+        repositoryPage.getResolveConflictsDialogComponent().resolveConflictUseTheirs();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
+
+        // Branch2 now holds Branch1's version ("use theirs" = the branch we merged from).
+        assertThat(readSpreadsheetCell(editorPage, BRANCH_2))
+                .as("Branch2 should hold Branch1's version after 'Use theirs'").contains(BRANCH_1_VALUE);
+        assertThat(readSpreadsheetCell(editorPage, BRANCH_1))
+                .as("Branch1 keeps its own version").contains(BRANCH_1_VALUE);
+    }
+
+    // Creates the project, then two branches that edit the same cell differently (Branch1 -> Branch1Value,
+    // Branch2 -> Branch2Value), leaving the project on Branch2. Returns the editor page.
+    private EditorPage createProjectWithConflictingBranches() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME,
+                "TestMergeBranchesNoConflicts_NoConflicts.zip");
 
-        createProjectWithConflictingBranches(repositoryPage, editorPage);
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.createBranch(BRANCH_1, true);
+        editSpreadsheetCell(editorPage, BRANCH_1_VALUE);
 
-        // Navigate to Branch2 and initiate sync with Branch1
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        propertiesTab.selectBranch(BRANCH_2);
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
-        SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(BRANCH_1);
-
-        // Conflict expected: attempt to import changes from Branch1 to Branch2
-        syncDialog.clickImportTheirChanges();
-
-        // Resolve conflict: Use Theirs (Branch1 version)
-        ResolveConflictsDialogComponent conflictDialog = repositoryPage.getResolveConflictsDialogComponent();
-        conflictDialog.waitForDialogToAppear();
-        assertThat(conflictDialog.isDialogVisible())
-                .as("Resolve Conflicts dialog should appear after import with conflicts")
-                .isTrue();
-        conflictDialog.resolveConflictUseTheirs();
-
-        // Verify: Branch2 now contains Branch1's version
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, MODULE_NAME);
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree(SPREADSHEET_TYPE)
-                .selectItemInFolder(SPREADSHEET_TYPE, TABLE_NAME);
-
-        String cellContentBranch2 = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellContentBranch2)
-                .as("Branch2 should contain Branch1's version after 'Use Theirs' resolution")
-                .contains("InitialSteps_Banch1");
-
-        // Verify: Branch1 retains its original version
-        editorPage.getEditorToolbarPanelComponent().switchBranch(BRANCH_1);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, MODULE_NAME);
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree(SPREADSHEET_TYPE)
-                .selectItemInFolder(SPREADSHEET_TYPE, TABLE_NAME);
-
-        String cellContentBranch1 = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellContentBranch1)
-                .as("Branch1 should retain its original version")
-                .contains("InitialSteps_Banch1");
+        // Branch2 must branch off master (not Branch1) so the two diverge on the same cell.
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorToolbarPanelComponent().switchBranch(MASTER_BRANCH);
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.createBranch(BRANCH_2, true);
+        editSpreadsheetCell(editorPage, BRANCH_2_VALUE);
+        return editorPage;
     }
 
-    private void createProjectWithConflictingBranches(RepositoryPage repositoryPage, EditorPage editorPage) {
-        // Step 1: Create project from initial Excel file (legacy: RepositoryTab.createProjectFromExcelFile)
-        repositoryPage.createProject(
-                CreateNewProjectComponent.TabName.EXCEL_FILES,
-                PROJECT_NAME,
-                "TestMergeBranchesWithConflicts_Initial.xlsx"
-        );
-        repositoryPage.refresh();
+    private void editSpreadsheetCell(EditorPage editorPage, String value) {
+        EditorPage edit = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        edit.getEditorLeftProjectModuleSelectorComponent().selectModule(PROJECT_NAME, MODULE_NAME);
+        edit.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree(SPREADSHEET)
+                .selectItemInFolder(SPREADSHEET, TABLE_NAME);
+        edit.getCenterTable().editCell(3, 1, value);
+        edit.getEditorTableActionsPanelComponent().clickSaveChanges();
+        edit.getEditorToolbarPanelComponent().clickSave();
+        edit.getSaveChangesComponent().getSaveBtn().click();
+    }
 
-        // Step 2: Copy project to Branch1 (legacy: copyGitProjectViaIconCustomBranchName)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_1);
-        copyDialog.clickCopyButton();
-        repositoryPage.refresh();
-
-        // Step 3: Update file in Branch1 (legacy: selectItemInTree + expandItemInProjectsTree + updateFile)
-        // We stay in Branch1 after copy, no need to switch
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECT_NAME)
-                .selectItemInFolder(PROJECT_NAME, "TestMergeBranchesWithConflicts_Initial.xlsx");
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUpdateFileBtn();
-        UpdateFileDialogComponent updateDialog = repositoryPage.getUpdateFileDialogComponent();
-        updateDialog.waitForDialogToAppear();
-        updateDialog.updateFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesWithConflicts_Branch1.xlsx"));
-        repositoryPage.getFileChangedWarningComponent().clickOkIfPresent();
-        updateDialog.clickUpdateButton();
-
-        // Save changes in Branch1 (legacy: selectProjectInTree + saveChanges)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-
-        // Step 4: Switch to master (legacy: selectProjectInTree + branchSelect.setValue("master"))
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        propertiesTab.selectBranch(MASTER_BRANCH);
-        repositoryPage.refresh();
-
-        // Step 5: Copy project to Branch2 from master (legacy: copyGitProjectViaIconCustomBranchName)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_2);
-        copyDialog.clickCopyButton();
-        repositoryPage.refresh();
-
-        // Step 6: Update file in Branch2 (legacy: selectItemInTree + expandItemInProjectsTree + updateFile)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECT_NAME)
-                .selectItemInFolder(PROJECT_NAME, "TestMergeBranchesWithConflicts_Initial.xlsx");
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUpdateFileBtn();
-        updateDialog = repositoryPage.getUpdateFileDialogComponent();
-        updateDialog.waitForDialogToAppear();
-        updateDialog.updateFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesWithConflicts_Branch2.xlsx"));
-        repositoryPage.getFileChangedWarningComponent().clickOkIfPresent();
-        updateDialog.clickUpdateButton();
-
-        // Save changes in Branch2 (legacy: selectProjectInTree + saveChanges)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
+    private String readSpreadsheetCell(EditorPage editorPage, String branch) {
+        // Resolving a conflict can drop the project from the editor workspace, so re-open it first.
+        RepositoryPage repo = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        if (repo.isProjectActionAvailable(PROJECT_NAME, "Open")) {
+            repo.openProject(PROJECT_NAME);
+            repo.waitUntilSpinnerLoaded();
+        }
+        EditorPage edit = repo.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        // Reload so the editor reflects the post-merge workspace, then select the project so the branch
+        // breadcrumb appears before switching to the target branch.
+        edit.reloadPage();
+        edit.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
+        edit.getEditorToolbarPanelComponent().switchBranch(branch);
+        edit.reloadPage();
+        edit.getEditorLeftProjectModuleSelectorComponent().selectModule(PROJECT_NAME, MODULE_NAME);
+        edit.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree(SPREADSHEET)
+                .selectItemInFolder(SPREADSHEET, TABLE_NAME);
+        return edit.getCenterTable().getCellText(3, 1);
     }
 }
