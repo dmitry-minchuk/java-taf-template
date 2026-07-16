@@ -236,21 +236,38 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void switchBranch(String branchName) {
-        WaitUtil.retryOnException(() -> {
-            breadcrumbsModuleBranch.click(1000);
-            breadcrumbsDropdownItemTemplate.format(branchName).click(1000);
-            waitUntilSpinnerLoaded();
-            if (!getCurrentBranch().trim().equals(branchName)) {
-                throw new RuntimeException("Branch did not switch to " + branchName + ", current: " + getCurrentBranch().trim());
-            }
-            return true;
-        }, 10000, 500, "Switching branch to " + branchName);
+        // Switching a branch on a project with uncommitted changes raises a native confirm ("...current
+        // changes will be lost..."); Playwright auto-dismisses unhandled dialogs, which would cancel the
+        // switch, so accept it for the duration of the switch.
+        Page page = LocalDriverPool.getPage();
+        java.util.function.Consumer<Dialog> acceptChanges = Dialog::accept;
+        page.onDialog(acceptChanges);
+        try {
+            WaitUtil.retryOnException(() -> {
+                breadcrumbsModuleBranch.click(1000);
+                breadcrumbsDropdownItemTemplate.format(branchName).click(1000);
+                waitUntilSpinnerLoaded();
+                if (!getCurrentBranch().trim().equals(branchName)) {
+                    throw new RuntimeException("Branch did not switch to " + branchName + ", current: " + getCurrentBranch().trim());
+                }
+                return true;
+            }, 10000, 500, "Switching branch to " + branchName);
+        } finally {
+            page.offDialog(acceptChanges);
+        }
     }
 
     public void selectBranchInDropdown(String branchName) {
-        breadcrumbsModuleBranch.click();
-        breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
-        breadcrumbsDropdownItemTemplate.format(branchName).click();
+        Page page = LocalDriverPool.getPage();
+        java.util.function.Consumer<Dialog> acceptChanges = Dialog::accept;
+        page.onDialog(acceptChanges);
+        try {
+            breadcrumbsModuleBranch.click();
+            breadcrumbsDropdownItemTemplate.format(branchName).waitForVisible();
+            breadcrumbsDropdownItemTemplate.format(branchName).click();
+        } finally {
+            page.offDialog(acceptChanges);
+        }
     }
 
     public String getCurrentBranch() {

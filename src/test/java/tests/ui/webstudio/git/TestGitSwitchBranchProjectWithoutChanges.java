@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -34,13 +33,10 @@ public class TestGitSwitchBranchProjectWithoutChanges extends BaseTest {
 
         // Create project from template
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, TEMPLATE_NAME);
-        repositoryPage.refresh();
 
-        // Copy project with short branch name to avoid UI overlap in dropdown
-        CopyProjectDialogComponent copyDialog = repositoryPage.clickCopyProjectInTable(PROJECT_NAME);
+        // React has no copy-into-branch, so create the branch off master via the project-detail Branches tab
         String copyBranchName = "copy";
-        copyDialog.setNewBranchName(copyBranchName);
-        copyDialog.clickCopyButton();
+        repositoryPage.openProjectDetail(PROJECT_NAME).createBranch(copyBranchName);
 
         // Switch to Editor tab and select project
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
