@@ -8,8 +8,8 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -23,7 +23,8 @@ public class TestGitCopyProjectIntoExistingBranchViaEditorTab extends BaseTest {
     private static final String PROJECT_NAME = "TestProject";
     private static final String SECOND_PROJECT_NAME = "TestProject2";
     private static final String BRANCH_NAME = "myBranch";
-    private static final String EXPECTED_ERROR_MESSAGE = "Branch myBranch already exists in repository.";
+    // React surfaces the collision as an ant-notification: "Branch 'myBranch' already exists in repository."
+    private static final String EXPECTED_ERROR_MESSAGE = "Branch '" + BRANCH_NAME + "' already exists in repository.";
 
     @Test
     @TestCaseId("EPBDS-8495")
@@ -32,51 +33,29 @@ public class TestGitCopyProjectIntoExistingBranchViaEditorTab extends BaseTest {
     public void testGitCopyProjectIntoExistingBranchEditorTab() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        // Create first project
+        // Create two projects
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, "Sample Project");
-        repositoryPage.refresh();
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, SECOND_PROJECT_NAME, "Sample Project");
 
-        // Navigate to Editor and copy project with custom branch
-        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
-        editorPage.getEditorToolbarPanelComponent().clickCopyProjectBtn();
+        // React: "copy a project into a new branch" is the project-detail Branches tab "New branch" action.
+        // Create the branch and switch onto it, then verify the project's current branch is the new one
+        // (EPBDS-10629 — the working branch follows the copy).
+        ProjectDetailPage detail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        detail.createBranch(BRANCH_NAME, true);
+        assertThat(detail.getCurrentBranch())
+                .as("Current branch should be set to the newly created branch")
+                .isEqualTo(BRANCH_NAME);
 
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_NAME);
-        copyDialog.clickCopyButton();
+        // Creating the same branch name for the second project must be rejected — branches are repo-wide.
+        String error = repositoryPage.openProjectsList()
+                .openProjectDetail(SECOND_PROJECT_NAME)
+                .createBranchExpectingError(BRANCH_NAME);
 
-        // Verify branch value in next copy operation (EPBDS-10629, second part)
-        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        assertThat(copyDialog.getCurrentBranch()).as("Current branch should be set to myBranch").isEqualTo(BRANCH_NAME);
-        copyDialog.clickCancelButton();
-
-        // Create second project
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, SECOND_PROJECT_NAME, "Empty Project");
-        repositoryPage.refresh();
-
-        // Navigate to Editor and try to copy second project to existing branch
-        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(SECOND_PROJECT_NAME);
-        editorPage.getEditorToolbarPanelComponent().clickCopyProjectBtn();
-
-        copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_NAME);
-        copyDialog.clickCopyButton(false);
-
-        // Verify error message is displayed
-        assertThat(copyDialog.waitForErrors(5000))
+        assertThat(error)
                 .as("Error message about existing branch should be displayed")
-                .anyMatch(msg -> msg.contains(EXPECTED_ERROR_MESSAGE));
+                .contains(EXPECTED_ERROR_MESSAGE);
     }
 }

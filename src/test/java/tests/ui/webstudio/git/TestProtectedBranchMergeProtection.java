@@ -11,7 +11,6 @@ import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
@@ -46,18 +45,10 @@ public class TestProtectedBranchMergeProtection extends BaseTest {
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, "TestMergeBranchesNoConflicts_NoConflicts.zip");
-        repositoryPage.refresh();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear()
-                .setNewBranchName(BRANCH_NAME)
-                .clickCopyButton();
-        repositoryPage.refresh();
+        // React: "copy the project into a new branch" is the project-detail Branches tab "New branch" action;
+        // switch onto the new branch so the later Sync merges from it into the protected master.
+        repositoryPage.openProjectDetail(PROJECT_NAME).createBranch(BRANCH_NAME, true);
 
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent repositories = adminPage.navigateToRepositoriesPage();
@@ -66,14 +57,14 @@ public class TestProtectedBranchMergeProtection extends BaseTest {
                 .applyChangesAndRelogin(User.ADMIN);
 
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isSyncButtonVisible())
+        // The project is already open on the new branch (createBranch switched onto it), so go straight to the editor.
+        EditorPage editor = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editor.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
+        assertThat(editor.getEditorToolbarPanelComponent().isSyncButtonVisible())
                 .as("Sync button should be visible after branching")
                 .isTrue();
 
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
+        editor.getEditorToolbarPanelComponent().clickSync();
         SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
         syncDialog.waitForDialogToAppear();
         syncDialog.selectBranch(MASTER_BRANCH);
