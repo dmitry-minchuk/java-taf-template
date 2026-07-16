@@ -8,9 +8,8 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -38,24 +37,12 @@ public class TestGitBranchSwitching extends BaseTest {
 
         // Create project from template
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, TEMPLATE_NAME);
-        repositoryPage.refresh();
 
-        // Copy project to custom branch
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(COPY_BRANCH_NAME);
-        copyDialog.clickCopyButton();
-
-        // Verify current branch is the custom branch in Properties Tab
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(PROJECT_NAME);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        assertThat(propertiesTab.getSelectedBranch())
+        // React has no copy-into-branch; create the custom branch and switch to it (matching the legacy
+        // copy-into-branch which left you on the new branch), then verify it via the Branches tab.
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.createBranch(COPY_BRANCH_NAME, true);
+        assertThat(projectDetail.getCurrentBranch())
                 .as("Current branch should be " + COPY_BRANCH_NAME)
                 .isEqualTo(COPY_BRANCH_NAME);
 
@@ -71,18 +58,10 @@ public class TestGitBranchSwitching extends BaseTest {
         // Switch to master branch via breadcrumb
         editorPage.getEditorToolbarPanelComponent().switchBranch(MASTER_BRANCH_NAME);
 
-        // Return to Repository tab
-        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-
-        // Repository tab keeps a cached view; refresh so it reflects the branch switched in the editor
-        repositoryPage.refresh();
-
-        // Verify current branch is master in Properties Tab
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getSelectedBranch())
+        // Verify current branch is master via the React Branches tab
+        RepositoryPage repositoryAfterSwitch = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        assertThat(repositoryAfterSwitch.openProjectDetail(PROJECT_NAME).getCurrentBranch())
                 .as("Current branch should be " + MASTER_BRANCH_NAME)
                 .isEqualTo(MASTER_BRANCH_NAME);
     }

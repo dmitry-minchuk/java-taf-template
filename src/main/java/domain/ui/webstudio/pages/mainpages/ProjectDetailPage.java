@@ -23,6 +23,7 @@ public class ProjectDetailPage extends BasePage {
     private WebElement branchesCreateBtn;
     private WebElement branchNewNameField;
     private WebElement branchCreateSubmitBtn;
+    private WebElement branchSwitchAfterToggle;  // ant-switch "Switch to the new branch" (role=switch)
     private WebElement branchRowByName;          // format(name) → branch-commit-<name> (row presence)
     private WebElement branchMergeByName;        // format(name) → branch-merge-<name>
     private SyncUpdatesDialogComponent syncUpdatesDialogComponent;
@@ -56,6 +57,7 @@ public class ProjectDetailPage extends BasePage {
         branchesCreateBtn = new WebElement(page, "[data-testid=branches-create]", "branchesCreateBtn");
         branchNewNameField = new WebElement(page, "[data-testid=branches-new-name]", "branchNewNameField");
         branchCreateSubmitBtn = new WebElement(page, "[data-testid=branches-create-submit]", "branchCreateSubmitBtn");
+        branchSwitchAfterToggle = new WebElement(page, "[data-testid=branches-switch-after]", "branchSwitchAfterToggle");
         branchRowByName = new WebElement(page, "xpath=//*[@data-testid='branch-commit-%s']", "branchRow");
         branchMergeByName = new WebElement(page, "xpath=//*[@data-testid='branch-merge-%s']", "branchMergeBtn");
         syncUpdatesDialogComponent = new SyncUpdatesDialogComponent();
@@ -97,12 +99,19 @@ public class ProjectDetailPage extends BasePage {
         return this;
     }
 
-    // Creates a branch off the current one via the "New branch" dialog (leaves "switch to new branch" at its
-    // default). Mirrors the legacy CopyProjectDialogComponent.setNewBranchName flow.
+    // Creates a branch off the current one via the "New branch" dialog. Mirrors the legacy
+    // CopyProjectDialogComponent.setNewBranchName flow (which left you on the new branch → switchAfter=true).
     public ProjectDetailPage createBranch(String branchName) {
+        return createBranch(branchName, false);
+    }
+
+    public ProjectDetailPage createBranch(String branchName, boolean switchAfter) {
         openBranchesTab();
         branchesCreateBtn.click();
         branchNewNameField.fill(branchName);
+        if (switchAfter && !"true".equals(branchSwitchAfterToggle.getAttribute("aria-checked"))) {
+            branchSwitchAfterToggle.click();
+        }
         branchCreateSubmitBtn.click();
         waitUntilSpinnerLoaded();
         return this;
