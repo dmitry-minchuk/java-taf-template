@@ -8,10 +8,8 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.ElementsTabComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.UploadFileDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -40,59 +38,26 @@ public class TestGitNewBranchCreatedFromMaster extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, TEMPLATE_NAME);
 
-        //Copying project to branch BRANCH_MASTER2
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent()
-                .clickCopyBtn();
+        // React has no copy-into-branch: create master2 off master and switch to it
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.createBranch(BRANCH_MASTER2, true);
 
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_MASTER2)
-                  .clickCopyButton();
+        // Upload a new module on master2 and commit it
+        projectDetail.uploadFile(TestDataUtil.getFilePathFromResources(NEW_FILE_NAME));
+        repositoryPage.openProjectsList();
+        repositoryPage.saveProject(PROJECT_NAME, "Add " + NEW_FILE_NAME);
 
-        //Uploading file
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent()
-                .clickUploadFileBtn();
+        // Create master3 off master2 (which now has the uploaded module) and switch to it
+        projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        projectDetail.createBranch(BRANCH_MASTER3, true);
 
-        UploadFileDialogComponent uploadDialog = repositoryPage.getUploadFileDialogComponent();
-        uploadDialog.waitForDialogToAppear();
-        uploadDialog.uploadFile(TestDataUtil.getFilePathFromResources(NEW_FILE_NAME))
-                    .setFileName(NEW_FILE_NAME)
-                    .clickUploadButton();
-
-        //Saving changes
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.refresh();
-
-        //Copying project to branch BRANCH_MASTER3
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent()
-                .clickCopyBtn();
-
-        copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_MASTER3)
-                  .clickCopyButton();
-
-        //Verifying files in project
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectProjectInTree(PROJECT_NAME);
-
-        ElementsTabComponent elementsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectElementsTab();
-        assertThat(elementsTab.getElementsTable().getCell(2, 2).getText().equalsIgnoreCase(NEW_FILE_NAME))
-                .as("File " + NEW_FILE_NAME + " should be present in the project")
+        // The new branch must contain both the uploaded and the pre-existing module
+        projectDetail.openFilesTab();
+        assertThat(projectDetail.isFilePresent(NEW_FILE_NAME))
+                .as("File %s should be present in the new branch", NEW_FILE_NAME)
                 .isTrue();
-
-        assertThat(elementsTab.getElementsTable().getCell(1, 2).getText().equalsIgnoreCase(EXISTING_FILE_NAME))
-                .as("File " + EXISTING_FILE_NAME + " should be present in the project")
+        assertThat(projectDetail.isFilePresent(EXISTING_FILE_NAME))
+                .as("File %s should be present in the new branch", EXISTING_FILE_NAME)
                 .isTrue();
     }
 }
