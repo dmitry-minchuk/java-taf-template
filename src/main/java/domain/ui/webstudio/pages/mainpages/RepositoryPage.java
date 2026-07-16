@@ -153,6 +153,16 @@ public class RepositoryPage extends BasePage {
         if(finalize) {
             fillCommitInfo();
             waitUntilSpinnerLoaded();
+            openIfClosed(projectName);
+        }
+    }
+
+    // The React repository leaves a freshly created project CLOSED (the legacy UI opened it on create),
+    // so the editor workspace stays empty. Open it into the workspace so callers can select its modules.
+    private void openIfClosed(String projectName) {
+        if (projectActionByName.format(projectName, "Open").isVisible(3000)) {
+            openProject(projectName);
+            waitUntilSpinnerLoaded();
         }
     }
 
