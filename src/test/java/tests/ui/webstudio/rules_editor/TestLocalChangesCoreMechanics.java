@@ -140,13 +140,7 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
 
         // Step 7: .history folder is absent in repository while local changes exist
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(projectName);
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isFolderExistsInTree(".history"))
+        assertThat(repositoryPage.openProjectDetail(projectName).openFilesTab().isFolderPresent(".history"))
                 .as(".history folder should not be visible in repository while local changes exist (not committed)")
                 .isFalse();
 
@@ -257,13 +251,7 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .isEqualTo(2);
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(projectName);
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isFolderExistsInTree(".history"))
+        assertThat(repositoryPage.openProjectDetail(projectName).openFilesTab().isFolderPresent(".history"))
                 .as(".history folder should not be visible in the repository tree after save")
                 .isFalse();
 
