@@ -10,14 +10,14 @@ import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
-import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
+import helpers.utils.WaitUtil;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -31,19 +31,16 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /*
- * Covered atomic tests (IPBQA-30010):
- *   2.2.1  - Browsing Design repo: project status lifecycle (No Changes → In Editing → No Changes → Closed → Archived → Closed → No Changes)
- *   2.2.2  - Design repo: Filter by name
- *   2.2.3  - Design repo: Advanced filter (show/hide archived/deleted projects)
- *   2.2.12 - Closing a Project
- *   2.2.14 - Saving a Project
- *   Multi-user locking status (Closed + locked by other user)
- *   Deploy both projects via DeployModal (step 3)
+ * Covered atomic tests (IPBQA-30010) — React repository (build 032c60a664ce+):
+ *   Project status lifecycle (Opened -> Editing -> Opened -> Closed -> Opened), filter by name,
+ *   folder creation, permanent delete, multi-user workspace isolation, deploy both projects.
  *
- * NOT covered:
- *   2.2.4  - Browsing Deployment repo: project pictures by status (Production tab UI not yet mapped)
- *   2.2.5  - Deployment repo: Filter by name (Production tab UI not yet mapped)
- *   Deploy Configuration was removed (EPBDS-15093) — legacy steps 8-11 obsolete
+ * React adaptations (removed/changed behaviour — verified live):
+ *   - The projects table has NO Status/Modified By/Modified At columns (status lives in the project detail),
+ *     so the legacy "6 columns" structure check is dropped and status is read via getProjectStatusFromDetail.
+ *   - Status vocabulary changed: "No Changes" -> "Opened", "In Editing" -> "Editing", "Closed" -> "Closed".
+ *   - The per-user "locked" status was removed: a second user viewing a project another user is editing just
+ *     sees it as "Closed" in their own workspace, so the lock check becomes a workspace-isolation check.
  */
 public class TestRepositoryBrowsingFilterStatus extends BaseTest {
 
@@ -74,18 +71,20 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
     private static final String TEMPLATE_NAME = "Sample Project";
     private static final String SECOND_USER = "repo_filter_second_user";
     private static final String SECOND_USER_PASSWORD = "Test123!";
+    private static final String STATUS_OPENED = "Opened";
+    private static final String STATUS_EDITING = "Editing";
+    private static final String STATUS_CLOSED = "Closed";
 
     @Test
     @TestCaseId("IPBQA-30010")
-    @Description("Repository - Browsing, filter by name, advanced filter, project status lifecycle, multi-user locking")
+    @Description("Repository - Browsing, filter by name, status lifecycle, folder creation, multi-user workspace isolation")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testRepositoryBrowsingFilterStatus() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // ===== Step 1: Create second user with Contributor access =====
-        AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
-        adminPage.navigateToUsersPage()
+        editorPage.openUserMenu().navigateToAdministration().navigateToUsersPage()
                 .clickAddUser()
                 .setUsername(SECOND_USER)
                 .setEmail(SECOND_USER + "@test.com")
@@ -102,234 +101,105 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
         editorPage = new EditorPage();
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_1, TEMPLATE_NAME);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_2, TEMPLATE_NAME);
 
-        // ===== Step 3: Deploy both projects via DeployModal =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
-        String deploymentName1 = StringUtil.generateUniqueName("Dep1");
-        deployModal.deployWithAllFields(null, deploymentName1, "Deploy project 1");
-        assertThat(deployModal.isSuccessNotificationVisible())
-                .as("Deploy of PROJECT_1 should succeed")
-                .isTrue();
+        // ===== Step 3: Deploy both projects via the React row Deploy action =====
+        DeployModalComponent deployModal = repositoryPage.clickDeploy(PROJECT_1);
+        deployModal.deployWithAllFields(null, StringUtil.generateUniqueName("Dep1"), "Deploy project 1");
+        assertThat(deployModal.isSuccessNotificationVisible()).as("Deploy of PROJECT_1 should succeed").isTrue();
         repositoryPage.closeAllMessages();
 
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_2);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        deployModal = repositoryPage.getDeployModalComponent();
-        String deploymentName2 = StringUtil.generateUniqueName("Dep2");
-        deployModal.deployWithAllFields(null, deploymentName2, "Deploy project 2");
-        assertThat(deployModal.isSuccessNotificationVisible())
-                .as("Deploy of PROJECT_2 should succeed")
-                .isTrue();
+        deployModal = repositoryPage.clickDeploy(PROJECT_2);
+        deployModal.deployWithAllFields(null, StringUtil.generateUniqueName("Dep2"), "Deploy project 2");
+        assertThat(deployModal.isSuccessNotificationVisible()).as("Deploy of PROJECT_2 should succeed").isTrue();
         repositoryPage.closeAllMessages();
 
-        // ===== Step 4: Verify table structure (6 columns) =====
-        // After deploy, the server session remembers the selected project (detail view).
-        // Click the "Projects" folder label in the tree to switch to projects table view.
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectFolderInTree("Projects");
-        List<String> headers = repositoryPage.getProjectsTable().getHeaders();
-        assertThat(headers)
-                .as("Projects table should have 6 columns: Name, Branch, Status, Modified By, Modified At, Actions")
-                .containsExactly("Name", "Branch", "Status", "Modified By", "Modified At", "Actions");
+        // ===== Step 5: Row actions for an open project (repo-level admin: Copy/Export/Delete) =====
+        List<String> p1Actions = repositoryPage.getProjectActionLabels(PROJECT_1);
+        assertThat(p1Actions)
+                .as("Open project should expose Copy/Export/Delete row actions. Actual: %s", p1Actions)
+                .contains("Copy", "Export", "Delete");
 
-        // ===== Step 5: Verify action buttons present for open project =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
+        // ===== Step 7: Freshly created project status is "Opened" =====
+        assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("Newly created project status should be 'Opened'").isEqualTo(STATUS_OPENED);
 
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isCloseBtnVisible())
-                .as("Close button should be present for opened project")
-                .isTrue();
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isCopyBtnVisible())
-                .as("Copy button should be present for opened project")
-                .isTrue();
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isExportBtnVisible())
-                .as("Export button should be present for opened project")
-                .isTrue();
-
-        // ===== Step 6: Verify Properties tab available and tabs list =====
-        List<String> availableTabs = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .getAvailableTabNames();
-        assertThat(availableTabs)
-                .as("Properties tab should be available")
-                .contains("Properties", "Revisions");
-
-        // ===== Step 7: Status "No Changes" for freshly created project =====
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Newly created project status should be 'No Changes'")
-                .isEqualTo("No Changes");
-
-        // [SKIPPED] Step 8: Deploy Configuration was removed from WebStudio (EPBDS-15093).
-        // Deploy now works directly from project via DeployModal.
-
-        // ===== Step 9: Put project into "In Editing" state via Editor =====
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        // ===== Step 9-10: Put project into "Editing" via the editor edit-project dialog =====
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_1);
         editorPage.openEditProjectDialog(PROJECT_1).setDescription("test edit").clickUpdateButton();
+        editorPage.waitUntilSpinnerLoaded();
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("Project status should be 'Editing' after an edit").isEqualTo(STATUS_EDITING);
 
-        // ===== Step 10: Verify "In Editing" status in Repository =====
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
+        // ===== Step 11: Save project → back to "Opened" =====
+        repositoryPage.saveProject(PROJECT_1, "Save after edit");
+        assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("Project status should be 'Opened' after save").isEqualTo(STATUS_OPENED);
 
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'In Editing' after edit")
-                .isEqualTo("In Editing");
+        // ===== Step 12: Close project → "Closed" =====
+        repositoryPage.closeProject(PROJECT_1);
+        assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("Project status should be 'Closed' after closing").isEqualTo(STATUS_CLOSED);
+        assertThat(repositoryPage.isProjectActionAvailable(PROJECT_1, "Open"))
+                .as("Open row action should appear for a closed project").isTrue();
 
-        // ===== Step 11: Save project → back to "No Changes" =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
+        // ===== Step 13: Open the closed project → "Opened" =====
+        repositoryPage.openProject(PROJECT_1);
+        assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("Project status should be 'Opened' after opening").isEqualTo(STATUS_OPENED);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'No Changes' after save")
-                .isEqualTo("No Changes");
-
-        // ===== Step 12: Close project → status "Closed" =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
-        repositoryPage.refresh();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'Closed' after closing")
-                .isEqualTo("Closed");
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isOpenBtnVisible())
-                .as("Open button should appear for closed project")
-                .isTrue();
-
-        // ===== Step 13: Open the closed project → status "No Changes" =====
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Project status should be 'No Changes' after opening")
-                .isEqualTo("No Changes");
-
-        // ===== Step 17: Multi-user locking — put project "In Editing" then login as second user =====
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        // ===== Step 17: Multi-user workspace isolation (React removed the per-user "locked" status) =====
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_1);
-        editorPage.openEditProjectDialog(PROJECT_1).setDescription("lock test").clickUpdateButton();
+        editorPage.openEditProjectDialog(PROJECT_1).setDescription("isolation test").clickUpdateButton();
+        editorPage.waitUntilSpinnerLoaded();
 
-        // Login as second user — should see project as locked
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(secondUser);
-
-        repositoryPage = editorPage.getTabSwitcherComponent()
+        RepositoryPage secondUserPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
+        WaitUtil.waitForCondition(
+                () -> secondUserPage.getAllVisibleProjectsInTable().contains(PROJECT_1),
+                10000, 500, "Waiting for project to appear for the second user");
+        assertThat(secondUserPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("A second user sees the project as 'Closed' in their own workspace (no per-user lock in React)")
+                .isEqualTo(STATUS_CLOSED);
 
-        String statusForSecondUser = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab()
-                .getStatus();
-        assertThat(statusForSecondUser)
-                .as("Project should appear locked to second user while admin has it In Editing")
-                .containsIgnoringCase("locked");
-
-        // Login back as admin — project still "In Editing" for owner
+        // Admin still sees "Editing" for their own workspace
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(UserService.getUser(User.ADMIN));
-
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propertiesTab.getStatus())
-                .as("Admin should still see 'In Editing' for their own project")
-                .isEqualTo("In Editing");
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
+                .as("Admin should still see 'Editing' for their own workspace").isEqualTo(STATUS_EDITING);
+        repositoryPage.saveProject(PROJECT_1, "Save isolation edit");
 
         // ===== Step 18: Filter by name =====
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent().expandFolderInTree("Projects");
-
         repositoryPage.filterByName(PROJECT_2);
         assertThat(repositoryPage.countVisibleProjectsInTable())
-                .as("Filter by name should show exactly 1 project")
-                .isEqualTo(1);
+                .as("Filter by name should show exactly 1 project").isEqualTo(1);
         assertThat(repositoryPage.getAllVisibleProjectsInTable().getFirst())
-                .as("Only PROJECT_2 should be visible after filter")
-                .contains(PROJECT_2);
-
+                .as("Only PROJECT_2 should be visible after filter").contains(PROJECT_2);
         repositoryPage.clearNameFilter();
         assertThat(repositoryPage.countVisibleProjectsInTable())
-                .as("After clearing filter all projects should be visible again")
-                .isGreaterThanOrEqualTo(2);
+                .as("After clearing the filter all projects should be visible again").isGreaterThanOrEqualTo(2);
 
-        // ===== Step 19: Create a folder inside the project =====
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isAddFolderBtnVisible())
-                .as("Add Folder button should be visible for opened project")
-                .isTrue();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickAddFolderBtn();
-        repositoryPage.getAddFolderDialogComponent().setFolderName("TestFolder").clickAdd();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getLeftRepositoryTreeComponent().expandFolderInTree(PROJECT_1);
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestFolder"))
-                .as("Created folder should be visible in project tree")
-                .isTrue();
+        // ===== Step 19: Create a folder inside the project (Files tab) =====
+        ProjectDetailPage detail = repositoryPage.openProjectDetail(PROJECT_1).openFilesTab();
+        detail.createFolder("TestFolder");
+        assertThat(detail.isFolderPresent("TestFolder"))
+                .as("Created folder should be visible in the project's Files tab").isTrue();
+        repositoryPage.openProjectsList();
 
-        // ===== Step 20: Permanent delete removes the project (no archive/undelete) =====
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getProjectDeleteConfirmModalComponent()
-                .waitForVisible()
+        // ===== Step 20: Permanent delete removes the project =====
+        repositoryPage.deleteProject(PROJECT_1)
                 .enterDeletionComment("Removed by automated regression test")
                 .acknowledgePermanentDeletion()
                 .clickDelete();
-        repositoryPage.refresh();
-
+        repositoryPage.openProjectsList();
         assertThat(repositoryPage.getAllVisibleProjectsInTable())
-                .as("Permanently deleted project must not be listed after deletion")
-                .doesNotContain(PROJECT_1);
-
-        // Step 21: Production repository browsing
-        // Legacy steps used a separate "Production" tab/tree (#prodTree) to browse deployed projects.
-        // Deploy Configuration was removed (EPBDS-15093). Production tab UI locators
-        // are not yet mapped in the new framework — requires separate investigation.
-        // The deploy itself was verified via success notifications in Step 3.
+                .as("Permanently deleted project must not be listed").doesNotContain(PROJECT_1);
     }
 }

@@ -93,7 +93,7 @@ public class RepositoryPage extends BasePage {
         copyProjectNameField = new WebElement(page, "[data-testid=copy-project-name]", "copyProjectNameField");
         copyProjectSubmitBtn = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmitBtn");
 
-        filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
+        filterByNameInput = new WebElement(page, "[data-testid=projects-search]", "filterByNameInput");
         clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
         advancedFilterBtn = new WebElement(page, "xpath=//a[@id='filterButton']", "advancedFilterBtn");
         hideDeletedCheckbox = new WebElement(page, "xpath=//input[@id='filterForm:hideDeleted']", "hideDeletedCheckbox");
@@ -378,6 +378,10 @@ public class RepositoryPage extends BasePage {
         WaitUtil.waitForCondition(() -> rows.count() > 0, 5000, 250, "Waiting for projects to load");
         int count = rows.count();
         for (int i = 0; i < count; i++) {
+            // Only count rows that are actually visible — the React name filter hides non-matching rows.
+            if (!rows.nth(i).isVisible()) {
+                continue;
+            }
             String name = rows.nth(i).locator("span").first().textContent();
             if (name != null && !name.trim().isEmpty()) {
                 projectNames.add(name.trim());
@@ -424,13 +428,18 @@ public class RepositoryPage extends BasePage {
     }
 
     public void filterByName(String name) {
-        filterByNameInput.fillSequentially(name);
-        WaitUtil.sleep(300, "Waiting for client-side filter to apply");
+        // React projects-search is a plain <input> that filters the list on value change; a single fill()
+        // (not per-char fillSequentially) reliably drives its onChange.
+        filterByNameInput.click();
+        filterByNameInput.fill(name);
+        WaitUtil.sleep(800, "Waiting for the React client-side name filter to apply");
     }
 
     public void clearNameFilter() {
-        clearFilterBtn.click();
-        WaitUtil.sleep(300, "Waiting for filter to clear");
+        // fill("") fires the React onChange (a bare clear() may not), restoring the full list.
+        filterByNameInput.click();
+        filterByNameInput.fill("");
+        WaitUtil.sleep(800, "Waiting for the filter to clear and the full list to restore");
     }
 
     public void setShowDeletedProjects(boolean showDeleted) {
