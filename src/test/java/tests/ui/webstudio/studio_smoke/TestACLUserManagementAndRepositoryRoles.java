@@ -10,7 +10,6 @@ import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -130,19 +129,17 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects).as("User 'test' should see the project with Manager role").isNotEmpty().contains(projectName);
 
-        // Verify Manager-specific options are available
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent managerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-        assertThat(managerButtonsPanel.isCopyBtnVisible(1000)).as("Manager should see Copy button").isTrue();
-        assertThat(managerButtonsPanel.isDeleteBtnVisible()).as("Manager should see Delete button").isTrue();
-        assertThat(!managerButtonsPanel.isDeployBtnVisible()).as("Manager should NOT see Deploy button").isTrue();
-        assertThat(managerButtonsPanel.isExportBtnVisible()).as("Manager should see Export button").isTrue();
+        // Verify Manager-specific options are available (repository-level Manager: Copy/Delete/Export, no Deploy)
+        List<String> managerActions = repositoryPage.getProjectActionLabels(projectName);
+        assertThat(managerActions)
+                .as("Repository Manager: Copy/Delete/Export visible, no Deploy. Actual: %s", managerActions)
+                .contains("Copy", "Delete", "Export")
+                .doesNotContain("Deploy");
 
-        // Verify Manager CAN edit tables in Editor tab
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        // Verify Manager CAN edit tables in Editor tab (open the project first if it is closed)
+        if (repositoryPage.isProjectActionAvailable(projectName, "Open")) {
+            repositoryPage.openProject(projectName);
+        }
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Bank Rating");
@@ -179,21 +176,17 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
         visibleProjects = repositoryPage.getAllVisibleProjectsInTable();
         assertThat(visibleProjects).as("User 'test' should still see the project with Viewer role").isNotEmpty().contains(projectName);
 
-        // Verify Viewer-restricted options are NOT available
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent viewerButtonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-        assertThat(viewerButtonsPanel.isCopyBtnVisible()).as("Viewer should NOT see Copy button").isFalse();
-        assertThat(viewerButtonsPanel.isDeleteBtnVisible()).as("Viewer should NOT see Delete button").isFalse();
-        assertThat(viewerButtonsPanel.isDeployBtnVisible()).as("Viewer should NOT see Deploy button").isFalse();
-        assertThat(viewerButtonsPanel.isSaveBtnVisible()).as("Viewer should NOT see Save button").isFalse();
-        // Viewer should still have read-only access
-        assertThat(viewerButtonsPanel.isExportBtnVisible()).as("Viewer should still see Export button").isTrue();
+        // Verify Viewer-restricted options are NOT available (repository-level Viewer: Export only)
+        List<String> viewerActions = repositoryPage.getProjectActionLabels(projectName);
+        assertThat(viewerActions)
+                .as("Repository Viewer: Export visible, no Copy/Delete/Deploy/Save. Actual: %s", viewerActions)
+                .contains("Export")
+                .doesNotContain("Copy", "Delete", "Deploy", "Save");
 
         // ============ Step 15: Verify Viewer cannot edit tables in Editor tab ============
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        if (repositoryPage.isProjectActionAvailable(projectName, "Open")) {
+            repositoryPage.openProject(projectName);
+        }
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
 
         // Open project and select a module (Example 1 - Bank Rating has "Bank Rating" module)
