@@ -28,6 +28,8 @@ public class ProjectDetailPage extends BasePage {
     private WebElement folderSubmitBtn;
     // History tab
     private WebElement revisionEntries;     // one per revision (revision-comment-<hash>)
+    // Overview tab: assigned tags render as ant-tags "<type> → <value>" in the TAGS section
+    private WebElement tagValueForType;     // format(tagType) → the value span
 
     public ProjectDetailPage() {
         super();
@@ -48,6 +50,7 @@ public class ProjectDetailPage extends BasePage {
         filesNewFolderBtn = new WebElement(page, "[data-testid=files-new-folder]", "filesNewFolderBtn");
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path]", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
+        tagValueForType = new WebElement(page, "xpath=//*[@data-testid='overview-left']//span[contains(@class,'ant-tag')][./span[1][normalize-space()='%s']]/span[last()]", "tagValueForType");
     }
 
     public ProjectDetailPage openOverviewTab() {
@@ -66,6 +69,13 @@ public class ProjectDetailPage extends BasePage {
         historyTab.click();
         waitUntilSpinnerLoaded();
         return this;
+    }
+
+    // Reads the value assigned for a tag type from the Overview TAGS section (each tag renders as an
+    // ant-tag "<type> → <value>"); returns the value span's text.
+    public String getTagValueForType(String tagType) {
+        openOverviewTab();
+        return tagValueForType.format(tagType).getText().trim();
     }
 
     // React status vocabulary (Local / Opened / Editing / Closed / ...) — differs from the legacy

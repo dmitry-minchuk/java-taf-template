@@ -9,9 +9,9 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -64,16 +64,14 @@ public class TestFillTagsForProject extends BaseTest {
 
         tagsPage.fillTagsForProject();
 
-        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        RepositoryContentTabPropertiesComponent properties = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
+        // Return to the projects list with a fresh load (navigating back from Administration can leave it
+        // stale), then open the project detail to read its filled tags.
+        ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
 
-        assertThat(properties.getSelectedTagForType(TAG_TYPE_NAME))
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_NAME))
                 .as("Tag '%s' should be filled from project name segment '%s'", TAG_TYPE_NAME, "Tag1")
                 .isEqualTo("Tag1");
-        assertThat(properties.getSelectedTagForType(TAG_TYPE_OPT))
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_OPT))
                 .as("Tag '%s' should be filled from project name segment '%s'", TAG_TYPE_OPT, "TagOpt1")
                 .isEqualTo("TagOpt1");
     }
