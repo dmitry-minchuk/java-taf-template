@@ -48,6 +48,17 @@ public class RightTableDetailsComponent extends BaseComponent {
     private WebElement selectAllCheckbox;
     private WebElement multiselectCheckboxTemplate;
 
+    // RichFaces calendar popup (readonly date inputs are picked via the widget, scoped to the one open popup)
+    private WebElement calMonthLabel;
+    private WebElement calPrevYear;
+    private WebElement calNextYear;
+    private WebElement calPrevMonth;
+    private WebElement calNextMonth;
+    private WebElement calDayTemplate;
+
+    private static final List<String> MONTHS = List.of("January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December");
+
     private void initializeElements() {
         addPropertyLink = createScopedElement("xpath=.//a[@id='addPropBtn']", "addPropertyLink");
         propertyTypeSelector = createScopedElement("xpath=.//div[@id='addPropsPanel']//select", "propertyTypeSelector");
@@ -76,6 +87,17 @@ public class RightTableDetailsComponent extends BaseComponent {
         // Multi-select popup
         selectAllCheckbox = createScopedElement("xpath=//div[@class='jquery-multiselect-popup jquery-popup']//label[text()='Select All']//..//input", "selectAllCheckbox");
         multiselectCheckboxTemplate = createScopedElement("xpath=//div[@class='jquery-multiselect-popup jquery-popup']//div[@class='jquery-multiselect-popup-data']//input[@value='%s']", "multiselectCheckbox");
+
+        // RichFaces calendar: scope to the single open popup (.rf-cal-popup:visible); nav cells and days by text.
+        String visiblePopup = ".rf-cal-popup:visible >> ";
+        calMonthLabel = new WebElement(getPage(), visiblePopup + "css=.rf-cal-hdr-month", "calMonthLabel");
+        calPrevYear = new WebElement(getPage(), visiblePopup + "xpath=.//td[contains(@class,'rf-cal-tl') and normalize-space(.)='<<']", "calPrevYear");
+        calNextYear = new WebElement(getPage(), visiblePopup + "xpath=.//td[contains(@class,'rf-cal-tl') and normalize-space(.)='>>']", "calNextYear");
+        calPrevMonth = new WebElement(getPage(), visiblePopup + "xpath=.//td[contains(@class,'rf-cal-tl') and normalize-space(.)='<']", "calPrevMonth");
+        calNextMonth = new WebElement(getPage(), visiblePopup + "xpath=.//td[contains(@class,'rf-cal-tl') and normalize-space(.)='>']", "calNextMonth");
+        calDayTemplate = new WebElement(getPage(), visiblePopup
+                + "xpath=.//td[(contains(@class,'rf-cal-btn') or contains(@class,'rf-cal-sel') or contains(@class,'rf-cal-today'))"
+                + " and not(contains(@class,'rf-cal-boundary-day')) and normalize-space(.)='%s']", "calDay");
 
     }
 
@@ -201,17 +223,43 @@ public class RightTableDetailsComponent extends BaseComponent {
         }
     }
 
+    // The date property is a readonly RichFaces calendar, so the value is picked through the widget: open the
+    // popup, navigate to the target month/year, and click the day (which commits "MM/DD/YYYY 12:00 AM" and closes).
     public void editDateProperty(String propertyName, String dateValue) {
         clickPropertyValue(propertyName);
-        WebElement input = propertyTextInputTemplate.format(propertyName);
-        String dateTimeValue = dateValue + " 12:00 AM";
-        input.getLocator().evaluate("(el) => {"
-                + "el.value = '" + dateTimeValue + "';"
-                + "el.dispatchEvent(new Event('input', { bubbles: true }));"
-                + "el.dispatchEvent(new Event('change', { bubbles: true }));"
-                + "el.dispatchEvent(new Event('blur', { bubbles: true }));"
-                + "}");
-        WaitUtil.sleep(200, "Waiting after entering date property value");
+        propertyTextInputTemplate.format(propertyName).click();
+        calMonthLabel.waitForVisible(DEFAULT_TIMEOUT_MS);
+        String[] parts = dateValue.split("/");
+        int targetMonth = Integer.parseInt(parts[0]);
+        int targetDay = Integer.parseInt(parts[1]);
+        int targetYear = Integer.parseInt(parts[2]);
+        navigateCalendarTo(targetMonth, targetYear);
+        calDayTemplate.format(String.valueOf(targetDay)).click();
+        WaitUtil.sleep(200, "Waiting after picking the date");
+    }
+
+    private void navigateCalendarTo(int targetMonth, int targetYear) {
+        int targetIndex = targetYear * 12 + (targetMonth - 1);
+        for (int guard = 0; guard < 240; guard++) {
+            int[] current = readCalendarMonthYear();
+            int currentIndex = current[1] * 12 + (current[0] - 1);
+            if (currentIndex == targetIndex) {
+                return;
+            }
+            if (currentIndex > targetIndex) {
+                (current[1] > targetYear ? calPrevYear : calPrevMonth).click();
+            } else {
+                (current[1] < targetYear ? calNextYear : calNextMonth).click();
+            }
+            WaitUtil.sleep(150, "Calendar navigation step");
+        }
+        throw new IllegalStateException("Calendar did not reach " + targetMonth + "/" + targetYear);
+    }
+
+    // Reads the popup header label "Month, YYYY" (e.g. "July, 2026") into [month(1-12), year].
+    private int[] readCalendarMonthYear() {
+        String[] label = calMonthLabel.getText().trim().split(",");
+        return new int[]{MONTHS.indexOf(label[0].trim()) + 1, Integer.parseInt(label[1].trim())};
     }
 
     public void deleteProperty(String propertyName) {

@@ -85,7 +85,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                 100,
                 "Searching for visible leaf node '" + itemName + "' in editor tree")
                 .orElseThrow(() -> new RuntimeException(String.format("Visible leaf node with name %s not found", itemName)));
-        leafNode.getLocator().evaluate("node => { const link = node.querySelector('a'); if (!link) throw new Error('Leaf link not found'); const href = link.getAttribute('href'); if (!href) throw new Error('Leaf href not found'); window.location.hash = href.replace(/^#/, ''); }");
+        leafNode.child("a").click();
         return this;
     }
 

@@ -81,8 +81,8 @@ public class TableComponent extends BaseComponent {
             return true;
         }, 10000, 500, "Activating cell editor for cell [" + rowIndex + "," + columnIndex + "]");
 
-        String editorTag = inputLocator.getLocator().evaluate("el => el.tagName.toLowerCase()").toString();
-        if ("select".equals(editorTag)) {
+        boolean isSelectEditor = inputLocator.getLocator().locator("xpath=self::select").count() > 0;
+        if (isSelectEditor) {
             inputLocator.selectByVisibleText(text);
             if (pressEnter) {
                 inputLocator.press("Enter");

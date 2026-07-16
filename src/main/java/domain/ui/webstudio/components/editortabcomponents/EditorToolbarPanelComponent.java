@@ -804,29 +804,36 @@ public class EditorToolbarPanelComponent extends BaseComponent {
             } else {
                 topPanelWithinCurrentModuleOnly.uncheck();
             }
-            page.waitForFunction(
-                    "() => new Promise(resolve => setTimeout(() => {" +
-                            " const cb = document.querySelector('#testModuleOnlyField');" +
-                            " resolve(!!cb && cb.checked === " + value + " && !cb.disabled);" +
-                            "}, 750))",
-                    null,
-                    new Page.WaitForFunctionOptions().setTimeout(1200));
+            boolean settled = WaitUtil.waitForCondition(
+                    () -> topPanelWithinCurrentModuleOnly.isChecked() == value
+                            && topPanelWithinCurrentModuleOnly.isEnabled(),
+                    1200, 200, "Waiting for WithinCurrentModuleOnly to settle at " + value);
+            if (!settled) {
+                throw new RuntimeException("WithinCurrentModuleOnly did not settle at " + value);
+            }
         }, 10000, 250, "Setting top panel WithinCurrentModuleOnly to " + value);
     }
 
+    // Waits until the checkbox's (checked, enabled) state stays unchanged for a short quiet window, i.e.
+    // the server round-trip that can flip/disable it during a recompile has settled.
     private void waitForTopPanelWithinCurrentModuleOnlyToStabilize() {
-        page.waitForFunction(
-                "() => new Promise(resolve => {" +
-                        " const cb = document.querySelector('#testModuleOnlyField');" +
-                        " if (!cb) { resolve(false); return; }" +
-                        " const state = cb.checked + ':' + cb.disabled;" +
-                        " setTimeout(() => {" +
-                        "   const current = document.querySelector('#testModuleOnlyField');" +
-                        "   resolve(!!current && (current.checked + ':' + current.disabled) === state);" +
-                        " }, 750);" +
-                        "})",
-                null,
-                new Page.WaitForFunctionOptions().setTimeout(10000));
+        long stableWindowMs = 750;
+        String[] lastState = {null};
+        long[] stableSince = {0};
+        WaitUtil.waitForCondition(() -> {
+            if (topPanelWithinCurrentModuleOnly.getLocator().count() == 0) {
+                lastState[0] = null;
+                return false;
+            }
+            String state = topPanelWithinCurrentModuleOnly.isChecked() + ":" + topPanelWithinCurrentModuleOnly.isEnabled();
+            long now = System.currentTimeMillis();
+            if (!state.equals(lastState[0])) {
+                lastState[0] = state;
+                stableSince[0] = now;
+                return false;
+            }
+            return now - stableSince[0] >= stableWindowMs;
+        }, 10000, 150, "Waiting for WithinCurrentModuleOnly checkbox state to stabilize");
     }
 
     // ========== Run/Trace/Benchmark Dropdown Arrows ==========

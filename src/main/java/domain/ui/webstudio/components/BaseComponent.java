@@ -38,14 +38,9 @@ public abstract class BaseComponent extends CoreComponent {
     }
 
     public void waitUntilSpinnerLoaded() {
+        // waitForHidden covers both "detached" and "display:none", so the legacy #loadingPanel is handled here;
+        // then wait out the new React full-screen loading overlay (EPBDS-16241 replaced #loadingPanel).
         contentLoadingSpinner.waitForHidden(30000);
-        try {
-            page.waitForFunction(
-                    "() => { const lp = document.querySelector('#loadingPanel'); return !lp || getComputedStyle(lp).display === 'none'; }",
-                    new Page.WaitForFunctionOptions().setTimeout(5000));
-        } catch (RuntimeException ignored) {
-        }
-        // Also wait out the new React full-screen loading overlay (EPBDS-16241 replaced #loadingPanel).
         WebElement.waitForAppReady(page);
     }
 

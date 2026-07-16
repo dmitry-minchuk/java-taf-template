@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -94,12 +95,10 @@ public class WebElement {
      * overlay is still up after the timeout we proceed and let Playwright's own actionability retry.
      */
     public static void waitForAppReady(Page page, long timeoutMs) {
-        try {
-            page.waitForFunction(
-                    "() => !document.querySelector('" + LOADING_OVERLAY_SELECTOR + "')",
-                    null,
-                    new Page.WaitForFunctionOptions().setTimeout(timeoutMs));
-        } catch (RuntimeException ignored) {
+        boolean ready = WaitUtil.waitForCondition(
+                () -> page.locator(LOADING_OVERLAY_SELECTOR).count() == 0,
+                timeoutMs, 150, "Waiting for the loading overlay to disappear");
+        if (!ready) {
             LOGGER.debug("Loading overlay still present after {}ms; proceeding and relying on actionability retry", timeoutMs);
         }
     }
@@ -116,16 +115,21 @@ public class WebElement {
      * {@link #waitForAppReady} can return mid-recompile while JSF nodes are still detaching. Never throws.
      */
     public static void waitForAppIdle(Page page, long timeoutMs) {
-        try {
-            page.evaluate("() => { window.__openlIdleSince = 0; }");
-            page.waitForFunction(
-                    "() => { const now = performance.now();" +
-                    " if (document.querySelector('" + LOADING_OVERLAY_SELECTOR + "')) { window.__openlIdleSince = 0; return false; }" +
-                    " if (!window.__openlIdleSince) { window.__openlIdleSince = now; return false; }" +
-                    " return (now - window.__openlIdleSince) >= 750; }",
-                    null,
-                    new Page.WaitForFunctionOptions().setTimeout(timeoutMs));
-        } catch (RuntimeException ignored) {
+        long quietWindowMs = 750;
+        long[] overlayAbsentSince = {0};
+        boolean idle = WaitUtil.waitForCondition(() -> {
+            long now = System.currentTimeMillis();
+            if (page.locator(LOADING_OVERLAY_SELECTOR).count() > 0) {
+                overlayAbsentSince[0] = 0;
+                return false;
+            }
+            if (overlayAbsentSince[0] == 0) {
+                overlayAbsentSince[0] = now;
+                return false;
+            }
+            return now - overlayAbsentSince[0] >= quietWindowMs;
+        }, timeoutMs, 150, "Waiting for the loading overlay to stay absent for a quiet window");
+        if (!idle) {
             LOGGER.debug("App still busy after {}ms; proceeding and relying on actionability retry", timeoutMs);
         }
     }
@@ -344,9 +348,7 @@ public class WebElement {
         List<String> optionLabels = locator.locator("option").allTextContents().stream()
                 .map(String::trim)
                 .toList();
-        @SuppressWarnings("unchecked")
-        List<String> optionValues = (List<String>) locator.locator("option")
-                .evaluateAll("options => options.map(option => option.value || '')");
+        List<String> optionValues = getSelectValues();
         if (optionLabels.contains(text)) {
             retryOnReRenderChurn(() -> locator.selectOption(new SelectOption().setLabel(text)));
         } else if (optionValues.contains(text)) {
@@ -357,11 +359,17 @@ public class WebElement {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getSelectValues() {
         isVisible();
         LOGGER.info("Getting select option values from {}", elementName);
-        return (List<String>) locator.locator("option").evaluateAll("options => options.map(option => option.value || '')");
+        Locator options = locator.locator("option");
+        List<String> values = new ArrayList<>();
+        int count = options.count();
+        for (int i = 0; i < count; i++) {
+            String value = options.nth(i).getAttribute("value");
+            values.add(value != null ? value : "");
+        }
+        return values;
     }
 
     public List<String> getSelectVisibleTextValues() {
@@ -372,7 +380,7 @@ public class WebElement {
 
     public String getSelectedOptionText() {
         LOGGER.info("Getting selected option text from {}", elementName);
-        return (String) locator.evaluate("el => el.options[el.selectedIndex].text");
+        return locator.locator("option:checked").textContent();
     }
     
     public WebElement child(String subSelector) {
@@ -482,6 +490,7 @@ public class WebElement {
     
     // CSS properties
     
+    // Playwright exposes no computed-style API, so getComputedStyle via evaluate is the only mechanism.
     public String getCssValue(String propertyName) {
         LOGGER.info("Getting CSS property '{}' from {}", propertyName, elementName);
         return locator.evaluate("el => window.getComputedStyle(el).getPropertyValue('" + propertyName + "')").toString();
