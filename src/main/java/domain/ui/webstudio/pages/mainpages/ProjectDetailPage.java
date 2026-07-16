@@ -1,10 +1,14 @@
 package domain.ui.webstudio.pages.mainpages;
 
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
+import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevisionsDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.pages.BasePage;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -43,6 +47,9 @@ public class ProjectDetailPage extends BasePage {
     private WebElement folderSubmitBtn;
     // History tab
     private WebElement revisionEntries;     // one per revision (revision-comment-<hash>)
+    private WebElement revisionCompareToggles;  // per-revision "select for comparison" toggles
+    private WebElement revisionsCompareBtn;     // "Compare (n/2)" button
+    private WebElement revisionCompareSubmit;   // submit in the "Compare" modal (opens the diff tab)
     // Overview tab: assigned tags render as ant-tags "<type> → <value>" in the TAGS section
     private WebElement tagValueForType;     // format(tagType) → the value span
 
@@ -67,6 +74,9 @@ public class ProjectDetailPage extends BasePage {
         syncUpdatesDialogComponent = new SyncUpdatesDialogComponent();
         projectStatus = new WebElement(page, "[data-testid^=\"status-\"]", "projectStatus");
         revisionEntries = new WebElement(page, "xpath=//*[starts-with(@data-testid,'revision-comment-')]", "revisionEntries");
+        revisionCompareToggles = new WebElement(page, "xpath=//*[starts-with(@data-testid,'revision-compare-') and not(@data-testid='revision-compare-file') and not(@data-testid='revision-compare-submit')]", "revisionCompareToggles");
+        revisionsCompareBtn = new WebElement(page, "[data-testid=revisions-compare]", "revisionsCompareBtn");
+        revisionCompareSubmit = new WebElement(page, "[data-testid=revision-compare-submit]", "revisionCompareSubmit");
         fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
         fileDeleteBtn = new WebElement(page, "[data-testid=file-delete]", "fileDeleteBtn");
         fileDeleteConfirmOk = new WebElement(page, "xpath=//div[contains(@class,'ant-popover')]//button[.//span[normalize-space()='OK']]", "fileDeleteConfirmOk");
@@ -164,6 +174,30 @@ public class ProjectDetailPage extends BasePage {
             descriptions.add(entries.nth(i).textContent().trim());
         }
         return descriptions;
+    }
+
+    // Opens the repository revision comparison: selects the two newest revisions on the History tab, submits
+    // the Compare dialog (which opens the diff in a NEW browser tab, the legacy showDiff.xhtml JSF page), and
+    // returns a CompareGitRevisionsDialogComponent bound to that tab.
+    public CompareGitRevisionsDialogComponent openRevisionCompare() {
+        openHistoryTab();
+        Locator toggles = revisionCompareToggles.getLocator();
+        toggles.first().waitFor();
+        toggles.nth(0).click();
+        toggles.nth(1).click();
+        revisionsCompareBtn.click();
+        revisionCompareSubmit.waitForVisible(DEFAULT_TIMEOUT_MS);
+        int pagesBefore = LocalDriverPool.getBrowserContext().pages().size();
+        revisionCompareSubmit.click();
+        WaitUtil.waitForCondition(
+                () -> LocalDriverPool.getBrowserContext().pages().size() > pagesBefore,
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare diff tab to open");
+        List<Page> pages = LocalDriverPool.getBrowserContext().pages();
+        Page diffTab = pages.get(pages.size() - 1);
+        WaitUtil.waitForCondition(() -> diffTab.url().contains("showDiff"),
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the diff tab to load showDiff.xhtml");
+        diffTab.waitForLoadState();
+        return new CompareGitRevisionsDialogComponent(diffTab);
     }
 
     public int getRevisionsCount() {

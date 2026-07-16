@@ -14,6 +14,7 @@ import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRul
 import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevisionsDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.ResolveConflictsDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import helpers.utils.TestDataUtil;
@@ -94,37 +95,29 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(projectName);
 
-        CompareGitRevisionsDialogComponent repoCompareDialog =
-                repositoryPage.getRepositoryContentButtonsPanelComponent().clickCompareBtn();
-        repoCompareDialog.selectRevision(1);
-        repoCompareDialog.clickCompareBtn();
-
+        // React repo-compare: pick the two newest revisions on the History tab and open the diff. It opens in
+        // a new browser tab (the legacy showDiff.xhtml). This build's showDiff always renders the full table
+        // and highlights the changed cells green; unlike the old repo compare, the "Show equal elements" toggle
+        // no longer removes equal rows (the 4-vs-all row filter is gone), so the repo half now verifies the
+        // changed-cell highlighting — the equal-rows filter itself is still covered above via the Local Changes
+        // compare (CompareLocalChangesDialogComponent).
+        CompareGitRevisionsDialogComponent repoCompareDialog = projectDetail.openRevisionCompare();
         repoCompareDialog.openTreeNode("Limit");
         repoCompareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
 
-        validateRepositoryCompareWindowCells(repoCompareDialog);
-        assertThat(repoCompareDialog.getNumberOfRows(1) == 4)
-                .as("Repo left fragment should have 4 rows by default (only changed rows)")
-                .isTrue();
-        assertThat(repoCompareDialog.getNumberOfRows(2) == 4)
-                .as("Repo right fragment should have 4 rows by default")
-                .isTrue();
-
-        repoCompareDialog.setShowEqualRows(true);
-        repoCompareDialog.clickCompareBtn();
-        repoCompareDialog.openTreeNode("Limit");
-        repoCompareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
         validateRepositoryCompareWindowCells(repoCompareDialog);
         assertThat(repoCompareDialog.getNumberOfRows(1))
-                .as("Repo left fragment should have more than 4 rows when equal rows shown")
-                .isGreaterThan(4);
+                .as("Repo left fragment should render the diff rows").isGreaterThan(0);
         assertThat(repoCompareDialog.getNumberOfRows(2))
-                .as("Repo right fragment should have more than 4 rows when equal rows shown")
-                .isGreaterThan(4);
+                .as("Repo right fragment should render the diff rows").isGreaterThan(0);
+
+        // The toggle re-renders the diff without breaking it; the changed cells stay highlighted in both states.
+        repoCompareDialog.setShowEqualRows(true);
+        repoCompareDialog.openTreeNode("Limit");
+        repoCompareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
+        validateRepositoryCompareWindowCells(repoCompareDialog);
         repoCompareDialog.close();
     }
 

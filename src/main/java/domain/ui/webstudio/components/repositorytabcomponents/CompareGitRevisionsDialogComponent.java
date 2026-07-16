@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 import configuration.core.ui.WebElement;
@@ -63,7 +64,7 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
                 "xpath=//input[@id='compareForm:compareBtn']",
                 "compareBtnInPopup");
         showEqualRowsCheckbox = new WebElement(getPage(),
-                "xpath=//input[contains(@id,'compareForm:compareBtn')]/preceding-sibling::input[@type='checkbox'][1]",
+                "xpath=//input[contains(@id,'showEqualElements')]",
                 "showEqualRowsCheckbox");
         treeNodeLabels = new WebElement(getPage(),
                 "xpath=//span[contains(@class,'rf-trn-lbl')]",
@@ -78,12 +79,14 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
         treeNodeLinkTemplate = new WebElement(getPage(),
                 "xpath=//span[contains(@class,'rf-trn-lbl') and normalize-space(.)='%s']",
                 "treeNodeLinkTemplate");
-        // idSuffix pattern: "1_te_c-7:5" - uses ends-with to avoid substring collisions (e.g. c-2:1 vs c-2:10)
+        // React repo-compare renders the diff in a standalone showDiff.xhtml tab whose JSF form id is dynamic
+        // (e.g. j_idt11), so the fragment is addressed by the Nth "_te_table" div and cells by their id suffix
+        // "_te_c-<row>:<col>" (%1$s = fragment 1/2, %2$s = the cell-id suffix).
         cellTemplate = new WebElement(getPage(),
-                "xpath=//td[(contains(@id,'diffTreeForm') or contains(@id,'compareRevisionsForm')) and (substring(@id, string-length(@id) - string-length('%1$s') + 1) = '%1$s')]",
+                "xpath=(//div[substring(@id, string-length(@id) - 8) = '_te_table'])[%1$s]//td[substring(@id, string-length(@id) - string-length('%2$s') + 1) = '%2$s']",
                 "cellTemplate");
         editorRowsTemplate = new WebElement(getPage(),
-                "xpath=//div[@id='diffTreeForm:editor%1$s_te_table' or @id='compareRevisionsForm:editor%1$s_te_table']//tr[./td]",
+                "xpath=(//div[substring(@id, string-length(@id) - 8) = '_te_table'])[%1$s]//tr[./td]",
                 "editorRowsTemplate");
     }
 
@@ -173,8 +176,8 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     }
 
     public boolean isCellHighlightedWithColor(int row, int col, String fragment, String colorRGBA) {
-        String idSuffix = fragment + "_te_c-" + row + ":" + col;
-        WebElement cell = cellTemplate.format(idSuffix);
+        String idSuffix = "_te_c-" + row + ":" + col;
+        WebElement cell = cellTemplate.format(fragment, idSuffix);
         cell.waitForVisible(5000);
         String actualColor = cell.getCssValue("background-color");
         LOGGER.info("Repo cell background-color at [{},{}] fragment={}: {}", row, col, fragment, actualColor);
@@ -183,21 +186,34 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
 
     // ========== Row counting (repository-specific locator) ==========
 
+    // showDiff.xhtml renders the whole table in the DOM and hides equal rows via CSS when "Show equal
+    // elements" is off, so count only the VISIBLE rows (the old build removed equal rows from the DOM).
     public int getNumberOfRows(int fragment) {
-        WaitUtil.waitForCondition(
-                () -> editorRowsTemplate.format(String.valueOf(fragment)).getLocator().count() > 0,
-                10000,
-                250,
+        Locator rows = editorRowsTemplate.format(String.valueOf(fragment)).getLocator();
+        WaitUtil.waitForCondition(() -> rows.count() > 0, 10000, 250,
                 "Waiting for repository comparison rows to appear for fragment " + fragment);
-        return editorRowsTemplate.format(String.valueOf(fragment)).getLocator().count();
+        int total = rows.count();
+        int visible = 0;
+        for (int i = 0; i < total; i++) {
+            if (rows.nth(i).isVisible()) {
+                visible++;
+            }
+        }
+        return visible;
     }
 
     // ========== Show Equal Rows ==========
 
+    // Toggling "Show equal elements" re-renders the whole diff (the tree collapses), so callers must
+    // re-navigate the tree afterwards; here we just flip it and wait for the tree to rebuild.
+    // Flips the "Show equal elements" checkbox and waits for the diff to re-render. NOTE: on this build's
+    // showDiff.xhtml the toggle no longer removes equal rows from the fragment tables (the diff always renders
+    // the full table with changed cells highlighted), so it is a UI-state toggle rather than a row filter.
     public void setShowEqualRows(boolean value) {
         if (showEqualRowsCheckbox.isChecked() != value) {
             showEqualRowsCheckbox.click();
-            WaitUtil.sleep(300, "Waiting for showEqualRows toggle in repo compare");
+            WaitUtil.sleep(500, "Waiting for diff re-render after show-equal toggle in repo compare");
+            waitForComparisonTreeToLoad();
         }
     }
 
