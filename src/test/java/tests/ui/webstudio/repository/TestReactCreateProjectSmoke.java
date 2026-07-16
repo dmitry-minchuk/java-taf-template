@@ -3,6 +3,9 @@ package tests.ui.webstudio.repository;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
+import domain.ui.webstudio.components.common.TabSwitcherComponent;
+import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -32,5 +35,17 @@ public class TestReactCreateProjectSmoke extends BaseTest {
     public void createFromZipWorks() {
         String projectName = WorkflowService.loginCreateProjectFromZip(User.ADMIN, "TestClickDatatypeNotFoundError.zip");
         assertThat(projectName).as("project name returned by the React create-from-Zip flow").isNotBlank();
+    }
+
+    @Test
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void copyProjectWorks() {
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
+        RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        String copyName = projectName + "Copy";
+        repositoryPage.copyProject(projectName, copyName);
+        assertThat(repositoryPage.isProjectPresent(copyName))
+                .as("Copied project '%s' should appear in the list", copyName).isTrue();
     }
 }

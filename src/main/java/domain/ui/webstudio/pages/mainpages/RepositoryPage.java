@@ -36,6 +36,8 @@ public class RepositoryPage extends BasePage {
     private WebElement projectRowByName;
     private WebElement projectActionByName;
     private WebElement discardCloseConfirmBtn;
+    private WebElement copyProjectNameField;
+    private WebElement copyProjectSubmitBtn;
     private WebElement filterByNameInput;
     private WebElement clearFilterBtn;
     private WebElement advancedFilterBtn;
@@ -85,6 +87,8 @@ public class RepositoryPage extends BasePage {
         projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
         discardCloseConfirmBtn = new WebElement(page, "[data-testid=discard-close-confirm]", "discardCloseConfirmBtn");
+        copyProjectNameField = new WebElement(page, "[data-testid=copy-project-name]", "copyProjectNameField");
+        copyProjectSubmitBtn = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmitBtn");
 
         filterByNameInput = new WebElement(page, "xpath=//input[@id='nameFilter']", "filterByNameInput");
         clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
@@ -238,6 +242,16 @@ public class RepositoryPage extends BasePage {
         if (discardCloseConfirmBtn.isVisible(3000)) {
             discardCloseConfirmBtn.click();
         }
+        waitUntilSpinnerLoaded();
+    }
+
+    // Copy an OPENED project via the row "Copy" action → dialog (name pre-filled "<name> (Copy)") → Copy.
+    // The project must be open (copying a closed project fails with "Failed to copy the project").
+    public void copyProject(String projectName, String newProjectName) {
+        projectActionByName.format(projectName, "Copy").click();
+        copyProjectNameField.fill(newProjectName);
+        copyProjectSubmitBtn.click();
+        fillCommitInfo();
         waitUntilSpinnerLoaded();
     }
 
