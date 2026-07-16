@@ -8,7 +8,6 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
@@ -37,29 +36,18 @@ public class TestACLLockUnlockDeprecated extends BaseTest {
 
         EditorPage editorPage = new EditorPage();
 
-        // ============ STEP 1: Check Repository tab — no Lock/Unlock in table actions ============
+        // ============ STEP 1: Repository tab — no Lock/Unlock in the React project row actions ============
+        // The React repository replaced the legacy right-panel buttons with per-row action buttons, so the
+        // former "table actions" and "right panel buttons" checks collapse into one row-actions assertion.
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        List<String> tableActions = repositoryPage.getTableActionTitles(projectName);
-        assertThat(tableActions)
-                .as("Repository table actions should not contain Lock or Unlock (BRD TR2). Actual actions: %s", tableActions)
+        List<String> rowActions = repositoryPage.getProjectActionLabels(projectName);
+        assertThat(rowActions)
+                .as("Repository row actions should not contain Lock or Unlock (BRD TR2). Actual actions: %s", rowActions)
                 .noneMatch(action -> action.toLowerCase().contains(LOCK) || action.toLowerCase().contains(UNLOCK));
 
-        // ============ STEP 2: Check Repository right panel — no Lock/Unlock buttons ============
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-
-        RepositoryContentButtonsPanelComponent buttonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-        List<String> panelButtons = buttonsPanel.getAllVisibleButtonValues();
-        assertThat(panelButtons)
-                .as("Repository right panel buttons should not contain Lock or Unlock (BRD TR2). Actual buttons: %s", panelButtons)
-                .noneMatch(btn -> btn.toLowerCase().contains(LOCK) || btn.toLowerCase().contains(UNLOCK));
-
         // ============ STEP 3: Check Editor toolbar — no Lock/Unlock actions ============
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
         editorPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()

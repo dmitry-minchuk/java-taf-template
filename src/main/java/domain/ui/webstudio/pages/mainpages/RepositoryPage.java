@@ -490,6 +490,23 @@ public class RepositoryPage extends BasePage {
         return inlineMessage.getText().trim();
     }
 
+    // React row-action aria-labels for a project's row (Open/Close/Copy/Export/Delete/Deploy/...).
+    public List<String> getProjectActionLabels(String projectName) {
+        List<String> labels = new ArrayList<>();
+        Locator btns = page.locator(String.format(
+                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label]",
+                projectName));
+        WaitUtil.waitForCondition(() -> btns.count() > 0, DEFAULT_TIMEOUT_MS, 250, "Waiting for project row actions");
+        int count = btns.count();
+        for (int i = 0; i < count; i++) {
+            String label = btns.nth(i).getAttribute("aria-label");
+            if (label != null && !label.isEmpty()) {
+                labels.add(label);
+            }
+        }
+        return labels;
+    }
+
     public List<String> getTableActionTitles(String projectName) {
         List<String> titles = new ArrayList<>();
         int rowIndex = findProjectRowIndex(projectName);
