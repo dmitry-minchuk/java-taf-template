@@ -395,14 +395,11 @@ public class RepositoryPage extends BasePage {
 
     public void createProjectFromOpenApi(String fileName, String projectName, boolean finalize) {
         createProjectLink.click();
-        OpenApiComponent openApiComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(fileName);
-        openApiComponent.setProjectName(projectName);
-        openApiComponent.clickCreate();
+        createNewProjectComponent.createProjectFromOpenApi(fileName, projectName, true);
         if (finalize) {
             fillCommitInfo();
             waitUntilSpinnerLoaded();
-            refreshBtn.click(DEFAULT_TIMEOUT_MS);
+            openIfClosed(projectName);
         }
     }
 

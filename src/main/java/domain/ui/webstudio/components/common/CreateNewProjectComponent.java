@@ -35,6 +35,8 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement templateItem;  // format(templateName): visible label
     private WebElement excelUpload;   // file input on the "From Excel files" step
     private WebElement archiveUpload; // file input on the "From archive" (.zip) step
+    private WebElement methodOpenApi;
+    private WebElement openApiUpload; // file input on the "From OpenAPI" step (data/rules modules auto-fill)
 
     public CreateNewProjectComponent() {
         super(LocalDriverPool.getPage());
@@ -66,6 +68,8 @@ public class CreateNewProjectComponent extends BaseComponent {
         templateItem = new WebElement(LocalDriverPool.getPage(), "xpath=//div[@data-testid='new-project-template']//button[.//span[normalize-space()='%s']]", "templateItem");
         excelUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-excel-upload]", "excelUpload");
         archiveUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-upload]", "archiveUpload");
+        methodOpenApi = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-openapi]", "methodOpenApi");
+        openApiUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-upload]", "openApiUpload");
     }
 
     // Full create-from-template path in the React wizard (method -> Next -> group -> item -> name -> Create).
@@ -116,6 +120,20 @@ public class CreateNewProjectComponent extends BaseComponent {
             nameField.fill(projectName);
         }
         submitBtn.click();
+    }
+
+    // Create-from-OpenAPI path in the React wizard (method -> Next -> upload spec -> name -> Create).
+    // The data/rules module name and path fields auto-populate from the uploaded spec.
+    public void createProjectFromOpenApi(String fileName, String projectName, boolean submit) {
+        methodOpenApi.click();
+        nextBtn.click();
+        openApiUpload.setInputFiles(TestDataUtil.getFilePathFromResources(fileName));
+        if (projectName != null && !projectName.isEmpty()) {
+            nameField.fill(projectName);
+        }
+        if (submit) {
+            submitBtn.click();
+        }
     }
 
     @SuppressWarnings("unchecked")
