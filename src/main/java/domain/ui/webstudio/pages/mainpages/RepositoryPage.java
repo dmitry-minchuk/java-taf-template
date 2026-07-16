@@ -336,19 +336,18 @@ public class RepositoryPage extends BasePage {
         }
     }
 
+    // React projects list (build 032c60a664ce+): rows are <tr data-testid=project-row-...> with the
+    // project name in the row's first <span> — the legacy RichFaces filtered-table this used to scrape
+    // no longer exists (it returned an empty list on React).
     public List<String> getAllVisibleProjectsInTable() {
         List<String> projectNames = new ArrayList<>();
-        WaitUtil.waitForCondition(() ->  !projectsTable.getRows().isEmpty(), 5000, 250, "Waiting for projects to load");
-        for (int i = 1; i <= projectsTable.getRows().size(); i++) {
-            TableComponent.PlaywrightTableRowComponent row = projectsTable.getRow(i);
-            if (!row.isVisible(100)) continue;
-            List<String> rowValues = row.getValue();
-            if (!rowValues.isEmpty() && !rowValues.getFirst().isEmpty()) {
-                String projectName = rowValues.getFirst().trim();
-                // Filter out JavaScript initialization code from RichFaces components
-                if (!projectName.startsWith("new RichFaces") && !projectName.contains("function(")) {
-                    projectNames.add(projectName);
-                }
+        Locator rows = page.locator("xpath=//tr[starts-with(@data-testid,'project-row')]");
+        WaitUtil.waitForCondition(() -> rows.count() > 0, 5000, 250, "Waiting for projects to load");
+        int count = rows.count();
+        for (int i = 0; i < count; i++) {
+            String name = rows.nth(i).locator("span").first().textContent();
+            if (name != null && !name.trim().isEmpty()) {
+                projectNames.add(name.trim());
             }
         }
         return projectNames;

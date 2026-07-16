@@ -48,4 +48,15 @@ public class TestReactCreateProjectSmoke extends BaseTest {
         assertThat(repositoryPage.isProjectPresent(copyName))
                 .as("Copied project '%s' should appear in the list", copyName).isTrue();
     }
+
+    @Test
+    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    public void listProjectsShowsCreatedProject() {
+        String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
+        RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        assertThat(repositoryPage.getAllVisibleProjectsInTable())
+                .as("getAllVisibleProjectsInTable should list the created project from the React rows")
+                .contains(projectName);
+    }
 }
