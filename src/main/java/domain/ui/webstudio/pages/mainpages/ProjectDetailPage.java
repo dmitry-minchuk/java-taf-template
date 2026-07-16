@@ -34,6 +34,7 @@ public class ProjectDetailPage extends BasePage {
     private WebElement branchSwitchAfterToggle;  // ant-switch "Switch to the new branch" (role=switch)
     private WebElement branchRowByName;          // format(name) → branch-commit-<name> (row presence)
     private WebElement branchMergeByName;        // format(name) → branch-merge-<name>
+    private WebElement branchCreateErrorNotice;  // React ant-notification shown when a branch create fails
     private SyncUpdatesDialogComponent syncUpdatesDialogComponent;
     // Header
     private WebElement projectStatus;       // React status: Local / Opened / Editing / Closed / ...
@@ -71,6 +72,7 @@ public class ProjectDetailPage extends BasePage {
         branchSwitchAfterToggle = new WebElement(page, "[data-testid=branches-switch-after]", "branchSwitchAfterToggle");
         branchRowByName = new WebElement(page, "xpath=//*[@data-testid='branch-commit-%s']", "branchRow");
         branchMergeByName = new WebElement(page, "xpath=//*[@data-testid='branch-merge-%s']", "branchMergeBtn");
+        branchCreateErrorNotice = new WebElement(page, "xpath=//div[contains(@class,'ant-notification')]//div[@role='alert']", "branchCreateErrorNotice");
         syncUpdatesDialogComponent = new SyncUpdatesDialogComponent();
         projectStatus = new WebElement(page, "[data-testid^=\"status-\"]", "projectStatus");
         revisionEntries = new WebElement(page, "xpath=//*[starts-with(@data-testid,'revision-comment-')]", "revisionEntries");
@@ -129,6 +131,17 @@ public class ProjectDetailPage extends BasePage {
         branchCreateSubmitBtn.click();
         waitUntilSpinnerLoaded();
         return this;
+    }
+
+    // Attempts to create a branch whose name is expected to be rejected (e.g. it already exists in the
+    // repository). Returns the React error notification text (e.g. "Branch 'x' already exists in repository.").
+    public String createBranchExpectingError(String branchName) {
+        openBranchesTab();
+        branchesCreateBtn.click();
+        branchNewNameField.fill(branchName);
+        branchCreateSubmitBtn.click();
+        branchCreateErrorNotice.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return branchCreateErrorNotice.getText().trim();
     }
 
     public boolean isBranchPresent(String branchName) {

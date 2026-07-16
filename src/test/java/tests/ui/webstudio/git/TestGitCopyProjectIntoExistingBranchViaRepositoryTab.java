@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -23,7 +22,8 @@ public class TestGitCopyProjectIntoExistingBranchViaRepositoryTab extends BaseTe
     private static final String PROJECT_NAME = "TestProject";
     private static final String SECOND_PROJECT_NAME = "TestProject2";
     private static final String BRANCH_NAME = "myBranch";
-    private static final String EXPECTED_ERROR_MESSAGE = "Branch myBranch already exists in repository.";
+    // React surfaces the collision as an ant-notification: "Branch 'myBranch' already exists in repository."
+    private static final String EXPECTED_ERROR_MESSAGE = "Branch '" + BRANCH_NAME + "' already exists in repository.";
 
     @Test
     @TestCaseId("EPBDS-8495")
@@ -32,40 +32,24 @@ public class TestGitCopyProjectIntoExistingBranchViaRepositoryTab extends BaseTe
     public void testGitCopyProjectIntoExistingBranchRepositoryTab() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
-        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        // Create first project and copy it to a new branch
+        // Create two projects
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, "Sample Project");
-        repositoryPage.refresh();
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, SECOND_PROJECT_NAME, "Sample Project");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
+        // React: "copy a project into a new branch" is now the project-detail Branches tab "New branch" action
+        // (mirrors the legacy CopyProjectDialogComponent.setNewBranchName flow). Create the branch on the first project.
+        repositoryPage.openProjectDetail(PROJECT_NAME).createBranch(BRANCH_NAME);
 
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_NAME);
-        copyDialog.clickCopyButton();
-        repositoryPage.refresh();
+        // Creating the same branch name for the second project must be rejected — branches are repo-wide.
+        String error = repositoryPage.openProjectsList()
+                .openProjectDetail(SECOND_PROJECT_NAME)
+                .createBranchExpectingError(BRANCH_NAME);
 
-        // Create second project and try to copy it to the same branch
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, SECOND_PROJECT_NAME, "Empty Project");
-        repositoryPage.refresh();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", SECOND_PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_NAME);
-        copyDialog.clickCopyButton(false);
-
-        // Verify error message is displayed
-        assertThat(copyDialog.waitForErrors(5000))
+        assertThat(error)
                 .as("Error message about existing branch should be displayed")
-                .anyMatch(msg -> msg.contains(EXPECTED_ERROR_MESSAGE));
+                .contains(EXPECTED_ERROR_MESSAGE);
     }
 }
