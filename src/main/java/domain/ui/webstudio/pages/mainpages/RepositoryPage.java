@@ -248,6 +248,11 @@ public class RepositoryPage extends BasePage {
         return deployModalComponent.waitForModal();
     }
 
+    // Whether the project row exposes the Deploy action (ACL: needs >= Viewer on design + Edit on deploy repo).
+    public boolean isDeployAvailable(String projectName) {
+        return projectDeployAction.format(projectName).isVisible(DEFAULT_TIMEOUT_MS);
+    }
+
     public void closeProject(String projectName) {
         projectActionByName.format(projectName, "Close").click();
         // Closing a project with uncommitted local changes prompts a "Discard unsaved changes?" confirm.

@@ -10,7 +10,6 @@ import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.DeployInfrastructureService;
@@ -72,16 +71,9 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,
                 projectName, "Example 1 - Bank Rating");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-
-        // ============ Verify Deploy button IS visible for admin ============
-        RepositoryContentButtonsPanelComponent buttonsPanel =
-                repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isDeployBtnVisible(5000))
-                .as("Admin should see Deploy button when deploy repo is configured (BRD TR2)")
+        // Verify the Deploy action IS available for admin (React project-row action)
+        assertThat(repositoryPage.isDeployAvailable(projectName))
+                .as("Admin should see Deploy when deploy repo is configured (BRD TR2)")
                 .isTrue();
     }
 
@@ -135,22 +127,13 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
                 10000, 500, "Waiting for project to appear for contributor"
         );
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-
-        // ============ Verify Deploy button IS visible ============
-        RepositoryContentButtonsPanelComponent buttonsPanel =
-                repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isDeployBtnVisible(5000))
-                .as("Contributor with Deploy repo access should see Deploy button (BRD TR2)")
+        // Verify the Deploy action IS available, plus Contributor's Copy/Export (React project-row actions)
+        assertThat(repositoryPage.isDeployAvailable(projectName))
+                .as("Contributor with Deploy repo access should see Deploy (BRD TR2)")
                 .isTrue();
-
-        // Also verify other Contributor buttons
-        assertThat(buttonsPanel.isCopyBtnVisible(1000))
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Copy"))
                 .as("Contributor: Copy visible (C permission)").isTrue();
-        assertThat(buttonsPanel.isExportBtnVisible())
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Export"))
                 .as("Contributor: Export visible (V permission)").isTrue();
     }
 
@@ -202,15 +185,8 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
                 10000, 500, "Waiting for project to appear for viewer"
         );
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-
-        // ============ Verify Deploy button NOT visible ============
-        RepositoryContentButtonsPanelComponent buttonsPanel =
-                repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isDeployBtnVisible())
+        // Verify the Deploy action is NOT available (Viewer on deploy lacks Edit)
+        assertThat(repositoryPage.isDeployAvailable(projectName))
                 .as("Viewer on both repos should NOT see Deploy — needs Edit on deploy repo (BRD TR2)")
                 .isFalse();
     }
@@ -266,24 +242,15 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
                 10000, 500, "Waiting for project to appear for viewer+contributor"
         );
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-
-        // ============ Verify Deploy IS visible (Contributor on deploy has Edit) ============
-        RepositoryContentButtonsPanelComponent buttonsPanel =
-                repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isDeployBtnVisible(5000))
+        // Verify Deploy IS available (Contributor on deploy has Edit); Viewer design perms unchanged
+        assertThat(repositoryPage.isDeployAvailable(projectName))
                 .as("Viewer(design) + Contributor(deploy) should see Deploy — minimum combo per BRD TR2")
                 .isTrue();
-
-        // Verify Viewer permissions on design side remain unchanged
-        assertThat(buttonsPanel.isExportBtnVisible())
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Export"))
                 .as("Viewer: Export visible (V permission)").isTrue();
-        assertThat(buttonsPanel.isCopyBtnVisible())
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Copy"))
                 .as("Viewer: Copy NOT visible (no C permission)").isFalse();
-        assertThat(buttonsPanel.isDeleteBtnVisible())
+        assertThat(repositoryPage.isProjectActionAvailable(projectName, "Delete"))
                 .as("Viewer: Delete NOT visible (no D permission)").isFalse();
     }
 }
