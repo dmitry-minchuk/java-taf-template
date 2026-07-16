@@ -54,8 +54,7 @@ public class TestEditingCommaSeparatedArrayValues extends BaseTest {
 
         domain.ui.webstudio.pages.mainpages.RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(domain.ui.webstudio.components.common.TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent().expandFolderInTree("Projects");
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().waitForItemInTree(projectName, 15_000))
+        assertThat(repositoryPage.isProjectPresent(projectName))
                 .as("Project '%s' should still be present in the repository", projectName)
                 .isTrue();
     }
