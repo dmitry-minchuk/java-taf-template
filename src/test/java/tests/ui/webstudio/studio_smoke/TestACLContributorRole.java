@@ -11,7 +11,6 @@ import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -72,22 +71,16 @@ public class TestACLContributorRole extends BaseTest {
                 .as("Contributor should see project with assigned Contributor role")
                 .contains(projectName);
 
-        // ============ Select project and verify button set ============
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent buttonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        // Contributor has V + C + E + D — all visible except Deploy (system action, requires deploy repo)
-        assertThat(buttonsPanel.isCopyBtnVisible(1000)).as("Contributor should see Copy button (C permission)").isTrue();
-        assertThat(buttonsPanel.isDeleteBtnVisible()).as("Contributor should see Delete button (D permission)").isTrue();
-        assertThat(buttonsPanel.isExportBtnVisible()).as("Contributor should see Export button (V permission)").isTrue();
-        assertThat(buttonsPanel.isDeployBtnVisible()).as("Contributor should NOT see Deploy (no deploy repo access)").isFalse();
-        assertThat(buttonsPanel.isSaveBtnVisible()).as("Contributor should NOT see Save button (project not opened)").isFalse();
+        // ============ Verify Contributor's React row actions (Copy+Export+Delete, no Deploy/Save) ============
+        List<String> contributorActions = repositoryPage.getProjectActionLabels(projectName);
+        assertThat(contributorActions)
+                .as("Contributor should see Copy/Export/Delete (C+V+D), not Deploy/Save. Actual: %s", contributorActions)
+                .contains("Copy", "Export", "Delete")
+                .doesNotContain("Deploy", "Save");
 
         // ============ Verify Contributor CAN edit tables in Editor (E permission) ============
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        // A freshly-logged-in user has the project CLOSED in their workspace, so open it before the editor.
+        repositoryPage.openProject(projectName);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Bank Rating");
@@ -153,19 +146,14 @@ public class TestACLContributorRole extends BaseTest {
                 10000, 500, "Waiting for project to appear for contributor"
         );
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent contributorPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(contributorPanel.isCopyBtnVisible(1000)).as("Contributor: Copy visible (C)").isTrue();
-        assertThat(contributorPanel.isDeleteBtnVisible()).as("Contributor: Delete visible (D)").isTrue();
-        assertThat(contributorPanel.isExportBtnVisible()).as("Contributor: Export visible (V)").isTrue();
-        assertThat(contributorPanel.isDeployBtnVisible()).as("Contributor: Deploy NOT visible").isFalse();
+        List<String> cmpContributorActions = repositoryPage.getProjectActionLabels(projectName);
+        assertThat(cmpContributorActions)
+                .as("Contributor: Copy/Delete/Export visible (C+D+V), no Deploy. Actual: %s", cmpContributorActions)
+                .contains("Copy", "Delete", "Export")
+                .doesNotContain("Deploy");
 
         // Verify Contributor CAN edit in Editor
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        repositoryPage.openProject(projectName);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getEditorLeftRulesTreeComponent()
@@ -186,19 +174,14 @@ public class TestACLContributorRole extends BaseTest {
                 10000, 500, "Waiting for project to appear for viewer"
         );
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        RepositoryContentButtonsPanelComponent viewerPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(viewerPanel.isCopyBtnVisible()).as("Viewer: Copy NOT visible (no C permission)").isFalse();
-        assertThat(viewerPanel.isDeleteBtnVisible()).as("Viewer: Delete NOT visible (no D permission)").isFalse();
-        assertThat(viewerPanel.isExportBtnVisible()).as("Viewer: Export visible (V permission)").isTrue();
-        assertThat(viewerPanel.isDeployBtnVisible()).as("Viewer: Deploy NOT visible").isFalse();
+        List<String> viewerActions = repositoryPage.getProjectActionLabels(projectName);
+        assertThat(viewerActions)
+                .as("Viewer: Export visible (V), no Copy/Delete/Deploy. Actual: %s", viewerActions)
+                .contains("Export")
+                .doesNotContain("Copy", "Delete", "Deploy");
 
         // Verify Viewer CANNOT edit in Editor
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        repositoryPage.openProject(projectName);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getEditorLeftRulesTreeComponent()
@@ -261,19 +244,17 @@ public class TestACLContributorRole extends BaseTest {
                 .as("User should NOT see project2 (no role assigned)")
                 .doesNotContain(project2Name);
 
-        // Verify Contributor buttons on project1
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", project1Name);
-        RepositoryContentButtonsPanelComponent buttonsPanel = repositoryPage.getRepositoryContentButtonsPanelComponent();
-
-        assertThat(buttonsPanel.isCopyBtnVisible(1000)).as("Project-level Contributor: Copy visible").isTrue();
-        assertThat(buttonsPanel.isExportBtnVisible()).as("Project-level Contributor: Export visible").isTrue();
-        assertThat(buttonsPanel.isDeployBtnVisible()).as("Project-level Contributor: Deploy NOT visible").isFalse();
+        // Verify project-level Contributor's React row actions. A PROJECT-level Contributor gets only
+        // [Open, Export] — Copy/Delete are repo-level actions (Copy creates a new project → needs repo rights),
+        // so they are NOT offered for a project-scoped role (verified live).
+        List<String> projActions = repositoryPage.getProjectActionLabels(project1Name);
+        assertThat(projActions)
+                .as("Project-level Contributor: Export visible, no Copy/Delete/Deploy. Actual: %s", projActions)
+                .contains("Export")
+                .doesNotContain("Copy", "Delete", "Deploy");
 
         // Verify Contributor CAN edit in Editor
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        repositoryPage.openProject(project1Name);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(project1Name, "Bank Rating");
         editorPage.getEditorLeftRulesTreeComponent()
