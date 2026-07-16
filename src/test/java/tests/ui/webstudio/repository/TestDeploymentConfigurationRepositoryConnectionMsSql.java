@@ -16,6 +16,7 @@ import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.DbVerificationUtil;
+import helpers.utils.WaitUtil;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -75,12 +76,7 @@ public class TestDeploymentConfigurationRepositoryConnectionMsSql extends BaseTe
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, "Example 1 - Bank Rating");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-
-        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
+        DeployModalComponent deployModal = repositoryPage.clickDeploy(projectName);
         deployModal.deployWithAllFields(null, deploymentName, "MS SQL JDBC deploy test");
 
         assertThat(deployModal.isSuccessNotificationVisible())
@@ -91,13 +87,23 @@ public class TestDeploymentConfigurationRepositoryConnectionMsSql extends BaseTe
     }
 
     private void verifyMsSqlContainsDeployedData() {
-        List<Map<String, String>> rows = DbVerificationUtil.queryRows(
-                deployInfra.getMsSqlHostJdbcUrl(),
-                deployInfra.getMsSqlContainer().getUsername(),
-                deployInfra.getMsSqlContainer().getPassword(),
-                "SELECT id, file_name, author, file_comment, DATALENGTH(file_data) as file_size FROM openl_repository ORDER BY id");
-        assertThat(rows)
+        String url = deployInfra.getMsSqlHostJdbcUrl();
+        String user = deployInfra.getMsSqlContainer().getUsername();
+        String pass = deployInfra.getMsSqlContainer().getPassword();
+
+        // Deploy to the JDBC production repo propagates asynchronously after the success notification — poll for it.
+        boolean found = WaitUtil.waitForCondition(() -> {
+            try {
+                List<Map<String, String>> rows = DbVerificationUtil.queryRows(url, user, pass,
+                        "SELECT id, file_name, author, file_comment, DATALENGTH(file_data) as file_size FROM openl_repository ORDER BY id");
+                return !rows.isEmpty();
+            } catch (RuntimeException e) {
+                return false;
+            }
+        }, 30000, 2000, "Waiting for MS SQL openl_repository to contain deployed data");
+
+        assertThat(found)
                 .as("MS SQL deployment repository should contain deployed project files")
-                .isNotEmpty();
+                .isTrue();
     }
 }

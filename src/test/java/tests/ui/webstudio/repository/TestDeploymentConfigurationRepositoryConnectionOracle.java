@@ -17,6 +17,7 @@ import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.DbVerificationUtil;
+import helpers.utils.WaitUtil;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -98,13 +99,9 @@ public class TestDeploymentConfigurationRepositoryConnectionOracle extends BaseT
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, "Example 1 - Bank Rating");
 
         // Step 5: Select the project and deploy it to the Oracle deployment repository
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
+        DeployModalComponent deployModal = repositoryPage.clickDeploy(projectName);
 
         // Step 6: Fill deploy modal and deploy
-        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
         deployModal.deployWithAllFields(null, deploymentName, "Oracle JDBC deploy test");
 
         // Step 7: Wait for deploy to complete (success notification appears)
@@ -117,13 +114,23 @@ public class TestDeploymentConfigurationRepositoryConnectionOracle extends BaseT
     }
 
     private void verifyOracleContainsDeployedData() {
-        List<Map<String, String>> rows = DbVerificationUtil.queryRows(
-                deployInfra.getOracleContainer().getJdbcUrl(),
-                deployInfra.getOracleContainer().getUsername(),
-                deployInfra.getOracleContainer().getPassword(),
-                "SELECT id, file_name, author, file_comment, modified_at, dbms_lob.getlength(file_data) as file_size FROM openl_repository ORDER BY id");
-        assertThat(rows)
+        String url = deployInfra.getOracleContainer().getJdbcUrl();
+        String user = deployInfra.getOracleContainer().getUsername();
+        String pass = deployInfra.getOracleContainer().getPassword();
+
+        // Deploy to the JDBC production repo propagates asynchronously after the success notification — poll for it.
+        boolean found = WaitUtil.waitForCondition(() -> {
+            try {
+                List<Map<String, String>> rows = DbVerificationUtil.queryRows(url, user, pass,
+                        "SELECT id, file_name, author, file_comment, dbms_lob.getlength(file_data) as file_size FROM openl_repository ORDER BY id");
+                return !rows.isEmpty();
+            } catch (RuntimeException e) {
+                return false;
+            }
+        }, 30000, 2000, "Waiting for Oracle openl_repository to contain deployed data");
+
+        assertThat(found)
                 .as("Oracle deployment repository should contain deployed project files")
-                .isNotEmpty();
+                .isTrue();
     }
 }
