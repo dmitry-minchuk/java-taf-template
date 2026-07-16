@@ -55,17 +55,18 @@ public class TestProtectedBranchBypassIdempotentRetryUi extends BaseTest {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
+        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
+        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProjectAndWait();
+        repositoryPage.openProject(PROJECT_NAME);
+        EditorPage editor = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editor.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
 
         SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
         WaitUtil.waitForCondition(() -> {
-            repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
+            editor.getEditorToolbarPanelComponent().clickSync();
             return syncDialog.isVisible();
         }, 15_000, 1_000, "Click Sync until the merge dialog appears");
         syncDialog.selectBranch(PROTECTED_TARGET);
@@ -78,13 +79,16 @@ public class TestProtectedBranchBypassIdempotentRetryUi extends BaseTest {
                 .as("first bypass merge succeeds with a '%s' toast", MERGE_SUCCESS_TOAST)
                 .isTrue();
 
-        // After the merge the Repository view drops back to the project list — re-select the
-        // project before re-opening Sync for the same direction.
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
+        // After the merge the project may drop from the editor workspace — re-open it if needed, then
+        // re-open the Sync dialog from the editor toolbar for the same direction.
+        repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        if (repositoryPage.isProjectActionAvailable(PROJECT_NAME, "Open")) {
+            repositoryPage.openProject(PROJECT_NAME);
+        }
+        editor.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editor.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
         WaitUtil.waitForCondition(() -> {
-            repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
+            editor.getEditorToolbarPanelComponent().clickSync();
             return syncDialog.isVisible();
         }, 15_000, 1_000, "Re-open the Sync dialog after the merge");
         syncDialog.selectBranch(PROTECTED_TARGET);
