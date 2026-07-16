@@ -80,17 +80,18 @@ public class TestProtectedBranchBypassGroupMembershipUi extends AbstractSsoUiTes
         LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
         EditorPage editorPage = new KeycloakLoginPage().login(GROUP_USER, GROUP_USER_PASSWORD);
 
+        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
+        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProjectAndWait();
+        repositoryPage.openProject(PROJECT_NAME);
+        EditorPage editor = repositoryPage.getTabSwitcherComponent()
+                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editor.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
 
         SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
         WaitUtil.waitForCondition(() -> {
-            repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
+            editor.getEditorToolbarPanelComponent().clickSync();
             return syncDialog.isVisible();
         }, 15_000, 1_000, "Click Sync until the merge dialog appears");
         syncDialog.selectBranch(PROTECTED_TARGET);
