@@ -66,8 +66,8 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
                 10000, 500, "Waiting for project to appear for viewer"
         );
 
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        // A freshly-logged-in user has the project CLOSED in their workspace — open it so the editor tree shows it.
+        repositoryPage.openProject(projectName);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Bank Rating");
@@ -129,8 +129,8 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
                 10000, 500, "Waiting for project to appear for contributor"
         );
 
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        // A freshly-logged-in user has the project CLOSED in their workspace — open it so the editor tree shows it.
+        repositoryPage.openProject(projectName);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Bank Rating");
@@ -190,8 +190,8 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
                 10000, 500, "Waiting for project to appear for manager"
         );
 
-        repositoryPage.refresh();
-        repositoryPage.unlockAllProjects();
+        // A freshly-logged-in user has the project CLOSED in their workspace — open it so the editor tree shows it.
+        repositoryPage.openProject(projectName);
         editorPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "Bank Rating");
