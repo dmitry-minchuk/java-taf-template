@@ -16,34 +16,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestProjectDeleteUnsavedEditUi extends BaseTest {
 
-    private static final String PROJECTS_FOLDER = "Projects";
-
     @Test
     @TestCaseId("EPBDS-16229")
     @Description("Known-failing regression for EPBDS-16229: deleting a project must succeed even when its name was changed in the edit dialog but the project was not saved. Stays red until EPBDS-16229 is fixed.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeleteProjectWithUnsavedRulesEditSucceeds() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
+        String renamedName = projectName + "Renamed";
         EditorPage editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
         editorPage.openEditProjectDialog(projectName)
-                .setProjectName(projectName + "Renamed")
+                .setProjectName(renamedName)
                 .clickUpdateButton();
 
+        // The React projects list keys a row by its working-copy name, so after the unsaved rename the
+        // row (and its Delete action) is found under the new name, not the original.
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECTS_FOLDER)
-                .selectItemInFolder(PROJECTS_FOLDER, projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getProjectDeleteConfirmModalComponent()
-                .waitForVisible()
+        repositoryPage.deleteProject(renamedName)
                 .enterDeletionComment("Removed by automated regression test")
                 .acknowledgePermanentDeletion()
                 .attemptDelete();
         repositoryPage.reloadPage();
 
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isProjectPresentInTree(projectName))
+        assertThat(repositoryPage.isProjectPresent(renamedName))
                 .as("A project with an unsaved rules.xml edit must delete successfully, not error out")
                 .isFalse();
     }
