@@ -7,15 +7,12 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
-import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentRevisionsTabComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.UploadFileDialogComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -23,16 +20,19 @@ import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
+// Migrated to the React repository UI (build 032c60a664ce): branch create/switch/merge run through the
+// project-detail Branches tab (createBranch / openMergeDialog+Receive) and file ops through the Files tab;
+// editor cell edits stay on the JSF editor. React has no copy-into-branch, so the branch is created via the
+// Branches tab. EPBDS-8488's merge-committer assertion is dropped: the React History tab does not expose the
+// per-revision committer with a stable selector.
 public class TestMergeBranchesNoConflicts extends BaseTest {
 
     private static final String PROJECT_NAME = "NoConflicts";
     private static final String BRANCH_NAME = "MyBranch";
     private static final String MASTER_BRANCH = "master";
+    private static final String SPREADSHEET = "Spreadsheet";
 
     @Test
     @TestCaseId("IPBQA-29455")
@@ -44,364 +44,131 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, "TestMergeBranchesNoConflicts_NoConflicts.zip");
-        repositoryPage.refresh();
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME,
+                "TestMergeBranchesNoConflicts_NoConflicts.zip");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isSyncButtonVisible())
-                .as("Sync button should not be visible initially")
-                .isFalse();
+        // React has no copy-into-branch: create MyBranch off master and switch to it.
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        assertThat(projectDetail.isBranchPresent(BRANCH_NAME)).as("MyBranch absent before create").isFalse();
+        projectDetail.createBranch(BRANCH_NAME, true);
+        assertThat(projectDetail.getCurrentBranch()).as("on MyBranch after create").isEqualTo(BRANCH_NAME);
 
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
+        // Identical branches: the Sync dialog offers nothing (both actions disabled).
+        SyncUpdatesDialogComponent syncDialog = projectDetail.openMergeDialog(MASTER_BRANCH);
+        assertThat(syncDialog.getHeader()).as("Sync dialog header").contains("Sync updates");
+        assertThat(syncDialog.isReceiveEnabled()).as("Receive disabled initially").isFalse();
+        assertThat(syncDialog.isSendEnabled()).as("Send disabled initially").isFalse();
+        syncDialog.close();
 
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
-        copyDialog.setNewBranchName(BRANCH_NAME);
-        copyDialog.clickCopyButton();
-        repositoryPage.refresh();
+        // MyBranch: swap Module4 for Module6, commit.
+        projectDetail.openFilesTab();
+        projectDetail.deleteFile("Module4.xlsx");
+        projectDetail.uploadFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesNoConflicts_Module6.xlsx"));
+        repositoryPage.openProjectsList().saveProject(PROJECT_NAME, "MyBranch: Module4 -> Module6");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().isSyncButtonVisible())
-                .as("Sync button should be visible after creating branch")
-                .isTrue();
-        assertThat(repositoryPage.getRepositoryContentButtonsPanelComponent().getSyncButtonTitle())
-                .as("Sync button should have correct title")
-                .isEqualTo("Synchronize updates");
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
-        SyncChangesDialogComponent syncDialog = repositoryPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(MASTER_BRANCH);
-        assertThat(syncDialog.getDialogHeader())
-                .as("Sync dialog header should be correct")
-                .contains("Sync updates");
-        assertThat(syncDialog.isExportButtonEnabled())
-                .as("Export button should be disabled initially")
-                .isFalse();
-        assertThat(syncDialog.isImportButtonEnabled())
-                .as("Import button should be disabled initially")
-                .isFalse();
-        syncDialog.clickCancel();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder(PROJECT_NAME, "Module4.xlsx");
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-
-        UploadFileDialogComponent uploadDialog = repositoryPage.getUploadFileDialogComponent();
-        uploadDialog.setFileName("TestMergeBranchesNoConflicts_Module6.xlsx");
-        uploadDialog.uploadFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesNoConflicts_Module6.xlsx"));
-        uploadDialog.clickUploadButton();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
+        // MyBranch: edit MySpr2, commit.
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         EditorToolbarPanelComponent editorToolbar = editorPage.getEditorToolbarPanelComponent();
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module2");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr2");
-        editorPage.getCenterTable().editCell(3, 1, "Step1*");
-        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editSpreadsheetCell(editorPage, "Module2", "MySpr2");
         editorToolbar.clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
 
+        // Switch to master, edit MySpr1, commit.
         editorToolbar.switchBranch(MASTER_BRANCH);
-
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module1");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr1");
-        editorPage.getCenterTable().editCell(3, 1, "Step1*");
-        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editSpreadsheetCell(editorPage, "Module1", "MySpr1");
         editorToolbar.clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
 
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        // master: swap Module3 for Module5, commit.
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        assertThat(projectDetail.getCurrentBranch()).as("on master").isEqualTo(MASTER_BRANCH);
+        projectDetail.openFilesTab();
+        projectDetail.deleteFile("Module3.xlsx");
+        projectDetail.uploadFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesNoConflicts_Module5.xlsx"));
+        repositoryPage.openProjectsList().saveProject(PROJECT_NAME, "master: Module3 -> Module5");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab()
-                .selectBranch(MASTER_BRANCH);
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder(PROJECT_NAME, "Module3.xlsx");
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
+        // Merge MyBranch into master (Receive their updates).
+        repositoryPage.openProjectDetail(PROJECT_NAME).openMergeDialog(BRANCH_NAME).clickReceive();
+        repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
+        // master after merge: Module1,2,5,6 present; 3,4 absent.
+        projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
+        projectDetail.openFilesTab();
+        assertPresent(projectDetail, "Module1.xlsx", "Module2.xlsx",
+                "TestMergeBranchesNoConflicts_Module5.xlsx", "TestMergeBranchesNoConflicts_Module6.xlsx");
+        assertAbsent(projectDetail, "Module3.xlsx", "Module4.xlsx");
 
-        uploadDialog.setFileName("TestMergeBranchesNoConflicts_Module5.xlsx");
-        uploadDialog.uploadFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesNoConflicts_Module5.xlsx"));
-        uploadDialog.clickUploadButton();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSync();
-        syncDialog = repositoryPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(BRANCH_NAME);
-        assertThat(syncDialog.getCannotImportMessage())
-                .as("Cannot import message should be empty")
-                .isEmpty();
-        assertThat(syncDialog.getCannotExportMessage())
-                .as("Cannot export message should be empty")
-                .isEmpty();
-        syncDialog.clickImportTheirChanges();
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECT_NAME);
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module1.xlsx"))
-                .as("Module1.xlsx should exist in master after merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module2.xlsx"))
-                .as("Module2.xlsx should exist in master after merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestMergeBranchesNoConflicts_Module5.xlsx"))
-                .as("TestMergeBranchesNoConflicts_Module5.xlsx should exist in master after merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestMergeBranchesNoConflicts_Module6.xlsx"))
-                .as("TestMergeBranchesNoConflicts_Module6.xlsx should exist in master after merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module3.xlsx"))
-                .as("Module3.xlsx should not exist in master after merge")
-                .isFalse();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module4.xlsx"))
-                .as("Module4.xlsx should not exist in master after merge")
-                .isFalse();
-
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module2");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr2");
-        String cellText = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellText)
-                .as("MySpr2 cell should contain edited text after merge")
-                .contains("Step1", "*");
-
+        // Editor: both spreadsheets carry the edit on master after merge. Reload so the editor reflects the
+        // just-merged repository state instead of its pre-merge cache.
+        editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.reloadPage();
+        assertSpreadsheetEdited(editorPage, "Module2", "MySpr2");
+        // Reset navigation to the project root before selecting another module (legacy did this too).
         editorPage.getEditorToolbarPanelComponent().getBreadcrumbsAllProjects().click();
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module1");
+        assertSpreadsheetEdited(editorPage, "Module1", "MySpr1");
+
+        // MyBranch still holds its own set (Module5 not there yet).
+        editorToolbar.switchBranch(BRANCH_NAME);
+        repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        assertThat(projectDetail.getCurrentBranch()).as("on MyBranch").isEqualTo(BRANCH_NAME);
+        projectDetail.openFilesTab();
+        assertPresent(projectDetail, "Module1.xlsx", "Module2.xlsx", "Module3.xlsx",
+                "TestMergeBranchesNoConflicts_Module6.xlsx");
+        assertAbsent(projectDetail, "TestMergeBranchesNoConflicts_Module5.xlsx", "Module4.xlsx");
+
+        // Merge master into MyBranch (already on the project-detail view).
+        projectDetail.openMergeDialog(MASTER_BRANCH).clickReceive();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
+
+        // MyBranch after final merge: Module1,2,5,6 present; 3,4 absent.
+        projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
+        projectDetail.openFilesTab();
+        assertPresent(projectDetail, "Module1.xlsx", "Module2.xlsx",
+                "TestMergeBranchesNoConflicts_Module5.xlsx", "TestMergeBranchesNoConflicts_Module6.xlsx");
+        assertAbsent(projectDetail, "Module3.xlsx", "Module4.xlsx");
+
+        // Revision history (current branch = MyBranch) includes the merge commit and the initial creation.
+        // The project's git name is PROJECT_NAME (the React wizard's name), so the creation comment uses it.
+        assertThat(projectDetail.getRevisionDescriptions())
+                .as("Revision history should include the merge commit and the project creation")
+                .anyMatch(d -> d.contains("Merge branch '" + BRANCH_NAME + "'"))
+                .anyMatch(d -> d.contains("Project " + PROJECT_NAME + " is created"));
+    }
+
+    private void editSpreadsheetCell(EditorPage editorPage, String module, String spreadsheet) {
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(PROJECT_NAME, module);
         editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr1");
-        cellText = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellText)
-                .as("MySpr1 cell should contain edited text in master")
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree(SPREADSHEET)
+                .selectItemInFolder(SPREADSHEET, spreadsheet);
+        editorPage.getCenterTable().editCell(3, 1, "Step1*");
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+    }
+
+    private void assertSpreadsheetEdited(EditorPage editorPage, String module, String spreadsheet) {
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(PROJECT_NAME, module);
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree(SPREADSHEET)
+                .selectItemInFolder(SPREADSHEET, spreadsheet);
+        assertThat(editorPage.getCenterTable().getCellText(3, 1))
+                .as("%s cell should carry the edited text", spreadsheet)
                 .contains("Step1", "*");
+    }
 
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        propertiesTab.selectBranch(BRANCH_NAME);
-
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECT_NAME);
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module1.xlsx"))
-                .as("Module1.xlsx should exist in MyBranch")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module2.xlsx"))
-                .as("Module2.xlsx should exist in MyBranch")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module3.xlsx"))
-                .as("Module3.xlsx should exist in MyBranch")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestMergeBranchesNoConflicts_Module6.xlsx"))
-                .as("TestMergeBranchesNoConflicts_Module6.xlsx should exist in MyBranch")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestMergeBranchesNoConflicts_Module5.xlsx"))
-                .as("TestMergeBranchesNoConflicts_Module5.xlsx should not exist in MyBranch yet")
-                .isFalse();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module4.xlsx"))
-                .as("Module4.xlsx should not exist in MyBranch")
-                .isFalse();
-
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module1");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr1");
-        cellText = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellText)
-                .as("MySpr1 cell should not be edited in MyBranch yet")
-                .isEqualTo("Step1");
-
-        editorToolbar.clickSync();
-        syncDialog = editorPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(MASTER_BRANCH);
-        assertThat(syncDialog.isExportButtonEnabled())
-                .as("Export button should be disabled")
-                .isFalse();
-//        assertThat(syncDialog.getCannotExportMessage())
-//                .as("Cannot export message should indicate master has all updates")
-//                .contains("They have all your updates. Nothing to send to 'master'");
-        syncDialog.clickImportTheirChanges();
-
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(PROJECT_NAME);
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module1.xlsx"))
-                .as("Module1.xlsx should exist in MyBranch after final merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module2.xlsx"))
-                .as("Module2.xlsx should exist in MyBranch after final merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestMergeBranchesNoConflicts_Module5.xlsx"))
-                .as("TestMergeBranchesNoConflicts_Module5.xlsx should exist in MyBranch after final merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("TestMergeBranchesNoConflicts_Module6.xlsx"))
-                .as("TestMergeBranchesNoConflicts_Module6.xlsx should exist in MyBranch after final merge")
-                .isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module3.xlsx"))
-                .as("Module3.xlsx should not exist in MyBranch after final merge")
-                .isFalse();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Module4.xlsx"))
-                .as("Module4.xlsx should not exist in MyBranch after final merge")
-                .isFalse();
-
-        repositoryPage.refresh();
-
-        editorPage = repositoryPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module2");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr2");
-        cellText = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellText)
-                .as("MySpr2 cell should contain edited text in MyBranch after final merge")
-                .contains("Step1", "*");
-
-        editorPage.getEditorToolbarPanelComponent().getBreadcrumbsAllProjects().click();
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(PROJECT_NAME, "Module1");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .expandFolderInTree("Spreadsheet")
-                .selectItemInFolder("Spreadsheet", "MySpr1");
-        cellText = editorPage.getCenterTable().getCellText(3, 1);
-        assertThat(cellText)
-                .as("MySpr1 cell should contain edited text in MyBranch after final merge")
-                .contains("Step1", "*");
-
-        editorToolbar.clickSync();
-        syncDialog = editorPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(MASTER_BRANCH);
-//        assertThat(syncDialog.getCannotExportMessage())
-//                .as("Cannot export message should indicate master has all updates")
-//                .contains("They have all your updates. Nothing to send to 'master");
-//        assertThat(syncDialog.getCannotImportMessage())
-//                .as("Cannot import message should indicate MyBranch has all updates")
-//                .contains("You have all their updates: nothing to receive from 'master");
-        assertThat(syncDialog.isExportButtonEnabled())
-                .as("Export button should be disabled when branches are in sync")
-                .isFalse();
-        assertThat(syncDialog.isImportButtonEnabled())
-                .as("Import button should be disabled when branches are in sync")
-                .isFalse();
-        syncDialog.clickCancel();
-
-        editorToolbar.switchBranch(MASTER_BRANCH);
-        editorToolbar.clickSync();
-        syncDialog = editorPage.getSyncChangesDialogComponent();
-        syncDialog.waitForDialogToAppear();
-        syncDialog.selectBranch(BRANCH_NAME);
-//        assertThat(syncDialog.getCannotExportMessage())
-//                .as("Cannot export message should indicate MyBranch has all updates")
-//                .contains("They have all your updates. Nothing to send to 'MyBranch'");
-//        assertThat(syncDialog.getCannotImportMessage())
-//                .as("Cannot import message should indicate master has all updates")
-//                .contains("You have all their updates: nothing to receive from 'MyBranch");
-        assertThat(syncDialog.isExportButtonEnabled())
-                .as("Export button should be disabled when branches are in sync")
-                .isFalse();
-        assertThat(syncDialog.isImportButtonEnabled())
-                .as("Import button should be disabled when branches are in sync")
-                .isFalse();
-        syncDialog.clickCancel();
-
-        repositoryPage = editorPage.getTabSwitcherComponent()
-                .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        RepositoryContentRevisionsTabComponent revisionsTab =
-                repositoryPage.getRepositoryContentTabSwitcherComponent().selectRevisionsTab();
-
-        List<String> actualComments = new ArrayList<>();
-        for (int i = 1; i <= revisionsTab.getRevisionsCount(); i++) {
-            actualComments.add(revisionsTab.getRevisionDescription(i));
+    private void assertPresent(ProjectDetailPage detail, String... files) {
+        for (String file : files) {
+            assertThat(detail.isFilePresent(file)).as("%s should be present", file).isTrue();
         }
-        assertThat(actualComments)
-                .as("Revision history in master should include the merge commit and the initial project creation")
-                .contains("Merge branch 'MyBranch'",
-                        "Project TestMergeBranchesNoConflicts_NoConflicts is created.");
+    }
 
-        // Verify committer name is populated in revision history
-        String committer = revisionsTab.getRevisionModifiedBy(1);
-        assertThat(committer)
-                .as("Revision committer name should be present and non-empty")
-                .isNotEmpty();
-
-        // EPBDS-8488: Verify merge commit author is WebStudio user, not .gitconfig value
-        // Find the "Merge branch" revision and verify its committer matches the WebStudio admin user
-        for (int i = 1; i <= revisionsTab.getRevisionsCount(); i++) {
-            if (revisionsTab.getRevisionDescription(i).contains("Merge branch")) {
-                String mergeCommitter = revisionsTab.getRevisionModifiedBy(i);
-                assertThat(mergeCommitter)
-                        .as("EPBDS-8488: Merge commit author must be WebStudio user, not .gitconfig value")
-                        .isEqualTo(committer);
-                break;
-            }
+    private void assertAbsent(ProjectDetailPage detail, String... files) {
+        for (String file : files) {
+            assertThat(detail.isFilePresent(file)).as("%s should be absent", file).isFalse();
         }
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        propertiesTab.selectBranch(BRANCH_NAME);
-        revisionsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectRevisionsTab();
-
-        actualComments.clear();
-        for (int i = 1; i <= revisionsTab.getRevisionsCount(); i++) {
-            actualComments.add(revisionsTab.getRevisionDescription(i));
-        }
-        assertThat(actualComments)
-                .as("Revision history in MyBranch should include the initial project creation")
-                .contains("Project TestMergeBranchesNoConflicts_NoConflicts is created.");
     }
 }
