@@ -10,7 +10,6 @@ import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.DeployModalComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.DeployInfrastructureService;
@@ -97,21 +96,12 @@ public class TestNewDeployPopup extends BaseTest {
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,
                 nameProject, "Example 1 - Bank Rating");
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", nameProject);
-
-        RepositoryContentTabPropertiesComponent propsTab =
-                repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String projectInitialRevision = propsTab.getRevision();
+        String projectInitialRevision = repositoryPage.openProjectDetail(nameProject).getLatestRevisionId();
+        repositoryPage.openProjectsList();
         LOGGER.info("Step 1: Project '{}' created, initial revision: {}", nameProject, projectInitialRevision);
 
-        // =========================================================================
-        // STEP 2: Deploy project to production via DeployModal
-        // Legacy steps: 11 (adapted — no Deploy Configuration, direct deploy)
-        // =========================================================================
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        DeployModalComponent deployModal = repositoryPage.getDeployModalComponent();
+        // STEP 2: Deploy project to production via the React DeployModal (project-row Deploy action)
+        DeployModalComponent deployModal = repositoryPage.clickDeploy(nameProject);
         deployModal.deployWithAllFields(null, deploymentName, "First deploy to production");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy should succeed with success notification")
@@ -130,24 +120,13 @@ public class TestNewDeployPopup extends BaseTest {
         String zipFile2 = "Tutorial 6 - Introduction to Spreadsheet Tables.zip";
         String deploymentNameComplex = StringUtil.generateUniqueName("ComplexDeploy");
 
-        // Create Tutorial 3
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
                 nameDependentProject1, zipFile1);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", nameDependentProject1);
-
-        // Deploy Tutorial 3 — backend auto-resolves dependency on Tutorial 6
-        // (Tutorial 6 doesn't exist yet, so we create Tutorial 6 first)
-        // Actually, create both projects first, then deploy
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE,
                 nameDependentProject2, zipFile2);
 
-        // Deploy Tutorial 3 (has dependency on Tutorial 6)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameDependentProject1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        deployModal = repositoryPage.getDeployModalComponent();
+        // Deploy Tutorial 3 (backend auto-resolves the dependency on Tutorial 6)
+        deployModal = repositoryPage.clickDeploy(nameDependentProject1);
         deployModal.deployWithAllFields(null, deploymentNameComplex, "Deploy dependent project");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy of dependent project should succeed")
@@ -161,40 +140,21 @@ public class TestNewDeployPopup extends BaseTest {
         // =========================================================================
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(nameProject, "Bank Rating");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "CapitalDynamicScore");
-
-        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
-        editorPage.getCenterTable().editCell(6, 2, "1000");
-        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
-        WaitUtil.sleep(1000, "Wait for table save");
+        editProjectCell(editorPage, nameProject, "1000");
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", nameProject);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        WaitUtil.sleep(1000, "Wait for project save");
+        repositoryPage.saveProject(nameProject, "Edit CapitalDynamicScore to 1000");
 
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String projectUpdatedRevision = propsTab.getRevision();
+        String projectUpdatedRevision = repositoryPage.openProjectDetail(nameProject).getLatestRevisionId();
+        repositoryPage.openProjectsList();
         assertThat(projectUpdatedRevision)
                 .as("Revision should change after edit")
                 .isNotEqualTo(projectInitialRevision);
         LOGGER.info("Step 4: Project edited, new revision: {}", projectUpdatedRevision);
 
-        // =========================================================================
-        // STEP 5: Redeploy project with updated revision
-        // Legacy steps: 14 (adapted — just deploy again, same deployment name)
-        // =========================================================================
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        deployModal = repositoryPage.getDeployModalComponent();
+        // STEP 5: Redeploy with the updated revision
+        deployModal = repositoryPage.clickDeploy(nameProject);
         deployModal.deployWithAllFields(null, deploymentName, "Redeploy with updated revision");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Redeploy should succeed")
@@ -209,28 +169,13 @@ public class TestNewDeployPopup extends BaseTest {
         // =========================================================================
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent()
-                .selectModule(nameProject, "Bank Rating");
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Decision")
-                .selectItemInFolder("Decision", "CapitalDynamicScore");
-
-        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
-        editorPage.getCenterTable().editCell(6, 2, "2000");
-        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
-        WaitUtil.sleep(1000, "Wait for table save");
+        editProjectCell(editorPage, nameProject, "2000");
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", nameProject);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        WaitUtil.sleep(1000, "Wait for save");
+        repositoryPage.saveProject(nameProject, "Second edit to 2000");
 
-        // Resolve conflict if it appears (legacy behavior from DC save)
+        // Resolve conflict if it appears (deploy targets the production repo, so usually none occurs)
         if (repositoryPage.getResolveConflictsDialogComponent().isDialogVisible()) {
             repositoryPage.getResolveConflictsDialogComponent().resolveConflictUseYours();
             LOGGER.info("Step 6: Conflict resolved using 'Use Yours'");
@@ -238,16 +183,15 @@ public class TestNewDeployPopup extends BaseTest {
             LOGGER.info("Step 6: No conflict occurred (expected in new deploy flow)");
         }
 
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        String projectSecondUpdatedRevision = propsTab.getRevision();
+        String projectSecondUpdatedRevision = repositoryPage.openProjectDetail(nameProject).getLatestRevisionId();
+        repositoryPage.openProjectsList();
         assertThat(projectSecondUpdatedRevision)
                 .as("Revision should change after second edit")
                 .isNotEqualTo(projectUpdatedRevision);
         LOGGER.info("Step 6: Second edit done, revision: {}", projectSecondUpdatedRevision);
 
         // Deploy after edit
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        deployModal = repositoryPage.getDeployModalComponent();
+        deployModal = repositoryPage.clickDeploy(nameProject);
         deployModal.deployWithAllFields(null, deploymentName, "Deploy after second edit");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy after second edit should succeed")
@@ -262,12 +206,8 @@ public class TestNewDeployPopup extends BaseTest {
         String nameProjectTutorial2 = "Tutorial 2 - Introduction to Data Tables";
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE,
                 nameProjectTutorial2, nameProjectTutorial2);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", nameProjectTutorial2);
 
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeploy();
-        deployModal = repositoryPage.getDeployModalComponent();
+        deployModal = repositoryPage.clickDeploy(nameProjectTutorial2);
         deployModal.deployWithAllFields(null, nameProjectTutorial2, "Deploy Tutorial 2");
         assertThat(deployModal.isSuccessNotificationVisible())
                 .as("Deploy of Tutorial 2 should succeed")
@@ -322,4 +262,15 @@ public class TestNewDeployPopup extends BaseTest {
         LOGGER.info("Step 8: WebService verification completed — all services found in WS admin UI");
     }
 
+    private void editProjectCell(EditorPage editorPage, String projectName, String value) {
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
+        editorPage.getEditorLeftRulesTreeComponent()
+                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
+                .expandFolderInTree("Decision")
+                .selectItemInFolder("Decision", "CapitalDynamicScore");
+        editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
+        editorPage.getCenterTable().editCell(6, 2, value);
+        editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        WaitUtil.sleep(1000, "Wait for table save");
+    }
 }

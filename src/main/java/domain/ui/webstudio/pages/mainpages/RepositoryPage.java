@@ -76,6 +76,7 @@ public class RepositoryPage extends BasePage {
     private AddFolderDialogComponent addFolderDialogComponent;
     private ProjectDeleteConfirmModalComponent projectDeleteConfirmModalComponent;
     private SaveProjectDialogComponent saveProjectDialogComponent;
+    private WebElement projectDeployAction;
 
     public RepositoryPage() {
         super();
@@ -87,6 +88,7 @@ public class RepositoryPage extends BasePage {
         refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
         projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
+        projectDeployAction = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-action-deploy-')]", "projectDeployAction");
         discardCloseConfirmBtn = new WebElement(page, "[data-testid=discard-close-confirm]", "discardCloseConfirmBtn");
         copyProjectNameField = new WebElement(page, "[data-testid=copy-project-name]", "copyProjectNameField");
         copyProjectSubmitBtn = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmitBtn");
@@ -236,6 +238,14 @@ public class RepositoryPage extends BasePage {
     // Opened projects expose "Close"; closed ones expose "Open".
     public void openProject(String projectName) {
         projectActionByName.format(projectName, "Open").click();
+    }
+
+    // Opens the React DeployModal via the project row's Deploy action (rocket icon, testid
+    // project-action-deploy-<id>) — only present when a deployment/production repository is configured.
+    // Replaces the legacy RepositoryContentButtonsPanelComponent.clickDeploy.
+    public DeployModalComponent clickDeploy(String projectName) {
+        projectDeployAction.format(projectName).click();
+        return deployModalComponent.waitForModal();
     }
 
     public void closeProject(String projectName) {

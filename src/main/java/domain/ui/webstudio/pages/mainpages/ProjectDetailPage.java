@@ -200,6 +200,16 @@ public class ProjectDetailPage extends BasePage {
         return new CompareGitRevisionsDialogComponent(diffTab);
     }
 
+    // The newest revision's git hash, parsed from the first History entry's data-testid
+    // ("revision-comment-<hash>"). Lets callers assert a new revision was committed (id changes).
+    public String getLatestRevisionId() {
+        openHistoryTab();
+        Locator first = revisionEntries.getLocator().first();
+        first.waitFor();
+        String testId = first.getAttribute("data-testid");
+        return testId == null ? "" : testId.substring(testId.lastIndexOf('-') + 1);
+    }
+
     public int getRevisionsCount() {
         openHistoryTab();
         // The History tab loads its revision list asynchronously after the spinner clears, so wait for
