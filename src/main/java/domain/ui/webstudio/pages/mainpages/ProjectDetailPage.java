@@ -202,6 +202,16 @@ public class ProjectDetailPage extends BasePage {
         return extractOverviewField("Last change", "Comment");
     }
 
+    // Replaces the legacy Properties-tab getPath() — the project's path-in-repository from the Overview.
+    public String getOverviewPath() {
+        return extractOverviewField("Path", "Branch");
+    }
+
+    // Replaces the legacy Properties-tab getRepository() — the design repository name from the Overview.
+    public String getOverviewRepository() {
+        return extractOverviewField("Repository", "Path");
+    }
+
     // Revision comments on the History tab (each revision-comment-<hash>), newest first. Replaces the
     // legacy RepositoryContentRevisionsTabComponent.getRevisionDescription(i) loop.
     public List<String> getRevisionDescriptions() {

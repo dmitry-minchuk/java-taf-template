@@ -37,6 +37,9 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement archiveUpload; // file input on the "From archive" (.zip) step
     private WebElement methodOpenApi;
     private WebElement openApiUpload; // file input on the "From OpenAPI" step (data/rules modules auto-fill)
+    private WebElement repoSelect;    // new-project-repo (ant-select) — target design repository (shown with >1 repo)
+    private WebElement repoOption;    // body-level ant-select option, format(repoName)
+    private WebElement pathField;     // new-project-path (path-in-repository for non-flat repos)
 
     public CreateNewProjectComponent() {
         super(LocalDriverPool.getPage());
@@ -70,6 +73,40 @@ public class CreateNewProjectComponent extends BaseComponent {
         archiveUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-upload]", "archiveUpload");
         methodOpenApi = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-openapi]", "methodOpenApi");
         openApiUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-upload]", "openApiUpload");
+        repoSelect = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-repo]", "newProjectRepo");
+        repoOption = new WebElement(LocalDriverPool.getPage(), "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "newProjectRepoOption");
+        pathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-path]", "newProjectPath");
+    }
+
+    // --- React create-wizard target-repository + path controls (visible on the form step once >1 design repo
+    // exists). Used by multi-repo tests to create/copy into a specific repository at a given path. ---
+    public CreateNewProjectComponent selectRepository(String repositoryName) {
+        repoSelect.waitForVisible(5000);
+        repoSelect.click();
+        repoOption.format(repositoryName, repositoryName).click();
+        return this;
+    }
+
+    public String getRepositorySelectValue() {
+        return repoSelect.getText().trim();
+    }
+
+    public boolean isPathInRepositoryVisible() {
+        return pathField.isVisible(3000);
+    }
+
+    public String getPathInRepositoryValue() {
+        return pathField.getCurrentInputValue();
+    }
+
+    public CreateNewProjectComponent setPathInRepository(String path) {
+        pathField.clear();
+        pathField.fill(path);
+        return this;
+    }
+
+    public void clickCreate() {
+        submitBtn.click();
     }
 
     // Full create-from-template path in the React wizard (method -> Next -> group -> item -> name -> Create).
@@ -155,7 +192,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void cancelCreation() {
-        closeDialogBtn.click();
+        cancelBtn.click();
     }
 
     @Getter

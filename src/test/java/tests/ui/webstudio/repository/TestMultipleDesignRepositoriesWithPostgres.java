@@ -10,9 +10,10 @@ import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.DeployInfrastructureService;
 import helpers.service.LoginService;
@@ -33,17 +34,12 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Migrated from: Repository/TestMultipleDesignRepositoriesWithPostgres.java
- * Ticket: IPBQA-30859
+ * Ticket: IPBQA-30859 — Multiple Design Repositories (Git flat + Git non-flat + JDBC security DB).
  *
- * Adaptation: Instead of using a pre-deployed PostgreSQL instance (used in legacy @BeforeMethod
- * clearDB() for test isolation), each test run spins up a PostgreSQL container via Testcontainers.
- * The container is configured as the Studio's users/security database via app container env vars,
- * demonstrating JDBC integration. Since each test gets a fresh container, clearDB() is not needed.
- *
- * All containers share a Docker network (created here and registered in NetworkPool).
- * The app container joins the same network via BaseTest support for pre-registered networks.
- * PostgreSQL is accessible via Docker DNS alias "postgres" — no host.docker.internal dependency.
+ * React repository (build 032c60a664ce+): create/copy target a specific repository via the wizard/copy-dialog
+ * repository selector + path field; status lives in the project detail (Opened/Closed, not "No Changes"/"Closed");
+ * two same-name projects across repos are disambiguated by open/closed state (openProjectDetailByState). The
+ * legacy branch/separate-project copy options were removed.
  */
 public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
@@ -60,15 +56,10 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
     public void beforeMethod(ITestResult result) {
         additionalContainerConfig.clear();
         additionalContainerFiles.clear();
-
-        deployInfra = DeployInfrastructureService.builder()
-                .withPostgresAsSecurityDb()
-                .build();
+        deployInfra = DeployInfrastructureService.builder().withPostgresAsSecurityDb().build();
         deployInfra.start();
-
         additionalContainerConfig.putAll(deployInfra.getContainerConfig());
         additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
-
         super.beforeMethod(result);
     }
 
@@ -83,278 +74,132 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30859")
-    @Description("Multiple Design Repositories: Git flat, Git non-flat, and JDBC security DB — project management across repos")
+    @Description("Multiple Design Repositories: create/copy across Git repos with JDBC security DB")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testMultipleDesignRepositoriesWithPostgres() {
-        // Step 0: Login and verify PostgreSQL is actually used as security DB
+        // Step 0: Login and verify PostgreSQL is used as the security DB
         EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         verifyPostgresContainsOpenLTables();
 
-        // Step 1: Create project in default Design repository
+        // Step 1: Create a project in the default Design repository
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         RepositoryPage repositoryPage = new RepositoryPage();
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProjectDesign, "Example 1 - Bank Rating");
 
-        // Step 2: Add second design repository (Design1 — Git non-flat)
+        // Step 2: Add a second design repository (Design1) and check its defaults
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent reposPage = adminPage.navigateToRepositoriesPage();
         reposPage.addDesignRepository();
-        // After clicking Add, the form auto-shows the new Design1 repo (active panel)
-        // Form fields are scoped to ant-tabs-tabpane-active, so they correctly read Design1 values
-
-        // Assert default values of newly added Design1 repository
         assertThat(reposPage.getDesignRepositoryNameValue()).isEqualTo("Design1");
         assertThat(reposPage.getDesignRepositoryType()).isEqualTo("Git");
-        // New UI has no remote/local checkbox — local path confirms it's not remote
         assertThat(reposPage.getDesignRepositoryLocalPath()).contains("repositories/design1");
-
-        // New UI: no flat/non-flat checkbox — Design1 is non-flat by default (has path-in-repository support)
-        // Just save Design1 repository to persist it
         reposPage.applyChangesAndRelogin(User.ADMIN);
 
-        // Step 3: Open Repository tab and check create project dialog repository selectors
+        // Step 3: Create-project wizard shows a repository selector + path field once >1 repo exists
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage = new RepositoryPage();
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProjectDesign + "_check", "", false);
-
-        // Template tab: default = "-- Select a repository --"
-        assertThat(repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().getRepositorySelectValue())
-                .isEqualTo("-- Select a repository --");
-        repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().selectRepository("Design");
-        // In new WebStudio, path-in-repository field is shown for all repo types (flat/non-flat distinction removed from dialog)
-        assertThat(repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().isPathInRepositoryVisible())
-                .isTrue();
-
-        // Switch to Design1 (non-flat) — path field should appear
-        repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().selectRepository("Design1");
-        assertThat(repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().isPathInRepositoryVisible())
-                .isTrue();
-        assertThat(repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().getPathInRepositoryValue())
-                .isEqualTo("/");
-
-        // Step 3.1: "Repository" tab (import from repository) — only Design1 available (non-flat only)
-        // NOTE: The exact locators for the "Repository" import tab may need verification
-        // Legacy: fromRepositoryRepository.getAllValues() containsOnly("-- Select a repository --", "Design1")
-        // The path field for "from repository" should be present by default
-
-        // Close Create Project dialog
+        CreateNewProjectComponent wizard = repositoryPage.getCreateNewProjectComponent();
+        wizard.selectRepository("Design");
+        assertThat(wizard.isPathInRepositoryVisible()).as("Path field should be shown for the Design repo").isTrue();
+        wizard.selectRepository("Design1");
+        assertThat(wizard.isPathInRepositoryVisible()).as("Path field should be shown for the Design1 repo").isTrue();
         repositoryPage.getCreateNewProjectComponent().cancelCreation();
 
-        // Step 4: Create ProjectDesign1Repo in Design1 with path /new/
-        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProjectDesign1,
-                "Example 2 - Corporate Rating", false);
-        repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent()
-                .selectRepository("Design1")
-                .setPathInRepository("/new/");
-        repositoryPage.getCreateNewProjectComponent().getTemplateTabComponent().clickCreate();
+        // Step 4: Create ProjectDesign1Repo in Design1 at path /new/
+        repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, nameProjectDesign1, "Example 2 - Corporate Rating", false);
+        wizard = repositoryPage.getCreateNewProjectComponent();
+        wizard.selectRepository("Design1").setPathInRepository("new").clickCreate();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
+        // In a non-flat repo, a project created at path "new" renders with a PATH-PREFIXED row name ("new"+name).
+        // Both repos' projects are shown by default (repo filters unchecked = show-all), so no filter toggling.
+        String design1RowName = "new" + nameProjectDesign1;
+        ProjectDetailPage detail = repositoryPage.openProjectsList().openProjectDetail(design1RowName);
+        assertThat(detail.getOverviewPath()).as("ProjectDesign1Repo path").contains("new" + nameProjectDesign1);
+        assertThat(detail.getOverviewRepository()).as("ProjectDesign1Repo repository").isEqualTo("Design1");
+        repositoryPage.openProjectsList();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", nameProjectDesign1);
-        RepositoryContentTabPropertiesComponent propsTab =
-                repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getPath()).isEqualTo("new/" + nameProjectDesign1);
-
-        // Step 5: Copy ProjectDesignRepo to Design1 with path /copied/ as nameCopiedProjectToDesign1
+        // A non-flat-repo project created at path P has a PATH-PREFIXED row name (P + name, no slash), and its
+        // Overview "Path" reads the same (P + name). Flat/Design projects keep their bare name.
+        // Step 5: Copy ProjectDesignRepo (flat) to Design1 at "copied" as nameCopiedProjectToDesign1
+        // COPY into a path yields a BARE row name (just the new name), unlike CREATE (which path-prefixes).
         String nameCopiedProjectToDesign1 = "nameCopiedProjectToDesign1";
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent()
-                .waitForDialogToAppear()
-                .setSeparateProject(true)
-                .setNewProjectName(nameCopiedProjectToDesign1)
-                .selectRepository("Design1")
-                .setProjectFolder("/copied")
-                .clickCopyButton();
+        CopyProjectDialogComponent copyDialog = repositoryPage.clickCopyAction(nameProjectDesign);
+        copyDialog.setNewProjectName(nameCopiedProjectToDesign1).selectRepository("Design1").setProjectFolder("copied").clickCopyButton();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
+        detail = repositoryPage.openProjectsList().openProjectDetail(nameCopiedProjectToDesign1);
+        assertThat(detail.getOverviewRepository()).isEqualTo("Design1");
+        repositoryPage.openProjectsList();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameCopiedProjectToDesign1);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getPath()).isEqualTo("copied/" + nameCopiedProjectToDesign1);
-        assertThat(propsTab.getRepository()).isEqualTo("Design1");
-
-        // Step 6: Copy ProjectDesign1Repo to Design as nameCopiedProjectFromDesign1
+        // Step 6: Copy ProjectDesign1Repo (row "new"+name) to Design (flat) as nameCopiedProjectFromDesign1
         String nameCopiedProjectFromDesign1 = "nameCopiedProjectFromDesign1";
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent()
-                .waitForDialogToAppear()
-                .setSeparateProject(true)
-                .setNewProjectName(nameCopiedProjectFromDesign1)
-                .selectRepository("Design")
-                .clickCopyButton();
+        copyDialog = repositoryPage.clickCopyAction(design1RowName);
+        copyDialog.setNewProjectName(nameCopiedProjectFromDesign1).selectRepository("Design").clickCopyButton();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
+        detail = repositoryPage.openProjectsList().openProjectDetail(nameCopiedProjectFromDesign1);
+        assertThat(detail.getOverviewRepository()).isEqualTo("Design");
+        repositoryPage.openProjectsList();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameCopiedProjectFromDesign1);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getRepository()).isEqualTo("Design");
+        // Step 7: Copy ProjectDesignRepo to Design1 at "step7" with the SAME name. COPY yields a BARE row name,
+        // so there are now TWO rows named "ProjectDesignRepo" (Design original = Opened, Design1 copy = Closed) —
+        // disambiguate by state.
+        copyDialog = repositoryPage.clickCopyAction(nameProjectDesign);
+        copyDialog.setNewProjectName(nameProjectDesign).selectRepository("Design1").setProjectFolder("step7").clickCopyButton();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
 
-        // Step 7: Copy ProjectDesignRepo to Design1 (same name) — conflict/closed scenario
-        // New UI requires explicit path for non-flat repos (legacy didn't set path)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent()
-                .waitForDialogToAppear()
-                .setSeparateProject(true)
-                .setNewProjectName(nameProjectDesign)
-                .selectRepository("Design1")
-                .setProjectFolder("/step7")
-                .clickCopyButton();
+        // The opened original (Design) still shows Opened
+        detail = repositoryPage.openProjectsList().openProjectDetailByState(nameProjectDesign, true);
+        assertThat(detail.getStatus()).as("Opened original status").isEqualTo("Opened");
+        // The closed copy (Design1)
+        detail = repositoryPage.openProjectsList().openProjectDetailByState(nameProjectDesign, false);
+        assertThat(detail.getOverviewRepository()).isEqualTo("Design1");
+        assertThat(detail.getStatus()).isEqualTo("Closed");
 
-        // After copy, the opened project (Design) should still show No Changes
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectOpenedItemInFolder("Projects", nameProjectDesign);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getStatus()).isEqualTo("No Changes");
-
-        // The copy creates a closed version visible in the tree (closed.gif icon)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectClosedItemInFolder("Projects", nameProjectDesign);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getName()).isEqualTo(nameProjectDesign);
-        assertThat(propsTab.getPath()).isEqualTo("step7/" + nameProjectDesign);
-        assertThat(propsTab.getRepository()).isEqualTo("Design1");
-        assertThat(propsTab.getStatus()).isEqualTo("Closed");
-
-        // Step 7.1: Try to open the closed project — the duplicate-name error now surfaces as a
-        // React toast notification (ant-notification); its text lives in the notice description,
-        // so match the whole notice rather than the legacy top-of-page closable message.
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        assertThat(WaitUtil.waitForCondition(
-                () -> LocalDriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
-                        + "[contains(normalize-space(.),'Cannot open two projects with the same name')]").count() > 0,
-                10000, 500, "Waiting for the duplicate-name error notification"))
-                .as("Opening a second project with the same name must be blocked with an error notification")
-                .isTrue();
+        // Step 7.1: Opening the closed same-name copy is blocked with a duplicate-name error notification
+        repositoryPage.openProjectsList().openProjectByState(nameProjectDesign, false);
+        assertThat(waitForDuplicateNameError())
+                .as("Opening a second project with the same name must be blocked").isTrue();
         repositoryPage.closeAllMessages();
 
-        // Step 8: Try to copy again to Design1 with /copied/ path — should show duplicate error
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent()
-                .waitForDialogToAppear()
-                .setSeparateProject(true)
-                .setNewProjectName(nameProjectDesign)
-                .selectRepository("Design1")
-                .setProjectFolder("/copied")
-                .clickCopyButton(false);
-        List<String> copyErrors = repositoryPage.getCopyProjectDialogComponent().getErrors();
-        assertThat(copyErrors).anyMatch(e -> e.contains("Project with this name already exists"));
-        repositoryPage.getCopyProjectDialogComponent().clickCancelButton();
+        // Step 8: Copy the opened original again to Design1 at "copied" with the same name → duplicate error
+        copyDialog = repositoryPage.clickCopyActionByState(nameProjectDesign, true);
+        copyDialog.setNewProjectName(nameProjectDesign).selectRepository("Design1").setProjectFolder("copied").clickCopyButton(false);
+        assertThat(copyDialog.waitForErrors(5000)).anyMatch(e -> e.contains("already exists"));
+        copyDialog.clickCancelButton();
 
-        // Step 9: Copy ProjectDesign1Repo to Design (another copy)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", nameProjectDesign1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent()
-                .waitForDialogToAppear()
-                .setSeparateProject(true)
-                .setNewProjectName(nameProjectDesign1)
-                .selectRepository("Design")
-                .clickCopyButton();
-
-        // After copy, the opened project (Design1) should still show No Changes
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectOpenedItemInFolder("Projects", nameProjectDesign1);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getRepository()).isEqualTo("Design1");
-        assertThat(propsTab.getStatus()).isEqualTo("No Changes");
-
-        // The closed copy in Design repo (closed.gif icon)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectClosedItemInFolder("Projects", nameProjectDesign1);
-        propsTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-        assertThat(propsTab.getName()).isEqualTo(nameProjectDesign1);
-        assertThat(propsTab.getRepository()).isEqualTo("Design");
-        assertThat(propsTab.getStatus()).isEqualTo("Closed");
-
-        // Step 9.1: Open closed copy — the duplicate-name error surfaces as a React toast notification
-        // whose text lives in the notice description; match the whole notice.
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
-        assertThat(WaitUtil.waitForCondition(
-                () -> LocalDriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
-                        + "[contains(normalize-space(.),'Cannot open two projects with the same name')]").count() > 0,
-                10000, 500, "Waiting for the duplicate-name error notification"))
-                .as("Opening a second project with the same name must be blocked with an error notification")
-                .isTrue();
-        repositoryPage.closeAllMessages();
-
-        // Step 9.2: Switch to Editor tab, rename project in non-flat git repo, then rename back
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
-        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameProjectDesign1);
-        EditProjectDialogComponent editDialog = editorPage.openEditProjectDialog(nameProjectDesign1);
-        String renamedProject = nameProjectDesign1 + "_Renamed";
-        editDialog.setProjectName(renamedProject);
-        assertThat(editDialog.getProjectName()).isEqualTo(renamedProject);
-        assertThat(editDialog.isUpdateButtonEnabled()).isTrue();
-        editDialog.clickUpdateButton();
-        editorPage.waitUntilSpinnerLoaded();
-
-        // Verify renamed project is reflected in editor
-        editDialog = editorPage.openEditProjectDialog(renamedProject);
-        assertThat(editDialog.getProjectName())
-                .as("Project should be renamed to new name in non-flat git repo")
-                .isEqualTo(renamedProject);
-
-        // Rename back to original so subsequent steps are not affected
-        editDialog.setProjectName(nameProjectDesign1);
-        editDialog.clickUpdateButton();
-        editorPage.waitUntilSpinnerLoaded();
-
-        // Save to return project to "No Changes" state after rename
-        editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
-        editorPage.waitUntilSpinnerLoaded();
-
-        // Step 10: Switch to ProjectDesignRepo via breadcrumbs — verify Edit Project dialog opens
-        // Legacy asserted project name field was absent for flat repos; new UI always shows it
-        editorPage.getEditorToolbarPanelComponent().selectProjectBreadcrumbs(nameProjectDesign);
-        editDialog = editorPage.openEditProjectDialog(nameProjectDesign);
-        assertThat(editDialog.getProjectName()).isEqualTo(nameProjectDesign);
-        editDialog.clickCancelButton();
-
-        // Switch back to Repository tab for remaining steps
-        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage = new RepositoryPage();
-
-        // Step 11: Permanently delete ProjectDesignRepo (single-step React modal, no archive/erase)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectOpenedItemInFolder("Projects", nameProjectDesign);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getProjectDeleteConfirmModalComponent()
-                .waitForVisible()
+        // Step 11: Permanently delete the opened ProjectDesignRepo original (a same-name closed copy also exists)
+        repositoryPage.openProjectsList();
+        repositoryPage.deleteProjectByState(nameProjectDesign, true)
                 .enterDeletionComment("Removed by automated regression test")
                 .acknowledgePermanentDeletion()
                 .clickDelete();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.refresh();
+        repositoryPage.openProjectsList();
 
-        // Step 12: Permanently delete ProjectDesign1Repo
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectOpenedItemInFolder("Projects", nameProjectDesign1);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getProjectDeleteConfirmModalComponent()
-                .waitForVisible()
+        // Step 12: Permanently delete ProjectDesign1Repo (Design1 at path → row name is path-prefixed)
+        repositoryPage.deleteProject(design1RowName)
                 .enterDeletionComment("Removed by automated regression test")
                 .acknowledgePermanentDeletion()
                 .clickDelete();
-        repositoryPage.waitUntilSpinnerLoaded();
+    }
+
+    private boolean waitForDuplicateNameError() {
+        return WaitUtil.waitForCondition(
+                () -> LocalDriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
+                        + "[contains(normalize-space(.),'Cannot open two projects with the same name')]").count() > 0,
+                10000, 500, "Waiting for the duplicate-name error notification");
     }
 
     private void verifyPostgresContainsOpenLTables() {
         PostgreSQLContainer<?> pg = deployInfra.getPostgresContainer();
         List<String> tables = DbVerificationUtil.queryTableNames(
-                pg.getJdbcUrl(),
-                pg.getUsername(),
-                pg.getPassword(),
+                pg.getJdbcUrl(), pg.getUsername(), pg.getPassword(),
                 "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name LIKE 'openl_%' ORDER BY table_name");
         assertThat(tables)
-                .as("PostgreSQL should contain OpenL security tables — proves it's used instead of embedded H2")
+                .as("PostgreSQL should contain OpenL security tables")
                 .isNotEmpty()
                 .anyMatch(t -> t.contains("openl_users"))
                 .anyMatch(t -> t.contains("openl_groups"));

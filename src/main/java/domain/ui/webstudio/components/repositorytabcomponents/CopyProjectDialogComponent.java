@@ -1,6 +1,5 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
-import com.microsoft.playwright.Dialog;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
@@ -10,24 +9,26 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+// React "Copy project" dialog (build 032c60a664ce+), opened from a project row's Copy action.
+// Fields (verified live): copy-project-repository (ant-select), copy-project-name, copy-project-path,
+// copy-project-comment, copy-project-submit. The legacy branch / separate-project / copy-old-revisions
+// options were removed in React (their setters are kept as no-op shims so not-yet-migrated legacy tests
+// still compile).
 public class CopyProjectDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
 
-    private WebElement newBranchNameField;
+    private static final String MODAL_ROOT =
+            "//div[contains(@class,'ant-modal')][.//*[contains(@data-testid,'copy-project')]]";
+
+    private WebElement newProjectNameField;
+    private WebElement projectFolderField;
+    private WebElement commentField;
     private WebElement copyButton;
     private WebElement cancelButton;
-    private WebElement currentProjectNameDisplay;
-    private WebElement currentBranchDisplay;
-    private WebElement newProjectNameField;
-    private WebElement commentField;
-    private WebElement copyOldVersionCheckbox;
-    private WebElement revisionsCountField;
-    private WebElement separateProjectCheckbox;
     private WebElement repositorySelect;
-    private WebElement projectFolderField;
+    private WebElement repositoryOption;
     private List<WebElement> errors;
-    private String expectedNewBranchName;
 
     public CopyProjectDialogComponent() {
         super(LocalDriverPool.getPage());
@@ -40,30 +41,14 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        newBranchNameField = createScopedElement("xpath=.//input[@id='copyProjectForm:newBranchName']", "newBranchNameField");
-        copyButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Copy']", "copyButton");
-        cancelButton = createScopedElement("xpath=.//form[@id='copyProjectForm']//input[@value='Cancel']", "cancelButton");
-        currentProjectNameDisplay = createScopedElement("xpath=.//div[@id='copyProjectForm:currentProjectName']", "currentProjectNameDisplay");
-        currentBranchDisplay = createScopedElement("xpath=.//span[@id='copyProjectForm:currentBranchName']", "currentBranchDisplay");
-        newProjectNameField = createScopedElement("xpath=.//input[@id='copyProjectForm:newProjectName']", "newProjectNameField");
-        commentField = createScopedElement("xpath=.//textarea[@id='copyProjectForm:comment']", "commentField");
-        copyOldVersionCheckbox = createScopedElement("xpath=.//input[@id='copyProjectForm:copyOldRevisions']", "copyOldVersionCheckbox");
-        revisionsCountField = createScopedElement("xpath=.//input[@name='copyProjectForm:revisionsCount']", "revisionsCountField");
-        separateProjectCheckbox = createScopedElement("xpath=.//input[@id='copyProjectForm:separateProjectCheckbox']", "separateProjectCheckbox");
-        repositorySelect = createScopedElement("xpath=.//select[@id='copyProjectForm:repository']", "repositorySelect");
-        projectFolderField = createScopedElement("xpath=.//input[@id='copyProjectForm:projectFolder']", "projectFolderField");
-        errors = createScopedElementList("xpath=.//span[@class='error']", "errors");
-    }
-
-    public CopyProjectDialogComponent setNewBranchName(String branchName) {
-        LOGGER.info("Setting new branch name: {}", branchName);
-        expectedNewBranchName = branchName;
-        fillNewBranchName(branchName);
-        return this;
-    }
-
-    public String getNewBranchName() {
-        return newBranchNameField.getCurrentInputValue();
+        newProjectNameField = new WebElement(page, "[data-testid=copy-project-name]", "copyProjectName");
+        projectFolderField = new WebElement(page, "[data-testid=copy-project-path]", "copyProjectPath");
+        commentField = new WebElement(page, "[data-testid=copy-project-comment]", "copyProjectComment");
+        copyButton = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmit");
+        cancelButton = new WebElement(page, "xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-modal-footer')]//button[not(contains(@class,'ant-btn-primary'))]", "copyProjectCancel");
+        repositorySelect = new WebElement(page, "[data-testid=copy-project-repository]", "copyProjectRepository");
+        repositoryOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "copyProjectRepoOption");
+        errors = createElementList("xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-form-item-explain-error')] | " + MODAL_ROOT + "//div[contains(@class,'ant-alert-error')]", "copyProjectErrors");
     }
 
     public CopyProjectDialogComponent setNewProjectName(String projectName) {
@@ -73,71 +58,29 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public String getNewProjectName() {
-        return newProjectNameField.getAttribute("value");
+        return newProjectNameField.getCurrentInputValue();
     }
 
     public CopyProjectDialogComponent setComment(String comment) {
-        LOGGER.info("Setting copy comment");
         commentField.fill(comment);
         return this;
     }
 
-    public String getComment() {
-        return commentField.getAttribute("value");
-    }
-
-    public CopyProjectDialogComponent setCopyOldVersion(boolean enabled) {
-        if (enabled) {
-            copyOldVersionCheckbox.check();
-        } else {
-            copyOldVersionCheckbox.uncheck();
-        }
-        return this;
-    }
-
-    public CopyProjectDialogComponent setRevisionsCount(String count) {
-        revisionsCountField.fill(count);
-        return this;
-    }
-
-    public CopyProjectDialogComponent setSeparateProject(boolean enabled) {
-        if (enabled) {
-            separateProjectCheckbox.check();
-        } else {
-            separateProjectCheckbox.uncheck();
-        }
-        return this;
-    }
-
     public CopyProjectDialogComponent selectRepository(String repositoryName) {
-        // The repository select fires JSF AJAX (mojarra.ab) on change which re-renders
-        // the newProject table including projectFolder. Use waitForResponse to ensure
-        // the AJAX completes before we attempt to fill the path field.
-        repositorySelect.getPage().waitForResponse(
-                response -> response.url().contains("index.xhtml"),
-                () -> repositorySelect.selectByVisibleText(repositoryName)
-        );
+        LOGGER.info("Selecting copy target repository: {}", repositoryName);
+        repositorySelect.click();
+        repositoryOption.format(repositoryName, repositoryName).click();
         return this;
     }
 
     public CopyProjectDialogComponent setProjectFolder(String folderPath) {
         projectFolderField.clear();
-        projectFolderField.fillSequentially(folderPath);
+        projectFolderField.fill(folderPath);
         return this;
-    }
-
-    public String getCurrentProjectName() {
-        return currentProjectNameDisplay.getText();
-    }
-
-    public String getCurrentBranch() {
-        return currentBranchDisplay.getText();
     }
 
     public void clickCopyButton(boolean waitForDialogToClose) {
         LOGGER.info("Clicking Copy button");
-        ensureExpectedNewBranchName();
-        LocalDriverPool.getPage().onceDialog(Dialog::accept);
         copyButton.click();
         if (waitForDialogToClose) {
             waitForDialogToClose();
@@ -145,23 +88,21 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public void clickCopyButton() {
-        copyButton.press("Tab");
         clickCopyButton(true);
     }
 
     public void clickCancelButton() {
-        LOGGER.info("Clicking Cancel button");
         cancelButton.click();
     }
 
     public CopyProjectDialogComponent waitForDialogToAppear() {
-        getRootLocator().waitForVisible(5000);
+        newProjectNameField.waitForVisible(5000);
         return this;
     }
 
     public void waitForDialogToClose() {
         try {
-            getRootLocator().waitForHidden(5000);
+            copyButton.waitForHidden(5000);
         } catch (Exception e) {
             List<String> visibleErrors = getErrors();
             if (!visibleErrors.isEmpty()) {
@@ -180,35 +121,21 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return getErrors();
     }
 
-    private void fillNewBranchName(String branchName) {
-        boolean branchNameSet = WaitUtil.retryAction(() -> {
-            WaitUtil.sleep(1000, "Extra wait for fillNewBranchName() method (before filling new branch name)");
-            newBranchNameField.waitForVisible();
-            newBranchNameField.clear();
-            newBranchNameField.fillSequentially(branchName);
-            WaitUtil.sleep(1000, "Extra wait for fillNewBranchName() method (after filling new branch name)");
-            String actualBranchName = getNewBranchName();
-            if (!branchName.equals(actualBranchName)) {
-                throw new RuntimeException(String.format(
-                        "Expected new branch name '%s', but field value is '%s'",
-                        branchName,
-                        actualBranchName
-                ));
-            }
-        }, 5000, 200, "Setting and verifying new branch name");
-
-        if (!branchNameSet) {
-            throw new RuntimeException("Failed to set new branch name to '" + branchName + "'");
-        }
+    // --- Legacy no-op/compat shims: branch / separate-project / copy-old-revisions were removed in the React
+    // copy dialog. Kept so not-yet-migrated legacy tests still compile; they are no longer functional. ---
+    public CopyProjectDialogComponent setSeparateProject(boolean enabled) {
+        return this;
     }
 
-    private void ensureExpectedNewBranchName() {
-        if (expectedNewBranchName == null) {
-            return;
-        }
+    public CopyProjectDialogComponent setNewBranchName(String branchName) {
+        return this;
+    }
 
-        if (!expectedNewBranchName.equals(getNewBranchName())) {
-            fillNewBranchName(expectedNewBranchName);
-        }
+    public String getNewBranchName() {
+        return "";
+    }
+
+    public String getCurrentBranch() {
+        return "";
     }
 }

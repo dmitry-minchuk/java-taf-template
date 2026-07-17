@@ -226,6 +226,28 @@ public class RepositoryPage extends BasePage {
         return new ProjectDetailPage();
     }
 
+    // When two rows share a name (e.g. the same project name copied across repositories), disambiguate by
+    // state: the OPEN row exposes a "Close" action, the CLOSED row exposes an "Open" action. Opens that row's
+    // detail. Replaces the legacy tree's selectOpened/ClosedItemInFolder.
+    public ProjectDetailPage openProjectDetailByState(String projectName, boolean opened) {
+        String action = opened ? "Close" : "Open";
+        page.locator(String.format(
+                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]",
+                projectName, action)).first().click();
+        return new ProjectDetailPage();
+    }
+
+    // The React projects list is repo-filtered via checkboxes in the filter rail (filter-repo-<name>, lowercase).
+    // Ensures the given repository's projects are shown (checks the box only if not already checked).
+    public void ensureRepoFilterChecked(String repositoryNameLower) {
+        WebElement checkbox = new WebElement(page, "[data-testid=filter-repo-" + repositoryNameLower + "]",
+                "repoFilter-" + repositoryNameLower);
+        if (checkbox.isVisible(3000) && !checkbox.isChecked()) {
+            checkbox.click();
+            waitUntilSpinnerLoaded();
+        }
+    }
+
     // React has no status column in the projects table — status lives in the project detail. This reads it
     // and returns to the list so callers can keep using row actions. (Legacy getProjectStatusFromTable.)
     public String getProjectStatusFromDetail(String projectName) {
@@ -268,6 +290,39 @@ public class RepositoryPage extends BasePage {
             discardCloseConfirmBtn.click();
         }
         waitUntilSpinnerLoaded();
+    }
+
+    // Opens the React copy dialog via the row "Copy" action and returns it for full control
+    // (repository / path / name), for multi-repo copy flows. Use when the name is unique in the list.
+    public CopyProjectDialogComponent clickCopyAction(String projectName) {
+        projectActionByName.format(projectName, "Copy").click();
+        return copyProjectDialogComponent.waitForDialogToAppear();
+    }
+
+    // Click the Open/Close action on a same-name row disambiguated by state (opened row has "Close", closed "Open").
+    public void openProjectByState(String projectName, boolean opened) {
+        String stateAction = opened ? "Close" : "Open";
+        page.locator(String.format(
+                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='Open']",
+                projectName, stateAction)).first().click();
+    }
+
+    // Delete a same-name project disambiguated by state; returns the (React) confirm modal.
+    public ProjectDeleteConfirmModalComponent deleteProjectByState(String projectName, boolean opened) {
+        String stateAction = opened ? "Close" : "Open";
+        page.locator(String.format(
+                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='Delete']",
+                projectName, stateAction)).first().click();
+        return projectDeleteConfirmModalComponent.waitForVisible();
+    }
+
+    // Same, but disambiguates when two rows share a name: opened row exposes "Close", closed row "Open".
+    public CopyProjectDialogComponent clickCopyActionByState(String projectName, boolean opened) {
+        String stateAction = opened ? "Close" : "Open";
+        page.locator(String.format(
+                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='Copy']",
+                projectName, stateAction)).first().click();
+        return copyProjectDialogComponent.waitForDialogToAppear();
     }
 
     // Copy an OPENED project via the row "Copy" action → dialog (name pre-filled "<name> (Copy)") → Copy.
