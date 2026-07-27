@@ -49,20 +49,21 @@ public class TestAdminUserSettings extends BaseTest {
                 .setLastName("")
                 .setEmail("")
                 .setDisplayName("");
-        Assert.assertFalse(myProfileComponent.getSaveProfileBtn().isEnabled(), "Save button should be disabled because nothing changed on the page.");
+        // 6.4.0 keeps Save clickable and points at the offending fields instead of blocking the button.
+        Assert.assertTrue(myProfileComponent.getValidationErrors().stream()
+                        .anyMatch(message -> message.contains("Email is required")),
+                "Clearing the required profile fields must be reported on the form");
 
-        // Scenario 2: Verify empty profile fields (lines 45-57 from original)
+        // Scenario 2: leaving the page without saving keeps the stored profile. 6.4.0 asks every user to
+        // complete their profile at first login, so the stored values are filled in, not empty.
         myProfileComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
         Assert.assertEquals(myProfileComponent.getUsername(), "admin", "Username should be admin");
-        Assert.assertEquals(myProfileComponent.getFirstName(), "", "First name should be empty");
-        Assert.assertEquals(myProfileComponent.getLastName(), "", "Last name should be empty");
-        Assert.assertEquals(myProfileComponent.getEmail(), "", "Email should be empty");
-
-        String displayName = myProfileComponent.getDisplayName();
-        Assert.assertEquals(displayName, "", "Display name should be empty");
+        Assert.assertFalse(myProfileComponent.getEmail().isBlank(), "Email should keep its stored value");
+        Assert.assertFalse(myProfileComponent.getDisplayName().isBlank(),
+                "Display name should keep its stored value");
 
         // Scenario 3: Update profile and check users table (lines 58-76 from original)
         myProfileComponent
@@ -229,7 +230,11 @@ public class TestAdminUserSettings extends BaseTest {
 
         // Navigate to the same project as user1
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.unlockAllProjects();
+        // A project another user created is closed in this user's workspace, so the editor tree is empty
+        // until it is opened. (Locking is gone from the React UI, so unlockAllProjects has nothing to do.)
+        if (repositoryPage.isProjectActionAvailable(projectNameTest1, "Open")) {
+            repositoryPage.openProject(projectNameTest1);
+        }
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTest1, "Test1"); //User1 is NOT admin
         editorPage.getEditorLeftRulesTreeComponent()

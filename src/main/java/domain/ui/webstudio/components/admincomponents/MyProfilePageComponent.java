@@ -2,6 +2,9 @@ package domain.ui.webstudio.components.admincomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
+import helpers.utils.WaitUtil;
+
+import java.util.List;
 import configuration.driver.LocalDriverPool;
 
 public class MyProfilePageComponent extends BaseComponent {
@@ -30,7 +33,10 @@ public class MyProfilePageComponent extends BaseComponent {
         initializeElements();
     }
 
+    private List<WebElement> validationErrors;
+
     private void initializeElements() {
+        validationErrors = createElementList("xpath=//div[contains(@class,'ant-form-item-explain-error')]", "profileValidationErrors");
         usernameField = createScopedElement("xpath=.//input[@placeholder='Username' or @id='username']", "usernameField");
         emailField = createScopedElement("xpath=.//input[@placeholder='Email' or @id='email']", "emailField");
         resendVerificationEmailBtn = createScopedElement("xpath=.//button[./span[text()='Resend Verification Email'] or ./span[contains(text(),'Resend')]]", "resendVerificationEmailBtn");
@@ -86,6 +92,11 @@ public class MyProfilePageComponent extends BaseComponent {
     }
 
     public MyProfilePageComponent setDisplayName(String displayName) {
+        // The field only takes typing in Custom mode; the other modes compose the name from first/last name
+        // and keep it read-only.
+        if (!displayNameField.isEnabled()) {
+            setDisplayNamePattern("Custom");
+        }
         displayNameField.fill(displayName);
         return this;
     }
@@ -122,6 +133,24 @@ public class MyProfilePageComponent extends BaseComponent {
 
     public void changePassword(String currentPassword, String newPassword) {
         changePassword(currentPassword, newPassword, newPassword);
+    }
+
+    /**
+     * Waits until Save becomes unavailable — it starts out that way, before anything is edited.
+     */
+    public boolean waitForSaveProfileDisabled() {
+        return WaitUtil.waitForCondition(() -> !getSaveProfileBtn().isEnabled(), DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the profile Save button to become disabled");
+    }
+
+    /**
+     * Messages shown under the fields, e.g. "Email is required". Studio 6.4.0 keeps Save clickable when a
+     * required field is emptied and points at the field instead, so this is how a rejected form is checked.
+     */
+    public List<String> getValidationErrors() {
+        WaitUtil.waitForCondition(() -> !validationErrors.isEmpty(), DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the profile form to report its required fields");
+        return validationErrors.stream().map(WebElement::getText).map(String::trim).toList();
     }
 
     public WebElement getSaveProfileBtn() {
