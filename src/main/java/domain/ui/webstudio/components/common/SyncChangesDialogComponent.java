@@ -24,6 +24,7 @@ public class SyncChangesDialogComponent extends BaseComponent {
     private WebElement branchSelector;
     private List<WebElement> selectorOptions;
     private List<WebElement> errorAlerts;
+    private List<WebElement> mergeBlockedAlerts;
     private WebElement bypassWarningAlert;
 
     public SyncChangesDialogComponent() {
@@ -49,6 +50,10 @@ public class SyncChangesDialogComponent extends BaseComponent {
                 "branchSelector");
         selectorOptions = createElementList("xpath=.//div[@class='ant-select-item-option-content']", "branchSelector");
         errorAlerts = createElementList("xpath=//div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert') and contains(@class,'ant-alert-error')]", "errorAlerts");
+        // 6.4.0 explains a blocked merge with an info alert instead of an error one.
+        mergeBlockedAlerts = createElementList(
+                "xpath=//*[@data-testid='merge-blocked-send' or @data-testid='merge-blocked-receive']",
+                "mergeBlockedAlerts");
         bypassWarningAlert = new WebElement(LocalDriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert-warning')]",
                 "bypassWarningAlert");
@@ -129,6 +134,18 @@ public class SyncChangesDialogComponent extends BaseComponent {
 
     public String getExportButtonTitle() {
         return exportYourChangesBtn.getAttribute("title");
+    }
+
+    /** Texts of the "cannot merge" notes the dialog shows (e.g. the target branch is protected). */
+    public List<String> getBlockedMessages() {
+        WaitUtil.sleep(1500, "Waiting for the merge check to answer");
+        return mergeBlockedAlerts.stream().map(WebElement::getText).toList();
+    }
+
+    public boolean hasBlockedMessageContaining(String substring) {
+        return WaitUtil.waitForCondition(
+                () -> getBlockedMessages().stream().anyMatch(msg -> msg.contains(substring)),
+                10000, 500, "Waiting for a blocked-merge note containing: " + substring);
     }
 
     public List<String> getErrorMessages() {

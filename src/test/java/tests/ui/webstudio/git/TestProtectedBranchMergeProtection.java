@@ -15,6 +15,7 @@ import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
+import helpers.utils.TestDataUtil;
 import helpers.service.UserService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -46,9 +47,14 @@ public class TestProtectedBranchMergeProtection extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, "TestMergeBranchesNoConflicts_NoConflicts.zip");
 
-        // React: "copy the project into a new branch" is the project-detail Branches tab "New branch" action;
-        // switch onto the new branch so the later Sync merges from it into the protected master.
+        // 6.4.0: branching happens in the Copy dialog and leaves the project on the new branch.
         repositoryPage.openProjectDetail(PROJECT_NAME).createBranch(BRANCH_NAME, true);
+
+        // The dialog only reports the protection when there is something to merge, so commit a change
+        // on the branch first ("There are changes to merge, but the branch ... is protected").
+        repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME).openFilesTab()
+                .uploadFile(TestDataUtil.getFilePathFromResources("TestMergeBranchesNoConflicts_Module6.xlsx"));
+        repositoryPage.openProjectsList().saveProject(PROJECT_NAME, BRANCH_NAME + ": add Module6");
 
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent repositories = adminPage.navigateToRepositoriesPage();
@@ -69,15 +75,14 @@ public class TestProtectedBranchMergeProtection extends BaseTest {
         syncDialog.waitForDialogToAppear();
         syncDialog.selectBranch(MASTER_BRANCH);
 
-        // EPBDS-15818 changed the error copy. The merge endpoint returns HTTP 403
-        // (`openl.error.403.default.message`) and the React UI renders it as
-        // "You do not have the required privileges to do that." (no longer mentions the branch name).
-        assertThat(syncDialog.hasErrorMessageContaining("privileges"))
-                .as("Error alert should appear when merging into protected branch '%s'", MASTER_BRANCH)
+        // 6.4.0 states the reason up front instead of failing the attempt with a 403: the dialog explains
+        // that the target branch is protected and leaves both merge buttons disabled.
+        assertThat(syncDialog.hasBlockedMessageContaining("protected"))
+                .as("The dialog should say the target branch '%s' is protected", MASTER_BRANCH)
                 .isTrue();
-        assertThat(syncDialog.getErrorMessages())
-                .as("Error alert should match the legacy 403 protected-branch copy")
-                .anyMatch(msg -> msg.contains("You do not have the required privileges"));
+        assertThat(syncDialog.getBlockedMessages())
+                .as("Wording of the protected-branch note")
+                .anyMatch(msg -> msg.contains("is protected and you may not merge into it"));
         assertThat(syncDialog.isExportButtonEnabled())
                 .as("Send (export) button must be disabled for protected target branch")
                 .isFalse();
