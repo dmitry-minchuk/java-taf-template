@@ -27,7 +27,6 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement methodTemplate;
     private WebElement methodExcel;
     private WebElement methodArchive;
-    private WebElement nextBtn;
     private WebElement cancelBtn;
     private WebElement submitBtn;
     private WebElement nameField;
@@ -63,7 +62,6 @@ public class CreateNewProjectComponent extends BaseComponent {
         methodTemplate = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-template]", "methodTemplate");
         methodExcel = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-excel]", "methodExcel");
         methodArchive = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-archive]", "methodArchive");
-        nextBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-next]", "newProjectNext");
         cancelBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-cancel]", "newProjectCancel");
         submitBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-submit]", "newProjectSubmit");
         nameField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-name]", "newProjectName");
@@ -109,7 +107,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         submitBtn.click();
     }
 
-    // Full create-from-template path in the React wizard (method -> Next -> group -> item -> name -> Create).
+    // Full create-from-template path in the React wizard (method -> group -> item -> name -> Create).
     public void createProjectFromTemplate(String templateName, String projectName) {
         createProjectFromTemplate(templateName, projectName, true);
     }
@@ -117,7 +115,6 @@ public class CreateNewProjectComponent extends BaseComponent {
     // submit=false opens the wizard and fills the form without pressing Create (partial flows).
     public void createProjectFromTemplate(String templateName, String projectName, boolean submit) {
         methodTemplate.click();
-        nextBtn.click();
         if (templateName != null && !templateName.isEmpty()) {
             templateGroup.format(groupOf(templateName)).click();
             templateItem.format(templateName).click();
@@ -137,10 +134,9 @@ public class CreateNewProjectComponent extends BaseComponent {
         return "templates";
     }
 
-    // Create-from-Excel path in the React wizard (method -> Next -> upload .xlsx -> name -> Create).
+    // Create-from-Excel path in the React wizard (method -> upload .xlsx -> name -> Create).
     public void createProjectFromExcel(String excelFileName, String projectName) {
         methodExcel.click();
-        nextBtn.click();
         excelUpload.setInputFiles(TestDataUtil.getFilePathFromResources(excelFileName));
         if (projectName != null && !projectName.isEmpty()) {
             nameField.fill(projectName);
@@ -148,10 +144,9 @@ public class CreateNewProjectComponent extends BaseComponent {
         submitBtn.click();
     }
 
-    // Create-from-archive path in the React wizard (method -> Next -> upload .zip -> name -> Create).
+    // Create-from-archive path in the React wizard (method -> upload .zip -> name -> Create).
     public void createProjectFromZip(String zipFileName, String projectName) {
         methodArchive.click();
-        nextBtn.click();
         archiveUpload.setInputFiles(TestDataUtil.getFilePathFromResources(zipFileName));
         if (projectName != null && !projectName.isEmpty()) {
             nameField.fill(projectName);
@@ -159,11 +154,10 @@ public class CreateNewProjectComponent extends BaseComponent {
         submitBtn.click();
     }
 
-    // Create-from-OpenAPI path in the React wizard (method -> Next -> upload spec -> name -> Create).
+    // Create-from-OpenAPI path in the React wizard (method -> upload spec -> name -> Create).
     // The data/rules module name and path fields auto-populate from the uploaded spec.
     public void createProjectFromOpenApi(String fileName, String projectName, boolean submit) {
         methodOpenApi.click();
-        nextBtn.click();
         openApiUpload.setInputFiles(TestDataUtil.getFilePathFromResources(fileName));
         if (projectName != null && !projectName.isEmpty()) {
             nameField.fill(projectName);

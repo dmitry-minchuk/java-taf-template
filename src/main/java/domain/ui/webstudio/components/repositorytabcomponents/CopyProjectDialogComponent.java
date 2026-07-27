@@ -9,11 +9,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-// React "Copy project" dialog (build 032c60a664ce+), opened from a project row's Copy action.
-// Fields (verified live): copy-project-repository (ant-select), copy-project-name, copy-project-path,
-// copy-project-comment, copy-project-submit. The legacy branch / separate-project / copy-old-revisions
-// options were removed in React (their setters are kept as no-op shims so not-yet-migrated legacy tests
-// still compile).
+/**
+ * React "Copy project" dialog, opened from a project row's Copy action.
+ *
+ * <p>Studio 6.4.0 restored the legacy capabilities the first React cut had dropped: the dialog opens in
+ * BRANCH mode (copy-project-branch) whenever the project's repository supports branching, and the
+ * copy-project-as-new checkbox switches it to NEW-PROJECT mode (name / target repository / path /
+ * comment), which also offers copying from an older revision.
+ */
 public class CopyProjectDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
@@ -28,6 +31,12 @@ public class CopyProjectDialogComponent extends BaseComponent {
     private WebElement cancelButton;
     private WebElement repositorySelect;
     private WebElement repositoryOption;
+    private WebElement asNewProjectCheckbox;
+    private WebElement branchField;
+    private WebElement currentBranchLabel;
+    private WebElement oldRevisionCheckbox;
+    private WebElement revisionSelect;
+    private WebElement revisionOption;
     private List<WebElement> errors;
 
     public CopyProjectDialogComponent() {
@@ -48,6 +57,12 @@ public class CopyProjectDialogComponent extends BaseComponent {
         cancelButton = new WebElement(page, "xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-modal-footer')]//button[not(contains(@class,'ant-btn-primary'))]", "copyProjectCancel");
         repositorySelect = new WebElement(page, "[data-testid=copy-project-repository]", "copyProjectRepository");
         repositoryOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "copyProjectRepoOption");
+        asNewProjectCheckbox = new WebElement(page, "[data-testid=copy-project-as-new]", "copyProjectAsNew");
+        branchField = new WebElement(page, "[data-testid=copy-project-branch]", "copyProjectBranch");
+        currentBranchLabel = new WebElement(page, "[data-testid=copy-project-current-branch]", "copyProjectCurrentBranch");
+        oldRevisionCheckbox = new WebElement(page, "[data-testid=copy-project-old-revision]", "copyProjectOldRevision");
+        revisionSelect = new WebElement(page, "[data-testid=copy-project-revision]", "copyProjectRevision");
+        revisionOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "copyProjectRevisionOption");
         errors = createElementList("xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-form-item-explain-error')] | " + MODAL_ROOT + "//div[contains(@class,'ant-alert-error')]", "copyProjectErrors");
     }
 
@@ -96,7 +111,36 @@ public class CopyProjectDialogComponent extends BaseComponent {
     }
 
     public CopyProjectDialogComponent waitForDialogToAppear() {
-        newProjectNameField.waitForVisible(5000);
+        copyButton.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return this;
+    }
+
+    /**
+     * Switches the dialog into NEW-PROJECT mode (name / target repository / path). On a branching
+     * repository the dialog opens in branch mode, so copying into a new project must tick this first;
+     * where the checkbox is absent (repository without branches) the dialog is already in that mode.
+     */
+    public CopyProjectDialogComponent setAsNewProject() {
+        if (asNewProjectCheckbox.isVisible(DEFAULT_TIMEOUT_MS / 5) && !asNewProjectCheckbox.isChecked()) {
+            asNewProjectCheckbox.click();
+        }
+        newProjectNameField.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return this;
+    }
+
+    /** Copies the project into a NEW branch (branch mode — the dialog's default on a git repository). */
+    public CopyProjectDialogComponent setBranchName(String branchName) {
+        branchField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(branchName);
+        return this;
+    }
+
+    /** Copies from an earlier revision instead of the latest one (new-project mode only). */
+    public CopyProjectDialogComponent setOldRevision(String revisionLabel) {
+        if (!oldRevisionCheckbox.isChecked()) {
+            oldRevisionCheckbox.click();
+        }
+        revisionSelect.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        revisionOption.format(revisionLabel, revisionLabel).click();
         return this;
     }
 
@@ -121,21 +165,21 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return getErrors();
     }
 
-    // --- Legacy no-op/compat shims: branch / separate-project / copy-old-revisions were removed in the React
-    // copy dialog. Kept so not-yet-migrated legacy tests still compile; they are no longer functional. ---
-    public CopyProjectDialogComponent setSeparateProject(boolean enabled) {
-        return this;
-    }
-
     public CopyProjectDialogComponent setNewBranchName(String branchName) {
-        return this;
+        return setBranchName(branchName);
     }
 
     public String getNewBranchName() {
-        return "";
+        return branchField.getCurrentInputValue();
     }
 
+    /** The branch the copied project currently sits on, as shown by the dialog. */
     public String getCurrentBranch() {
-        return "";
+        return currentBranchLabel.waitForVisible(DEFAULT_TIMEOUT_MS).getText().trim();
+    }
+
+    // "Copy as a separate project" is expressed by the as-new checkbox in 6.4.0.
+    public CopyProjectDialogComponent setSeparateProject(boolean enabled) {
+        return enabled ? setAsNewProject() : this;
     }
 }

@@ -31,10 +31,17 @@ public class RepositoryPage extends BasePage {
     // top menu elements:
     private WebElement refreshBtn;
     private WebElement createProjectLink;
+    // Inline row buttons render with the row itself, so a short probe decides inline-vs-overflow.
+    private static final int ROW_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+    // aria-label of the row's overflow trigger — a menu opener, not an action of its own.
+    private static final String OVERFLOW_TRIGGER_LABEL = "Actions";
+
     // React projects list (build 032c60a664ce+): rows are <tr data-testid=project-row-...> with
     // per-row action buttons keyed by aria-label. Format placeholders with the project name.
     private WebElement projectRowByName;
     private WebElement projectActionByName;
+    private WebElement projectRowMoreBtn;
+    private WebElement overflowMenuItem;
     private WebElement discardCloseConfirmBtn;
     private WebElement copyProjectNameField;
     private WebElement copyProjectSubmitBtn;
@@ -89,6 +96,8 @@ public class RepositoryPage extends BasePage {
         projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
         projectDeployAction = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-action-deploy-')]", "projectDeployAction");
+        projectRowMoreBtn = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-actions-')]", "projectRowMoreBtn");
+        overflowMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][normalize-space()='%s']", "overflowMenuItem");
         discardCloseConfirmBtn = new WebElement(page, "[data-testid=discard-close-confirm]", "discardCloseConfirmBtn");
         copyProjectNameField = new WebElement(page, "[data-testid=copy-project-name]", "copyProjectNameField");
         copyProjectSubmitBtn = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmitBtn");
@@ -170,7 +179,7 @@ public class RepositoryPage extends BasePage {
     // The React repository leaves a freshly created project CLOSED (the legacy UI opened it on create),
     // so the editor workspace stays empty. Open it into the workspace so callers can select its modules.
     private void openIfClosed(String projectName) {
-        if (projectActionByName.format(projectName, "Open").isVisible(3000)) {
+        if (isProjectActionAvailable(projectName, "Open")) {
             openProject(projectName);
             waitUntilSpinnerLoaded();
         }
@@ -209,14 +218,29 @@ public class RepositoryPage extends BasePage {
         return projectRowByName.format(projectName).isVisible(DEFAULT_TIMEOUT_MS);
     }
 
+    /**
+     * Clicks a row action by its label, wherever the row keeps it. Studio 6.4.0 shows only
+     * Copy / Delete Branch / Open / Close as buttons and folds Save, Open Revision, Sync, Deploy,
+     * Compare, Export and Delete into the row's overflow menu.
+     */
+    public void clickRowAction(String projectName, String actionLabel) {
+        WebElement inlineAction = projectActionByName.format(projectName, actionLabel);
+        if (inlineAction.isVisible(ROW_ACTION_PROBE_MS)) {
+            inlineAction.click();
+            return;
+        }
+        projectRowMoreBtn.format(projectName).click();
+        overflowMenuItem.format(actionLabel).click();
+    }
+
     // A closed project exposes the "Open" row action; an opened one exposes "Close".
     public boolean isProjectActionAvailable(String projectName, String actionLabel) {
-        return projectActionByName.format(projectName, actionLabel).isVisible(DEFAULT_TIMEOUT_MS);
+        return getProjectActionLabels(projectName).contains(actionLabel);
     }
 
     // Clicks the row's Delete action and returns the (already React) confirm modal, ready to fill.
     public ProjectDeleteConfirmModalComponent deleteProject(String projectName) {
-        projectActionByName.format(projectName, "Delete").click();
+        clickRowAction(projectName, "Delete");
         return projectDeleteConfirmModalComponent.waitForVisible();
     }
 
@@ -267,24 +291,24 @@ public class RepositoryPage extends BasePage {
 
     // Opened projects expose "Close"; closed ones expose "Open".
     public void openProject(String projectName) {
-        projectActionByName.format(projectName, "Open").click();
+        clickRowAction(projectName, "Open");
     }
 
     // Opens the React DeployModal via the project row's Deploy action (rocket icon, testid
     // project-action-deploy-<id>) — only present when a deployment/production repository is configured.
     // Replaces the legacy RepositoryContentButtonsPanelComponent.clickDeploy.
     public DeployModalComponent clickDeploy(String projectName) {
-        projectDeployAction.format(projectName).click();
+        clickRowAction(projectName, "Deploy");
         return deployModalComponent.waitForModal();
     }
 
     // Whether the project row exposes the Deploy action (ACL: needs >= Viewer on design + Edit on deploy repo).
     public boolean isDeployAvailable(String projectName) {
-        return projectDeployAction.format(projectName).isVisible(DEFAULT_TIMEOUT_MS);
+        return isProjectActionAvailable(projectName, "Deploy");
     }
 
     public void closeProject(String projectName) {
-        projectActionByName.format(projectName, "Close").click();
+        clickRowAction(projectName, "Close");
         // Closing a project with uncommitted local changes prompts a "Discard unsaved changes?" confirm.
         if (discardCloseConfirmBtn.isVisible(3000)) {
             discardCloseConfirmBtn.click();
@@ -295,7 +319,7 @@ public class RepositoryPage extends BasePage {
     // Opens the React copy dialog via the row "Copy" action and returns it for full control
     // (repository / path / name), for multi-repo copy flows. Use when the name is unique in the list.
     public CopyProjectDialogComponent clickCopyAction(String projectName) {
-        projectActionByName.format(projectName, "Copy").click();
+        clickRowAction(projectName, "Copy");
         return copyProjectDialogComponent.waitForDialogToAppear();
     }
 
@@ -325,11 +349,18 @@ public class RepositoryPage extends BasePage {
         return copyProjectDialogComponent.waitForDialogToAppear();
     }
 
-    // Copy an OPENED project via the row "Copy" action → dialog (name pre-filled "<name> (Copy)") → Copy.
-    // The project must be open (copying a closed project fails with "Failed to copy the project").
+    // Copy a project into a NEW project via the row "Copy" action. On a branching repository the dialog
+    // opens in branch mode, so switch it to new-project mode before naming the copy.
     public void copyProject(String projectName, String newProjectName) {
-        projectActionByName.format(projectName, "Copy").click();
-        copyProjectNameField.fill(newProjectName);
+        clickCopyAction(projectName).setAsNewProject().setNewProjectName(newProjectName);
+        copyProjectSubmitBtn.click();
+        fillCommitInfo();
+        waitUntilSpinnerLoaded();
+    }
+
+    // Copy a project into a NEW BRANCH (the copy dialog's default mode on a git repository).
+    public void copyProjectToBranch(String projectName, String branchName) {
+        clickCopyAction(projectName).setBranchName(branchName);
         copyProjectSubmitBtn.click();
         fillCommitInfo();
         waitUntilSpinnerLoaded();
@@ -339,7 +370,7 @@ public class RepositoryPage extends BasePage {
     // (the Save action only appears while the project has local changes). Replaces the legacy
     // buttons-panel Save + SaveChangesComponent flow.
     public void saveProject(String projectName, String comment) {
-        projectActionByName.format(projectName, "Save").click();
+        clickRowAction(projectName, "Save");
         saveProjectDialogComponent.waitForVisible().setComment(comment).submit();
         waitUntilSpinnerLoaded();
     }
@@ -347,7 +378,7 @@ public class RepositoryPage extends BasePage {
     // Like saveProject, but also handles the "Configure Git Commit Info" modal raised on a user's FIRST commit
     // (the save dialog stays open behind it until the identity is filled).
     public void saveProjectWithCommitInfo(String projectName, String comment) {
-        projectActionByName.format(projectName, "Save").click();
+        clickRowAction(projectName, "Save");
         saveProjectDialogComponent.waitForVisible().setComment(comment).clickSubmit();
         fillCommitInfo();
         saveProjectDialogComponent.waitForSubmitHidden();
@@ -554,7 +585,11 @@ public class RepositoryPage extends BasePage {
         return inlineMessage.getText().trim();
     }
 
-    // React row-action aria-labels for a project's row (Open/Close/Copy/Export/Delete/Deploy/...).
+    /**
+     * Every action a project's row offers (Open/Close/Copy/Export/Delete/Deploy/...), taking both the
+     * inline buttons and the overflow menu into account — 6.4.0 keeps most actions behind the menu, so
+     * the inline buttons alone are not the project's permission set.
+     */
     public List<String> getProjectActionLabels(String projectName) {
         List<String> labels = new ArrayList<>();
         Locator btns = page.locator(String.format(
@@ -564,9 +599,18 @@ public class RepositoryPage extends BasePage {
         int count = btns.count();
         for (int i = 0; i < count; i++) {
             String label = btns.nth(i).getAttribute("aria-label");
-            if (label != null && !label.isEmpty()) {
+            if (label != null && !label.isEmpty() && !OVERFLOW_TRIGGER_LABEL.equals(label)) {
                 labels.add(label);
             }
+        }
+        if (projectRowMoreBtn.format(projectName).isVisible(ROW_ACTION_PROBE_MS)) {
+            projectRowMoreBtn.format(projectName).click();
+            Locator items = page.locator(
+                    "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]"
+                            + "//li[contains(@class,'ant-dropdown-menu-item')]");
+            WaitUtil.waitForCondition(() -> items.count() > 0, DEFAULT_TIMEOUT_MS, 250, "Waiting for the row overflow menu");
+            labels.addAll(items.allInnerTexts().stream().map(String::trim).filter(text -> !text.isEmpty()).toList());
+            page.keyboard().press("Escape");
         }
         return labels;
     }
