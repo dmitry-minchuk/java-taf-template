@@ -7,6 +7,8 @@ import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevisionsDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
+import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -18,6 +20,9 @@ import java.util.List;
 // History / Branches / Publish tabs. Reached from the projects list via RepositoryPage.openProjectDetail.
 public class ProjectDetailPage extends BasePage {
 
+    // Header buttons render with the screen, so a short probe decides bar-vs-overflow.
+    private static final int HEADER_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+
     // Top navigation (shared React shell)
     @Getter
     private TabSwitcherComponent tabSwitcherComponent;
@@ -25,7 +30,17 @@ public class ProjectDetailPage extends BasePage {
     private WebElement overviewTab;
     private WebElement filesTab;
     private WebElement historyTab;
-    private WebElement branchesTab;
+    private WebElement headerActionByLabel;
+    private WebElement headerMoreBtn;
+    private WebElement headerOverflowItem;
+    private WebElement branchLabel;
+    private WebElement branchSwitcherTrigger;
+    private WebElement branchMenuItem;
+    private WebElement mergeTargetBranchSelect;
+    private WebElement mergeBranchOption;
+    private CopyProjectDialogComponent copyProjectDialogComponent;
+    private ConfigureCommitInfoComponent configureCommitInfoComponent;
+    private WebElement configureCommitInfoShade;
     // Branches tab (only interactive when the project is OPEN): create/merge/delete per branch row
     private WebElement branchesCurrentLabel;    // the current-branch name
     private WebElement branchesCreateBtn;
@@ -69,7 +84,21 @@ public class ProjectDetailPage extends BasePage {
         overviewTab = new WebElement(page, "xpath=//div[@data-node-key='overview']", "overviewTab");
         filesTab = new WebElement(page, "xpath=//div[@data-node-key='files']", "filesTab");
         historyTab = new WebElement(page, "xpath=//div[@data-node-key='history']", "historyTab");
-        branchesTab = new WebElement(page, "xpath=//div[@data-node-key='branches']", "branchesTab");
+        // The header bar also renders a hidden copy of every button to measure widths, so match the visible
+        // one by its testid (<actionId>-<projectId>) rather than by label text.
+        headerActionByLabel = new WebElement(page, "xpath=//button[starts-with(@data-testid,'%s-')]", "headerAction");
+        headerMoreBtn = new WebElement(page, "[data-testid=project-actions-more]", "headerMoreBtn");
+        headerOverflowItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//button[normalize-space()='%s']", "headerOverflowItem");
+        branchLabel = new WebElement(page, "[data-testid=overview-branch]", "branchLabel");
+        branchSwitcherTrigger = new WebElement(page, "[data-testid=overview-branch-trigger]", "branchSwitcherTrigger");
+        // A switcher entry shows the branch name plus its marks ("master" + a Default tag), so match it by
+        // the menu key antd derives from the branch name, falling back to the name held inside the label.
+        branchMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][@data-menu-id='rc-menu-uuid-%s' or .//*[normalize-space()='%s']]", "branchMenuItem");
+        mergeTargetBranchSelect = new WebElement(page, "xpath=//*[@id='targetBranch']", "mergeTargetBranchSelect");
+        mergeBranchOption = new WebElement(page, "xpath=//*[@data-testid='merge-branch-%s']", "mergeBranchOption");
+        copyProjectDialogComponent = new CopyProjectDialogComponent();
+        configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoComponent");
+        configureCommitInfoShade = new WebElement(page, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoShade");
         branchesCurrentLabel = new WebElement(page, "[data-testid=branches-current]", "branchesCurrentLabel");
         branchesCreateBtn = new WebElement(page, "[data-testid=branches-create]", "branchesCreateBtn");
         branchNewNameField = new WebElement(page, "[data-testid=branches-new-name]", "branchNewNameField");
@@ -122,56 +151,106 @@ public class ProjectDetailPage extends BasePage {
 
     // --- Branches tab (React project-detail; create/merge controls require the project to be OPEN) ---
 
-    public ProjectDetailPage openBranchesTab() {
-        branchesTab.click();
-        waitUntilSpinnerLoaded();
+    /**
+     * Clicks an action in the project header (Open Revision / Close / Sync / Copy / Delete / Compare /
+     * Export / Deploy). The header bar collapses trailing actions into an overflow menu as the window
+     * narrows, so look there when the button is not on the bar.
+     */
+    public ProjectDetailPage clickHeaderAction(String actionLabel) {
+        WebElement action = headerActionByLabel.format(actionIdOf(actionLabel));
+        if (action.isVisible(HEADER_ACTION_PROBE_MS)) {
+            action.click();
+            return this;
+        }
+        headerMoreBtn.click();
+        headerOverflowItem.format(actionLabel).click();
         return this;
     }
 
-    // Creates a branch off the current one via the "New branch" dialog. Mirrors the legacy
-    // CopyProjectDialogComponent.setNewBranchName flow (which left you on the new branch → switchAfter=true).
+    // The header buttons are keyed by the action's own id; the overflow menu still lists them by label.
+    private static String actionIdOf(String actionLabel) {
+        return switch (actionLabel) {
+            case "Open Revision" -> "openRevision";
+            case "Delete Branch" -> "deleteBranch";
+            default -> actionLabel.substring(0, 1).toLowerCase() + actionLabel.substring(1);
+        };
+    }
+
+    /**
+     * Branches the project. Studio 6.4.0 removed the Branches tab and moved branching into the Copy
+     * dialog, which opens in branch mode on a branching repository — so "create a branch" is a copy of the
+     * project into a new branch, and it leaves the project on that branch.
+     */
     public ProjectDetailPage createBranch(String branchName) {
         return createBranch(branchName, false);
     }
 
     public ProjectDetailPage createBranch(String branchName, boolean switchAfter) {
-        openBranchesTab();
-        branchesCreateBtn.click();
-        branchNewNameField.fill(branchName);
-        if (switchAfter && !"true".equals(branchSwitchAfterToggle.getAttribute("aria-checked"))) {
-            branchSwitchAfterToggle.click();
+        String sourceBranch = getCurrentBranch();
+        clickHeaderAction("Copy");
+        copyProjectDialogComponent.waitForDialogToAppear().setBranchName(branchName);
+        copyProjectDialogComponent.clickCopyButton();
+        fillCommitInfoIfShown();
+        waitUntilSpinnerLoaded();
+        // Branching leaves the project where it was, so honour the caller's choice explicitly.
+        String wanted = switchAfter ? branchName : sourceBranch;
+        if (!wanted.equals(getCurrentBranch())) {
+            switchBranch(wanted);
         }
-        branchCreateSubmitBtn.click();
+        return this;
+    }
+
+    // Attempts to branch under a name the repository already holds; returns the dialog's error text.
+    public String createBranchExpectingError(String branchName) {
+        clickHeaderAction("Copy");
+        copyProjectDialogComponent.waitForDialogToAppear().setBranchName(branchName);
+        copyProjectDialogComponent.clickCopyButton(false);
+        return String.join(" ", copyProjectDialogComponent.waitForErrors(DEFAULT_TIMEOUT_MS));
+    }
+
+    // Switches the project onto another branch via the branch switcher next to the branch label.
+    public ProjectDetailPage switchBranch(String branchName) {
+        openOverviewTab();
+        branchSwitcherTrigger.click();
+        branchMenuItem.format(branchName, branchName).click();
         waitUntilSpinnerLoaded();
         return this;
     }
 
-    // Attempts to create a branch whose name is expected to be rejected (e.g. it already exists in the
-    // repository). Returns the React error notification text (e.g. "Branch 'x' already exists in repository.").
-    public String createBranchExpectingError(String branchName) {
-        openBranchesTab();
-        branchesCreateBtn.click();
-        branchNewNameField.fill(branchName);
-        branchCreateSubmitBtn.click();
-        branchCreateErrorNotice.waitForVisible(DEFAULT_TIMEOUT_MS);
-        return branchCreateErrorNotice.getText().trim();
-    }
-
+    /**
+     * Whether the repository holds this branch. The switcher offers every branch except the one the project
+     * is already on, so the current branch is answered directly.
+     */
     public boolean isBranchPresent(String branchName) {
-        openBranchesTab();
-        return branchRowByName.format(branchName).isVisible(DEFAULT_TIMEOUT_MS);
+        if (branchName.equals(getCurrentBranch())) {
+            return true;
+        }
+        branchSwitcherTrigger.click();
+        boolean present = branchMenuItem.format(branchName, branchName).isVisible(HEADER_ACTION_PROBE_MS);
+        page.keyboard().press("Escape");
+        return present;
     }
 
     public String getCurrentBranch() {
-        openBranchesTab();
-        return branchesCurrentLabel.getText().trim();
+        openOverviewTab();
+        return branchLabel.getText().trim();
     }
 
-    // Opens the "Sync updates" dialog for merging the current branch with the given target branch (the target
-    // is implicit in the branch row's Merge action).
+    // A first commit by a user raises the "Configure Git Commit Info" modal on top of the flow.
+    private void fillCommitInfoIfShown() {
+        if (configureCommitInfoShade.isVisible(HEADER_ACTION_PROBE_MS)) {
+            configureCommitInfoComponent.fillCommitInfoWithRandomData();
+        }
+    }
+
+    /**
+     * Opens the merge dialog against another branch. 6.4.0 reaches it from the header's Sync action and asks
+     * which branch to merge with, instead of the per-branch Merge action the removed Branches tab had.
+     */
     public SyncUpdatesDialogComponent openMergeDialog(String targetBranch) {
-        openBranchesTab();
-        branchMergeByName.format(targetBranch).click();
+        clickHeaderAction("Sync");
+        mergeTargetBranchSelect.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        mergeBranchOption.format(targetBranch).click();
         return syncUpdatesDialogComponent.waitForVisible();
     }
 

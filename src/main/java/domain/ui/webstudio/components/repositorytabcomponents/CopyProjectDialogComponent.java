@@ -128,9 +128,18 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return this;
     }
 
-    /** Copies the project into a NEW branch (branch mode — the dialog's default on a git repository). */
+    /**
+     * Copies the project into a NEW branch (branch mode — the dialog's default on a git repository).
+     *
+     * <p>The dialog suggests a branch name of its own ("&lt;project&gt;/&lt;user&gt;/&lt;date&gt;") once the
+     * repository config arrives, and that late write also clears its "user edited this" flag — so typing
+     * before the suggestion lands is silently undone. Wait for the suggestion, then replace it.
+     */
     public CopyProjectDialogComponent setBranchName(String branchName) {
-        branchField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(branchName);
+        branchField.waitForVisible(DEFAULT_TIMEOUT_MS);
+        WaitUtil.waitForCondition(() -> !branchField.getCurrentInputValue().isBlank(),
+                DEFAULT_TIMEOUT_MS, 200, "Waiting for the copy dialog's suggested branch name");
+        branchField.fill(branchName);
         return this;
     }
 
