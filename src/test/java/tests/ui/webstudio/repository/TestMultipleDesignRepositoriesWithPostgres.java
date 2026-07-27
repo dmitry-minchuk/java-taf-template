@@ -112,31 +112,30 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         wizard.selectRepository("Design1").setPathInRepository("new").clickCreate();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
-        // In a non-flat repo, a project created at path "new" renders with a PATH-PREFIXED row name ("new"+name).
-        // Both repos' projects are shown by default (repo filters unchecked = show-all), so no filter toggling.
-        String design1RowName = "new" + nameProjectDesign1;
+        // 6.4.0 lists a project under its own name wherever it lives; the path is a field of its own, not a
+        // prefix on the row name as the 6.3.1 React build showed it. Both repos' projects are listed by
+        // default (repo filters unchecked = show-all), so no filter toggling.
+        String design1RowName = nameProjectDesign1;
         ProjectDetailPage detail = repositoryPage.openProjectsList().openProjectDetail(design1RowName);
-        assertThat(detail.getOverviewPath()).as("ProjectDesign1Repo path").contains("new" + nameProjectDesign1);
+        assertThat(detail.getOverviewPath()).as("ProjectDesign1Repo path").contains("new");
         assertThat(detail.getOverviewRepository()).as("ProjectDesign1Repo repository").isEqualTo("Design1");
         repositoryPage.openProjectsList();
 
-        // A non-flat-repo project created at path P has a PATH-PREFIXED row name (P + name, no slash), and its
-        // Overview "Path" reads the same (P + name). Flat/Design projects keep their bare name.
         // Step 5: Copy ProjectDesignRepo (flat) to Design1 at "copied" as nameCopiedProjectToDesign1
         // COPY into a path yields a BARE row name (just the new name), unlike CREATE (which path-prefixes).
         String nameCopiedProjectToDesign1 = "nameCopiedProjectToDesign1";
         CopyProjectDialogComponent copyDialog = repositoryPage.clickCopyAction(nameProjectDesign);
-        copyDialog.setNewProjectName(nameCopiedProjectToDesign1).selectRepository("Design1").setProjectFolder("copied").clickCopyButton();
+        copyDialog.setAsNewProject().setNewProjectName(nameCopiedProjectToDesign1).selectRepository("Design1").setProjectFolder("copied").clickCopyButton();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
         detail = repositoryPage.openProjectsList().openProjectDetail(nameCopiedProjectToDesign1);
         assertThat(detail.getOverviewRepository()).isEqualTo("Design1");
         repositoryPage.openProjectsList();
 
-        // Step 6: Copy ProjectDesign1Repo (row "new"+name) to Design (flat) as nameCopiedProjectFromDesign1
+        // Step 6: Copy ProjectDesign1Repo to Design (flat) as nameCopiedProjectFromDesign1
         String nameCopiedProjectFromDesign1 = "nameCopiedProjectFromDesign1";
         copyDialog = repositoryPage.clickCopyAction(design1RowName);
-        copyDialog.setNewProjectName(nameCopiedProjectFromDesign1).selectRepository("Design").clickCopyButton();
+        copyDialog.setAsNewProject().setNewProjectName(nameCopiedProjectFromDesign1).selectRepository("Design").clickCopyButton();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
         detail = repositoryPage.openProjectsList().openProjectDetail(nameCopiedProjectFromDesign1);
@@ -147,7 +146,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
         // so there are now TWO rows named "ProjectDesignRepo" (Design original = Opened, Design1 copy = Closed) —
         // disambiguate by state.
         copyDialog = repositoryPage.clickCopyAction(nameProjectDesign);
-        copyDialog.setNewProjectName(nameProjectDesign).selectRepository("Design1").setProjectFolder("step7").clickCopyButton();
+        copyDialog.setAsNewProject().setNewProjectName(nameProjectDesign).selectRepository("Design1").setProjectFolder("step7").clickCopyButton();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
 
@@ -167,7 +166,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
         // Step 8: Copy the opened original again to Design1 at "copied" with the same name → duplicate error
         copyDialog = repositoryPage.clickCopyActionByState(nameProjectDesign, true);
-        copyDialog.setNewProjectName(nameProjectDesign).selectRepository("Design1").setProjectFolder("copied").clickCopyButton(false);
+        copyDialog.setAsNewProject().setNewProjectName(nameProjectDesign).selectRepository("Design1").setProjectFolder("copied").clickCopyButton(false);
         assertThat(copyDialog.waitForErrors(5000)).anyMatch(e -> e.contains("already exists"));
         copyDialog.clickCancelButton();
 
