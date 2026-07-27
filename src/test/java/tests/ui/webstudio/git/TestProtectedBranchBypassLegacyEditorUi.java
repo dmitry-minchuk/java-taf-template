@@ -12,8 +12,8 @@ import domain.api.RepositoryProjectsMethod;
 import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.TestDataUtil;
@@ -66,13 +66,10 @@ public class TestProtectedBranchBypassLegacyEditorUi extends BaseTest {
     public void testEligibleManagerCanEditOnProtectedBranchLegacy() {
         String projectId = provisionProjectOnProtectedBranch(MANAGER_LOGIN, "MANAGER");
 
-        RepositoryContentButtonsPanelComponent toolbar = openProjectAs(MANAGER_LOGIN);
-
-        assertThat(toolbar.isUploadFileBtnVisible())
-                .as("I.1 — Manager + bypass ON: Upload File is rendered on the protected branch")
-                .isTrue();
-        assertThat(toolbar.isAddFolderBtnVisible())
-                .as("I.1 — Manager + bypass ON: Add Folder is rendered on the protected branch")
+        // The Files tab only offers its Add menu (New folder / New text file / Upload) to a user who may
+        // change the files, which is what the old toolbar's Upload File / Add Folder buttons showed.
+        assertThat(openProjectAs(MANAGER_LOGIN).isAddFilesMenuAvailable())
+                .as("I.1 — Manager + bypass ON: file actions are offered on the protected branch")
                 .isTrue();
     }
 
@@ -84,13 +81,8 @@ public class TestProtectedBranchBypassLegacyEditorUi extends BaseTest {
     public void testContributorCannotEditOnProtectedBranchLegacy() {
         String projectId = provisionProjectOnProtectedBranch(CONTRIBUTOR_LOGIN, "CONTRIBUTOR");
 
-        RepositoryContentButtonsPanelComponent toolbar = openProjectAs(CONTRIBUTOR_LOGIN);
-
-        assertThat(toolbar.isUploadFileBtnVisible())
-                .as("I.3 — Contributor: Upload File is NOT rendered on the protected branch")
-                .isFalse();
-        assertThat(toolbar.isAddFolderBtnVisible())
-                .as("I.3 — Contributor: Add Folder is NOT rendered on the protected branch")
+        assertThat(openProjectAs(CONTRIBUTOR_LOGIN).isAddFilesMenuAvailable())
+                .as("I.3 — Contributor: file actions are NOT offered on the protected branch")
                 .isFalse();
     }
 
@@ -115,17 +107,15 @@ public class TestProtectedBranchBypassLegacyEditorUi extends BaseTest {
         return projectId;
     }
 
-    private RepositoryContentButtonsPanelComponent openProjectAs(String login) {
+    private ProjectDetailPage openProjectAs(String login) {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(login, login));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProjectAndWait();
-        return repositoryPage.getRepositoryContentButtonsPanelComponent();
+        if (repositoryPage.isProjectActionAvailable(PROJECT_NAME, "Open")) {
+            repositoryPage.openProject(PROJECT_NAME);
+        }
+        return repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
     }
 
     private String resolveProjectId() {

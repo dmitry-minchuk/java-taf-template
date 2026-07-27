@@ -42,6 +42,7 @@ public class RepositoryPage extends BasePage {
     // React projects list (build 032c60a664ce+): rows are <tr data-testid=project-row-...> with
     // per-row action buttons keyed by aria-label. Format placeholders with the project name.
     private WebElement projectRowByName;
+    private WebElement projectNameInRow;
     private WebElement projectActionByName;
     private WebElement projectRowMoreBtn;
     private WebElement projectActionByNameAndState;
@@ -103,6 +104,8 @@ public class RepositoryPage extends BasePage {
         createProjectLink = new WebElement(page, "[data-testid=projects-new]", "createProjectLink");
         refreshBtn = new WebElement(page, "xpath=//a[@id='designRepoRefresh']", "refreshBtn");
         projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
+        // Click the name, not the row: a row also holds a branch switcher, and a row-wide click can hit it.
+        projectNameInRow = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')]//span[normalize-space()='%s']", "projectNameInRow");
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
         projectDeployAction = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-action-deploy-')]", "projectDeployAction");
         projectRowMoreBtn = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-actions-')]", "projectRowMoreBtn");
@@ -263,7 +266,7 @@ public class RepositoryPage extends BasePage {
 
     // Opens the React project-detail view (Overview/Files/History/...) by clicking the project row.
     public ProjectDetailPage openProjectDetail(String projectName) {
-        projectRowByName.format(projectName).click();
+        projectNameInRow.format(projectName).click();
         return new ProjectDetailPage();
     }
 

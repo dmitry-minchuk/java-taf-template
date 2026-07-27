@@ -488,6 +488,16 @@ public class ProjectDetailPage extends BasePage {
         return this;
     }
 
+    /**
+     * Whether the Files tab offers its Add menu (New folder / New text file / Upload). It is only rendered
+     * for a user who may change the project's files, so this is how "can this user edit here?" is checked —
+     * it replaces the old toolbar's Upload File / Add Folder buttons.
+     */
+    public boolean isAddFilesMenuAvailable() {
+        openFilesTab();
+        return filesAddBtn.isVisible(DEFAULT_TIMEOUT_MS);
+    }
+
     // The Files tab gathers New folder / New text file / Upload behind a single Add menu. That menu is an
     // antd Dropdown with the default HOVER trigger, so clicking the button toggles it shut again — hover it.
     private void openAddMenuItem(String itemTestId) {
