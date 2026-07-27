@@ -205,16 +205,15 @@ public class RepositoryPage extends BasePage {
         }
     }
 
+    // Create from a template into a chosen design repository: fill the wizard without submitting, pick the
+    // repository, then Create.
     public void createProjectFromTemplateWithSelectRepo(String projectName, String templateName, String repositoryName) {
-        createProjectLink.click();
-        TemplateTabComponent templateComponent = createNewProjectComponent.selectTab(CreateNewProjectComponent.TabName.TEMPLATE);
-        templateComponent.selectProjectTemplate(templateName);
-        templateComponent.setProjectName(projectName);
-        templateComponent.selectRepository(repositoryName);
-        templateComponent.createProject();
+        createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, templateName, false);
+        createNewProjectComponent.selectRepository(repositoryName).clickCreate();
         fillCommitInfo();
         waitUntilSpinnerLoaded();
-        refreshBtn.click(DEFAULT_TIMEOUT_MS);
+        openProjectsList();
+        openIfClosed(projectName);
     }
 
     public void fillCommitInfo() {
