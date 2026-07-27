@@ -7,6 +7,7 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.LoginPage;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -31,6 +32,9 @@ public class TestSingleModeProfileEditUi extends BaseTest {
     public void testSingleModeProfileEditPersists() {
         LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
         LocalDriverPool.getPage().waitForLoadState();
+        // Single mode signs the user in without a login form, so the 6.4.0 "Complete Your Profile" modal
+        // has to be dealt with here — otherwise it blocks the whole page.
+        new LoginPage().completeProfileIfRequested();
 
         new EditorPage().openUserMenu()
                 .navigateToAdministration()

@@ -25,6 +25,9 @@ public class TestSingleModeAuthUi extends BaseTest {
     public void testSingleModeAutoAuthentication() {
         LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
         LocalDriverPool.getPage().waitForLoadState();
+        // Single mode signs the user in without a login form, so the 6.4.0 "Complete Your Profile" modal
+        // has to be dealt with here — otherwise it blocks the whole page.
+        new LoginPage().completeProfileIfRequested();
 
         assertThat(new LoginPage().isLoginFormDisplayed(5000))
                 .as("single mode auto-authenticates — no login form is shown")
