@@ -40,10 +40,14 @@ public class ProjectDetailPage extends BasePage {
     private WebElement projectStatus;       // React status: Local / Opened / Editing / Closed / ...
     // Files tab: a file tree on the left, a preview panel with per-file actions on the right
     private WebElement fileNodeByName;      // format(fileName)
-    private WebElement fileDeleteBtn;
-    private WebElement fileDeleteConfirmOk;
+    private WebElement filesAddBtn;
+    private WebElement filesAddMenuItem;
+    private WebElement fileActionsBtn;
+    private WebElement fileActionsMenuItem;
+    private WebElement fileDeleteSubmitBtn;
     private WebElement filesUploadInput;
-    private WebElement filesNewFolderBtn;
+    private WebElement filesUploadSubmitBtn;
+    private WebElement filesUploadNameField;
     private WebElement folderPathInput;
     private WebElement folderSubmitBtn;
     // History tab
@@ -81,10 +85,15 @@ public class ProjectDetailPage extends BasePage {
         revisionsCompareBtn = new WebElement(page, "[data-testid=revisions-compare]", "revisionsCompareBtn");
         revisionCompareSubmit = new WebElement(page, "[data-testid=revision-compare-submit]", "revisionCompareSubmit");
         fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
-        fileDeleteBtn = new WebElement(page, "[data-testid=file-delete]", "fileDeleteBtn");
-        fileDeleteConfirmOk = new WebElement(page, "xpath=//div[contains(@class,'ant-popover')]//button[.//span[normalize-space()='OK']]", "fileDeleteConfirmOk");
-        filesUploadInput = new WebElement(page, "[data-testid=files-upload-input]", "filesUploadInput");
-        filesNewFolderBtn = new WebElement(page, "[data-testid=files-new-folder]", "filesNewFolderBtn");
+        filesAddBtn = new WebElement(page, "[data-testid=files-add]", "filesAddBtn");
+        filesAddMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//span[@data-testid='%s']", "filesAddMenuItem");
+        fileActionsBtn = new WebElement(page, "[data-testid=file-actions]", "fileActionsBtn");
+        fileActionsMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][normalize-space()='%s']", "fileActionsMenuItem");
+        fileDeleteSubmitBtn = new WebElement(page, "[data-testid=file-delete-submit]", "fileDeleteSubmitBtn");
+        // antd Upload.Dragger forwards unknown props to the file input itself, so the testid lands there.
+        filesUploadInput = new WebElement(page, "input[data-testid=files-upload-dragger]", "filesUploadInput");
+        filesUploadNameField = new WebElement(page, "[data-testid=files-upload-name]", "filesUploadNameField");
+        filesUploadSubmitBtn = new WebElement(page, "[data-testid=files-upload-submit]", "filesUploadSubmitBtn");
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path]", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
         tagValueForType = new WebElement(page, "xpath=//*[@data-testid='overview-left']//span[contains(@class,'ant-tag')][./span[1][normalize-space()='%s']]/span[last()]", "tagValueForType");
@@ -269,13 +278,16 @@ public class ProjectDetailPage extends BasePage {
         return revisionEntries.getLocator().count();
     }
 
-    // Selecting a file reveals the preview panel with its delete action; deletion is confirmed via a popconfirm.
-    // The tree node is removed asynchronously after the popconfirm, so wait it out before returning — otherwise
-    // a following isFilePresent check races the removal and still sees the node.
+    /**
+     * Deletes a file: select it in the tree, then Delete from the preview pane's "More actions" menu and
+     * confirm in the delete dialog. The tree node goes away asynchronously, so wait it out — otherwise a
+     * following isFilePresent check races the removal and still sees the node.
+     */
     public ProjectDetailPage deleteFile(String fileName) {
         fileNodeByName.format(fileName).click();
-        fileDeleteBtn.click();
-        fileDeleteConfirmOk.click();
+        fileActionsBtn.click();
+        fileActionsMenuItem.format("Delete").click();
+        fileDeleteSubmitBtn.click();
         waitUntilSpinnerLoaded();
         fileNodeByName.format(fileName).waitForHidden(DEFAULT_TIMEOUT_MS);
         return this;
@@ -285,18 +297,38 @@ public class ProjectDetailPage extends BasePage {
         return fileNodeByName.format(fileName).isVisible(DEFAULT_TIMEOUT_MS);
     }
 
-    // Uploads a file into the project via the Files tab's upload input (adds/overwrites the module).
+    // Uploads a file into the project: Files tab -> Add -> Upload -> pick the file -> submit.
     public ProjectDetailPage uploadFile(String filePath) {
+        return uploadFileAs(filePath, null);
+    }
+
+    /**
+     * Uploads a file and stores it under a different name. A single-file upload exposes a Name field
+     * (pre-filled from the picked file), which is how the legacy upload dialog's source→target rename maps
+     * onto the React Files tab.
+     */
+    public ProjectDetailPage uploadFileAs(String filePath, String targetName) {
         openFilesTab();
+        openAddMenuItem("files-upload");
         filesUploadInput.setInputFiles(filePath);
+        if (targetName != null && !targetName.isEmpty()) {
+            filesUploadNameField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(targetName);
+        }
+        filesUploadSubmitBtn.click();
         waitUntilSpinnerLoaded();
         return this;
+    }
+
+    // The Files tab gathers New folder / New text file / Upload behind a single Add menu.
+    private void openAddMenuItem(String itemTestId) {
+        filesAddBtn.click();
+        filesAddMenuItem.format(itemTestId).click();
     }
 
     // Creates a folder (or path/to/folder) in the project via the Files tab.
     public ProjectDetailPage createFolder(String folderPath) {
         openFilesTab();
-        filesNewFolderBtn.click();
+        openAddMenuItem("files-new-folder");
         folderPathInput.fill(folderPath);
         folderSubmitBtn.click();
         waitUntilSpinnerLoaded();
