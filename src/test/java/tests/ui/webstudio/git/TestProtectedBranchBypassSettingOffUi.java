@@ -23,7 +23,7 @@ import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARG
 
 /**
  * EPBDS-15960 H.8 — with the global bypass setting OFF, an eligible Manager merging into a
- * protected branch sees the same blocked path as a non-eligible user: a privileges error in
+ * protected branch sees the same blocked path as a non-eligible user: a protected-branch note in
  * the Sync dialog, no bypass warning and no "Bypass branch protection?" confirmation modal.
  */
 public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
@@ -43,7 +43,7 @@ public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
     @Test
     @TestCaseId("EPBDS-15960")
     @Description("H.8: setting OFF hides the bypass flow — an eligible Manager merging into a "
-            + "protected branch gets the privileges error with no bypass warning and no confirm modal.")
+            + "protected branch is told the branch is protected, with no bypass warning and no confirm modal.")
     @AppContainerConfig(startParams = AppContainerStartParameters.STUDIO_PROTECTED_NO_BYPASS_PARAMS)
     public void testManagerBlockedWhenBypassSettingOff() {
         ProtectedBranchBypassFixture.provisionProjectAndUser(
@@ -71,8 +71,10 @@ public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
         assertThat(syncDialog.isBypassWarningVisible())
                 .as("H.8 — no bypass warning when the global setting is OFF")
                 .isFalse();
-        assertThat(syncDialog.hasErrorMessageContaining("privileges"))
-                .as("H.8 — Manager sees the privileges error when the setting is OFF")
+        // With the setting OFF a Manager is blocked the same way anyone else is: 6.4.0 says the target
+        // branch is protected and disables the merge buttons.
+        assertThat(syncDialog.hasBlockedMessageContaining("protected"))
+                .as("H.8 — Manager is told the branch is protected when the setting is OFF")
                 .isTrue();
 
         BypassConfirmDialogComponent confirmDialog = repositoryPage.getBypassConfirmDialogComponent();

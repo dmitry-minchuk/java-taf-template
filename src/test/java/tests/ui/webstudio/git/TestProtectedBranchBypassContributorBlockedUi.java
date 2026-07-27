@@ -23,7 +23,7 @@ import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARG
 
 /**
  * EPBDS-15960 H.4: a Contributor (not bypass-eligible) trying to merge a dev
- * branch into a protected release branch sees the plain "privileges" error
+ * branch into a protected release branch is told the branch is protected
  * in the Sync dialog, not the bypass confirmation modal.
  */
 public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
@@ -43,7 +43,7 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
     @Test
     @TestCaseId("EPBDS-15960")
     @Description("H.4: A Contributor (not bypass-eligible) attempting to merge into a "
-            + "protected branch sees a plain privileges error in the Sync dialog and NOT "
+            + "protected branch is told the branch is protected in the Sync dialog and NOT "
             + "the 'Bypass branch protection?' confirmation modal.")
     @AppContainerConfig(startParams = AppContainerStartParameters.STUDIO_BYPASS_ENABLED_PARAMS)
     public void testContributorSeesErrorInsteadOfBypassConfirm() {
@@ -74,8 +74,10 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
                 .as("H.4 — bypass warning must NOT be shown for a Contributor on a protected target")
                 .isFalse();
 
-        assertThat(syncDialog.hasErrorMessageContaining("privileges"))
-                .as("H.4 — Contributor must see the 'privileges' error in the Sync dialog")
+        // 6.4.0 checks before merging and states the reason instead of failing with a 403: the dialog
+        // says the target branch is protected and leaves the merge buttons disabled.
+        assertThat(syncDialog.hasBlockedMessageContaining("protected"))
+                .as("H.4 — Contributor must be told the target branch is protected")
                 .isTrue();
 
         BypassConfirmDialogComponent confirmDialog = repositoryPage.getBypassConfirmDialogComponent();
