@@ -86,7 +86,8 @@ public class ProjectDetailPage extends BasePage {
         revisionCompareSubmit = new WebElement(page, "[data-testid=revision-compare-submit]", "revisionCompareSubmit");
         fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
         filesAddBtn = new WebElement(page, "[data-testid=files-add]", "filesAddBtn");
-        filesAddMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//span[@data-testid='%s']", "filesAddMenuItem");
+        // antd binds the menu handler to the <li>, so click that rather than the labelled <span> inside it.
+        filesAddMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][.//span[@data-testid='%s']]", "filesAddMenuItem");
         fileActionsBtn = new WebElement(page, "[data-testid=file-actions]", "fileActionsBtn");
         fileActionsMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][normalize-space()='%s']", "fileActionsMenuItem");
         fileDeleteSubmitBtn = new WebElement(page, "[data-testid=file-delete-submit]", "fileDeleteSubmitBtn");
@@ -94,7 +95,8 @@ public class ProjectDetailPage extends BasePage {
         filesUploadInput = new WebElement(page, "input[data-testid=files-upload-dragger]", "filesUploadInput");
         filesUploadNameField = new WebElement(page, "[data-testid=files-upload-name]", "filesUploadNameField");
         filesUploadSubmitBtn = new WebElement(page, "[data-testid=files-upload-submit]", "filesUploadSubmitBtn");
-        folderPathInput = new WebElement(page, "[data-testid=files-folder-path]", "folderPathInput");
+        // files-folder-path is an antd AutoComplete wrapper (a DIV); the typeable field is its inner input.
+        folderPathInput = new WebElement(page, "[data-testid=files-folder-path] input", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
         tagValueForType = new WebElement(page, "xpath=//*[@data-testid='overview-left']//span[contains(@class,'ant-tag')][./span[1][normalize-space()='%s']]/span[last()]", "tagValueForType");
         overviewRight = new WebElement(page, "[data-testid=overview-right]", "overviewRight");
@@ -180,14 +182,17 @@ public class ProjectDetailPage extends BasePage {
         return tagValueForType.format(tagType).getText().trim();
     }
 
-    // React status vocabulary (Local / Opened / Editing / Closed / ...) — differs from the legacy
-    // "No Changes" / "In Editing" wording, so migrated tests must assert against the React values.
+    /**
+     * The project's status. 6.4.0 restored the legacy wording — No Changes / In Editing / Viewing Revision
+     * / Local / Closed / Deleted — and dropped the testid from the status pill, so it is read from the
+     * Overview panel by its label.
+     */
     public String getStatus() {
-        return projectStatus.getText().trim();
+        return extractOverviewField("Status", "Repository");
     }
 
-    // The React Overview-right column concatenates its labelled fields into one text blob
-    // ("...Revision<hash>Last change<author><date>Comment<text>"). Extracts the value between two labels.
+    // The Overview-right column concatenates its labelled fields into one text blob, in the order
+    // Status / Repository / Path / Branch / Revision ID / Modified / Comment. Extracts one field's value.
     private String extractOverviewField(String label, String nextLabel) {
         openOverviewTab();
         String blob = overviewRight.getText();
@@ -202,13 +207,13 @@ public class ProjectDetailPage extends BasePage {
 
     // Replaces the legacy Properties-tab getRevision() — the React Overview shows the FULL commit hash.
     public String getOverviewRevision() {
-        return extractOverviewField("Revision", "Last change");
+        return extractOverviewField("Revision ID", "Modified");
     }
 
-    // Replaces the legacy Properties-tab getModifiedBy()+getModifiedAt() — the React Overview combines the
-    // author and timestamp into a single "Last change" field (e.g. "Sheldon SawaynJul 16, 2026 6:04 PM").
+    // Replaces the legacy Properties-tab getModifiedBy()+getModifiedAt() — the Overview combines the author
+    // and timestamp into a single "Modified" field (e.g. "German HarberJul 27, 2026 6:51 AM").
     public String getOverviewLastChange() {
-        return extractOverviewField("Last change", "Comment");
+        return extractOverviewField("Modified", "Comment");
     }
 
     // Replaces the legacy Properties-tab getPath() — the project's path-in-repository from the Overview.
@@ -319,9 +324,10 @@ public class ProjectDetailPage extends BasePage {
         return this;
     }
 
-    // The Files tab gathers New folder / New text file / Upload behind a single Add menu.
+    // The Files tab gathers New folder / New text file / Upload behind a single Add menu. That menu is an
+    // antd Dropdown with the default HOVER trigger, so clicking the button toggles it shut again — hover it.
     private void openAddMenuItem(String itemTestId) {
-        filesAddBtn.click();
+        filesAddBtn.hover();
         filesAddMenuItem.format(itemTestId).click();
     }
 

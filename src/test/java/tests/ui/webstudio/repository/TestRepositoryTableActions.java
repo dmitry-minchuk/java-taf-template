@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * React repository (build 032c60a664ce+): the projects table exposes per-row action buttons
  * (project-action-{open,close,copy,export,delete,deploy}-<id>, aria-label Open/Close/...); status lives in
  * the project-detail header/Overview (not a table column), so status is read via getProjectStatusFromDetail /
- * ProjectDetailPage.getStatus (React words: "Opened"/"Closed", not the legacy "No Changes"/"Closed").
+ * ProjectDetailPage.getStatus ("No Changes"/"Closed" — 6.4.0 restored the legacy wording).
  * The Overview-right column carries Revision (full commit hash) and a combined "Last change" (author+timestamp).
  * Deploy automation: DeployInfrastructureService with a PostgreSQL production repository (DEPLOY_STUDIO_PARAMS).
  */
@@ -71,7 +71,7 @@ public class TestRepositoryTableActions extends BaseTest {
     private static final String TEMPLATE_NAME = "Sample Project";
 
     // React project statuses (project-detail header). Legacy "No Changes" is now "Opened".
-    private static final String STATUS_OPENED = "Opened";
+    private static final String STATUS_OPENED = "No Changes";
     private static final String STATUS_CLOSED = "Closed";
 
     // React row action aria-labels
@@ -152,7 +152,7 @@ public class TestRepositoryTableActions extends BaseTest {
                 .isTrue();
         repositoryPage.openProject(projectName1);
         assertThat(repositoryPage.getProjectStatusFromDetail(projectName1))
-                .as("Project status should be 'Opened' after Open row action")
+                .as("Project status should be 'No Changes' after Open row action")
                 .isEqualTo(STATUS_OPENED);
 
         // ===== Redeploy via Deploy row action → DeployModal opens → cancel =====
@@ -165,7 +165,7 @@ public class TestRepositoryTableActions extends BaseTest {
         // ===== Create project2 from Excel, verify status via detail =====
         repositoryPage.createProject(CreateNewProjectComponent.TabName.EXCEL_FILES, projectName2, MAIN_XLS);
         assertThat(repositoryPage.getProjectStatusFromDetail(projectName2))
-                .as("Newly created Excel project status should be 'Opened'")
+                .as("Newly created Excel project status should be 'No Changes'")
                 .isEqualTo(STATUS_OPENED);
 
         // ===== Close project2 via row action → "Closed" =====
@@ -177,7 +177,7 @@ public class TestRepositoryTableActions extends BaseTest {
         // ===== Open project2 via row action → "Opened" =====
         repositoryPage.openProject(projectName2);
         assertThat(repositoryPage.getProjectStatusFromDetail(projectName2))
-                .as("Project2 status should be 'Opened' after Open")
+                .as("Project2 status should be 'No Changes' after Open")
                 .isEqualTo(STATUS_OPENED);
 
         // ===== Create project3 from template (for viewer test) =====
@@ -196,7 +196,7 @@ public class TestRepositoryTableActions extends BaseTest {
                 .isTrue();
         repositoryPage.openProject(projectName3);
         assertThat(repositoryPage.getProjectStatusFromDetail(projectName3))
-                .as("Project3 status should be 'Opened' after viewer Open")
+                .as("Project3 status should be 'No Changes' after viewer Open")
                 .isEqualTo(STATUS_OPENED);
 
         // ===== Viewer: Close project3 =====

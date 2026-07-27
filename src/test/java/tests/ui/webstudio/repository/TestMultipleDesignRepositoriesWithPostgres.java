@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Ticket: IPBQA-30859 — Multiple Design Repositories (Git flat + Git non-flat + JDBC security DB).
  *
  * React repository (build 032c60a664ce+): create/copy target a specific repository via the wizard/copy-dialog
- * repository selector + path field; status lives in the project detail (Opened/Closed, not "No Changes"/"Closed");
+ * repository selector + path field; status lives in the project detail ("No Changes"/"Closed");
  * two same-name projects across repos are disambiguated by open/closed state (openProjectDetailByState). The
  * legacy branch/separate-project copy options were removed.
  */
@@ -153,7 +153,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
         // The opened original (Design) still shows Opened
         detail = repositoryPage.openProjectsList().openProjectDetailByState(nameProjectDesign, true);
-        assertThat(detail.getStatus()).as("Opened original status").isEqualTo("Opened");
+        assertThat(detail.getStatus()).as("Opened original status").isEqualTo("No Changes");
         // The closed copy (Design1)
         detail = repositoryPage.openProjectsList().openProjectDetailByState(nameProjectDesign, false);
         assertThat(detail.getOverviewRepository()).isEqualTo("Design1");

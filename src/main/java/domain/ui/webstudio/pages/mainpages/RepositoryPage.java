@@ -35,17 +35,26 @@ public class RepositoryPage extends BasePage {
     private static final int ROW_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
     // aria-label of the row's overflow trigger — a menu opener, not an action of its own.
     private static final String OVERFLOW_TRIGGER_LABEL = "Actions";
+    // Filter-rail group ids (6.4.0): each group collapses, and its rows leave the DOM while collapsed.
+    private static final String REPOSITORY_FILTER_GROUP = "repository";
+    private static final String STATUS_FILTER_GROUP = "status";
 
     // React projects list (build 032c60a664ce+): rows are <tr data-testid=project-row-...> with
     // per-row action buttons keyed by aria-label. Format placeholders with the project name.
     private WebElement projectRowByName;
     private WebElement projectActionByName;
     private WebElement projectRowMoreBtn;
+    private WebElement projectActionByNameAndState;
+    private WebElement projectRowMoreBtnByState;
     private WebElement overflowMenuItem;
     private WebElement discardCloseConfirmBtn;
     private WebElement copyProjectNameField;
     private WebElement copyProjectSubmitBtn;
     private WebElement filterByNameInput;
+    private WebElement filterGroupToggle;
+    private WebElement filterGroupShow;
+    private WebElement filterRepoCheckbox;
+    private WebElement filterStatusCheckbox;
     private WebElement clearFilterBtn;
     private WebElement advancedFilterBtn;
     private WebElement hideDeletedCheckbox;
@@ -97,12 +106,18 @@ public class RepositoryPage extends BasePage {
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
         projectDeployAction = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-action-deploy-')]", "projectDeployAction");
         projectRowMoreBtn = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-actions-')]", "projectRowMoreBtn");
+        projectActionByNameAndState = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='%s']", "projectRowActionByState");
+        projectRowMoreBtnByState = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[starts-with(@data-testid,'project-actions-')]", "projectRowMoreBtnByState");
         overflowMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][normalize-space()='%s']", "overflowMenuItem");
         discardCloseConfirmBtn = new WebElement(page, "[data-testid=discard-close-confirm]", "discardCloseConfirmBtn");
         copyProjectNameField = new WebElement(page, "[data-testid=copy-project-name]", "copyProjectNameField");
         copyProjectSubmitBtn = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmitBtn");
 
         filterByNameInput = new WebElement(page, "[data-testid=projects-search]", "filterByNameInput");
+        filterGroupToggle = new WebElement(page, "[data-testid=filter-toggle-%s]", "filterGroupToggle");
+        filterGroupShow = new WebElement(page, "[data-testid=filter-show-%s]", "filterGroupShow");
+        filterRepoCheckbox = new WebElement(page, "[data-testid=filter-repo-%s]", "filterRepoCheckbox");
+        filterStatusCheckbox = new WebElement(page, "[data-testid=filter-status-%s]", "filterStatusCheckbox");
         clearFilterBtn = new WebElement(page, "xpath=//span[@id='clearFilter']", "clearFilterBtn");
         advancedFilterBtn = new WebElement(page, "xpath=//a[@id='filterButton']", "advancedFilterBtn");
         hideDeletedCheckbox = new WebElement(page, "xpath=//input[@id='filterForm:hideDeleted']", "hideDeletedCheckbox");
@@ -172,6 +187,8 @@ public class RepositoryPage extends BasePage {
         if(finalize) {
             fillCommitInfo();
             waitUntilSpinnerLoaded();
+            // 6.4.0 lands on the new project's detail screen, which has no row actions — go back to the list.
+            openProjectsList();
             openIfClosed(projectName);
         }
     }
@@ -261,12 +278,40 @@ public class RepositoryPage extends BasePage {
         return new ProjectDetailPage();
     }
 
+    /**
+     * Opens a filter-rail group so its checkboxes exist. Studio 6.4.0 lets each group be collapsed (its rows
+     * are then absent from the DOM, not merely hidden) and even hidden away behind a "show" button.
+     */
+    public void expandFilterGroup(String groupId) {
+        WebElement showBtn = filterGroupShow.format(groupId);
+        if (showBtn.isVisible(ROW_ACTION_PROBE_MS)) {
+            showBtn.click();
+        }
+        WebElement toggle = filterGroupToggle.format(groupId);
+        if (toggle.isVisible(ROW_ACTION_PROBE_MS) && "false".equals(toggle.getAttribute("aria-expanded"))) {
+            toggle.click();
+        }
+    }
+
     // The React projects list is repo-filtered via checkboxes in the filter rail (filter-repo-<name>, lowercase).
     // Ensures the given repository's projects are shown (checks the box only if not already checked).
     public void ensureRepoFilterChecked(String repositoryNameLower) {
-        WebElement checkbox = new WebElement(page, "[data-testid=filter-repo-" + repositoryNameLower + "]",
-                "repoFilter-" + repositoryNameLower);
-        if (checkbox.isVisible(3000) && !checkbox.isChecked()) {
+        expandFilterGroup(REPOSITORY_FILTER_GROUP);
+        WebElement checkbox = filterRepoCheckbox.format(repositoryNameLower);
+        if (checkbox.isVisible(ROW_ACTION_PROBE_MS) && !checkbox.isChecked()) {
+            checkbox.click();
+            waitUntilSpinnerLoaded();
+        }
+    }
+
+    /**
+     * Ticks (or unticks) a status facet — LOCAL / OPENED / EDITING / VIEWING_VERSION / CLOSED / DELETED.
+     * A status no project is currently in is not offered at all, so this is a no-op for an absent facet.
+     */
+    public void setStatusFilter(String status, boolean checked) {
+        expandFilterGroup(STATUS_FILTER_GROUP);
+        WebElement checkbox = filterStatusCheckbox.format(status);
+        if (checkbox.isVisible(ROW_ACTION_PROBE_MS) && checkbox.isChecked() != checked) {
             checkbox.click();
             waitUntilSpinnerLoaded();
         }
@@ -323,29 +368,35 @@ public class RepositoryPage extends BasePage {
         return copyProjectDialogComponent.waitForDialogToAppear();
     }
 
-    // Click the Open/Close action on a same-name row disambiguated by state (opened row has "Close", closed "Open").
-    public void openProjectByState(String projectName, boolean opened) {
+    /**
+     * Clicks a row action on a same-name row picked out by its state (an opened row offers "Close", a
+     * closed one "Open"), looking inline first and then in that row's overflow menu.
+     */
+    public void clickRowActionByState(String projectName, boolean opened, String actionLabel) {
         String stateAction = opened ? "Close" : "Open";
-        page.locator(String.format(
-                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='Open']",
-                projectName, stateAction)).first().click();
+        WebElement inlineAction = projectActionByNameAndState.format(projectName, stateAction, actionLabel);
+        if (inlineAction.isVisible(ROW_ACTION_PROBE_MS)) {
+            inlineAction.click();
+            return;
+        }
+        projectRowMoreBtnByState.format(projectName, stateAction).click();
+        overflowMenuItem.format(actionLabel).click();
+    }
+
+    // Open a same-name project disambiguated by state (only a closed row can be opened).
+    public void openProjectByState(String projectName, boolean opened) {
+        clickRowActionByState(projectName, opened, "Open");
     }
 
     // Delete a same-name project disambiguated by state; returns the (React) confirm modal.
     public ProjectDeleteConfirmModalComponent deleteProjectByState(String projectName, boolean opened) {
-        String stateAction = opened ? "Close" : "Open";
-        page.locator(String.format(
-                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='Delete']",
-                projectName, stateAction)).first().click();
+        clickRowActionByState(projectName, opened, "Delete");
         return projectDeleteConfirmModalComponent.waitForVisible();
     }
 
     // Same, but disambiguates when two rows share a name: opened row exposes "Close", closed row "Open".
     public CopyProjectDialogComponent clickCopyActionByState(String projectName, boolean opened) {
-        String stateAction = opened ? "Close" : "Open";
-        page.locator(String.format(
-                "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']][.//button[@aria-label='%s']]//button[@aria-label='Copy']",
-                projectName, stateAction)).first().click();
+        clickRowActionByState(projectName, opened, "Copy");
         return copyProjectDialogComponent.waitForDialogToAppear();
     }
 
@@ -528,18 +579,9 @@ public class RepositoryPage extends BasePage {
         WaitUtil.sleep(800, "Waiting for the filter to clear and the full list to restore");
     }
 
+    // Deleted projects are a status facet in the React rail, not a separate "show deleted" toggle.
     public void setShowDeletedProjects(boolean showDeleted) {
-        advancedFilterBtn.click();
-        boolean currentlyHidden = hideDeletedCheckbox.isChecked();
-        // currentlyHidden=true means deleted are hidden; we want showDeleted → need unchecked
-        if (showDeleted && currentlyHidden) {
-            hideDeletedCheckbox.click();
-        } else if (!showDeleted && !currentlyHidden) {
-            hideDeletedCheckbox.click();
-        }
-        applyFilterBtn.click();
-        waitUntilSpinnerLoaded();
-        refreshBtn.click(DEFAULT_TIMEOUT_MS);
+        setStatusFilter("DELETED", showDeleted);
     }
 
     public int countVisibleProjectsInTable() {

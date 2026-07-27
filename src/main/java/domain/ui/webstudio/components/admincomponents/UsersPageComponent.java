@@ -303,9 +303,23 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void saveUser(boolean waitForDrawerToGetHidden) {
+        fillDisplayNameIfRequired();
         drawerSubmitBtn.click();
         if (waitForDrawerToGetHidden)
             drawer.waitForHidden(3000);
+    }
+
+    /**
+     * Studio 6.4.0 defaults the Display Name mode to "Custom" and makes the field mandatory, so a save with
+     * it left empty is rejected with "Display Name is required". Fills it from the entered name when a
+     * caller has not set one, which is what a user picking Custom would do.
+     */
+    private void fillDisplayNameIfRequired() {
+        if (!displayNameField.isEnabled() || !displayNameField.getCurrentInputValue().isBlank()) {
+            return;
+        }
+        String composed = (getFirstName() + " " + getLastName()).trim();
+        displayNameField.fill(composed.isBlank() ? getUsername() : composed);
     }
 
     public void cancelUser() {

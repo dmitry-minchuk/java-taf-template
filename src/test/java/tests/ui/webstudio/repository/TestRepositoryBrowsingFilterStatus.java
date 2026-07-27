@@ -32,13 +32,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /*
  * Covered atomic tests (IPBQA-30010) — React repository (build 032c60a664ce+):
- *   Project status lifecycle (Opened -> Editing -> Opened -> Closed -> Opened), filter by name,
+ *   Project status lifecycle (No Changes -> In Editing -> No Changes -> Closed -> No Changes), filter by name,
  *   folder creation, permanent delete, multi-user workspace isolation, deploy both projects.
  *
  * React adaptations (removed/changed behaviour — verified live):
  *   - The projects table has NO Status/Modified By/Modified At columns (status lives in the project detail),
  *     so the legacy "6 columns" structure check is dropped and status is read via getProjectStatusFromDetail.
- *   - Status vocabulary changed: "No Changes" -> "Opened", "In Editing" -> "Editing", "Closed" -> "Closed".
+ *   - Status wording follows the build: 6.3.1 React said "Opened"/"Editing"; 6.4.0 restored "No Changes"/"In Editing".
  *   - The per-user "locked" status was removed: a second user viewing a project another user is editing just
  *     sees it as "Closed" in their own workspace, so the lock check becomes a workspace-isolation check.
  */
@@ -71,8 +71,8 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
     private static final String TEMPLATE_NAME = "Sample Project";
     private static final String SECOND_USER = "repo_filter_second_user";
     private static final String SECOND_USER_PASSWORD = "Test123!";
-    private static final String STATUS_OPENED = "Opened";
-    private static final String STATUS_EDITING = "Editing";
+    private static final String STATUS_OPENED = "No Changes";
+    private static final String STATUS_EDITING = "In Editing";
     private static final String STATUS_CLOSED = "Closed";
 
     @Test
@@ -123,7 +123,7 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
 
         // ===== Step 7: Freshly created project status is "Opened" =====
         assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
-                .as("Newly created project status should be 'Opened'").isEqualTo(STATUS_OPENED);
+                .as("Newly created project status should be 'No Changes'").isEqualTo(STATUS_OPENED);
 
         // ===== Step 9-10: Put project into "Editing" via the editor edit-project dialog =====
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
@@ -137,7 +137,7 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
         // ===== Step 11: Save project → back to "Opened" =====
         repositoryPage.saveProject(PROJECT_1, "Save after edit");
         assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
-                .as("Project status should be 'Opened' after save").isEqualTo(STATUS_OPENED);
+                .as("Project status should be 'No Changes' after save").isEqualTo(STATUS_OPENED);
 
         // ===== Step 12: Close project → "Closed" =====
         repositoryPage.closeProject(PROJECT_1);
@@ -149,7 +149,7 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
         // ===== Step 13: Open the closed project → "Opened" =====
         repositoryPage.openProject(PROJECT_1);
         assertThat(repositoryPage.getProjectStatusFromDetail(PROJECT_1))
-                .as("Project status should be 'Opened' after opening").isEqualTo(STATUS_OPENED);
+                .as("Project status should be 'No Changes' after opening").isEqualTo(STATUS_OPENED);
 
         // ===== Step 17: Multi-user workspace isolation (React removed the per-user "locked" status) =====
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
