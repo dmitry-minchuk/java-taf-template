@@ -22,6 +22,7 @@ public class TagsPageComponent extends BaseComponent {
     private WebElement projectNameTemplatesTextarea;
     private WebElement saveTemplatesBtn;
     private WebElement fillTagsForProjectBtn;
+    private WebElement fillPreviewApplyBtn;
 
     public TagsPageComponent() {
         super(LocalDriverPool.getPage());
@@ -40,6 +41,7 @@ public class TagsPageComponent extends BaseComponent {
         projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[contains(@class,'ant-input')]", "projectNameTemplatesTextarea");
         saveTemplatesBtn = createScopedElement("xpath=.//button[.//span[text()='Save Templates']]", "saveTemplatesBtn");
         fillTagsForProjectBtn = createScopedElement("xpath=.//button[.//span[text()='Fill Tags for Project']]", "fillTagsForProjectBtn");
+        fillPreviewApplyBtn = new WebElement(page, "[data-testid=fill-apply]", "fillPreviewApplyBtn");
     }
 
     public TableComponent getTagsTable() {
@@ -136,8 +138,16 @@ public class TagsPageComponent extends BaseComponent {
         return this;
     }
 
+    /**
+     * Fills tags for the projects whose names match the templates. Studio 6.4.0 first shows a preview of
+     * what it is about to fill, so the run has to be confirmed there.
+     */
     public TagsPageComponent fillTagsForProject() {
         fillTagsForProjectBtn.click();
+        if (fillPreviewApplyBtn.isVisible(DEFAULT_TIMEOUT_MS)) {
+            fillPreviewApplyBtn.click();
+        }
+        waitUntilSpinnerLoaded();
         return this;
     }
 }
