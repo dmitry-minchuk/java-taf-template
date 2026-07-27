@@ -233,13 +233,17 @@ public class ProjectDetailPage extends BasePage {
         return present;
     }
 
-    /**
-     * Name of the branch the project sits on. The label also carries marks ("master" + a Default tag), so
-     * only the first line — the name itself — is returned.
-     */
+    // The default branch is tagged in the label, and the text comes back glued together ("masterDefault").
+    private static final String DEFAULT_BRANCH_TAG = "Default";
+
+    /** Name of the branch the project sits on, without the Default tag the label adds to it. */
     public String getCurrentBranch() {
         openOverviewTab();
-        return branchLabel.getText().trim().lines().findFirst().orElse("").trim();
+        String label = branchLabel.getText().trim();
+        if (label.endsWith(DEFAULT_BRANCH_TAG)) {
+            label = label.substring(0, label.length() - DEFAULT_BRANCH_TAG.length());
+        }
+        return label.trim();
     }
 
     // A first commit by a user raises the "Configure Git Commit Info" modal on top of the flow.
