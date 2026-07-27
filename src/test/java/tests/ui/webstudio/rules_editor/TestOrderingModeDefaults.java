@@ -11,6 +11,7 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.LoginPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.StringUtil;
@@ -28,6 +29,9 @@ public class TestOrderingModeDefaults extends BaseTest {
         // 1.1 Start Webstudio in single user mode — handled by @AppContainerConfig
         String projectName = StringUtil.generateUniqueName("TestOrderingMode");
         LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        // Single-user mode signs in without a login form, so the "Complete Your Profile" modal has to be
+        // dealt with here or it blocks the page.
+        new LoginPage().completeProfileIfRequested();
         EditorPage editorPage = new EditorPage();
 
         // 1.2 Verification of the default value of "Default Order:"
@@ -78,6 +82,7 @@ public class TestOrderingModeDefaults extends BaseTest {
         // 1.10 Verify ordering mode after open/close the browser
         LocalDriverPool.getPage().context().clearCookies();
         LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        new LoginPage().completeProfileIfRequested();
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent()
                 .selectModule(projectName, "DefaultModeTesting");
@@ -152,7 +157,11 @@ public class TestOrderingModeDefaults extends BaseTest {
         editorPage = adminPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.unlockAllProjects();
+        // The project belongs to the other user's workspace, so this user has to open it before the editor
+        // tree shows it. (Locking is gone from the React UI, so unlockAllProjects has nothing to do.)
+        if (repositoryPage.isProjectActionAvailable(projectName, "Open")) {
+            repositoryPage.openProject(projectName);
+        }
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent()
