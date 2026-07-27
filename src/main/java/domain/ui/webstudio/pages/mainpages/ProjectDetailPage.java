@@ -407,25 +407,27 @@ public class ProjectDetailPage extends BasePage {
     // Opens the repository revision comparison: selects the two newest revisions on the History tab, submits
     // the Compare dialog (which opens the diff in a NEW browser tab, the legacy showDiff.xhtml JSF page), and
     // returns a CompareGitRevisionsDialogComponent bound to that tab.
+    /**
+     * Opens the revision comparison. In 6.4.0 the Revisions tab no longer picks two revisions: the header's
+     * Compare action opens the comparison screen in a separate window, where the revisions are chosen.
+     */
     public CompareGitRevisionsDialogComponent openRevisionCompare() {
-        openHistoryTab();
-        Locator toggles = revisionCompareToggles.getLocator();
-        toggles.first().waitFor();
-        toggles.nth(0).click();
-        toggles.nth(1).click();
-        revisionsCompareBtn.click();
-        revisionCompareSubmit.waitForVisible(DEFAULT_TIMEOUT_MS);
         int pagesBefore = LocalDriverPool.getBrowserContext().pages().size();
-        revisionCompareSubmit.click();
+        clickHeaderAction("Compare");
         WaitUtil.waitForCondition(
                 () -> LocalDriverPool.getBrowserContext().pages().size() > pagesBefore,
-                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare diff tab to open");
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare window to open");
         List<Page> pages = LocalDriverPool.getBrowserContext().pages();
-        Page diffTab = pages.get(pages.size() - 1);
-        WaitUtil.waitForCondition(() -> diffTab.url().contains("showDiff"),
-                DEFAULT_TIMEOUT_MS, 250, "Waiting for the diff tab to load showDiff.xhtml");
-        diffTab.waitForLoadState();
-        return new CompareGitRevisionsDialogComponent(diffTab);
+        Page compareWindow = pages.get(pages.size() - 1);
+        WaitUtil.waitForCondition(() -> compareWindow.url().contains("compare"),
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare screen to load");
+        compareWindow.waitForLoadState();
+        CompareGitRevisionsDialogComponent compare = new CompareGitRevisionsDialogComponent(compareWindow);
+        // The screen opens with nothing compared yet: pick the revision to compare against and run it.
+        // (Its module dropdowns are RichFaces combos and stay hidden, so do not wait on them here.)
+        compare.selectRevision(1);
+        compare.clickCompareBtn();
+        return compare;
     }
 
     // The newest revision's git hash, parsed from the first History entry's data-testid
