@@ -12,16 +12,14 @@ import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.CopyModuleDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.EditProjectDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.ExportProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentRevisionsTabComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.ExportProjectModalComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.DownloadUtil;
-import helpers.utils.WaitUtil;
 import helpers.utils.ZipUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -40,9 +38,36 @@ public class TestExportProjectFunctionality extends BaseTest {
     private static final String SAMPLE_PROJECT = "SampleProject";
     private static final String BRANCH_NAME = "branch1";
     private static final String SECOND_USER_USERNAME = "test_analyst_user";
+    private static final String VIEWING = "Viewing";
+
+    // Every entry other than "Viewing" is a committed revision, named "<author>: <date>".
+    private static List<String> committedRevisions(List<String> revisions) {
+        return revisions.stream().filter(entry -> !VIEWING.equals(entry)).toList();
+    }
+
+    private static String committedRevisionOf(List<String> revisions) {
+        List<String> committed = committedRevisions(revisions);
+        assertThat(committed).as("Committed revisions offered for export").hasSize(1);
+        return committed.getFirst();
+    }
+
+    // The revision that was not there before — the one the latest commit added.
+    private static String newRevisionIn(List<String> revisions, List<String> known) {
+        return committedRevisions(revisions).stream()
+                .filter(entry -> !known.contains(entry))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No new revision in " + revisions + ", known: " + known));
+    }
 
     private void exportAndVerifyDownload(ExportProjectDialogComponent exportDialog, String contextMessage, String... expectedFiles) {
-        File exportedFile = exportDialog.clickExportAndDownload();
+        verifyDownload(exportDialog.clickExportAndDownload(), contextMessage, expectedFiles);
+    }
+
+    private void exportAndVerifyDownload(ExportProjectModalComponent exportDialog, String contextMessage, String... expectedFiles) {
+        verifyDownload(exportDialog.clickExportAndDownload(), contextMessage, expectedFiles);
+    }
+
+    private void verifyDownload(File exportedFile, String contextMessage, String... expectedFiles) {
         assertThat(exportedFile.exists())
                 .as("Downloaded file should exist - " + contextMessage)
                 .isTrue();
@@ -80,18 +105,11 @@ public class TestExportProjectFunctionality extends BaseTest {
                 "TestExportProjectFunctionality.zip"
         );
 
-        // Step 3: Get initial revision (ModifiedBy + ModifiedAt)
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-
-        String modifiedBy = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_BY);
-        String modifiedAt = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_AT);
-        String revision = modifiedBy + ": " + modifiedAt;
+        // Step 3: Who committed the project, as the projects screen reports it. The editor's export window
+        // spells the same commit differently (US date and a different time zone), so the revision entries
+        // themselves are read from that window and only the author is cross-checked here.
+        String author = repositoryPage.openProjectDetail(PROJECT_NAME).getModifiedBy();
+        repositoryPage.openProjectsList();
 
         // Step 4-5: Navigate to Editor and verify Export button, test dialog
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
@@ -103,8 +121,13 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         List<String> revisions = exportDialog.getAllRevisions();
         assertThat(revisions)
-                .as("Should show Viewing and initial revision")
-                .containsExactlyInAnyOrder("Viewing", revision);
+                .as("Should show Viewing and the single initial revision")
+                .hasSize(2)
+                .contains(VIEWING);
+        String revision = committedRevisionOf(revisions);
+        assertThat(revision)
+                .as("The initial revision should be credited to the project's author")
+                .startsWith(author + ":");
 
         exportDialog.clickCancel();
         assertThat(exportDialog.isDialogVisible())
@@ -155,19 +178,9 @@ public class TestExportProjectFunctionality extends BaseTest {
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().getSaveBtn().click();
 
-        // Get second revision
+        // Step 14: Verify all revisions available
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-
-        String modifiedBy2 = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_BY);
-        String modifiedAt2 = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_AT);
-        String secondRevision = modifiedBy2 + ": " + modifiedAt2;
-
-        // Step 14: Verify all revisions available
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
@@ -177,12 +190,14 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         assertThat(exportDialog.getSelectedRevision())
                 .as("Default should be Viewing")
-                .isEqualTo("Viewing");
+                .isEqualTo(VIEWING);
 
         revisions = exportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Should show Viewing, first and second revision")
-                .containsExactlyInAnyOrder("Viewing", revision, secondRevision);
+                .hasSize(3)
+                .contains(VIEWING, revision);
+        String secondRevision = newRevisionIn(revisions, List.of(revision));
 
         exportDialog.clickExport();
 
@@ -197,18 +212,11 @@ public class TestExportProjectFunctionality extends BaseTest {
         exportDialog.selectRevision(revision);
         exportDialog.clickExport();
 
-        // Step 17: Open Revisions tab and export from history
-        editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
-
+        // Step 17: Open the project on its first revision and export from there
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        RepositoryContentRevisionsTabComponent revisionsTab = repositoryPage
-                .getRepositoryContentTabSwitcherComponent()
-                .selectRevisionsTab();
-
-        WaitUtil.waitForCondition(() -> revisionsTab.getRevisionsCount() > 0, 500, 100, "Waiting for revisions to load in Revisions tab");
-        revisionsTab.openRevision(2);
-        WaitUtil.sleep(1000, "Waiting for revision to open");
+        repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME).openRevisionByPosition(2);
+        repositoryPage.openProjectsList();
 
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
@@ -247,63 +255,48 @@ public class TestExportProjectFunctionality extends BaseTest {
         // Step 20: Verify project is closed for second user
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        String status = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.STATUS);
-        assertThat(status.toLowerCase())
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(PROJECT_NAME);
+        assertThat(projectDetail.getStatus().toLowerCase())
                 .as("Project should be closed for second user")
                 .contains("closed");
 
-        // Step 21: Export closed project from Repository tab
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickExportBtn();
-
-        exportDialog = repositoryPage.getExportProjectDialogComponent();
-        exportDialog.waitForDialogToAppear();
-        revisions = exportDialog.getAllRevisions();
+        // Step 21: Export the closed project from the projects screen
+        ExportProjectModalComponent repoExportDialog = projectDetail.openExportDialog();
+        // The projects screen and the editor spell a commit's date differently, so the entries are compared
+        // by count and by author rather than against the editor's strings.
+        revisions = repoExportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Should show both revisions but not 'Viewing' for closed project")
-                .containsExactlyInAnyOrder(revision, secondRevision)
-                .doesNotContain("Viewing");
+                .hasSize(2)
+                .doesNotContain(VIEWING)
+                .allMatch(entry -> entry.contains(":"));
 
-        exportDialog.clickCancel();
+        repoExportDialog.clickCancel();
 
-        // Step 22: Copy project to new branch
-        repositoryPage.refresh();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
+        // Step 22: Branch the project (6.4.0 branches from the Copy dialog) and stay on the new branch
+        projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
+        projectDetail.createBranch(BRANCH_NAME, true);
 
-        CopyProjectDialogComponent copyProjectDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyProjectDialog.waitForDialogToAppear();
-        copyProjectDialog.setNewBranchName(BRANCH_NAME);
-        copyProjectDialog.clickCopyButton(false);
-        repositoryPage.fillCommitInfo();
-        repositoryPage.refresh();
-
-        // Step 23: Verify project status in branch
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        status = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.STATUS);
-        assertThat(status.toLowerCase())
+        // Step 23: Verify project status in branch. Branching does not open the project in this user's
+        // workspace — it stayed closed for them — so open it first, then it reads as unchanged.
+        repositoryPage.openProjectsList();
+        if (repositoryPage.isProjectActionAvailable(PROJECT_NAME, "Open")) {
+            repositoryPage.openProject(PROJECT_NAME);
+        }
+        projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
+        assertThat(projectDetail.getStatus().toLowerCase())
                 .as("Project should have 'no changes' status in branch")
                 .contains("no changes");
 
         // Step 24: Export from branch - should show Viewing
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickExportBtn();
-        exportDialog = repositoryPage.getExportProjectDialogComponent();
-        exportDialog.waitForDialogToAppear();
-        revisions = exportDialog.getAllRevisions();
+        repoExportDialog = projectDetail.openExportDialog();
+        revisions = repoExportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Should show Viewing and both revisions in branch")
-                .containsExactlyInAnyOrder("Viewing", revision, secondRevision);
+                .hasSize(3)
+                .contains(VIEWING);
 
-        exportAndVerifyDownload(exportDialog, "branch export",
+        exportAndVerifyDownload(repoExportDialog, "branch export",
                 "file1.xls", "file2.xlsx", "file4.xls", "pic.png", "rules.xml", "dir1/file3.xlsx");
 
         // Step 25: Copy another module and export in "In Editing"
@@ -332,15 +325,6 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-
-        String modifiedBy3 = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_BY);
-        String modifiedAt3 = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_AT);
-        String revisionBranch = modifiedBy3 + ": " + modifiedAt3;
-
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(PROJECT_NAME);
@@ -350,7 +334,8 @@ public class TestExportProjectFunctionality extends BaseTest {
         revisions = exportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Should show all three revisions")
-                .containsExactlyInAnyOrder("Viewing", revision, secondRevision, revisionBranch);
+                .hasSize(4)
+                .contains(VIEWING, revision, secondRevision);
         exportDialog.clickExport();
 
         // ========== PART 3: Template project workflow ==========
@@ -368,17 +353,6 @@ public class TestExportProjectFunctionality extends BaseTest {
                 "Empty Project"
         );
 
-        // Step 29: Get sample project revision
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", SAMPLE_PROJECT);
-        propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-
-        String sampleModifiedBy = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_BY);
-        String sampleModifiedAt = propertiesTab.getProperty(RepositoryContentTabPropertiesComponent.Property.MODIFIED_AT);
-        String revisionSampleProject = sampleModifiedBy + ": " + sampleModifiedAt;
-
         // Step 30: Verify export for template project
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(SAMPLE_PROJECT);
@@ -388,7 +362,9 @@ public class TestExportProjectFunctionality extends BaseTest {
         revisions = exportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Template project should show Viewing and its revision")
-                .containsExactlyInAnyOrder("Viewing", revisionSampleProject);
+                .hasSize(2)
+                .contains(VIEWING);
+        String revisionSampleProject = committedRevisionOf(revisions);
         exportDialog.clickCancel();
 
         // Step 31: Export template project
@@ -408,10 +384,7 @@ public class TestExportProjectFunctionality extends BaseTest {
         // Step 33: Open sample project
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", SAMPLE_PROJECT);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().openProject();
+        repositoryPage.openProject(SAMPLE_PROJECT);
 
         // Step 34: Verify export for opened project
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
@@ -422,7 +395,7 @@ public class TestExportProjectFunctionality extends BaseTest {
         revisions = exportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Opened project should show Viewing and revision")
-                .containsExactlyInAnyOrder("Viewing", revisionSampleProject);
+                .containsExactlyInAnyOrder(VIEWING, revisionSampleProject);
         exportDialog.clickCancel();
 
         // Step 35: Edit project description and export "In Editing"
@@ -453,6 +426,6 @@ public class TestExportProjectFunctionality extends BaseTest {
         revisions = exportDialog.getAllRevisions();
         assertThat(revisions)
                 .as("Admin should see Viewing for locked project")
-                .containsExactlyInAnyOrder("Viewing", revisionSampleProject);
+                .containsExactlyInAnyOrder(VIEWING, revisionSampleProject);
     }
 }

@@ -9,6 +9,7 @@ import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevision
 import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.ExportProjectModalComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
@@ -34,6 +35,13 @@ public class ProjectDetailPage extends BasePage {
     private WebElement headerMoreBtn;
     private WebElement headerOverflowItem;
     private WebElement branchLabel;
+    private WebElement openRevisionSelect;
+    private WebElement openRevisionOption;
+    private WebElement openRevisionSubmit;
+    private List<WebElement> openRevisionOptions;
+    private WebElement modifiedValue;
+    private WebElement modifiedDate;
+    private ExportProjectModalComponent exportProjectModalComponent;
     private WebElement branchSwitcherTrigger;
     private WebElement branchMenuItem;
     private WebElement mergeTargetBranchSelect;
@@ -90,6 +98,15 @@ public class ProjectDetailPage extends BasePage {
         headerMoreBtn = new WebElement(page, "[data-testid=project-actions-more]", "headerMoreBtn");
         headerOverflowItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//button[normalize-space()='%s']", "headerOverflowItem");
         branchLabel = new WebElement(page, "[data-testid=overview-branch]", "branchLabel");
+        // In the Overview panel a field is a label <div><span>Name</span></div> followed by its value div;
+        // the Modified value holds the author and, in a nested div, the date.
+        modifiedValue = new WebElement(page, "xpath=//*[@data-testid='overview-right']//div[./span[normalize-space()='Modified']]/following-sibling::div[1]", "modifiedValue");
+        modifiedDate = new WebElement(page, "xpath=//*[@data-testid='overview-right']//div[./span[normalize-space()='Modified']]/following-sibling::div[1]/div[last()]", "modifiedDate");
+        openRevisionSelect = new WebElement(page, "[data-testid=open-revision-select]", "openRevisionSelect");
+        openRevisionOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][@title='%s']", "openRevisionOption");
+        openRevisionSubmit = new WebElement(page, "[data-testid=open-revision-submit]", "openRevisionSubmit");
+        openRevisionOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option')]", "openRevisionOptions");
+        exportProjectModalComponent = new ExportProjectModalComponent();
         branchSwitcherTrigger = new WebElement(page, "[data-testid=overview-branch-trigger]", "branchSwitcherTrigger");
         // A switcher entry shows the branch name plus its marks ("master" + a Default tag), so match it by
         // the menu key antd derives from the branch name, falling back to the name held inside the label.
@@ -303,6 +320,64 @@ public class ProjectDetailPage extends BasePage {
     // and timestamp into a single "Modified" field (e.g. "German HarberJul 27, 2026 6:51 AM").
     public String getOverviewLastChange() {
         return extractOverviewField("Modified", "Comment");
+    }
+
+    /** Who last changed the project — the author part of the Overview "Modified" field. */
+    public String getModifiedBy() {
+        openOverviewTab();
+        String whole = modifiedValue.getText().trim();
+        String date = modifiedDate.getText().trim();
+        return whole.endsWith(date) ? whole.substring(0, whole.length() - date.length()).trim() : whole;
+    }
+
+    /** When the project was last changed, as the Overview shows it (e.g. "Jul 27, 2026 10:26 AM"). */
+    public String getModifiedAt() {
+        openOverviewTab();
+        return modifiedDate.getText().trim();
+    }
+
+    /**
+     * The way a committed revision is named in the export window: "&lt;author&gt;: &lt;date&gt;". Lets a test
+     * build the expected entry from the project's own Overview.
+     */
+    public String getLatestRevisionLabel() {
+        return getModifiedBy() + ": " + getModifiedAt();
+    }
+
+    /**
+     * Opens the project on an earlier revision, replacing the workspace copy — the "Open Revision" action.
+     * The revision is named the way the revision lists name it: "&lt;author&gt;: &lt;date&gt;".
+     */
+    public ProjectDetailPage openRevision(String revisionLabel) {
+        clickHeaderAction("Open Revision");
+        openRevisionSelect.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        openRevisionOption.format(revisionLabel).click();
+        openRevisionSubmit.click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
+    /**
+     * Opens the project on the revision at the given position in the list, newest first (1 = newest). Use
+     * this rather than a label when the label comes from elsewhere: the editor's export window and this one
+     * write the same commit's date differently.
+     */
+    public ProjectDetailPage openRevisionByPosition(int position) {
+        clickHeaderAction("Open Revision");
+        openRevisionSelect.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        WaitUtil.waitForCondition(() -> openRevisionOptions.size() >= position, DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the revision list to hold at least " + position + " entries");
+        openRevisionOptions.get(position - 1).click();
+        openRevisionSubmit.click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
+    /** Opens the Export window for this project (the action sits in the header, or in its Actions menu). */
+    public ExportProjectModalComponent openExportDialog() {
+        clickHeaderAction("Export");
+        exportProjectModalComponent.waitForDialogToAppear();
+        return exportProjectModalComponent;
     }
 
     // Replaces the legacy Properties-tab getPath() — the project's path-in-repository from the Overview.
