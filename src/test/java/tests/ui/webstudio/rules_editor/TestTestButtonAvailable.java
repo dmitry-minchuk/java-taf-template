@@ -90,14 +90,17 @@ public class TestTestButtonAvailable extends BaseTest {
                 .selectItemInFolder("Test", "DriverPremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineDriverPremium DriverPremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editorPage.waitUntilAppIdle();
 
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "PolicyPremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DeterminePolicyPremium PolicyPremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editorPage.waitUntilAppIdle();
 
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "VehiclePremiumTest");
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineVehiclePremium VehiclePremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
+        editorPage.waitUntilAppIdle();
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
 
         assertThat(editorPage.getEditorToolbarPanelComponent().getTestButtonText())
