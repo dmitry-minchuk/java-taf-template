@@ -245,13 +245,14 @@ public class TestACLContributorRole extends BaseTest {
                 .doesNotContain(project2Name);
 
         // Verify project-level Contributor's React row actions. A PROJECT-level Contributor gets only
-        // [Open, Export] — Copy/Delete are repo-level actions (Copy creates a new project → needs repo rights),
-        // so they are NOT offered for a project-scoped role (verified live).
+        // A project-scoped role may branch the project, and 6.4.0 gates Copy on either canCopy OR
+        // canManageBranches (the Copy dialog does both), so Copy/Sync/Compare/Open Revision are offered.
+        // Deleting the project and deploying it stay repo-level and are not.
         List<String> projActions = repositoryPage.getProjectActionLabels(project1Name);
         assertThat(projActions)
-                .as("Project-level Contributor: Export visible, no Copy/Delete/Deploy. Actual: %s", projActions)
+                .as("Project-level Contributor: Export visible, no Delete/Deploy. Actual: %s", projActions)
                 .contains("Export")
-                .doesNotContain("Copy", "Delete", "Deploy");
+                .doesNotContain("Delete", "Deploy");
 
         // Verify Contributor CAN edit in Editor
         repositoryPage.openProject(project1Name);

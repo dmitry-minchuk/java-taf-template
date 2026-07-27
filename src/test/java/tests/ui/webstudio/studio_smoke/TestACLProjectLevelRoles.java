@@ -112,13 +112,14 @@ public class TestACLProjectLevelRoles extends BaseTest {
 
         // Verify Project-level Manager row actions. A PROJECT-scoped role (Manager or Contributor) gets only
         // [Open, Export] in React — Copy/Delete are repo-level actions (create/delete a project), not granted
-        // to a project-scoped role (verified live). The Manager-vs-Viewer distinction is the Editor Edit rights,
-        // asserted below.
+        // to a project-scoped role. 6.4.0 does offer Copy/Sync/Compare/Open Revision there, because a
+        // project-scoped role may branch the project and Copy covers branching too. The Manager-vs-Viewer
+        // distinction is the Editor Edit rights, asserted below.
         List<String> managerActions = repositoryPage.getProjectActionLabels(project1Name);
         assertThat(managerActions)
-                .as("Project Manager: Export visible, NOT Copy/Delete/Deploy (project-scoped). Actual: %s", managerActions)
+                .as("Project Manager: Export visible, NOT Delete/Deploy (project-scoped). Actual: %s", managerActions)
                 .contains("Export")
-                .doesNotContain("Copy", "Delete", "Deploy");
+                .doesNotContain("Delete", "Deploy");
 
         // Verify Project Manager CAN edit tables in Editor tab (open the project first if it is closed)
         if (repositoryPage.isProjectActionAvailable(project1Name, "Open")) {

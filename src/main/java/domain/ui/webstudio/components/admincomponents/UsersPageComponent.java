@@ -303,23 +303,25 @@ public class UsersPageComponent extends BaseComponent {
     }
 
     public void saveUser(boolean waitForDrawerToGetHidden) {
-        fillDisplayNameIfRequired();
+        fillRequiredIdentityFields();
         drawerSubmitBtn.click();
         if (waitForDrawerToGetHidden)
             drawer.waitForHidden(3000);
     }
 
     /**
-     * Studio 6.4.0 defaults the Display Name mode to "Custom" and makes the field mandatory, so a save with
-     * it left empty is rejected with "Display Name is required". Fills it from the entered name when a
-     * caller has not set one, which is what a user picking Custom would do.
+     * Studio 6.4.0 made Email mandatory and defaults the Display Name mode to "Custom", which makes that
+     * field mandatory too, so a save leaving either empty is rejected with "Please fix the errors before
+     * saving". Fills whichever the caller did not set, the way a user filling the form would.
      */
-    private void fillDisplayNameIfRequired() {
-        if (!displayNameField.isEnabled() || !displayNameField.getCurrentInputValue().isBlank()) {
-            return;
+    private void fillRequiredIdentityFields() {
+        if (emailField.isEnabled() && emailField.getCurrentInputValue().isBlank()) {
+            emailField.fill(getUsername() + "@test.com");
         }
-        String composed = (getFirstName() + " " + getLastName()).trim();
-        displayNameField.fill(composed.isBlank() ? getUsername() : composed);
+        if (displayNameField.isEnabled() && displayNameField.getCurrentInputValue().isBlank()) {
+            String composed = (getFirstName() + " " + getLastName()).trim();
+            displayNameField.fill(composed.isBlank() ? getUsername() : composed);
+        }
     }
 
     public void cancelUser() {
