@@ -94,7 +94,8 @@ public class ProjectDetailPage extends BasePage {
         // A switcher entry shows the branch name plus its marks ("master" + a Default tag), so match it by
         // the menu key antd derives from the branch name, falling back to the name held inside the label.
         branchMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][@data-menu-id='rc-menu-uuid-%s' or .//*[normalize-space()='%s']]", "branchMenuItem");
-        mergeTargetBranchSelect = new WebElement(page, "xpath=//*[@id='targetBranch']", "mergeTargetBranchSelect");
+        // antd prefixes the field id with the form name, so the select is merge_branches_form_targetBranch.
+        mergeTargetBranchSelect = new WebElement(page, "input[id$=targetBranch]", "mergeTargetBranchSelect");
         mergeBranchOption = new WebElement(page, "xpath=//*[@data-testid='merge-branch-%s']", "mergeBranchOption");
         copyProjectDialogComponent = new CopyProjectDialogComponent();
         configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoComponent");
@@ -192,10 +193,11 @@ public class ProjectDetailPage extends BasePage {
         copyProjectDialogComponent.clickCopyButton();
         fillCommitInfoIfShown();
         waitUntilSpinnerLoaded();
-        // Branching leaves the project where it was, so honour the caller's choice explicitly.
-        String wanted = switchAfter ? branchName : sourceBranch;
-        if (!wanted.equals(getCurrentBranch())) {
-            switchBranch(wanted);
+        // Studio moves the project onto the branch it just created, so wait for that instead of forcing it.
+        WaitUtil.waitForCondition(() -> branchName.equals(getCurrentBranch()), DEFAULT_TIMEOUT_MS, 500,
+                "Waiting for the project to land on branch " + branchName);
+        if (!switchAfter) {
+            switchBranch(sourceBranch);
         }
         return this;
     }
@@ -231,9 +233,13 @@ public class ProjectDetailPage extends BasePage {
         return present;
     }
 
+    /**
+     * Name of the branch the project sits on. The label also carries marks ("master" + a Default tag), so
+     * only the first line — the name itself — is returned.
+     */
     public String getCurrentBranch() {
         openOverviewTab();
-        return branchLabel.getText().trim();
+        return branchLabel.getText().trim().lines().findFirst().orElse("").trim();
     }
 
     // A first commit by a user raises the "Configure Git Commit Info" modal on top of the flow.
