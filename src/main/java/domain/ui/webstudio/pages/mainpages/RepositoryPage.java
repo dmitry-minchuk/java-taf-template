@@ -79,7 +79,7 @@ public class RepositoryPage extends BasePage {
     private WebElement confirmOpeningDialogShade;
     private WebElement messagePopupText;
     private WebElement messagePopupOkBtn;
-    private WebElement inlineMessage;
+    private WebElement errorNotification;
     private SaveChangesComponent saveChangesComponent;
     private SyncChangesDialogComponent syncChangesDialogComponent;
     private BypassConfirmDialogComponent bypassConfirmDialogComponent;
@@ -160,7 +160,8 @@ public class RepositoryPage extends BasePage {
         confirmOpeningDialogShade = new WebElement(page, "xpath=//div[@id='modalOpenProject_shade']", "confirmOpeningDialogShade");
         messagePopupText = new WebElement(page, "xpath=//div[@id='messagePopup_container']//span[@id='messagePopupText']", "messagePopupText");
         messagePopupOkBtn = new WebElement(page, "xpath=//div[@id='messagePopup_container']//input[@value='OK']", "messagePopupOkBtn");
-        inlineMessage = new WebElement(page, "xpath=//div[@id='top']//div[@class='messages']", "inlineMessage");
+        // React reports failures through antd notifications; the legacy inline "messages" block is gone.
+        errorNotification = new WebElement(page, "xpath=(//div[contains(@class,'ant-notification-notice')])[1]", "errorNotification");
     }
 
     public void createProject(CreateNewProjectComponent.TabName projectType, String projectName, String sourceName) {
@@ -634,9 +635,10 @@ public class RepositoryPage extends BasePage {
         messagePopupOkBtn.click();
     }
 
-    public String getInlineMessage() {
-        inlineMessage.waitForVisible(DEFAULT_TIMEOUT_MS);
-        return inlineMessage.getText().trim();
+    /** The text of the notification the UI raises for a failed action. */
+    public String getErrorNotification() {
+        errorNotification.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return errorNotification.getText().trim();
     }
 
     /**

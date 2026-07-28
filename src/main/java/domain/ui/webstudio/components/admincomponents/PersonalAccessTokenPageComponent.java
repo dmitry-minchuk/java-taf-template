@@ -59,17 +59,24 @@ public class PersonalAccessTokenPageComponent extends BaseComponent {
         generatedTokenCode.waitForVisible();
         String token = generatedTokenCode.getText().trim();
         drawerOkBtn.click();
-        drawerOkBtn.waitForHidden(5000);
+        drawerOkBtn.waitForHidden(DEFAULT_TIMEOUT_MS);
         return token;
     }
 
     public boolean isTokenListed(String name) {
-        return tokenRowTemplate.format(name).isVisible(2000);
+        // Short poll on purpose: this also answers "is it gone?", where waiting the full timeout is wasted.
+        return tokenRowTemplate.format(name).isVisible(DEFAULT_TIMEOUT_MS / 5);
     }
 
     public void revokeToken(String name) {
         revokeBtnTemplate.format(name).click();
         revokeConfirmOkBtn.click();
-        tokenRowTemplate.format(name).waitForHidden(5000);
+        WebElement row = tokenRowTemplate.format(name);
+        if (row.isVisible(DEFAULT_TIMEOUT_MS)) {
+            // The revoke request can outlive the list's own refresh; re-reading the page shows the result.
+            getPage().reload();
+            waitUntilSpinnerLoaded();
+            row.waitForHidden(DEFAULT_TIMEOUT_MS);
+        }
     }
 }

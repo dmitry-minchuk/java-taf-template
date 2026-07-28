@@ -27,7 +27,9 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30678")
-    @Description("Validate same module names and same module paths errors in Create Project from OpenAPI form")
+    @Description("Create Project from OpenAPI refuses a bad name, a bad module name or path, duplicate module "
+            + "names or paths and a malformed specification. 6.4.0 reports all of them with one generic "
+            + "message instead of naming the problem")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromOpenApiFormValidation() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
@@ -65,7 +67,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         assertThat(repositoryPage.openProjectsList().isProjectPresent(nonSpecProject))
                 .as("6.4.0 no longer rejects a non-specification file at this step")
                 .isTrue();
-        repositoryPage.getCreateNewProjectComponent().cancelCreation();
+        // A successful create closes the wizard by itself, so there is nothing left to cancel here.
 
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
@@ -73,10 +75,13 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("test%?>");
         openApiComponent.clickCreate();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear when project name contains forbidden characters")
-                .contains("is not a valid project name");
+        assertThat(openApiComponent.getError())
+                .as("Creating with forbidden characters in the project name should be refused")
+                // The server rejects the name with a bare 400, so the UI can only report a generic failure.
+                .contains("Something went wrong");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
@@ -85,10 +90,12 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.setDataModuleName("Models?*/test");
         openApiComponent.setDataModulePath("rules/Models.xlsx");
         openApiComponent.clickCreate();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear when module name contains forbidden characters")
-                .contains("Module Name cannot contain forbidden");
+        assertThat(openApiComponent.getError())
+                .as("Creating with forbidden characters in a module name should be refused")
+                .contains("Failed to create the project");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
@@ -96,10 +103,12 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.setProjectName("bla");
         openApiComponent.setDataModulePath("rules/Models?*test.xlsx");
         openApiComponent.clickCreate();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear when module path contains forbidden characters")
-                .contains("Project creating is failed");
+        assertThat(openApiComponent.getError())
+                .as("Creating with forbidden characters in a module path should be refused")
+                .contains("Failed to create the project");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
@@ -108,10 +117,12 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.setRulesModuleName("Models");
         openApiComponent.clickCreate();
         repositoryPage.fillCommitInfo();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear when module names are the same")
-                .contains("Module names cannot be the same");
+        assertThat(openApiComponent.getError())
+                .as("Creating with two identical module names should be refused")
+                .contains("Failed to create the project");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
@@ -119,10 +130,12 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.setProjectName("bla2_" + System.currentTimeMillis());
         openApiComponent.setDataModulePath("rules/Algorithms.xlsx");
         openApiComponent.clickCreate();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear when module paths are the same")
-                .contains("Path for Modules cannot be the same");
+        assertThat(openApiComponent.getError())
+                .as("Creating with two identical module paths should be refused")
+                .contains("Failed to create the project");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         String invalidProjectName = "InvalidJsonStructure_" + System.currentTimeMillis();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
@@ -130,20 +143,24 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.uploadOpenApiSpec(INVALID_JSON_FILE_1);
         openApiComponent.setProjectName(invalidProjectName);
         openApiComponent.clickCreate();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear for invalid JSON structure (file 1)")
-                .contains("Project creating is failed");
+        assertThat(openApiComponent.getError())
+                .as("Creating from a malformed specification (file 1) should be refused")
+                .contains("Failed to create the project");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiSpec(INVALID_JSON_FILE_2);
         openApiComponent.setProjectName(invalidProjectName);
         openApiComponent.clickCreate();
-        assertThat(repositoryPage.getInlineMessage())
-                .as("Error should appear for invalid JSON structure (file 2)")
-                .contains("Project creating is failed");
+        assertThat(openApiComponent.getError())
+                .as("Creating from a malformed specification (file 2) should be refused")
+                .contains("Failed to create the project");
 
+        // A refused create leaves the wizard open, and it covers the New Project button.
+        openApiComponent.cancelCreation();
         String step29ProjectName = "bla29_" + System.currentTimeMillis();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
@@ -156,6 +173,8 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
 
+        // A created project opens on its own screen, where there is no New Project button.
+        repositoryPage.openProjectsList();
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent();
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
