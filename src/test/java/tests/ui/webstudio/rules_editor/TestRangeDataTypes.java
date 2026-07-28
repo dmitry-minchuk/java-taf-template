@@ -10,12 +10,15 @@ import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
+import helpers.utils.WaitUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestRangeDataTypes extends BaseTest {
+
+    private static final int TABLE_LOAD_TIMEOUT_MS = 30_000;
 
     private static final String EXCEL_FILE = "TestRangeDataTypes.xlsx";
     private static final String MODULE_NAME = "TestRangeDataTypes";
@@ -58,6 +61,9 @@ public class TestRangeDataTypes extends BaseTest {
         rangeEditor.discardChangesIfPresent();
 
         TableComponent table = editorPage.getCenterTable();
+        // The table of a freshly selected node arrives asynchronously, so a double click can land on nothing.
+        WaitUtil.waitForCondition(table::isVisible, TABLE_LOAD_TIMEOUT_MS, 250,
+                "Waiting for the table of the selected node");
         table.doubleClickCell(row, column);
 
         assertThat(rangeEditor.isOpen(3000))

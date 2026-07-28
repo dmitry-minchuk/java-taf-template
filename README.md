@@ -53,7 +53,7 @@ Components → DriverPool (Unified Interface)
 
 3. **Verify Docker setup** (for Docker execution mode)
    ```bash
-   docker pull ghcr.io/openl-tablets/webstudio:6.0.0-d0f5599b68ba
+   docker pull ghcr.io/openl-tablets/webstudio:6.4.0-0bdcb4a5edef
    ```
 
 ## Test Execution Guide
@@ -393,7 +393,7 @@ test_retry_count=1                      # Test retry attempts
 ```properties
 # Application container
 default_app_port=8080
-docker_image_name=ghcr.io/openl-tablets/webstudio:6.0.0-d0f5599b68ba
+docker_image_name=ghcr.io/openl-tablets/webstudio:6.4.0-0bdcb4a5edef
 deployed_app_path=                      # App context path (empty for root)
 
 # Volume mappings
@@ -718,7 +718,7 @@ target/logs/app-container-<timestamp>.log
    docker ps
    
    # Check Docker image availability
-   docker pull ghcr.io/openl-tablets/webstudio:6.0.0-d0f5599b68ba
+   docker pull ghcr.io/openl-tablets/webstudio:6.4.0-0bdcb4a5edef
    ```
 
 2. **Port conflicts** 

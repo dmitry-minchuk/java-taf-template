@@ -9,6 +9,9 @@ import helpers.utils.WaitUtil;
 
 public class CreateTableDialogComponent extends BaseComponent {
 
+    // The construct-a-table wizard is a handful of steps; Save lives on the last one.
+    private static final int MAX_WIZARD_STEPS = 4;
+
     private WebElement tableTypeRadioTemplate;
     private WebElement nextButton;
     private WebElement technicalNameInput;
@@ -52,7 +55,9 @@ public class CreateTableDialogComponent extends BaseComponent {
     }
 
     public CreateTableDialogComponent clickNext() {
-        nextButton.click();
+        // The wizard is JSF and re-renders each step on its own, so click once the page has settled.
+        nextButton.clickWhenSettled();
+        waitUntilSpinnerLoaded();
         return this;
     }
 
@@ -109,14 +114,20 @@ public class CreateTableDialogComponent extends BaseComponent {
     public CreateTableDialogComponent addSimpleRule(String column, String rule, int cellIndex) {
         page.locator("xpath=//td[text()='" + column + "']").first()
                 .click(new Locator.ClickOptions().setButton(MouseButton.RIGHT));
-        WaitUtil.sleep(1000, "Waiting for Simple Rules context menu");
-        contextMenuItemTemplate.format("Add Rule").click();
+        contextMenuItemTemplate.format("Add Rule").waitForVisible(DEFAULT_TIMEOUT_MS).click();
         return setSimpleRule(rule, cellIndex);
     }
 
+    /**
+     * Types a value into the rules grid cell at the given position. Adding a rule grows the grid a moment
+     * later, so the cell is waited for — otherwise the value lands in whatever cell is there at the time.
+     */
     public CreateTableDialogComponent setSimpleRule(String rule, int cellIndex) {
-        simpleRulesCellTemplate.format(String.valueOf(cellIndex)).click();
-        page.locator("xpath=//form[@id='srtTableForm']//div//input").fill(rule);
+        WebElement cell = simpleRulesCellTemplate.format(String.valueOf(cellIndex));
+        cell.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        Locator cellInput = page.locator("xpath=//form[@id='srtTableForm']//div//input");
+        cellInput.first().waitFor();
+        cellInput.fill(rule);
         return this;
     }
 
@@ -134,7 +145,16 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
+    /**
+     * Saves the table. The wizard advances a step at a time and the grid step can still be settling when
+     * Next is pressed, so if Save is not on screen yet the wizard is advanced once more.
+     */
     public void save() {
-        saveButton.click();
+        // The wizard advances a step at a time, and a step can still be settling when Next is pressed, so
+        // keep advancing until the last step (the one with Save) is reached.
+        for (int step = 1; step <= MAX_WIZARD_STEPS && !saveButton.isVisible(DEFAULT_TIMEOUT_MS / 5); step++) {
+            clickNext();
+        }
+        saveButton.waitForVisible(DEFAULT_TIMEOUT_MS).click();
     }
 }

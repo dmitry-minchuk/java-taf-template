@@ -21,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestTestButtonAvailable extends BaseTest {
 
+    private static final int TABLE_LOAD_TIMEOUT_MS = 30_000;
+
     private static final String NAME_PROJECT_MY = "MyProject";
 
     @Test
@@ -88,16 +90,19 @@ public class TestTestButtonAvailable extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", "DriverPremiumTest");
+        waitForTable(editorPage);
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineDriverPremium DriverPremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilAppIdle();
 
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "PolicyPremiumTest");
+        waitForTable(editorPage);
         editorPage.getCenterTable().editCell(1, 1, "Test DeterminePolicyPremium PolicyPremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilAppIdle();
 
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "VehiclePremiumTest");
+        waitForTable(editorPage);
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineVehiclePremium VehiclePremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilAppIdle();
@@ -126,5 +131,10 @@ public class TestTestButtonAvailable extends BaseTest {
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_MY, "module_KS");
         editorPage.getProblemsPanelComponent().waitForCompilationProgressBarToContain("Loaded", 200000);
+    }
+    // Selecting a node loads its table asynchronously; editing a cell before that fails.
+    private void waitForTable(EditorPage editorPage) {
+        WaitUtil.waitForCondition(() -> editorPage.getCenterTable().isVisible(),
+                TABLE_LOAD_TIMEOUT_MS, 250, "Waiting for the table of the selected node");
     }
 }
