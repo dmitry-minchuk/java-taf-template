@@ -41,7 +41,11 @@ public class TagsPageComponent extends BaseComponent {
         projectNameTemplatesTextarea = createScopedElement("xpath=.//textarea[contains(@class,'ant-input')]", "projectNameTemplatesTextarea");
         saveTemplatesBtn = createScopedElement("xpath=.//button[.//span[text()='Save Templates']]", "saveTemplatesBtn");
         fillTagsForProjectBtn = createScopedElement("xpath=.//button[.//span[text()='Fill Tags for Project']]", "fillTagsForProjectBtn");
-        fillPreviewApplyBtn = new WebElement(page, "[data-testid=fill-apply]", "fillPreviewApplyBtn");
+        // The preview modal confirms with its own OK button, labelled "Fill Tags"; scope it to the footer so
+        // the page's "Fill Tags for Project" button is not matched.
+        fillPreviewApplyBtn = new WebElement(page,
+                "xpath=//div[contains(@class,'ant-modal-footer')]//button[.//span[normalize-space()='Fill Tags']]",
+                "fillPreviewApplyBtn");
     }
 
     public TableComponent getTagsTable() {
@@ -144,9 +148,9 @@ public class TagsPageComponent extends BaseComponent {
      */
     public TagsPageComponent fillTagsForProject() {
         fillTagsForProjectBtn.click();
-        if (fillPreviewApplyBtn.isVisible(DEFAULT_TIMEOUT_MS)) {
-            fillPreviewApplyBtn.click();
-        }
+        // The modal lists the projects a template names a tag for and pre-selects every one it may change,
+        // so confirming is all that is left.
+        fillPreviewApplyBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
         waitUntilSpinnerLoaded();
         return this;
     }

@@ -29,13 +29,13 @@ public class TestProjectTagsCreationNonExistingType extends BaseTest {
     private static final String TAG_TYPE_OPT = "TagOpt";
     private static final String TAG_TYPE_EXT = "TagExt";
     private static final String TAG_TYPE_OPT_EXT = "TagOptExt";
+    // Declared by the zip's tags.properties but deliberately absent from the Tags settings.
+    private static final String TAG_TYPE_UNKNOWN = "TagNonExisging";
 
     @Test
     @TestCaseId("IPBQA-32767")
-    @Description("Create project from zip with a non-existing tag type. KNOWN-FAILING on 6.4.0: the React UI "
-            + "dropped the tag reconciliation dialogs AND does not apply a zip's tags at all — a project "
-            + "created from TagsTestProject6.zip carries no tags. Asserts the intended behaviour (the zip's "
-            + "tags are applied); needs confirming with the team whether the loss is intended.")
+    @Description("Create project from zip with a non-existing tag type: the tags declared by tags.properties "
+            + "are applied as they are, including a type that the Tags settings do not know")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNonExistingTagTypeHandling() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
@@ -46,13 +46,14 @@ public class TestProjectTagsCreationNonExistingType extends BaseTest {
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME, false);
         repositoryPage.fillCommitInfo();
 
-        // The React UI no longer reconciles a zip's tags through popups (the old "Missing tags" and "Tags"
-        // dialogs are gone): whatever the zip declares is applied as-is, so this reads the result instead.
+        // Tags now live in the project's own tags.properties and are shown exactly as written there: the old
+        // reconciliation popups ("Missing tags" / "Tags") are gone and nothing is matched against the Tags
+        // settings, so even a type the settings do not declare is kept.
         ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_NAME), "Tag3",
-                "The tag value declared by the zip should be applied");
         Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_EXT), "TagExt3",
                 "An extensible type should take the zip's value");
+        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_UNKNOWN), "Tag3",
+                "A type missing from the Tags settings should still be shown as the zip declares it");
     }
 
     private void setupRequiredTagTypes(EditorPage editorPage) {

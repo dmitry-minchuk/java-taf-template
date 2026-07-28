@@ -83,6 +83,7 @@ public class ProjectDetailPage extends BasePage {
     private WebElement updateFileInput;
     private WebElement updateFileSubmitBtn;
     private WebElement updateFileNameWarning;
+    private WebElement filesSearchField;
     private WebElement filesUploadInput;
     private WebElement filesUploadSubmitBtn;
     private WebElement filesUploadNameField;
@@ -149,6 +150,9 @@ public class ProjectDetailPage extends BasePage {
         revisionCompareSubmit = new WebElement(page, "[data-testid=revision-compare-submit]", "revisionCompareSubmit");
         fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
         filesAddBtn = new WebElement(page, "[data-testid=files-add]", "filesAddBtn");
+        // The Add menu is only rendered for a user who may change the files, so the tab is confirmed by the
+        // file search box instead — it is always there.
+        filesSearchField = new WebElement(page, "[data-testid=files-search]", "filesSearchField");
         detailRoot = new WebElement(page, "[data-testid=project-detail]", "detailRoot");
         // antd binds the menu handler to the <li>, so click that rather than the labelled <span> inside it.
         filesAddMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][.//span[@data-testid='%s']]", "filesAddMenuItem");
@@ -189,11 +193,11 @@ public class ProjectDetailPage extends BasePage {
         for (int attempt = 1; attempt <= TAB_SWITCH_ATTEMPTS; attempt++) {
             filesTab.click();
             waitUntilSpinnerLoaded();
-            if (filesAddBtn.isVisible(DEFAULT_TIMEOUT_MS / 2)) {
+            if (filesSearchField.isVisible(DEFAULT_TIMEOUT_MS / 2)) {
                 return this;
             }
         }
-        filesAddBtn.waitForVisible(DEFAULT_TIMEOUT_MS);
+        filesSearchField.waitForVisible(DEFAULT_TIMEOUT_MS);
         return this;
     }
 

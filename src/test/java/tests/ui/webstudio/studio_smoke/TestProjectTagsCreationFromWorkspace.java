@@ -35,9 +35,8 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-32767")
-    @Description("Create project from workspace with tags KNOWN-FAILING on 6.4.0: the React UI dropped the tag reconciliation dialogs and does not apply "
-            + "a zip's tags at all, so the project comes out untagged. Asserts the intended behaviour; needs "
-            + "confirming with the team whether the loss is intended.")
+    @Description("Create project from workspace with tags: the values declared by tags.properties are applied "
+            + "as they are, even when a value is outside the type's own value list")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromWorkspaceWithTags() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
@@ -47,11 +46,13 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME_5, ZIP_FILE_NAME_5, false);
         repositoryPage.fillCommitInfo();
-        // The React UI applies (or drops) a zip's tags without asking — the old reconciliation dialogs
-        // are gone — so this reads the resulting tags on the project screen.
+        // The zip declares Tag=Tag9, a value the non-extensible "Tag" type does not list. The old UI asked the
+        // user to pick a known value; 6.4.0 keeps what tags.properties says without asking.
         ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME_5);
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_NAME), "Tag1",
-                "The tag declared by the zip should be applied");
+        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_NAME), "Tag9",
+                "The tag value declared by the zip should be kept as it is");
+        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_EXT), "TagExt1",
+                "The extensible type should take the zip's value too");
     }
 
     private void setupRequiredTagTypes(EditorPage editorPage) {
