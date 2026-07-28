@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
@@ -41,38 +40,34 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         repositoryPage.getCreateProjectLink().click();
-        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
-                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
+        CreateNewProjectComponent openApiComponent = repositoryPage.getCreateNewProjectComponent();
+        openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
 
-        openApiComponent.uploadOpenApiFile(YAML_FILE);
+        openApiComponent.uploadOpenApiSpec(YAML_FILE);
         openApiComponent.setProjectName(projectName);
 
         assertThat(openApiComponent.isCreateEnabled())
                 .as("Create button should be enabled after uploading file and setting project name").isTrue();
 
         openApiComponent.setDataModuleName("Data_Types");
-        assertThat(openApiComponent.getDataModulePathDisplay())
+        assertThat(openApiComponent.getDataModulePath())
                 .as("Data module path should auto-update to 'rules/Data_Types.xlsx'").isEqualTo("rules/Data_Types.xlsx");
 
         openApiComponent.setRulesModuleName("Spreadsheets");
-        assertThat(openApiComponent.getRulesModulePathDisplay())
+        assertThat(openApiComponent.getRulesModulePath())
                 .as("Rules module path should auto-update to 'rules/Spreadsheets.xlsx'").isEqualTo("rules/Spreadsheets.xlsx");
-
-        openApiComponent.clickEditDataPath();
         openApiComponent.setDataModulePath("rules1/Data_Types_file.xlsx");
         assertThat(openApiComponent.getDataModulePathInputValue())
                 .as("Data module path input should reflect custom path").isEqualTo("rules1/Data_Types_file.xlsx");
-
-        openApiComponent.clickEditRulesPath();
+        // The React wizard has no "reset path" button — the path is a plain input, so it is typed back.
         openApiComponent.setRulesModulePath("rules/Spreadsheets_file.xlsx");
-        openApiComponent.clickResetRulesPath();
-        assertThat(openApiComponent.getRulesModulePathDisplay())
-                .as("Rules module path should reset to default 'rules/Spreadsheets.xlsx' after reset").isEqualTo("rules/Spreadsheets.xlsx");
+        openApiComponent.setRulesModulePath("rules/Spreadsheets.xlsx");
+        assertThat(openApiComponent.getRulesModulePath())
+                .as("Rules module path should read back what was typed").isEqualTo("rules/Spreadsheets.xlsx");
 
         openApiComponent.clickCreate();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getRefreshBtn().click(10000);
 
         repositoryPage.getLeftRepositoryTreeComponent()
                 .expandFolderInTree("Projects").expandFolderInTree(projectName)

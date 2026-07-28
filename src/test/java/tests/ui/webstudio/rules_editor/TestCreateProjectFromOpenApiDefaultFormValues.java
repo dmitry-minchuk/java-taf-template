@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -34,63 +33,56 @@ public class TestCreateProjectFromOpenApiDefaultFormValues extends BaseTest {
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         repositoryPage.getCreateProjectLink().click();
-        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
-                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
+        CreateNewProjectComponent openApiComponent = repositoryPage.getCreateNewProjectComponent();
+        openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
 
         assertThat(openApiComponent.getProjectName())
                 .as("Project name should be empty by default")
                 .isEmpty();
+        // The React wizard offers module names and paths already filled in, instead of leaving the names empty.
         assertThat(openApiComponent.getDataModuleName())
-                .as("Data module name should be empty by default")
-                .isEmpty();
-        assertThat(openApiComponent.getDataModulePathDisplay())
+                .as("Data module name should default to 'Models'")
+                .isEqualTo("Models");
+        assertThat(openApiComponent.getDataModulePath())
                 .as("Data module path should default to 'rules/Models.xlsx'")
                 .isEqualTo("rules/Models.xlsx");
         assertThat(openApiComponent.getRulesModuleName())
-                .as("Rules module name should be empty by default")
-                .isEmpty();
-        assertThat(openApiComponent.getRulesModulePathDisplay())
+                .as("Rules module name should default to 'Algorithms'")
+                .isEqualTo("Algorithms");
+        assertThat(openApiComponent.getRulesModulePath())
                 .as("Rules module path should default to 'rules/Algorithms.xlsx'")
                 .isEqualTo("rules/Algorithms.xlsx");
 
-        repositoryPage.getCreateNewProjectComponent().closeDialog();
+        repositoryPage.getCreateNewProjectComponent().cancelCreation();
 
         repositoryPage.getCreateProjectLink().click();
-        openApiComponent = repositoryPage.getCreateNewProjectComponent()
-                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent = repositoryPage.getCreateNewProjectComponent();
+        openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla");
 
-        assertThat(openApiComponent.isClearFirstFileVisible())
+        assertThat(openApiComponent.isOpenApiFileUploaded())
                 .as("Clear button should be visible after file upload")
                 .isTrue();
-        assertThat(openApiComponent.isClearAllVisible())
-                .as("ClearAll button should be visible after file upload")
-                .isTrue();
 
-        openApiComponent.clearFirstFile();
-        assertThat(openApiComponent.isCreateEnabled())
-                .as("Create button should be disabled after clearing the file")
+        openApiComponent.clearOpenApiFile();
+        assertThat(openApiComponent.isOpenApiFileUploaded())
+                .as("The specification should be gone after clearing it")
                 .isFalse();
-        assertThat(openApiComponent.isClearFirstFileVisible())
-                .as("Clear button should be absent after file is cleared")
-                .isFalse();
-        assertThat(openApiComponent.isClearAllVisible())
-                .as("ClearAll button should be absent after file is cleared")
-                .isFalse();
+        // Create stays clickable; pressing it without a specification is what reports the problem.
+        openApiComponent.clickCreate();
+        assertThat(openApiComponent.getError())
+                .as("Creating without a specification should ask for the file")
+                .contains("Select an OpenAPI file");
 
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
-        openApiComponent.clearAllFiles();
-        assertThat(openApiComponent.isCreateEnabled())
-                .as("Create button should be disabled after clearing all files")
-                .isFalse();
-        assertThat(openApiComponent.isClearFirstFileVisible())
-                .as("Clear button should be absent after ClearAll")
-                .isFalse();
-        assertThat(openApiComponent.isClearAllVisible())
-                .as("ClearAll button should be absent after ClearAll")
-                .isFalse();
+        // Re-uploading and clearing again leaves the step in the same state.
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
+        assertThat(openApiComponent.isOpenApiFileUploaded())
+                .as("The uploaded specification should be listed").isTrue();
+        openApiComponent.clearOpenApiFile();
+        assertThat(openApiComponent.isOpenApiFileUploaded())
+                .as("The specification should be gone after clearing it").isFalse();
 
-        repositoryPage.getCreateNewProjectComponent().closeDialog();
+        repositoryPage.getCreateNewProjectComponent().cancelCreation();
     }
 }

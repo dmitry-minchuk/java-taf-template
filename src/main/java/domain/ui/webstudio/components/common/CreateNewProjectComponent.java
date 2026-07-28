@@ -9,6 +9,7 @@ import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
 import domain.ui.webstudio.components.createnewproject.WorkspaceComponent;
 import domain.ui.webstudio.components.createnewproject.ZipArchiveComponent;
 import helpers.utils.TestDataUtil;
+import helpers.utils.WaitUtil;
 import lombok.Getter;
 
 public class CreateNewProjectComponent extends BaseComponent {
@@ -36,6 +37,13 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement archiveUpload; // file input on the "From archive" (.zip) step
     private WebElement methodOpenApi;
     private WebElement openApiUpload; // file input on the "From OpenAPI" step (data/rules modules auto-fill)
+    private WebElement openApiDataModuleField;
+    private WebElement openApiDataPathField;
+    private WebElement openApiRulesModuleField;
+    private WebElement openApiRulesPathField;
+    private WebElement openApiUploadedFileRemoveBtn;
+    private java.util.List<WebElement> openApiUploadedFiles;
+    private WebElement openApiError;
     private WebElement repoSelect;    // new-project-repo (ant-select) — target design repository (shown with >1 repo)
     private WebElement repoOption;    // body-level ant-select option, format(repoName)
     private WebElement pathField;     // new-project-path (path-in-repository for non-flat repos)
@@ -71,6 +79,14 @@ public class CreateNewProjectComponent extends BaseComponent {
         archiveUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-upload]", "archiveUpload");
         methodOpenApi = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-openapi]", "methodOpenApi");
         openApiUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-upload]", "openApiUpload");
+        openApiDataModuleField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-data-module]", "openApiDataModule");
+        openApiDataPathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-data-path]", "openApiDataPath");
+        openApiRulesModuleField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-rules-module]", "openApiRulesModule");
+        openApiRulesPathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-rules-path]", "openApiRulesPath");
+        // The remove button sits inside the upload list item's actions container.
+        openApiUploadedFileRemoveBtn = new WebElement(LocalDriverPool.getPage(), "xpath=//span[contains(@class,'ant-upload-list-item-actions')]//button", "openApiRemoveFile");
+        openApiUploadedFiles = createElementList("xpath=//div[contains(@class,'ant-upload-list-item')]", "openApiUploadedFiles");
+        openApiError = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-error]", "newProjectError");
         repoSelect = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-repo]", "newProjectRepo");
         repoOption = new WebElement(LocalDriverPool.getPage(), "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "newProjectRepoOption");
         pathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-path]", "newProjectPath");
@@ -152,6 +168,105 @@ public class CreateNewProjectComponent extends BaseComponent {
             nameField.fill(projectName);
         }
         submitBtn.click();
+    }
+
+    /** Picks how the project is created (the wizard opens the matching form right away). */
+    public CreateNewProjectComponent selectMethod(TabName method) {
+        switch (method) {
+            case TEMPLATE -> methodTemplate.click();
+            case ZIP_ARCHIVE -> methodArchive.click();
+            case EXCEL_FILES -> methodExcel.click();
+            case OPEN_API -> methodOpenApi.click();
+            default -> throw new IllegalArgumentException("Unsupported create method: " + method);
+        }
+        return this;
+    }
+
+    public CreateNewProjectComponent uploadOpenApiSpec(String fileName) {
+        openApiUpload.setInputFiles(TestDataUtil.getFilePathFromResources(fileName));
+        return this;
+    }
+
+    public CreateNewProjectComponent setProjectName(String projectName) {
+        nameField.fill(projectName);
+        return this;
+    }
+
+    public String getProjectName() {
+        return nameField.getCurrentInputValue();
+    }
+
+    // --- "From OpenAPI" step fields. The wizard shows the module names and paths as plain inputs, filled in
+    // from the uploaded specification; paths are edited directly, so the legacy "Edit path" step is gone. ---
+
+    public CreateNewProjectComponent setDataModuleName(String moduleName) {
+        openApiDataModuleField.fill(moduleName);
+        return this;
+    }
+
+    public String getDataModuleName() {
+        return openApiDataModuleField.getCurrentInputValue();
+    }
+
+    public CreateNewProjectComponent setDataModulePath(String path) {
+        openApiDataPathField.fill(path);
+        return this;
+    }
+
+    public String getDataModulePathInputValue() {
+        return getDataModulePath();
+    }
+
+    public String getDataModulePath() {
+        return openApiDataPathField.getCurrentInputValue();
+    }
+
+    public CreateNewProjectComponent setRulesModuleName(String moduleName) {
+        openApiRulesModuleField.fill(moduleName);
+        return this;
+    }
+
+    public String getRulesModuleName() {
+        return openApiRulesModuleField.getCurrentInputValue();
+    }
+
+    public CreateNewProjectComponent setRulesModulePath(String path) {
+        openApiRulesPathField.fill(path);
+        return this;
+    }
+
+    public String getRulesModulePath() {
+        return openApiRulesPathField.getCurrentInputValue();
+    }
+
+    /**
+     * Removes the uploaded specification from the step (the upload takes a single file). The remove button
+     * only shows on hover, so presence is judged by the upload list itself, not by the button.
+     */
+    public CreateNewProjectComponent clearOpenApiFile() {
+        if (!openApiUploadedFiles.isEmpty()) {
+            openApiUploadedFileRemoveBtn.click();
+            WaitUtil.waitForCondition(openApiUploadedFiles::isEmpty, DEFAULT_TIMEOUT_MS, 200,
+                    "Waiting for the uploaded specification to be removed");
+        }
+        return this;
+    }
+
+    public boolean isOpenApiFileUploaded() {
+        return !openApiUploadedFiles.isEmpty();
+    }
+
+    public boolean isCreateEnabled() {
+        return submitBtn.isEnabled();
+    }
+
+    /** The wizard's error message, e.g. when the specification or a module name is missing. */
+    public String getError() {
+        return openApiError.waitForVisible(DEFAULT_TIMEOUT_MS).getText().trim();
+    }
+
+    public boolean hasError() {
+        return openApiError.isVisible(DEFAULT_TIMEOUT_MS / 2);
     }
 
     // Create-from-OpenAPI path in the React wizard (method -> upload spec -> name -> Create).

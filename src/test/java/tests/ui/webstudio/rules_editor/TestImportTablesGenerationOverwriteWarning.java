@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.editortabcomponents.ImportOpenApiDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.OpenApiModuleSettingsDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -40,20 +39,17 @@ public class TestImportTablesGenerationOverwriteWarning extends BaseTest {
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getCreateProjectLink().click();
-        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
-                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(OPENAPI_FILE_1);
+        CreateNewProjectComponent openApiComponent = repositoryPage.getCreateNewProjectComponent();
+        openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiSpec(OPENAPI_FILE_1);
         openApiComponent.setDataModuleName("Models_test");
-        openApiComponent.clickEditDataPath();
         openApiComponent.setDataModulePath("rules2/Models_test2.xlsx");
         openApiComponent.setRulesModuleName("Algorithms_test");
-        openApiComponent.clickEditRulesPath();
         openApiComponent.setRulesModulePath("rules1/Algorithms_test1.xlsx");
         openApiComponent.setProjectName(projectName);
         openApiComponent.clickCreate();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getRefreshBtn().click(10000);
 
         // Step 2: Upload openapi2.json and do Reconciliation import
         uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);

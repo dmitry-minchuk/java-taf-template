@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
@@ -38,9 +37,9 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         repositoryPage.getCreateProjectLink().click();
-        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
-                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(INVALID_FILENAME_YAML);
+        CreateNewProjectComponent openApiComponent = repositoryPage.getCreateNewProjectComponent();
+        openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiSpec(INVALID_FILENAME_YAML);
         openApiComponent.setProjectName("bla");
         openApiComponent.clickCreate();
         repositoryPage.fillCommitInfo();
@@ -51,17 +50,17 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(NON_OPENAPI_FILE);
+        openApiComponent.uploadOpenApiSpec(NON_OPENAPI_FILE);
         assertThat(repositoryPage.getMessagePopupText())
                 .as("Popup should appear when non-OpenAPI file is uploaded")
                 .contains("Only JSON and YML/YAML files are accepted");
         repositoryPage.closeMessagePopup();
-        repositoryPage.getCreateNewProjectComponent().closeDialog();
+        repositoryPage.getCreateNewProjectComponent().cancelCreation();
 
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("test%?>");
         openApiComponent.clickCreate();
         assertThat(repositoryPage.getInlineMessage())
@@ -71,10 +70,9 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla");
         openApiComponent.setDataModuleName("Models?*/test");
-        openApiComponent.clickEditDataPath();
         openApiComponent.setDataModulePath("rules/Models.xlsx");
         openApiComponent.clickCreate();
         assertThat(repositoryPage.getInlineMessage())
@@ -84,7 +82,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla");
         openApiComponent.setDataModulePath("rules/Models?*test.xlsx");
         openApiComponent.clickCreate();
@@ -95,7 +93,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla_" + System.currentTimeMillis());
         openApiComponent.setRulesModuleName("Models");
         openApiComponent.clickCreate();
@@ -107,7 +105,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla2_" + System.currentTimeMillis());
         openApiComponent.setDataModulePath("rules/Algorithms.xlsx");
         openApiComponent.clickCreate();
@@ -119,7 +117,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(INVALID_JSON_FILE_1);
+        openApiComponent.uploadOpenApiSpec(INVALID_JSON_FILE_1);
         openApiComponent.setProjectName(invalidProjectName);
         openApiComponent.clickCreate();
         assertThat(repositoryPage.getInlineMessage())
@@ -129,7 +127,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(INVALID_JSON_FILE_2);
+        openApiComponent.uploadOpenApiSpec(INVALID_JSON_FILE_2);
         openApiComponent.setProjectName(invalidProjectName);
         openApiComponent.clickCreate();
         assertThat(repositoryPage.getInlineMessage())
@@ -140,22 +138,21 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(JSON_FILE);
+        openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName(step29ProjectName);
         openApiComponent.setDataModuleName("bla1");
         openApiComponent.setRulesModuleName("kek2");
         openApiComponent.clickCreate();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getRefreshBtn().click(10000);
 
         repositoryPage.getCreateProjectLink().click();
         openApiComponent = repositoryPage.getCreateNewProjectComponent()
                 .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
         assertThat(openApiComponent.getDataModuleName()).isNotEqualTo("bla1");
-        assertThat(openApiComponent.getDataModulePathDisplay()).isEqualTo("rules/Models.xlsx");
+        assertThat(openApiComponent.getDataModulePath()).isEqualTo("rules/Models.xlsx");
         assertThat(openApiComponent.getRulesModuleName()).isNotEqualTo("kek2");
-        assertThat(openApiComponent.getRulesModulePathDisplay()).isEqualTo("rules/Algorithms.xlsx");
-        repositoryPage.getCreateNewProjectComponent().closeDialog();
+        assertThat(openApiComponent.getRulesModulePath()).isEqualTo("rules/Algorithms.xlsx");
+        repositoryPage.getCreateNewProjectComponent().cancelCreation();
     }
 }

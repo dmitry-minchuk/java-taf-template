@@ -8,7 +8,6 @@ import configuration.driver.LocalDriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.editortabcomponents.ImportOpenApiDialogComponent;
 import domain.ui.webstudio.components.editortabcomponents.OpenApiModuleSettingsDialogComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -43,20 +42,17 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getCreateProjectLink().click();
-        OpenApiComponent openApiComponent = repositoryPage.getCreateNewProjectComponent()
-                .selectTab(CreateNewProjectComponent.TabName.OPEN_API);
-        openApiComponent.uploadOpenApiFile(OPENAPI_FILE_1);
+        CreateNewProjectComponent openApiComponent = repositoryPage.getCreateNewProjectComponent();
+        openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
+        openApiComponent.uploadOpenApiSpec(OPENAPI_FILE_1);
         openApiComponent.setDataModuleName("Models_test");
-        openApiComponent.clickEditDataPath();
         openApiComponent.setDataModulePath("rules2/Models_test2.xlsx");
         openApiComponent.setRulesModuleName("Algorithms_test");
-        openApiComponent.clickEditRulesPath();
         openApiComponent.setRulesModulePath("rules1/Algorithms_test1.xlsx");
         openApiComponent.setProjectName(projectName);
         openApiComponent.clickCreate();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getRefreshBtn().click(10000);
 
         // Upload openapi2.json for later use in step 5
         uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
@@ -113,7 +109,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .isEqualTo("Import");
 
         // === Step 4.1: Edit rules path, then reset and verify default restored ===
-        settingsDialog.clickEditRulesPath();
         settingsDialog.setNewRulesPath("rules/Alg12.xlsx");
         settingsDialog.clickResetRulesPath();
 
@@ -123,8 +118,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         assertThat(settingsDialog.getRulesPathDisplayValue())
                 .as("Rules path display should revert to default 'rules/Alg.xlsx' after reset")
                 .isEqualTo("rules/Alg.xlsx");
-
-        settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules1/Mod1.xlsx");
         settingsDialog.clickResetDataPath();
 
@@ -149,10 +142,7 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         importDialog.clickImportTablesGeneration();
         settingsDialog = editorPage.getOpenApiModuleSettingsDialogComponent();
         settingsDialog.waitForVisible();
-
-        settingsDialog.clickEditRulesPath();
         settingsDialog.setNewRulesPath("rules/Alg12.xlsx");
-        settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules1/Mod1.xlsx");
 
         // === Step 4.3: Import and verify module list and OpenAPI properties ===
@@ -212,8 +202,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .contains("The following module doesn't exist and is going to be created:\n" +
                         "Data Module: Mod1\n" +
                         "rules/Mod1.xlsx");
-
-        settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules/Mod5.xlsx");
 
         // === Step 5.2: Import and verify final module list and properties ===
