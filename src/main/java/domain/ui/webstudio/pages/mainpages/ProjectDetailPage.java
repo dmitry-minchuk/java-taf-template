@@ -168,7 +168,8 @@ public class ProjectDetailPage extends BasePage {
         // files-folder-path is an antd AutoComplete wrapper (a DIV); the typeable field is its inner input.
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path] input", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
-        tagValueForType = new WebElement(page, "xpath=//*[@data-testid='overview-left']//span[contains(@class,'ant-tag')][./span[1][normalize-space()='%s']]/span[last()]", "tagValueForType");
+        // Tags render in their own panel as pairs of spans: the type, then its value.
+        tagValueForType = new WebElement(page, "xpath=//*[@data-testid='project-tags']/span[normalize-space()='%s']/following-sibling::span[1]", "tagValueForType");
         overviewRight = new WebElement(page, "[data-testid=overview-right]", "overviewRight");
     }
 

@@ -9,10 +9,9 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.TagsPopupComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -33,7 +32,9 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-32767")
-    @Description("Create project from zip with non-existing tag value")
+    @Description("Create project from zip with non-existing tag value KNOWN-FAILING on 6.4.0: the React UI dropped the tag reconciliation dialogs and does not apply "
+            + "a zip's tags at all, so the project comes out untagged. Asserts the intended behaviour; needs "
+            + "confirming with the team whether the loss is intended.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNonExistingTagValueHandling() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
@@ -45,37 +46,11 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
         repositoryPage.fillCommitInfo();
 
         // Step 5: After clicking create, warning popup appears and system proceeds to tags popup
-        Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().isVisible(1500), "Missing Tags PopupComponent should be visible!");
-        Assert.assertTrue(repositoryPage.getMissingTagsPopupComponent().getAllWarnings().contains("Tag: Tag9"), "'Tag: Tag9' warning should be visible!");
-        repositoryPage.getMissingTagsPopupComponent().clickContinue();
-
-        // Step 6-7: Verify and select tags in TagsPopupComponent
-        TagsPopupComponent tagsPopup = repositoryPage.getTagsPopupComponent();
-        String selectedTagValue = tagsPopup.getSelectedTagForType(TAG_TYPE_NAME);
-        Assert.assertTrue(selectedTagValue.equals("[None]"), "Tag value should be empty for non-existing tag value");
-
-        // Verify TagExt is set to first available value (TagExt1)
-        String selectedTagExtValue = tagsPopup.getSelectedTagForType(TAG_TYPE_EXT);
-        Assert.assertNotNull(selectedTagExtValue, "TagExt should have a value");
-
-        // Select tags for the project
-        tagsPopup.selectTagForType(TAG_TYPE_NAME, "Tag2")
-                .selectTagForType(TAG_TYPE_EXT, "TagExt2")
-                .selectTagForType(TAG_TYPE_OPT, "TagOpt2")
-                .selectTagForType(TAG_TYPE_OPT_EXT, "TagOptExt2")
-                .clickSave();
-
-        // Step 9: Verify tags in project properties
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        RepositoryContentTabPropertiesComponent propertiesComponent = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-
-        // Verify all tags are correctly saved
-        verifyTagValue(propertiesComponent, TAG_TYPE_NAME, "Tag2");
-        verifyTagValue(propertiesComponent, TAG_TYPE_EXT, "TagExt2");
-        verifyTagValue(propertiesComponent, TAG_TYPE_OPT, "TagOpt2");
-        verifyTagValue(propertiesComponent, TAG_TYPE_OPT_EXT, "TagOptExt2");
+        // The React UI applies (or drops) a zip's tags without asking — the old reconciliation dialogs
+        // are gone — so this reads the resulting tags on the project screen.
+        ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
+        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_NAME), "Tag9",
+                "The tag declared by the zip should be applied");
     }
 
     private void setupRequiredTagTypes(EditorPage editorPage) {
@@ -115,8 +90,4 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
         tagsPageComponent.saveTemplates();
     }
 
-    private void verifyTagValue(RepositoryContentTabPropertiesComponent propertiesComponent, String tagTypeName, String expectedValue) {
-        String actualValue = propertiesComponent.getSelectedTagForType(tagTypeName);
-        Assert.assertEquals(actualValue, expectedValue, String.format("Tag type '%s' should have value '%s', but got '%s'", tagTypeName, expectedValue, actualValue));
-    }
 }
