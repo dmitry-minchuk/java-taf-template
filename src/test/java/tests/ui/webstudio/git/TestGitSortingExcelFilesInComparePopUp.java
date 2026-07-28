@@ -13,6 +13,7 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -53,14 +54,10 @@ public class TestGitSortingExcelFilesInComparePopUp extends BaseTest {
         // Create project from ZIP file
         repositoryPage.createProject(CreateNewProjectComponent.TabName.ZIP_ARCHIVE, PROJECT_NAME, ZIP_FILE_NAME);
 
-        // Select project in tree
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-
-        // Open Compare dialog
-        CompareGitRevisionsDialogComponent compareDialog = repositoryPage.getRepositoryContentButtonsPanelComponent()
-                .clickCompareBtn();
+        // The comparison screen opens from the project's Compare action, in a window of its own, and lists
+        // the project's modules on both sides once it has loaded.
+        CompareGitRevisionsDialogComponent compareDialog = repositoryPage.openProjectsList()
+                .openProjectDetail(PROJECT_NAME).openCompareWindow();
         compareDialog.waitForDialogToAppear();
 
         // Verify left and right modules lists are sorted correctly

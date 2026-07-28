@@ -54,8 +54,10 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
+        // The screen has four selects: the workspace module list, the branch, the revision and the
+        // revision's module list. Address the two module lists directly rather than by position.
         leftModulesSelect = new WebElement(getPage(), "xpath=(//select[contains(@name,'compareForm')])[1]", "leftModulesSelect");
-        rightModulesSelect = new WebElement(getPage(), "xpath=(//select[contains(@name,'compareForm')])[4]", "rightModulesSelect");
+        rightModulesSelect = new WebElement(getPage(), "xpath=//select[@name='compareForm:repositoryExcelCombo']", "rightModulesSelect");
         closeBtn = new WebElement(getPage(), "xpath=//input[@value='Close']", "closeBtn");
         revisionSelect = new WebElement(getPage(),
                 "xpath=//select[@name='compareForm:repositoryRevision']",
@@ -90,9 +92,11 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
                 "editorRowsTemplate");
     }
 
+    /** Waits until the screen has loaded its lists (the module dropdowns fill in a moment after opening). */
     public CompareGitRevisionsDialogComponent waitForDialogToAppear() {
-        WaitUtil.sleep(1500, "Waiting for Compare dialog to appear");
-        leftModulesSelect.waitForVisible(5000);
+        compareBtnInPopup.waitForVisible(DEFAULT_TIMEOUT_MS);
+        WaitUtil.waitForCondition(() -> !leftModulesSelect.getSelectVisibleTextValues().isEmpty(),
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare screen's module list");
         return this;
     }
 

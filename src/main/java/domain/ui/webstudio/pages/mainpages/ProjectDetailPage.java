@@ -12,6 +12,8 @@ import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogC
 import domain.ui.webstudio.components.repositorytabcomponents.ExportProjectModalComponent;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -21,10 +23,15 @@ import java.util.List;
 // History / Branches / Publish tabs. Reached from the projects list via RepositoryPage.openProjectDetail.
 public class ProjectDetailPage extends BasePage {
 
+    private static final Logger LOGGER = LogManager.getLogger(ProjectDetailPage.class);
+
     // Header buttons render with the screen, so a short probe decides bar-vs-overflow.
     private static final int HEADER_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
     // The detail screen can settle after the first tab click, so a switch may need repeating.
     private static final int TAB_SWITCH_ATTEMPTS = 3;
+    private static final String COMPARE_SCREEN_PATH = "compare.xhtml";
+    private static final int COMPARE_WINDOW_WIDTH = 1280;
+    private static final int COMPARE_WINDOW_HEIGHT = 800;
 
     // Top navigation (shared React shell)
     @Getter
@@ -203,9 +210,11 @@ public class ProjectDetailPage extends BasePage {
     public ProjectDetailPage clickHeaderAction(String actionLabel) {
         WebElement action = headerActionByLabel.format(actionIdOf(actionLabel));
         if (action.isVisible(HEADER_ACTION_PROBE_MS)) {
+            LOGGER.info("Header action '{}' clicked on the bar", actionLabel);
             action.click();
             return this;
         }
+        LOGGER.info("Header action '{}' is not on the bar; opening the Actions menu", actionLabel);
         headerMoreBtn.click();
         headerOverflowItem.format(actionLabel).click();
         return this;
@@ -437,17 +446,56 @@ public class ProjectDetailPage extends BasePage {
      * Opens the revision comparison. In 6.4.0 the Revisions tab no longer picks two revisions: the header's
      * Compare action opens the comparison screen in a separate window, where the revisions are chosen.
      */
-    public CompareGitRevisionsDialogComponent openRevisionCompare() {
-        int pagesBefore = LocalDriverPool.getBrowserContext().pages().size();
-        clickHeaderAction("Compare");
-        WaitUtil.waitForCondition(
-                () -> LocalDriverPool.getBrowserContext().pages().size() > pagesBefore,
-                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare window to open");
-        List<Page> pages = LocalDriverPool.getBrowserContext().pages();
-        Page compareWindow = pages.get(pages.size() - 1);
-        WaitUtil.waitForCondition(() -> compareWindow.url().contains("compare"),
-                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare screen to load");
+    /**
+     * Opens the comparison screen (a separate window) without choosing a revision — for checks that only
+     * look at the screen itself, such as how the module dropdowns are ordered.
+     */
+    public CompareGitRevisionsDialogComponent openCompareWindow() {
+        Page compareWindow = openCompareScreen();
+        return new CompareGitRevisionsDialogComponent(compareWindow);
+    }
+
+    /** Clicks Compare and returns the window it opens (the screen is a popup, so wait for it as one). */
+    private Page openCompareScreen() {
+        Page compareWindow = page.waitForPopup(() -> clickHeaderAction("Compare"));
+        settleCompareWindow(compareWindow);
+        return compareWindow;
+    }
+
+    /**
+     * Finds the window the Compare action opens. Match on the screen's own address — a project's own URL can
+     * contain the word "compare" simply because its name does.
+     */
+    private Page awaitCompareWindow() {
+        WaitUtil.waitForCondition(() -> findCompareWindow() != null, DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the compare window to open");
+        return findCompareWindow();
+    }
+
+    private Page findCompareWindow() {
+        return LocalDriverPool.getBrowserContext().pages().stream()
+                .filter(candidate -> candidate.url().contains(COMPARE_SCREEN_PATH))
+                .reduce((first, second) -> second)
+                .orElse(null);
+    }
+
+    // The comparison screen is a JSF page that keeps loading after the window appears. It is opened with
+    // window.open(width, height), which in a headless run can leave the popup sized so small that nothing
+    // in it counts as visible — so give it a viewport of its own first.
+    private void settleCompareWindow(Page compareWindow) {
+        compareWindow.setViewportSize(COMPARE_WINDOW_WIDTH, COMPARE_WINDOW_HEIGHT);
         compareWindow.waitForLoadState();
+        LOGGER.info("Compare window: url={}, title={}", compareWindow.url(), compareWindow.title());
+        try {
+            compareWindow.waitForLoadState(com.microsoft.playwright.options.LoadState.NETWORKIDLE,
+                    new Page.WaitForLoadStateOptions().setTimeout(DEFAULT_TIMEOUT_MS));
+        } catch (RuntimeException ignored) {
+            // A busy page never reaches network-idle; the element waits below cover that.
+        }
+    }
+
+    public CompareGitRevisionsDialogComponent openRevisionCompare() {
+        Page compareWindow = openCompareScreen();
         CompareGitRevisionsDialogComponent compare = new CompareGitRevisionsDialogComponent(compareWindow);
         // The screen opens with nothing compared yet: pick the revision to compare against and run it.
         // (Its module dropdowns are RichFaces combos and stay hidden, so do not wait on them here.)
