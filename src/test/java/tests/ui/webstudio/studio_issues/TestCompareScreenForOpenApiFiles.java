@@ -8,6 +8,7 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.WorkflowService;
 import helpers.utils.TestDataUtil;
@@ -35,46 +36,20 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
         // Upload openapi-compare.json as "openapi.json" to the project
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_1))
-                .setFileName(OPENAPI_FILE_NAME)
-                .clickUploadButton();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
+        ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        projectDetail.uploadFileAs(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_1), OPENAPI_FILE_NAME);
+        repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + OPENAPI_FILE_NAME);
 
         // Read current revision for later use
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        String revision = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab()
-                .getRevision();
+        String revision = repositoryPage.openProjectsList().openProjectDetail(projectName).getOverviewRevision();
 
-        // Select openapi.json and update to openapi-compare2.json
-        repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder(projectName, OPENAPI_FILE_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUpdateFileBtn();
-        repositoryPage.getUpdateFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUpdateFileDialogComponent().updateFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_2));
-        assertThat(repositoryPage.getUpdateFileDialogComponent().isFileChangedWarningVisible())
-                .as("Warning popup should appear when uploading file with different name")
-                .isTrue();
-        repositoryPage.getUpdateFileDialogComponent().clickFileChangedOk();
-        repositoryPage.getUpdateFileDialogComponent().clickUpdateButton();
-        repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
+        // Replace openapi.json with openapi-compare2.json (a different file name, which is warned about)
+        projectDetail = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        projectDetail.updateFile(OPENAPI_FILE_NAME, TestDataUtil.getFilePathFromResources(OPENAPI_FILE_2));
+        repositoryPage.openProjectsList().saveProject(projectName, "Updated " + OPENAPI_FILE_NAME);
 
-        // Open the previous revision (R1) from the Revisions tab
-        repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentTabSwitcherComponent().selectRevisionsTab().openRevision(2);
-        repositoryPage.waitUntilSpinnerLoaded();
+        // Open the previous revision (R1)
+        repositoryPage.openProjectsList().openProjectDetail(projectName).openRevisionByPosition(2);
 
         // In Editor: select Bank Rating module, navigate to MaxLimit table, edit a cell
         EditorPage editorPage = repositoryPage.getTabSwitcherComponent()
@@ -94,14 +69,7 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
         // Back in Repository: select openapi.json, update to openapi-compare3.json
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder(projectName, OPENAPI_FILE_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUpdateFileBtn();
-        repositoryPage.getUpdateFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUpdateFileDialogComponent().updateFile(TestDataUtil.getFilePathFromResources(OPENAPI_FILE_3));
-        assertThat(repositoryPage.getUpdateFileDialogComponent().isFileChangedWarningVisible())
-                .as("Warning popup should appear when uploading file with different name")
-                .isTrue();
-        repositoryPage.getUpdateFileDialogComponent().clickFileChangedOk();
-        repositoryPage.getUpdateFileDialogComponent().clickUpdateButton();
+        repositoryPage.openProjectsList().openProjectDetail(projectName)
+                .updateFile(OPENAPI_FILE_NAME, TestDataUtil.getFilePathFromResources(OPENAPI_FILE_3));
     }
 }

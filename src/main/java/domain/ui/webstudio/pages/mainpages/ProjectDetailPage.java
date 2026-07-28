@@ -71,6 +71,9 @@ public class ProjectDetailPage extends BasePage {
     private WebElement fileActionsBtn;
     private WebElement fileActionsMenuItem;
     private WebElement fileDeleteSubmitBtn;
+    private WebElement updateFileInput;
+    private WebElement updateFileSubmitBtn;
+    private WebElement updateFileNameWarning;
     private WebElement filesUploadInput;
     private WebElement filesUploadSubmitBtn;
     private WebElement filesUploadNameField;
@@ -143,6 +146,10 @@ public class ProjectDetailPage extends BasePage {
         fileActionsBtn = new WebElement(page, "[data-testid=file-actions]", "fileActionsBtn");
         fileActionsMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][normalize-space()='%s']", "fileActionsMenuItem");
         fileDeleteSubmitBtn = new WebElement(page, "[data-testid=file-delete-submit]", "fileDeleteSubmitBtn");
+        // As with the upload dragger, antd puts the testid on the file input itself.
+        updateFileInput = new WebElement(page, "input[data-testid=update-file-dragger]", "updateFileInput");
+        updateFileSubmitBtn = new WebElement(page, "[data-testid=update-file-submit]", "updateFileSubmitBtn");
+        updateFileNameWarning = new WebElement(page, "[data-testid=update-file-name-warning]", "updateFileNameWarning");
         // antd Upload.Dragger forwards unknown props to the file input itself, so the testid lands there.
         filesUploadInput = new WebElement(page, "input[data-testid=files-upload-dragger]", "filesUploadInput");
         filesUploadNameField = new WebElement(page, "[data-testid=files-upload-name]", "filesUploadNameField");
@@ -476,7 +483,7 @@ public class ProjectDetailPage extends BasePage {
     public ProjectDetailPage deleteFile(String fileName) {
         openFilesTab();
         fileNodeByName.format(fileName).click();
-        fileActionsBtn.click();
+        fileActionsBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
         fileActionsMenuItem.format("Delete").click();
         fileDeleteSubmitBtn.click();
         waitUntilSpinnerLoaded();
@@ -535,6 +542,27 @@ public class ProjectDetailPage extends BasePage {
     public boolean isAddFilesMenuAvailable() {
         openFilesTab();
         return filesAddBtn.isVisible(DEFAULT_TIMEOUT_MS);
+    }
+
+    /**
+     * Replaces a file's content with another file: select it, Update from its actions menu, pick the new
+     * file, confirm. Uploading a file with a different name is allowed but warned about.
+     */
+    public ProjectDetailPage updateFile(String fileName, String newFilePath) {
+        openFilesTab();
+        fileNodeByName.format(fileName).click();
+        // Selecting a file opens its preview pane, where the actions menu lives — wait for it.
+        fileActionsBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        fileActionsMenuItem.format("Update").click();
+        updateFileInput.waitForVisible(DEFAULT_TIMEOUT_MS).setInputFiles(newFilePath);
+        updateFileSubmitBtn.click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
+    /** Whether the update dialog warns that the chosen file has a different name. */
+    public boolean isUpdateFileNameWarningShown() {
+        return updateFileNameWarning.isVisible(DEFAULT_TIMEOUT_MS / 2);
     }
 
     // The Files tab gathers New folder / New text file / Upload behind a single Add menu. That menu is an
