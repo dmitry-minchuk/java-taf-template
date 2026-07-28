@@ -611,6 +611,9 @@ public class RepositoryPage extends BasePage {
         if (finalize) {
             fillCommitInfo();
             waitUntilSpinnerLoaded();
+            // Creating from a specification lands on the new project's detail screen, which has no row
+            // actions — go back to the list so callers can use them.
+            openProjectsList();
             openIfClosed(projectName);
         }
     }

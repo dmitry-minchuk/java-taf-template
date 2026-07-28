@@ -302,7 +302,9 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void clickExport() {
-        exportBtn.click();
+        // Like Save, this toolbar button sits in the JSF layer that re-renders on its own while the project
+        // recompiles, so a strict click can thrash — click it once the page has settled.
+        exportBtn.clickWhenSettled();
         new ExportProjectDialogComponent().waitForDialogToAppear();
     }
     

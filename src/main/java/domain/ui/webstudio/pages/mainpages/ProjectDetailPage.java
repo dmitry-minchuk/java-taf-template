@@ -23,6 +23,8 @@ public class ProjectDetailPage extends BasePage {
 
     // Header buttons render with the screen, so a short probe decides bar-vs-overflow.
     private static final int HEADER_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+    // The detail screen can settle after the first tab click, so a switch may need repeating.
+    private static final int TAB_SWITCH_ATTEMPTS = 3;
 
     // Top navigation (shared React shell)
     @Getter
@@ -64,6 +66,7 @@ public class ProjectDetailPage extends BasePage {
     // Files tab: a file tree on the left, a preview panel with per-file actions on the right
     private WebElement fileNodeByName;      // format(fileName)
     private WebElement filesAddBtn;
+    private WebElement detailRoot;
     private WebElement filesAddMenuItem;
     private WebElement fileActionsBtn;
     private WebElement fileActionsMenuItem;
@@ -71,6 +74,7 @@ public class ProjectDetailPage extends BasePage {
     private WebElement filesUploadInput;
     private WebElement filesUploadSubmitBtn;
     private WebElement filesUploadNameField;
+    private WebElement filesUploadPathField;
     private WebElement folderPathInput;
     private WebElement folderSubmitBtn;
     // History tab
@@ -133,6 +137,7 @@ public class ProjectDetailPage extends BasePage {
         revisionCompareSubmit = new WebElement(page, "[data-testid=revision-compare-submit]", "revisionCompareSubmit");
         fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
         filesAddBtn = new WebElement(page, "[data-testid=files-add]", "filesAddBtn");
+        detailRoot = new WebElement(page, "[data-testid=project-detail]", "detailRoot");
         // antd binds the menu handler to the <li>, so click that rather than the labelled <span> inside it.
         filesAddMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][.//span[@data-testid='%s']]", "filesAddMenuItem");
         fileActionsBtn = new WebElement(page, "[data-testid=file-actions]", "fileActionsBtn");
@@ -141,6 +146,8 @@ public class ProjectDetailPage extends BasePage {
         // antd Upload.Dragger forwards unknown props to the file input itself, so the testid lands there.
         filesUploadInput = new WebElement(page, "input[data-testid=files-upload-dragger]", "filesUploadInput");
         filesUploadNameField = new WebElement(page, "[data-testid=files-upload-name]", "filesUploadNameField");
+        // The path field is an AutoComplete wrapper, so type into its inner input.
+        filesUploadPathField = new WebElement(page, "[data-testid=files-upload-path] input", "filesUploadPathField");
         filesUploadSubmitBtn = new WebElement(page, "[data-testid=files-upload-submit]", "filesUploadSubmitBtn");
         // files-folder-path is an antd AutoComplete wrapper (a DIV); the typeable field is its inner input.
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path] input", "folderPathInput");
@@ -155,9 +162,21 @@ public class ProjectDetailPage extends BasePage {
         return this;
     }
 
+    /**
+     * Opens the Files tab. Right after a project is created the detail screen finishes loading late and
+     * resets to Overview, so the click is repeated until the tab really is open — the Add button exists
+     * only there, which makes it a reliable marker.
+     */
     public ProjectDetailPage openFilesTab() {
-        filesTab.click();
-        waitUntilSpinnerLoaded();
+        detailRoot.waitForVisible(DEFAULT_TIMEOUT_MS);
+        for (int attempt = 1; attempt <= TAB_SWITCH_ATTEMPTS; attempt++) {
+            filesTab.click();
+            waitUntilSpinnerLoaded();
+            if (filesAddBtn.isVisible(DEFAULT_TIMEOUT_MS / 2)) {
+                return this;
+            }
+        }
+        filesAddBtn.waitForVisible(DEFAULT_TIMEOUT_MS);
         return this;
     }
 
@@ -464,7 +483,12 @@ public class ProjectDetailPage extends BasePage {
         return this;
     }
 
+    /**
+     * Whether the project holds this file. Opens the Files tab itself: the detail screen can finish loading
+     * late and drop back to Overview, which would leave the file tree out of the page.
+     */
     public boolean isFilePresent(String fileName) {
+        openFilesTab();
         return fileNodeByName.format(fileName).isVisible(DEFAULT_TIMEOUT_MS);
     }
 
@@ -479,11 +503,23 @@ public class ProjectDetailPage extends BasePage {
      * onto the React Files tab.
      */
     public ProjectDetailPage uploadFileAs(String filePath, String targetName) {
+        return uploadFileAs(filePath, targetName, null);
+    }
+
+    /** Uploads into a folder of the project (e.g. "rules"); an empty folder means the project root. */
+    public ProjectDetailPage uploadFileInto(String filePath, String targetFolder) {
+        return uploadFileAs(filePath, null, targetFolder);
+    }
+
+    public ProjectDetailPage uploadFileAs(String filePath, String targetName, String targetFolder) {
         openFilesTab();
         openAddMenuItem("files-upload");
         filesUploadInput.setInputFiles(filePath);
         if (targetName != null && !targetName.isEmpty()) {
             filesUploadNameField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(targetName);
+        }
+        if (targetFolder != null && !targetFolder.isEmpty()) {
+            filesUploadPathField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(targetFolder);
         }
         filesUploadSubmitBtn.click();
         waitUntilSpinnerLoaded();

@@ -10,6 +10,7 @@ import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -41,21 +42,18 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
 
         repositoryPage.createProjectFromOpenApi(JSON_FILE, projectName);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .expandFolderInTree(projectName)
-                .expandFolderInTree("rules");
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Algorithms.xlsx"))
-                .as("Algorithms.xlsx should be present in repository tree").isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Models.xlsx"))
-                .as("Models.xlsx should be present in repository tree").isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("openapi.json"))
-                .as("openapi.json should be present in repository tree").isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("rules.xml"))
-                .as("rules.xml should be present in repository tree").isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("rules-deploy.xml"))
-                .as("rules-deploy.xml should be present in repository tree").isTrue();
+        ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(projectName).openFilesTab();
+        assertThat(projectDetail.isFilePresent("Algorithms.xlsx"))
+                .as("Algorithms.xlsx should be present in the project files").isTrue();
+        assertThat(projectDetail.isFilePresent("Models.xlsx"))
+                .as("Models.xlsx should be present in the project files").isTrue();
+        assertThat(projectDetail.isFilePresent("openapi.json"))
+                .as("openapi.json should be present in the project files").isTrue();
+        assertThat(projectDetail.isFilePresent("rules.xml"))
+                .as("rules.xml should be present in the project files").isTrue();
+        assertThat(projectDetail.isFilePresent("rules-deploy.xml"))
+                .as("rules-deploy.xml should be present in the project files").isTrue();
+        repositoryPage.openProjectsList();
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
@@ -94,8 +92,16 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         datatypeTable.editCell(3, 1, "String[]");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilSpinnerLoaded();
-        editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
+        // Read the problems panel here, on the module: it is part of the module view.
+        editorPage.waitUntilAppIdle();
         editorPage.getProblemsPanelComponent().checkNoProblems();
+
+        // Export is a project-level action, so go to the project root. The breadcrumb keeps re-rendering
+        // while the project recompiles and its click never lands, so reload and come back via the tabs.
+        editorPage.reloadPage();
+        editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
+        editorPage = new EditorPage().getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
         editorPage.getEditorToolbarPanelComponent().clickExport();
         File exportedZip = editorPage.getExportProjectDialogComponent().clickExportAndDownload();
@@ -151,45 +157,29 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         assertThat(editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
                 .as("Algorithms2 module should be present after copy").contains("Algorithms2");
 
+        // Uploading a rules file adds the file; it no longer registers a module in the descriptor (the
+        // Studio only UNregisters modules, when a file is deleted), so this checks the file landed and that
+        // the descriptor still carries the module added by the copy.
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects").selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources("rules.xlsx")).clickUploadButton();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getRefreshBtn().click(10000);
+        ProjectDetailPage detailAfterUpload = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        detailAfterUpload.uploadFileInto(TestDataUtil.getFilePathFromResources("rules.xlsx"), "rules");
+        assertThat(detailAfterUpload.isFilePresent("rules.xlsx"))
+                .as("rules.xlsx should be present in the project files after upload").isTrue();
+        repositoryPage.openProjectsList().saveProject(projectName, "Uploaded rules.xlsx");
 
         EditorPage editorPageAfterUpload = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPageAfterUpload.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
-        assertThat(editorPageAfterUpload.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
-                .as("Module 'rules' should appear after uploading rules.xlsx").contains("rules");
 
         editorPageAfterUpload.getEditorToolbarPanelComponent().clickExport();
         File exportedZipAfterUpload = editorPageAfterUpload.getExportProjectDialogComponent().clickExportAndDownload();
         String rulesXmlAfterUpload = ZipUtil.readFileFromZip(exportedZipAfterUpload, "rules.xml");
         assertThat(rulesXmlAfterUpload).as("rules.xml should contain Algorithms2 module after copy")
                 .contains("<name>Algorithms2</name>");
-        assertThat(rulesXmlAfterUpload).as("rules.xml should contain rules module after upload")
-                .contains("<name>rules</name>");
 
         repositoryPage = editorPageAfterUpload.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects").selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent().clickCopyButton();
-        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.openProjectsList().copyProject(projectName, projectName + "-Copy");
 
-        repositoryPage.getLeftRepositoryTreeComponent().selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-        repositoryPage.getCopyProjectDialogComponent()
-                .setSeparateProject(true).setNewProjectName(projectName + "-Copy").clickCopyButton();
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getRefreshBtn().click(10000);
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree(projectName + "-Copy"))
-                .as("Copied project '" + projectName + "-Copy' should be present in repository tree").isTrue();
+        assertThat(repositoryPage.isProjectPresent(projectName + "-Copy"))
+                .as("Copied project '" + projectName + "-Copy' should appear in the projects list").isTrue();
     }
 }
