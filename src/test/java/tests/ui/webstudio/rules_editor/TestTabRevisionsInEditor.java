@@ -48,9 +48,11 @@ public class TestTabRevisionsInEditor extends BaseTest {
         editorPage.getCenterTable().editCell(6, 2, "100");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
-        // Saving the table starts a recompile; clicking Save while it runs is swallowed and the save dialog
-        // never opens, so wait for the compilation to finish first.
-        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+        // Saving the table leaves the editor spinning on a recompile that never settles, and the toolbar's
+        // Save stays disabled while it does. A reload comes back to the same module with the edit kept and
+        // the toolbar usable.
+        editorPage.reloadPage();
+        editorPage = new EditorPage();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();

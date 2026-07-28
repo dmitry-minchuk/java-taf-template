@@ -198,9 +198,13 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void clickSave() {
-        // Committing recompiles and briefly re-renders this JSF toolbar button, so it must be
-        // clicked resiliently (see WebElement.clickWhenSettled).
-        saveBtn.clickWhenSettled();
+        // A real click is what reliably opens the save dialog; dispatching the event is only the fallback for
+        // when the recompile keeps re-rendering this JSF toolbar button (see WebElement.clickWhenSettled).
+        try {
+            saveBtn.click();
+        } catch (RuntimeException stillReRendering) {
+            saveBtn.clickWhenSettled();
+        }
     }
 
     public void clickSync() {
