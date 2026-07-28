@@ -64,17 +64,9 @@ public class TestImportOpenApiModuleNamesValidation extends BaseTest {
     }
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName, String fileName) {
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(fileName))
-                .setFileName(fileName)
-                .clickUploadButton();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
+        // React Files tab: upload through the project's own screen, then commit from the projects list.
+        repositoryPage.openProjectsList().openProjectDetail(projectName)
+                .uploadFileAs(TestDataUtil.getFilePathFromResources(fileName), fileName);
+        repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + fileName);
     }
 }

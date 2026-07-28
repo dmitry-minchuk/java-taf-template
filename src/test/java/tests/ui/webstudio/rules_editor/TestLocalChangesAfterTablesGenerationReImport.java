@@ -119,17 +119,9 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName,
                                      String sourceFileName, String targetFileName) {
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickUploadFileBtn();
-        repositoryPage.getUploadFileDialogComponent().waitForDialogToAppear();
-        repositoryPage.getUploadFileDialogComponent()
-                .uploadFile(TestDataUtil.getFilePathFromResources(sourceFileName))
-                .setFileName(targetFileName)
-                .clickUploadButton();
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickSaveBtn();
-        repositoryPage.getSaveChangesComponent().getSaveBtn().click();
-        repositoryPage.waitUntilSpinnerLoaded();
+        // React Files tab: upload (renaming to the target name), then commit from the projects list.
+        repositoryPage.openProjectsList().openProjectDetail(projectName)
+                .uploadFileAs(TestDataUtil.getFilePathFromResources(sourceFileName), targetFileName);
+        repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + targetFileName);
     }
 }
