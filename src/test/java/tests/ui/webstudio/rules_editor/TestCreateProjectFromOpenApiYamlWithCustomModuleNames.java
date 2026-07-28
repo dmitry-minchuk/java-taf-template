@@ -10,6 +10,7 @@ import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
@@ -49,13 +50,17 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
         assertThat(openApiComponent.isCreateEnabled())
                 .as("Create button should be enabled after uploading file and setting project name").isTrue();
 
+        // In the React wizard the module name and its path are independent inputs: renaming the module no
+        // longer rewrites the path, so both are set explicitly.
         openApiComponent.setDataModuleName("Data_Types");
+        openApiComponent.setDataModulePath("rules/Data_Types.xlsx");
         assertThat(openApiComponent.getDataModulePath())
-                .as("Data module path should auto-update to 'rules/Data_Types.xlsx'").isEqualTo("rules/Data_Types.xlsx");
+                .as("Data module path should hold what was typed").isEqualTo("rules/Data_Types.xlsx");
 
         openApiComponent.setRulesModuleName("Spreadsheets");
+        openApiComponent.setRulesModulePath("rules/Spreadsheets.xlsx");
         assertThat(openApiComponent.getRulesModulePath())
-                .as("Rules module path should auto-update to 'rules/Spreadsheets.xlsx'").isEqualTo("rules/Spreadsheets.xlsx");
+                .as("Rules module path should hold what was typed").isEqualTo("rules/Spreadsheets.xlsx");
         openApiComponent.setDataModulePath("rules1/Data_Types_file.xlsx");
         assertThat(openApiComponent.getDataModulePathInputValue())
                 .as("Data module path input should reflect custom path").isEqualTo("rules1/Data_Types_file.xlsx");
@@ -69,16 +74,13 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects").expandFolderInTree(projectName)
-                .expandFolderInTree("rules").expandFolderInTree("rules1");
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Data_Types_file.xlsx"))
-                .as("Data_Types_file.xlsx should be present in rules1 folder").isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("Spreadsheets.xlsx"))
-                .as("Spreadsheets.xlsx should be present in rules folder").isTrue();
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("new_openapi_1.yaml"))
-                .as("new_openapi_1.yaml should be present in repository tree").isTrue();
+        ProjectDetailPage projectFiles = repositoryPage.openProjectsList().openProjectDetail(projectName);
+        assertThat(projectFiles.isFilePresent("Data_Types_file.xlsx"))
+                .as("Data_Types_file.xlsx should be present in the project files").isTrue();
+        assertThat(projectFiles.isFilePresent("Spreadsheets.xlsx"))
+                .as("Spreadsheets.xlsx should be present in the project files").isTrue();
+        assertThat(projectFiles.isFilePresent("new_openapi_1.yaml"))
+                .as("new_openapi_1.yaml should be present in the project files").isTrue();
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
