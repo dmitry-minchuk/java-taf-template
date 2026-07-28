@@ -97,12 +97,18 @@ public class TestTestButtonAvailable extends BaseTest {
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilAppIdle();
 
+        // Until every duplicated test is renamed the module stays in error and the editor keeps re-rendering,
+        // which blocks the cell editor. A reload lands on a settled page where the next edit works.
+        editorPage.reloadPage();
+        editorPage = new EditorPage();
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "PolicyPremiumTest");
         waitForTable(editorPage);
         editorPage.getCenterTable().editCell(1, 1, "Test DeterminePolicyPremium PolicyPremiumTest1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilAppIdle();
 
+        editorPage.reloadPage();
+        editorPage = new EditorPage();
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Test", "VehiclePremiumTest");
         waitForTable(editorPage);
         editorPage.getCenterTable().editCell(1, 1, "Test DetermineVehiclePremium VehiclePremiumTest1");
@@ -130,6 +136,10 @@ public class TestTestButtonAvailable extends BaseTest {
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameExample3Project);
         LocalDriverPool.getPage().goBack();
+        // Going back restores the previous view without rebuilding the projects tree, so its nodes stay
+        // hidden; a reload renders the tree for the state the browser navigated to.
+        editorPage = new EditorPage();
+        editorPage.reloadPage();
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_MY, "module_KS");
         editorPage.getProblemsPanelComponent().waitForCompilationProgressBarToContain("Loaded", 200000);

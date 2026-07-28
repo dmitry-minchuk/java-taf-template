@@ -76,7 +76,13 @@ public class TableComponent extends BaseComponent {
     public void editCell(int rowIndex, int columnIndex, String text, boolean pressEnter) {
         waitUntilSpinnerLoaded();
         WaitUtil.retryOnException(() -> {
-            doubleClickCell(rowIndex, columnIndex);
+            try {
+                doubleClickCell(rowIndex, columnIndex);
+            } catch (RuntimeException neverSettles) {
+                // A module that keeps recompiling re-renders the table, so the cell never reaches the
+                // "stable" state a real dblclick requires; dispatch the event instead.
+                getCell(rowIndex, columnIndex).doubleClickWhenSettled();
+            }
             editorWrapper.waitForVisible(2000);
             return true;
         }, 10000, 500, "Activating cell editor for cell [" + rowIndex + "," + columnIndex + "]");

@@ -223,6 +223,13 @@ public class WebElement {
         locator.dispatchEvent("click");
     }
 
+    /** Double click for pages that keep re-rendering: dispatches the event instead of waiting for stability. */
+    public void doubleClickWhenSettled() {
+        waitForAppIdle(page, OVERLAY_IDLE_TIMEOUT_MS);
+        LOGGER.info("Dispatching dblclick (after app settled) {}", elementName);
+        locator.dispatchEvent("dblclick");
+    }
+
     public WebElement doubleClick() {
         waitForAppReady();
         isVisible();
