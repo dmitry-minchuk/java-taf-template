@@ -178,7 +178,14 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return setBranchName(branchName);
     }
 
+    /**
+     * The branch name the dialog offers ("&lt;project&gt;/&lt;user&gt;/&lt;date&gt;"). It arrives with the
+     * repository config, a moment after the dialog opens, so wait for it rather than reading an empty field.
+     */
     public String getNewBranchName() {
+        branchField.waitForVisible(DEFAULT_TIMEOUT_MS);
+        WaitUtil.waitForCondition(() -> !branchField.getCurrentInputValue().isBlank(),
+                DEFAULT_TIMEOUT_MS, 200, "Waiting for the suggested branch name");
         return branchField.getCurrentInputValue();
     }
 

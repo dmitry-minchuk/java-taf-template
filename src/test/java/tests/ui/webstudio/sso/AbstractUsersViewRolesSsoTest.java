@@ -4,9 +4,10 @@ import domain.api.AuthorizedApiMethod;
 import domain.api.RepositoryProjectsMethod;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
+
+import java.util.List;
 import helpers.utils.TestDataUtil;
 import io.restassured.response.Response;
 
@@ -44,18 +45,17 @@ public abstract class AbstractUsersViewRolesSsoTest extends AbstractSsoUiTest {
 
         // 3. External user now sees Manager affordances on the project.
         ssoLogin(EXTERNAL_USER, EXTERNAL_USER);
-        RepositoryContentButtonsPanelComponent managerToolbar = selectProjectToolbar();
-        assertThat(managerToolbar.isCopyBtnVisible())
-                .as("group/role Manager via external auth sees the Copy action").isTrue();
+        assertThat(projectActions())
+                .as("group/role Manager via external auth sees the Copy action").contains("Copy");
 
         // 4. Admin downgrades the role to Viewer.
         assignProjectRole("Viewer", false);
 
         // 5. External user now sees only read-only (Viewer) affordances.
         ssoLogin(EXTERNAL_USER, EXTERNAL_USER);
-        RepositoryContentButtonsPanelComponent viewerToolbar = selectProjectToolbar();
-        assertThat(viewerToolbar.isCopyBtnVisible()).as("Viewer does NOT see the Copy action").isFalse();
-        assertThat(viewerToolbar.isExportBtnVisible()).as("Viewer still sees the Export action").isTrue();
+        List<String> viewerActions = projectActions();
+        assertThat(viewerActions).as("Viewer does NOT see the Copy action").doesNotContain("Copy");
+        assertThat(viewerActions).as("Viewer still sees the Export action").contains("Export");
     }
 
     private void uploadProjectViaBrowserSession() {
@@ -92,11 +92,8 @@ public abstract class AbstractUsersViewRolesSsoTest extends AbstractSsoUiTest {
         return goToRepository().getAllVisibleProjectsInTable();
     }
 
-    private RepositoryContentButtonsPanelComponent selectProjectToolbar() {
-        RepositoryPage repositoryPage = goToRepository();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        return repositoryPage.getRepositoryContentButtonsPanelComponent();
+    /** What the project's row offers this user — the React equivalent of the old toolbar buttons. */
+    private List<String> projectActions() {
+        return goToRepository().getProjectActionLabels(PROJECT_NAME);
     }
 }

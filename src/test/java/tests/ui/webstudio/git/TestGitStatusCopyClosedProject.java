@@ -16,8 +16,6 @@ import helpers.service.UserService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestGitStatusCopyClosedProject extends BaseTest {
@@ -38,59 +36,28 @@ public class TestGitStatusCopyClosedProject extends BaseTest {
         // Create project from template
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, PROJECT_NAME, TEMPLATE_NAME);
 
-        // Select project in tree and close it
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
+        // Close the project, then copy it — the copy dialog opens in branch mode and suggests a branch name.
+        repositoryPage.closeProject(PROJECT_NAME);
 
-        // Refresh and copy project via icon in table
-        repositoryPage.refresh();
-        CopyProjectDialogComponent copyDialog = repositoryPage.clickCopyProjectInTable(PROJECT_NAME);
+        CopyProjectDialogComponent copyDialog = repositoryPage.clickCopyAction(PROJECT_NAME);
         String copyBranch = copyDialog.getNewBranchName();
         copyDialog.clickCopyButton();
+        repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
 
-        // Verify status in Properties tab
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        String statusInProperties = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab()
-                .getStatus();
-        assertThat(statusInProperties)
-                .as("Status in Properties tab should be 'No Changes'")
-                .isEqualTo("No Changes");
+        // Copying a closed project leaves it closed in the workspace (the old UI opened it as "No Changes").
+        assertThat(repositoryPage.openProjectsList().getProjectStatusFromDetail(PROJECT_NAME))
+                .as("A copied closed project stays closed")
+                .isEqualTo("Closed");
 
-        // Verify status and branch in table after refresh
-        repositoryPage.refresh();
-        Map<String, String> projectInfo = repositoryPage.getProjectInfoFromTable(PROJECT_NAME);
-        assertThat(projectInfo.get("Status"))
-                .as("Status in table should be 'No Changes'")
-                .isEqualTo("No Changes");
-
-        // Verification of EPBDS-8469
-        assertThat(projectInfo.get("Branch"))
-                .as("Branch in table should be " + copyBranch)
+        // EPBDS-8469: the row shows the branch the copy was made on.
+        assertThat(repositoryPage.openProjectsList().getProjectBranchFromTable(PROJECT_NAME))
+                .as("The row should show branch " + copyBranch)
                 .isEqualTo(copyBranch);
 
-        // Close project again and verify branch selector
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", PROJECT_NAME);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCloseBtn();
-
-        String selectedBranch = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab()
-                .getSelectedBranch();
-        assertThat(selectedBranch)
-                .as("Selected branch should be " + copyBranch)
-                .isEqualTo(copyBranch);
-
-        // Final verification after refresh
-        repositoryPage.refresh();
-        Map<String, String> finalProjectInfo = repositoryPage.getProjectInfoFromTable(PROJECT_NAME);
-        assertThat(finalProjectInfo.get("Branch"))
-                .as("Branch in table should still be " + copyBranch)
+        // It is still closed, and still on that branch.
+        assertThat(repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME).getCurrentBranch())
+                .as("The project should still sit on branch " + copyBranch)
                 .isEqualTo(copyBranch);
     }
 }

@@ -43,6 +43,7 @@ public class RepositoryPage extends BasePage {
     // per-row action buttons keyed by aria-label. Format placeholders with the project name.
     private WebElement projectRowByName;
     private WebElement projectNameInRow;
+    private WebElement projectBranchInRow;
     private WebElement projectActionByName;
     private WebElement projectRowMoreBtn;
     private WebElement projectActionByNameAndState;
@@ -106,6 +107,7 @@ public class RepositoryPage extends BasePage {
         projectRowByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]", "projectRow");
         // Click the name, not the row: a row also holds a branch switcher, and a row-wide click can hit it.
         projectNameInRow = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')]//span[normalize-space()='%s']", "projectNameInRow");
+        projectBranchInRow = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//span[starts-with(@data-testid,'row-branch-')][not(contains(@data-testid,'-default'))][not(contains(@data-testid,'-trigger'))]", "projectBranchInRow");
         projectActionByName = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[@aria-label='%s']", "projectRowAction");
         projectDeployAction = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-action-deploy-')]", "projectDeployAction");
         projectRowMoreBtn = new WebElement(page, "xpath=//tr[starts-with(@data-testid,'project-row')][.//span[normalize-space()='%s']]//button[starts-with(@data-testid,'project-actions-')]", "projectRowMoreBtn");
@@ -325,6 +327,11 @@ public class RepositoryPage extends BasePage {
         String status = openProjectDetail(projectName).getStatus();
         openProjectsList();
         return status;
+    }
+
+    /** The branch a project sits on, as shown in its row (the list has a branch column again in 6.4.0). */
+    public String getProjectBranchFromTable(String projectName) {
+        return projectBranchInRow.format(projectName).waitForVisible(DEFAULT_TIMEOUT_MS).getText().trim();
     }
 
     // Return to the projects list from a project-detail view (the detail has no row actions), so callers
