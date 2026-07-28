@@ -82,10 +82,9 @@ public abstract class AbstractUsersViewRolesSsoTest extends AbstractSsoUiTest {
     }
 
     private RepositoryPage goToRepository() {
-        RepositoryPage repositoryPage = new EditorPage().getTabSwitcherComponent()
+        // The React list needs no explicit refresh (the old refresh link is gone).
+        return new EditorPage().getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.refresh();
-        return repositoryPage;
     }
 
     private java.util.List<String> repositoryProjects() {

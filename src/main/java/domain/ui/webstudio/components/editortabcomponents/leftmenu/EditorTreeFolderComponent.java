@@ -52,7 +52,8 @@ public class EditorTreeFolderComponent extends BaseComponent {
     }
 
     public void selectItem(String itemName) {
-        itemTemplate.format(itemName).click();
+        // The tree re-renders on its own while the project recompiles, so a strict click can thrash.
+        itemTemplate.format(itemName).clickWhenSettled();
         waitUntilSpinnerLoaded();
     }
 

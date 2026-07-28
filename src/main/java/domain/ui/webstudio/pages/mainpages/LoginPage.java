@@ -59,8 +59,13 @@ public class LoginPage extends BasePage {
      * Waits for either the modal or the loaded shell so a returning user costs no extra timeout.
      */
     public void completeProfileIfRequested() {
-        page.waitForSelector(SHELL_READY_SELECTOR,
-                new Page.WaitForSelectorOptions().setTimeout(DEFAULT_TIMEOUT_MS));
+        try {
+            page.waitForSelector(SHELL_READY_SELECTOR,
+                    new Page.WaitForSelectorOptions().setTimeout(DEFAULT_TIMEOUT_MS));
+        } catch (RuntimeException notSignedIn) {
+            // Wrong credentials leave us on the login form: there is no shell and no profile modal to fill.
+            return;
+        }
         if (completeProfileModal.isVisible(DEFAULT_TIMEOUT_MS / 10)) {
             completeProfileComponent.fillCommitInfoWithRandomData();
             completeProfileModal.waitForHidden(DEFAULT_TIMEOUT_MS);

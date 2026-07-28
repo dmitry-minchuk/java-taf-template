@@ -76,6 +76,7 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         return this;
     }
 
+    /** Selects a leaf node of the tree, tolerating a tree that is still being rebuilt after a save. */
     public EditorLeftRulesTreeComponent selectVisibleLeafNode(String itemName) {
         waitUntilSpinnerLoaded();
         WebElement leafNode = WaitUtil.waitForResult(() -> leafNodes.stream()
@@ -85,7 +86,8 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
                 100,
                 "Searching for visible leaf node '" + itemName + "' in editor tree")
                 .orElseThrow(() -> new RuntimeException(String.format("Visible leaf node with name %s not found", itemName)));
-        leafNode.child("a").click();
+        // The tree re-renders on its own while the project recompiles, so a strict click can thrash.
+        leafNode.child("a").clickWhenSettled();
         return this;
     }
 
@@ -131,11 +133,17 @@ public class EditorLeftRulesTreeComponent extends BaseComponent {
         return this;
     }
 
+    /**
+     * Selects an item in a folder of the rules tree. Saving a table makes the project recompile and the tree
+     * is rebuilt while that runs, so the lookup is retried rather than failing on a tree that is mid-refresh.
+     */
     public EditorLeftRulesTreeComponent selectItemInFolder(String folderName, String itemName) {
         waitUntilSpinnerLoaded();
-        EditorTreeFolderComponent folder = findFolderInTree(folderName);
-        folder.selectItem(itemName);
-        return this;
+        return WaitUtil.retryOnException(() -> {
+            EditorTreeFolderComponent folder = findFolderInTree(folderName);
+            folder.selectItem(itemName);
+            return this;
+        }, DEFAULT_TIMEOUT_MS, 500, "Selecting '" + itemName + "' in folder '" + folderName + "'");
     }
 
     public EditorLeftRulesTreeComponent expandFolderInTree(String folderName) {
