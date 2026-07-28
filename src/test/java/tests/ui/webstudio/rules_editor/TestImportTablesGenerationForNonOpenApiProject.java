@@ -89,6 +89,12 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
                         "rules/Models.xlsx");
         settingsDialog.clickImportAndOverride();
 
+        // The import rewrites the project descriptor; give the editor time to settle and re-read the project
+        // so the module list is the new one.
+        editorPage.waitUntilAppIdle();
+        editorPage.reloadPage();
+        editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
+
         // Verify module list: Models and Bank Rating present, Algorithms absent
         List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
         assertThat(modules)
