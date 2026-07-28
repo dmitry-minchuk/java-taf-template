@@ -42,6 +42,13 @@ public class ChangesDialogComponent extends BaseComponent {
 
     public void setCompareCheckbox(int index, boolean value) {
         WebElement checkbox = compareCheckboxTemplate.format(String.valueOf(index));
+        if (!checkbox.isVisible(DEFAULT_TIMEOUT_MS / 2)) {
+            // The changes page is rendered on its own request and can arrive before the edit that was just
+            // saved is registered, leaving the list empty. Re-requesting it picks the change up.
+            page.reload();
+            waitUntilSpinnerLoaded();
+            checkbox.waitForVisible(DEFAULT_TIMEOUT_MS);
+        }
         if (checkbox.isChecked() != value) {
             checkbox.click();
             WaitUtil.sleep(100, "Waiting after checkbox click");
