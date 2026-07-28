@@ -474,6 +474,7 @@ public class ProjectDetailPage extends BasePage {
      * following isFilePresent check races the removal and still sees the node.
      */
     public ProjectDetailPage deleteFile(String fileName) {
+        openFilesTab();
         fileNodeByName.format(fileName).click();
         fileActionsBtn.click();
         fileActionsMenuItem.format("Delete").click();

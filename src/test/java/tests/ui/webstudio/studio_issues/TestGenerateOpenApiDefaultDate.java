@@ -37,14 +37,7 @@ public class TestGenerateOpenApiDefaultDate extends BaseTest {
         // Navigate to Repository tab and verify openapi.json appears in the project tree
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects");
-        repositoryPage.waitUntilSpinnerLoaded();
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree(projectName);
-        repositoryPage.waitUntilSpinnerLoaded();
-
-        assertThat(repositoryPage.getLeftRepositoryTreeComponent().isItemExistsInTree("openapi.json"))
+        assertThat(repositoryPage.openProjectsList().openProjectDetail(projectName).isFilePresent("openapi.json"))
                 .as("openapi.json should appear in the repository tree after generating the OpenAPI schema")
                 .isTrue();
     }

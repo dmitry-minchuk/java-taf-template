@@ -38,14 +38,7 @@ public class TestDeleteOpenApiFileRemovesProperties extends BaseTest {
 
         repositoryPage.createProjectFromOpenApi(YML_FILE, projectName);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .expandFolderInTree(projectName)
-                .selectItemInFolder(projectName, "openapi.yml");
-
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickDeleteBtn();
-        repositoryPage.getConfirmDeleteDialogComponent().clickDelete();
-        repositoryPage.waitUntilSpinnerLoaded();
+        repositoryPage.openProjectsList().openProjectDetail(projectName).deleteFile("openapi.yml");
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
