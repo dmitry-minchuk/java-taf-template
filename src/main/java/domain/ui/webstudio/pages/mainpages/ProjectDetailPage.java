@@ -30,6 +30,8 @@ public class ProjectDetailPage extends BasePage {
     // The detail screen can settle after the first tab click, so a switch may need repeating.
     private static final int TAB_SWITCH_ATTEMPTS = 3;
     private static final String COMPARE_SCREEN_PATH = "compare.xhtml";
+    // Reading a file's content before its dialog opens can take a while on a large project.
+    private static final int FILE_DIALOG_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
     private static final int COMPARE_WINDOW_WIDTH = 1280;
     private static final int COMPARE_WINDOW_HEIGHT = 800;
 
@@ -599,10 +601,10 @@ public class ProjectDetailPage extends BasePage {
     public ProjectDetailPage updateFile(String fileName, String newFilePath) {
         openFilesTab();
         fileNodeByName.format(fileName).click();
-        // Selecting a file opens its preview pane, where the actions menu lives — wait for it.
+        // Selecting a file opens its preview pane, where the actions menu lives.
         fileActionsBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
         fileActionsMenuItem.format("Update").click();
-        updateFileInput.waitForVisible(DEFAULT_TIMEOUT_MS).setInputFiles(newFilePath);
+        updateFileInput.waitForVisible(FILE_DIALOG_TIMEOUT_MS).setInputFiles(newFilePath);
         updateFileSubmitBtn.click();
         waitUntilSpinnerLoaded();
         return this;
