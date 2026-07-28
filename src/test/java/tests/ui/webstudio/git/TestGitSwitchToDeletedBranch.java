@@ -9,7 +9,6 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.GitActionsService;
@@ -48,13 +47,10 @@ public class TestGitSwitchToDeletedBranch extends BaseTest {
 
         WaitUtil.sleep(11000, "Waiting for branch deletion to propagate");
 
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(projectNameForTest);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-
-        assertThat(propertiesTab.getSelectOprions())
-                .as("Deleted branch should not be listed in available select_options")
-                .doesNotContain(deletedBranchName);
+        assertThat(repositoryPage.openProjectsList().openProjectDetail(projectNameForTest)
+                        .isBranchPresent(deletedBranchName))
+                .as("A deleted branch should no longer be offered by the branch switcher")
+                .isFalse();
     }
 
     private String getOrCreateProject(RepositoryPage repositoryPage) {
@@ -72,23 +68,15 @@ public class TestGitSwitchToDeletedBranch extends BaseTest {
     }
 
     private String createBranchAndDeleteIt(RepositoryPage repositoryPage, String projectName) {
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
+        // Branching happens in the Copy dialog, which suggests the new branch name.
+        CopyProjectDialogComponent copyDialog = repositoryPage.openProjectsList().clickCopyAction(projectName);
         String newBranchName = copyDialog.getNewBranchName();
-        copyDialog.clickCopyButton(false);
+        copyDialog.clickCopyButton();
         repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
 
-        repositoryPage.refresh();
-
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(projectName);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        propertiesTab.selectBranch("master");
+        // Move the project back onto master before the branch is removed underneath it.
+        repositoryPage.openProjectsList().openProjectDetail(projectName).switchBranch("master");
 
         GitActionsService.deleteRemoteBranchDirect(newBranchName);
 

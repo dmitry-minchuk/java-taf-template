@@ -9,8 +9,8 @@ import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
-import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentTabPropertiesComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.GitActionsService;
 import helpers.service.LoginService;
@@ -52,23 +52,14 @@ public class TestGitSwitchDeletedBranchPreset extends BaseTest {
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
 
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectNameForTest);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent().selectPropertiesTab();
-
-        String currentBranch = propertiesTab.getSelectedBranch();
-        assertThat(propertiesTab.getSelectOprions())
-                .as("Deleted branch should not be listed in available select_options")
-                .doesNotContain(deletedBranchName);
-        assertThat(currentBranch)
+        ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(projectNameForTest);
+        assertThat(projectDetail.isBranchPresent(deletedBranchName))
+                .as("A deleted branch should no longer be offered by the branch switcher")
+                .isFalse();
+        assertThat(projectDetail.getCurrentBranch())
                 .as("Branch should revert to master after login")
                 .isEqualTo("master");
-
-        String status = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab()
-                .getStatus();
-        assertThat(status)
+        assertThat(projectDetail.getStatus())
                 .as("Status should be Closed or No Changes")
                 .isIn("Closed", "No Changes");
     }
@@ -88,23 +79,15 @@ public class TestGitSwitchDeletedBranchPreset extends BaseTest {
     }
 
     private String createBranchAndDeleteIt(RepositoryPage repositoryPage, String projectName) {
-        repositoryPage.getLeftRepositoryTreeComponent()
-                .expandFolderInTree("Projects")
-                .selectItemInFolder("Projects", projectName);
-        repositoryPage.getRepositoryContentButtonsPanelComponent().clickCopyBtn();
-
-        CopyProjectDialogComponent copyDialog = repositoryPage.getCopyProjectDialogComponent();
-        copyDialog.waitForDialogToAppear();
+        // Branching happens in the Copy dialog, which suggests the new branch name.
+        CopyProjectDialogComponent copyDialog = repositoryPage.openProjectsList().clickCopyAction(projectName);
         String newBranchName = copyDialog.getNewBranchName();
-        copyDialog.clickCopyButton(false);
+        copyDialog.clickCopyButton();
         repositoryPage.fillCommitInfo();
+        repositoryPage.waitUntilSpinnerLoaded();
 
-        repositoryPage.refresh();
-
-        repositoryPage.getLeftRepositoryTreeComponent().selectProjectInTree(projectName);
-        RepositoryContentTabPropertiesComponent propertiesTab = repositoryPage.getRepositoryContentTabSwitcherComponent()
-                .selectPropertiesTab();
-        propertiesTab.selectBranch(newBranchName);
+        // Leave the project sitting on the branch that is about to be deleted.
+        repositoryPage.openProjectsList().openProjectDetail(projectName).switchBranch(newBranchName);
 
         GitActionsService.deleteRemoteBranchDirect(newBranchName);
 
