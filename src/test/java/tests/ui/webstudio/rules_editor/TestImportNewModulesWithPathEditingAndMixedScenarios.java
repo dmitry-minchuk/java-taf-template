@@ -109,6 +109,7 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .isEqualTo("Import");
 
         // === Step 4.1: Edit rules path, then reset and verify default restored ===
+        settingsDialog.clickEditRulesPath();
         settingsDialog.setNewRulesPath("rules/Alg12.xlsx");
         settingsDialog.clickResetRulesPath();
 
@@ -118,6 +119,7 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         assertThat(settingsDialog.getRulesPathDisplayValue())
                 .as("Rules path display should revert to default 'rules/Alg.xlsx' after reset")
                 .isEqualTo("rules/Alg.xlsx");
+        settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules1/Mod1.xlsx");
         settingsDialog.clickResetDataPath();
 
@@ -142,7 +144,9 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         importDialog.clickImportTablesGeneration();
         settingsDialog = editorPage.getOpenApiModuleSettingsDialogComponent();
         settingsDialog.waitForVisible();
+        settingsDialog.clickEditRulesPath();
         settingsDialog.setNewRulesPath("rules/Alg12.xlsx");
+        settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules1/Mod1.xlsx");
 
         // === Step 4.3: Import and verify module list and OpenAPI properties ===
@@ -152,6 +156,8 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
         assertThat(modules).as("Algorithms_test should still be present").contains("Algorithms_test");
         assertThat(modules).as("Models_test should still be present").contains("Models_test");
+        // Known-failing (product bug EPBDS-16323): OpenAPI import updates the <openapi> block but the
+        // modules it generates are stripped again on descriptor save, so they never reach rules.xml.
         assertThat(modules).as("Alg should be created").contains("Alg");
         assertThat(modules).as("Mod-123 should be created").contains(moduleName);
 
@@ -202,6 +208,7 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .contains("The following module doesn't exist and is going to be created:\n" +
                         "Data Module: Mod1\n" +
                         "rules/Mod1.xlsx");
+        settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules/Mod5.xlsx");
 
         // === Step 5.2: Import and verify final module list and properties ===

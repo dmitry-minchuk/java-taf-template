@@ -73,6 +73,8 @@ public class TestTestButtonAvailable extends BaseTest {
                 () -> editorPageRef2.getEditorToolbarPanelComponent().isTestButtonVisible(),
                 5000, 500, "Waiting for Test button after full refresh"
         );
+        // The button shows the plain "Test" label until the reloaded module finishes compiling.
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         assertThat(editorPage.getEditorToolbarPanelComponent().getTestButtonText())
                 .as("Test button should show 'Test 3' after full refresh")
                 .isEqualTo("Test 3");
@@ -136,5 +138,10 @@ public class TestTestButtonAvailable extends BaseTest {
     private void waitForTable(EditorPage editorPage) {
         WaitUtil.waitForCondition(() -> editorPage.getCenterTable().isVisible(),
                 TABLE_LOAD_TIMEOUT_MS, 250, "Waiting for the table of the selected node");
+        // Selecting a node triggers a recompile that keeps redrawing the table, so an edit started before the
+        // compilation finishes never finds a stable cell.
+        editorPage.waitUntilSpinnerLoaded();
+        editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
+        editorPage.waitUntilAppIdle();
     }
 }

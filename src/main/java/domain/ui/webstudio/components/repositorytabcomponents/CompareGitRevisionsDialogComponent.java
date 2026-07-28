@@ -65,8 +65,10 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
         compareBtnInPopup = new WebElement(getPage(),
                 "xpath=//input[@id='compareForm:compareBtn']",
                 "compareBtnInPopup");
+        // Both checkboxes are rendered without an id and with a generated name (compareForm:j_idtNN), so the
+        // only stable handle is their own label text.
         showEqualRowsCheckbox = new WebElement(getPage(),
-                "xpath=//input[contains(@id,'showEqualElements')]",
+                "xpath=//text()[contains(.,'Show equal rows')]/following::input[@type='checkbox'][1]",
                 "showEqualRowsCheckbox");
         treeNodeLabels = new WebElement(getPage(),
                 "xpath=//span[contains(@class,'rf-trn-lbl')]",
@@ -127,6 +129,11 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
 
     public void clickCompareBtn() {
         compareBtnInPopup.waitForVisible(5000);
+        // Changing the revision reloads the revision's Excel list over Ajax, and Compare stays disabled
+        // until both file lists are filled. Clicking earlier is a no-op and leaves the tree empty.
+        WaitUtil.waitForCondition(() -> !rightModulesSelect.getSelectVisibleTextValues().isEmpty()
+                        && compareBtnInPopup.isEnabled(),
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the compare screen to enable the Compare button");
         compareBtnInPopup.click();
         WaitUtil.sleep(1000, "Waiting for repository comparison Ajax request to start");
         waitUntilSpinnerLoaded();

@@ -502,7 +502,10 @@ public class ProjectDetailPage extends BasePage {
         CompareGitRevisionsDialogComponent compare = new CompareGitRevisionsDialogComponent(compareWindow);
         // The screen opens with nothing compared yet: pick the revision to compare against and run it.
         // (Its module dropdowns are RichFaces combos and stay hidden, so do not wait on them here.)
-        compare.selectRevision(1);
+        // The left half is always the working copy, so index 0 (the newest revision) is what a project with
+        // uncommitted edits must be compared against; comparing a committed project against its own HEAD
+        // yields "File elements are identical" and no tree.
+        compare.selectRevision(0);
         compare.clickCompareBtn();
         return compare;
     }
@@ -600,12 +603,26 @@ public class ProjectDetailPage extends BasePage {
      * file, confirm. Uploading a file with a different name is allowed but warned about.
      */
     public ProjectDetailPage updateFile(String fileName, String newFilePath) {
+        pickUpdateFile(fileName, newFilePath);
+        confirmUpdateFile();
+        return this;
+    }
+
+    /** Opens the Update dialog for a file and picks the replacement, leaving the dialog open. */
+    public ProjectDetailPage pickUpdateFile(String fileName, String newFilePath) {
         openFilesTab();
         fileNodeByName.format(fileName).click();
         // Selecting a file opens its preview pane, where the actions menu lives.
         fileActionsBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
         fileActionsMenuItem.format("Update").click();
-        updateFileInput.waitForVisible(FILE_DIALOG_TIMEOUT_MS).setInputFiles(newFilePath);
+        // The dragger's file input is hidden, so wait on the dialog's own button and feed the input directly.
+        updateFileSubmitBtn.waitForVisible(FILE_DIALOG_TIMEOUT_MS);
+        updateFileInput.setInputFiles(newFilePath);
+        return this;
+    }
+
+    /** Confirms the Update dialog opened by {@link #pickUpdateFile}. */
+    public ProjectDetailPage confirmUpdateFile() {
         updateFileSubmitBtn.click();
         waitUntilSpinnerLoaded();
         return this;

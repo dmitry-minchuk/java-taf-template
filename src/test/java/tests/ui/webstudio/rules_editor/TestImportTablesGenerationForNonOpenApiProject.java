@@ -95,6 +95,8 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
         editorPage.reloadPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
+        // Known-failing (product bug EPBDS-16323): the import writes the <openapi> block but the modules it
+        // generates are stripped again when the descriptor is saved, so "Models" never reaches rules.xml.
         // Verify module list: Models and Bank Rating present, Algorithms absent
         List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
         assertThat(modules)

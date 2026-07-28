@@ -45,7 +45,11 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
 
         // Replace openapi.json with openapi-compare2.json (a different file name, which is warned about)
         projectDetail = repositoryPage.openProjectsList().openProjectDetail(projectName);
-        projectDetail.updateFile(OPENAPI_FILE_NAME, TestDataUtil.getFilePathFromResources(OPENAPI_FILE_2));
+        projectDetail.pickUpdateFile(OPENAPI_FILE_NAME, TestDataUtil.getFilePathFromResources(OPENAPI_FILE_2));
+        assertThat(projectDetail.isUpdateFileNameWarningShown())
+                .as("Warning should appear when uploading a file with a different name")
+                .isTrue();
+        projectDetail.confirmUpdateFile();
         repositoryPage.openProjectsList().saveProject(projectName, "Updated " + OPENAPI_FILE_NAME);
 
         // Open the previous revision (R1)
@@ -69,7 +73,14 @@ public class TestCompareScreenForOpenApiFiles extends BaseTest {
         // Back in Repository: select openapi.json, update to openapi-compare3.json
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        repositoryPage.openProjectsList().openProjectDetail(projectName)
-                .updateFile(OPENAPI_FILE_NAME, TestDataUtil.getFilePathFromResources(OPENAPI_FILE_3));
+        projectDetail = repositoryPage.openProjectsList().openProjectDetail(projectName)
+                .pickUpdateFile(OPENAPI_FILE_NAME, TestDataUtil.getFilePathFromResources(OPENAPI_FILE_3));
+        assertThat(projectDetail.isUpdateFileNameWarningShown())
+                .as("Warning should appear again when the replacement file has a different name")
+                .isTrue();
+        projectDetail.confirmUpdateFile();
+        assertThat(projectDetail.isFilePresent(OPENAPI_FILE_NAME))
+                .as("openapi.json should still be in the project after the update")
+                .isTrue();
     }
 }

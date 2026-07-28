@@ -88,21 +88,16 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
                 .isGreaterThan(4);
         compareDialog.close();
 
-        // Save project and go to Repository
-        editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
-        editorPage.waitUntilSpinnerLoaded();
-
+        // Compare the working copy against the repository BEFORE committing: the repo compare screen always
+        // puts the working copy on the left, so the edited-but-unsaved project is what differs from HEAD.
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         ProjectDetailPage projectDetail = repositoryPage.openProjectDetail(projectName);
 
-        // React repo-compare: pick the two newest revisions on the History tab and open the diff. It opens in
-        // a new browser tab (the legacy showDiff.xhtml). This build's showDiff always renders the full table
-        // and highlights the changed cells green; unlike the old repo compare, the "Show equal elements" toggle
-        // no longer removes equal rows (the 4-vs-all row filter is gone), so the repo half now verifies the
-        // changed-cell highlighting — the equal-rows filter itself is still covered above via the Local Changes
-        // compare (CompareLocalChangesDialogComponent).
+        // The repo compare opens in a new browser tab (the legacy showDiff.xhtml). This build always renders the
+        // full table and highlights the changed cells green; unlike the old repo compare, "Show equal elements"
+        // no longer removes equal rows, so the repo half verifies the highlighting and the equal-rows filter
+        // stays covered above through the Local Changes compare.
         CompareGitRevisionsDialogComponent repoCompareDialog = projectDetail.openRevisionCompare();
         repoCompareDialog.openTreeNode("Limit");
         repoCompareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
@@ -119,6 +114,8 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
         repoCompareDialog.clickTreeNode("Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)");
         validateRepositoryCompareWindowCells(repoCompareDialog);
         repoCompareDialog.close();
+
+        repositoryPage.openProjectsList().saveProject(projectName, "Edited BankLimitIndex");
     }
 
     @Test
