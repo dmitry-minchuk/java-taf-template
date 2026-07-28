@@ -5,9 +5,12 @@ def openlTestsGitIrl = "https://github.com/dmitry-minchuk/java-taf-template.git"
 
 def protocol_prefix = "https://"
 def image_hub_registry = "ghcr.io/"
-def studio = "openl-tablets/webstudio:x"
-def ws = "openl-tablets/ws:x-all"
-// def demo = "openl-tablets/demo:x"
+// The registry no longer publishes the floating ":x" tag, so the tested build is named explicitly.
+// APPLICATION_IMAGE_TAG overrides it per run; the fallback keeps the very first build (no params yet) working.
+def application_image_tag = params?.APPLICATION_IMAGE_TAG ?: "6.4.0-ef53e0bec1d7"
+def studio = "openl-tablets/webstudio:${application_image_tag}"
+def ws = "openl-tablets/ws:${application_image_tag}-all"
+// def demo = "openl-tablets/demo:${application_image_tag}"
 
 class JenkinsNode {
     String nodeLabel
@@ -77,6 +80,7 @@ pipeline {
     }
     parameters {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Tested application version (openl-tablets). Special chars like : or | or [] not allowed here!')
+        string(name: 'APPLICATION_IMAGE_TAG', defaultValue: '6.4.0-ef53e0bec1d7', description: 'Tag of the tested images in ghcr.io: webstudio:<tag> and ws:<tag>-all')
         string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests repository branch')
     }
     stages {
@@ -91,10 +95,11 @@ pipeline {
                                   def studio_image = docker.image(studio)
                                   def ws_image = docker.image(ws)
                                   sh "docker system prune -f"
-                                  sh "docker image rm -f ghcr.io/${studio_image.imageName()}"
-                                  sh "docker image rm -f ghcr.io/${ws_image.imageName()}"
-                                  sh "docker pull ${studio_image.imageName()}"  // Always pulling latest image here :x
-                                  sh "docker pull ${ws_image.imageName()}"  // Always pulling latest image here :x
+                                  // imageName() already carries the registry prefix inside withRegistry.
+                                  sh "docker image rm -f ${studio_image.imageName()}"
+                                  sh "docker image rm -f ${ws_image.imageName()}"
+                                  sh "docker pull ${studio_image.imageName()}"
+                                  sh "docker pull ${ws_image.imageName()}"
                                 }
                             }
                         }]
