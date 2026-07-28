@@ -5,12 +5,10 @@ def openlTestsGitIrl = "https://github.com/dmitry-minchuk/java-taf-template.git"
 
 def protocol_prefix = "https://"
 def image_hub_registry = "ghcr.io/"
-// The registry no longer publishes the floating ":x" tag, so the tested build is named explicitly.
-// APPLICATION_IMAGE_TAG overrides it per run; the fallback keeps the very first build (no params yet) working.
-def application_image_tag = params?.APPLICATION_IMAGE_TAG ?: "6.4.0-ef53e0bec1d7"
-def studio = "openl-tablets/webstudio:${application_image_tag}"
-def ws = "openl-tablets/ws:${application_image_tag}-all"
-// def demo = "openl-tablets/demo:${application_image_tag}"
+// ":x" used to be the floating "newest build" tag; the registry publishes "latest" instead.
+def studio = "openl-tablets/webstudio:latest"
+def ws = "openl-tablets/ws:latest-all"
+// def demo = "openl-tablets/demo:latest"
 
 class JenkinsNode {
     String nodeLabel
@@ -80,7 +78,6 @@ pipeline {
     }
     parameters {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Tested application version (openl-tablets). Special chars like : or | or [] not allowed here!')
-        string(name: 'APPLICATION_IMAGE_TAG', defaultValue: '6.4.0-ef53e0bec1d7', description: 'Tag of the tested images in ghcr.io: webstudio:<tag> and ws:<tag>-all')
         string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests repository branch')
     }
     stages {
