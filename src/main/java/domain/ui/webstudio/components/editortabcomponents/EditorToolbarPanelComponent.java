@@ -193,6 +193,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         copyProjectBtn.click();
     }
 
+    public boolean isCopyProjectBtnVisible() {
+        return copyProjectBtn.isVisible(DEFAULT_TIMEOUT_MS / 2);
+    }
+
     public void clickCreateTable() {
         createTableBtn.click();
     }
