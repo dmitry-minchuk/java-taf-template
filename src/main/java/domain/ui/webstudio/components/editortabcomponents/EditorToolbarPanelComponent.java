@@ -316,19 +316,42 @@ public class EditorToolbarPanelComponent extends BaseComponent {
      * the first document fires the page-hide handler, which releases the debug session the new document has
      * just created, and the step table then stays empty.
      */
-    private void requestAdvancedTracer() {
-        // The launcher reads the flag at click time (isAdvancedTracer in table.xhtml), so the switch is set right
-        // before the button is pressed. The exec switch sits inside the launch menu next to the Trace button and
-        // is on screen; the test-table one lives in a hidden block and only its "checked" state is read.
-        if (advancedTracerExecCheckbox.exists()) {
-            if (!advancedTracerExecCheckbox.isCheckedEvenIfHidden()) {
-                LOGGER.info("Asking the launcher for the advanced tracer");
-                advancedTracerExecCheckbox.checkEvenIfHidden();
+    /**
+     * Asks for the advanced step debugger before the trace window is opened.
+     *
+     * <p>The launcher reads the flag at click time (isAdvancedTracer in table.xhtml) and each launcher reads its
+     * own switch. Only the switch of the menu that is open belongs to the launcher about to run - ticking the
+     * other one closes that menu and the Trace button goes away with it.
+     */
+    private boolean requestAdvancedTracer() {
+        for (WebElement checkbox : List.of(advancedTracerExecCheckbox, advancedTracerTestCheckbox)) {
+            if (checkbox.isVisible(1000)) {
+                if (!checkbox.isCheckedEvenIfHidden()) {
+                    LOGGER.info("Asking the launcher for the advanced tracer");
+                    checkbox.checkEvenIfHidden();
+                }
+                return true;
             }
-        } else if (advancedTracerTestCheckbox.exists() && !advancedTracerTestCheckbox.isCheckedEvenIfHidden()) {
-            LOGGER.info("Asking the test launcher for the advanced tracer");
-            advancedTracerTestCheckbox.checkEvenIfHidden();
         }
+        return false;
+    }
+
+    /**
+     * Last resort for a table the launcher runs without asking for parameters: its switch is in a block the page
+     * keeps hidden, and a programmatic click does not flip a hidden checkbox, so the window is re-opened with the
+     * flag. Costly - leaving the first document releases the debug session - so it is only used when the switch
+     * could not be reached.
+     */
+    private static void reopenInAdvancedTracer(Page tracePopup) {
+        String url = tracePopup.url();
+        if (url.contains("advanced=true")) {
+            return;
+        }
+        LOGGER.info("Re-opening the trace window in the advanced debugger");
+        tracePopup.navigate(url + (url.contains("?") ? "&" : "?") + "advanced=true");
+        tracePopup.waitForLoadState();
+        tracePopup.waitForSelector("xpath=//div[@id='trace-view']",
+                new Page.WaitForSelectorOptions().setTimeout(DEFAULT_TIMEOUT_MS));
     }
 
     public ITraceWindow clickTraceExpectTraceWindow() {
@@ -336,12 +359,15 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         traceBtn.waitForVisible();
 
         // Retry the click+wait: on slow CI the first click can land before the rule is runnable, so no popup opens.
-        requestAdvancedTracer();
+        boolean switchSet = requestAdvancedTracer();
         Page popup = WaitUtil.retryOnException(
                 () -> page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(30000), () -> traceBtn.click()),
                 65000, 1000, "Opening Trace popup window");
         popup.waitForLoadState();
         popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
+        if (!switchSet) {
+            reopenInAdvancedTracer(popup);
+        }
         return new TraceWindow(popup);
     }
 
@@ -599,10 +625,13 @@ public class EditorToolbarPanelComponent extends BaseComponent {
                 // (execute="@form") → /web/projects/{id} fetch → CustomEvent → React window.open.
                 // On loaded CI agents this can exceed the default 10s timeout — match the 60s
                 // already used by clickTraceExpectTraceWindow.
-                requestAdvancedTracer();
+                boolean switchSet = requestAdvancedTracer();
                 Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceInsideMenuBtn.click());
                 popup.waitForLoadState();
                 popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
+                if (!switchSet) {
+                    reopenInAdvancedTracer(popup);
+                }
                 return new TraceWindow(popup);
             } else {
                 traceInsideMenuBtn.click();
