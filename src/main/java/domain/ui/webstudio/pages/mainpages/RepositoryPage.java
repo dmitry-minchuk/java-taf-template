@@ -33,6 +33,8 @@ public class RepositoryPage extends BasePage {
     private WebElement createProjectLink;
     // Inline row buttons render with the row itself, so a short probe decides inline-vs-overflow.
     private static final int ROW_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+    // Short enough that a row lost to a re-render is retried instead of waited out.
+    private static final int ROW_ACTION_CLICK_TIMEOUT_MS = DEFAULT_TIMEOUT_MS / 2;
     // aria-label of the row's overflow trigger — a menu opener, not an action of its own.
     private static final String OVERFLOW_TRIGGER_LABEL = "Actions";
     // Filter-rail group ids (6.4.0): each group collapses, and its rows leave the DOM while collapsed.
@@ -246,13 +248,19 @@ public class RepositoryPage extends BasePage {
      * Compare, Export and Delete into the row's overflow menu.
      */
     public void clickRowAction(String projectName, String actionLabel) {
-        WebElement inlineAction = projectActionByName.format(projectName, actionLabel);
-        if (inlineAction.isVisible(ROW_ACTION_PROBE_MS)) {
-            inlineAction.click();
-            return;
-        }
-        projectRowMoreBtn.format(projectName).click();
-        overflowMenuItem.format(actionLabel).click();
+        // The row is re-rendered when the projects list refreshes, which can drop the button between the moment it
+        // is found and the moment it is pressed - and the overflow menu closes with it. So the whole
+        // open-the-menu-and-pick sequence is retried rather than waited for once.
+        WaitUtil.retryOnException(() -> {
+            WebElement inlineAction = projectActionByName.format(projectName, actionLabel);
+            if (inlineAction.isVisible(ROW_ACTION_PROBE_MS)) {
+                inlineAction.click(ROW_ACTION_CLICK_TIMEOUT_MS);
+            } else {
+                projectRowMoreBtn.format(projectName).click();
+                overflowMenuItem.format(actionLabel).click(ROW_ACTION_CLICK_TIMEOUT_MS);
+            }
+            return null;
+        }, DEFAULT_TIMEOUT_MS * 2, 500, "Pressing the row action '" + actionLabel + "' of project " + projectName);
     }
 
     // A closed project exposes the "Open" row action; an opened one exposes "Close".
