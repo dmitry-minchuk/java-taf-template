@@ -208,16 +208,23 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
 
     // ========== Row and column counting ==========
 
+    /**
+     * Rows of the given comparison fragment. The table is replaced wholesale on every re-render, so the count
+     * is read once it stops changing - the first non-zero count can be taken mid-replacement.
+     */
     public int getNumberOfRows(int fragment) {
         String frag = String.valueOf(fragment);
-        WaitUtil.waitForCondition(() -> {
-            int c = tableEditorRowsTemplate.format(frag).getLocator().count();
-            if (c == 0) c = comparisonLayoutRowsTemplate.format(frag).getLocator().count();
-            return c > 0;
-        }, 10000, 250, "Waiting for comparison rows to appear for fragment " + fragment);
-        int count = tableEditorRowsTemplate.format(frag).getLocator().count();
+        WaitUtil.waitForCondition(() -> countRows(frag) > 0, DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for comparison rows to appear for fragment " + fragment);
+        WaitUtil.waitForStableSize(() -> countRows(frag), DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the row count of fragment " + fragment + " to settle");
+        return countRows(frag);
+    }
+
+    private int countRows(String fragment) {
+        int count = tableEditorRowsTemplate.format(fragment).getLocator().count();
         if (count == 0) {
-            count = comparisonLayoutRowsTemplate.format(frag).getLocator().count();
+            count = comparisonLayoutRowsTemplate.format(fragment).getLocator().count();
         }
         return count;
     }
@@ -240,11 +247,22 @@ public class CompareLocalChangesDialogComponent extends BaseComponent {
 
     // ========== Show Equal Rows ==========
 
+    /**
+     * Turns the "show equal rows" filter on or off and waits for the tables to be redrawn: the checkbox itself
+     * flips at once, while the rows are replaced by a later render.
+     */
     public void setShowEqualRows(boolean value) {
-        if (showEqualRowsCheckbox.isChecked() != value) {
-            showEqualRowsCheckbox.click();
-            WaitUtil.sleep(500, "Waiting for equal rows filter to apply");
+        if (showEqualRowsCheckbox.isChecked() == value) {
+            return;
         }
+        int before = countRows("1");
+        showEqualRowsCheckbox.click();
+        WaitUtil.waitForCondition(() -> showEqualRowsCheckbox.isChecked() == value, DEFAULT_TIMEOUT_MS, 200,
+                "Waiting for the equal rows checkbox to read " + value);
+        WaitUtil.waitForCondition(() -> countRows("1") != before, DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the comparison to be redrawn with equal rows " + (value ? "shown" : "hidden"));
+        WaitUtil.waitForStableSize(() -> countRows("1"), DEFAULT_TIMEOUT_MS, 250,
+                "Waiting for the redrawn comparison to settle");
     }
 
     public boolean isShowEqualRowsCheckboxVisible() {

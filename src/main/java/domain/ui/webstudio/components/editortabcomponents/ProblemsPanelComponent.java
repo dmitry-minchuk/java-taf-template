@@ -134,17 +134,33 @@ public class ProblemsPanelComponent extends BaseComponent {
         return warnings;
     }
 
+    // "Not compiling" is believed only after this many polls in a row: the bar keeps the previous result briefly.
+    private static final int QUIET_POLLS_BEFORE_COMPILED = 4;
+
     public void waitForCompilationToComplete() {
         waitForCompilationToComplete(30000, 250);
     }
     
+    /**
+     * Waits for the project to be compiled.
+     *
+     * <p>The progress bar still shows the previous run's "Loaded 100%" for a moment after an edit is saved, so
+     * "not in progress" is only trusted once it holds over a few polls in a row - otherwise the problems panel
+     * is read while the recompile is only starting and reports no problems at all.
+     */
     public void waitForCompilationToComplete(long timeoutMillis, long pollIntervalMillis) {
-        long maxAttempts = timeoutMillis / pollIntervalMillis;
-        for (int attempt = 1; attempt <= maxAttempts && isCompilationInProgress(); attempt++) {
-            LOGGER.info("Compilation in progress, waiting... ({}/{})", attempt, maxAttempts);
+        long deadline = System.currentTimeMillis() + timeoutMillis;
+        int quietPolls = 0;
+        while (System.currentTimeMillis() < deadline) {
+            if (isCompilationInProgress()) {
+                quietPolls = 0;
+            } else if (++quietPolls >= QUIET_POLLS_BEFORE_COMPILED) {
+                LOGGER.info("Compilation completed");
+                return;
+            }
             WaitUtil.sleep((int) pollIntervalMillis, "Waiting for project compilation to complete (polling)");
         }
-        LOGGER.info(isCompilationInProgress() ? "Compilation timeout reached" : "Compilation completed");
+        LOGGER.info("Compilation timeout reached");
     }
 
     public void selectProblemByText(String text) {
