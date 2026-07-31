@@ -31,7 +31,8 @@ public class TestAddAndDeleteProperty extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-25857")
-    @Description("Rules Editor - Add and delete properties in table details")
+    @Description("Rules Editor - Add and delete properties in table details."
+            + " Known bug: EPBDS-15705.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAddAndDeleteProperty() {
         EditorPage editorPage = loginAndCreateProject();

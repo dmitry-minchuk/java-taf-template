@@ -22,6 +22,8 @@
     <test name="TestProjectDeleteClosedProjectNameUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteClosedProjectNameUi"/></classes></test>
     <test name="TestProjectDeleteUnsavedEditUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteUnsavedEditUi"/></classes></test>
     <test name="TestProjectOverviewEditKeepsModulesUi"><classes><class name="tests.ui.webstudio.repository.TestProjectOverviewEditKeepsModulesUi"/></classes></test>
+    <test name="TestDeployProjectMessagesAndValidationUi"><classes><class name="tests.ui.webstudio.repository.TestDeployProjectMessagesAndValidationUi"/></classes></test>
+    <test name="TestMainPageHasNoHorizontalScrollUi"><classes><class name="tests.ui.webstudio.repository.TestMainPageHasNoHorizontalScrollUi"/></classes></test>
     <test name="TestDeleteCommentTemplateUi"><classes><class name="tests.ui.webstudio.repository.TestDeleteCommentTemplateUi"/></classes></test>
     <test name="TestUploadModulePreservesExistingUi"><classes><class name="tests.ui.webstudio.repository.TestUploadModulePreservesExistingUi"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionOracle"/></classes></test>

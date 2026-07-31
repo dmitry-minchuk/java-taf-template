@@ -29,7 +29,8 @@ public class TestProjectOverviewEditKeepsModulesUi extends BaseTest {
     @TestCaseId("EPBDS-16327")
     @Description("Saving the Overview tab without changing anything must keep the project's modules. "
             + "KNOWN-FAILING: Edit -> Save writes a rules.xml whose modules block is empty, so the module "
-            + "list comes out empty both on Overview and in the Editor")
+            + "list comes out empty both on Overview and in the Editor."
+            + " Known bug: EPBDS-16327.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testOverviewEditSaveKeepsModules() {
         String projectName = "OverviewEditModules_" + System.currentTimeMillis();

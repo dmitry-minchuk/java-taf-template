@@ -22,7 +22,8 @@ public class TestRenameProjectFromOldRevisionConflictUi extends BaseTest {
     @TestCaseId("EPBDS-16269")
     @Description("Renaming a project, then renaming it again from an older revision must offer Resolve Conflicts. "
             + "KNOWN-FAILING: the save is refused and no dialog appears — the conflicts request still uses the "
-            + "previous project name, so it answers 404")
+            + "previous project name, so it answers 404."
+            + " Known bug: EPBDS-16269.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testRenameFromOldRevisionOffersConflictResolution() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, TEMPLATE_NAME);

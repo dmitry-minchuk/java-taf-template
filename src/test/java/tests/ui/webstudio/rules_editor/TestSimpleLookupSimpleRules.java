@@ -25,7 +25,8 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-29967")
-    @Description("SimpleLookup and SimpleRules tables: open, recreate, run, edit, copy and create test table")
+    @Description("SimpleLookup and SimpleRules tables: open, recreate, run, edit, copy and create test table."
+            + " Known bug: EPBDS-16239.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSimpleLookupSimpleRules() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, EXCEL_FILE);

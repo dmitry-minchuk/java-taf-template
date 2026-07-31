@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
+import com.microsoft.playwright.Dialog;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
@@ -12,6 +13,8 @@ public class ProjectDetailsComponent extends BaseComponent {
     private WebElement editModuleIconTemplate;
     private WebElement removeModuleHoverTemplate;
     private WebElement removeModuleIconTemplate;
+    // Offered only while the project still carries module-level method filters to convert.
+    private WebElement migrateMethodFiltersBtn;
 
     public ProjectDetailsComponent() {
         super(LocalDriverPool.getPage());
@@ -24,12 +27,24 @@ public class ProjectDetailsComponent extends BaseComponent {
     }
 
     private void initializeElements() {
+        migrateMethodFiltersBtn = new WebElement(page, "xpath=//input[@id='migrateMethodFiltersBtn']", "migrateMethodFiltersBtn");
         modulesHeaderElement = createScopedElement("xpath=.//h3/span[text()='Modules']", "modulesHeaderElement");
         addModuleBtn = createScopedElement("xpath=.//h3/span[text()='Modules']/following-sibling::a[@title='Add Module']", "addModuleBtn");
         editModuleHoverTemplate = createScopedElement("xpath=.//div[@class='list-item editable-inner']//a[contains(text(), '%s')]/../..", "editModuleHoverTemplate");
         editModuleIconTemplate = createScopedElement("xpath=.//div[@class='list list-modules']//a[contains(text(), '%s')]/../..//a[contains(@onclick, 'editModule')]/img", "editModuleIconTemplate");
         removeModuleHoverTemplate = createScopedElement("xpath=.//div[@class='list list-modules']//a[contains(text(), '%s')]", "removeModuleHoverTemplate");
         removeModuleIconTemplate = createScopedElement("xpath=.//div[@class='list list-modules']//a[contains(text(), '%s')]/../..//a[contains(@onclick, 'removeModule')]", "removeModuleIconTemplate");
+    }
+
+    public boolean isMigrateMethodFiltersVisible() {
+        return migrateMethodFiltersBtn.isVisible(DEFAULT_TIMEOUT_MS / 2);
+    }
+
+    /** Converts module-level method filters into project-level exposed methods; the button asks to confirm. */
+    public void clickMigrateMethodFilters() {
+        page.onDialog(Dialog::accept);
+        migrateMethodFiltersBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        waitUntilSpinnerLoaded();
     }
 
     public void openAddModulePopup() {

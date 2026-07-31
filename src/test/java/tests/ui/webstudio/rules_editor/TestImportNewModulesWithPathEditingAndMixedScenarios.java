@@ -29,7 +29,8 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
 
     @Test
     @TestCaseId("IPBQA-31035")
-    @Description("Steps 4-5.2: Import new modules with path editing/reset, module names retained after cancel, mixed new/existing modules scenario")
+    @Description("Steps 4-5.2: Import new modules with path editing/reset, module names retained after cancel, mixed new/existing modules scenario."
+            + " Known bug: EPBDS-16323.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testImportNewModulesWithPathEditingAndMixedScenarios() {
         String projectName = "TestNewModulesPath_" + System.currentTimeMillis();

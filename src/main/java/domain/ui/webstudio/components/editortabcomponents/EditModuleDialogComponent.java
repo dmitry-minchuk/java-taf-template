@@ -9,6 +9,8 @@ public class EditModuleDialogComponent extends BaseComponent {
 
     private WebElement compileThisModuleOnlyCheckbox;
     private WebElement moduleNameField;
+    private WebElement includedMethodsField;
+    private WebElement excludedMethodsField;
     private WebElement saveBtn;
     private WebElement closeBtn;
 
@@ -25,6 +27,8 @@ public class EditModuleDialogComponent extends BaseComponent {
     private void initializeElements() {
         compileThisModuleOnlyCheckbox = createScopedElement("xpath=.//input[@id='compileThisModuleOnly']", "compileThisModuleOnlyCheckbox");
         moduleNameField = createScopedElement("xpath=.//input[@id='moduleName']", "moduleNameField");
+        includedMethodsField = createScopedElement("xpath=.//textarea[@id='moduleIncludes']", "includedMethodsField");
+        excludedMethodsField = createScopedElement("xpath=.//textarea[@id='moduleExcludes']", "excludedMethodsField");
         saveBtn = createScopedElement("xpath=.//input[@value='Save']", "saveBtn");
         closeBtn = createScopedElement("xpath=.//input[@value='Cancel'] | .//a[@class='close']", "closeBtn");
     }
@@ -57,6 +61,15 @@ public class EditModuleDialogComponent extends BaseComponent {
     public void setModuleName(String name) {
         moduleNameField.clear();
         moduleNameField.fill(name);
+    }
+
+    /** One pattern per line, as the dialog's own hint says. */
+    public void setIncludedMethods(String patterns) {
+        includedMethodsField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(patterns);
+    }
+
+    public void setExcludedMethods(String patterns) {
+        excludedMethodsField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(patterns);
     }
 
     public void clickSave() {

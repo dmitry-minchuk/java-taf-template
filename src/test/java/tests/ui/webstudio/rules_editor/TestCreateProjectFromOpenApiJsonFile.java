@@ -29,7 +29,8 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30678")
-    @Description("Create project from OpenAPI JSON file and verify repository tree structure and Editor module properties")
+    @Description("Create project from OpenAPI JSON file and verify repository tree structure and Editor module properties."
+            + " Known bug: EPBDS-16227.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromOpenApiJsonFile() {
         String projectName = "JsonOpenApiProject_" + System.currentTimeMillis();

@@ -28,7 +28,8 @@ public class TestGitCopyProjectIntoExistingBranchViaEditorTab extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-8495")
-    @Description("Git - Copy project into existing branch via Editor Tab should display error and verify branch value")
+    @Description("Git - Copy project into existing branch via Editor Tab should display error and verify branch value."
+            + " Known bug: EPBDS-9535.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testGitCopyProjectIntoExistingBranchEditorTab() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());

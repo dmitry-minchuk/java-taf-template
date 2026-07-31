@@ -106,6 +106,12 @@ public class DeployModalComponent extends BaseComponent {
         return successNotification.isVisible(DEFAULT_TIMEOUT_MS);
     }
 
+    /** The wording of the notification the deploy raised, title and description together. */
+    public String getSuccessNotificationText() {
+        successNotification.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return successNotification.getText().trim();
+    }
+
     public boolean isErrorMessageDisplayed() {
         return errorMessage.isVisible(1000);
     }

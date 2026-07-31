@@ -1,6 +1,7 @@
 package domain.ui.webstudio.pages;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.BoundingBox;
 import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.MessageComponent;
@@ -110,6 +111,19 @@ public abstract class BasePage extends CorePage {
     // Bounded (never throws): if the app is still churning it just proceeds and relies on click retries.
     public void waitUntilAppIdle() {
         WebElement.waitForAppIdle(page, 30000L);
+    }
+
+    /**
+     * Whether the page is wider than the window, i.e. it scrolls sideways.
+     *
+     * <p>Measured from the body's own box against the viewport, so no page script is involved.
+     */
+    public boolean hasHorizontalScroll() {
+        waitUntilSpinnerLoaded();
+        BoundingBox body = page.locator("body").boundingBox();
+        int viewportWidth = page.viewportSize().width;
+        // A pixel of slack: rounding of a fractional layout width is not a scrollbar.
+        return body != null && body.width > viewportWidth + 1;
     }
 
     public boolean isNotificationVisible() {

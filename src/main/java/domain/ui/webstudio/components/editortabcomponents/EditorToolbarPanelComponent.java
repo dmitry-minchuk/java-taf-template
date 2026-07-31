@@ -24,6 +24,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement verifyBtn;
     private WebElement copyProjectBtn;
     private WebElement createTableBtn;
+    private WebElement refreshProjectBtn;
     private WebElement moreBtn;
     private WebElement syncBtn;
     @Getter
@@ -110,6 +111,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         exportBtn = new WebElement(page, "xpath=//a[@id='exportProjectButton']", "exportBtn");
         verifyBtn = new WebElement(page,"//a[@id='verifyButton']", "verifyBtn");
         saveBtn = new WebElement(page,"//a[@id='saveProjectButton']", "saveBtn");
+        refreshProjectBtn = new WebElement(page, "xpath=//a[@id='refreshBtn']", "refreshProjectBtn");
         copyProjectBtn = new WebElement(page, "xpath=//a[@id='copyProjectButton']", "copyProjectBtn");
         createTableBtn = new WebElement(page, "xpath=//a[@title='Create new table']", "createTableBtn");
         moreBtn = new WebElement(page, "xpath=//form[@id='headerForm']//span/*[contains(text(), 'More')]", "moreBtn");
@@ -209,6 +211,11 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         } catch (RuntimeException stillReRendering) {
             saveBtn.clickWhenSettled();
         }
+    }
+
+    /** The toolbar's Refresh, which reloads the project the editor is showing. */
+    public void clickProjectRefresh() {
+        refreshProjectBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
     }
 
     public void clickSync() {

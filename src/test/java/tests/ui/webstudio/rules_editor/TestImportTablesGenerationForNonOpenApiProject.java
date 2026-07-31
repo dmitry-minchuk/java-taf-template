@@ -29,7 +29,8 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-31035")
-    @Description("Tables Generation import for non-OpenAPI project: overwrite existing module and create new Data module; verify module list and properties")
+    @Description("Tables Generation import for non-OpenAPI project: overwrite existing module and create new Data module; verify module list and properties."
+            + " Known bug: EPBDS-16323.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testImportTablesGenerationForNonOpenApiProject() {
         String projectName = "TestNonOpenApiGen_" + System.currentTimeMillis();

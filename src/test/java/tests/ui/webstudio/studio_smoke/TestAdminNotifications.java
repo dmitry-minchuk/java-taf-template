@@ -25,7 +25,8 @@ public class TestAdminNotifications extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30617")
-    @Description("Test notifications: send to all users, display, delete, validate message length and empty messages")
+    @Description("Test notifications: send to all users, display, delete, validate message length and empty messages."
+            + " Known bug: EPBDS-15703.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNotifications() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
