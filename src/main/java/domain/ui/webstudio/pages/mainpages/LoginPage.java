@@ -19,6 +19,8 @@ public class LoginPage extends BasePage {
     private WebElement passwordField;
     private WebElement loginButton;
     private WebElement loginErrorMessage;
+    private static final int PROFILE_SAVE_ATTEMPTS = 3;
+
     private WebElement completeProfileModal;
     private ConfigureCommitInfoComponent completeProfileComponent;
 
@@ -66,10 +68,21 @@ public class LoginPage extends BasePage {
             // Wrong credentials leave us on the login form: there is no shell and no profile modal to fill.
             return;
         }
-        if (completeProfileModal.isVisible(DEFAULT_TIMEOUT_MS / 10)) {
-            completeProfileComponent.fillCommitInfoWithRandomData();
-            completeProfileModal.waitForHidden(DEFAULT_TIMEOUT_MS);
+        if (!completeProfileModal.isVisible(DEFAULT_TIMEOUT_MS / 10)) {
+            return;
         }
+        // Saving the profile occasionally leaves the modal on screen - a save that raced the shell finishing its
+        // own load. Filling it again is harmless and cheaper than failing the login step.
+        for (int attempt = 1; attempt <= PROFILE_SAVE_ATTEMPTS; attempt++) {
+            completeProfileComponent.fillCommitInfoWithRandomData();
+            if (WaitUtil.waitForCondition(() -> !completeProfileModal.isVisible(500),
+                    DEFAULT_TIMEOUT_MS, 250, "Waiting for the Complete Your Profile modal to close")) {
+                return;
+            }
+            LOGGER.info("The Complete Your Profile modal is still on screen, filling it again");
+        }
+        throw new IllegalStateException("The Complete Your Profile modal did not close after "
+                + PROFILE_SAVE_ATTEMPTS + " attempts");
     }
 
     /** True if the Studio login form is shown within the timeout (e.g. after sign-out). */
