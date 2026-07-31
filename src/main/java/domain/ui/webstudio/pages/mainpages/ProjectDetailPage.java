@@ -98,6 +98,11 @@ public class ProjectDetailPage extends BasePage {
     // Overview tab: assigned tags render as ant-tags "<type> → <value>" in the TAGS section
     private WebElement tagValueForType;     // format(tagType) → the value span
     private WebElement overviewRight;       // the right column of the Overview tab (Status/Repository/Path/Branch/Revision/Last change/Comment)
+    // Overview lists the project's modules as <li data-testid="module-<path or name>"> rows; the same prefix
+    // is also used for a module's filter and matched-wildcard rows, which are not modules of their own.
+    private WebElement overviewModuleRows;
+    private WebElement overviewEditBtn;
+    private WebElement overviewSaveBtn;
 
     public ProjectDetailPage() {
         super();
@@ -175,6 +180,14 @@ public class ProjectDetailPage extends BasePage {
         // Tags render in their own panel as pairs of spans: the type, then its value.
         tagValueForType = new WebElement(page, "xpath=//*[@data-testid='project-tags']/span[normalize-space()='%s']/following-sibling::span[1]", "tagValueForType");
         overviewRight = new WebElement(page, "[data-testid=overview-right]", "overviewRight");
+        overviewModuleRows = new WebElement(page,
+                "xpath=//li[starts-with(@data-testid,'module-')]"
+                        + "[not(starts-with(@data-testid,'module-filter-'))]"
+                        + "[not(starts-with(@data-testid,'module-matched-'))]"
+                        + "[not(starts-with(@data-testid,'module-unmatched-'))]",
+                "overviewModuleRows");
+        overviewEditBtn = new WebElement(page, "[data-testid=overview-edit]", "overviewEditBtn");
+        overviewSaveBtn = new WebElement(page, "[data-testid=overview-save]", "overviewSaveBtn");
     }
 
     public ProjectDetailPage openOverviewTab() {
@@ -354,6 +367,27 @@ public class ProjectDetailPage extends BasePage {
     }
 
     // Replaces the legacy Properties-tab getRevision() — the React Overview shows the FULL commit hash.
+    /** Names of the modules the Overview tab lists for the project. */
+    public List<String> getOverviewModuleNames() {
+        openOverviewTab();
+        overviewEditBtn.waitForVisible(DEFAULT_TIMEOUT_MS);
+        Locator rows = overviewModuleRows.getLocator();
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < rows.count(); i++) {
+            names.add(rows.nth(i).innerText().trim().split("\n")[0].trim());
+        }
+        return names;
+    }
+
+    /** Switches the Overview tab into edit mode and saves it without changing anything. */
+    public ProjectDetailPage editOverviewAndSave() {
+        openOverviewTab();
+        overviewEditBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        overviewSaveBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        waitUntilSpinnerLoaded();
+        return this;
+    }
+
     public String getOverviewRevision() {
         return extractOverviewField("Revision ID", "Modified");
     }

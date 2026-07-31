@@ -157,9 +157,6 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         assertThat(editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
                 .as("Algorithms2 module should be present after copy").contains("Algorithms2");
 
-        // Uploading a rules file adds the file; it no longer registers a module in the descriptor (the
-        // Studio only UNregisters modules, when a file is deleted), so this checks the file landed and that
-        // the descriptor still carries the module added by the copy.
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         ProjectDetailPage detailAfterUpload = repositoryPage.openProjectsList().openProjectDetail(projectName);
         detailAfterUpload.uploadFileInto(TestDataUtil.getFilePathFromResources("rules.xlsx"), "rules");
@@ -170,11 +167,20 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         EditorPage editorPageAfterUpload = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPageAfterUpload.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
+        // Known-failing (product bug EPBDS-16227): an uploaded Excel file must be registered as a module and
+        // must not cost the project the modules it already had. Today the upload leaves the descriptor with
+        // the uploaded file only, so both checks below fail.
+        assertThat(editorPageAfterUpload.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
+                .as("Module 'rules' should appear after uploading rules.xlsx, next to the modules already there")
+                .contains("rules", "Algorithms2");
+
         editorPageAfterUpload.getEditorToolbarPanelComponent().clickExport();
         File exportedZipAfterUpload = editorPageAfterUpload.getExportProjectDialogComponent().clickExportAndDownload();
         String rulesXmlAfterUpload = ZipUtil.readFileFromZip(exportedZipAfterUpload, "rules.xml");
         assertThat(rulesXmlAfterUpload).as("rules.xml should contain Algorithms2 module after copy")
                 .contains("<name>Algorithms2</name>");
+        assertThat(rulesXmlAfterUpload).as("rules.xml should contain the rules module after upload (EPBDS-16227)")
+                .contains("<name>rules</name>");
 
         repositoryPage = editorPageAfterUpload.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProjectsList().copyProject(projectName, projectName + "-Copy");

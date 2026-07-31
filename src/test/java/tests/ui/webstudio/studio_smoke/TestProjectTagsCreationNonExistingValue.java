@@ -32,9 +32,8 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-32767")
-    @Description("Create project from zip with non-existing tag value KNOWN-FAILING on 6.4.0: the React UI dropped the tag reconciliation dialogs and does not apply "
-            + "a zip's tags at all, so the project comes out untagged. Asserts the intended behaviour; needs "
-            + "confirming with the team whether the loss is intended.")
+    @Description("Create project from zip with a tag value outside the type's own list: the value declared by "
+            + "tags.properties is applied as it is, without the removed reconciliation dialogs")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNonExistingTagValueHandling() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
