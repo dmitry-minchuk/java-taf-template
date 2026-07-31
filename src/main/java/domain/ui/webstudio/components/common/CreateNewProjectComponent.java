@@ -44,6 +44,9 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement openApiUploadedFileRemoveBtn;
     private java.util.List<WebElement> openApiUploadedFiles;
     private WebElement openApiError;
+    // 6.4.0 added a required Branch field; the repository config fills it in asynchronously and the wizard
+    // refuses to submit while it is empty, leaving the modal open over the rest of the page.
+    private WebElement branchField;
     private WebElement repoSelect;    // new-project-repo (ant-select) — target design repository (shown with >1 repo)
     private WebElement repoOption;    // body-level ant-select option, format(repoName)
     private WebElement pathField;     // new-project-path (path-in-repository for non-flat repos)
@@ -88,6 +91,9 @@ public class CreateNewProjectComponent extends BaseComponent {
         openApiUploadedFiles = createElementList("xpath=//div[contains(@class,'ant-upload-list-item')]", "openApiUploadedFiles");
         openApiError = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-error]", "newProjectError");
         repoSelect = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-repo]", "newProjectRepo");
+        // antd wraps the field, so the testid can sit on the wrapper - read the inner input either way.
+        branchField = new WebElement(LocalDriverPool.getPage(),
+                "css=[data-testid=new-project-branch] input, input[data-testid=new-project-branch]", "newProjectBranch");
         repoOption = new WebElement(LocalDriverPool.getPage(), "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "newProjectRepoOption");
         pathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-path]", "newProjectPath");
     }
@@ -120,7 +126,22 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void clickCreate() {
+        waitForBranchToBeOffered();
         submitBtn.click();
+        // A refused submit never leaves the wizard, and the open modal then swallows every later click.
+        submitBtn.waitForHidden(DEFAULT_TIMEOUT_MS);
+    }
+
+    /**
+     * Waits until the wizard's Branch field carries the value its repository config supplies. Submitting
+     * earlier is rejected client-side, with no request sent and the modal left open.
+     */
+    private void waitForBranchToBeOffered() {
+        if (!branchField.exists()) {
+            return;
+        }
+        WaitUtil.waitForCondition(() -> !branchField.getCurrentInputValue().isBlank(),
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for the wizard to fill in the branch");
     }
 
     // Full create-from-template path in the React wizard (method -> group -> item -> name -> Create).
