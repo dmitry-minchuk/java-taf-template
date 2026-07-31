@@ -84,6 +84,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     private WebElement selectTypeDropdown;
     // Trace Menu elements  
     private WebElement traceInsideMenuBtn;
+    // 6.4.0-d8969cae6329 launches the trace in the business view by default; the advanced step debugger our
+    // assertions read is behind this checkbox (it exists twice: on the Trace menu and in the Run/exec panel).
+    private WebElement advancedTracerTestCheckbox;
+    private WebElement advancedTracerExecCheckbox;
     private WebElement traceIntoFileBtn;
     private WebElement factorTextFieldForTrace;
     private WebElement jsonRadioBtn;
@@ -171,6 +175,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         selectTypeDropdown = new WebElement(page, "xpath=//div[contains(@id, 'input')]//select", "selectTypeDropdown");
         // Trace Menu elements - page-level (form elements)
         traceInsideMenuBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceButton']", "traceInsideMenuBtn");
+        // Two separate switches: the test-table launcher reads advancedTracerTest, the run/exec launcher reads
+        // advancedTracerExec (isAdvancedTracer in table.xhtml). Both may be hidden - only "checked" is read.
+        advancedTracerTestCheckbox = new WebElement(page, "css=input#advancedTracerTest", "advancedTracerTest");
+        advancedTracerExecCheckbox = new WebElement(page, "css=input#advancedTracerExec", "advancedTracerExec");
         traceIntoFileBtn = new WebElement(page, "xpath=//input[@id='inputArgsForm:traceIntoFileButton']", "traceIntoFileBtn");
         factorTextField = new WebElement(page, "xpath=//div[contains(@id, 'input')]//input[@type='text']", "factorTextField");
         factorTextFieldForTrace = new WebElement(page, "xpath=//span[text()='factor = ']/input", "factorTextFieldForTrace");
@@ -300,15 +308,35 @@ public class EditorToolbarPanelComponent extends BaseComponent {
         return new TraceMenu();
     }
 
+    /**
+     * Makes sure the trace window shows the advanced step debugger.
+     *
+     * <p>6.4.0 opens the trace in the simple business view unless the launcher passes {@code advanced=true};
+     * that flag comes from a checkbox the page keeps hidden on most screens, so the window is re-opened with
+     * the flag instead of fighting the checkbox.
+     */
+    private static void switchToAdvancedTracer(Page tracePopup) {
+        String url = tracePopup.url();
+        if (url.contains("advanced=true")) {
+            return;
+        }
+        LOGGER.info("Re-opening the trace window in the advanced debugger");
+        tracePopup.navigate(url + (url.contains("?") ? "&" : "?") + "advanced=true");
+        tracePopup.waitForLoadState();
+        tracePopup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(DEFAULT_TIMEOUT_MS));
+    }
+
     public ITraceWindow clickTraceExpectTraceWindow() {
         waitUntilSpinnerLoaded();
         traceBtn.waitForVisible();
+
         // Retry the click+wait: on slow CI the first click can land before the rule is runnable, so no popup opens.
         Page popup = WaitUtil.retryOnException(
                 () -> page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(30000), () -> traceBtn.click()),
                 65000, 1000, "Opening Trace popup window");
         popup.waitForLoadState();
         popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
+        switchToAdvancedTracer(popup);
         return new TraceWindow(popup);
     }
 
@@ -528,6 +556,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     // Implementation for Playwright Trace Menu
     public class TraceMenu implements ITraceMenu {
 
+        /**
+         * Switches the trace to the advanced step debugger, which is what the call-tree and details assertions
+         * read. Without it 6.4.0 opens the simple business view, which has neither.
+         */
         @Override
         public ITraceMenu setFactorTextField(String text) {
             if (factorTextFieldForTrace.isVisible()) {
@@ -565,6 +597,7 @@ public class EditorToolbarPanelComponent extends BaseComponent {
                 Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceInsideMenuBtn.click());
                 popup.waitForLoadState();
                 popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
+                switchToAdvancedTracer(popup);
                 return new TraceWindow(popup);
             } else {
                 traceInsideMenuBtn.click();

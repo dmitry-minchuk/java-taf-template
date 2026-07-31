@@ -333,6 +333,25 @@ public class WebElement {
         return locator.isChecked();
     }
 
+    /**
+     * Ticks a checkbox the page keeps hidden but still reads. A real click needs a visible element, so the
+     * click event is dispatched instead - the same approach as {@link #clickWhenSettled()}.
+     */
+    public void checkEvenIfHidden() {
+        waitForAppReady();
+        LOGGER.info("Dispatching click on hidden checkbox {}", elementName);
+        retryOnReRenderChurn(() -> locator.dispatchEvent("click"));
+    }
+
+    /** Whether the element is present in the DOM at all, visible or not. */
+    public boolean exists() {
+        return locator.count() > 0;
+    }
+
+    public boolean isCheckedEvenIfHidden() {
+        return locator.count() > 0 && locator.isChecked();
+    }
+
     public void check() {
         waitForAppReady();
         isVisible();

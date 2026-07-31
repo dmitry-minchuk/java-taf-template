@@ -115,7 +115,10 @@ public class SyncChangesDialogComponent extends BaseComponent {
         branchSelector.click();  // Click on parent div, safer than input
         WaitUtil.waitForCondition(() -> !selectorOptions.isEmpty(), 2000, 100, "Waiting for selector options to appear");
         for (WebElement option : selectorOptions) {
-            if (option.getText().trim().equals(branchName)) {
+            // An option now reads "masterDefault" - the Default badge is part of its text - so the branch name
+            // is matched as the start of the option rather than the whole of it.
+            String optionText = option.getText().trim();
+            if (optionText.equals(branchName) || optionText.startsWith(branchName)) {
                 option.click();
                 return this;
             }
