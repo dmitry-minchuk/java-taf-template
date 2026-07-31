@@ -20,8 +20,10 @@ public class TestMainPageHasNoHorizontalScrollUi extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-16274")
-    @Description("Studio pages must fit the window width. KNOWN-FAILING: the main page is wider than the "
-            + "viewport, so a horizontal scroll bar appears."
+    @Description("Studio pages must fit the window width. Guards the horizontal scroll bar reported in "
+            + "EPBDS-16274, which carries no steps beyond a screenshot; measured at 1280 and below it does not "
+            + "appear on 6.4.0-ef53e0bec1d7, so the test is green here and turns red if the page outgrows the "
+            + "window."
             + " Known bug: EPBDS-16274.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testStudioPagesFitTheWindowWidth() {

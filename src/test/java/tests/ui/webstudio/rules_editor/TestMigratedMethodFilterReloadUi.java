@@ -25,7 +25,8 @@ public class TestMigratedMethodFilterReloadUi extends BaseTest {
     @Test
     @TestCaseId("EPBDS-16275")
     @Description("After module method filters are migrated to project level, reloading the project must load the "
-            + "module once. KNOWN-FAILING: the editor keeps reloading and stops responding."
+            + "module once. Guards the reload loop reported in EPBDS-16275, which these steps do not reproduce "
+            + "on 6.4.0-ef53e0bec1d7 - the test is green here and turns red if the loop comes back."
             + " Known bug: EPBDS-16275.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testProjectReloadAfterMethodFilterMigration() {
