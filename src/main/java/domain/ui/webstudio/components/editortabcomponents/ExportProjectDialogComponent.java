@@ -1,6 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
+import helpers.utils.WaitUtil;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.DownloadUtil;
@@ -40,6 +41,10 @@ public class ExportProjectDialogComponent extends BaseComponent {
         revisionDropdown.waitForVisible(5000);
         waitUntilSpinnerLoaded();
         exportBtn.waitForVisible(5000);
+        // The popup is autosized: it is attached and "visible" while the ajax response that fills it is still on
+        // its way, and measures zero until then - a click landing in that window hits nothing.
+        WaitUtil.waitForCondition(exportBtn::hasSize, DEFAULT_TIMEOUT_MS, 200,
+                "Waiting for the export dialog to be laid out");
     }
 
     public boolean isDialogVisible() {

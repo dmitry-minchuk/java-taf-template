@@ -3,6 +3,7 @@ package domain.ui.webstudio.components.common;
 import configuration.core.ui.WebElement;
 import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.BaseComponent;
+import helpers.utils.WaitUtil;
 
 import java.util.List;
 
@@ -10,6 +11,9 @@ public class MultiselectArrayEditorComponent extends BaseComponent {
 
     private WebElement valueCheckboxTemplate;
     private WebElement valueRowTemplate;
+    // Short enough that a button lost to a re-render is retried rather than waited out.
+    private static final int ACTION_BUTTON_CLICK_TIMEOUT_MS = DEFAULT_TIMEOUT_MS / 2;
+
     private WebElement actionButtonTemplate;
     private List<WebElement> allValueLabels;
 
@@ -76,8 +80,16 @@ public class MultiselectArrayEditorComponent extends BaseComponent {
         }
     }
 
+    /**
+     * Presses one of the editor's buttons (Done / Cancel / ...). The editor is re-rendered whenever a value is
+     * ticked, so the button found a moment ago can be gone by the time it is pressed - the press is retried on
+     * the current one instead of waiting the whole timeout out on a detached node.
+     */
     public void clickActionButton(String buttonName) {
-        actionButtonTemplate.format(buttonName).click();
+        WaitUtil.retryOnException(() -> {
+            actionButtonTemplate.format(buttonName).click(ACTION_BUTTON_CLICK_TIMEOUT_MS);
+            return null;
+        }, DEFAULT_TIMEOUT_MS * 2, 500, "Pressing the multiselect button " + buttonName);
     }
 
     public List<String> getAllValues() {

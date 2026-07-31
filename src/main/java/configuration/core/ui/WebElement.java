@@ -431,6 +431,15 @@ public class WebElement {
         retryOnReRenderChurn(locator::clear);
     }
 
+    /**
+     * True once the element occupies space on screen. A RichFaces popup with {@code autosized="true"} is attached
+     * and "visible" before its ajax response arrives, while still measuring zero - clicking it then hits nothing.
+     */
+    public boolean hasSize() {
+        var box = locator.first().boundingBox();
+        return box != null && box.width > 0 && box.height > 0;
+    }
+
     public void clearByKeyCombination() {
         String execMode = System.getProperty("execution.mode");
         String modifierKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "Meta" : "Control";
