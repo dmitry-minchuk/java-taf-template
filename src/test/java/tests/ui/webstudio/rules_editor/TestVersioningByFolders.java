@@ -23,14 +23,19 @@ public class TestVersioningByFolders extends BaseTest {
     private static final String VERSION_FOLDER = "MyRules1";
     private static final String VERSIONED_TABLE_1 = "MyRules1 [0.0.1]";
     private static final String VERSIONED_TABLE_2 = "MyRules1 [0.0.2]";
-    private static final String VERSION_VALUE = "v2";
+    // The modal writes the version as entered, so it has to be the N.N.N value OpenL compares by.
+    private static final String VERSION_VALUE = "0.0.2";
     private static final String PROPERTY_NAME = "LOB";
     private static final String INHERITED_VALUE = "001";
     private static final String OVERRIDDEN_VALUE = "777";
 
     @Test
     @TestCaseId("IPBQA-30979")
-    @Description("Versioning by folders: verify copied versions are grouped under a table folder, inherited properties are preserved per version, and overriding a property in one version does not affect the other version")
+    @Description("Versioning by folders: verify copied versions are grouped under a table folder, inherited "
+            + "properties are preserved per version, and overriding a property in one version does not affect "
+            + "the other version. KNOWN-FAILING: the copy modal no longer deactivates the source table, so the "
+            + "module reports \"There can be only one active table.\" after Copy as New Version."
+            + " Known bug: EPBDS-16357.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testVersioningByFolders() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, "TestModuleCategoryInheritedProperties.xlsx");

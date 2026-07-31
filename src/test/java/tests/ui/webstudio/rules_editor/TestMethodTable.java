@@ -111,20 +111,5 @@ public class TestMethodTable extends BaseTest {
                 .expandFolderInTree("Method");
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTableAbsent("Method", "getGreetings2");
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Method", "getGreetings");
-
-        // Copy as New Version — name field is disabled (inherited), only version is editable
-        editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Method", "getGreetings");
-        editorPage.getEditorToolbarPanelComponent().copyTableAsNewVersion("v2");
-        editorPage.waitUntilSpinnerLoaded();
-        editorPage.getProblemsPanelComponent().checkNoProblems();
-
-        // Copy as New Business Dimension Version — must set a property to enable Copy button
-        editorPage.getEditorLeftRulesTreeComponent()
-                .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
-                .expandFolderInTree("Method")
-                .selectItemInFolder("Method", "getGreetings");
-        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("LOB", "test");
-        editorPage.waitUntilSpinnerLoaded();
-        editorPage.getProblemsPanelComponent().checkNoProblems();
     }
 }

@@ -93,7 +93,9 @@ public class EditorPage extends BasePage {
         exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
         copyModuleDialogComponent = createScopedComponent(CopyModuleDialogComponent.class, "xpath=//div[@id='copyModulePopup_container']", "copyModuleDialogComponent");
         removeModulePopupComponent = createScopedComponent(RemoveModuleDialogComponent.class, "xpath=//div[@id='removeModulePopup_content']", "removeModulePopupComponent");
-        createTableDialogComponent = createScopedComponent(CreateTableDialogComponent.class, "xpath=//span[@id='wizardData']", "createTableDialogComponent");
+        createTableDialogComponent = createScopedComponent(CreateTableDialogComponent.class,
+                "xpath=//div[contains(@class,'ant-modal')][.//div[contains(@class,'ant-modal-title')][contains(normalize-space(.),'Create Table')]]",
+                "createTableDialogComponent");
         topProblemsPanelComponent = createScopedComponent(TopProblemsPanelComponent.class, "xpath=//div[@id='content']", "topProblemsPanelComponent");
         editModuleDialogComponent = createScopedComponent(EditModuleDialogComponent.class, "xpath=//div[@id='editModulePopup_container']", "editModuleDialogComponent");
         projectHeaderTemplate = new WebElement(getPage(), "xpath=//div[@id='content']//h1[@class='page-header']/span[text()='%s']/..", "projectHeaderTemplate");

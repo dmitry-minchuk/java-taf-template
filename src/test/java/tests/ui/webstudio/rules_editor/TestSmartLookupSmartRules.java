@@ -65,7 +65,7 @@ public class TestSmartLookupSmartRules extends BaseTest {
         saveTableAndCheckNoProblems(editorPage);
         assertThat(table.getRowsCount()).isEqualTo(7);
 
-        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("Countries", "FR");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "FR");
         editorPage.waitUntilSpinnerLoaded();
         assertThat(table.getRow(2).getValue()).isEqualTo(List.of("properties", "country", "FR", "\u00a0"));
 

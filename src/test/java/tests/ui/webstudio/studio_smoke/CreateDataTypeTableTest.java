@@ -62,7 +62,10 @@ public class CreateDataTypeTableTest extends BaseTest {
         // 7. Verify table content
         TableComponent table = editorPage.getCenterTable();
         Assert.assertEquals(table.getCellText(1, 1), "Datatype " + TABLE_NAME, "Header should contain table name");
-        Assert.assertEquals(table.getCellText(2, 1), "BigDecimal", "First column of second row should be the type");
-        Assert.assertEquals(table.getCellText(2, 2), PARAMETER_NAME, "Second column of second row should be the parameter name");
+        // The React modal titles the datatype's columns, so the fields start one row lower than in the wizard.
+        Assert.assertEquals(table.getCellText(2, 1), "Type", "Second row should title the type column");
+        Assert.assertEquals(table.getCellText(2, 2), "Name", "Second row should title the name column");
+        Assert.assertEquals(table.getCellText(3, 1), "BigDecimal", "The field's type should be written as entered");
+        Assert.assertEquals(table.getCellText(3, 2), PARAMETER_NAME, "The field's name should be written as entered");
     }
 }

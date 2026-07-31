@@ -52,34 +52,20 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         rulesTree.expandFolderInTree("Decision")
                 .checkRulesTableAbsent("Decision", "SimpleREx1");
 
-        // Known-failing (product bug EPBDS-16239): the Create Table wizard cannot advance from
-        // "Construct a table" for a multi-row Simple Rules table with 2+ parameters — the step-2
-        // server response is truncated (ERR_INCOMPLETE_CHUNKED_ENCODING), so save() times out.
-        // Confirmed by hand in the browser (a single-row table advances fine). Red until 16239 is fixed.
+        // The React modal builds the whole table on one page: the rules grid is addressed by row and column,
+        // and the last row is filled and then deleted to cover row removal.
         editorPage.getEditorToolbarPanelComponent().clickCreateTable();
         CreateTableDialogComponent createTableDialog = editorPage.getCreateTableDialogComponent();
         createTableDialog.selectType("Simple Rules Table")
-                .clickNext()
                 .setSimpleRulesInitialParameters("SimpleREx1", "Double")
                 .addSimpleRulesParameter("Integer", false, "age")
                 .addSimpleRulesParameter("Gender", false, "gender")
-                .clickNext()
-                .addSimpleRule("age", "18-30", 5)
-                .setSimpleRule("male", 6)
-                .setSimpleRule("0.1", 7)
-                .addSimpleRule("age", "18-30", 8)
-                .setSimpleRule("female", 9)
-                .setSimpleRule("0.2", 10)
-                .addSimpleRule("age", "31-60", 11)
-                .setSimpleRule("male", 12)
-                .setSimpleRule("0.3", 13)
-                .addSimpleRule("age", "31-60", 14)
-                .setSimpleRule("female", 15)
-                .setSimpleRule("0.4", 16)
-                .addSimpleRule("age", "61-70", 17)
-                .setSimpleRule("0.5", 19)
-                .deleteSimpleRuleRow(7)
-                .clickNext()
+                .setRow(0, "18-30", "male", "0.1")
+                .setRow(1, "18-30", "female", "0.2")
+                .setRow(2, "31-60", "male", "0.3")
+                .setRow(3, "31-60", "female", "0.4")
+                .setRow(4, "61-70", "male", "0.5")
+                .deleteRow(4)
                 .save();
 
         runSimpleRule(editorPage, "20", "female");
@@ -104,7 +90,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         saveTableAndCheckNoProblems(editorPage);
         assertThat(table.getRowsCount()).isEqualTo(5);
 
-        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("Countries", "AU");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "AU");
         editorPage.waitUntilSpinnerLoaded();
         assertThat(rulesTree.getSelectedItemText()).isEqualTo("SimpleREx1 [country=AU]");
         rulesTree.checkRulesTablePresent("Decision", "SimpleREx1");
