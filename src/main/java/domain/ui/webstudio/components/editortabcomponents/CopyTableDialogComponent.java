@@ -59,8 +59,9 @@ public class CopyTableDialogComponent extends BaseComponent {
         propertyValueTemplate = new WebElement(page,
                 "css=[data-testid=copy-table-property-value-%1$s] input, input[data-testid=copy-table-property-value-%1$s]",
                 "copyTablePropertyValue");
+        // The row controls carry their label in aria-label, not title.
         insertPropertyTemplate = new WebElement(page,
-                "css=[data-testid=copy-table-property-row-%s] button[title='Insert property above']",
+                "css=[data-testid=copy-table-property-row-%s] button[aria-label='Insert property above']",
                 "copyTableInsertProperty");
     }
 
@@ -132,11 +133,49 @@ public class CopyTableDialogComponent extends BaseComponent {
         name.press("Enter");
         WebElement propertyValue = propertyValueTemplate.format(row);
         propertyValue.waitForVisible(DEFAULT_TIMEOUT_MS);
-        WaitUtil.waitForCondition(() -> {
-            retype(propertyValue, value);
-            return value.equals(propertyValue.getCurrentInputValue());
-        }, DEFAULT_TIMEOUT_MS, 300, "Waiting for the property value to hold the requested value");
+        if (isListBacked(row)) {
+            // A property whose type lists its values (a business dimension, for one) is picked, never typed:
+            // typing only moves the list to the first value starting with that letter.
+            pickPropertyValue(row, propertyValue, value);
+        } else {
+            WaitUtil.waitForCondition(() -> {
+                retype(propertyValue, value);
+                return value.equals(propertyValue.getCurrentInputValue());
+            }, DEFAULT_TIMEOUT_MS, 300, "Waiting for the property value to hold the requested value");
+        }
         return this;
+    }
+
+    /** A property backed by a list of its own values: antd renders it as a select, not as a plain input. */
+    private boolean isListBacked(String row) {
+        return new WebElement(page, "css=[data-testid=copy-table-property-value-" + row + "].ant-select",
+                "copyTablePropertySelect").exists();
+    }
+
+    private void pickPropertyValue(String row, WebElement field, String value) {
+        WebElement option = new WebElement(page,
+                "css=.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option[title='"
+                        + value + "']", "copyTablePropertyOption");
+        field.click();
+        // The list can be long (every country, for one), so it is filtered down to the wanted value first.
+        field.fillSequentially(value);
+        if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
+                "Waiting for the property to offer '" + value + "'")) {
+            field.click();
+            if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
+                    "Waiting for the property to offer '" + value + "'")) {
+                throw new IllegalStateException("The copy dialog offers no '" + value + "' for this property");
+            }
+        }
+        option.click(DEFAULT_TIMEOUT_MS / 2);
+        // A multi-value property shows each picked value as its own tag.
+        WebElement selected = new WebElement(page,
+                "css=[data-testid=copy-table-property-value-" + row + "] .ant-select-selection-item[title='"
+                        + value + "']", "copyTablePropertySelection");
+        if (!WaitUtil.waitForCondition(selected::exists, DEFAULT_TIMEOUT_MS / 2, 200,
+                "Waiting for the property to hold '" + value + "'")) {
+            throw new IllegalStateException("The copy dialog did not take '" + value + "' for this property");
+        }
     }
 
     /**

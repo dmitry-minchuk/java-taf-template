@@ -1003,10 +1003,10 @@ public class EditorToolbarPanelComponent extends BaseComponent {
     }
 
     public void createDefaultTestTable() {
+        // Create Test now opens the React Create Table modal with the tested table already filled in, so the
+        // default test table is one press of Create away.
         createTestBtn.click();
-        nextButtonInCreateTestDialog.waitForVisible(5000);
-        nextButtonInCreateTestDialog.click();
-        saveButtonInCreateTestDialog.click();
+        new CreateTableDialogComponent().waitForDialogToAppear().save();
         WaitUtil.sleep(500, "Waiting for created test table to open");
     }
 

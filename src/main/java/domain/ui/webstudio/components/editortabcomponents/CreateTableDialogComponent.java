@@ -78,8 +78,9 @@ public class CreateTableDialogComponent extends BaseComponent {
                 "createTableArgumentName");
         argumentRowTemplate = new WebElement(page,
                 "css=[data-testid=create-table-argument-row-%s]", "createTableArgumentRow");
+        // The row controls carry their label in aria-label, not title.
         insertArgumentTemplate = new WebElement(page,
-                "css=[data-testid=create-table-argument-row-%s] button[title='Insert Argument']",
+                "css=[data-testid=create-table-argument-row-%s] button[aria-label='Insert Argument']",
                 "createTableInsertArgument");
         cellTemplate = new WebElement(page,
                 "css=[data-testid=create-table-cell-%1$s-%2$s] input, input[data-testid=create-table-cell-%1$s-%2$s]",
@@ -104,7 +105,7 @@ public class CreateTableDialogComponent extends BaseComponent {
         writtenArgumentRows = 0;
         String option = type.replaceAll("(?i)\\s+table$", "").trim();
         typeSelect.waitForVisible(DEFAULT_TIMEOUT_MS).click();
-        openDropdownOption(option).waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        openDropdownOption(option).waitForVisible(DEFAULT_TIMEOUT_MS).click(DEFAULT_TIMEOUT_MS / 2);
         return this;
     }
 
@@ -128,10 +129,7 @@ public class CreateTableDialogComponent extends BaseComponent {
         // instead of looking for a free one - otherwise the table is created with a field nobody asked for.
         int row = writtenParameterRows++;
         if (type != null && !type.isEmpty()) {
-            growSkeletonTo(row);
-            WebElement typeCell = cellTemplate.format(String.valueOf(row), String.valueOf(DATATYPE_TYPE_COLUMN));
-            typeCell.waitForVisible(DEFAULT_TIMEOUT_MS);
-            retypeSuggest(typeCell, type);
+            setCell(row, DATATYPE_TYPE_COLUMN, type);
         }
         setCell(row, DATATYPE_NAME_COLUMN, name);
         return this;
@@ -160,13 +158,60 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /** Writes into the skeleton cell at the given zero-based position, growing the grid when the row is missing. */
+    /**
+     * Writes into the skeleton cell at the given zero-based position, growing the grid when the row is missing.
+     *
+     * <p>A cell editor follows the value it holds: a plain cell is typed into, a cell whose type only allows the
+     * values it lists is picked from that list, and a cell backed by suggestions takes either.
+     */
     public CreateTableDialogComponent setCell(int row, int column, String value) {
         growSkeletonTo(row);
         WebElement cell = cellTemplate.format(String.valueOf(row), String.valueOf(column));
         cell.waitForVisible(DEFAULT_TIMEOUT_MS);
-        retype(cell, value);
+        if (cell.getAttribute("readonly") != null) {
+            pickFromList(row, column, cell, value);
+        } else if (isSuggest(row, column)) {
+            retypeSuggest(cell, value);
+        } else {
+            retype(cell, value);
+        }
         return this;
+    }
+
+    /**
+     * A cell that offers nothing but its own values: the value is chosen, never typed. The list is opened once
+     * and then waited for - clicking again while it is opening closes it.
+     */
+    private void pickFromList(int row, int column, WebElement cell, String value) {
+        WebElement option = openDropdownOption(value);
+        cell.click();
+        if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
+                "Waiting for the create table cell to offer '" + value + "'")) {
+            // A click that landed while the list was closing leaves it shut - open it again.
+            cell.click();
+            if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
+                    "Waiting for the create table cell to offer '" + value + "'")) {
+                throw new IllegalStateException("The create table dialog offers no '" + value + "' for this cell");
+            }
+        }
+        option.click(DEFAULT_TIMEOUT_MS / 2);
+        // A list-only cell shows the picked value as the selection's label, never in its input.
+        WebElement selected = new WebElement(page,
+                "css=[data-testid=create-table-cell-" + row + "-" + column + "] .ant-select-content,"
+                        + " [data-testid=create-table-cell-" + row + "-" + column + "] .ant-select-selection-item",
+                "createTableCellSelection");
+        boolean set = WaitUtil.waitForCondition(() -> selected.exists() && value.equals(selected.getText(false)),
+                DEFAULT_TIMEOUT_MS / 2, 200, "Waiting for the create table cell to hold '" + value + "'");
+        if (!set) {
+            throw new IllegalStateException("The create table cell kept '"
+                    + (selected.exists() ? selected.getText(false) : "") + "' instead of '" + value + "'");
+        }
+    }
+
+    private boolean isSuggest(int row, int column) {
+        return new WebElement(page,
+                "css=[data-testid=create-table-cell-" + row + "-" + column + "].ant-select",
+                "createTableSuggestCell").exists();
     }
 
     public String getCellValue(int row, int column) {
@@ -242,7 +287,7 @@ public class CreateTableDialogComponent extends BaseComponent {
     private WebElement rowAction(int row, String title) {
         return new WebElement(page,
                 "xpath=" + MODAL + "//tr[.//*[@data-testid='create-table-cell-" + row + "-0']]"
-                        + "//button[@title='" + title + "']",
+                        + "//button[@aria-label='" + title + "']",
                 "createTableRowAction").waitForVisible(DEFAULT_TIMEOUT_MS);
     }
 
@@ -296,7 +341,7 @@ public class CreateTableDialogComponent extends BaseComponent {
             field.fillSequentially(text);
             WebElement option = openDropdownOption(text);
             if (option.exists()) {
-                option.click();
+                option.click(DEFAULT_TIMEOUT_MS / 2);
             } else {
                 field.press("Enter");
             }

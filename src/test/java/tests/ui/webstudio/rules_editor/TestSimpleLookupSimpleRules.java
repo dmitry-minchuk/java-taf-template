@@ -25,8 +25,11 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-29967")
-    @Description("SimpleLookup and SimpleRules tables: open, recreate, run, edit, copy and create test table."
-            + " Known bug: EPBDS-16239.")
+    @Description("SimpleLookup and SimpleRules tables: open, recreate, run, edit, copy and create test table. "
+            + "KNOWN-FAILING: the Create Table modal gives an Integer condition column a number-only editor, so "
+            + "the age ranges this table is built on cannot be entered and the created table has an empty age "
+            + "column."
+            + " Known bug: EPBDS-16359.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSimpleLookupSimpleRules() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, EXCEL_FILE);
@@ -90,7 +93,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         saveTableAndCheckNoProblems(editorPage);
         assertThat(table.getRowsCount()).isEqualTo(5);
 
-        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "AU");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "Australia");
         editorPage.waitUntilSpinnerLoaded();
         assertThat(rulesTree.getSelectedItemText()).isEqualTo("SimpleREx1 [country=AU]");
         rulesTree.checkRulesTablePresent("Decision", "SimpleREx1");

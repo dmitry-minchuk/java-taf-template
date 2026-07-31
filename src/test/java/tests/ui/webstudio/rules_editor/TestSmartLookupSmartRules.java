@@ -65,7 +65,7 @@ public class TestSmartLookupSmartRules extends BaseTest {
         saveTableAndCheckNoProblems(editorPage);
         assertThat(table.getRowsCount()).isEqualTo(7);
 
-        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "FR");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "France");
         editorPage.waitUntilSpinnerLoaded();
         assertThat(table.getRow(2).getValue()).isEqualTo(List.of("properties", "country", "FR", "\u00a0"));
 
@@ -101,7 +101,9 @@ public class TestSmartLookupSmartRules extends BaseTest {
         editorPage.getEditorToolbarPanelComponent().createDefaultTestTable();
         editorPage.getEditorLeftRulesTreeComponent().checkRulesTablePresent("Test", "MySmartLookupTest");
         assertThat(editorPage.getEditorLeftRulesTreeComponent().getSelectedItemText()).isEqualTo("MySmartLookupTest");
-        assertThat(table.getRow(2).getValue()).isEqualTo(List.of("gender", "dateOfBirth", "status", "_res_"));
+        // The row carries the editor's own numbering cell, so only the named columns are compared.
+        assertThat(table.getRow(2).getValue().stream().filter(cell -> !cell.isBlank()).toList())
+                .isEqualTo(List.of("gender", "dateOfBirth", "status", "_res_"));
     }
 
     private void saveTableAndCheckNoProblems(EditorPage editorPage) {
