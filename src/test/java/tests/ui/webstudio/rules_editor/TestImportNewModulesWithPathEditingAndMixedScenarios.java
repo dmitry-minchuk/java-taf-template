@@ -81,7 +81,7 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         settingsDialog.waitForVisible();
         settingsDialog.clickImportAndOverride();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // === Step 4: Import with new modules Alg and Mod-123 from openapi1.json ===

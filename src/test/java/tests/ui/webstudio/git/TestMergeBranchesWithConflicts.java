@@ -121,7 +121,7 @@ public class TestMergeBranchesWithConflicts extends BaseTest {
         edit.getCenterTable().editCell(3, 1, value);
         edit.getEditorTableActionsPanelComponent().clickSaveChanges();
         edit.getEditorToolbarPanelComponent().clickSave();
-        edit.getSaveChangesComponent().getSaveBtn().click();
+        edit.getSaveChangesComponent().clickSave();
     }
 
     private String readSpreadsheetCell(EditorPage editorPage, String branch) {

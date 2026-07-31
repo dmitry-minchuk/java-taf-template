@@ -133,7 +133,7 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         editorPage.getAddModulePopupComponent().setModuleName("Models_test");
         editorPage.getAddModulePopupComponent().saveModule();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         editorPage.getEditorToolbarPanelComponent().clickExport();
@@ -152,7 +152,7 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         editorPage.getCopyModuleDialogComponent().setModuleName("Algorithms2");
         editorPage.getCopyModuleDialogComponent().clickCopy();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         assertThat(editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))

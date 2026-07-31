@@ -176,7 +176,7 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 13: Save project to create second revision
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         // Step 14: Verify all revisions available
         repositoryPage = editorPage.getTabSwitcherComponent()
@@ -321,7 +321,7 @@ public class TestExportProjectFunctionality extends BaseTest {
 
         // Step 26: Save and verify third revision
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);

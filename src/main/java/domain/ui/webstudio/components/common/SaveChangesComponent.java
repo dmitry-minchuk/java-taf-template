@@ -28,8 +28,16 @@ public class SaveChangesComponent extends BaseComponent {
         cancelBtn = createScopedElement("xpath=.//input[@value='Cancel']", "Cancel Button");
     }
 
-    // The commit recompile re-renders this dialog's Save button; click it resiliently.
+    /**
+     * Presses Save. The dialog's own shade can still be on top of the button right after another popup closed
+     * (removing a module, for one), so a click that the shade swallows is repeated on the button itself.
+     */
     public void clickSave() {
-        saveBtn.clickWhenSettled();
+        try {
+            saveBtn.click();
+        } catch (RuntimeException shadeInTheWay) {
+            saveBtn.clickForce();
+        }
+        saveBtn.waitForHidden(DEFAULT_TIMEOUT_MS);
     }
 }

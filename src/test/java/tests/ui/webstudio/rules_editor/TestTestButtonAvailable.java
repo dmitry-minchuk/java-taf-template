@@ -121,7 +121,7 @@ public class TestTestButtonAvailable extends BaseTest {
                 .isEqualTo("Test 6");
 
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         LocalDriverPool.getPage().reload();
         editorPage = new EditorPage();

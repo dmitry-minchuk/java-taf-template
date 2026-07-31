@@ -36,7 +36,10 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-29455")
-    @Description("Git - Merge branches without conflicts between master and MyBranch")
+    @Description("Git - Merge branches without conflicts between master and MyBranch. KNOWN-FAILING: the "
+            + "first save on MyBranch - after Module4 is deleted and Module6 uploaded - fails server-side "
+            + "with ProjectException \"Object ... is not a tree\", so the Save dialog never closes."
+            + " Known bug: EPBDS-16361.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testMergeBranchesNoConflicts() {
         LoginService loginService = new LoginService(LocalDriverPool.getPage());
@@ -71,13 +74,13 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
         EditorToolbarPanelComponent editorToolbar = editorPage.getEditorToolbarPanelComponent();
         editSpreadsheetCell(editorPage, "Module2", "MySpr2");
         editorToolbar.clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         // Switch to master, edit MySpr1, commit.
         editorToolbar.switchBranch(MASTER_BRANCH);
         editSpreadsheetCell(editorPage, "Module1", "MySpr1");
         editorToolbar.clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         // master: swap Module3 for Module5, commit.
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);

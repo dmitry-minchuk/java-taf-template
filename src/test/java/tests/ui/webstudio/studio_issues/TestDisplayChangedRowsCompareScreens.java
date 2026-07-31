@@ -171,13 +171,13 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
         // Save desc1 → revision 2
         editorPage.openEditProjectDialog(projectName).setDescription("desc1").clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Save desc2 → revision 3 (HEAD)
         editorPage.openEditProjectDialog(projectName).setDescription("desc2").clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Open revision 2 (one behind HEAD=rev3) — editing from here causes a conflict
@@ -189,7 +189,7 @@ public class TestDisplayChangedRowsCompareScreens extends BaseTest {
         // Edit description from old revision and save → triggers Resolve Conflicts
         editorPage.openEditProjectDialog(projectName).setDescription("desc3").clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Resolve Conflicts dialog must appear because we edited from an old revision

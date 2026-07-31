@@ -29,7 +29,10 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
 
     @Test
     @TestCaseId("IPBQA-30678")
-    @Description("Create project from YAML file with custom module names and paths, verify structure")
+    @Description("Create project from YAML file with custom module names and paths, verify structure. "
+            + "KNOWN-FAILING: saving the project after a module is removed fails server-side with "
+            + "ProjectException \"Object ... is not a tree\", so the Save dialog never closes."
+            + " Known bug: EPBDS-16361.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromOpenApiYamlWithCustomModuleNames() {
         String projectName = "YamlOpenApiProject_" + System.currentTimeMillis();
@@ -111,7 +114,7 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
         editorPage.getAddModulePopupComponent().setModuleName("Data_Type_test");
         editorPage.getAddModulePopupComponent().saveModule();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         assertThat(editorPage.getOpenApiPropertyValue("Rules Module:")).isEqualTo("Spreadsheets_test");
@@ -130,7 +133,7 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
         editorPage.getRemoveModulePopupComponent().setLeaveFile(false);
         editorPage.getRemoveModulePopupComponent().clickRemove();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         List<String> modulesAfterDelete = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);

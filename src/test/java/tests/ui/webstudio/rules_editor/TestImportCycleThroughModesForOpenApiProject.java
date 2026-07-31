@@ -59,7 +59,7 @@ public class TestImportCycleThroughModesForOpenApiProject extends BaseTest {
         assertThat(editorPage.getOpenApiPropertyValue("OpenAPI File:")).isEqualTo(OPENAPI_FILE_3);
 
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Upload openapi2.json to repository
@@ -93,7 +93,7 @@ public class TestImportCycleThroughModesForOpenApiProject extends BaseTest {
         // Step 6.2: Import and override, save, verify properties and modules
         settingsDialog.clickImportAndOverride();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
 
@@ -124,7 +124,7 @@ public class TestImportCycleThroughModesForOpenApiProject extends BaseTest {
         settingsDialog.clickImportAndOverride();
 
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         editorPage.getEditorLeftProjectModuleSelectorComponent()

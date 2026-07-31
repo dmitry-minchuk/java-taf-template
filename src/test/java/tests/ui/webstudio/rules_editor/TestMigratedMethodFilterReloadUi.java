@@ -51,7 +51,7 @@ public class TestMigratedMethodFilterReloadUi extends BaseTest {
         editorPage.getProjectDetailsComponent().clickMigrateMethodFilters();
 
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Open a table of that module, then ask the editor to reload the project.

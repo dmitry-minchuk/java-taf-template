@@ -53,7 +53,7 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
         importDialog.setOpenApiFilePath(OPENAPI_FILE);
         importDialog.clickImportReconciliation();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         assertThat(editorPage.getOpenApiPropertyValue("Mode:"))
@@ -125,7 +125,7 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
 
         // Step 10.1: Save project and verify no problems in each new module
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");

@@ -53,7 +53,7 @@ public class TestImportForProjectCreatedFromTwoOpenApiFiles extends BaseTest {
         settingsDialog.clickImportAndOverride();
 
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms");

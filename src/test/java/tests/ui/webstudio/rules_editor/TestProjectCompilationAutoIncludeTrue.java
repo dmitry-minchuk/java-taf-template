@@ -61,7 +61,7 @@ public class TestProjectCompilationAutoIncludeTrue extends BaseTest {
 
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         assertThat(editorPage.getProblemsPanelComponent().isCompilationProgressBarVisible())
                 .as("Compilation progress bar should be absent after save")
                 .isFalse();

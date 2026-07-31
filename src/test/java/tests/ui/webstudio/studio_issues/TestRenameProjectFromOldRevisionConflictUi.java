@@ -36,7 +36,7 @@ public class TestRenameProjectFromOldRevisionConflictUi extends BaseTest {
         // Rename and save → revision 2, the project now lives under its new name.
         editorPage.openEditProjectDialog(projectName).setProjectName(renamedOnce).clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Go back to the revision the project was created in.
@@ -48,7 +48,7 @@ public class TestRenameProjectFromOldRevisionConflictUi extends BaseTest {
         // The revision being viewed carries the name the project had back then, so it is addressed by that.
         editorPage.openEditProjectDialog(projectName).setProjectName(renamedTwice).clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         assertThat(new ResolveConflictsDialogComponent().isDialogVisible())

@@ -60,7 +60,7 @@ public class TestConstructorNotFoundInDependentTable extends BaseTest {
         editorPage.getCenterTable().editCell(1, 1, "someRuleModified");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Step 3: Go back to DoliMy → mySpr3 — EPBDS-12848: must still have NO errors

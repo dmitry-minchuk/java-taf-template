@@ -226,7 +226,7 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
 
         // Step 11: Save project clears local history, creates 2 revisions, no .history in repo
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);

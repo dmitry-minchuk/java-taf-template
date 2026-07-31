@@ -49,7 +49,7 @@ public class TestImportPathValidationErrors extends BaseTest {
         importDialog.setOpenApiFilePath(OPENAPI_FILE);
         importDialog.clickImportReconciliation();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Setup: Tables Generation import with Bank Rating rules module to create Models module (needed for path validation)
@@ -63,7 +63,7 @@ public class TestImportPathValidationErrors extends BaseTest {
         editorPage.getOpenApiModuleSettingsDialogComponent().waitForVisible();
         editorPage.getOpenApiModuleSettingsDialogComponent().clickImportAndOverride();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         // Now: Bank Rating.xlsx and rules/Models.xlsx both exist in the project

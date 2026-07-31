@@ -67,7 +67,7 @@ public class TestImportOpenApiReconciliationMode extends BaseTest {
 
         // Step 6: Save project
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
     }
 

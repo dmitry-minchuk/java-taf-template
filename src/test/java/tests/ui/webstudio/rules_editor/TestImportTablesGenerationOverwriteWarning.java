@@ -98,7 +98,7 @@ public class TestImportTablesGenerationOverwriteWarning extends BaseTest {
         editorPage.getOpenApiModuleSettingsDialogComponent().waitForVisible();
         editorPage.getOpenApiModuleSettingsDialogComponent().clickImportAndOverride();
         editorPage.getEditorToolbarPanelComponent().clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms_test");

@@ -45,13 +45,13 @@ public class TestReactMergeConflictSmoke extends BaseTest {
         EditorToolbarPanelComponent toolbar = editorPage.getEditorToolbarPanelComponent();
         editMySpr1(editorPage, "TheirValue");
         toolbar.clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         // master: edit the SAME cell differently, commit.
         toolbar.switchBranch(MASTER);
         editMySpr1(editorPage, "YourValue");
         toolbar.clickSave();
-        editorPage.getSaveChangesComponent().getSaveBtn().click();
+        editorPage.getSaveChangesComponent().clickSave();
 
         // Merge MyBranch into master -> conflict on that cell -> Resolve Conflicts dialog.
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
