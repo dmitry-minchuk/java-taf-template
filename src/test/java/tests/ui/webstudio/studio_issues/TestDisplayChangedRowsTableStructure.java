@@ -22,7 +22,7 @@ public class TestDisplayChangedRowsTableStructure extends BaseTest {
     @Description("Display Changed Rows: equal rows checkbox when a new table is created by copying. "
             + "KNOWN-FAILING: copying a table that has merged cells is refused with \"The cell value must be a "
             + "string, a number or a boolean\", so the comparison has nothing to show."
-            + " Known bug: EPBDS-16360.")
+            + " Known bug: EPBDS-16358.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testEqualRowsCheckboxInTableCreationComparison() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
