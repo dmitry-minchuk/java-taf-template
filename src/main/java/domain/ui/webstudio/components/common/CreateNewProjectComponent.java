@@ -125,6 +125,25 @@ public class CreateNewProjectComponent extends BaseComponent {
         return this;
     }
 
+    /**
+     * Puts the name into the wizard's Name field and makes sure that is all it holds.
+     *
+     * <p>The wizard suggests a name from the picked template or archive, and that suggestion arrives after the
+     * field is already on screen: typing while it lands leaves both values in the field (e.g. "Sample Project"
+     * plus the typed name), and the project is then created under that joined name. Retyping until the field
+     * reads back exactly what was asked for is what makes this reliable.
+     */
+    private void typeProjectName(String projectName) {
+        boolean accepted = WaitUtil.waitForCondition(() -> {
+            nameField.fill(projectName);
+            return projectName.equals(nameField.getCurrentInputValue());
+        }, DEFAULT_TIMEOUT_MS, 300, "Waiting for the name field to hold only the requested project name");
+        if (!accepted) {
+            throw new IllegalStateException("The wizard kept its suggested name next to '" + projectName
+                    + "': field reads '" + nameField.getCurrentInputValue() + "'");
+        }
+    }
+
     public void clickCreate() {
         waitForBranchToBeOffered();
         submitBtn.click();
@@ -157,7 +176,7 @@ public class CreateNewProjectComponent extends BaseComponent {
             templateItem.format(templateName).click();
         }
         if (projectName != null && !projectName.isEmpty()) {
-            nameField.fill(projectName);
+            typeProjectName(projectName);
         }
         if (submit) {
             submitBtn.click();
@@ -176,7 +195,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         methodExcel.click();
         excelUpload.setInputFiles(TestDataUtil.getFilePathFromResources(excelFileName));
         if (projectName != null && !projectName.isEmpty()) {
-            nameField.fill(projectName);
+            typeProjectName(projectName);
         }
         submitBtn.click();
     }
@@ -186,7 +205,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         methodArchive.click();
         archiveUpload.setInputFiles(TestDataUtil.getFilePathFromResources(zipFileName));
         if (projectName != null && !projectName.isEmpty()) {
-            nameField.fill(projectName);
+            typeProjectName(projectName);
         }
         submitBtn.click();
     }
@@ -209,7 +228,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public CreateNewProjectComponent setProjectName(String projectName) {
-        nameField.fill(projectName);
+        typeProjectName(projectName);
         return this;
     }
 
@@ -296,7 +315,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         methodOpenApi.click();
         openApiUpload.setInputFiles(TestDataUtil.getFilePathFromResources(fileName));
         if (projectName != null && !projectName.isEmpty()) {
-            nameField.fill(projectName);
+            typeProjectName(projectName);
         }
         if (submit) {
             submitBtn.click();
