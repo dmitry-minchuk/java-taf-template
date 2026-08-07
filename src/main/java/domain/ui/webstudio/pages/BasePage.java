@@ -109,8 +109,10 @@ public abstract class BasePage extends CorePage {
     // Debounced settle: waits until the React loading overlay stays absent continuously, so a following
     // click (e.g. a tab switch right after a recompile) isn't intercepted by the overlay flickering back.
     // Bounded (never throws): if the app is still churning it just proceeds and relies on click retries.
-    public void waitUntilAppIdle() {
-        WebElement.waitForAppIdle(page, 30000L);
+    // The returned flag tells whether the app really settled — an overlay that never leaves is the
+    // EPBDS-16275 reload loop, so guard tests must assert on it instead of ignoring it.
+    public boolean waitUntilAppIdle() {
+        return WebElement.waitForAppIdle(page, 30000L);
     }
 
     /**

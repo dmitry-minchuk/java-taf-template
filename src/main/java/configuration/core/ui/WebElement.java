@@ -113,8 +113,13 @@ public class WebElement {
      * continuously for a short quiet window, i.e. the background refresh / recompile has truly finished
      * re-rendering. A single absent instant is not enough during a commit — the overlay flickers, so
      * {@link #waitForAppReady} can return mid-recompile while JSF nodes are still detaching. Never throws.
+     *
+     * @return whether the app became idle within the timeout. A {@code false} from a wait this long is
+     *         itself a signal: an overlay that never settles is the JSF reload loop of EPBDS-16275
+     *         (a POST with an evicted ViewState expires, the error handler reloads the panels without
+     *         renewing the ViewState, and the next auto-fired POST expires again, endlessly).
      */
-    public static void waitForAppIdle(Page page, long timeoutMs) {
+    public static boolean waitForAppIdle(Page page, long timeoutMs) {
         long quietWindowMs = 750;
         long[] overlayAbsentSince = {0};
         boolean idle = WaitUtil.waitForCondition(() -> {
@@ -132,6 +137,7 @@ public class WebElement {
         if (!idle) {
             LOGGER.debug("App still busy after {}ms; proceeding and relying on actionability retry", timeoutMs);
         }
+        return idle;
     }
 
     private void waitForAppReady() {
