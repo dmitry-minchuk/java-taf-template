@@ -4,7 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class RepositoryContentButtonsPanelComponent extends BaseComponent {
     private WebElement allButtonsLocator;
 
     public RepositoryContentButtonsPanelComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

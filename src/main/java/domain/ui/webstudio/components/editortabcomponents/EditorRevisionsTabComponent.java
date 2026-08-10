@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import com.microsoft.playwright.Dialog;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -16,7 +16,7 @@ public class EditorRevisionsTabComponent extends BaseComponent {
     private WebElement actionLinkTemplate;
 
     public EditorRevisionsTabComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

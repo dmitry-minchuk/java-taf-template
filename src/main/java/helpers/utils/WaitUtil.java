@@ -37,7 +37,7 @@ public class WaitUtil {
                 LOGGER.info("List became non-empty after {}ms: {}", System.currentTimeMillis() - startTime, description);
                 return true;
             }
-            sleep((int) pollingIntervalMs, "Polling for list (attempt): " + description);
+            sleep(pollingIntervalMs, "Polling for list (attempt): " + description);
         }
         LOGGER.warn("List remained empty after {}ms timeout: {}", timeoutMs, description);
         return false;
@@ -53,7 +53,7 @@ public class WaitUtil {
                 LOGGER.info("Condition met after {}ms: {}", System.currentTimeMillis() - startTime, description);
                 return true;
             }
-            sleep((int) pollingIntervalMs, "Polling for condition (attempt): " + description);
+            sleep(pollingIntervalMs, "Polling for condition (attempt): " + description);
         }
         LOGGER.warn("Condition not met after {}ms timeout: {}", timeoutMs, description);
         return false;
@@ -123,18 +123,21 @@ public class WaitUtil {
     public static <T> T retryOnException(Supplier<T> supplier, long timeoutMs, long pollingMs, String description) {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + timeoutMs;
-        RuntimeException lastException = null;
+        RuntimeException lastException;
         int attempts = 0;
-        while (System.currentTimeMillis() < endTime) {
+        // do-while: always make at least one attempt, even with a non-positive timeout
+        do {
             try {
                 return supplier.get();
             } catch (RuntimeException e) {
                 lastException = e;
                 attempts++;
                 LOGGER.debug("Attempt {} failed (will retry): {} - {}", attempts, description, e.getMessage());
-                sleep(pollingMs, "Retrying: " + description);
+                if (System.currentTimeMillis() < endTime) {
+                    sleep(pollingMs, "Retrying: " + description);
+                }
             }
-        }
+        } while (System.currentTimeMillis() < endTime);
         LOGGER.warn("All retries exhausted: {} attempt(s), {}ms interval, {}ms total elapsed - {}",
                 attempts, pollingMs, System.currentTimeMillis() - startTime, description);
         throw lastException;

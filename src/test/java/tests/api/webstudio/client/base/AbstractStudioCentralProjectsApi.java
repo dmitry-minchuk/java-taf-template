@@ -14,7 +14,6 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.Assert;
 import org.testng.ITest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -29,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public abstract class AbstractStudioCentralProjectsApi implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(AbstractStudioCentralProjectsApi.class);
@@ -160,7 +162,7 @@ public abstract class AbstractStudioCentralProjectsApi implements ITest {
     @Test(dataProvider = "studioCentralProjects")
     public void testStudioCentralProject(String projectName) {
         Map<String, Object> project = projectsByName.get(projectName);
-        Assert.assertNotNull(project, "Project not found in discovered set: " + projectName);
+        assertThat(project).as("%s", "Project not found in discovered set: " + projectName).isNotNull();
         validateProject(project);
     }
 
@@ -215,9 +217,8 @@ public abstract class AbstractStudioCentralProjectsApi implements ITest {
 
         // Re-anchor "current project" in session even if already OPENED.
         Response open = new ProjectsMethod().openProject(projectId);
-        Assert.assertTrue(open.getStatusCode() < 300,
-                String.format("Failed to set project %s as current: HTTP %d — %s",
-                        projectName, open.getStatusCode(), open.getBody().asString()));
+        assertThat(open.getStatusCode() < 300).as("%s", String.format("Failed to set project %s as current: HTTP %d — %s",
+                        projectName, open.getStatusCode(), open.getBody().asString())).isTrue();
 
         // tests/run opens a module, awaits compilation server-side, then runs all tests — so it is
         // also the compile trigger (a plain open leaves compileState 'idle'). 404 means the project
@@ -228,35 +229,32 @@ public abstract class AbstractStudioCentralProjectsApi implements ITest {
             LOGGER.info("Project [{}] has no modules to compile/run — skipping", projectName);
             return;
         }
-        Assert.assertTrue(runStatus == 200 || runStatus == 202,
-                String.format("Failed to compile/run tests for project %s: HTTP %d — %s",
-                        projectName, runStatus, runResponse.getBody().asString()));
+        assertThat(runStatus == 200 || runStatus == 202).as("%s", String.format("Failed to compile/run tests for project %s: HTTP %d — %s",
+                        projectName, runStatus, runResponse.getBody().asString())).isTrue();
 
         // Compilation is finished by the time tests/run returns; /status now reports the real state
         // (replaces the removed /modules + /compile/progress endpoints).
         Response statusResp = awaitCompilation(projectId);
-        Assert.assertEquals(statusResp.getStatusCode(), 200,
-                String.format("Project status failed for project %s: HTTP %d — %s",
-                        projectName, statusResp.getStatusCode(), statusResp.getBody().asString()));
+        assertThat(statusResp.getStatusCode()).as("%s", String.format("Project status failed for project %s: HTTP %d — %s",
+                        projectName, statusResp.getStatusCode(), statusResp.getBody().asString())).isEqualTo(200);
         JsonPath status = statusResp.jsonPath();
         String compileState = status.getString("compileState");
         int compileErrors = intOrZero(status.get("compilation.messages.errors"));
         if ("errors".equalsIgnoreCase(compileState) || compileErrors > 0) {
             String detail = buildCompileErrorReport(projectName, status);
             LOGGER.error(detail);
-            Assert.fail(detail);
+            fail(detail);
         }
 
         Response summary = pollTestsSummary(projectId, projectName);
-        Assert.assertNotNull(summary, String.format("Test summary timed out for project [%s]", projectName));
+        assertThat(summary).as("%s", String.format("Test summary timed out for project [%s]", projectName)).isNotNull();
         int code = summary.getStatusCode();
         if (code == 404) {
             LOGGER.info("Project [{}] has no Test tables — compile validated, nothing to run", projectName);
             return;
         }
-        Assert.assertEquals(code, 200,
-                String.format("Tests summary returned HTTP %d for project [%s]: %s",
-                        code, projectName, summary.getBody().asString()));
+        assertThat(code).as("%s", String.format("Tests summary returned HTTP %d for project [%s]: %s",
+                        code, projectName, summary.getBody().asString())).isEqualTo(200);
 
         Integer failures = summary.jsonPath().getInt("numberOfFailures");
         Integer total = summary.jsonPath().getInt("numberOfTests");
@@ -264,7 +262,7 @@ public abstract class AbstractStudioCentralProjectsApi implements ITest {
         if (failures != null && failures > 0) {
             String detail = buildFailureReport(projectName, total, failures, summary.jsonPath());
             LOGGER.error(detail);
-            Assert.fail(detail);
+            fail(detail);
         }
     }
 

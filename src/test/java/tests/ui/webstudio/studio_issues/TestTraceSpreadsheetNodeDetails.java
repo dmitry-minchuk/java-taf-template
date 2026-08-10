@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.ITraceWindow;
 
 /**
  * EPBDS-16160 (automated per EPBDS-16183) — selecting the SpreadsheetResult node of a
@@ -40,7 +41,7 @@ public class TestTraceSpreadsheetNodeDetails extends BaseTest {
                 .selectItemInFolder("Spreadsheet", TRACED_TABLE);
 
         // MyRule has no parameters, so Trace opens the step debugger directly (no params menu).
-        EditorToolbarPanelComponent.ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
+        ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
                 .clickTraceExpectTraceWindow();
 
         assertThat(traceWindow.getCallTreeTitles())

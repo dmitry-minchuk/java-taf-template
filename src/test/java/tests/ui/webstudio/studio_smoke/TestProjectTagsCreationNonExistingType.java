@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -15,9 +15,10 @@ import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestProjectTagsCreationNonExistingType extends BaseTest {
 
@@ -38,7 +39,7 @@ public class TestProjectTagsCreationNonExistingType extends BaseTest {
             + "are applied as they are, including a type that the Tags settings do not know")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNonExistingTagTypeHandling() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         setupRequiredTagTypes(editorPage);
@@ -50,10 +51,8 @@ public class TestProjectTagsCreationNonExistingType extends BaseTest {
         // reconciliation popups ("Missing tags" / "Tags") are gone and nothing is matched against the Tags
         // settings, so even a type the settings do not declare is kept.
         ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_EXT), "TagExt3",
-                "An extensible type should take the zip's value");
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_UNKNOWN), "Tag3",
-                "A type missing from the Tags settings should still be shown as the zip declares it");
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_EXT)).as("An extensible type should take the zip's value").isEqualTo("TagExt3");
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_UNKNOWN)).as("A type missing from the Tags settings should still be shown as the zip declares it").isEqualTo("Tag3");
     }
 
     private void setupRequiredTagTypes(EditorPage editorPage) {

@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
@@ -38,7 +38,7 @@ public class TestSupportedRepositories extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSupportedRepositories() {
         // Login as admin
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // Navigate to Admin → Repositories

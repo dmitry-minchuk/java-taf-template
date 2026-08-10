@@ -35,7 +35,6 @@ public class TestClickOnErrorFromTheBottom extends BaseTest {
                 .as("'Something went wrong' message should not be displayed")
                 .isFalse();
 
-        System.out.println(editorPage.getEditorMainContentProblemsPanelComponent().isErrorMessageListPresent());
         // Validate that error message is present in the top problems panel
         assertThat(editorPage.getEditorMainContentProblemsPanelComponent().isErrorMessageListPresent())
                 .as("Error message should be present in top problems panel")

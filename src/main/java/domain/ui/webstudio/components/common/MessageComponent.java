@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.common;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class MessageComponent extends BaseComponent {
     private WebElement closeBtn;
 
     public MessageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeComponents();
     }
 

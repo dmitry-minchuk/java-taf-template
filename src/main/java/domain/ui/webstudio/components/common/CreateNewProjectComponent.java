@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.common;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.createnewproject.ExcelFilesComponent;
 import domain.ui.webstudio.components.createnewproject.OpenApiComponent;
 import domain.ui.webstudio.components.createnewproject.TemplateTabComponent;
@@ -52,7 +52,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement pathField;     // new-project-path (path-in-repository for non-flat repos)
 
     public CreateNewProjectComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -70,32 +70,32 @@ public class CreateNewProjectComponent extends BaseComponent {
         openApiComponent = createScopedComponent(OpenApiComponent.class, "xpath=.//form[@name='openAPIProjectForm']", "openApiComponent");
         closeDialogBtn = createScopedElement("xpath=.//img[@class='close']", "closeDialogBtn");
 
-        methodTemplate = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-template]", "methodTemplate");
-        methodExcel = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-excel]", "methodExcel");
-        methodArchive = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-archive]", "methodArchive");
-        cancelBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-cancel]", "newProjectCancel");
-        submitBtn = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-submit]", "newProjectSubmit");
-        nameField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-name]", "newProjectName");
-        templateGroup = new WebElement(LocalDriverPool.getPage(), "[data-testid=template-group-%s]", "templateGroup");
-        templateItem = new WebElement(LocalDriverPool.getPage(), "xpath=//div[@data-testid='new-project-template']//button[.//span[normalize-space()='%s']]", "templateItem");
-        excelUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-excel-upload]", "excelUpload");
-        archiveUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-upload]", "archiveUpload");
-        methodOpenApi = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-method-openapi]", "methodOpenApi");
-        openApiUpload = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-upload]", "openApiUpload");
-        openApiDataModuleField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-data-module]", "openApiDataModule");
-        openApiDataPathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-data-path]", "openApiDataPath");
-        openApiRulesModuleField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-rules-module]", "openApiRulesModule");
-        openApiRulesPathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-openapi-rules-path]", "openApiRulesPath");
+        methodTemplate = new WebElement(DriverPool.getPage(), "[data-testid=new-project-method-template]", "methodTemplate");
+        methodExcel = new WebElement(DriverPool.getPage(), "[data-testid=new-project-method-excel]", "methodExcel");
+        methodArchive = new WebElement(DriverPool.getPage(), "[data-testid=new-project-method-archive]", "methodArchive");
+        cancelBtn = new WebElement(DriverPool.getPage(), "[data-testid=new-project-cancel]", "newProjectCancel");
+        submitBtn = new WebElement(DriverPool.getPage(), "[data-testid=new-project-submit]", "newProjectSubmit");
+        nameField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-name]", "newProjectName");
+        templateGroup = new WebElement(DriverPool.getPage(), "[data-testid=template-group-%s]", "templateGroup");
+        templateItem = new WebElement(DriverPool.getPage(), "xpath=//div[@data-testid='new-project-template']//button[.//span[normalize-space()='%s']]", "templateItem");
+        excelUpload = new WebElement(DriverPool.getPage(), "[data-testid=new-project-excel-upload]", "excelUpload");
+        archiveUpload = new WebElement(DriverPool.getPage(), "[data-testid=new-project-upload]", "archiveUpload");
+        methodOpenApi = new WebElement(DriverPool.getPage(), "[data-testid=new-project-method-openapi]", "methodOpenApi");
+        openApiUpload = new WebElement(DriverPool.getPage(), "[data-testid=new-project-openapi-upload]", "openApiUpload");
+        openApiDataModuleField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-openapi-data-module]", "openApiDataModule");
+        openApiDataPathField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-openapi-data-path]", "openApiDataPath");
+        openApiRulesModuleField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-openapi-rules-module]", "openApiRulesModule");
+        openApiRulesPathField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-openapi-rules-path]", "openApiRulesPath");
         // The remove button sits inside the upload list item's actions container.
-        openApiUploadedFileRemoveBtn = new WebElement(LocalDriverPool.getPage(), "xpath=//span[contains(@class,'ant-upload-list-item-actions')]//button", "openApiRemoveFile");
+        openApiUploadedFileRemoveBtn = new WebElement(DriverPool.getPage(), "xpath=//span[contains(@class,'ant-upload-list-item-actions')]//button", "openApiRemoveFile");
         openApiUploadedFiles = createElementList("xpath=//div[contains(@class,'ant-upload-list-item')]", "openApiUploadedFiles");
-        openApiError = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-error]", "newProjectError");
-        repoSelect = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-repo]", "newProjectRepo");
+        openApiError = new WebElement(DriverPool.getPage(), "[data-testid=new-project-error]", "newProjectError");
+        repoSelect = new WebElement(DriverPool.getPage(), "[data-testid=new-project-repo]", "newProjectRepo");
         // antd wraps the field, so the testid can sit on the wrapper - read the inner input either way.
-        branchField = new WebElement(LocalDriverPool.getPage(),
+        branchField = new WebElement(DriverPool.getPage(),
                 "css=[data-testid=new-project-branch] input, input[data-testid=new-project-branch]", "newProjectBranch");
-        repoOption = new WebElement(LocalDriverPool.getPage(), "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "newProjectRepoOption");
-        pathField = new WebElement(LocalDriverPool.getPage(), "[data-testid=new-project-path]", "newProjectPath");
+        repoOption = new WebElement(DriverPool.getPage(), "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "newProjectRepoOption");
+        pathField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-path]", "newProjectPath");
     }
 
     // --- React create-wizard target-repository + path controls (visible on the form step once >1 design repo

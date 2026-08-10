@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.common;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.BasePage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
@@ -14,7 +14,7 @@ public class TabSwitcherComponent extends BaseComponent {
     private WebElement tabTemplate;
 
     public TabSwitcherComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

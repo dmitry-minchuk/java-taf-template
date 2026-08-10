@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class TopProblemsPanelComponent extends BaseComponent {
     private List<WebElement> errorItems;
 
     public TopProblemsPanelComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

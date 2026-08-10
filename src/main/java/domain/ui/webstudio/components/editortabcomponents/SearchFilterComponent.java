@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -29,7 +29,7 @@ public class SearchFilterComponent extends BaseComponent {
     private List<WebElement> scopeOptions;
 
     public SearchFilterComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.editortabcomponents.ProblemsPanelComponent;
 import helpers.utils.WaitUtil;
 
@@ -17,7 +17,7 @@ public class EditorLeftProjectModuleSelectorComponent extends BaseComponent {
     private ProblemsPanelComponent problemsPanelComponent;
 
     public EditorLeftProjectModuleSelectorComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

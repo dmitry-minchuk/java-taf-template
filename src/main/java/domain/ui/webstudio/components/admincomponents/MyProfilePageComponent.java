@@ -5,7 +5,7 @@ import configuration.core.ui.WebElement;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 
 public class MyProfilePageComponent extends BaseComponent {
 
@@ -24,7 +24,7 @@ public class MyProfilePageComponent extends BaseComponent {
     private WebElement displayNamePatternDropdown;
 
     public MyProfilePageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

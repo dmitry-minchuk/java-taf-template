@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
@@ -28,7 +28,7 @@ public class RightTableDetailsComponent extends BaseComponent {
     private List<WebElement> propertyRows;
 
     public RightTableDetailsComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

@@ -4,7 +4,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 public class EditorTableActionsPanelComponent extends BaseComponent {
@@ -19,7 +19,7 @@ public class EditorTableActionsPanelComponent extends BaseComponent {
     private WebElement removeColumnBtn;
 
     public EditorTableActionsPanelComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

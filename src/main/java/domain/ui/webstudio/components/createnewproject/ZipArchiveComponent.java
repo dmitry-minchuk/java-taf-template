@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.createnewproject;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
 import helpers.utils.TestDataUtil;
 import helpers.utils.WaitUtil;
@@ -17,7 +17,7 @@ public class ZipArchiveComponent extends BaseComponent {
     private WebElement cancelBtn;
 
     public ZipArchiveComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

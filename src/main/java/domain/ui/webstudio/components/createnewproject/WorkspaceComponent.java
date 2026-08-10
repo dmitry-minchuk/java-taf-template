@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.createnewproject;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.common.TableComponent;
 import helpers.utils.WaitUtil;
 
@@ -21,7 +21,7 @@ public class WorkspaceComponent extends BaseComponent {
     private WebElement cancelBtn;
 
     public WorkspaceComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

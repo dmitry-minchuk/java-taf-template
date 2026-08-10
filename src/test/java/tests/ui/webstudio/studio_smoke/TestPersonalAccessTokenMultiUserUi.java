@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.api.PersonalAccessTokenApiMethod;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.PersonalAccessTokenPageComponent;
@@ -26,7 +26,7 @@ public class TestPersonalAccessTokenMultiUserUi extends BaseTest {
     @Description("Multi-user mode: a personal access token created in the UI authenticates a REST call, and revoking it removes access.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testPersonalAccessTokenAuthenticatesRestInMultiUserMode() {
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         PersonalAccessTokenPageComponent tokensPage = adminPage.navigateToPersonalAccessTokensPage();
 

@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
@@ -29,7 +29,7 @@ public class SystemSettingsPageComponent extends BaseComponent {
     private WebElement databaseMaxPoolSizeField;
 
     public SystemSettingsPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

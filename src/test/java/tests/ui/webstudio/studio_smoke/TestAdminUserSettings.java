@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import domain.ui.webstudio.components.common.TableComponent;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -20,7 +20,6 @@ import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.service.WorkflowService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -28,6 +27,8 @@ import java.util.List;
 
 import static domain.serviceclasses.constants.User.ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.IRunTestsMenu;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.ITraceWindow;
 
 public class TestAdminUserSettings extends BaseTest {
 
@@ -36,7 +37,7 @@ public class TestAdminUserSettings extends BaseTest {
     @Description("User settings and profile management")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testUserSettingsAndDetails() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // Scenario 1: Clear profile information (lines 34-44 from original)
         EditorPage editorPage = loginService.login(UserService.getUser(ADMIN));
@@ -50,9 +51,8 @@ public class TestAdminUserSettings extends BaseTest {
                 .setEmail("")
                 .setDisplayName("");
         // 6.4.0 keeps Save clickable and points at the offending fields instead of blocking the button.
-        Assert.assertTrue(myProfileComponent.getValidationErrors().stream()
-                        .anyMatch(message -> message.contains("Email is required")),
-                "Clearing the required profile fields must be reported on the form");
+        assertThat(myProfileComponent.getValidationErrors().stream()
+                        .anyMatch(message -> message.contains("Email is required"))).as("Clearing the required profile fields must be reported on the form").isTrue();
 
         // Scenario 2: leaving the page without saving keeps the stored profile. 6.4.0 asks every user to
         // complete their profile at first login, so the stored values are filled in, not empty.
@@ -60,10 +60,9 @@ public class TestAdminUserSettings extends BaseTest {
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
-        Assert.assertEquals(myProfileComponent.getUsername(), "admin", "Username should be admin");
-        Assert.assertFalse(myProfileComponent.getEmail().isBlank(), "Email should keep its stored value");
-        Assert.assertFalse(myProfileComponent.getDisplayName().isBlank(),
-                "Display name should keep its stored value");
+        assertThat(myProfileComponent.getUsername()).as("Username should be admin").isEqualTo("admin");
+        assertThat(myProfileComponent.getEmail().isBlank()).as("Email should keep its stored value").isFalse();
+        assertThat(myProfileComponent.getDisplayName().isBlank()).as("Display name should keep its stored value").isFalse();
 
         // Scenario 3: Update profile and check users table (lines 58-76 from original)
         myProfileComponent
@@ -77,10 +76,10 @@ public class TestAdminUserSettings extends BaseTest {
                 .navigateToAdministration()
                 .navigateToMyProfilePage();
 
-        Assert.assertEquals(myProfileComponent.getFirstName(), "Abc", "First name should be 'Abc'");
-        Assert.assertEquals(myProfileComponent.getLastName(), "Bcd", "Last name should be 'Bcd'");
-        Assert.assertEquals(myProfileComponent.getEmail(), "admin@admin.com", "Email should be 'admin@admin.com'");
-        Assert.assertEquals(myProfileComponent.getDisplayName(), "Abc Bcd", "Display name should be 'Abc Bcd'");
+        assertThat(myProfileComponent.getFirstName()).as("First name should be 'Abc'").isEqualTo("Abc");
+        assertThat(myProfileComponent.getLastName()).as("Last name should be 'Bcd'").isEqualTo("Bcd");
+        assertThat(myProfileComponent.getEmail()).as("Email should be 'admin@admin.com'").isEqualTo("admin@admin.com");
+        assertThat(myProfileComponent.getDisplayName()).as("Display name should be 'Abc Bcd'").isEqualTo("Abc Bcd");
 
         UsersPageComponent usersComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
@@ -91,10 +90,10 @@ public class TestAdminUserSettings extends BaseTest {
         String adminFullName = usersComponent.getFullNameFromRow(adminRow);
         String[] nameParts = adminFullName.split(" ");
 
-        Assert.assertEquals(nameParts[0], "Abc", "Admin first name in Users table should be 'Abc'");
-        Assert.assertEquals(nameParts[1], "Bcd", "Admin last name in Users table should be 'Bcd'");
-        Assert.assertEquals(usersComponent.getEmailFromRow(adminRow), "admin@admin.com", "Admin email in Users table should be 'admin@admin.com'");
-        Assert.assertEquals(adminFullName, "Abc Bcd", "Admin display name in Users table should be 'Abc Bcd'");
+        assertThat(nameParts[0]).as("Admin first name in Users table should be 'Abc'").isEqualTo("Abc");
+        assertThat(nameParts[1]).as("Admin last name in Users table should be 'Bcd'").isEqualTo("Bcd");
+        assertThat(usersComponent.getEmailFromRow(adminRow)).as("Admin email in Users table should be 'admin@admin.com'").isEqualTo("admin@admin.com");
+        assertThat(adminFullName).as("Admin display name in Users table should be 'Abc Bcd'").isEqualTo("Abc Bcd");
 
         // Scenario 4: Change password and test authentication (lines 77-95 from original)
         myProfileComponent = editorPage.openUserMenu()
@@ -108,9 +107,9 @@ public class TestAdminUserSettings extends BaseTest {
         LoginPage loginPage = new LoginPage();
         UserData oldPasswordData = new UserData("admin", "admin");
 //        loginPage.login(oldPasswordData);
-//        Assert.assertTrue(loginPage.isLoginErrorDisplayed(), "Login error should be displayed for old password");
+//        assertThat(loginPage.isLoginErrorDisplayed()).as("Login error should be displayed for old password").isTrue();
 //        String errorMessage = loginPage.getLoginErrorMessage();
-//        Assert.assertTrue(errorMessage.contains("Wrong username") || errorMessage.contains("Invalid username"), "Error message should indicate wrong credentials");
+//        assertThat(errorMessage.contains("Wrong username") || errorMessage.contains("Invalid username")).as("Error message should indicate wrong credentials").isTrue();
 
         // Login with new password
         UserData newUserData = new UserData("admin", "12345");
@@ -146,10 +145,10 @@ public class TestAdminUserSettings extends BaseTest {
                 .navigateToMyProfile()
                 .navigateToMyProfilePage();
                 
-        Assert.assertEquals(myProfileComponent.getUsername(), "user1", "Username should be 'user1'");
-        Assert.assertEquals(myProfileComponent.getFirstName(), "Aaa", "First name should be 'Aaa'");
-        Assert.assertEquals(myProfileComponent.getLastName(), "Bbb", "Last name should be 'Bbb'");
-        Assert.assertEquals(myProfileComponent.getEmail(), "user1@example.com", "Email should be user1@example.com");
+        assertThat(myProfileComponent.getUsername()).as("Username should be 'user1'").isEqualTo("user1");
+        assertThat(myProfileComponent.getFirstName()).as("First name should be 'Aaa'").isEqualTo("Aaa");
+        assertThat(myProfileComponent.getLastName()).as("Last name should be 'Bbb'").isEqualTo("Bbb");
+        assertThat(myProfileComponent.getEmail()).as("Email should be user1@example.com").isEqualTo("user1@example.com");
         
         // Change display name
         myProfileComponent.setDisplayName("Bbb Aaa").saveProfile();
@@ -158,7 +157,7 @@ public class TestAdminUserSettings extends BaseTest {
         myProfileComponent = editorPage.openUserMenu()
                 .navigateToMySettings()
                 .navigateToMyProfilePage();
-        Assert.assertEquals(myProfileComponent.getDisplayName(), "Bbb Aaa", "Display name should be updated");
+        assertThat(myProfileComponent.getDisplayName()).as("Display name should be updated").isEqualTo("Bbb Aaa");
 
         // Scenario 6: Check default settings (lines 133-143 from original)
         editorPage.openUserMenu().signOut();
@@ -170,18 +169,18 @@ public class TestAdminUserSettings extends BaseTest {
                 .navigateToAdministration()
                 .navigateToUsersPage();
         int user1Row = usersComponent.getUserRow("user1");
-        Assert.assertEquals(usersComponent.getFullNameFromRow(user1Row), "Bbb Aaa", "Display name should be updated in users table");
+        assertThat(usersComponent.getFullNameFromRow(user1Row)).as("Display name should be updated in users table").isEqualTo("Bbb Aaa");
 
         MySettingsPageComponent mySettingsComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToMySettingsPage();
 
-        Assert.assertTrue(mySettingsComponent.isShowHeaderEnabled(), "Show Header should be true");
-        Assert.assertFalse(mySettingsComponent.isShowFormulasEnabled(), "Show Formulas should be false");
-        Assert.assertEquals(mySettingsComponent.getTestsPerPage(), 5, "Tests per page should be 5");
-        Assert.assertFalse(mySettingsComponent.isFailuresOnlyEnabled(), "Failures Only should be false");
-        Assert.assertFalse(mySettingsComponent.isCompoundResultEnabled(), "Compound Result should be false");
-        Assert.assertFalse(mySettingsComponent.isShowNumbersWithoutFormattingEnabled(), "Show numbers without formatting should be false");
+        assertThat(mySettingsComponent.isShowHeaderEnabled()).as("Show Header should be true").isTrue();
+        assertThat(mySettingsComponent.isShowFormulasEnabled()).as("Show Formulas should be false").isFalse();
+        assertThat(mySettingsComponent.getTestsPerPage()).as("Tests per page should be 5").isEqualTo(5);
+        assertThat(mySettingsComponent.isFailuresOnlyEnabled()).as("Failures Only should be false").isFalse();
+        assertThat(mySettingsComponent.isCompoundResultEnabled()).as("Compound Result should be false").isFalse();
+        assertThat(mySettingsComponent.isShowNumbersWithoutFormattingEnabled()).as("Show numbers without formatting should be false").isFalse();
 
         myProfileComponent = editorPage.openUserMenu()
                 .navigateToAdministration()
@@ -206,7 +205,7 @@ public class TestAdminUserSettings extends BaseTest {
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
 
         TableComponent tableComponent = editorPage.getCenterTable();
-        Assert.assertEquals(tableComponent.getCellText(3, 2), "2500", "Cell content should be '2500'");
+        assertThat(tableComponent.getCellText(3, 2)).as("Cell content should be '2500'").isEqualTo("2500");
 
         // Click "arrow" after admin, Click "User settings", Set Show Header: false, Show Formulas: true, Click "Save"
         mySettingsComponent = editorPage.openUserMenu()
@@ -221,8 +220,8 @@ public class TestAdminUserSettings extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "CapitalAdequacyScore");
-        Assert.assertEquals(tableComponent.getRowsCount(), 7, "Table should have 7 rows");
-        Assert.assertEquals(tableComponent.getCellText(2, 2), "=50*45/D8", "Formula should be visible");
+        assertThat(tableComponent.getRowsCount()).as("Table should have 7 rows").isEqualTo(7);
+        assertThat(tableComponent.getCellText(2, 2)).as("Formula should be visible").isEqualTo("=50*45/D8");
 
         // Scenario 9: Check settings isolation for different users (lines 154-164 from original)
         editorPage.openUserMenu().signOut();
@@ -244,10 +243,9 @@ public class TestAdminUserSettings extends BaseTest {
 
         // User1 should see different table format (8 rows instead of 7) due to different settings
         TableComponent tableComponentUser1 = editorPage.getCenterTable();
-        Assert.assertEquals(tableComponentUser1.getRowsCount(), 8, "Table should have 8 rows for user1 (different settings)");
+        assertThat(tableComponentUser1.getRowsCount()).as("Table should have 8 rows for user1 (different settings)").isEqualTo(8);
         // User1 should see different header row content
-        Assert.assertEquals(tableComponentUser1.getCellText(1, 1), "SimpleRules Double CapitalAdequacyScore (Double capitalAdequacy)",
-                           "User1 should see different header format");
+        assertThat(tableComponentUser1.getCellText(1, 1)).as("User1 should see different header format").isEqualTo("SimpleRules Double CapitalAdequacyScore (Double capitalAdequacy)");
 
         // Scenario 9: Change test settings (lines 165-176 from original)
         editorPage.openUserMenu().signOut();
@@ -267,10 +265,10 @@ public class TestAdminUserSettings extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectNameTemplate, "Bank Rating");
 
         // Verify test execution settings in dropdown
-        EditorToolbarPanelComponent.IRunTestsMenu testSettings = editorPage.getEditorToolbarPanelComponent().clickTestDropdown();
-        Assert.assertEquals(testSettings.getTestPerPage(), "20", "Tests per page should be 20");
-        Assert.assertTrue(testSettings.isFailuresOnlyChecked(), "Failures Only should be enabled");
-        Assert.assertTrue(testSettings.isCompoundResultChecked(), "Compound Result should be enabled");
+        IRunTestsMenu testSettings = editorPage.getEditorToolbarPanelComponent().clickTestDropdown();
+        assertThat(testSettings.getTestPerPage()).as("Tests per page should be 20").isEqualTo("20");
+        assertThat(testSettings.isFailuresOnlyChecked()).as("Failures Only should be enabled").isTrue();
+        assertThat(testSettings.isCompoundResultChecked()).as("Compound Result should be enabled").isTrue();
 
         // Scenario 11: Verify user settings isolation (lines 185-195 from original)
         editorPage.openUserMenu().signOut();
@@ -280,16 +278,16 @@ public class TestAdminUserSettings extends BaseTest {
                 .navigateToMySettingsPage();
 
         // Verify that user1 has default settings (different from admin's modified settings)
-        Assert.assertTrue(mySettingsComponent.isShowHeaderEnabled(), "User1 Show Header should still be true");
-        Assert.assertFalse(mySettingsComponent.isShowFormulasEnabled(), "User1 Show Formulas should still be false");
-        Assert.assertEquals(mySettingsComponent.getTestsPerPage(), 5, "User1 Tests per page should still be 5");
-        Assert.assertFalse(mySettingsComponent.isFailuresOnlyEnabled(), "User1 Failures Only should still be false");
-        Assert.assertFalse(mySettingsComponent.isCompoundResultEnabled(), "User1 Compound Result should still be false");
+        assertThat(mySettingsComponent.isShowHeaderEnabled()).as("User1 Show Header should still be true").isTrue();
+        assertThat(mySettingsComponent.isShowFormulasEnabled()).as("User1 Show Formulas should still be false").isFalse();
+        assertThat(mySettingsComponent.getTestsPerPage()).as("User1 Tests per page should still be 5").isEqualTo(5);
+        assertThat(mySettingsComponent.isFailuresOnlyEnabled()).as("User1 Failures Only should still be false").isFalse();
+        assertThat(mySettingsComponent.isCompoundResultEnabled()).as("User1 Compound Result should still be false").isFalse();
 
         // Scenario 12: Test Help functionality (lines 196-201 from original)
         editorPage.openUserMenu().openHelp();
         String helpUrl = editorPage.getPage().url();
-        Assert.assertTrue(helpUrl.contains("help"), "Help should open OpenL Tablets documentation");
+        assertThat(helpUrl.contains("help")).as("Help should open OpenL Tablets documentation").isTrue();
 
         // Scenarios 13-17: Trace functionality with number formatting (lines 202-234 from original)
         editorPage.openUserMenu().signOut();
@@ -309,7 +307,7 @@ public class TestAdminUserSettings extends BaseTest {
         // apply. We keep the setting toggles and assert the debugger opens and renders the traced
         // table for the selected spreadsheet; verifying the formatted-vs-unformatted number through
         // the step debugger needs a dedicated redesign (tracked against EPBDS-16195).
-        EditorToolbarPanelComponent.ITraceWindow traceWindow =
+        ITraceWindow traceWindow =
                 editorPage.getEditorToolbarPanelComponent().clickTraceExpectTraceWindow();
         assertThat(traceWindow.getCallTreeTitles())
                 .as("trace opens and shows the TotalAssets4 frame")

@@ -1,6 +1,6 @@
 package tests.ui.webstudio.sso;
 
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.KeycloakLoginPage;
 import helpers.service.KeycloakInfrastructureService;
@@ -42,8 +42,8 @@ public abstract class AbstractSsoUiTest extends BaseTest {
 
     /** Clears the browser session so the next SSO login starts fresh (switches IdP user). */
     protected EditorPage ssoLogin(String username, String password) {
-        LocalDriverPool.getBrowserContext().clearCookies();
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getBrowserContext().clearCookies();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         return new KeycloakLoginPage().login(username, password);
     }
 }

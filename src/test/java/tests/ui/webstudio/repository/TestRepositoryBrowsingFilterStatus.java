@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -45,6 +45,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestRepositoryBrowsingFilterStatus extends BaseTest {
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
     private DeployInfrastructureService deployInfra;
 
     @Override
@@ -80,7 +85,7 @@ public class TestRepositoryBrowsingFilterStatus extends BaseTest {
     @Description("Repository - Browsing, filter by name, status lifecycle, folder creation, multi-user workspace isolation")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testRepositoryBrowsingFilterStatus() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // ===== Step 1: Create second user with Contributor access =====

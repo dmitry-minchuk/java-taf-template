@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -44,7 +44,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
 
     private DeployInfrastructureService deployInfra;
 
@@ -78,7 +88,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testMultipleDesignRepositoriesWithPostgres() {
         // Step 0: Login and verify PostgreSQL is used as the security DB
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         verifyPostgresContainsOpenLTables();
 
         // Step 1: Create a project in the default Design repository
@@ -187,7 +197,7 @@ public class TestMultipleDesignRepositoriesWithPostgres extends BaseTest {
 
     private boolean waitForDuplicateNameError() {
         return WaitUtil.waitForCondition(
-                () -> LocalDriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
+                () -> DriverPool.getPage().locator("xpath=//div[contains(@class,'ant-notification-notice')]"
                         + "[contains(normalize-space(.),'Cannot open two projects with the same name')]").count() > 0,
                 10000, 500, "Waiting for the duplicate-name error notification");
     }

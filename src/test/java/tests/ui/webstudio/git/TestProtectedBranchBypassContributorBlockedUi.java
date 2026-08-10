@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
@@ -50,7 +50,7 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
         ProtectedBranchBypassFixture.provisionProjectAndUser(
                 PROJECT_NAME, CONTRIBUTOR_LOGIN, CONTRIBUTOR_PASSWORD, "CONTRIBUTOR");
 
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(
                 new UserData(CONTRIBUTOR_LOGIN, CONTRIBUTOR_PASSWORD));
 

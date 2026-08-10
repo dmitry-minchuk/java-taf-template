@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webservice.pages.ServicePage;
 import org.testng.annotations.Test;
 import tests.BaseTest;
@@ -26,12 +26,17 @@ public class TestDeployProjectsWithoutServiceNameInRulesDeploy extends BaseTest 
             //Map.entry("production-repository.password", "ghp_token_here")
     ));
 
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
+
     @Test
     @TestCaseId("EPBDS-9881")
     @Description("Test that projects are compiled and deployed as services without service name configuration in rules deploy")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
     public void testDeployProjectsWithoutServiceNameInRulesDeploy() {
-        ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
         verifyProjectDeployed(servicePage, RUN_TABLE_PROJECT);

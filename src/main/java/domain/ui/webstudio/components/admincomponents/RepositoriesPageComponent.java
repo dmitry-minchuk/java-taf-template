@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.service.LoginService;
@@ -40,7 +40,7 @@ public class RepositoriesPageComponent extends BaseComponent {
     private List<WebElement> repositoryTypeOptions;
 
     public RepositoriesPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -221,7 +221,7 @@ public class RepositoriesPageComponent extends BaseComponent {
         applyChangesBtn.click();
         getModalOkBtn().click();
         WaitUtil.sleep(2000, "Wait for changes to re-login before reloading the page");
-        WaitUtil.retryAction(() -> LocalDriverPool.getPage().reload(), 10000, 1000, "Reload page after applying changes");
+        WaitUtil.retryAction(() -> DriverPool.getPage().reload(), 10000, 1000, "Reload page after applying changes");
         WaitUtil.sleep(1000, "Wait for changes to re-login after reloading the page");
         relogin(user);
     }

@@ -3,7 +3,7 @@ package tests.ui.webstudio.rules_editor;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.MySettingsPageComponent;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -28,7 +28,7 @@ public class TestOrderingModeDefaults extends BaseTest {
     public void testDefaultOrderForSingleUser() {
         // 1.1 Start Webstudio in single user mode — handled by @AppContainerConfig
         String projectName = StringUtil.generateUniqueName("TestOrderingMode");
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         // Single-user mode signs in without a login form, so the "Complete Your Profile" modal has to be
         // dealt with here or it blocks the page.
         new LoginPage().completeProfileIfRequested();
@@ -80,8 +80,8 @@ public class TestOrderingModeDefaults extends BaseTest {
                 .contains("Calculaiton-Spreadsheet", "Calculation-Smart", "Model", "Test");
 
         // 1.10 Verify ordering mode after open/close the browser
-        LocalDriverPool.getPage().context().clearCookies();
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getPage().context().clearCookies();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         new LoginPage().completeProfileIfRequested();
         editorPage = new EditorPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent()
@@ -96,7 +96,7 @@ public class TestOrderingModeDefaults extends BaseTest {
     public void testDefaultOrderForMultiUser() {
         String projectName = StringUtil.generateUniqueName("TestOrderingMode");
 
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData("admin", "admin"));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
@@ -142,7 +142,7 @@ public class TestOrderingModeDefaults extends BaseTest {
                 .saveUser();
 
         editorPage.openUserMenu().signOut();
-        loginService = new LoginService(LocalDriverPool.getPage());
+        loginService = new LoginService(DriverPool.getPage());
         editorPage = loginService.login(new UserData("user1", "user1"));
 
         // Check default order for user1 — should still be "By Excel Sheet" (default)

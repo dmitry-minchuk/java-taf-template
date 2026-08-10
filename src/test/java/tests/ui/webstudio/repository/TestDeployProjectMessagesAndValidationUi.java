@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -39,6 +39,11 @@ public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
     private static final String INVALID_DEPLOYMENT_NAME = "bad:name?*";
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
     private DeployInfrastructureService deployInfra;
 
     @Override
@@ -108,7 +113,7 @@ public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
 
     private RepositoryPage openRepositoryWithProject(String prefix) {
         lastCreatedProject = StringUtil.generateUniqueName(prefix);
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+        EditorPage editorPage = new LoginService(DriverPool.getPage())
                 .login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);

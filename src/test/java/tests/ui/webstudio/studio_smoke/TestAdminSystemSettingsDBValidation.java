@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.SystemSettingsPageComponent;
@@ -34,7 +34,7 @@ public class TestAdminSystemSettingsDBValidation extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSystemSettingsDBValidation() throws Exception {
         // Step 1: Login as admin and verify default DB settings
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         SystemSettingsPageComponent systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();

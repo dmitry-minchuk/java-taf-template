@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -30,7 +30,7 @@ public class TestACLDeploySystemAction extends BaseTest {
     @Description("ACL: Deploy button NOT visible for Viewer with Design-only access (no deploy repo access)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeployNotVisibleForDesignViewerWithoutDeployRepo() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Viewer-only user ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -81,7 +81,7 @@ public class TestACLDeploySystemAction extends BaseTest {
     @Description("ACL: Deploy button NOT visible for Contributor on Design when user also has Viewer on deploy repo (needs Edit on deploy)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeployNotVisibleWhenDeployRepoAccessIsViewerOnly() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and user ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");

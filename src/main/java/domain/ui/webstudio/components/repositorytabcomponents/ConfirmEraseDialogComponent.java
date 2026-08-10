@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 public class ConfirmEraseDialogComponent extends BaseComponent {
@@ -11,7 +11,7 @@ public class ConfirmEraseDialogComponent extends BaseComponent {
     private WebElement alsoDeleteFromRepositoryCheckbox;
 
     public ConfirmEraseDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

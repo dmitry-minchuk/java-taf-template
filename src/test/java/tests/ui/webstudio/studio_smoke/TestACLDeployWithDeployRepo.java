@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -35,6 +35,11 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
     // This test requires a production/deploy repository (PostgreSQL).
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
     private DeployInfrastructureService deployInfra;
 
     @Override
@@ -64,7 +69,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
         String projectName = StringUtil.generateUniqueName("DeployACL");
 
         // ============ Admin creates project ============
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+        EditorPage editorPage = new LoginService(DriverPool.getPage())
                 .login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
@@ -82,7 +87,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
     @Description("ACL: Contributor on design + Contributor on deploy repo → Deploy button visible and functional")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testDeployVisibleForContributorWithDeployRepoAccess() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         String projectName = StringUtil.generateUniqueName("DeployACL");
 
         // ============ Admin creates project and user ============
@@ -142,7 +147,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
     @Description("ACL: Viewer on design + Viewer on deploy repo → Deploy NOT visible (needs Edit on deploy)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testDeployNotVisibleForViewerOnBothRepos() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         String projectName = StringUtil.generateUniqueName("DeployACL");
 
         // ============ Admin creates project and user ============
@@ -196,7 +201,7 @@ public class TestACLDeployWithDeployRepo extends BaseTest {
     @Description("ACL: Viewer on design + Contributor on deploy repo → Deploy button visible (minimum required combo per BRD TR2)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     public void testDeployVisibleForViewerOnDesignWithContributorOnDeployRepo() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         String projectName = StringUtil.generateUniqueName("DeployACL");
 
         // ============ Admin creates project and user ============

@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.projectconfig.PropertyNameSpace;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.utils.TestDataUtil;
 import helpers.utils.WaitUtil;
@@ -34,13 +34,18 @@ public class TestWebservicesSwaggerUi extends BaseTest {
             "/opt/openl/shared/"
     ));
 
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
+
     @Test
     @TestCaseId("IPBQA-32142")
     @Description("Verify Swagger UI renders for RESTFUL service and JSON/YAML spec formats are available; "
             + "verify alphabetical ordering of deployments on the services page (EPBDS-13121)")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_FILE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testWebservicesSwaggerUi() {
-        ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
         assertThat(servicePage.getDeploymentRow(DEPLOYMENT1).isVisible(10000))
@@ -51,7 +56,7 @@ public class TestWebservicesSwaggerUi extends BaseTest {
                 .as(DEPLOYMENT3 + " should be visible").isTrue();
 
         // Step 1: Verify alphabetical ordering of deployments (EPBDS-13121)
-        List<String> deploymentNames = LocalDriverPool.getPage().locator("h3").allTextContents()
+        List<String> deploymentNames = DriverPool.getPage().locator("h3").allTextContents()
                 .stream()
                 .map(String::trim)
                 .filter(name -> name.startsWith("deployment"))
@@ -64,7 +69,7 @@ public class TestWebservicesSwaggerUi extends BaseTest {
         servicePage.getProjectTitleLink(DEPLOYMENT2).click();
 
         // Step 3: Verify Swagger UI container renders (JS-rendered, needs extended timeout)
-        servicePage = new ServicePage(LocalDriverPool.getPage());
+        servicePage = new ServicePage(DriverPool.getPage());
         assertThat(servicePage.getSwaggerUiContainer().isVisible(15000))
                 .as("Swagger UI container #swagger-ui should be visible after navigating to swagger-ui.html")
                 .isTrue();
@@ -72,7 +77,7 @@ public class TestWebservicesSwaggerUi extends BaseTest {
         // Step 4: Wait for API selector to be populated with deployed service entries
         // The select#select-api options are populated asynchronously by Swagger UI JavaScript
         assertThat(WaitUtil.waitForCondition(
-                () -> !LocalDriverPool.getPage().locator("xpath=//select[@id='select-api']")
+                () -> !DriverPool.getPage().locator("xpath=//select[@id='select-api']")
                         .locator("option").allTextContents().isEmpty(),
                 15000, 1000, "Waiting for API selector options to be populated"))
                 .as("API selector (select#select-api) should list at least one deployed service").isTrue();
@@ -80,10 +85,10 @@ public class TestWebservicesSwaggerUi extends BaseTest {
         // Step 5: Verify JSON/YAML spec download options are visible in Swagger UI
         // OpenL renders button text via CSS pseudo-elements; use Playwright text= selector
         assertThat(WaitUtil.waitForCondition(
-                () -> LocalDriverPool.getPage().locator("text=Download OpenAPI spec").isVisible(),
+                () -> DriverPool.getPage().locator("text=Download OpenAPI spec").isVisible(),
                 15000, 1000, "Waiting for 'Download OpenAPI spec' button to appear"))
                 .as("Swagger UI should show 'Download OpenAPI spec' button (JSON spec available)").isTrue();
-        assertThat(LocalDriverPool.getPage().locator("text=View OpenAPI spec (New Tab)").isVisible())
+        assertThat(DriverPool.getPage().locator("text=View OpenAPI spec (New Tab)").isVisible())
                 .as("Swagger UI should show 'View OpenAPI spec (New Tab)' button (spec viewable in browser)").isTrue();
     }
 }

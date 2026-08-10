@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import configuration.network.NetworkPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
@@ -43,7 +43,17 @@ public class TestRuleServiceS3DeployClasspathJarProperty extends BaseTest {
     private static final String VERSION_2 = "2";
 
     private static final Map<String, String> additionalContainerConfig = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
 
     private DeployInfrastructureService deployInfra;
 
@@ -138,15 +148,15 @@ public class TestRuleServiceS3DeployClasspathJarProperty extends BaseTest {
     }
 
     private ServicePage openServicePage() {
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-        return new ServicePage(LocalDriverPool.getPage());
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
+        return new ServicePage(DriverPool.getPage());
     }
 
     private void waitForServicesPageLoaded() {
         assertThat(WaitUtil.waitForCondition(
                 () -> {
-                    LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-                    ServicePage currentPage = new ServicePage(LocalDriverPool.getPage());
+                    DriverPool.getPage().navigate(DriverPool.getAppUrl());
+                    ServicePage currentPage = new ServicePage(DriverPool.getPage());
                     return currentPage.getShowAllDeploymentsCheckBox().isVisible(1000);
                 },
                 30000,
@@ -158,8 +168,8 @@ public class TestRuleServiceS3DeployClasspathJarProperty extends BaseTest {
     private void waitForProjectVersion(String expectedDisplayName, String expectedVersion) {
         assertThat(WaitUtil.waitForCondition(
                 () -> {
-                    LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-                    ServicePage currentPage = new ServicePage(LocalDriverPool.getPage());
+                    DriverPool.getPage().navigate(DriverPool.getAppUrl());
+                    ServicePage currentPage = new ServicePage(DriverPool.getPage());
                     if (!currentPage.getShowAllDeploymentsCheckBox().isVisible(1000)) {
                         return false;
                     }
@@ -174,7 +184,7 @@ public class TestRuleServiceS3DeployClasspathJarProperty extends BaseTest {
                 "Waiting for Rule Services deployment '" + expectedDisplayName + "' to show version " + expectedVersion))
                 .isTrue();
 
-        String href = new ServicePage(LocalDriverPool.getPage()).getProjectTitleLink(expectedDisplayName).getAttribute("href");
+        String href = new ServicePage(DriverPool.getPage()).getProjectTitleLink(expectedDisplayName).getAttribute("href");
         assertThat(decodeHref(href))
                 .as("Swagger URL should point to version " + expectedVersion)
                 .contains("version=" + expectedVersion);

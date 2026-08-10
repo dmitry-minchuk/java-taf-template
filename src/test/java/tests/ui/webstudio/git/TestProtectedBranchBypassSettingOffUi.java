@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
@@ -49,7 +49,7 @@ public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
         ProtectedBranchBypassFixture.provisionProjectAndUser(
                 PROJECT_NAME, MANAGER_LOGIN, MANAGER_PASSWORD, "MANAGER");
 
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
         // React nav: open the project from the /projects list, then open the Sync dialog from the editor

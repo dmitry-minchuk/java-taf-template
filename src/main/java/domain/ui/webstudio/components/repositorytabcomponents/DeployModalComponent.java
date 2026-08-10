@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -22,7 +22,7 @@ public class DeployModalComponent extends BaseComponent {
     private WebElement dropdownOption;
 
     public DeployModalComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

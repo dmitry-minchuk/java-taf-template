@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
 import helpers.utils.WaitUtil;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.DownloadUtil;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class ExportProjectDialogComponent extends BaseComponent {
     private WebElement cancelBtn;
 
     public ExportProjectDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

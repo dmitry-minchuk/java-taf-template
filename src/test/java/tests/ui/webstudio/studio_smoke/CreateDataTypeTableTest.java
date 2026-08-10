@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -15,9 +15,10 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateDataTypeTableTest extends BaseTest {
 
@@ -32,7 +33,7 @@ public class CreateDataTypeTableTest extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateDataTypeTable() {
         // 1. Login
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // 2. Create Project from Excel
@@ -61,11 +62,11 @@ public class CreateDataTypeTableTest extends BaseTest {
 
         // 7. Verify table content
         TableComponent table = editorPage.getCenterTable();
-        Assert.assertEquals(table.getCellText(1, 1), "Datatype " + TABLE_NAME, "Header should contain table name");
+        assertThat(table.getCellText(1, 1)).as("Header should contain table name").isEqualTo("Datatype " + TABLE_NAME);
         // The React modal titles the datatype's columns, so the fields start one row lower than in the wizard.
-        Assert.assertEquals(table.getCellText(2, 1), "Type", "Second row should title the type column");
-        Assert.assertEquals(table.getCellText(2, 2), "Name", "Second row should title the name column");
-        Assert.assertEquals(table.getCellText(3, 1), "BigDecimal", "The field's type should be written as entered");
-        Assert.assertEquals(table.getCellText(3, 2), PARAMETER_NAME, "The field's name should be written as entered");
+        assertThat(table.getCellText(2, 1)).as("Second row should title the type column").isEqualTo("Type");
+        assertThat(table.getCellText(2, 2)).as("Second row should title the name column").isEqualTo("Name");
+        assertThat(table.getCellText(3, 1)).as("The field's type should be written as entered").isEqualTo("BigDecimal");
+        assertThat(table.getCellText(3, 2)).as("The field's name should be written as entered").isEqualTo(PARAMETER_NAME);
     }
 }

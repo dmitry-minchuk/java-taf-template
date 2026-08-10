@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -12,7 +12,7 @@ public class RemoveModuleDialogComponent extends BaseComponent {
     private WebElement cancelButton;
 
     public RemoveModuleDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

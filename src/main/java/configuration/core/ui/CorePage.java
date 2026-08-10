@@ -7,7 +7,7 @@ import configuration.core.ui.factory.ComponentFactoryImpl;
 import configuration.core.ui.factory.LazyComponentsList;
 import configuration.core.ui.factory.LazyElementsList;
 import configuration.core.ui.factory.ComponentFactory;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.webstudio.components.BaseComponent;
@@ -24,7 +24,7 @@ public abstract class CorePage implements ComponentFactory {
     protected Page page;
 
     public CorePage() {
-        this.page = LocalDriverPool.getPage();
+        this.page = DriverPool.getPage();
         LOGGER.info("{} was opened.", this.getClass().getName());
     }
 

@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -34,7 +34,7 @@ public class TestACLManagePermission extends BaseTest {
     @Description("ACL: Manager role user can see Administration menu item (has M permission)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testManagerCanAccessAdministration() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Manager user ============
         WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -74,7 +74,7 @@ public class TestACLManagePermission extends BaseTest {
     @Description("ACL: Contributor role user does NOT see Administration menu item (no M permission)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testContributorCannotAccessAdministration() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Contributor user ============
         WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -114,7 +114,7 @@ public class TestACLManagePermission extends BaseTest {
     @Description("ACL: Viewer role user does NOT see Administration menu item (no M permission)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testViewerCannotAccessAdministration() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Viewer user ============
         WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -154,7 +154,7 @@ public class TestACLManagePermission extends BaseTest {
     @Description("ACL: User with no roles sees no projects (no access at all)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testUserWithNoRolesHasNoAccess() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and user with NO roles ============
         WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");

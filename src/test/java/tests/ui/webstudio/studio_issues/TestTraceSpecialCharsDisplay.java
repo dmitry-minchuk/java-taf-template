@@ -15,6 +15,7 @@ import tests.BaseTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.ITraceWindow;
 
 /**
  * EPBDS-16151 (automated per EPBDS-16186) — the traced-table HTML was double-escaped, so special
@@ -47,7 +48,7 @@ public class TestTraceSpecialCharsDisplay extends BaseTest {
                 .selectItemInFolder("Spreadsheet", TRACED_TABLE);
 
         // callTheMessage has no parameters, so Trace opens the step debugger directly (no params menu).
-        EditorToolbarPanelComponent.ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
+        ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
                 .clickTraceExpectTraceWindow();
 
         assertThat(traceWindow.getCallTreeTitles())

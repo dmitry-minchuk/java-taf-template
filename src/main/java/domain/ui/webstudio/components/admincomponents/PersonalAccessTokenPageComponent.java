@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 public class PersonalAccessTokenPageComponent extends BaseComponent {
@@ -18,7 +18,7 @@ public class PersonalAccessTokenPageComponent extends BaseComponent {
     private WebElement revokeConfirmOkBtn;
 
     public PersonalAccessTokenPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -28,24 +28,24 @@ public class PersonalAccessTokenPageComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        createTokenBtn = new WebElement(LocalDriverPool.getPage(),
+        createTokenBtn = new WebElement(DriverPool.getPage(),
                 "xpath=//button[contains(normalize-space(.),'Create Token')]", "createTokenBtn");
-        nameInput = new WebElement(LocalDriverPool.getPage(), "xpath=//input[@id='name']", "tokenNameInput");
-        expirationInput = new WebElement(LocalDriverPool.getPage(),
+        nameInput = new WebElement(DriverPool.getPage(), "xpath=//input[@id='name']", "tokenNameInput");
+        expirationInput = new WebElement(DriverPool.getPage(),
                 "xpath=//input[@id='expirationOption']", "tokenExpirationInput");
-        expirationOptionTemplate = new WebElement(LocalDriverPool.getPage(),
+        expirationOptionTemplate = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-select-item-option-content') and normalize-space()='%s']", "expirationOption");
-        drawerCreateBtn = new WebElement(LocalDriverPool.getPage(),
+        drawerCreateBtn = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-drawer')]//button[.//span[normalize-space()='Create']]", "drawerCreateBtn");
-        generatedTokenCode = new WebElement(LocalDriverPool.getPage(),
+        generatedTokenCode = new WebElement(DriverPool.getPage(),
                 "xpath=//code[starts-with(normalize-space(),'openl_pat_')]", "generatedTokenCode");
-        drawerOkBtn = new WebElement(LocalDriverPool.getPage(),
+        drawerOkBtn = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-drawer')]//button[.//span[normalize-space()='OK']]", "drawerOkBtn");
-        tokenRowTemplate = new WebElement(LocalDriverPool.getPage(),
+        tokenRowTemplate = new WebElement(DriverPool.getPage(),
                 "xpath=//tr[contains(@class,'ant-table-row') and .//*[normalize-space()='%s']]", "tokenRow");
-        revokeBtnTemplate = new WebElement(LocalDriverPool.getPage(),
+        revokeBtnTemplate = new WebElement(DriverPool.getPage(),
                 "xpath=//tr[contains(@class,'ant-table-row') and .//*[normalize-space()='%s']]//button[@aria-label='Delete']", "tokenRevokeBtn");
-        revokeConfirmOkBtn = new WebElement(LocalDriverPool.getPage(),
+        revokeConfirmOkBtn = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-modal')]//button[.//span[normalize-space()='OK']]", "revokeConfirmOkBtn");
     }
 

@@ -4,7 +4,7 @@ import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.driver.DockerDriverPool;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +40,7 @@ public class DownloadUtil {
     }
     
     private static File downloadFileLocal(Locator trigger, int timeoutMs) {
-        Page page = LocalDriverPool.getPage();
+        Page page = DriverPool.getPage();
 
         return WaitUtil.retryOnException(() -> {
             Download download = page.waitForDownload(new Page.WaitForDownloadOptions().setTimeout(timeoutMs), trigger::click);

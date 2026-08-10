@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
@@ -16,9 +16,10 @@ import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestProjectTagsCreationFromWorkspace extends BaseTest {
 
@@ -39,7 +40,7 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
             + "as they are, even when a value is outside the type's own value list")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromWorkspaceWithTags() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         setupRequiredTagTypes(editorPage);
@@ -49,10 +50,8 @@ public class TestProjectTagsCreationFromWorkspace extends BaseTest {
         // The zip declares Tag=Tag9, a value the non-extensible "Tag" type does not list. The old UI asked the
         // user to pick a known value; 6.4.0 keeps what tags.properties says without asking.
         ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME_5);
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_NAME), "Tag9",
-                "The tag value declared by the zip should be kept as it is");
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_EXT), "TagExt1",
-                "The extensible type should take the zip's value too");
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_NAME)).as("The tag value declared by the zip should be kept as it is").isEqualTo("Tag9");
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_EXT)).as("The extensible type should take the zip's value too").isEqualTo("TagExt1");
     }
 
     private void setupRequiredTagTypes(EditorPage editorPage) {

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.ITraceWindow;
 
 public class TestAllStepsDisplayedInTrace extends BaseTest {
 
@@ -49,7 +50,7 @@ public class TestAllStepsDisplayedInTrace extends BaseTest {
                 .expandFolderInTree("Spreadsheet")
                 .selectItemInFolder("Spreadsheet", "DetermineCoverageFeeOrTax2");
 
-        EditorToolbarPanelComponent.ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
+        ITraceWindow traceWindow = editorPage.getEditorToolbarPanelComponent()
                 .clickTrace()
                 .setFactorTextField("123")
                 .clickTraceInsideMenu();

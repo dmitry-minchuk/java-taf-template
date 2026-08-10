@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 
 import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.editortabcomponents.CompareLocalChangesDialogComponent;
 import helpers.utils.WaitUtil;
@@ -18,7 +18,7 @@ public class ResolveConflictsDialogComponent extends BaseComponent {
     private WebElement compareLink;
 
     public ResolveConflictsDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

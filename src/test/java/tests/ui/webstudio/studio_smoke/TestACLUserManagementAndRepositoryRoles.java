@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -15,7 +15,6 @@ import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.service.WorkflowService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -30,7 +29,7 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
     @Description("ACL: user management (create/edit/delete) and repository-level role assignment (Manager/Viewer) without external auth system")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testACLUserManagementAndRepositoryRoles() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Steps 1-3: Admin login and verify users page ============
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
@@ -39,8 +38,8 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
                 .navigateToAdministration()
                 .navigateToUsersPage();
 
-        Assert.assertTrue(usersComponent.isUserInList("admin"), "Admin user should be in the users list");
-        Assert.assertTrue(usersComponent.areActionsAvailableForUser("admin"), "Edit and delete actions should be available for admin user");
+        assertThat(usersComponent.isUserInList("admin")).as("Admin user should be in the users list").isTrue();
+        assertThat(usersComponent.areActionsAvailableForUser("admin")).as("Edit and delete actions should be available for admin user").isTrue();
 
         // ============ Steps 4-5: Add new user 'test' ============
         int initialUserCount = usersComponent.getUsersCount();
@@ -49,9 +48,8 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
                 .setPassword("test")
                 .saveUser();
 
-        Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
-        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1,
-                "User count should increase by 1");
+        assertThat(usersComponent.isUserInList("test")).as("User 'test' should be added to the list").isTrue();
+        assertThat(usersComponent.getUsersCount()).as("User count should increase by 1").isEqualTo(initialUserCount + 1);
 
         // Verify alphabetical order
         List<String> allUsers = usersComponent.getAllUsernames();
@@ -64,13 +62,13 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
 
         // Verify email was updated
         usersComponent.clickEditUser("test");
-        Assert.assertEquals(usersComponent.getEmail(), "test@example.com", "Email should be updated to 'test@example.com'");
+        assertThat(usersComponent.getEmail()).as("Email should be updated to 'test@example.com'").isEqualTo("test@example.com");
         usersComponent.cancelUser();
 
         // ============ Step 7: Delete user 'test' ============
         usersComponent.clickDeleteUser("test");
-        Assert.assertFalse(usersComponent.isUserInList("test"), "User 'test' should be removed from the list");
-        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should return to initial value");
+        assertThat(usersComponent.isUserInList("test")).as("User 'test' should be removed from the list").isFalse();
+        assertThat(usersComponent.getUsersCount()).as("User count should return to initial value").isEqualTo(initialUserCount);
 
         // ============ Step 8: Try to create duplicate 'Admin' user ============
         usersComponent.clickAddUser()
@@ -79,7 +77,7 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
                 .saveUser(false);
 
         usersComponent.closeAllMessages();
-        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount, "User count should be equal to previous value");
+        assertThat(usersComponent.getUsersCount()).as("User count should be equal to previous value").isEqualTo(initialUserCount);
         usersComponent.cancelUser();
 
         // ============ Step 9: Re-create user 'test' ============
@@ -88,7 +86,7 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
                 .setPassword("test")
                 .saveUser();
 
-        Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be created successfully");
+        assertThat(usersComponent.isUserInList("test")).as("User 'test' should be created successfully").isTrue();
 
         // ============ Step 10: Login as 'test' user and verify no projects/options ============
         editorPage.openUserMenu().signOut();
@@ -117,8 +115,8 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
 
         // Verify role was added
         usersComponent.clickEditUser("test");
-        Assert.assertEquals(usersComponent.getRoleRepository(0), "Design", "Repository should be 'Design'");
-        Assert.assertEquals(usersComponent.getRole(0), "Manager", "Role should be 'Manager'");
+        assertThat(usersComponent.getRoleRepository(0)).as("Repository should be 'Design'").isEqualTo("Design");
+        assertThat(usersComponent.getRole(0)).as("Role should be 'Manager'").isEqualTo("Manager");
         usersComponent.cancelUser();
 
         // ============ Step 12: Login as 'test' and verify Manager access ============
@@ -166,7 +164,7 @@ public class TestACLUserManagementAndRepositoryRoles extends BaseTest {
 
         // Verify role was changed
         usersComponent.clickEditUser("test");
-        Assert.assertEquals(usersComponent.getRole(0), "Viewer", "Role should be changed to 'Viewer'");
+        assertThat(usersComponent.getRole(0)).as("Role should be changed to 'Viewer'").isEqualTo("Viewer");
         usersComponent.cancelUser();
 
         // ============ Step 14: Login as 'test' and verify Viewer access ============

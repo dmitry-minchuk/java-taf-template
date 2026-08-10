@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import com.microsoft.playwright.Locator;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class EditorMainContentProblemsPanelComponent extends BaseComponent {
     private WebElement showProblemsBtn;
 
     public EditorMainContentProblemsPanelComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

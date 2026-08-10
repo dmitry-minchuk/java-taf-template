@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +40,7 @@ public class CopyProjectDialogComponent extends BaseComponent {
     private List<WebElement> errors;
 
     public CopyProjectDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

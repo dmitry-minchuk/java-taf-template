@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents.leftmenu;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ public class EditorTreeFolderComponent extends BaseComponent {
     private WebElement indexedItemTemplate;
 
     public EditorTreeFolderComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

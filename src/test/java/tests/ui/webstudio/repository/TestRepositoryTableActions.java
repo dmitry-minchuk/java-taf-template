@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -47,6 +47,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestRepositoryTableActions extends BaseTest {
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
     private DeployInfrastructureService deployInfra;
 
     @Override
@@ -98,7 +103,7 @@ public class TestRepositoryTableActions extends BaseTest {
         String projectName2 = "TestTableActionButtons_P2_" + System.currentTimeMillis();
         String projectName3 = "TestTableActionButtons_P3_" + System.currentTimeMillis();
 
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // ===== Create viewer user =====
@@ -216,7 +221,7 @@ public class TestRepositoryTableActions extends BaseTest {
     public void testRepositoryTabProperties() {
         String projectName = "TestRepositoryTabProperties_" + System.currentTimeMillis();
 
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         // ===== Create second user (contributor access) =====

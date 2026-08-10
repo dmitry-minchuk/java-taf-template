@@ -1,13 +1,15 @@
 package domain.ui.webstudio.pages.mainpages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevisionsDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
+import domain.ui.webstudio.components.projectdetail.ProjectFilesTabComponent;
+import domain.ui.webstudio.components.projectdetail.ProjectHeaderActionsComponent;
+import domain.ui.webstudio.components.projectdetail.ProjectHistoryTabComponent;
+import domain.ui.webstudio.components.projectdetail.ProjectOverviewTabComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.ExportProjectModalComponent;
 import domain.ui.webstudio.pages.BasePage;
@@ -16,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 // React project-detail view (/projects/<id>) introduced in build 032c60a664ce: Overview / Files /
@@ -29,9 +30,6 @@ public class ProjectDetailPage extends BasePage {
     private static final int HEADER_ACTION_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
     // The detail screen can settle after the first tab click, so a switch may need repeating.
     private static final int TAB_SWITCH_ATTEMPTS = 3;
-    private static final String COMPARE_SCREEN_PATH = "compare.xhtml";
-    // Reading a file's content before its dialog opens can take a while on a large project.
-    private static final int FILE_DIALOG_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
     private static final int COMPARE_WINDOW_WIDTH = 1280;
     private static final int COMPARE_WINDOW_HEIGHT = 800;
 
@@ -42,67 +40,24 @@ public class ProjectDetailPage extends BasePage {
     private WebElement overviewTab;
     private WebElement filesTab;
     private WebElement historyTab;
-    private WebElement headerActionByLabel;
-    private WebElement headerMoreBtn;
-    private WebElement headerOverflowItem;
-    private WebElement branchLabel;
+    // Scoped sub-components of the detail view
+    private ProjectHeaderActionsComponent headerActions;
+    private ProjectOverviewTabComponent overview;
+    private ProjectFilesTabComponent files;
+    private ProjectHistoryTabComponent history;
+    // Open Revision dialog (antd portal)
     private WebElement openRevisionSelect;
     private WebElement openRevisionOption;
     private WebElement openRevisionSubmit;
     private List<WebElement> openRevisionOptions;
-    private WebElement modifiedValue;
-    private WebElement modifiedDate;
     private ExportProjectModalComponent exportProjectModalComponent;
-    private WebElement branchSwitcherTrigger;
-    private WebElement branchMenuItem;
     private WebElement mergeTargetBranchSelect;
     private WebElement mergeBranchOption;
     private CopyProjectDialogComponent copyProjectDialogComponent;
     private ConfigureCommitInfoComponent configureCommitInfoComponent;
     private WebElement configureCommitInfoShade;
-    // Branches tab (only interactive when the project is OPEN): create/merge/delete per branch row
-    private WebElement branchesCurrentLabel;    // the current-branch name
-    private WebElement branchesCreateBtn;
-    private WebElement branchNewNameField;
-    private WebElement branchCreateSubmitBtn;
-    private WebElement branchSwitchAfterToggle;  // ant-switch "Switch to the new branch" (role=switch)
-    private WebElement branchRowByName;          // format(name) → branch-commit-<name> (row presence)
-    private WebElement branchMergeByName;        // format(name) → branch-merge-<name>
-    private WebElement branchCreateErrorNotice;  // React ant-notification shown when a branch create fails
     private SyncUpdatesDialogComponent syncUpdatesDialogComponent;
-    // Header
-    private WebElement projectStatus;       // React status: Local / Opened / Editing / Closed / ...
-    // Files tab: a file tree on the left, a preview panel with per-file actions on the right
-    private WebElement fileNodeByName;      // format(fileName)
-    private WebElement filesAddBtn;
     private WebElement detailRoot;
-    private WebElement filesAddMenuItem;
-    private WebElement fileActionsBtn;
-    private WebElement fileActionsMenuItem;
-    private WebElement fileDeleteSubmitBtn;
-    private WebElement updateFileInput;
-    private WebElement updateFileSubmitBtn;
-    private WebElement updateFileNameWarning;
-    private WebElement filesSearchField;
-    private WebElement filesUploadInput;
-    private WebElement filesUploadSubmitBtn;
-    private WebElement filesUploadNameField;
-    private WebElement filesUploadPathField;
-    private WebElement folderPathInput;
-    private WebElement folderSubmitBtn;
-    // History tab
-    private WebElement revisionEntries;     // one per revision (revision-comment-<hash>)
-    private WebElement revisionCompareToggles;  // per-revision "select for comparison" toggles
-    private WebElement revisionsCompareBtn;     // "Compare (n/2)" button
-    private WebElement revisionCompareSubmit;   // submit in the "Compare" modal (opens the diff tab)
-    // Overview tab: assigned tags render as ant-tags "<type> → <value>" in the TAGS section
-    private WebElement tagValueForType;     // format(tagType) → the value span
-    private WebElement overviewRight;       // the right column of the Overview tab (Status/Repository/Path/Branch/Revision/Last change/Comment)
-    // Overview lists the project's modules as <li data-testid="module-<path or name>"> rows; the same prefix
-    // is also used for a module's filter and matched-wildcard rows, which are not modules of their own.
-    private WebElement overviewModuleRows;
-    private WebElement overviewEditBtn;
-    private WebElement overviewSaveBtn;
 
     public ProjectDetailPage() {
         super();
@@ -114,80 +69,23 @@ public class ProjectDetailPage extends BasePage {
         overviewTab = new WebElement(page, "xpath=//div[@data-node-key='overview']", "overviewTab");
         filesTab = new WebElement(page, "xpath=//div[@data-node-key='files']", "filesTab");
         historyTab = new WebElement(page, "xpath=//div[@data-node-key='history']", "historyTab");
-        // The header bar also renders a hidden copy of every button to measure widths, so match the visible
-        // one by its testid (<actionId>-<projectId>) rather than by label text.
-        headerActionByLabel = new WebElement(page, "xpath=//button[starts-with(@data-testid,'%s-')]", "headerAction");
-        headerMoreBtn = new WebElement(page, "[data-testid=project-actions-more]", "headerMoreBtn");
-        headerOverflowItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//button[normalize-space()='%s']", "headerOverflowItem");
-        branchLabel = new WebElement(page, "[data-testid=overview-branch]", "branchLabel");
-        // In the Overview panel a field is a label <div><span>Name</span></div> followed by its value div;
-        // the Modified value holds the author and, in a nested div, the date.
-        modifiedValue = new WebElement(page, "xpath=//*[@data-testid='overview-right']//div[./span[normalize-space()='Modified']]/following-sibling::div[1]", "modifiedValue");
-        modifiedDate = new WebElement(page, "xpath=//*[@data-testid='overview-right']//div[./span[normalize-space()='Modified']]/following-sibling::div[1]/div[last()]", "modifiedDate");
+        headerActions = new ProjectHeaderActionsComponent(page);
+        overview = new ProjectOverviewTabComponent(page);
+        files = new ProjectFilesTabComponent(page);
+        history = new ProjectHistoryTabComponent(page);
         openRevisionSelect = new WebElement(page, "[data-testid=open-revision-select]", "openRevisionSelect");
         openRevisionOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][@title='%s']", "openRevisionOption");
         openRevisionSubmit = new WebElement(page, "[data-testid=open-revision-submit]", "openRevisionSubmit");
         openRevisionOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option')]", "openRevisionOptions");
         exportProjectModalComponent = new ExportProjectModalComponent();
-        branchSwitcherTrigger = new WebElement(page, "[data-testid=overview-branch-trigger]", "branchSwitcherTrigger");
-        // A switcher entry shows the branch name plus its marks ("master" + a Default tag), so match it by
-        // the menu key antd derives from the branch name, falling back to the name held inside the label.
-        branchMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][@data-menu-id='rc-menu-uuid-%s' or .//*[normalize-space()='%s']]", "branchMenuItem");
         // antd prefixes the field id with the form name, so the select is merge_branches_form_targetBranch.
         mergeTargetBranchSelect = new WebElement(page, "input[id$=targetBranch]", "mergeTargetBranchSelect");
         mergeBranchOption = new WebElement(page, "xpath=//*[@data-testid='merge-branch-%s']", "mergeBranchOption");
         copyProjectDialogComponent = new CopyProjectDialogComponent();
         configureCommitInfoComponent = createScopedComponent(ConfigureCommitInfoComponent.class, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoComponent");
         configureCommitInfoShade = new WebElement(page, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoShade");
-        branchesCurrentLabel = new WebElement(page, "[data-testid=branches-current]", "branchesCurrentLabel");
-        branchesCreateBtn = new WebElement(page, "[data-testid=branches-create]", "branchesCreateBtn");
-        branchNewNameField = new WebElement(page, "[data-testid=branches-new-name]", "branchNewNameField");
-        branchCreateSubmitBtn = new WebElement(page, "[data-testid=branches-create-submit]", "branchCreateSubmitBtn");
-        branchSwitchAfterToggle = new WebElement(page, "[data-testid=branches-switch-after]", "branchSwitchAfterToggle");
-        branchRowByName = new WebElement(page, "xpath=//*[@data-testid='branch-commit-%s']", "branchRow");
-        branchMergeByName = new WebElement(page, "xpath=//*[@data-testid='branch-merge-%s']", "branchMergeBtn");
-        branchCreateErrorNotice = new WebElement(page, "xpath=//div[contains(@class,'ant-notification')]//div[@role='alert']", "branchCreateErrorNotice");
         syncUpdatesDialogComponent = new SyncUpdatesDialogComponent();
-        projectStatus = new WebElement(page, "[data-testid^=\"status-\"]", "projectStatus");
-        revisionEntries = new WebElement(page, "xpath=//*[starts-with(@data-testid,'revision-comment-')]", "revisionEntries");
-        revisionCompareToggles = new WebElement(page, "xpath=//*[starts-with(@data-testid,'revision-compare-') and not(@data-testid='revision-compare-file') and not(@data-testid='revision-compare-submit')]", "revisionCompareToggles");
-        revisionsCompareBtn = new WebElement(page, "[data-testid=revisions-compare]", "revisionsCompareBtn");
-        revisionCompareSubmit = new WebElement(page, "[data-testid=revision-compare-submit]", "revisionCompareSubmit");
-        fileNodeByName = new WebElement(page, "xpath=//div[@role='treeitem'][.//*[normalize-space()='%s']]", "fileTreeNode");
-        filesAddBtn = new WebElement(page, "[data-testid=files-add]", "filesAddBtn");
-        // The Add menu is only rendered for a user who may change the files, so the tab is confirmed by the
-        // file search box instead — it is always there.
-        filesSearchField = new WebElement(page, "[data-testid=files-search]", "filesSearchField");
         detailRoot = new WebElement(page, "[data-testid=project-detail]", "detailRoot");
-        // antd binds the menu handler to the <li>, so click that rather than the labelled <span> inside it.
-        filesAddMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][.//span[@data-testid='%s']]", "filesAddMenuItem");
-        fileActionsBtn = new WebElement(page, "[data-testid=file-actions]", "fileActionsBtn");
-        fileActionsMenuItem = new WebElement(page, "xpath=//div[contains(@class,'ant-dropdown')][not(contains(@class,'ant-dropdown-hidden'))]//li[contains(@class,'ant-dropdown-menu-item')][normalize-space()='%s']", "fileActionsMenuItem");
-        fileDeleteSubmitBtn = new WebElement(page, "[data-testid=file-delete-submit]", "fileDeleteSubmitBtn");
-        // As with the upload dragger, antd puts the testid on the file input itself.
-        updateFileInput = new WebElement(page, "input[data-testid=update-file-dragger]", "updateFileInput");
-        updateFileSubmitBtn = new WebElement(page, "[data-testid=update-file-submit]", "updateFileSubmitBtn");
-        updateFileNameWarning = new WebElement(page, "[data-testid=update-file-name-warning]", "updateFileNameWarning");
-        // antd Upload.Dragger forwards unknown props to the file input itself, so the testid lands there.
-        filesUploadInput = new WebElement(page, "input[data-testid=files-upload-dragger]", "filesUploadInput");
-        filesUploadNameField = new WebElement(page, "[data-testid=files-upload-name]", "filesUploadNameField");
-        // The path field is an AutoComplete wrapper, so type into its inner input.
-        filesUploadPathField = new WebElement(page, "[data-testid=files-upload-path] input", "filesUploadPathField");
-        filesUploadSubmitBtn = new WebElement(page, "[data-testid=files-upload-submit]", "filesUploadSubmitBtn");
-        // files-folder-path is an antd AutoComplete wrapper (a DIV); the typeable field is its inner input.
-        folderPathInput = new WebElement(page, "[data-testid=files-folder-path] input", "folderPathInput");
-        folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
-        // Tags render in their own panel as pairs of spans: the type, then its value.
-        tagValueForType = new WebElement(page, "xpath=//*[@data-testid='project-tags']/span[normalize-space()='%s']/following-sibling::span[1]", "tagValueForType");
-        overviewRight = new WebElement(page, "[data-testid=overview-right]", "overviewRight");
-        overviewModuleRows = new WebElement(page,
-                "xpath=//li[starts-with(@data-testid,'module-')]"
-                        + "[not(starts-with(@data-testid,'module-filter-'))]"
-                        + "[not(starts-with(@data-testid,'module-matched-'))]"
-                        + "[not(starts-with(@data-testid,'module-unmatched-'))]",
-                "overviewModuleRows");
-        overviewEditBtn = new WebElement(page, "[data-testid=overview-edit]", "overviewEditBtn");
-        overviewSaveBtn = new WebElement(page, "[data-testid=overview-save]", "overviewSaveBtn");
     }
 
     public ProjectDetailPage openOverviewTab() {
@@ -206,11 +104,11 @@ public class ProjectDetailPage extends BasePage {
         for (int attempt = 1; attempt <= TAB_SWITCH_ATTEMPTS; attempt++) {
             filesTab.click();
             waitUntilSpinnerLoaded();
-            if (filesSearchField.isVisible(DEFAULT_TIMEOUT_MS / 2)) {
+            if (files.isOpen(DEFAULT_TIMEOUT_MS / 2)) {
                 return this;
             }
         }
-        filesSearchField.waitForVisible(DEFAULT_TIMEOUT_MS);
+        files.waitForOpen(DEFAULT_TIMEOUT_MS);
         return this;
     }
 
@@ -228,25 +126,8 @@ public class ProjectDetailPage extends BasePage {
      * narrows, so look there when the button is not on the bar.
      */
     public ProjectDetailPage clickHeaderAction(String actionLabel) {
-        WebElement action = headerActionByLabel.format(actionIdOf(actionLabel));
-        if (action.isVisible(HEADER_ACTION_PROBE_MS)) {
-            LOGGER.info("Header action '{}' clicked on the bar", actionLabel);
-            action.click();
-            return this;
-        }
-        LOGGER.info("Header action '{}' is not on the bar; opening the Actions menu", actionLabel);
-        headerMoreBtn.click();
-        headerOverflowItem.format(actionLabel).click();
+        headerActions.clickAction(actionLabel);
         return this;
-    }
-
-    // The header buttons are keyed by the action's own id; the overflow menu still lists them by label.
-    private static String actionIdOf(String actionLabel) {
-        return switch (actionLabel) {
-            case "Open Revision" -> "openRevision";
-            case "Delete Branch" -> "deleteBranch";
-            default -> actionLabel.substring(0, 1).toLowerCase() + actionLabel.substring(1);
-        };
     }
 
     /**
@@ -285,9 +166,7 @@ public class ProjectDetailPage extends BasePage {
     // Switches the project onto another branch via the branch switcher next to the branch label.
     public ProjectDetailPage switchBranch(String branchName) {
         openOverviewTab();
-        branchSwitcherTrigger.click();
-        branchMenuItem.format(branchName, branchName).click();
-        waitUntilSpinnerLoaded();
+        overview.switchBranch(branchName);
         return this;
     }
 
@@ -296,26 +175,14 @@ public class ProjectDetailPage extends BasePage {
      * is already on, so the current branch is answered directly.
      */
     public boolean isBranchPresent(String branchName) {
-        if (branchName.equals(getCurrentBranch())) {
-            return true;
-        }
-        branchSwitcherTrigger.click();
-        boolean present = branchMenuItem.format(branchName, branchName).isVisible(HEADER_ACTION_PROBE_MS);
-        page.keyboard().press("Escape");
-        return present;
+        openOverviewTab();
+        return overview.isBranchPresent(branchName);
     }
-
-    // The default branch is tagged in the label, and the text comes back glued together ("masterDefault").
-    private static final String DEFAULT_BRANCH_TAG = "Default";
 
     /** Name of the branch the project sits on, without the Default tag the label adds to it. */
     public String getCurrentBranch() {
         openOverviewTab();
-        String label = branchLabel.getText().trim();
-        if (label.endsWith(DEFAULT_BRANCH_TAG)) {
-            label = label.substring(0, label.length() - DEFAULT_BRANCH_TAG.length());
-        }
-        return label.trim();
+        return overview.getCurrentBranch();
     }
 
     // A first commit by a user raises the "Configure Git Commit Info" modal on top of the flow.
@@ -340,7 +207,7 @@ public class ProjectDetailPage extends BasePage {
     // ant-tag "<type> → <value>"); returns the value span's text.
     public String getTagValueForType(String tagType) {
         openOverviewTab();
-        return tagValueForType.format(tagType).getText().trim();
+        return overview.getTagValueForType(tagType);
     }
 
     /**
@@ -356,35 +223,20 @@ public class ProjectDetailPage extends BasePage {
     // Status / Repository / Path / Branch / Revision ID / Modified / Comment. Extracts one field's value.
     private String extractOverviewField(String label, String nextLabel) {
         openOverviewTab();
-        String blob = overviewRight.getText();
-        int start = blob.indexOf(label);
-        if (start < 0) {
-            return "";
-        }
-        start += label.length();
-        int end = blob.indexOf(nextLabel, start);
-        return (end < 0 ? blob.substring(start) : blob.substring(start, end)).trim();
+        return overview.extractField(label, nextLabel);
     }
 
     // Replaces the legacy Properties-tab getRevision() — the React Overview shows the FULL commit hash.
     /** Names of the modules the Overview tab lists for the project. */
     public List<String> getOverviewModuleNames() {
         openOverviewTab();
-        overviewEditBtn.waitForVisible(DEFAULT_TIMEOUT_MS);
-        Locator rows = overviewModuleRows.getLocator();
-        List<String> names = new ArrayList<>();
-        for (int i = 0; i < rows.count(); i++) {
-            names.add(rows.nth(i).innerText().trim().split("\n")[0].trim());
-        }
-        return names;
+        return overview.getModuleNames();
     }
 
     /** Switches the Overview tab into edit mode and saves it without changing anything. */
     public ProjectDetailPage editOverviewAndSave() {
         openOverviewTab();
-        overviewEditBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
-        overviewSaveBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
-        waitUntilSpinnerLoaded();
+        overview.editAndSave();
         return this;
     }
 
@@ -401,15 +253,13 @@ public class ProjectDetailPage extends BasePage {
     /** Who last changed the project — the author part of the Overview "Modified" field. */
     public String getModifiedBy() {
         openOverviewTab();
-        String whole = modifiedValue.getText().trim();
-        String date = modifiedDate.getText().trim();
-        return whole.endsWith(date) ? whole.substring(0, whole.length() - date.length()).trim() : whole;
+        return overview.getModifiedBy();
     }
 
     /** When the project was last changed, as the Overview shows it (e.g. "Jul 27, 2026 10:26 AM"). */
     public String getModifiedAt() {
         openOverviewTab();
-        return modifiedDate.getText().trim();
+        return overview.getModifiedAt();
     }
 
     /**
@@ -470,14 +320,7 @@ public class ProjectDetailPage extends BasePage {
     // legacy RepositoryContentRevisionsTabComponent.getRevisionDescription(i) loop.
     public List<String> getRevisionDescriptions() {
         openHistoryTab();
-        Locator entries = revisionEntries.getLocator();
-        entries.first().waitFor();
-        List<String> descriptions = new ArrayList<>();
-        int count = entries.count();
-        for (int i = 0; i < count; i++) {
-            descriptions.add(entries.nth(i).textContent().trim());
-        }
-        return descriptions;
+        return history.getRevisionDescriptions();
     }
 
     // Opens the repository revision comparison: selects the two newest revisions on the History tab, submits
@@ -501,23 +344,6 @@ public class ProjectDetailPage extends BasePage {
         Page compareWindow = page.waitForPopup(() -> clickHeaderAction("Compare"));
         settleCompareWindow(compareWindow);
         return compareWindow;
-    }
-
-    /**
-     * Finds the window the Compare action opens. Match on the screen's own address — a project's own URL can
-     * contain the word "compare" simply because its name does.
-     */
-    private Page awaitCompareWindow() {
-        WaitUtil.waitForCondition(() -> findCompareWindow() != null, DEFAULT_TIMEOUT_MS, 250,
-                "Waiting for the compare window to open");
-        return findCompareWindow();
-    }
-
-    private Page findCompareWindow() {
-        return LocalDriverPool.getBrowserContext().pages().stream()
-                .filter(candidate -> candidate.url().contains(COMPARE_SCREEN_PATH))
-                .reduce((first, second) -> second)
-                .orElse(null);
     }
 
     // The comparison screen is a JSF page that keeps loading after the window appears. It is opened with
@@ -552,19 +378,12 @@ public class ProjectDetailPage extends BasePage {
     // ("revision-comment-<hash>"). Lets callers assert a new revision was committed (id changes).
     public String getLatestRevisionId() {
         openHistoryTab();
-        Locator first = revisionEntries.getLocator().first();
-        first.waitFor();
-        String testId = first.getAttribute("data-testid");
-        return testId == null ? "" : testId.substring(testId.lastIndexOf('-') + 1);
+        return history.getLatestRevisionId();
     }
 
     public int getRevisionsCount() {
         openHistoryTab();
-        // The History tab loads its revision list asynchronously after the spinner clears, so wait for
-        // the first entry to render before counting (every project has at least the creation revision).
-        // waitForVisible would trip strict mode on the multi-match, so wait on the first entry directly.
-        revisionEntries.getLocator().first().waitFor();
-        return revisionEntries.getLocator().count();
+        return history.getRevisionsCount();
     }
 
     /**
@@ -574,12 +393,7 @@ public class ProjectDetailPage extends BasePage {
      */
     public ProjectDetailPage deleteFile(String fileName) {
         openFilesTab();
-        fileNodeByName.format(fileName).click();
-        fileActionsBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
-        fileActionsMenuItem.format("Delete").click();
-        fileDeleteSubmitBtn.click();
-        waitUntilSpinnerLoaded();
-        fileNodeByName.format(fileName).waitForHidden(DEFAULT_TIMEOUT_MS);
+        files.deleteFile(fileName);
         return this;
     }
 
@@ -589,7 +403,7 @@ public class ProjectDetailPage extends BasePage {
      */
     public boolean isFilePresent(String fileName) {
         openFilesTab();
-        return fileNodeByName.format(fileName).isVisible(DEFAULT_TIMEOUT_MS);
+        return files.isNodePresent(fileName);
     }
 
     // Uploads a file into the project: Files tab -> Add -> Upload -> pick the file -> submit.
@@ -613,16 +427,7 @@ public class ProjectDetailPage extends BasePage {
 
     public ProjectDetailPage uploadFileAs(String filePath, String targetName, String targetFolder) {
         openFilesTab();
-        openAddMenuItem("files-upload");
-        filesUploadInput.setInputFiles(filePath);
-        if (targetName != null && !targetName.isEmpty()) {
-            filesUploadNameField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(targetName);
-        }
-        if (targetFolder != null && !targetFolder.isEmpty()) {
-            filesUploadPathField.waitForVisible(DEFAULT_TIMEOUT_MS).fill(targetFolder);
-        }
-        filesUploadSubmitBtn.click();
-        waitUntilSpinnerLoaded();
+        files.uploadFileAs(filePath, targetName, targetFolder);
         return this;
     }
 
@@ -633,7 +438,7 @@ public class ProjectDetailPage extends BasePage {
      */
     public boolean isAddFilesMenuAvailable() {
         openFilesTab();
-        return filesAddBtn.isVisible(DEFAULT_TIMEOUT_MS);
+        return files.isAddMenuAvailable();
     }
 
     /**
@@ -649,48 +454,31 @@ public class ProjectDetailPage extends BasePage {
     /** Opens the Update dialog for a file and picks the replacement, leaving the dialog open. */
     public ProjectDetailPage pickUpdateFile(String fileName, String newFilePath) {
         openFilesTab();
-        fileNodeByName.format(fileName).click();
-        // Selecting a file opens its preview pane, where the actions menu lives.
-        fileActionsBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
-        fileActionsMenuItem.format("Update").click();
-        // The dragger's file input is hidden, so wait on the dialog's own button and feed the input directly.
-        updateFileSubmitBtn.waitForVisible(FILE_DIALOG_TIMEOUT_MS);
-        updateFileInput.setInputFiles(newFilePath);
+        files.pickUpdateFile(fileName, newFilePath);
         return this;
     }
 
     /** Confirms the Update dialog opened by {@link #pickUpdateFile}. */
     public ProjectDetailPage confirmUpdateFile() {
-        updateFileSubmitBtn.click();
-        waitUntilSpinnerLoaded();
+        files.confirmUpdateFile();
         return this;
     }
 
     /** Whether the update dialog warns that the chosen file has a different name. */
     public boolean isUpdateFileNameWarningShown() {
-        return updateFileNameWarning.isVisible(DEFAULT_TIMEOUT_MS / 2);
-    }
-
-    // The Files tab gathers New folder / New text file / Upload behind a single Add menu. That menu is an
-    // antd Dropdown with the default HOVER trigger, so clicking the button toggles it shut again — hover it.
-    private void openAddMenuItem(String itemTestId) {
-        filesAddBtn.hover();
-        filesAddMenuItem.format(itemTestId).click();
+        return files.isUpdateFileNameWarningShown();
     }
 
     // Creates a folder (or path/to/folder) in the project via the Files tab.
     public ProjectDetailPage createFolder(String folderPath) {
         openFilesTab();
-        openAddMenuItem("files-new-folder");
-        folderPathInput.fill(folderPath);
-        folderSubmitBtn.click();
-        waitUntilSpinnerLoaded();
+        files.createFolder(folderPath);
         return this;
     }
 
     // Folders and files are both tree nodes, so this also answers "is this folder present?".
     public boolean isFolderPresent(String folderName) {
-        return fileNodeByName.format(folderName).isVisible(DEFAULT_TIMEOUT_MS);
+        return files.isNodePresent(folderName);
     }
 
     public ProjectDetailPage reloadPage() {

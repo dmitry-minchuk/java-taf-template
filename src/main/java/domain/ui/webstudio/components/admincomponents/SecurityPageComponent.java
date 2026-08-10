@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.WaitUtil;
@@ -32,7 +32,7 @@ public class SecurityPageComponent extends BaseComponent {
     private WebElement applyBtn;
 
     public SecurityPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -90,7 +90,7 @@ public class SecurityPageComponent extends BaseComponent {
         applyBtn.click();
         getModalOkBtn().click();
         WaitUtil.sleep(2000, "Wait for auth context to restart after Apply");
-        WaitUtil.retryAction(() -> LocalDriverPool.getPage().reload(), 10000, 1000,
+        WaitUtil.retryAction(() -> DriverPool.getPage().reload(), 10000, 1000,
                 "Reload page after applying security changes");
         WaitUtil.sleep(1000, "Wait for the login page to fully render");
         new LoginService(page).login(UserService.getUser(user));

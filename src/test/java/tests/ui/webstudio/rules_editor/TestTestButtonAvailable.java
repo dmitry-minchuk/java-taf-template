@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -31,7 +31,7 @@ public class TestTestButtonAvailable extends BaseTest {
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testTestButtonAvailable() {
         String nameExample3Project = "Example 3";
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
@@ -59,14 +59,14 @@ public class TestTestButtonAvailable extends BaseTest {
                 .setViewFilter(EditorLeftRulesTreeComponent.FilterOptions.BY_TYPE)
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "AccidentPremium");
-        LocalDriverPool.getPage().reload();
+        DriverPool.getPage().reload();
         editorPage = new EditorPage();
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         assertThat(editorPage.getEditorToolbarPanelComponent().getTestButtonText())
                 .as("Test button should show 'Test 3'")
                 .isEqualTo("Test 3");
 
-        LocalDriverPool.getPage().reload();
+        DriverPool.getPage().reload();
         editorPage = new EditorPage();
         EditorPage editorPageRef2 = editorPage;
         WaitUtil.waitForCondition(
@@ -123,7 +123,7 @@ public class TestTestButtonAvailable extends BaseTest {
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().clickSave();
 
-        LocalDriverPool.getPage().reload();
+        DriverPool.getPage().reload();
         editorPage = new EditorPage();
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         assertThat(editorPage.getEditorToolbarPanelComponent().getTestButtonText())
@@ -135,7 +135,7 @@ public class TestTestButtonAvailable extends BaseTest {
 
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(nameExample3Project);
-        LocalDriverPool.getPage().goBack();
+        DriverPool.getPage().goBack();
         // Going back restores the previous view without rebuilding the projects tree, so its nodes stay
         // hidden; a reload renders the tree for the state the browser navigated to.
         editorPage = new EditorPage();

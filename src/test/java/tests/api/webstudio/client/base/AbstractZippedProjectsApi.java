@@ -16,7 +16,6 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.Assert;
 import org.testng.ITest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -32,6 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Per-deployment-group lifecycle:
@@ -193,7 +195,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             for (String f : uploadFailures) {
                 sb.append("\n  ").append(f.replace("\n", "\n  "));
             }
-            Assert.fail(sb.toString());
+            fail(sb.toString());
         }
 
         List<String> validationFailures = new ArrayList<>();
@@ -222,7 +224,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         for (String f : validationFailures) {
             sb.append("\n\n").append(f);
         }
-        Assert.fail(sb.toString());
+        fail(sb.toString());
     }
 
     /**
@@ -270,9 +272,8 @@ public abstract class AbstractZippedProjectsApi implements ITest {
         LOGGER.info("Validating project [{}] (id={}, group={})", projectName, projectId, groupLabel);
 
         Response open = new ProjectsMethod().openProject(projectId);
-        Assert.assertTrue(open.getStatusCode() < 300,
-                String.format("Failed to set project %s as current: HTTP %d — %s",
-                        projectName, open.getStatusCode(), open.getBody().asString()));
+        assertThat(open.getStatusCode() < 300).as("%s", String.format("Failed to set project %s as current: HTTP %d — %s",
+                        projectName, open.getStatusCode(), open.getBody().asString())).isTrue();
 
         // tests/run opens a module, awaits compilation server-side, then runs all tests — so it
         // is also the compile trigger (a plain open leaves compileState 'idle' forever). 404 here
@@ -284,27 +285,26 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             return;
         }
         if (runStatus != 200 && runStatus != 202) {
-            Assert.fail(String.format("Failed to compile/run tests for project [%s]: HTTP %d — %s%s",
+            fail(String.format("Failed to compile/run tests for project [%s]: HTTP %d — %s%s",
                     projectName, runStatus, runResponse.getBody().asString(), serverBugNote(runStatus)));
         }
 
         // Compilation is finished by the time tests/run returns; /status now reports the real state
         // (replaces the removed /modules + /compile/progress endpoints).
         Response statusResp = awaitCompilation(projectId);
-        Assert.assertEquals(statusResp.getStatusCode(), 200,
-                String.format("Project status failed for %s in group %s: HTTP %d — %s%s",
+        assertThat(statusResp.getStatusCode()).as("%s", String.format("Project status failed for %s in group %s: HTTP %d — %s%s",
                         projectName, groupLabel, statusResp.getStatusCode(), statusResp.getBody().asString(),
-                        serverBugNote(statusResp.getStatusCode())));
+                        serverBugNote(statusResp.getStatusCode()))).isEqualTo(200);
         JsonPath status = statusResp.jsonPath();
         String compileState = status.getString("compileState");
         int compileErrors = intOrZero(status.get("compilation.messages.errors"));
         if ("errors".equalsIgnoreCase(compileState) || compileErrors > 0) {
-            Assert.fail(buildCompileErrorReport(projectName, status));
+            fail(buildCompileErrorReport(projectName, status));
         }
 
         Response summary = pollTestsSummary(projectId, projectName);
         if (summary == null) {
-            Assert.fail(String.format("Tests summary timed out for project [%s]", projectName));
+            fail(String.format("Tests summary timed out for project [%s]", projectName));
         }
         int code = summary.getStatusCode();
         if (code == 404) {
@@ -312,7 +312,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             return;
         }
         if (code != 200) {
-            Assert.fail(String.format("Tests summary failed for project [%s]: HTTP %d — %s%s",
+            fail(String.format("Tests summary failed for project [%s]: HTTP %d — %s%s",
                     projectName, code, summary.getBody().asString(), serverBugNote(code)));
         }
 
@@ -324,7 +324,7 @@ public abstract class AbstractZippedProjectsApi implements ITest {
             StringBuilder sb = new StringBuilder(String.format(
                     "Project [%s]: %d test failure(s) of %d total", projectName, failures, total));
             appendTestCases(sb, summaryJson);
-            Assert.fail(sb.toString());
+            fail(sb.toString());
         }
     }
 

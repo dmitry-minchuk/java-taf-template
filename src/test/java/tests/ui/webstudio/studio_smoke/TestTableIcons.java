@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestTableIcons extends BaseTest {
 
@@ -58,7 +58,7 @@ public class TestTableIcons extends BaseTest {
     @Description("Verify that each table type has the correct icon in the rules tree")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testTableIcons() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
@@ -84,9 +84,9 @@ public class TestTableIcons extends BaseTest {
             String actualIconSrc = finalEditorPage.getEditorLeftRulesTreeComponent()
                     .getTableIcon(tableName)
                     .getAttribute("src");
-            assertTrue(actualIconSrc.endsWith(expectedIcon),
-                    String.format("Table '%s' should have icon '%s', but actual: '%s'",
-                            tableName, expectedIcon, actualIconSrc));
+            assertThat(actualIconSrc)
+                    .as("Table '%s' should have icon '%s'", tableName, expectedIcon)
+                    .endsWith(expectedIcon);
         });
     }
 }

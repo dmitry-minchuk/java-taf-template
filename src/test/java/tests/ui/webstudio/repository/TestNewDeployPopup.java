@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -54,6 +54,11 @@ public class TestNewDeployPopup extends BaseTest {
     private static final int WS_PORT = 8080;
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
+
     private DeployInfrastructureService deployInfra;
 
     @Override
@@ -89,7 +94,7 @@ public class TestNewDeployPopup extends BaseTest {
         // STEP 1: Login, create project from template, get initial revision
         // Legacy steps: 1
         // =========================================================================
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+        EditorPage editorPage = new LoginService(DriverPool.getPage())
                 .login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
@@ -219,7 +224,7 @@ public class TestNewDeployPopup extends BaseTest {
         // STEP 8: Verify deployed services visible in WebService via browser
         // Legacy steps: 18
         // =========================================================================
-        boolean isDockerMode = LocalDriverPool.getCurrentExecutionMode() == LocalDriverPool.ExecutionMode.PLAYWRIGHT_DOCKER;
+        boolean isDockerMode = DriverPool.getCurrentExecutionMode() == configuration.driver.ExecutionMode.PLAYWRIGHT_DOCKER;
         String wsBaseUrl = isDockerMode
                 ? "http://wscontainer:" + WS_PORT
                 : "http://localhost:" + deployInfra.getWsContainer().getMappedPort(WS_PORT);
@@ -230,11 +235,11 @@ public class TestNewDeployPopup extends BaseTest {
         boolean allServicesAppeared = WaitUtil.waitForCondition(
                 () -> {
                     try {
-                        LocalDriverPool.getPage().navigate(wsBaseUrl);
+                        DriverPool.getPage().navigate(wsBaseUrl);
                         // Block until at least one service row (h3) appears in the DOM;
                         // throws TimeoutError (caught below) if none within the default timeout
-                        LocalDriverPool.getPage().waitForSelector("xpath=//h3");
-                        String pageContent = LocalDriverPool.getPage().content();
+                        DriverPool.getPage().waitForSelector("xpath=//h3");
+                        String pageContent = DriverPool.getPage().content();
                         List<String> missingProjects = expectedProjects.stream()
                                 .filter(project -> !pageContent.contains(project))
                                 .toList();
@@ -253,7 +258,7 @@ public class TestNewDeployPopup extends BaseTest {
                 .as("All expected WS services should appear within %sms", wsServicesTimeoutMs)
                 .isTrue();
 
-        String finalPageContent = LocalDriverPool.getPage().content();
+        String finalPageContent = DriverPool.getPage().content();
         for (String project : expectedProjects) {
             assertThat(finalPageContent)
                     .as("WS admin UI should show service for project '%s'", project)

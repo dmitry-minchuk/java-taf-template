@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.editortabcomponents.ChangesDialogComponent;
@@ -34,7 +34,7 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
     public void testLocalChangesAfterTablesGenerationReImport() {
         String projectName = "TestLocalChanges1_" + System.currentTimeMillis();
 
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()

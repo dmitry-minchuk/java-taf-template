@@ -1,10 +1,8 @@
 package configuration.driver;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.ScreenshotType;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
-import helpers.utils.DownloadUtil;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,31 +55,34 @@ public class DockerDriverPool {
         public BrowserContext getBrowserContext() { return browserContext; }
         public Page getPage() { return page; }
 
+        // Each step is closed independently: a failure on one (e.g. a flaky page.close())
+        // must not leak the browser or, worst of all, the Playwright container behind it.
         public void close() {
-            try {
+            DriverPool.closeQuietly("page", () -> {
                 if (page != null && !page.isClosed()) {
                     page.close();
-                    LOGGER.debug("Page closed successfully");
                 }
+            });
+            DriverPool.closeQuietly("browser context", () -> {
                 if (browserContext != null) {
                     browserContext.close();
-                    LOGGER.debug("Browser context closed successfully");
                 }
+            });
+            DriverPool.closeQuietly("browser", () -> {
                 if (browser != null && browser.isConnected()) {
                     browser.close();
-                    LOGGER.debug("Browser closed successfully");
                 }
+            });
+            DriverPool.closeQuietly("playwright", () -> {
                 if (playwright != null) {
                     playwright.close();
-                    LOGGER.debug("Playwright closed successfully");
                 }
+            });
+            DriverPool.closeQuietly("playwright container", () -> {
                 if (playwrightContainer != null && playwrightContainer.isRunning()) {
                     playwrightContainer.stop();
-                    LOGGER.debug("Playwright container stopped successfully");
                 }
-            } catch (Exception e) {
-                LOGGER.warn("Error during Playwright Docker cleanup: {}", e.getMessage());
-            }
+            });
         }
     }
 
@@ -223,8 +224,8 @@ public class DockerDriverPool {
                 .setAcceptDownloads(true)
                 .setIgnoreHTTPSErrors(true);
 
-        // Container-specific user agent
-        contextOptions.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Playwright-Server");
+        // The default user agent of the containerized browser is kept on purpose:
+        // faking a host-browser UA would test a configuration no real user has.
 
         // Configure video recording if enabled - using temp dir for recording (not for file extraction)
         boolean videoRecordingEnabled = Boolean.parseBoolean(ProjectConfiguration.getProperty(PropertyNameSpace.ENABLE_VIDEO_RECORDING));
@@ -270,14 +271,6 @@ public class DockerDriverPool {
         return context.getBrowserContext();
     }
 
-    public static Network getNetwork() {
-        PlaywrightDockerContext context = threadLocalContext.get();
-        if (context == null) {
-            throw new IllegalStateException("Playwright Docker not initialized for current thread. Call setPlaywrightDocker() first.");
-        }
-        return context.getNetwork();
-    }
-
     public static void closePlaywrightDocker() {
         PlaywrightDockerContext context = threadLocalContext.get();
         if (context != null) {
@@ -291,24 +284,6 @@ public class DockerDriverPool {
 
     public static boolean isInitialized() {
         return threadLocalContext.get() != null;
-    }
-
-    public static Page createNewPage() {
-        BrowserContext context = getBrowserContext();
-        Page newPage = context.newPage();
-        
-        // Set default timeout from configuration for new page
-        newPage.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
-        
-        LOGGER.debug("Created new page in Docker-aware browser context");
-        return newPage;
-    }
-
-    public static byte[] takeScreenshot() {
-        Page page = getPage();
-        return page.screenshot(new Page.ScreenshotOptions()
-                .setFullPage(true)
-                .setType(ScreenshotType.PNG));
     }
 
     public static void navigateTo(String url) {
@@ -418,19 +393,4 @@ public class DockerDriverPool {
         return info.toString();
     }
 
-    public static GenericContainer<?> getPlaywrightContainer() {
-        PlaywrightDockerContext context = threadLocalContext.get();
-        if (context == null) {
-            throw new IllegalStateException("Playwright Docker not initialized for current thread. Call setPlaywrightDocker() first.");
-        }
-        return context.getPlaywrightContainer();
-    }
-
-    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger) {
-        return DownloadUtil.downloadFile(trigger);
-    }
-
-    public static java.io.File downloadFile(com.microsoft.playwright.Locator trigger, int timeoutMs) {
-        return DownloadUtil.downloadFile(trigger, timeoutMs);
-    }
 }

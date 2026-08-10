@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class RepositoryContentTabSwitcherComponent extends BaseComponent {
     private ElementsTabComponent elementsTabComponent;
 
     public RepositoryContentTabSwitcherComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

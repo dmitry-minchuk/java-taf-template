@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -27,7 +27,7 @@ public class TestMainPageHasNoHorizontalScrollUi extends BaseTest {
             + " Known bug: EPBDS-16274.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testStudioPagesFitTheWindowWidth() {
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+        EditorPage editorPage = new LoginService(DriverPool.getPage())
                 .login(UserService.getUser(User.ADMIN));
 
         assertThat(editorPage.hasHorizontalScroll())

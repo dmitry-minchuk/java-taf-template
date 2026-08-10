@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import com.microsoft.playwright.Dialog;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 
 public class ProjectDetailsComponent extends BaseComponent {
 
@@ -17,7 +17,7 @@ public class ProjectDetailsComponent extends BaseComponent {
     private WebElement migrateMethodFiltersBtn;
 
     public ProjectDetailsComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

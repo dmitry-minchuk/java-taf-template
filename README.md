@@ -150,19 +150,31 @@ All containers call `.withNetwork(network)` with the **same Java object**, so Do
 
 ### How Extra Configuration Reaches the App Container
 
-`BaseTest.setupAppContainer()` uses **reflection** to pick up two static fields from the test class:
+`BaseTest` exposes two overridable methods a test can implement to feed extra configuration into
+the app container (an explicit, compiler-checked contract — no reflection involved):
 
-| Field Name | Type | Purpose |
+| Method | Returns | Purpose |
 |---|---|---|
-| `additionalContainerFiles` | `Map<String, String>` | Files to copy into container (host path -> container path) |
-| `additionalContainerConfig` | `Map<String, String>` | Extra env vars to pass to the container |
+| `additionalContainerFiles()` | `Map<String, String>` | Files to copy into container (host path -> container path) |
+| `additionalContainerConfig()` | `Map<String, String>` | Extra env vars to pass to the container |
 
-The test populates these maps in `beforeMethod()` **before** calling `super.beforeMethod()`, and `BaseTest` reads them via `getDeclaredField()` + `setAccessible(true)`:
+The test populates its backing maps in `beforeMethod()` **before** calling `super.beforeMethod()`,
+and overrides the methods to expose them:
 
 ```java
 // In test class:
 private static final Map<String, String> additionalContainerConfig = new HashMap<>();
 private static final Map<String, String> additionalContainerFiles = new HashMap<>();
+
+@Override
+protected Map<String, String> additionalContainerConfig() {
+    return additionalContainerConfig;
+}
+
+@Override
+protected Map<String, String> additionalContainerFiles() {
+    return additionalContainerFiles;
+}
 
 @Override
 @BeforeMethod
@@ -178,7 +190,7 @@ public void beforeMethod(ITestResult result) {
     additionalContainerConfig.putAll(deployInfra.getContainerConfig());
     additionalContainerFiles.putAll(deployInfra.getFilesToCopy());
 
-    super.beforeMethod(result);  // BaseTest reads both maps via reflection
+    super.beforeMethod(result);  // BaseTest calls both methods while setting up the container
 }
 ```
 
@@ -439,7 +451,7 @@ mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dbrowser=firefox -Dplaywright_defau
 │   │   │   ├── annotations/           # Custom annotations (@AppContainerConfig)
 │   │   │   ├── appcontainer/          # TestContainers app management  
 │   │   │   ├── core/ui/               # Core UI components (WebElement, CoreComponent)
-│   │   │   ├── driver/                # Driver pools (LocalDriverPool, DockerDriverPool)
+│   │   │   ├── driver/                # DriverPool facade + LocalDriverPool/DockerDriverPool implementations
 │   │   │   ├── listeners/             # TestNG listeners and retry analyzers
 │   │   │   ├── network/               # Docker network management (NetworkPool)
 │   │   │   └── projectconfig/         # Configuration management
@@ -472,7 +484,7 @@ mvn test -Dexecution.mode=PLAYWRIGHT_DOCKER -Dbrowser=firefox -Dplaywright_defau
 @Description("Test admin email configuration")
 @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
 public void testAdminEmail() {
-    EditorPage editorPage = new LoginService(LocalDriverPool.getPage())
+    EditorPage editorPage = new LoginService(DriverPool.getPage())
             .login(UserService.getUser(User.ADMIN));
 
     AdminPage adminPage = editorPage.navigateToAdmin();
@@ -551,7 +563,7 @@ String testDataPath = TestDataUtil.getTestDataPath("project-template.zip");
 zipComponent.selectFile(testDataPath);
 
 // File download (mode-aware)
-File downloadedFile = LocalDriverPool.downloadFile(downloadButton);
+File downloadedFile = DownloadUtil.downloadFile(downloadButton);
 assertThat(downloadedFile).exists();
 ```
 
@@ -625,21 +637,20 @@ public class TestWithDataProvider extends BaseTest {
 
 ### Automatic Mode Detection
 
-The `LocalDriverPool` class provides unified access to Playwright functionality with automatic mode detection:
+The `DriverPool` facade provides unified access to Playwright functionality with automatic mode detection
+(`LocalDriverPool` and `DockerDriverPool` hold the per-mode implementations):
 
 ```java
 // These methods work in both LOCAL and DOCKER modes
-Page page = LocalDriverPool.getPage();
-Browser browser = LocalDriverPool.getBrowser(); 
-BrowserContext context = LocalDriverPool.getBrowserContext();
+Page page = DriverPool.getPage();
+BrowserContext context = DriverPool.getBrowserContext();
 
 // Navigation (mode-aware URL handling)
-LocalDriverPool.navigateToApp();          // Uses correct URL for each mode
-LocalDriverPool.navigateTo("https://example.com");
+DriverPool.navigateToApp();               // Uses correct URL for each mode
 
 // Utilities
-byte[] screenshot = LocalDriverPool.takeScreenshot();
-Page newPage = LocalDriverPool.createNewPage();
+byte[] screenshot = DriverPool.takeScreenshot();
+Page newPage = DriverPool.createNewPage();
 ```
 
 ### Execution Mode Differences
@@ -695,8 +706,8 @@ Use `Jenkinsfile.reportportal-import` for the manual Jenkins job that downloads 
 
 ```java
 // Get current execution mode and debug info
-LocalDriverPool.ExecutionMode mode = LocalDriverPool.getCurrentExecutionMode();
-String debugInfo = LocalDriverPool.getDebugInfo();
+ExecutionMode mode = DriverPool.getCurrentExecutionMode();
+String debugInfo = DriverPool.getDebugInfo();
 logger.info("Current mode: {}, Debug: {}", mode, debugInfo);
 ```
 

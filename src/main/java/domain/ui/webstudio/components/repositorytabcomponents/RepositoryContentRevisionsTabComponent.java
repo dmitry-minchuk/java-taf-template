@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 
 import com.microsoft.playwright.Dialog;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,7 @@ public class RepositoryContentRevisionsTabComponent extends BaseComponent {
     private List<WebElement> visibleRows;
 
     public RepositoryContentRevisionsTabComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -74,7 +74,7 @@ public class RepositoryContentRevisionsTabComponent extends BaseComponent {
         LOGGER.info("Opening revision at row {}", rowIndex);
         WaitUtil.waitForCondition(() -> visibleRows.size() >= rowIndex, 5000, 200,
                 "Waiting for at least " + rowIndex + " revision rows to load");
-        LocalDriverPool.getPage().onDialog(Dialog::accept);
+        DriverPool.getPage().onDialog(Dialog::accept);
         visibleRows.get(rowIndex - 1).getLocator().locator("xpath=.//a[@attr='open-revision']").click();
         WaitUtil.sleep(1000, "Waiting for revision to open");
     }

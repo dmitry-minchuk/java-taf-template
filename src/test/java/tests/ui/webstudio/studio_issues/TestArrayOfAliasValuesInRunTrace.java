@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.IRunMenu;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.ITraceMenu;
 
 public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
 
@@ -40,7 +42,7 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
             // Select the item from the already expanded folder
             editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", tableName);
 
-            EditorToolbarPanelComponent.IRunMenu runMenu = editorPage.getEditorToolbarPanelComponent().clickRun();
+            IRunMenu runMenu = editorPage.getEditorToolbarPanelComponent().clickRun();
             runMenu.clickCreateItem()
                     .clickAddElementToCollectionBtn("my =")
                     .clickExpandCollection();
@@ -51,7 +53,7 @@ public class TestArrayOfAliasValuesInRunTrace extends BaseTest {
                     .containsExactly("", "bla1", "bla2", "bla3");
 
             // Switch to Trace and verify again
-            EditorToolbarPanelComponent.ITraceMenu traceMenu = editorPage.getEditorToolbarPanelComponent().clickTrace();
+            ITraceMenu traceMenu = editorPage.getEditorToolbarPanelComponent().clickTrace();
             assertThat(traceMenu.getAliasDropdownValues())
                     .as("Dropdown for alias values should contain expected values in Trace menu for table: " + tableName)
                     .containsExactly("", "bla1", "bla2", "bla3");

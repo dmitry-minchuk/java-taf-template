@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -139,9 +139,9 @@ public class TestACLParsedGroupsUserView extends BaseTest {
         usersComponent.clickProjectsTab();
 
         // Verify project role is displayed using the project selector template
-        String projectValue = LocalDriverPool.getPage()
+        String projectValue = DriverPool.getPage()
                 .locator("xpath=//input[@id='projects_0_id']/..").getAttribute("title");
-        String roleValue = LocalDriverPool.getPage()
+        String roleValue = DriverPool.getPage()
                 .locator("xpath=//input[@id='projects_0_role']/..").getAttribute("title");
 
         assertThat(projectValue)

@@ -17,6 +17,7 @@ import tests.BaseTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import domain.ui.webstudio.components.editortabcomponents.toolbar.IRunMenu;
 
 public class TestSimpleLookupSimpleRules extends BaseTest {
 
@@ -150,7 +151,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
     }
 
     private void runSimpleLookup(EditorPage editorPage, String gender, String status) {
-        EditorToolbarPanelComponent.IRunMenu runMenu = editorPage.getEditorToolbarPanelComponent().clickRun();
+        IRunMenu runMenu = editorPage.getEditorToolbarPanelComponent().clickRun();
         if (gender != null) {
             runMenu.setInputSelectField("1", gender);
         }

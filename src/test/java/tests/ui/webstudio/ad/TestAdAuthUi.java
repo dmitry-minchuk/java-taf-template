@@ -3,7 +3,7 @@ package tests.ui.webstudio.ad;
 import com.epam.reportportal.annotations.Description;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.UserSlidingRightMenuComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -36,8 +36,8 @@ public class TestAdAuthUi extends AbstractAdUiTest {
 
         // 2. Sign out — AD is form-based, so the Studio login form must reappear (session ended).
         adminMenu.signOut();
-        LocalDriverPool.getPage().waitForLoadState();
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getPage().waitForLoadState();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         assertThat(new LoginPage().isLoginFormDisplayed(15000))
                 .as("after AD Sign Out the Studio login form reappears")
                 .isTrue();
@@ -49,8 +49,8 @@ public class TestAdAuthUi extends AbstractAdUiTest {
                 .isFalse();
 
         // 4. Invalid credentials are rejected.
-        LocalDriverPool.getBrowserContext().clearCookies();
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getBrowserContext().clearCookies();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         LoginPage loginPage = new LoginPage();
         loginPage.login(new UserData(SambaAdInfrastructureService.ADMIN_USER, "WrongPassword!"));
         assertThat(loginPage.isLoginErrorDisplayed(10000))

@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -32,7 +32,7 @@ public class TestACLContributorRole extends BaseTest {
     @Description("ACL: Contributor role on repository level — verify V+C+E+D permissions, no Manage, no Deploy")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testACLContributorRoleOnRepositoryLevel() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and contributor user ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -99,7 +99,7 @@ public class TestACLContributorRole extends BaseTest {
     @Description("ACL: Contributor vs Viewer comparison — Contributor has Edit+Delete+Copy, Viewer has Export only")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testACLContributorVsViewerComparison() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and two users ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -196,7 +196,7 @@ public class TestACLContributorRole extends BaseTest {
     @Description("ACL: Contributor role on project level — access scoped to permitted project only")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testACLContributorRoleOnProjectLevel() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create two projects ============
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));

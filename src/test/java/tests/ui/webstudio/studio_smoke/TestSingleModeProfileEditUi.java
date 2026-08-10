@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.admincomponents.MyProfilePageComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
@@ -30,8 +30,8 @@ public class TestSingleModeProfileEditUi extends BaseTest {
             + "Studio UI and the changes persist after a full page reload (EPBDS-16213).")
     @AppContainerConfig(startParams = AppContainerStartParameters.STUDIO_SINGLE_PARAMS)
     public void testSingleModeProfileEditPersists() {
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-        LocalDriverPool.getPage().waitForLoadState();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
+        DriverPool.getPage().waitForLoadState();
         // Single mode signs the user in without a login form, so the 6.4.0 "Complete Your Profile" modal
         // has to be dealt with here — otherwise it blocks the whole page.
         new LoginPage().completeProfileIfRequested();
@@ -44,8 +44,8 @@ public class TestSingleModeProfileEditUi extends BaseTest {
                 .setEmail(EMAIL)
                 .saveProfile();
 
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-        LocalDriverPool.getPage().waitForLoadState();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
+        DriverPool.getPage().waitForLoadState();
 
         MyProfilePageComponent profile = new EditorPage().openUserMenu()
                 .navigateToAdministration()

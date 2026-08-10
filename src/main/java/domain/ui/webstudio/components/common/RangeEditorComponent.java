@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.common;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 public class RangeEditorComponent extends BaseComponent {
@@ -10,7 +10,7 @@ public class RangeEditorComponent extends BaseComponent {
     private WebElement discardChangesBtn;
 
     public RangeEditorComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

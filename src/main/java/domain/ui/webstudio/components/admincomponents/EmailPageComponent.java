@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ public class EmailPageComponent extends BaseComponent {
     private WebElement showPasswordBtn;
 
     public EmailPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeEmailComponents();
     }
     

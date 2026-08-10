@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -17,7 +17,6 @@ import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -33,7 +32,7 @@ public class TestACLProjectLevelRoles extends BaseTest {
     @Description("ACL: project-level role assignment (Manager/Viewer on specific projects) and permission verification without external auth system")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testACLProjectLevelRoles() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin Setup: Log in and create two projects ============
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
@@ -60,7 +59,7 @@ public class TestACLProjectLevelRoles extends BaseTest {
                 .navigateToAdministration()
                 .navigateToUsersPage();
 
-        Assert.assertTrue(usersComponent.isUserInList("admin"), "Admin user should be in the users list");
+        assertThat(usersComponent.isUserInList("admin")).as("Admin user should be in the users list").isTrue();
 
         // ============ Steps 4-5: Add new user 'test' ============
         int initialUserCount = usersComponent.getUsersCount();
@@ -69,8 +68,8 @@ public class TestACLProjectLevelRoles extends BaseTest {
                 .setPassword("test")
                 .saveUser();
 
-        Assert.assertTrue(usersComponent.isUserInList("test"), "User 'test' should be added to the list");
-        Assert.assertEquals(usersComponent.getUsersCount(), initialUserCount + 1, "User count should increase by 1");
+        assertThat(usersComponent.isUserInList("test")).as("User 'test' should be added to the list").isTrue();
+        assertThat(usersComponent.getUsersCount()).as("User count should increase by 1").isEqualTo(initialUserCount + 1);
 
         // ============ Step 10: Login as 'test' user and verify no projects/options ============
         editorPage.openUserMenu().signOut();

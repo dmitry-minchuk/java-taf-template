@@ -3,7 +3,7 @@ package tests.ui.webstudio.studio_smoke;
 import com.epam.reportportal.annotations.Description;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
 import org.testng.annotations.Test;
@@ -23,8 +23,8 @@ public class TestSingleModeAuthUi extends BaseTest {
             + "configured single user has admin access (Administration menu visible).")
     @AppContainerConfig(startParams = AppContainerStartParameters.STUDIO_SINGLE_PARAMS)
     public void testSingleModeAutoAuthentication() {
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
-        LocalDriverPool.getPage().waitForLoadState();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
+        DriverPool.getPage().waitForLoadState();
         // Single mode signs the user in without a login form, so the 6.4.0 "Complete Your Profile" modal
         // has to be dealt with here — otherwise it blocks the whole page.
         new LoginPage().completeProfileIfRequested();

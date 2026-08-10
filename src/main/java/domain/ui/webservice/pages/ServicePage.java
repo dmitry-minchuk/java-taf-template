@@ -3,7 +3,7 @@ package domain.ui.webservice.pages;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.CorePage;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.pages.BasePage;
 import lombok.Getter;
 
@@ -80,7 +80,7 @@ public class ServicePage extends BasePage {
     }
 
     public void open() {
-        this.page.navigate(LocalDriverPool.getAppUrl());
+        this.page.navigate(DriverPool.getAppUrl());
     }
 
     public WebElement getProjectElement(String projectName) {

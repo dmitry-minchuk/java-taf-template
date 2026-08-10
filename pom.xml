@@ -79,11 +79,6 @@
             <version>${rest.assured.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>${rest.assured.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
@@ -137,19 +132,8 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.2.224</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
@@ -171,6 +155,9 @@
             <artifactId>mssqlserver</artifactId>
             <version>1.21.3</version>
         </dependency>
+        <!-- The three JDBC drivers below are not referenced from code on purpose: declaring them
+             downloads the jars into the local .m2, from where they are copied into the app container
+             (see db.*.jar.maven.path in config.properties and DeployInfrastructureService). -->
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
@@ -194,15 +181,12 @@
             <artifactId>s3</artifactId>
             <version>2.41.18</version>
         </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.21.0</version>
-        </dependency>
+        <!-- ReportPortal's HttpRequestUtils exposes okhttp3 types in its API (ReportPortalExportImporter),
+             so okhttp must be on the compile classpath; the version matches the client's transitive one. -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp-jvm</artifactId>
-            <version>5.1.0</version>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
         </dependency>
     </dependencies>
 

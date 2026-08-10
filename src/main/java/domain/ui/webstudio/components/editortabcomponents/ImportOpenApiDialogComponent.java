@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -25,7 +25,7 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     private List<WebElement> errorMsgs;
 
     public ImportOpenApiDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -112,7 +112,7 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     }
 
     public String getErrorMessage() {
-        return errorMsg.getText(3000);
+        return errorMsg.getTextAfterDelay(3000);
     }
 
     public List<String> getErrorMessages() {
@@ -123,7 +123,7 @@ public class ImportOpenApiDialogComponent extends BaseComponent {
     }
 
     public String getAnyErrorMessage() {
-        return anyErrorMsg.getText(3000);
+        return anyErrorMsg.getTextAfterDelay(3000);
     }
 
     public boolean isReconciliationModeSelected() {

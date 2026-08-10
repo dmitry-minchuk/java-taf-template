@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -31,7 +31,7 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
     @Description("ACL: Run and Benchmark buttons visible for Viewer — system actions available to all users (BRD TR2)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testRunAndBenchmarkVisibleForViewer() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Viewer user ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -96,7 +96,7 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
     @Description("ACL: Run and Benchmark visible for Contributor — system actions available to all users (BRD TR2)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testRunAndBenchmarkVisibleForContributor() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Contributor user ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -157,7 +157,7 @@ public class TestACLRunBenchmarkSystemAction extends BaseTest {
     @Description("ACL: Run and Benchmark visible for Manager — system actions available to all users (BRD TR2)")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testRunAndBenchmarkVisibleForManager() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and Manager user ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");

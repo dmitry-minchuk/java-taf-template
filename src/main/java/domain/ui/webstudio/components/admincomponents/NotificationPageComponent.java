@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.admincomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 public class NotificationPageComponent extends BaseComponent {
@@ -11,7 +11,7 @@ public class NotificationPageComponent extends BaseComponent {
     private WebElement clearButton;
 
     public NotificationPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

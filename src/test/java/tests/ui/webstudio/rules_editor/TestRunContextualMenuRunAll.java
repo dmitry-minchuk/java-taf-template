@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import com.microsoft.playwright.Page;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent.FilterOptions;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -95,7 +95,7 @@ public class TestRunContextualMenuRunAll extends BaseTest {
                 .expandFolderInTree("Test")
                 .selectItemInFolder("Test", BIG_TEST);
 
-        Page page = LocalDriverPool.getPage();
+        Page page = DriverPool.getPage();
         WaitUtil.waitForCondition(
                 () -> Boolean.TRUE.equals(page.evaluate("() => document.getElementById('runAllTests') !== null")),
                 10000, 250, "Waiting for '#runAllTests' to appear in the DOM for doubleItTest"

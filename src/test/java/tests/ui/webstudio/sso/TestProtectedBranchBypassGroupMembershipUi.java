@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.api.AclProjectsMethod;
 import domain.api.AuthorizedApiMethod;
 import domain.api.GroupsMethod;
@@ -77,7 +77,7 @@ public class TestProtectedBranchBypassGroupMembershipUi extends AbstractSsoUiTes
         }
 
         // ===== UI flow as groupmgr via Keycloak SSO =====
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         EditorPage editorPage = new KeycloakLoginPage().login(GROUP_USER, GROUP_USER_PASSWORD);
 
         // React nav: open the project from the /projects list, then open the Sync dialog from the editor

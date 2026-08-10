@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.common;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import net.datafaker.Faker;
 
 // React "Configure Git Commit Info" modal (build 032c60a664ce+). Fields are #firstName / #lastName /
@@ -17,7 +17,7 @@ public class ConfigureCommitInfoComponent extends BaseComponent {
     private WebElement cancelBtn;
 
     public ConfigureCommitInfoComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

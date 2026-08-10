@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 public class ProjectDeleteConfirmModalComponent extends BaseComponent {
@@ -13,21 +13,21 @@ public class ProjectDeleteConfirmModalComponent extends BaseComponent {
     private WebElement messageBody;
 
     public ProjectDeleteConfirmModalComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
     private void initializeElements() {
         String modalRoot = "//div[contains(@class,'ant-modal') and .//textarea[@id='comment']]";
-        commentInput = new WebElement(LocalDriverPool.getPage(),
+        commentInput = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//textarea[@id='comment']", "projectDeleteCommentInput");
-        acknowledgeCheckbox = new WebElement(LocalDriverPool.getPage(),
+        acknowledgeCheckbox = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//input[@id='confirmed']", "projectDeleteAcknowledgeCheckbox");
-        deleteBtn = new WebElement(LocalDriverPool.getPage(),
+        deleteBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//button[contains(@class,'ant-btn-dangerous')]", "projectDeleteConfirmBtn");
-        cancelBtn = new WebElement(LocalDriverPool.getPage(),
+        cancelBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//button[normalize-space(.)='Cancel']", "projectDeleteCancelBtn");
-        messageBody = new WebElement(LocalDriverPool.getPage(),
+        messageBody = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//div[contains(@class,'ant-modal-body')]", "projectDeleteMessageBody");
     }
 

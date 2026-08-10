@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 
 public class ProjectModuleDetailsComponent extends BaseComponent {
 
@@ -13,7 +13,7 @@ public class ProjectModuleDetailsComponent extends BaseComponent {
     private WebElement cancelBtn;
 
     public ProjectModuleDetailsComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

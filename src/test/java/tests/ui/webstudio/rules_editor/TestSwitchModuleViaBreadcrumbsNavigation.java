@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.serviceclasses.constants.User;
@@ -39,7 +39,7 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
     @Description("Switch Module Via Breadcrumbs Navigation - breadcrumb switching through multiple modules, performance check")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSwitchModuleViaBreadcrumbsNavigation() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
@@ -89,7 +89,7 @@ public class TestSwitchModuleViaBreadcrumbsNavigation extends BaseTest {
     @Description("EPBDS-12366: Breadcrumbs must show correct module after navigating from Table Dependencies view")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testBreadcrumbsCorrectAfterTableDependencyNavigation() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()

@@ -6,7 +6,8 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import configuration.driver.DockerDriverPool;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.ExecutionMode;
+import configuration.driver.DriverPool;
 import configuration.network.NetworkPool;
 import domain.api.GetApplicationInfoMethod;
 import helpers.utils.LogsUtil;
@@ -16,7 +17,6 @@ import helpers.utils.StringUtil;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.Network;
 import org.testng.ITest;
 import org.testng.ITestResult;
@@ -24,7 +24,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,27 +34,8 @@ public abstract class BaseTest implements ITest {
     // Thread-safe test name storage for DataProvider support
     private final ThreadLocal<String> testName = new ThreadLocal<>();
 
-    // Support multiple Playwright execution modes
-    private static final ExecutionMode EXECUTION_MODE = getExecutionMode();
-
-    // Execution modes for Playwright
-    public enum ExecutionMode {
-        PLAYWRIGHT_LOCAL,   // Phase 1: Playwright local execution
-        PLAYWRIGHT_DOCKER   // Phase 3: Playwright with Docker integration
-    }
-
-    private static ExecutionMode getExecutionMode() {
-        String mode = System.getProperty("execution.mode", "PLAYWRIGHT_LOCAL");
-
-        try {
-            ExecutionMode execMode = ExecutionMode.valueOf(mode.toUpperCase());
-            LOGGER.info("Using execution mode: {}", execMode);
-            return execMode;
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("Unknown execution mode '{}', defaulting to PLAYWRIGHT_LOCAL", mode);
-            return ExecutionMode.PLAYWRIGHT_LOCAL;
-        }
-    }
+    // Single source of truth for mode detection — see ExecutionMode.current()
+    private static final ExecutionMode EXECUTION_MODE = ExecutionMode.current();
 
     @BeforeMethod
     public void beforeMethod(ITestResult result) {
@@ -107,7 +87,7 @@ public abstract class BaseTest implements ITest {
         setupAppContainer(result, network);
 
         // Initialize Playwright through unified interface
-        LocalDriverPool.initializePlaywright(network);
+        DriverPool.initializePlaywright(network);
     }
 
     private void initializePlaywrightDockerTest(ITestResult result) {
@@ -124,20 +104,25 @@ public abstract class BaseTest implements ITest {
         // Set up app container with network
         setupAppContainer(result, network);
 
-        // CRITICAL: Wait for Docker DNS to sync container network aliases across the network
-        // This ensures that when Playwright container starts, it can resolve the app container hostname
-        waitForNetworkConnectivity(result);
+        // Wait for Docker DNS to sync container network aliases across the network,
+        // so the Playwright container can resolve the app container hostname on start
+        waitForNetworkConnectivity();
 
         // Initialize Playwright through unified interface with network
-        LocalDriverPool.initializePlaywright(network);
+        DriverPool.initializePlaywright(network);
     }
 
-    private void waitForNetworkConnectivity(ITestResult result) {
+    private void waitForNetworkConnectivity() {
         if (AppContainerPool.get() == null) {
             LOGGER.warn("No app container found, skipping network connectivity check");
             return;
         }
-        WaitUtil.sleep(3000, "Waiting for Docker DNS to propagate container hostname across the network");
+        // First make sure the container itself is up (fast when it already is), then give Docker DNS
+        // a short settle window — alias propagation is not observable from the host, only from a peer
+        // container that does not exist yet at this point.
+        WaitUtil.waitForCondition(() -> AppContainerPool.get().getAppContainer().isRunning(),
+                10_000, 250, "Waiting for the app container to be running before Playwright container starts");
+        WaitUtil.sleep(1000, "Letting Docker DNS propagate the app container hostname across the network");
     }
 
     private void setupAppContainer(ITestResult result, Network network) {
@@ -148,9 +133,9 @@ public abstract class BaseTest implements ITest {
 
         if (configAnnotation != null) {
             containerConfig = configAnnotation.startParams().getParameterMap();
-            containerConfig.putAll(getAdditionalContainerConfig(testMethod));
+            containerConfig.putAll(additionalContainerConfig());
             containerConfig.forEach((key, value) -> LOGGER.info(String.format("[%s] -> [%s]", key, value)));
-            Map<String, String> filesToCopy = getAdditionalContainerFiles(testMethod);
+            Map<String, String> filesToCopy = new HashMap<>(additionalContainerFiles());
             if (!configAnnotation.copyFileFromPath().isEmpty() && !configAnnotation.copyFileToContainerPath().isEmpty()) {
                 filesToCopy.put(configAnnotation.copyFileFromPath(), configAnnotation.copyFileToContainerPath());
             }
@@ -161,59 +146,20 @@ public abstract class BaseTest implements ITest {
         }
     }
 
-    private Map<String, String> getAdditionalContainerFiles(Method testMethod) {
-        Field additionalFiles;
-        try {
-            additionalFiles = testMethod.getDeclaringClass().getDeclaredField("additionalContainerFiles");
-            additionalFiles.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            return new HashMap<>();
-        }
-        Object raw;
-        try {
-            raw = additionalFiles.get(null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return getStringStringMap(raw);
+    /**
+     * Extra app-container configuration merged over the {@code @AppContainerConfig} start parameters.
+     * Override in tests that need per-test container settings.
+     */
+    protected Map<String, String> additionalContainerConfig() {
+        return Map.of();
     }
 
-    // This is needed for container extra configuration and not breaking annotation config logic
-    private Map<String, String> getAdditionalContainerConfig(Method testMethod) {
-        Field additionalConfig;
-        try {
-            additionalConfig = testMethod.getDeclaringClass().getDeclaredField("additionalContainerConfig");
-            additionalConfig.setAccessible(true);  // Allow access to private field
-        } catch (NoSuchFieldException e) {
-            return new HashMap<>();  // Return empty map if field doesn't exist
-        }
-
-        Object raw;
-        try {
-            raw = additionalConfig.get(null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return getStringStringMap(raw);
-    }
-
-    // This is needed for container extra configuration and not breaking annotation config logic
-    private static @NotNull Map<String, String> getStringStringMap(Object raw) {
-        if (!(raw instanceof Map<?, ?> map)) {
-            throw new IllegalStateException("additionalContainerConfig must be a Map<String,String>, but was " + (raw == null ? "null" : raw.getClass()));
-        }
-
-        Map<String, String> result = new HashMap<>();
-        for (Map.Entry<?, ?> e : map.entrySet()) {
-            if (!(e.getKey() instanceof String key)) {
-                throw new IllegalStateException("Key must be String, but was " + e.getKey());
-            }
-            if (!(e.getValue() instanceof String value)) {
-                throw new IllegalStateException("Value must be String, but was " + e.getValue());
-            }
-            result.put(key, value);
-        }
-        return result;
+    /**
+     * Extra "host path -> container path" files to copy into the app container before start.
+     * Override in tests that stage test data into the container.
+     */
+    protected Map<String, String> additionalContainerFiles() {
+        return Map.of();
     }
 
     private void cleanupPlaywrightLocalTest(ITestResult result) {
@@ -232,7 +178,7 @@ public abstract class BaseTest implements ITest {
         }
 
         // Close Playwright
-        LocalDriverPool.closePlaywright();
+        DriverPool.closePlaywright();
 
         // Close app container
         AppContainerPool.closeAppContainer();

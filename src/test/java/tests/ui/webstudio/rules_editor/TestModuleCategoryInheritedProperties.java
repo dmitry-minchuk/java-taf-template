@@ -10,7 +10,6 @@ import domain.ui.webstudio.components.editortabcomponents.RightTableDetailsCompo
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -185,7 +184,7 @@ public class TestModuleCategoryInheritedProperties extends BaseTest {
         tableDetails.clickGoToPropertiesTableArrow("LOB");
 
         TableComponent centerTable = editorPage.getCenterTable();
-        Assert.assertTrue(centerTable.isVisible(), "Properties table should be visible");
+        assertThat(centerTable.isVisible()).as("Properties table should be visible").isTrue();
 
         String headerText = String.join(" ", centerTable.getRow(1).getValue());
         assertThat(headerText).contains("Properties myProperty");

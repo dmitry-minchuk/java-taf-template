@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.common;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +28,7 @@ public class SyncChangesDialogComponent extends BaseComponent {
     private WebElement bypassWarningAlert;
 
     public SyncChangesDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -54,7 +54,7 @@ public class SyncChangesDialogComponent extends BaseComponent {
         mergeBlockedAlerts = createElementList(
                 "xpath=//*[@data-testid='merge-blocked-send' or @data-testid='merge-blocked-receive']",
                 "mergeBlockedAlerts");
-        bypassWarningAlert = new WebElement(LocalDriverPool.getPage(),
+        bypassWarningAlert = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert-warning')]",
                 "bypassWarningAlert");
     }

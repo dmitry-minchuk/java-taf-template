@@ -1,6 +1,6 @@
 package tests.ui.webstudio.ad;
 
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
@@ -45,8 +45,8 @@ public abstract class AbstractAdUiTest extends BaseTest {
 
     /** Clears the session and logs in through Studio's form as the given AD user (switches user). */
     protected EditorPage adLogin(String username, String password) {
-        LocalDriverPool.getBrowserContext().clearCookies();
-        LocalDriverPool.getPage().navigate(LocalDriverPool.getAppUrl());
+        DriverPool.getBrowserContext().clearCookies();
+        DriverPool.getPage().navigate(DriverPool.getAppUrl());
         return new LoginPage().login(new UserData(username, password));
     }
 }

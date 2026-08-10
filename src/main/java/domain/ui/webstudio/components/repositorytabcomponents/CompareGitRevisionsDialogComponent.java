@@ -4,7 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +37,7 @@ public class CompareGitRevisionsDialogComponent extends BaseComponent {
     private String lastOpenedTreeNodeName;
 
     public CompareGitRevisionsDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

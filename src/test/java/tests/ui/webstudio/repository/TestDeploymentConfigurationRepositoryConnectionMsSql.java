@@ -3,7 +3,7 @@ package tests.ui.webstudio.repository;
 import com.epam.reportportal.annotations.Description;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -33,6 +33,11 @@ public class TestDeploymentConfigurationRepositoryConnectionMsSql extends BaseTe
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
+
     private DeployInfrastructureService deployInfra;
     private final String projectName = "MsSqlDeployTest";
     private final String deploymentName = "mssql-deploy";
@@ -60,7 +65,7 @@ public class TestDeploymentConfigurationRepositoryConnectionMsSql extends BaseTe
     @Description("Deployment Configuration Repository — connect via MS SQL JDBC and deploy a project")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeploymentConfigurationRepositoryConnectionMsSql() {
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent reposPage = adminPage.navigateToRepositoriesPage();
 

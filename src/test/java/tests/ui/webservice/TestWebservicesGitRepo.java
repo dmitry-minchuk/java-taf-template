@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.api.ServiceHelloMethod;
 import domain.ui.webservice.pages.ServicePage;
 import io.restassured.response.Response;
@@ -26,12 +26,17 @@ public class TestWebservicesGitRepo extends BaseTest {
             //Map.entry("production-repository.password", "ghp_token_here")
     ));
 
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
+
     @Test
     @TestCaseId("EPBDS-14497")
     @Description("Test that SimpleGitProject from Git repository is deployed and service endpoint works")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
     public void testWebservicesGitRepo() {
-        ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
         verifyProjectDeployed(servicePage, GIT_PROJECT_NAME);

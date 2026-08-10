@@ -11,12 +11,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+/**
+ * Resolves configuration properties with the following precedence:
+ * system property > .env file > config.properties. Both files are loaded once and cached.
+ */
 public class ProjectConfiguration {
     protected static final Logger LOGGER = LogManager.getLogger(ProjectConfiguration.class);
     private final static String CONFIG_PATH = "src/test/resources/config.properties";
     private final static String DOTENV_PATH = ".env";
 
     private static final Properties DOTENV = loadDotEnv();
+    private static final Properties CONFIG = loadConfig();
 
     public static String getProperty(PropertyNameSpace pn) {
         return getProperty(pn.getValue());
@@ -31,13 +36,17 @@ public class ProjectConfiguration {
         if (dotEnv != null && !dotEnv.isEmpty()) {
             return dotEnv;
         }
+        return CONFIG.getProperty(pn);
+    }
+
+    private static Properties loadConfig() {
+        Properties properties = new Properties();
         try (InputStream input = new FileInputStream(CONFIG_PATH)) {
-            Properties properties = new Properties();
             properties.load(input);
-            return properties.getProperty(pn);
         } catch (IOException ex) {
-            throw new RuntimeException(ex.toString());
+            throw new IllegalStateException("Failed to load " + CONFIG_PATH, ex);
         }
+        return properties;
     }
 
     private static Properties loadDotEnv() {

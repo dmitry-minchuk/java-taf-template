@@ -5,7 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import org.testng.annotations.Test;
 
@@ -36,8 +36,8 @@ public class TestSamlLogoutUi extends AbstractSsoUiTest {
 
         // Fully settle the authenticated SAML session before logging out (avoids a login->logout race
         // where Sign Out happens before the SP has persisted the SAML authentication).
-        Page page = LocalDriverPool.getPage();
-        page.navigate(LocalDriverPool.getAppUrl());
+        Page page = DriverPool.getPage();
+        page.navigate(DriverPool.getAppUrl());
         page.waitForLoadState();
 
         // waitForRequest arms the listener BEFORE running Sign Out, so the LogoutRequest cannot be

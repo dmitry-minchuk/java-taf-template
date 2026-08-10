@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.common;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class TableComponent extends BaseComponent {
     private WebElement propertyValueTemplate;
 
     public TableComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -151,7 +151,7 @@ public class TableComponent extends BaseComponent {
         List<WebElement> cells;
 
         public PlaywrightTableRowComponent() {
-            super(LocalDriverPool.getPage());
+            super(DriverPool.getPage());
             initializeElements();
         }
 

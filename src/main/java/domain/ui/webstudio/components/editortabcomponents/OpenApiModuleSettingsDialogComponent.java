@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -26,7 +26,7 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     private WebElement dataPathDisplay;
 
     public OpenApiModuleSettingsDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -54,7 +54,7 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     }
 
     public String getContentText() {
-        String raw = contentDiv.getInnerText(5000);
+        String raw = contentDiv.getInnerTextAfterDelay(5000);
         return Arrays.stream(raw.split("\n"))
                 .map(line -> line.replaceAll("\\s+", " ").trim())
                 .filter(line -> !line.isEmpty())
@@ -76,7 +76,7 @@ public class OpenApiModuleSettingsDialogComponent extends BaseComponent {
     }
 
     public String getErrorMessage() {
-        return errorMsg.getText(3000);
+        return errorMsg.getTextAfterDelay(3000);
     }
 
     public List<String> getErrorMessages() {

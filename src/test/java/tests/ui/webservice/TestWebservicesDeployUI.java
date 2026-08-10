@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
@@ -30,13 +30,18 @@ public class TestWebservicesDeployUI extends BaseTest {
             //Map.entry("production-repository.password", "ghp_token_here")
     ));
 
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
+
     @Test
     @TestCaseId("IPBQA-28640")
     @Description("Test WebService deployment UI - verify projects are deployed and accessible")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
     public void testWebservicesDeployUi() {
         // Initialize ServicePage
-        ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
         // Part 1: Verify SimpleProject is present and accessible
@@ -48,8 +53,8 @@ public class TestWebservicesDeployUI extends BaseTest {
         servicePage.downloadProject(SIMPLE_PROJECT);
 
         // Refresh page to see updated state
-        LocalDriverPool.getPage().reload();
-        servicePage = new ServicePage(LocalDriverPool.getPage());
+        DriverPool.getPage().reload();
+        servicePage = new ServicePage(DriverPool.getPage());
 
         // Part 1.3: Verify SimpleProject2 manifest link is present
         assertThat(servicePage.getManifestLink(SIMPLE_PROJECT_2).isVisible(5000))
@@ -62,8 +67,8 @@ public class TestWebservicesDeployUI extends BaseTest {
                 .isTrue();
 
         // Refresh page
-        LocalDriverPool.getPage().reload();
-        servicePage = new ServicePage(LocalDriverPool.getPage());
+        DriverPool.getPage().reload();
+        servicePage = new ServicePage(DriverPool.getPage());
 
         // Part 2: Verify multiple deployments are present
         assertThat(servicePage.getProjectElement(MULTIPLE_PROJECT).isVisible(5000))
@@ -78,8 +83,8 @@ public class TestWebservicesDeployUI extends BaseTest {
         servicePage.downloadProject(MULTIPLE_PROJECT_2);
 
         // Refresh page
-        LocalDriverPool.getPage().reload();
-        servicePage = new ServicePage(LocalDriverPool.getPage());
+        DriverPool.getPage().reload();
+        servicePage = new ServicePage(DriverPool.getPage());
 
         // Part 3: Verify someDeployment/Hello_Rule is present
         assertThat(servicePage.getProjectElement(HELLO_RULE).isVisible(5000))
@@ -87,7 +92,7 @@ public class TestWebservicesDeployUI extends BaseTest {
                 .isTrue();
 
         // Refresh page
-        LocalDriverPool.getPage().reload();
+        DriverPool.getPage().reload();
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }
 }

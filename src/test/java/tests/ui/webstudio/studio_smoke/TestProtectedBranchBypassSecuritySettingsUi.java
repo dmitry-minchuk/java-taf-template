@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.SecurityPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
@@ -29,7 +29,7 @@ public class TestProtectedBranchBypassSecuritySettingsUi extends BaseTest {
             + "persists after Apply + restart + re-login.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testAllowBypassCheckboxRenderTogglePersistence() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();

@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.TagsPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -15,9 +15,10 @@ import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestProjectTagsCreationNonExistingValue extends BaseTest {
 
@@ -36,7 +37,7 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
             + "tags.properties is applied as it is, without the removed reconciliation dialogs")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNonExistingTagValueHandling() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         setupRequiredTagTypes(editorPage);
@@ -48,8 +49,7 @@ public class TestProjectTagsCreationNonExistingValue extends BaseTest {
         // The React UI applies (or drops) a zip's tags without asking — the old reconciliation dialogs
         // are gone — so this reads the resulting tags on the project screen.
         ProjectDetailPage projectDetail = repositoryPage.openProjectsList().openProjectDetail(PROJECT_NAME);
-        Assert.assertEquals(projectDetail.getTagValueForType(TAG_TYPE_NAME), "Tag9",
-                "The tag declared by the zip should be applied");
+        assertThat(projectDetail.getTagValueForType(TAG_TYPE_NAME)).as("The tag declared by the zip should be applied").isEqualTo("Tag9");
     }
 
     private void setupRequiredTagTypes(EditorPage editorPage) {

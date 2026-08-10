@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.projectconfig.PropertyNameSpace;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
@@ -26,17 +26,27 @@ public class TestRuleServicesNewUI extends BaseTest {
             "openl.application.title", "🌍 Привет, мир! こんにちは世界 🚀"
     ));
 
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
+
     private static final Map<String, String> additionalContainerFiles = new HashMap<>(Map.of(
             TestDataUtil.getDirectoryPathFromResources("TestRuleServicesNewUI"),
             "/opt/openl/shared/"
     ));
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
 
     @Test
     @TestCaseId("EPBDS-14196")
     @Description("Verify new Rule Services UI features: configurable title, Show All Deployments filter, Services & Links column")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_FILE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testRuleServicesNewUI() {
-        ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
         // Step 1: All 3 deployments are visible (confirms AJAX completed and JS rendered the page)
@@ -51,7 +61,7 @@ public class TestRuleServicesNewUI extends BaseTest {
                 .isTrue();
 
         // Step 2: Verify configurable page title (set by JS after AJAX — check after deployments are rendered)
-        assertThat(LocalDriverPool.getPage().title())
+        assertThat(DriverPool.getPage().title())
                 .as("Page title should match the configured openl.application.title")
                 .isEqualTo("🌍 Привет, мир! こんにちは世界 🚀");
 
@@ -88,15 +98,15 @@ public class TestRuleServicesNewUI extends BaseTest {
 
         // Step 7: Click MANIFEST.MF, verify content, navigate back
         servicePage.getDeploymentManifestLink(DEPLOYMENT1).click();
-        String pageContent = LocalDriverPool.getPage().content();
+        String pageContent = DriverPool.getPage().content();
         assertThat(pageContent)
                 .as("MANIFEST.MF page should contain implementation info for Sample1")
                 .contains("Implementation-Title")
                 .contains("Sample1")
                 .contains("Build-Branch")
                 .contains("master");
-        LocalDriverPool.getPage().goBack();
-        servicePage = new ServicePage(LocalDriverPool.getPage());
+        DriverPool.getPage().goBack();
+        servicePage = new ServicePage(DriverPool.getPage());
 
         // Wait for all 3 rows to appear after back navigation — ensures AJAX has completed
         // and all Services & Links badges are fully rendered before continuing

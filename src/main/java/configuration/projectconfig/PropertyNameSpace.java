@@ -35,7 +35,11 @@ public enum PropertyNameSpace {
     DB_MSSQL_CONTAINER_IMAGE("db.mssql.container.image"),
     DB_MSSQL_JAR_MAVEN_PATH("db.mssql.jar.maven.path"),
     S3MOCK_DOCKER_IMAGE_NAME("s3mock.docker.image"),
-    WS_DOCKER_IMAGE_NAME("ws_docker_image_name");
+    WS_DOCKER_IMAGE_NAME("ws_docker_image_name"),
+    // SMTP credentials for the admin Email page test; secrets come from .env / system properties, never from VCS
+    EMAIL_SMTP_URL("email.smtp.url"),
+    EMAIL_SMTP_USERNAME("email.smtp.username"),
+    EMAIL_SMTP_PASSWORD("email.smtp.password");
 
     private String value;
 

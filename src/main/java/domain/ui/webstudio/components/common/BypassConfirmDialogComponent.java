@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.common;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +21,7 @@ public class BypassConfirmDialogComponent extends BaseComponent {
     private WebElement mergeSuccessNotice;
 
     public BypassConfirmDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -32,16 +32,16 @@ public class BypassConfirmDialogComponent extends BaseComponent {
         String modalRoot = "//div[contains(@class,'ant-modal') and "
                 + ".//div[contains(@class,'ant-modal-title') and "
                 + "normalize-space(text())='Bypass branch protection?']]";
-        confirmBtn = new WebElement(LocalDriverPool.getPage(),
+        confirmBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//button[.//span[normalize-space(text())='Confirm bypass and merge']]",
                 "bypassConfirmBtn");
-        cancelBtn = new WebElement(LocalDriverPool.getPage(),
+        cancelBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//button[normalize-space(.)='Cancel']",
                 "bypassCancelBtn");
-        title = new WebElement(LocalDriverPool.getPage(),
+        title = new WebElement(DriverPool.getPage(),
                 "xpath=" + modalRoot + "//div[contains(@class,'ant-modal-title')]",
                 "bypassConfirmTitle");
-        mergeSuccessNotice = new WebElement(LocalDriverPool.getPage(),
+        mergeSuccessNotice = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-notification')]//*[normalize-space(text())='Merge Successful']",
                 "mergeSuccessNotice");
     }

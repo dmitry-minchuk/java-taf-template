@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.editortabcomponents;
 import com.microsoft.playwright.Page;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class ChangesDialogComponent extends BaseComponent {
     private List<WebElement> changeRowCheckboxes;
 
     public ChangesDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

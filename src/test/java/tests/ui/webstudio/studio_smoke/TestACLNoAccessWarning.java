@@ -5,7 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import com.microsoft.playwright.Locator;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.UsersPageComponent;
@@ -32,7 +32,7 @@ public class TestACLNoAccessWarning extends BaseTest {
     @Description("ACL: User with no roles sees no projects and no Create Project link in Repository")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testNoAccessUserSeesEmptyRepositoryAndNoCreateLink() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup: create project and user with NO roles ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");
@@ -63,7 +63,7 @@ public class TestACLNoAccessWarning extends BaseTest {
                 .as("User with no roles should see no projects in Repository")
                 .isEmpty();
 
-        Locator createProjectLink = LocalDriverPool.getPage()
+        Locator createProjectLink = DriverPool.getPage()
                 .locator("xpath=//div[@id='top']//a[contains(text(), 'Create Project')]");
         assertThat(createProjectLink.count())
                 .as("User with no roles should NOT see 'Create Project' link")
@@ -73,7 +73,7 @@ public class TestACLNoAccessWarning extends BaseTest {
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
 
-        Locator emptyWorkspaceMessage = LocalDriverPool.getPage()
+        Locator emptyWorkspaceMessage = DriverPool.getPage()
                 .locator("xpath=//*[contains(text(),'No Projects in the Workspace')]");
         assertThat(emptyWorkspaceMessage.isVisible())
                 .as("Editor should show the empty-workspace message for a user with no roles")
@@ -91,7 +91,7 @@ public class TestACLNoAccessWarning extends BaseTest {
     @Description("ACL: Warning disappears after assigning a role and re-logging in")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testWarningDisappearsAfterRoleAssignment() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
 
         // ============ Admin setup ============
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Example 1 - Bank Rating");

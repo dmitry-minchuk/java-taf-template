@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 
 public class MySettingsPageComponent extends BaseComponent {
 
@@ -19,7 +19,7 @@ public class MySettingsPageComponent extends BaseComponent {
     private WebElement saveBtn;
 
     public MySettingsPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

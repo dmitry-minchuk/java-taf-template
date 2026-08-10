@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.common.TableComponent;
 import helpers.utils.WaitUtil;
@@ -21,7 +21,7 @@ public class RepositoryContentTabPropertiesComponent extends BaseComponent {
     private WebElement branchSelectError;
 
     public RepositoryContentTabPropertiesComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

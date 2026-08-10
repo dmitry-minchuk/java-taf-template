@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.admincomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import lombok.Getter;
 
 public class AdminNavigationComponent extends BaseComponent {
@@ -10,7 +10,7 @@ public class AdminNavigationComponent extends BaseComponent {
     private WebElement navigationItemTemplate;
 
     public AdminNavigationComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeNavigationComponents();
     }
 

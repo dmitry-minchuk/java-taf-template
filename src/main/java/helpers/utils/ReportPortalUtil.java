@@ -2,7 +2,7 @@ package helpers.utils;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.ScreenshotType;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +44,7 @@ public class ReportPortalUtil {
     
     public static void attachScreenshotOnFailure(String testName, String description) {
         try {
-            byte[] screenshotBytes = LocalDriverPool.takeScreenshot();
+            byte[] screenshotBytes = DriverPool.takeScreenshot();
             if (screenshotBytes != null) {
                 File screenshotFile = saveScreenshotToFile(screenshotBytes, testName);
                 if (screenshotFile != null) {
@@ -64,7 +64,7 @@ public class ReportPortalUtil {
     
     public static File captureScreenshot(String testName, boolean fullPage) {
         try {
-            Page page = LocalDriverPool.getPage();
+            Page page = DriverPool.getPage();
             
             Page.ScreenshotOptions options = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
@@ -96,7 +96,7 @@ public class ReportPortalUtil {
                 return null;
             }
             
-            Page page = LocalDriverPool.getPage();
+            Page page = DriverPool.getPage();
             
             // Check if video is available (only works if BrowserContext was configured with recordVideoDir)
             if (page.video() == null) {
@@ -174,7 +174,7 @@ public class ReportPortalUtil {
     
     public static void attachPageContent(String description) {
         try {
-            Page page = LocalDriverPool.getPage();
+            Page page = DriverPool.getPage();
             String content = page.content();
             
             File tempFile = createTempFile("page-content-", ".html", content);
@@ -238,8 +238,8 @@ public class ReportPortalUtil {
     
     public static void attachExecutionInfo() {
         try {
-            LocalDriverPool.ExecutionMode mode = LocalDriverPool.getCurrentExecutionMode();
-            String debugInfo = LocalDriverPool.getDebugInfo();
+            configuration.driver.ExecutionMode mode = DriverPool.getCurrentExecutionMode();
+            String debugInfo = DriverPool.getDebugInfo();
             
             String executionInfo = String.format(
                 "Execution Mode: %s%n%n%s", 

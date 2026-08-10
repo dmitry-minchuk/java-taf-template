@@ -11,7 +11,6 @@ import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRul
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
 import helpers.utils.WaitUtil;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -77,10 +76,10 @@ public class TestAdminSystemSettings extends BaseTest {
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         editorPage.getProblemsPanelComponent().checkNoProblems();
-        Assert.assertTrue(editorPage.getEditorToolbarPanelComponent().isVerifyButtonPresent(), "Verify button should be present when Verify on Edit is disabled");
+        assertThat(editorPage.getEditorToolbarPanelComponent().isVerifyButtonPresent()).as("Verify button should be present when Verify on Edit is disabled").isTrue();
         editorPage.getEditorToolbarPanelComponent().clickVerify();
         WaitUtil.waitForCondition(() -> editorPage.getProblemsPanelComponent().getErrorsCount() == 1, 5000, 100, "Waiting for errors ti be listed...");
-        Assert.assertEquals(editorPage.getProblemsPanelComponent().getErrorsCount(), 1, "Should have 1 error after clicking Verify button");
+        assertThat(editorPage.getProblemsPanelComponent().getErrorsCount()).as("Should have 1 error after clicking Verify button").isEqualTo(1);
 
         // Step 4: Test Dispatching Validation = true
         systemSettings = editorPage.openUserMenu()
@@ -98,7 +97,7 @@ public class TestAdminSystemSettings extends BaseTest {
                 .clickTestDropdown()
                 .runTests();
 
-        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTableFailed(), "Tests should fail with dispatching validation enabled");
+        assertThat(editorPage.getTestResultValidationComponent().isTestTableFailed()).as("Tests should fail with dispatching validation enabled").isTrue();
 
         // Step 5: Test Dispatching Validation = false
         systemSettings = editorPage.openUserMenu()
@@ -115,7 +114,7 @@ public class TestAdminSystemSettings extends BaseTest {
                 .clickTestDropdown()
                 .runTests();
 
-        Assert.assertTrue(editorPage.getTestResultValidationComponent().isTestTablePassed(), "Tests should pass with dispatching validation disabled");
+        assertThat(editorPage.getTestResultValidationComponent().isTestTablePassed()).as("Tests should pass with dispatching validation disabled").isTrue();
 
         // Step 6: Test Thread Number validation // BUG: no errors shown
         systemSettings = editorPage.openUserMenu()

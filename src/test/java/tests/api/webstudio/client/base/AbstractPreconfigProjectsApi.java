@@ -20,7 +20,6 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.Assert;
 import org.testng.ITest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -30,6 +29,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Per-preconfig-project lifecycle:
@@ -106,7 +108,7 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
     @Test
     public void testPreconfigProject() {
         if (uploadFailure != null) {
-            Assert.fail(String.format("Preconfig [%s] — upload failed:%n  %s%nSources: %s",
+            fail(String.format("Preconfig [%s] — upload failed:%n  %s%nSources: %s",
                     project.label(), uploadFailure, project.zip().getAbsolutePath()));
         }
 
@@ -114,27 +116,24 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
         LOGGER.info("Validating preconfig [{}] (id={})", project.label(), projectId);
 
         Response open = new ProjectsMethod().openProject(projectId);
-        Assert.assertTrue(open.getStatusCode() < 300,
-                String.format("Failed to open project [%s]: HTTP %d — %s",
-                        project.projectName(), open.getStatusCode(), open.getBody().asString()));
+        assertThat(open.getStatusCode() < 300).as("%s", String.format("Failed to open project [%s]: HTTP %d — %s",
+                        project.projectName(), open.getStatusCode(), open.getBody().asString())).isTrue();
 
         // tests/run opens the module and awaits compilation server-side — it is the compile
         // trigger; a plain open leaves compileState 'idle' forever.
         Response run = new ProjectTestsMethod().runAllTests(projectId);
-        Assert.assertTrue(run.getStatusCode() == 200 || run.getStatusCode() == 202 || run.getStatusCode() == 404,
-                String.format("Failed to trigger compile for [%s]: HTTP %d — %s",
-                        project.projectName(), run.getStatusCode(), run.getBody().asString()));
+        assertThat(run.getStatusCode() == 200 || run.getStatusCode() == 202 || run.getStatusCode() == 404).as("%s", String.format("Failed to trigger compile for [%s]: HTTP %d — %s",
+                        project.projectName(), run.getStatusCode(), run.getBody().asString())).isTrue();
 
         Response statusResp = awaitCompilation(projectId);
-        Assert.assertNotNull(statusResp, String.format("No /status response for [%s]", project.projectName()));
-        Assert.assertEquals(statusResp.getStatusCode(), 200,
-                String.format("Project status failed for [%s]: HTTP %d — %s",
-                        project.projectName(), statusResp.getStatusCode(), statusResp.getBody().asString()));
+        assertThat(statusResp).as("%s", String.format("No /status response for [%s]", project.projectName())).isNotNull();
+        assertThat(statusResp.getStatusCode()).as("%s", String.format("Project status failed for [%s]: HTTP %d — %s",
+                        project.projectName(), statusResp.getStatusCode(), statusResp.getBody().asString())).isEqualTo(200);
         JsonPath status = statusResp.jsonPath();
         String compileState = status.getString("compileState");
         int compileErrors = intOrZero(status.get("compilation.messages.errors"));
         if ("errors".equalsIgnoreCase(compileState) || compileErrors > 0) {
-            Assert.fail(buildCompileErrorReport(status));
+            fail(buildCompileErrorReport(status));
         }
         LOGGER.info("Preconfig [{}] compiled: state={}, errors=0", project.label(), compileState);
 
@@ -147,9 +146,8 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
                 project.projectName(), PRODUCTION_REPO_ID, deploymentName);
         Response deploy = new DeploymentsMethod()
                 .deploy(PRODUCTION_REPO_ID, deploymentName, projectId, "Preconfig regression deploy");
-        Assert.assertTrue(deploy.getStatusCode() < 300,
-                String.format("Deploy failed for [%s]: HTTP %d — %s",
-                        project.projectName(), deploy.getStatusCode(), deploy.getBody().asString()));
+        assertThat(deploy.getStatusCode() < 300).as("%s", String.format("Deploy failed for [%s]: HTTP %d — %s",
+                        project.projectName(), deploy.getStatusCode(), deploy.getBody().asString())).isTrue();
 
         GetWsServicesMethod wsServices = new GetWsServicesMethod(deployInfra.getWsContainer(), WS_PORT);
         long deadline = System.currentTimeMillis() + WS_SERVICE_POLL_TIMEOUT_MS;
@@ -166,7 +164,7 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
             }
             sleepInterruptible(WS_SERVICE_POLL_INTERVAL_MS);
         }
-        Assert.fail(String.format(
+        fail(String.format(
                 "Preconfig [%s] was deployed (HTTP<300) but did not appear in ruleservice within %d s.%n"
                         + "Expected a service matching serviceName [%s] or project [%s]; /admin/services returned: %s",
                 project.label(), WS_SERVICE_POLL_TIMEOUT_MS / 1000,
@@ -184,17 +182,16 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
 
     private String findProjectId() {
         Response list = new ProjectsMethod().getAllProjects(100);
-        Assert.assertEquals(list.getStatusCode(), 200,
-                String.format("GET /rest/projects failed: HTTP %d — %s",
-                        list.getStatusCode(), list.getBody().asString()));
+        assertThat(list.getStatusCode()).as("%s", String.format("GET /rest/projects failed: HTTP %d — %s",
+                        list.getStatusCode(), list.getBody().asString())).isEqualTo(200);
         List<Map<String, Object>> projects = list.jsonPath().getList("content");
-        Assert.assertNotNull(projects, "GET /rest/projects returned no content array");
+        assertThat(projects).as("GET /rest/projects returned no content array").isNotNull();
         return projects.stream()
                 .filter(p -> project.projectName().equals(String.valueOf(p.get("name"))))
                 .map(p -> String.valueOf(p.get("id")))
                 .findFirst()
                 .orElseGet(() -> {
-                    Assert.fail(String.format("Project [%s] was uploaded but is not listed in GET /rest/projects",
+                    fail(String.format("Project [%s] was uploaded but is not listed in GET /rest/projects",
                             project.projectName()));
                     return null;
                 });

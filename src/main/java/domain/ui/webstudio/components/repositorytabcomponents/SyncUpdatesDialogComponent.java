@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.repositorytabcomponents;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
 // React "Sync updates" dialog (build 032c60a664ce+), opened from the project-detail Branches tab via a
@@ -19,18 +19,18 @@ public class SyncUpdatesDialogComponent extends BaseComponent {
     private WebElement closeBtn;
 
     public SyncUpdatesDialogComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
     private void initializeElements() {
-        modalTitle = new WebElement(LocalDriverPool.getPage(),
+        modalTitle = new WebElement(DriverPool.getPage(),
                 "xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-modal-title')]", "syncUpdatesTitle");
-        receiveBtn = new WebElement(LocalDriverPool.getPage(),
+        receiveBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + MODAL_ROOT + "//button[.//span[normalize-space()='Receive their updates'] or normalize-space()='Receive their updates']", "syncReceiveBtn");
-        sendBtn = new WebElement(LocalDriverPool.getPage(),
+        sendBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + MODAL_ROOT + "//button[.//span[normalize-space()='Send your updates'] or normalize-space()='Send your updates']", "syncSendBtn");
-        closeBtn = new WebElement(LocalDriverPool.getPage(),
+        closeBtn = new WebElement(DriverPool.getPage(),
                 "xpath=" + MODAL_ROOT + "//button[contains(@class,'ant-modal-close')]", "syncCloseBtn");
     }
 

@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
@@ -23,7 +23,7 @@ public class TestDeleteCommentTemplateUi extends BaseTest {
     @Description("Known-failing regression for EPBDS-16230: the repository 'Customize comments' User Message Templates must include a Delete-project template, so delete commits are consistent with create/save/copy. Red until EPBDS-16230 is fixed.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeleteProjectMessageTemplateExists() {
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent repositories = adminPage.navigateToRepositoriesPage();
         repositories.enableCustomizeComments();

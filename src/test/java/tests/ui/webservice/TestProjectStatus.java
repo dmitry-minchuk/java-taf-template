@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.utils.TestDataUtil;
@@ -25,17 +25,27 @@ public class TestProjectStatus extends BaseTest {
             "production-repository.factory", "repo-zip"
     ));
 
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        return additionalContainerConfig;
+    }
+
     private static final Map<String, String> additionalContainerFiles = new HashMap<>(Map.of(
             TestDataUtil.getDirectoryPathFromResources("TestProjectStatus"),
             "/opt/openl/shared/"
     ));
+
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
 
     @Test
     @TestCaseId("IPBQA-29488")
     @Description("Project Status on the Web Services page: failed deployment shows compilation errors, successful deployment shows success status")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_FILE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testProjectStatus() {
-        ServicePage servicePage = new ServicePage(LocalDriverPool.getPage());
+        ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
         assertThat(servicePage.getDeploymentFailedIcon(FAILED_PROJECT).isVisible(10000))

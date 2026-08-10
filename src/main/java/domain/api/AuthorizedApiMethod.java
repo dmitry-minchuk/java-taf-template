@@ -1,7 +1,7 @@
 package domain.api;
 
 import com.microsoft.playwright.options.Cookie;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.serviceclasses.models.UserData;
 import helpers.service.UserService;
@@ -71,10 +71,10 @@ public abstract class AuthorizedApiMethod extends ApiBaseMethod {
 
     private List<Cookie> extractBrowserSessionCookies() {
         try {
-            if (LocalDriverPool.getPage() == null) {
+            if (DriverPool.getPage() == null) {
                 return List.of();
             }
-            return LocalDriverPool.getPage().context().cookies();
+            return DriverPool.getPage().context().cookies();
         } catch (Exception e) {
             LOGGER.debug("Unable to read Playwright session cookies, falling back to basic auth: {}", e.getMessage());
             return List.of();

@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -31,7 +31,7 @@ public class TestProjectCompilationAutoIncludeFalse extends BaseTest {
     @Description("Project Compilation - AutoInclude=false: progress bar absent for small project, appears for large project")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testProjectCompilationAutoIncludeFalse() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
@@ -44,7 +44,7 @@ public class TestProjectCompilationAutoIncludeFalse extends BaseTest {
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(NAME_PROJECT_INCLUDE_FALSE, "TestSomeState");
         verifyProgressBarAbsentOrQuicklyDisappears(editorPage.getProblemsPanelComponent());
 
-        LocalDriverPool.getPage().reload();
+        DriverPool.getPage().reload();
         editorPage = new EditorPage();
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         verifyProgressBarAbsentOrQuicklyDisappears(editorPage.getProblemsPanelComponent());

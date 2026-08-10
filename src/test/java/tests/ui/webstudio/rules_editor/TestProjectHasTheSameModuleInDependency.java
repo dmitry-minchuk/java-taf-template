@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -29,7 +29,7 @@ public class TestProjectHasTheSameModuleInDependency extends BaseTest {
     @Description("Project Compilation - Project has same module in dependency: no errors on Spreadsheet table")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testProjectHasTheSameModuleInDependency() {
-        LoginService loginService = new LoginService(LocalDriverPool.getPage());
+        LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
@@ -57,7 +57,7 @@ public class TestProjectHasTheSameModuleInDependency extends BaseTest {
                 .as("No errors should be shown for CalcProject2")
                 .isTrue();
 
-        LocalDriverPool.getPage().reload();
+        DriverPool.getPage().reload();
         editorPage = new EditorPage();
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         assertThat(editorPage.getEditorLeftRulesTreeComponent().getSelectedItemText())

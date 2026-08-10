@@ -1,7 +1,7 @@
 package domain.ui.webstudio.components.common;
 
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
@@ -18,7 +18,7 @@ public class MultiselectArrayEditorComponent extends BaseComponent {
     private List<WebElement> allValueLabels;
 
     public MultiselectArrayEditorComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

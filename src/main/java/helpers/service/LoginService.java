@@ -1,7 +1,7 @@
 package helpers.service;
 
 import com.microsoft.playwright.Page;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.LoginPage;
@@ -19,7 +19,7 @@ public class LoginService {
     }
     
     public EditorPage login(UserData user) {
-        return login(user, LocalDriverPool.getAppUrl());
+        return login(user, DriverPool.getAppUrl());
     }
 
     public EditorPage login(UserData user, String appUrl) {

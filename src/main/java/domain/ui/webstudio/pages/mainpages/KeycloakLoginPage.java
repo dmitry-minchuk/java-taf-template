@@ -2,7 +2,7 @@ package domain.ui.webstudio.pages.mainpages;
 
 import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.ui.webstudio.pages.BasePage;
 import helpers.utils.WaitUtil;
 
@@ -45,7 +45,7 @@ public class KeycloakLoginPage extends BasePage {
         // Wait until the browser is back on Studio (SAML uses an extra POST-binding auto-submit,
         // so the session is only established once we leave the IdP) and the Studio session cookie
         // is set — REST setup that reuses the browser session depends on it.
-        Page page = LocalDriverPool.getPage();
+        Page page = DriverPool.getPage();
         WaitUtil.waitForCondition(() -> {
             page.waitForLoadState();
             String url = page.url();

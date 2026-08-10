@@ -4,7 +4,7 @@ import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.admincomponents.RepositoriesPageComponent;
 import domain.ui.webstudio.components.common.CreateNewProjectComponent;
@@ -49,6 +49,11 @@ public class TestDeploymentConfigurationRepositoryConnectionOracle extends BaseT
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
 
+    @Override
+    protected Map<String, String> additionalContainerFiles() {
+        return additionalContainerFiles;
+    }
+
     private DeployInfrastructureService deployInfra;
     private final String projectName = "OracleDeployTest";
     private final String deploymentName = "oracle-deploy";
@@ -78,7 +83,7 @@ public class TestDeploymentConfigurationRepositoryConnectionOracle extends BaseT
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeploymentConfigurationRepositoryConnectionOracleJDBC() {
         // Step 1: Login and navigate to Admin → Repositories
-        EditorPage editorPage = new LoginService(LocalDriverPool.getPage()).login(UserService.getUser(User.ADMIN));
+        EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         RepositoriesPageComponent reposPage = adminPage.navigateToRepositoriesPage();
 

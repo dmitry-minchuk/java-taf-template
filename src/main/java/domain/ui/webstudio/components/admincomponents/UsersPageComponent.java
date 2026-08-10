@@ -3,7 +3,7 @@ package domain.ui.webstudio.components.admincomponents;
 import domain.ui.webstudio.components.BaseComponent;
 import domain.ui.webstudio.components.common.TableComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class UsersPageComponent extends BaseComponent {
     private WebElement errorDescription;
 
     public UsersPageComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 

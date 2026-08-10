@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static configuration.driver.LocalDriverPool.ExecutionMode.PLAYWRIGHT_DOCKER;
+import configuration.driver.ExecutionMode;
 
 public class WebElement {
     
-    protected final static Logger LOGGER = LogManager.getLogger(WebElement.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebElement.class);
     private static final int DEFAULT_TIMEOUT_MS = Integer.parseInt(ProjectConfiguration.getProperty(PropertyNameSpace.PLAYWRIGHT_DEFAULT_TIMEOUT));
     // React full-screen click shield raised while the app loader is busy (EPBDS-16241 / EPBDS-16261).
     // It has pointer-events:auto and covers the whole viewport, so any pointer interaction started
@@ -196,14 +196,12 @@ public class WebElement {
 
     public void click() {
         waitForAppReady();
-        isVisible();
         LOGGER.info("Clicking {} ", elementName);
         retryOnReRenderChurn(locator::click);
     }
 
     public void click(int timeoutInMillis) {
         waitForAppReady();
-        isVisible(timeoutInMillis);
         LOGGER.info("Clicking with increased timeout {} ", elementName);
         retryOnReRenderChurn(() -> locator.click(new Locator.ClickOptions().setTimeout(timeoutInMillis)));
     }
@@ -238,7 +236,6 @@ public class WebElement {
 
     public WebElement doubleClick() {
         waitForAppReady();
-        isVisible();
         LOGGER.info("Double clicking {} ", elementName);
         retryOnReRenderChurn(locator::dblclick);
         return this;
@@ -246,7 +243,6 @@ public class WebElement {
 
     public WebElement press(String key) {
         waitForAppReady();
-        isVisible();
         LOGGER.info("Pressing {} on {}", key, elementName);
         retryOnReRenderChurn(() -> locator.press(key));
         return this;
@@ -254,7 +250,6 @@ public class WebElement {
 
     public WebElement fill(String text) {
         waitForAppReady();
-        isVisible();
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
         retryOnReRenderChurn(() -> locator.fill(text));
         return this;
@@ -262,7 +257,6 @@ public class WebElement {
 
     public WebElement fillSequentially(String text) {
         waitForAppReady();
-        isVisible();
         LOGGER.info("Filling Sequentially {} with text: '{}'", elementName, text);
         retryOnReRenderChurn(() -> locator.pressSequentially(text));
         return this;
@@ -281,8 +275,9 @@ public class WebElement {
         return text;
     }
 
-    public String getText(int timeoutInMillis) {
-        WaitUtil.sleep(timeoutInMillis, "Sleeping before getting text from " + elementName);
+    /** Reads the text after an unconditional pause — for values the page rewrites shortly after render. */
+    public String getTextAfterDelay(long delayMs) {
+        WaitUtil.sleep(delayMs, "Sleeping before getting text from " + elementName);
         return getText();
     }
 
@@ -293,8 +288,9 @@ public class WebElement {
         return text;
     }
 
-    public String getInnerText(int timeoutInMillis) {
-        WaitUtil.sleep(timeoutInMillis, "Sleeping before getting inner text from " + elementName);
+    /** Reads the inner text after an unconditional pause — for values the page rewrites shortly after render. */
+    public String getInnerTextAfterDelay(long delayMs) {
+        WaitUtil.sleep(delayMs, "Sleeping before getting inner text from " + elementName);
         return getInnerText();
     }
 
@@ -360,13 +356,11 @@ public class WebElement {
 
     public void check() {
         waitForAppReady();
-        isVisible();
         retryOnReRenderChurn(locator::check);
     }
 
     public void uncheck() {
         waitForAppReady();
-        isVisible();
         retryOnReRenderChurn(locator::uncheck);
     }
     
@@ -375,7 +369,6 @@ public class WebElement {
     // This method does not require clicking by selector - everything will be done automatically if selector implemented as <select>
     public void selectByVisibleText(String text) {
         waitForAppReady();
-        isVisible();
         LOGGER.info("Selecting option '{}' in {}", text, elementName);
         List<String> optionLabels = locator.locator("option").allTextContents().stream()
                 .map(String::trim)
@@ -433,7 +426,6 @@ public class WebElement {
     public void clear() {
         waitForAppReady();
         LOGGER.info("Clearing {}", elementName);
-        locator.isVisible();
         retryOnReRenderChurn(locator::clear);
     }
 
@@ -446,26 +438,23 @@ public class WebElement {
         return box != null && box.width > 0 && box.height > 0;
     }
 
+    /**
+     * Clears an input with keystrokes (select-all + Backspace) for fields that ignore a plain
+     * {@link Locator#clear()} — e.g. inputs re-rendered by JS on change events. The Tab + re-click
+     * commits the cleared value the same way a human would.
+     */
     public void clearByKeyCombination() {
-        String execMode = System.getProperty("execution.mode");
-        String modifierKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "Meta" : "Control";
+        // In Docker mode the browser runs on Linux regardless of the host OS, so the modifier is always Control
+        boolean dockerMode = ExecutionMode.current() == ExecutionMode.PLAYWRIGHT_DOCKER;
+        boolean macHost = System.getProperty("os.name").toLowerCase().contains("mac");
+        String modifierKey = !dockerMode && macHost ? "Meta" : "Control";
 
-        LOGGER.info("'Control+a' + 'Backspace' + 'Enter' {}", elementName);
-        locator.isVisible();
-        sleep(50);
+        LOGGER.info("Clearing {} via '{}+a' + 'Backspace'", elementName, modifierKey);
         locator.click();
-        sleep(50);
-        if(execMode != null && execMode.equalsIgnoreCase(String.valueOf(PLAYWRIGHT_DOCKER)))
-            locator.press("Control+a");
-        else
-            locator.press(modifierKey + "+a");
-        sleep(50);
+        locator.press(modifierKey + "+a");
         locator.press("Backspace");
-        sleep(50);
         locator.press("Tab");
-        sleep(50);
         locator.click();
-        sleep(50);
     }
     
     public void sendKeys(CharSequence... keysToSend) {
@@ -503,7 +492,7 @@ public class WebElement {
     }
     
     public WebElement waitForVisible(long timeoutInMillis) {
-        LOGGER.info("Waiting for {} to be visible (timeout: {}s)", elementName, timeoutInMillis);
+        LOGGER.info("Waiting for {} to be visible (timeout: {}ms)", elementName, timeoutInMillis);
         locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE).setTimeout(timeoutInMillis));
         return this;
     }
@@ -534,7 +523,7 @@ public class WebElement {
     // Playwright exposes no computed-style API, so getComputedStyle via evaluate is the only mechanism.
     public String getCssValue(String propertyName) {
         LOGGER.info("Getting CSS property '{}' from {}", propertyName, elementName);
-        return locator.evaluate("el => window.getComputedStyle(el).getPropertyValue('" + propertyName + "')").toString();
+        return locator.evaluate("(el, prop) => window.getComputedStyle(el).getPropertyValue(prop)", propertyName).toString();
     }
 
     public boolean isEnabled() {

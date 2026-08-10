@@ -1,7 +1,7 @@
 package helpers.service;
 
 import configuration.appcontainer.AppContainerPool;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.repositorytabcomponents.LeftRepositoryTreeComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.RepositoryContentButtonsPanelComponent;
@@ -22,7 +22,7 @@ public class RepositoryActionsService {
 
     public static void eraseAllProjectsFromRemoteGitRepository() {
         try {
-            LoginService loginService = new LoginService(LocalDriverPool.getPage());
+            LoginService loginService = new LoginService(DriverPool.getPage());
             EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
             RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                     .selectTab(domain.ui.webstudio.components.common.TabSwitcherComponent.TabName.REPOSITORY);

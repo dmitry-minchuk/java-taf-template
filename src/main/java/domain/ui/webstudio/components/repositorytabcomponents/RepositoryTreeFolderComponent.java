@@ -2,7 +2,7 @@ package domain.ui.webstudio.components.repositorytabcomponents;
 
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
-import configuration.driver.LocalDriverPool;
+import configuration.driver.DriverPool;
 import helpers.utils.WaitUtil;
 
 public class RepositoryTreeFolderComponent extends BaseComponent {
@@ -16,7 +16,7 @@ public class RepositoryTreeFolderComponent extends BaseComponent {
     private WebElement openedItemTemplate;
 
     public RepositoryTreeFolderComponent() {
-        super(LocalDriverPool.getPage());
+        super(DriverPool.getPage());
         initializeElements();
     }
 
@@ -69,6 +69,6 @@ public class RepositoryTreeFolderComponent extends BaseComponent {
     }
 
     public String getFolderName() {
-        return folderName.getText(500);
+        return folderName.getTextAfterDelay(500);
     }
 }
