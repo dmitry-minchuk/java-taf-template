@@ -14,6 +14,9 @@ import lombok.Getter;
 
 public class CreateNewProjectComponent extends BaseComponent {
 
+    // The branch field renders with the wizard step, so a short probe decides present-vs-absent.
+    private static final int BRANCH_FIELD_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+
     private ExcelFilesComponent excelFilesComponent;
     private ZipArchiveComponent zipArchiveComponent;
     @Getter
@@ -144,19 +147,40 @@ public class CreateNewProjectComponent extends BaseComponent {
         }
     }
 
+    /** Presses Create for a project that must be created: the wizard is expected to close. */
     public void clickCreate() {
+        clickCreate(true);
+    }
+
+    /**
+     * Presses Create.
+     *
+     * @param expectWizardToClose {@code true} when the create must succeed — the wizard closes, and leaving
+     *        it open would let the modal swallow every later click, so its disappearance is waited for.
+     *        {@code false} for the negative flows (a malformed spec, a rejected name): the wizard stays open
+     *        on purpose and reports the problem in its own error area, so waiting for it to close would
+     *        time out before the caller ever gets to read the message.
+     */
+    public void clickCreate(boolean expectWizardToClose) {
         waitForBranchToBeOffered();
         submitBtn.click();
-        // A refused submit never leaves the wizard, and the open modal then swallows every later click.
-        submitBtn.waitForHidden(DEFAULT_TIMEOUT_MS);
+        if (expectWizardToClose) {
+            submitBtn.waitForHidden(DEFAULT_TIMEOUT_MS);
+        } else {
+            // Give the wizard a moment to answer, so a following getError() reads the message rather than
+            // racing the request. Whether it appears is the caller's assertion, so nothing is enforced here.
+            openApiError.isVisible(DEFAULT_TIMEOUT_MS);
+        }
     }
 
     /**
      * Waits until the wizard's Branch field carries the value its repository config supplies. Submitting
-     * earlier is rejected client-side, with no request sent and the modal left open.
+     * earlier is rejected client-side, with no request sent and the modal left open. Only the visible field
+     * is waited for: the OpenAPI path keeps a branch input in the DOM that it never fills, and waiting on
+     * that one burned the full timeout on every Create.
      */
     private void waitForBranchToBeOffered() {
-        if (!branchField.exists()) {
+        if (!branchField.isVisible(BRANCH_FIELD_PROBE_MS)) {
             return;
         }
         WaitUtil.waitForCondition(() -> !branchField.getCurrentInputValue().isBlank(),

@@ -43,7 +43,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiSpec(INVALID_FILENAME_YAML);
         openApiComponent.setProjectName("bla");
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         repositoryPage.fillCommitInfo();
         // The wizard reports problems in its own error area now, and with a short message: where the old UI
         // spelled out the forbidden characters, 6.4.0 just says the project could not be created.
@@ -74,7 +74,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("test%?>");
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating with forbidden characters in the project name should be refused")
                 // The server rejects the name with a bare 400, so the UI can only report a generic failure.
@@ -89,7 +89,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.setProjectName("bla");
         openApiComponent.setDataModuleName("Models?*/test");
         openApiComponent.setDataModulePath("rules/Models.xlsx");
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating with forbidden characters in a module name should be refused")
                 .contains("Failed to create the project");
@@ -102,7 +102,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla");
         openApiComponent.setDataModulePath("rules/Models?*test.xlsx");
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating with forbidden characters in a module path should be refused")
                 .contains("Failed to create the project");
@@ -115,7 +115,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla_" + System.currentTimeMillis());
         openApiComponent.setRulesModuleName("Models");
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         repositoryPage.fillCommitInfo();
         assertThat(openApiComponent.getError())
                 .as("Creating with two identical module names should be refused")
@@ -129,7 +129,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.uploadOpenApiSpec(JSON_FILE);
         openApiComponent.setProjectName("bla2_" + System.currentTimeMillis());
         openApiComponent.setDataModulePath("rules/Algorithms.xlsx");
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating with two identical module paths should be refused")
                 .contains("Failed to create the project");
@@ -142,7 +142,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiSpec(INVALID_JSON_FILE_1);
         openApiComponent.setProjectName(invalidProjectName);
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating from a malformed specification (file 1) should be refused")
                 .contains("Failed to create the project");
@@ -154,7 +154,7 @@ public class TestCreateProjectFromOpenApiFormValidation extends BaseTest {
         openApiComponent.selectMethod(CreateNewProjectComponent.TabName.OPEN_API);
         openApiComponent.uploadOpenApiSpec(INVALID_JSON_FILE_2);
         openApiComponent.setProjectName(invalidProjectName);
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating from a malformed specification (file 2) should be refused")
                 .contains("Failed to create the project");

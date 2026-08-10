@@ -70,7 +70,7 @@ public class TestCreateProjectFromOpenApiDefaultFormValues extends BaseTest {
                 .as("The specification should be gone after clearing it")
                 .isFalse();
         // Create stays clickable; pressing it without a specification is what reports the problem.
-        openApiComponent.clickCreate();
+        openApiComponent.clickCreate(false);
         assertThat(openApiComponent.getError())
                 .as("Creating without a specification should ask for the file")
                 .contains("Select an OpenAPI file");
