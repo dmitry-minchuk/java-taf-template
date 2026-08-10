@@ -20,6 +20,14 @@ public class LoginPage extends BasePage {
     private WebElement loginButton;
     private WebElement loginErrorMessage;
     private static final int PROFILE_SAVE_ATTEMPTS = 3;
+    /**
+     * How long a user without a profile is given to have the modal rendered. The shell reports itself
+     * ready before React has decided whether the profile is complete, so the modal lands a beat later —
+     * measured at just over a second on CI. A shorter probe misses it, the login step walks away, and the
+     * modal then opens over the app and swallows every later click as
+     * "<div class=ant-modal-wrap> intercepts pointer events".
+     */
+    private static final int PROFILE_MODAL_PROBE_MS = DEFAULT_TIMEOUT_MS / 2;
 
     private WebElement completeProfileModal;
     private ConfigureCommitInfoComponent completeProfileComponent;
@@ -68,7 +76,7 @@ public class LoginPage extends BasePage {
             // Wrong credentials leave us on the login form: there is no shell and no profile modal to fill.
             return;
         }
-        if (!completeProfileModal.isVisible(DEFAULT_TIMEOUT_MS / 10)) {
+        if (!completeProfileModal.isVisible(PROFILE_MODAL_PROBE_MS)) {
             return;
         }
         // Saving the profile occasionally leaves the modal on screen - a save that raced the shell finishing its
