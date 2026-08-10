@@ -66,6 +66,26 @@ public class ProjectsTableComponent extends BaseComponent {
         return rowByName.format(projectName);
     }
 
+    /**
+     * Whether the row shows this action as an inline button right now. Unlike
+     * {@link #getProjectActionLabels}, it neither opens the overflow menu nor waits, so it is cheap enough
+     * to poll — that is what makes it usable as a completion signal for Open/Close.
+     */
+    public boolean isInlineActionPresent(String projectName, String actionLabel) {
+        return actionByName.format(projectName, actionLabel).getLocator().count() > 0;
+    }
+
+    /**
+     * Waits until the project is really open. The list swaps the row's Open button for Close once the
+     * workspace copy is ready; until then the project detail still renders its read-only subset (no Add
+     * menu on the Files tab), so a permission check that runs straight after the click reads the wrong
+     * state. Never throws — a caller that only needed the click is not failed by a slow open.
+     */
+    public void waitUntilOpened(String projectName) {
+        WaitUtil.waitForCondition(() -> isInlineActionPresent(projectName, "Close"),
+                DEFAULT_TIMEOUT_MS, 250, "Waiting for project " + projectName + " to finish opening");
+    }
+
     /** Clicks the project name to open the React project-detail view. */
     public void clickProjectName(String projectName) {
         nameInRow.format(projectName).click();

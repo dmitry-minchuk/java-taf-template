@@ -282,6 +282,11 @@ public class RepositoryPage extends BasePage {
     // Opened projects expose "Close"; closed ones expose "Open".
     public void openProject(String projectName) {
         clickRowAction(projectName, "Open");
+        // The React list opens the project asynchronously, and until the workspace copy is ready the
+        // project detail still renders its read-only subset — a permission check running straight after
+        // the click would read that instead of the opened project.
+        projectsListTable.waitUntilOpened(projectName);
+        waitUntilSpinnerLoaded();
     }
 
     // Opens the React DeployModal via the project row's Deploy action (rocket icon, testid
