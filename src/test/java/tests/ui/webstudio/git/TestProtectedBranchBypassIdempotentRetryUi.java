@@ -5,7 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
-import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
@@ -14,7 +13,6 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.WaitUtil;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -22,25 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.MERGE_SUCCESS_TOAST;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARGET;
 
-/**
- * EPBDS-15960 H.7: a bypass merge is idempotent — after a Manager confirms the
- * bypass and the merge succeeds, re-opening the Sync dialog for the same
- * direction shows the branches as up-to-date (Send disabled), so the same
- * merge cannot be applied twice.
- */
 public class TestProtectedBranchBypassIdempotentRetryUi extends BaseTest {
 
     private static final String PROJECT_NAME = "BypassIdempotentUiProject";
     private static final String MANAGER_LOGIN = "manager_15960_retry";
     private static final String MANAGER_PASSWORD = "manager_15960_retry";
-
-    @AfterMethod(alwaysRun = true)
-    public void deleteManagerUser() {
-        try {
-            new UsersMethod().deleteUser(MANAGER_LOGIN);
-        } catch (Exception ignored) {
-        }
-    }
 
     @Test
     @TestCaseId("EPBDS-15960")
@@ -55,8 +39,6 @@ public class TestProtectedBranchBypassIdempotentRetryUi extends BaseTest {
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
-        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
-        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProject(PROJECT_NAME);
@@ -79,8 +61,6 @@ public class TestProtectedBranchBypassIdempotentRetryUi extends BaseTest {
                 .as("first bypass merge succeeds with a '%s' toast", MERGE_SUCCESS_TOAST)
                 .isTrue();
 
-        // After the merge the project may drop from the editor workspace — re-open it if needed, then
-        // re-open the Sync dialog from the editor toolbar for the same direction.
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         if (repositoryPage.isProjectActionAvailable(PROJECT_NAME, "Open")) {
             repositoryPage.openProject(PROJECT_NAME);

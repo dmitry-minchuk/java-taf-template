@@ -5,7 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
-import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
@@ -13,7 +12,6 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.WaitUtil;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -21,24 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.DEV_BRANCH;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARGET;
 
-/**
- * EPBDS-15960 H.6: when BOTH the source (dev) and the target (release) branches
- * are protected, the bypass warning uses the "both branches are protected" copy
- * and names both branches.
- */
 public class TestProtectedBranchBypassBothProtectedUi extends BaseTest {
 
     private static final String PROJECT_NAME = "BypassBothProtectedUiProject";
     private static final String MANAGER_LOGIN = "manager_15960_both";
     private static final String MANAGER_PASSWORD = "manager_15960_both";
-
-    @AfterMethod(alwaysRun = true)
-    public void deleteManagerUser() {
-        try {
-            new UsersMethod().deleteUser(MANAGER_LOGIN);
-        } catch (Exception ignored) {
-        }
-    }
 
     @Test
     @TestCaseId("EPBDS-15960")
@@ -52,8 +37,6 @@ public class TestProtectedBranchBypassBothProtectedUi extends BaseTest {
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
-        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
-        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProject(PROJECT_NAME);

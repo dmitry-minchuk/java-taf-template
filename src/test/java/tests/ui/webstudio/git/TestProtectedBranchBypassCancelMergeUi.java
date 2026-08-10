@@ -5,7 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
-import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
@@ -14,32 +13,17 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.WaitUtil;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARGET;
 
-/**
- * EPBDS-15960 H.3: clicking Cancel on the bypass confirmation modal closes
- * the confirmation, leaves the Sync dialog in its pre-Send state, and does
- * NOT merge — the bypass warning is still shown, and a subsequent click on
- * "Send your updates" still produces the same confirmation modal.
- */
 public class TestProtectedBranchBypassCancelMergeUi extends BaseTest {
 
     private static final String PROJECT_NAME = "BypassCancelUiProject";
     private static final String MANAGER_LOGIN = "manager_15960_cancel";
     private static final String MANAGER_PASSWORD = "manager_15960_cancel";
-
-    @AfterMethod(alwaysRun = true)
-    public void deleteManagerUser() {
-        try {
-            new UsersMethod().deleteUser(MANAGER_LOGIN);
-        } catch (Exception ignored) {
-        }
-    }
 
     @Test
     @TestCaseId("EPBDS-15960")
@@ -54,8 +38,6 @@ public class TestProtectedBranchBypassCancelMergeUi extends BaseTest {
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
-        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
-        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProject(PROJECT_NAME);
@@ -88,7 +70,6 @@ public class TestProtectedBranchBypassCancelMergeUi extends BaseTest {
                 .as("H.3 — bypass warning is still rendered, target is still protected")
                 .isTrue();
 
-        // Re-click Send to confirm the bypass flow is not in a stuck state after Cancel.
         syncDialog.clickSendYourUpdates();
         assertThat(repositoryPage.getBypassConfirmDialogComponent().waitForDialogToAppear().getTitle())
                 .as("H.3 — re-click Send after Cancel re-opens the same confirmation modal")

@@ -5,7 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
-import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
@@ -14,7 +13,6 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.WaitUtil;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -26,13 +24,6 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
     private static final String PROJECT_NAME = "BypassContributorUiProject";
     private static final String CONTRIBUTOR_LOGIN = "contributor_15960";
     private static final String CONTRIBUTOR_PASSWORD = "contributor_15960";
-
-    @AfterMethod(alwaysRun = true)
-    public void deleteUser() {
-        try {
-            new UsersMethod().deleteUser(CONTRIBUTOR_LOGIN);
-        } catch (Exception ignored) {}
-    }
 
     @Test
     @TestCaseId("EPBDS-15960")

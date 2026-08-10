@@ -5,7 +5,6 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
-import domain.api.UsersMethod;
 import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.common.BypassConfirmDialogComponent;
 import domain.ui.webstudio.components.common.SyncChangesDialogComponent;
@@ -14,31 +13,17 @@ import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.utils.WaitUtil;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARGET;
 
-/**
- * EPBDS-15960 H.8 — with the global bypass setting OFF, an eligible Manager merging into a
- * protected branch sees the same blocked path as a non-eligible user: a protected-branch note in
- * the Sync dialog, no bypass warning and no "Bypass branch protection?" confirmation modal.
- */
 public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
 
     private static final String PROJECT_NAME = "BypassOffUiProject";
     private static final String MANAGER_LOGIN = "manager_15960_off";
     private static final String MANAGER_PASSWORD = "manager_15960_off";
-
-    @AfterMethod(alwaysRun = true)
-    public void deleteManagerUser() {
-        try {
-            new UsersMethod().deleteUser(MANAGER_LOGIN);
-        } catch (Exception ignored) {
-        }
-    }
 
     @Test
     @TestCaseId("EPBDS-15960")
@@ -52,8 +37,6 @@ public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(new UserData(MANAGER_LOGIN, MANAGER_PASSWORD));
 
-        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
-        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProject(PROJECT_NAME);
@@ -71,8 +54,6 @@ public class TestProtectedBranchBypassSettingOffUi extends BaseTest {
         assertThat(syncDialog.isBypassWarningVisible())
                 .as("H.8 — no bypass warning when the global setting is OFF")
                 .isFalse();
-        // With the setting OFF a Manager is blocked the same way anyone else is: 6.4.0 says the target
-        // branch is protected and disables the merge buttons.
         assertThat(syncDialog.hasBlockedMessageContaining("protected"))
                 .as("H.8 — Manager is told the branch is protected when the setting is OFF")
                 .isTrue();
