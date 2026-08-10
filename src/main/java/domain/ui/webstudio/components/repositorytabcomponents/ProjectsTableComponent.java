@@ -19,9 +19,10 @@ public class ProjectsTableComponent extends BaseComponent {
 
     // aria-label of the row's overflow trigger — a menu opener, not an action of its own.
     private static final String OVERFLOW_TRIGGER_LABEL = "Actions";
-    // How long to probe for an optional element before deciding it is absent
-    private static final int PROBE_MS = 1500;
-    private static final int ACTION_CLICK_TIMEOUT_MS = 5000;
+    // Inline row buttons render with the row itself, so a short probe decides inline-vs-overflow.
+    private static final int PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+    // Short enough that a row lost to a re-render is retried instead of waited out.
+    private static final int ACTION_CLICK_TIMEOUT_MS = DEFAULT_TIMEOUT_MS / 2;
 
     private final WebElement rowByName;
     private final WebElement nameInRow;

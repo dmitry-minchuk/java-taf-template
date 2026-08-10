@@ -12,8 +12,8 @@ import domain.ui.webstudio.components.BaseComponent;
  */
 public class ProjectHeaderActionsComponent extends BaseComponent {
 
-    // Inline header buttons render with the bar itself, so a short probe decides bar-vs-overflow.
-    private static final int PROBE_MS = 1500;
+    // Header buttons render with the screen, so a short probe decides bar-vs-overflow.
+    private static final int PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
 
     private final WebElement actionByLabel;
     private final WebElement moreBtn;

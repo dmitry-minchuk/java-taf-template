@@ -13,8 +13,8 @@ public class ProjectsFilterRailComponent extends BaseComponent {
     public static final String REPOSITORY_FILTER_GROUP = "repository";
     public static final String STATUS_FILTER_GROUP = "status";
 
-    // How long to probe for an optional element before deciding it is absent
-    private static final int PROBE_MS = 1500;
+    // Facet rows render with the rail itself, so a short probe decides present-vs-absent.
+    private static final int PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
 
     private final WebElement filterGroupToggle;
     private final WebElement filterGroupShow;

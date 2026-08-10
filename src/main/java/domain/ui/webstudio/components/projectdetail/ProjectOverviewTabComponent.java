@@ -18,7 +18,7 @@ public class ProjectOverviewTabComponent extends BaseComponent {
 
     // The default branch is tagged in the label, and the text comes back glued together ("masterDefault").
     private static final String DEFAULT_BRANCH_TAG = "Default";
-    private static final int PROBE_MS = 1500;
+    private static final int PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
 
     private final WebElement branchLabel;
     private final WebElement branchSwitcherTrigger;

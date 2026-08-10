@@ -196,12 +196,16 @@ public class WebElement {
 
     public void click() {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         LOGGER.info("Clicking {} ", elementName);
         retryOnReRenderChurn(locator::click);
     }
 
     public void click(int timeoutInMillis) {
         waitForAppReady();
+        isVisible(timeoutInMillis);
         LOGGER.info("Clicking with increased timeout {} ", elementName);
         retryOnReRenderChurn(() -> locator.click(new Locator.ClickOptions().setTimeout(timeoutInMillis)));
     }
@@ -236,6 +240,9 @@ public class WebElement {
 
     public WebElement doubleClick() {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         LOGGER.info("Double clicking {} ", elementName);
         retryOnReRenderChurn(locator::dblclick);
         return this;
@@ -243,6 +250,9 @@ public class WebElement {
 
     public WebElement press(String key) {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         LOGGER.info("Pressing {} on {}", key, elementName);
         retryOnReRenderChurn(() -> locator.press(key));
         return this;
@@ -250,6 +260,9 @@ public class WebElement {
 
     public WebElement fill(String text) {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         LOGGER.info("Filling {} with text: '{}'", elementName, text);
         retryOnReRenderChurn(() -> locator.fill(text));
         return this;
@@ -257,6 +270,9 @@ public class WebElement {
 
     public WebElement fillSequentially(String text) {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         LOGGER.info("Filling Sequentially {} with text: '{}'", elementName, text);
         retryOnReRenderChurn(() -> locator.pressSequentially(text));
         return this;
@@ -356,11 +372,17 @@ public class WebElement {
 
     public void check() {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         retryOnReRenderChurn(locator::check);
     }
 
     public void uncheck() {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         retryOnReRenderChurn(locator::uncheck);
     }
     
@@ -369,6 +391,9 @@ public class WebElement {
     // This method does not require clicking by selector - everything will be done automatically if selector implemented as <select>
     public void selectByVisibleText(String text) {
         waitForAppReady();
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         LOGGER.info("Selecting option '{}' in {}", text, elementName);
         List<String> optionLabels = locator.locator("option").allTextContents().stream()
                 .map(String::trim)
@@ -426,6 +451,9 @@ public class WebElement {
     public void clear() {
         waitForAppReady();
         LOGGER.info("Clearing {}", elementName);
+        // 250ms settling barrier: the JSF layer re-renders under us, and letting the element
+        // appear before Playwright captures it is what keeps these actions stable (EPBDS-16261).
+        isVisible();
         retryOnReRenderChurn(locator::clear);
     }
 
