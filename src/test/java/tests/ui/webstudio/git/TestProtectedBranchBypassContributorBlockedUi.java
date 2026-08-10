@@ -21,11 +21,6 @@ import tests.BaseTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.ui.webstudio.git.ProtectedBranchBypassFixture.PROTECTED_TARGET;
 
-/**
- * EPBDS-15960 H.4: a Contributor (not bypass-eligible) trying to merge a dev
- * branch into a protected release branch is told the branch is protected
- * in the Sync dialog, not the bypass confirmation modal.
- */
 public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
 
     private static final String PROJECT_NAME = "BypassContributorUiProject";
@@ -36,8 +31,7 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
     public void deleteUser() {
         try {
             new UsersMethod().deleteUser(CONTRIBUTOR_LOGIN);
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
 
     @Test
@@ -54,8 +48,6 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
         EditorPage editorPage = loginService.login(
                 new UserData(CONTRIBUTOR_LOGIN, CONTRIBUTOR_PASSWORD));
 
-        // React nav: open the project from the /projects list, then open the Sync dialog from the editor
-        // toolbar (the Sync dialog + bypass confirm are already React components).
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProject(PROJECT_NAME);
@@ -74,8 +66,6 @@ public class TestProtectedBranchBypassContributorBlockedUi extends BaseTest {
                 .as("H.4 — bypass warning must NOT be shown for a Contributor on a protected target")
                 .isFalse();
 
-        // 6.4.0 checks before merging and states the reason instead of failing with a 403: the dialog
-        // says the target branch is protected and leaves the merge buttons disabled.
         assertThat(syncDialog.hasBlockedMessageContaining("protected"))
                 .as("H.4 — Contributor must be told the target branch is protected")
                 .isTrue();
