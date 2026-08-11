@@ -30,8 +30,6 @@ public class RepositoriesPageComponent extends BaseComponent {
     private WebElement remoteRepositoryProtectedBranchesField;
     private WebElement flatFolderStructureCheckBox;
     private WebElement secureConnectionCheckbox;
-    private WebElement customizeCommentsCheckbox;
-    private WebElement deleteMessageTemplateLabel;
     private WebElement applyChangesBtn;
     private WebElement designRepoActiveTab;
     private WebElement typeOption;
@@ -54,13 +52,9 @@ public class RepositoriesPageComponent extends BaseComponent {
         deploymentRepositoriesTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-tab') and contains(text(),'Deployment Repositories')]", "deploymentRepositoriesTab");
         addRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Design Repository')]]", "addRepositoryBtn");
         addDeploymentRepositoryBtn = createScopedElement("xpath=.//button[./span[contains(text(),'Add Deployment Repository')]]", "addDeploymentRepositoryBtn");
-        // repositories-tabs: nav-list is a sibling of content-holder, not inside it
         designRepositoryList = createScopedElementList("xpath=.//div[contains(@class,'ant-tabs-card')]//div[contains(@class,'ant-tabs-nav-list')]/div[@data-node-key]", "designRepositoryList");
 
-        // Scope form fields to the active tab panel within the left-positioned repos tabs
-        // This prevents reading values from hidden (non-active) repo panels
         remoteRepositoryNameField = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='name']", "remoteRepositoryNameField");
-        // Type selector: scope to the ant-select that contains input[@id='type'] to avoid matching other selects (e.g. Deployment branch)
         remoteRepositoryTypeSelector = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//div[contains(@class,'ant-select') and .//input[@id='type']]//div[contains(@class,'ant-select-content')]", "remoteRepositoryTypeSelector");
         remoteRepositoryCheckBox = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_remoteRepository']", "remoteRepositoryCheckBox");
         remoteRepositoryPathField = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_uri']", "remoteRepositoryPathField");
@@ -70,11 +64,8 @@ public class RepositoriesPageComponent extends BaseComponent {
         remoteRepositoryProtectedBranchesField = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_protectedBranches']", "remoteRepositoryProtectedBranchesField");
         flatFolderStructureCheckBox = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_flatFolderStructure']", "flatFolderStructureCheckBox");
         secureConnectionCheckbox = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//input[@id='settings_secure']", "secureConnectionCheckbox");
-        customizeCommentsCheckbox = createScopedElement("xpath=.//input[@id='settings_useCustomComments']", "customizeCommentsCheckbox");
-        deleteMessageTemplateLabel = createScopedElement("xpath=.//label[contains(.,'Delete project') or contains(.,'Delete Project') or contains(.,'Erase project')]", "deleteMessageTemplateLabel");
         applyChangesBtn = createScopedElement("xpath=.//button[@type='submit']", "applyChangesBtn");
         designRepoActiveTab = createScopedElement("xpath=.//div[contains(@class,'ant-tabs-card')]//div[contains(@class,'ant-tabs-tab-active') and .//*[text()='%s']]", "designRepoActiveTab");
-        // Ant Design dropdown renders as a body-level overlay, not inside the form — must use page-level locator
         typeOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option') and .//div[text()='%s']]", "typeOption");
         repositoryTabTemplate = new WebElement(page, "xpath=//div[contains(@class,'ant-tabs-card')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]", "repositoryTab");
         deleteRepositoryBtnTemplate = new WebElement(page, "xpath=//div[contains(@class,'ant-tabs-card')]//div[contains(@class,'ant-tabs-nav-list')]//div[contains(@class,'ant-tabs-tab') and .//*[text()='%s']]//button[contains(@class,'ant-tabs-tab-remove')]", "deleteRepositoryBtn");
@@ -101,14 +92,6 @@ public class RepositoriesPageComponent extends BaseComponent {
     public RepositoriesPageComponent setRepositoryPath(String path) {
         remoteRepositoryPathField.fillSequentially(path);
         return this;
-    }
-
-    public void enableCustomizeComments() {
-        customizeCommentsCheckbox.check();
-    }
-
-    public boolean isDeleteMessageTemplatePresent() {
-        return deleteMessageTemplateLabel.isVisible(2000);
     }
 
     public void addDesignRepository() {
