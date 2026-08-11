@@ -3,7 +3,6 @@ package domain.ui.webstudio.components.common;
 import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.DriverPool;
-import helpers.utils.WaitUtil;
 
 import java.util.List;
 
@@ -34,6 +33,10 @@ public class MessageComponent extends BaseComponent {
             return text;
         }
         return "";
+    }
+
+    public String getFullText() {
+        return getRootLocator().getText().replaceAll("\\s+", " ").trim();
     }
 
     public void closeMessage() {

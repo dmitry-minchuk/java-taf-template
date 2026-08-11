@@ -11,12 +11,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import tests.BaseTest;
 
-/**
- * PLAYWRIGHT_DOCKER base for Active Directory (LDAP) auth UI tests. Owns the ephemeral Samba AD DC
- * lifecycle and the form-login helper. WebStudio runs in {@code user.mode=ad} against the DC and
- * authenticates via its own login form (not an external IdP), so this uses {@link LoginPage}.
- * Requires DOCKER mode so the Studio container shares the network with the DC ({@code ldap://samba:389}).
- */
+// TODO: figure out why the Studio container start/stop is not delegated to the standard BaseTest
+//  @BeforeMethod/@AfterMethod mechanism (separate config methods, like startMailMock/stopMailMock in
+//  TestAdminEmail) and is instead intercepted by beforeMethod/afterMethod overrides with an explicit super.
 public abstract class AbstractAdUiTest extends BaseTest {
 
     protected final SambaAdInfrastructureService samba = new SambaAdInfrastructureService();
@@ -28,7 +25,6 @@ public abstract class AbstractAdUiTest extends BaseTest {
             throw new SkipException("AD auth test requires -Dexecution.mode=PLAYWRIGHT_DOCKER "
                     + "(Studio must share the Docker network with the Samba AD DC).");
         }
-        // Start the DC first so it registers the shared network the Studio container then joins (via super).
         samba.start();
         super.beforeMethod(result);
     }
@@ -43,7 +39,6 @@ public abstract class AbstractAdUiTest extends BaseTest {
         }
     }
 
-    /** Clears the session and logs in through Studio's form as the given AD user (switches user). */
     protected EditorPage adLogin(String username, String password) {
         DriverPool.getBrowserContext().clearCookies();
         DriverPool.getPage().navigate(DriverPool.getAppUrl());

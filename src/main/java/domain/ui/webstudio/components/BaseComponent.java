@@ -10,7 +10,6 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-// This class is separated from CoreComponent and created for specific element storage
 public abstract class BaseComponent extends CoreComponent {
 
     private WebElement contentLoadingSpinner;
@@ -38,8 +37,6 @@ public abstract class BaseComponent extends CoreComponent {
     }
 
     public void waitUntilSpinnerLoaded() {
-        // waitForHidden covers both "detached" and "display:none", so the legacy #loadingPanel is handled here;
-        // then wait out the new React full-screen loading overlay (EPBDS-16241 replaced #loadingPanel).
         contentLoadingSpinner.waitForHidden(30000);
         WebElement.waitForAppReady(page);
     }
@@ -73,6 +70,22 @@ public abstract class BaseComponent extends CoreComponent {
             }
             WaitUtil.sleep(50, "Waiting between message get_text attempts");
         }
+        return messagesTextList;
+    }
+
+    public List<String> getAllMessagesFullText() {
+        List<String> messagesTextList = new ArrayList<>();
+        try {
+            messages.forEach(m -> {
+                String text = m.getFullText();
+                if (!text.isEmpty() && !messagesTextList.contains(text)) {
+                    messagesTextList.add(text);
+                }
+            });
+        } catch (Exception e) {
+            LOGGER.debug("Ignoring exception during message collection (likely due to DOM update): {}", e.getMessage());
+        }
+        LOGGER.info("Popup messages on screen: {}", messagesTextList);
         return messagesTextList;
     }
 
