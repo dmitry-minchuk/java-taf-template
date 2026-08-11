@@ -7,7 +7,6 @@ import configuration.appcontainer.AppContainerStartParameters;
 import domain.serviceclasses.constants.User;
 import domain.ui.webstudio.components.common.TableComponent;
 import domain.ui.webstudio.components.editortabcomponents.CreateTableDialogComponent;
-import domain.ui.webstudio.components.editortabcomponents.EditorToolbarPanelComponent;
 import domain.ui.webstudio.components.editortabcomponents.leftmenu.EditorLeftRulesTreeComponent;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import helpers.service.WorkflowService;
@@ -27,10 +26,8 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
     @Test
     @TestCaseId("IPBQA-29967")
     @Description("SimpleLookup and SimpleRules tables: open, recreate, run, edit, copy and create test table. "
-            + "KNOWN-FAILING: the Create Table modal gives an Integer condition column a number-only editor, so "
-            + "the age ranges this table is built on cannot be entered and the created table has an empty age "
-            + "column."
-            + " Known bug: EPBDS-16359.")
+            + "The Create Table modal (EPBDS-6912) titles the default return column 'Output' (legacy wizard "
+            + "wrote 'RETURN') and generates the default Test table with a leading numbering column.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testSimpleLookupSimpleRules() {
         String projectName = WorkflowService.loginCreateProjectFromExcelFile(User.ADMIN, EXCEL_FILE);
@@ -56,8 +53,6 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         rulesTree.expandFolderInTree("Decision")
                 .checkRulesTableAbsent("Decision", "SimpleREx1");
 
-        // The React modal builds the whole table on one page: the rules grid is addressed by row and column,
-        // and the last row is filled and then deleted to cover row removal.
         editorPage.getEditorToolbarPanelComponent().clickCreateTable();
         CreateTableDialogComponent createTableDialog = editorPage.getCreateTableDialogComponent();
         createTableDialog.selectType("Simple Rules Table")
@@ -103,7 +98,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
                 "properties", "age", "18-30", "18-30", "31-60"));
         assertThat(table.getColumn(2)).isEqualTo(List.of("country", "Status", "Married", "Divorced", "Single"));
         assertThat(table.getColumn(3)).isEqualTo(List.of("AU", "gender", "male", "female", "male"));
-        assertThat(table.getColumn(4)).isEqualTo(List.of("\u00a0", "RETURN", "0.1", "0.2", "0.3"));
+        assertThat(table.getColumn(4)).isEqualTo(List.of("\u00a0", "Output", "0.1", "0.2", "0.3"));
 
         rulesTree.selectItemInFolder("Decision", "SimpleLEx2");
         editorPage.getProblemsPanelComponent().checkNoProblems();
@@ -139,7 +134,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         editorPage.getEditorToolbarPanelComponent().createDefaultTestTable();
         rulesTree.checkRulesTablePresent("Test", "SimpleLEx2Test");
         assertThat(rulesTree.getSelectedItemText()).isEqualTo("SimpleLEx2Test");
-        assertThat(table.getRow(2).getValue()).isEqualTo(List.of("gender", "status", "_res_"));
+        assertThat(table.getRow(2).getValue()).isEqualTo(List.of("", "gender", "status", "_res_"));
     }
 
     private void runSimpleRule(EditorPage editorPage, String age, String gender) {

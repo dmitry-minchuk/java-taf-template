@@ -2,25 +2,17 @@ package domain.ui.webstudio.components.editortabcomponents;
 
 import configuration.core.ui.WebElement;
 import configuration.driver.DriverPool;
+import configuration.driver.ExecutionMode;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
-/**
- * The React "Create Table" modal, which EPBDS-16313 put in place of the JSF wizard.
- *
- * <p>The wizard walked through a step per question; the modal asks everything on one page and previews the
- * table being built. The step-by-step methods are kept so the tests written against the wizard keep reading
- * the same way - {@link #clickNext()} has nothing left to do here.
- */
 public class CreateTableDialogComponent extends BaseComponent {
 
     private static final String MODAL =
             "//div[contains(@class,'ant-modal')][.//div[contains(@class,'ant-modal-title')][contains(normalize-space(.),'Create Table')]]";
-    // Columns of the Datatype skeleton: Type, Name, Default Value, Mandatory, Description, Examples.
     private static final int DATATYPE_TYPE_COLUMN = 0;
     private static final int DATATYPE_NAME_COLUMN = 1;
     private static final int MAX_SKELETON_ROWS = 30;
-    // Long enough for the value the modal suggests itself to arrive and overwrite what was typed.
     private static final int SETTLE_MS = 400;
 
     private WebElement modal;
@@ -31,15 +23,12 @@ public class CreateTableDialogComponent extends BaseComponent {
     private WebElement resultTypeInput;
     private WebElement headerPreview;
     private WebElement createButton;
-    // Formatted with the argument's row index, starting at 0.
     private WebElement argumentTypeTemplate;
     private WebElement argumentNameTemplate;
     private WebElement argumentRowTemplate;
     private WebElement insertArgumentTemplate;
-    // Formatted with the cell's row and column index, both starting at 0.
     private WebElement cellTemplate;
     private WebElement rowTemplate;
-    // Rows already written by this dialog, counted from the type selection so a reopened dialog starts over.
     private int writtenParameterRows;
     private int writtenArgumentRows;
 
@@ -55,7 +44,6 @@ public class CreateTableDialogComponent extends BaseComponent {
 
     private void initializeElements() {
         modal = new WebElement(page, "xpath=" + MODAL, "createTableModal");
-        // antd puts the testid on the wrapper of some controls, so reach the inner control either way.
         typeSelect = new WebElement(page, "css=[data-testid=create-table-type]", "createTableType");
         nameInput = new WebElement(page,
                 "css=[data-testid=create-table-name] input, input[data-testid=create-table-name]", "createTableName");
@@ -78,7 +66,6 @@ public class CreateTableDialogComponent extends BaseComponent {
                 "createTableArgumentName");
         argumentRowTemplate = new WebElement(page,
                 "css=[data-testid=create-table-argument-row-%s]", "createTableArgumentRow");
-        // The row controls carry their label in aria-label, not title.
         insertArgumentTemplate = new WebElement(page,
                 "css=[data-testid=create-table-argument-row-%s] button[aria-label='Insert Argument']",
                 "createTableInsertArgument");
@@ -95,10 +82,6 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Picks the table type. The wizard listed types as "Datatype Table"; the modal drops the "Table" suffix, so
-     * either wording is accepted here.
-     */
     public CreateTableDialogComponent selectType(String type) {
         waitForDialogToAppear();
         writtenParameterRows = 0;
@@ -109,7 +92,6 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /** The modal asks everything at once, so there is no step to advance to. */
     public CreateTableDialogComponent clickNext() {
         return waitForDialogToAppear();
     }
@@ -120,13 +102,7 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Adds a field to the table being built: the wizard asked for a type and a name per field, and the modal
-     * takes the same pair in the first free row of the skeleton it previews.
-     */
     public CreateTableDialogComponent addParameter(String type, String name) {
-        // The modal opens with a field of its own ("String field1"), so the first parameter overwrites that row
-        // instead of looking for a free one - otherwise the table is created with a field nobody asked for.
         int row = writtenParameterRows++;
         if (type != null && !type.isEmpty()) {
             setCell(row, DATATYPE_TYPE_COLUMN, type);
@@ -144,10 +120,6 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Declares one argument of the table's signature. The modal has no "array" checkbox any more - an array is
-     * the type with brackets, which is how it reaches the header either way.
-     */
     public CreateTableDialogComponent addSimpleRulesParameter(String type, boolean isArray, String name) {
         int row = argumentRow(writtenArgumentRows++);
         String declaredType = isArray && type != null && !type.endsWith("[]") ? type + "[]" : type;
@@ -158,12 +130,6 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Writes into the skeleton cell at the given zero-based position, growing the grid when the row is missing.
-     *
-     * <p>A cell editor follows the value it holds: a plain cell is typed into, a cell whose type only allows the
-     * values it lists is picked from that list, and a cell backed by suggestions takes either.
-     */
     public CreateTableDialogComponent setCell(int row, int column, String value) {
         growSkeletonTo(row);
         WebElement cell = cellTemplate.format(String.valueOf(row), String.valueOf(column));
@@ -178,16 +144,11 @@ public class CreateTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * A cell that offers nothing but its own values: the value is chosen, never typed. The list is opened once
-     * and then waited for - clicking again while it is opening closes it.
-     */
     private void pickFromList(int row, int column, WebElement cell, String value) {
         WebElement option = openDropdownOption(value);
         cell.click();
         if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
                 "Waiting for the create table cell to offer '" + value + "'")) {
-            // A click that landed while the list was closing leaves it shut - open it again.
             cell.click();
             if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
                     "Waiting for the create table cell to offer '" + value + "'")) {
@@ -195,7 +156,6 @@ public class CreateTableDialogComponent extends BaseComponent {
             }
         }
         option.click(DEFAULT_TIMEOUT_MS / 2);
-        // A list-only cell shows the picked value as the selection's label, never in its input.
         WebElement selected = new WebElement(page,
                 "css=[data-testid=create-table-cell-" + row + "-" + column + "] .ant-select-content,"
                         + " [data-testid=create-table-cell-" + row + "-" + column + "] .ant-select-selection-item",
@@ -252,14 +212,12 @@ public class CreateTableDialogComponent extends BaseComponent {
         waitUntilSpinnerLoaded();
     }
 
-    /** Adds rows below the last one until the requested row exists. */
     private void growSkeletonTo(int row) {
         for (int current = lastSkeletonRow(); current < row; current++) {
             insertRowBelow(current);
         }
     }
 
-    /** Fills a whole skeleton row left to right, adding the row when the grid is shorter than that. */
     public CreateTableDialogComponent setRow(int row, String... values) {
         for (int column = 0; column < values.length; column++) {
             if (values[column] != null && !values[column].isEmpty()) {
@@ -302,7 +260,6 @@ public class CreateTableDialogComponent extends BaseComponent {
         return last;
     }
 
-    /** The argument row at that index, added below the last one when the modal does not offer it yet. */
     private int argumentRow(int row) {
         WebElement name = argumentNameTemplate.format(String.valueOf(row));
         if (!name.exists() && row > 0) {
@@ -312,15 +269,9 @@ public class CreateTableDialogComponent extends BaseComponent {
         return row;
     }
 
-    /**
-     * Writes into a plain text field, retyping until it holds only the requested text: the modal fills a field
-     * it can name itself (a field's name, for one) a moment after it is opened, and that value joins whatever
-     * was typed before it arrived.
-     */
     private void retype(WebElement field, String text) {
         boolean accepted = WaitUtil.waitForCondition(() -> {
             field.fill(text);
-            // The suggested value can land after the field was read, so the value is checked once it has settled.
             WaitUtil.sleep(SETTLE_MS, "Letting the create table dialog fill in what it names itself");
             return text.equals(field.getCurrentInputValue());
         }, DEFAULT_TIMEOUT_MS, 300, "Waiting for the create table field to hold '" + text + "'");
@@ -330,11 +281,6 @@ public class CreateTableDialogComponent extends BaseComponent {
         }
     }
 
-    /**
-     * Writes into a suggest field. Setting the value outright never reaches the list's own state, so the text is
-     * typed key by key and then committed by picking the matching option - leaving the field on an uncommitted
-     * value drops it back to the type the modal suggests.
-     */
     private void retypeSuggest(WebElement field, String text) {
         boolean accepted = WaitUtil.waitForCondition(() -> {
             clearWithoutLeaving(field);
@@ -354,20 +300,17 @@ public class CreateTableDialogComponent extends BaseComponent {
         }
     }
 
-    /**
-     * The requested option of the dropdown that is open. Every suggest field keeps its own dropdown in the page,
-     * so a match has to be looked for in the one on screen.
-     */
     private WebElement openDropdownOption(String text) {
         return new WebElement(page,
                 "css=.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option[title='" + text + "']",
                 "createTableDropdownOption");
     }
 
-    /** Empties a field while keeping the focus in it: a suggest field resets itself when it loses focus empty. */
     private void clearWithoutLeaving(WebElement field) {
         field.click();
-        field.press(System.getProperty("os.name").toLowerCase().contains("mac") ? "Meta+a" : "Control+a");
+        boolean dockerMode = ExecutionMode.current() == ExecutionMode.PLAYWRIGHT_DOCKER;
+        boolean macHost = System.getProperty("os.name").toLowerCase().contains("mac");
+        field.press(!dockerMode && macHost ? "Meta+a" : "Control+a");
         field.press("Backspace");
     }
 }
