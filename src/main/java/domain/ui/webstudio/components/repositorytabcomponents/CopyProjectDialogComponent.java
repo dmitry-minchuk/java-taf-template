@@ -9,20 +9,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-/**
- * React "Copy project" dialog, opened from a project row's Copy action.
- *
- * <p>Studio 6.4.0 restored the legacy capabilities the first React cut had dropped: the dialog opens in
- * BRANCH mode (copy-project-branch) whenever the project's repository supports branching, and the
- * copy-project-as-new checkbox switches it to NEW-PROJECT mode (name / target repository / path /
- * comment), which also offers copying from an older revision.
- */
 public class CopyProjectDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyProjectDialogComponent.class);
 
     private static final String MODAL_ROOT =
             "//div[contains(@class,'ant-modal')][.//*[contains(@data-testid,'copy-project')]]";
+    private static final String VISIBLE_DROPDOWN =
+            "//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'ant-select-dropdown-hidden'))]";
+    private static final String OPTION_BY_TEXT =
+            "//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']";
+    private static final int SELECTION_ATTEMPTS = 3;
+    private static final int SELECTION_CONFIRM_MS = DEFAULT_TIMEOUT_MS / 5;
 
     private WebElement newProjectNameField;
     private WebElement projectFolderField;
@@ -56,13 +54,13 @@ public class CopyProjectDialogComponent extends BaseComponent {
         copyButton = new WebElement(page, "[data-testid=copy-project-submit]", "copyProjectSubmit");
         cancelButton = new WebElement(page, "xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-modal-footer')]//button[not(contains(@class,'ant-btn-primary'))]", "copyProjectCancel");
         repositorySelect = new WebElement(page, "[data-testid=copy-project-repository]", "copyProjectRepository");
-        repositoryOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "copyProjectRepoOption");
+        repositoryOption = new WebElement(page, "xpath=" + VISIBLE_DROPDOWN + OPTION_BY_TEXT, "copyProjectRepoOption");
         asNewProjectCheckbox = new WebElement(page, "[data-testid=copy-project-as-new]", "copyProjectAsNew");
         branchField = new WebElement(page, "[data-testid=copy-project-branch]", "copyProjectBranch");
         currentBranchLabel = new WebElement(page, "[data-testid=copy-project-current-branch]", "copyProjectCurrentBranch");
         oldRevisionCheckbox = new WebElement(page, "[data-testid=copy-project-old-revision]", "copyProjectOldRevision");
         revisionSelect = new WebElement(page, "[data-testid=copy-project-revision]", "copyProjectRevision");
-        revisionOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item-option')][.//*[normalize-space(text())='%s'] or @title='%s']", "copyProjectRevisionOption");
+        revisionOption = new WebElement(page, "xpath=" + VISIBLE_DROPDOWN + OPTION_BY_TEXT, "copyProjectRevisionOption");
         errors = createElementList("xpath=" + MODAL_ROOT + "//div[contains(@class,'ant-form-item-explain-error')] | " + MODAL_ROOT + "//div[contains(@class,'ant-alert-error')]", "copyProjectErrors");
     }
 
@@ -83,12 +81,29 @@ public class CopyProjectDialogComponent extends BaseComponent {
 
     public CopyProjectDialogComponent selectRepository(String repositoryName) {
         LOGGER.info("Selecting copy target repository: {}", repositoryName);
-        repositorySelect.click();
-        repositoryOption.format(repositoryName, repositoryName).click();
-        return this;
+        for (int attempt = 1; attempt <= SELECTION_ATTEMPTS; attempt++) {
+            repositorySelect.click();
+            repositoryOption.format(repositoryName, repositoryName).click();
+            boolean selected = WaitUtil.waitForCondition(
+                    () -> repositoryName.equals(repositorySelect.getText().trim()),
+                    SELECTION_CONFIRM_MS, 200,
+                    "Waiting for the copy dialog to show " + repositoryName + " as the target repository");
+            if (selected) {
+                return this;
+            }
+            LOGGER.warn("Target repository is still '{}' after clicking '{}' (attempt {}/{}), retrying",
+                    repositorySelect.getText().trim(), repositoryName, attempt, SELECTION_ATTEMPTS);
+        }
+        throw new IllegalStateException("The copy dialog did not accept '" + repositoryName
+                + "' as the target repository; it shows '" + repositorySelect.getText().trim() + "'");
+    }
+
+    public String getSelectedRepository() {
+        return repositorySelect.getText().trim();
     }
 
     public CopyProjectDialogComponent setProjectFolder(String folderPath) {
+        projectFolderField.waitForVisible(DEFAULT_TIMEOUT_MS);
         projectFolderField.clear();
         projectFolderField.fill(folderPath);
         return this;
@@ -115,11 +130,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Switches the dialog into NEW-PROJECT mode (name / target repository / path). On a branching
-     * repository the dialog opens in branch mode, so copying into a new project must tick this first;
-     * where the checkbox is absent (repository without branches) the dialog is already in that mode.
-     */
     public CopyProjectDialogComponent setAsNewProject() {
         if (asNewProjectCheckbox.isVisible(DEFAULT_TIMEOUT_MS / 5) && !asNewProjectCheckbox.isChecked()) {
             asNewProjectCheckbox.click();
@@ -128,13 +138,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Copies the project into a NEW branch (branch mode — the dialog's default on a git repository).
-     *
-     * <p>The dialog suggests a branch name of its own ("&lt;project&gt;/&lt;user&gt;/&lt;date&gt;") once the
-     * repository config arrives, and that late write also clears its "user edited this" flag — so typing
-     * before the suggestion lands is silently undone. Wait for the suggestion, then replace it.
-     */
     public CopyProjectDialogComponent setBranchName(String branchName) {
         branchField.waitForVisible(DEFAULT_TIMEOUT_MS);
         WaitUtil.waitForCondition(() -> !branchField.getCurrentInputValue().isBlank(),
@@ -143,7 +146,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return this;
     }
 
-    /** Copies from an earlier revision instead of the latest one (new-project mode only). */
     public CopyProjectDialogComponent setOldRevision(String revisionLabel) {
         if (!oldRevisionCheckbox.isChecked()) {
             oldRevisionCheckbox.click();
@@ -178,10 +180,6 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return setBranchName(branchName);
     }
 
-    /**
-     * The branch name the dialog offers ("&lt;project&gt;/&lt;user&gt;/&lt;date&gt;"). It arrives with the
-     * repository config, a moment after the dialog opens, so wait for it rather than reading an empty field.
-     */
     public String getNewBranchName() {
         branchField.waitForVisible(DEFAULT_TIMEOUT_MS);
         WaitUtil.waitForCondition(() -> !branchField.getCurrentInputValue().isBlank(),
@@ -189,12 +187,10 @@ public class CopyProjectDialogComponent extends BaseComponent {
         return branchField.getCurrentInputValue();
     }
 
-    /** The branch the copied project currently sits on, as shown by the dialog. */
     public String getCurrentBranch() {
         return currentBranchLabel.waitForVisible(DEFAULT_TIMEOUT_MS).getText().trim();
     }
 
-    // "Copy as a separate project" is expressed by the as-new checkbox in 6.4.0.
     public CopyProjectDialogComponent setSeparateProject(boolean enabled) {
         return enabled ? setAsNewProject() : this;
     }
