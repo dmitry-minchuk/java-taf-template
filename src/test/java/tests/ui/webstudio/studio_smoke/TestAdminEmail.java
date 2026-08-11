@@ -54,7 +54,8 @@ public class TestAdminEmail extends BaseTest {
         emailPageComponent.enableEmailVerificationWithCredentials(
                 MailMockService.SMTP_URL, MailMockService.USERNAME, MailMockService.PASSWORD);
 
-        DriverPool.getPage().navigate(DriverPool.getAppUrl());
+        WaitUtil.retryAction(() -> DriverPool.getPage().navigate(DriverPool.getAppUrl()), 10000, 1000,
+                "Navigate to the app root after applying email settings restarts the security context");
         editorPage = new LoginPage().login(UserService.getUser(User.ADMIN));
 
         adminPage = editorPage.openUserMenu().navigateToAdministration();

@@ -18,13 +18,11 @@ public class RightTableDetailsComponent extends BaseComponent {
     private WebElement propertyInputTemplate;
     private WebElement propertyValueTemplate;
 
-    // Property value reading (for inherited properties test)
     private WebElement propertyValueTextTemplate;
     private WebElement propertyRowTemplate;
     private WebElement goToPropertiesTableArrowTemplate;
     private WebElement loadedTableNameTemplate;
 
-    // Property rows list
     private List<WebElement> propertyRows;
 
     public RightTableDetailsComponent() {
@@ -37,18 +35,15 @@ public class RightTableDetailsComponent extends BaseComponent {
         initializeElements();
     }
 
-    // Editing properties templates
     private WebElement propertyValueLinkTemplate;
     private WebElement propertyTextInputTemplate;
     private WebElement propertyCheckboxInputTemplate;
     private WebElement propertyDropdownTemplate;
     private WebElement deletePropertyLinkTemplate;
 
-    // Multi-select popup
     private WebElement selectAllCheckbox;
     private WebElement multiselectCheckboxTemplate;
 
-    // RichFaces calendar popup (readonly date inputs are picked via the widget, scoped to the one open popup)
     private WebElement calMonthLabel;
     private WebElement calPrevYear;
     private WebElement calNextYear;
@@ -68,27 +63,22 @@ public class RightTableDetailsComponent extends BaseComponent {
         propertyInputTemplate = createScopedElement("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span/input", "propertyInputField");
         propertyValueTemplate = createScopedElement("xpath=.//td[@class='propName' and contains(text(),'%s')]/following-sibling::td[@class='propData']/span[1][contains(text(),'%s')]", "propertyValueCell");
 
-        // Property value reading templates
         propertyValueTextTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueText");
         propertyRowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[./td[normalize-space(text())='%s']]", "propertyRow");
         goToPropertiesTableArrowTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[2]//a", "goToPropertiesTableArrow");
         loadedTableNameTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr[td[normalize-space()='Name']]/td[normalize-space()='%s']", "loadedTableName");
 
-        // Property rows list
         propertyRows = createScopedElementList("xpath=.//div[@id='propsTable']//table[1]//tr[./td[@class='table-data-name']]", "propertyRows");
 
-        // New templates for editing
         propertyValueLinkTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]", "propertyValueLink");
         propertyTextInputTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]//input[@type='text']", "propertyTextInput");
         propertyCheckboxInputTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]//input[@type='checkbox']", "propertyCheckboxInput");
         propertyDropdownTemplate = createScopedElement("xpath=.//div[@id='propsTable']//table[1]//tr/td[contains(text(),'%s')]/following-sibling::td[1]//select", "propertyDropdown");
         deletePropertyLinkTemplate = createScopedElement("xpath=.//div[@id='propsTable']//td[normalize-space(text())='%s']//..//td/a", "deletePropertyLink");
 
-        // Multi-select popup
         selectAllCheckbox = createScopedElement("xpath=//div[@class='jquery-multiselect-popup jquery-popup']//label[text()='Select All']//..//input", "selectAllCheckbox");
         multiselectCheckboxTemplate = createScopedElement("xpath=//div[@class='jquery-multiselect-popup jquery-popup']//div[@class='jquery-multiselect-popup-data']//input[@value='%s']", "multiselectCheckbox");
 
-        // RichFaces calendar: scope to the single open popup (.rf-cal-popup:visible); nav cells and days by text.
         String visiblePopup = ".rf-cal-popup:visible >> ";
         calMonthLabel = new WebElement(getPage(), visiblePopup + "css=.rf-cal-hdr-month", "calMonthLabel");
         calPrevYear = new WebElement(getPage(), visiblePopup + "xpath=.//td[contains(@class,'rf-cal-tl') and normalize-space(.)='<<']", "calPrevYear");
@@ -132,7 +122,6 @@ public class RightTableDetailsComponent extends BaseComponent {
         return propertyValueTextTemplate.format(propertyName).getText().trim();
     }
 
-    // Panel reloads asynchronously after table selection; wait until it reflects the target table
     public RightTableDetailsComponent waitForTableLoaded(String tableName) {
         loadedTableNameTemplate.format(tableName).waitForVisible(DEFAULT_TIMEOUT_MS);
         return this;
@@ -223,19 +212,32 @@ public class RightTableDetailsComponent extends BaseComponent {
         }
     }
 
-    // The date property is a readonly RichFaces calendar, so the value is picked through the widget: open the
-    // popup, navigate to the target month/year, and click the day (which commits "MM/DD/YYYY 12:00 AM" and closes).
     public void editDateProperty(String propertyName, String dateValue) {
         clickPropertyValue(propertyName);
-        propertyTextInputTemplate.format(propertyName).click();
-        calMonthLabel.waitForVisible(DEFAULT_TIMEOUT_MS);
         String[] parts = dateValue.split("/");
         int targetMonth = Integer.parseInt(parts[0]);
         int targetDay = Integer.parseInt(parts[1]);
         int targetYear = Integer.parseInt(parts[2]);
-        navigateCalendarTo(targetMonth, targetYear);
-        calDayTemplate.format(String.valueOf(targetDay)).click();
-        WaitUtil.sleep(200, "Waiting after picking the date");
+        WebElement dateInput = propertyTextInputTemplate.format(propertyName);
+        boolean picked = WaitUtil.retryAction(() -> {
+            if (!calMonthLabel.isVisible(1000)) {
+                dateInput.click();
+                calMonthLabel.waitForVisible(DEFAULT_TIMEOUT_MS / 2);
+            }
+            navigateCalendarTo(targetMonth, targetYear);
+            calDayTemplate.format(String.valueOf(targetDay)).click(DEFAULT_TIMEOUT_MS / 5);
+            boolean committed = WaitUtil.waitForCondition(() -> {
+                String value = dateInput.getCurrentInputValue();
+                return value != null && value.startsWith(dateValue);
+            }, DEFAULT_TIMEOUT_MS / 5, 100, "Waiting for the picked date to be committed to the input");
+            if (!committed) {
+                throw new IllegalStateException("The calendar did not commit " + dateValue
+                        + "; the input holds '" + dateInput.getCurrentInputValue() + "'");
+            }
+        }, DEFAULT_TIMEOUT_MS * 3, 500, "Picking " + dateValue + " in the calendar for " + propertyName);
+        if (!picked) {
+            throw new IllegalStateException("The calendar did not commit " + dateValue + " for " + propertyName);
+        }
     }
 
     private void navigateCalendarTo(int targetMonth, int targetYear) {
@@ -251,12 +253,18 @@ public class RightTableDetailsComponent extends BaseComponent {
             } else {
                 (current[1] < targetYear ? calNextYear : calNextMonth).click();
             }
-            WaitUtil.sleep(150, "Calendar navigation step");
+            WaitUtil.waitForCondition(() -> {
+                try {
+                    int[] now = readCalendarMonthYear();
+                    return now[1] * 12 + (now[0] - 1) != currentIndex;
+                } catch (RuntimeException e) {
+                    return false;
+                }
+            }, DEFAULT_TIMEOUT_MS / 5, 100, "Waiting for the calendar grid to re-render after navigation");
         }
         throw new IllegalStateException("Calendar did not reach " + targetMonth + "/" + targetYear);
     }
 
-    // Reads the popup header label "Month, YYYY" (e.g. "July, 2026") into [month(1-12), year].
     private int[] readCalendarMonthYear() {
         String[] label = calMonthLabel.getText().trim().split(",");
         return new int[]{MONTHS.indexOf(label[0].trim()) + 1, Integer.parseInt(label[1].trim())};
