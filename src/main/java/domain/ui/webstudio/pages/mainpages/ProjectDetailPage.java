@@ -274,6 +274,11 @@ public class ProjectDetailPage extends BasePage {
         return history.getRevisionDescriptions();
     }
 
+    public List<String> getRevisionAuthors() {
+        openHistoryTab();
+        return history.getRevisionAuthors();
+    }
+
     public CompareGitRevisionsDialogComponent openCompareWindow() {
         Page compareWindow = openCompareScreen();
         return new CompareGitRevisionsDialogComponent(compareWindow);

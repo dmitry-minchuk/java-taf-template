@@ -1,17 +1,14 @@
 package domain.api;
 
+import domain.serviceclasses.models.UserData;
+import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Per-user profile updates. Useful in fresh WebStudio instances where the
- * admin account has no name/email yet — JGit commits inside local design
- * repos fail with "Name of PersonIdent must not be null" until first/last
- * name and email are set.
- */
 public class UsersMethod extends AuthorizedApiMethod {
 
     public UsersMethod() {
@@ -42,5 +39,16 @@ public class UsersMethod extends AuthorizedApiMethod {
 
     public Response deleteUser(String username) {
         return callApi(Method.DELETE, authorizedRequest(), fullApiUrl + "/" + username, true);
+    }
+
+    public Response getProfile(UserData asUser) {
+        RequestSpecification spec = RestAssured.given()
+                .header("Accept", "application/json")
+                .auth().preemptive().basic(asUser.getLogin(), asUser.getPassword());
+        return callApi(Method.GET, spec, fullApiUrl + "/profile", true);
+    }
+
+    public String getProfileDisplayName(UserData asUser) {
+        return getProfile(asUser).jsonPath().getString("displayName");
     }
 }
