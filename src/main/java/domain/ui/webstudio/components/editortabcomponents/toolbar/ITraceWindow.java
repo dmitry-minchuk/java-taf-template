@@ -2,12 +2,6 @@ package domain.ui.webstudio.components.editortabcomponents.toolbar;
 
 import java.util.List;
 
-/**
- * The Trace popup window. EPBDS-16195 reworked Trace into an interactive step debugger. The debugger
- * opens SUSPENDED (paused at the start); the call tree, traced table and node details are only populated
- * while suspended. Resuming to the end ("Completed") clears everything, so inspection is done in the
- * suspended state.
- */
 public interface ITraceWindow {
     String getStatus();
     List<String> getCallTreeTitles();
@@ -18,5 +12,17 @@ public interface ITraceWindow {
     String getTracedTableText();
     boolean isNodeDetailsErrorDisplayed(int timeoutInMillis);
     boolean areDetailsDisplayed(int timeoutInMillis);
+    boolean isDebugToolbarShown(int timeoutInMillis);
+    boolean isBusinessToggleShown(int timeoutInMillis);
+    ITraceWindow toggleDetailedTrace();
+    String getSimpleTreeText();
+    ITraceWindow setBreakWhenRuleFires();
+    ITraceWindow pickBreakOnRule(String ruleName);
+    ITraceWindow addWatch(String expression);
+    String getWatchPanelText();
+    ITraceWindow clickRerun();
+    ITraceWindow waitForStatus(String expectedStatus, int timeoutInMillis);
+    String getDecisionPanelText();
+    ITraceWindow waitForDecisionPanelToContain(String expectedText, int timeoutInMillis);
     void close();
 }

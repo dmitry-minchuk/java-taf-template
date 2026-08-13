@@ -29,6 +29,8 @@ public class CreateTableDialogComponent extends BaseComponent {
     private WebElement insertArgumentTemplate;
     private WebElement cellTemplate;
     private WebElement rowTemplate;
+    private WebElement blockedHint;
+    private WebElement transposedToggle;
     private int writtenParameterRows;
     private int writtenArgumentRows;
 
@@ -75,6 +77,23 @@ public class CreateTableDialogComponent extends BaseComponent {
         rowTemplate = new WebElement(page,
                 "css=[data-testid=create-table-cell-%s-0] input, input[data-testid=create-table-cell-%s-0]",
                 "createTableRow");
+        blockedHint = new WebElement(page, "css=[data-testid=create-table-blocked]", "createTableBlockedHint");
+        transposedToggle = new WebElement(page,
+                "css=[data-testid=create-table-transposed] input, [data-testid=create-table-transposed]",
+                "createTableTransposed");
+    }
+
+    public String getBlockedHint() {
+        return blockedHint.waitForVisible(DEFAULT_TIMEOUT_MS).getText().trim();
+    }
+
+    public boolean isBlockedHintShown() {
+        return blockedHint.isVisible(DEFAULT_TIMEOUT_MS / 5);
+    }
+
+    public CreateTableDialogComponent toggleTransposed() {
+        transposedToggle.click();
+        return this;
     }
 
     public CreateTableDialogComponent waitForDialogToAppear() {

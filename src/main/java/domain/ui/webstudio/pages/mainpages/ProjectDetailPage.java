@@ -4,6 +4,7 @@ import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.common.TabSwitcherComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.CompareGitRevisionsDialogComponent;
+import domain.ui.webstudio.components.repositorytabcomponents.DeleteBranchModalComponent;
 import domain.ui.webstudio.components.repositorytabcomponents.SyncUpdatesDialogComponent;
 import domain.ui.webstudio.components.common.ConfigureCommitInfoComponent;
 import domain.ui.webstudio.components.projectdetail.ProjectFilesTabComponent;
@@ -50,6 +51,7 @@ public class ProjectDetailPage extends BasePage {
     private WebElement configureCommitInfoShade;
     private SyncUpdatesDialogComponent syncUpdatesDialogComponent;
     private WebElement detailRoot;
+    private WebElement errorNotification;
 
     public ProjectDetailPage() {
         super();
@@ -77,6 +79,7 @@ public class ProjectDetailPage extends BasePage {
         configureCommitInfoShade = new WebElement(page, "xpath=//div[@role='dialog'][.//div[contains(@class,'ant-modal-title') and normalize-space()='Configure Git Commit Info']]", "configureCommitInfoShade");
         syncUpdatesDialogComponent = new SyncUpdatesDialogComponent();
         detailRoot = new WebElement(page, "[data-testid=project-detail]", "detailRoot");
+        errorNotification = new WebElement(page, "xpath=(//div[contains(@class,'ant-notification-notice')])[last()]", "errorNotification");
     }
 
     public ProjectDetailPage openOverviewTab() {
@@ -107,6 +110,20 @@ public class ProjectDetailPage extends BasePage {
     public ProjectDetailPage clickHeaderAction(String actionLabel) {
         headerActions.clickAction(actionLabel);
         return this;
+    }
+
+    public boolean isHeaderActionAvailable(String actionLabel) {
+        return headerActions.isActionAvailable(actionLabel);
+    }
+
+    public DeleteBranchModalComponent openDeleteBranchDialog() {
+        clickHeaderAction("Delete Branch");
+        return new DeleteBranchModalComponent().waitForVisible();
+    }
+
+    public String getErrorNotification() {
+        errorNotification.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return errorNotification.getText().trim();
     }
 
     public ProjectDetailPage createBranch(String branchName) {
@@ -205,6 +222,21 @@ public class ProjectDetailPage extends BasePage {
         openOverviewTab();
         overview.migrateAndWaitUntilEditable();
         return this;
+    }
+
+    public boolean isOverviewMigrateOffered() {
+        openOverviewTab();
+        return overview.isMigrateOffered();
+    }
+
+    public boolean isOverviewEditOffered() {
+        openOverviewTab();
+        return overview.isEditOffered();
+    }
+
+    public boolean isOverviewMigrateEnabled() {
+        openOverviewTab();
+        return overview.isMigrateEnabled();
     }
 
     public ProjectDetailPage editOverviewAndSave() {
@@ -330,6 +362,20 @@ public class ProjectDetailPage extends BasePage {
         return files.isNodePresent(fileName);
     }
 
+    public ProjectDetailPage selectFile(String fileName) {
+        openFilesTab();
+        files.selectFile(fileName);
+        return this;
+    }
+
+    public boolean isFilesTabOpen() {
+        return files.isOpen(DEFAULT_TIMEOUT_MS);
+    }
+
+    public boolean isResourceNotFoundShown() {
+        return files.isResourceNotFoundShown();
+    }
+
     public ProjectDetailPage uploadFile(String filePath) {
         return uploadFileAs(filePath, null);
     }
@@ -381,6 +427,7 @@ public class ProjectDetailPage extends BasePage {
     }
 
     public boolean isFolderPresent(String folderName) {
+        openFilesTab();
         return files.isNodePresent(folderName);
     }
 

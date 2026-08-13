@@ -206,7 +206,10 @@ public class RepositoriesPageComponent extends BaseComponent {
         WaitUtil.sleep(2000, "Wait for changes to re-login before reloading the page");
         WaitUtil.retryAction(() -> DriverPool.getPage().reload(), 10000, 1000, "Reload page after applying changes");
         WaitUtil.sleep(1000, "Wait for changes to re-login after reloading the page");
-        relogin(user);
+        WebElement loginForm = new WebElement(DriverPool.getPage(), "xpath=//input[@id='username']", "loginFormProbe");
+        if (loginForm.isVisible(3000)) {
+            relogin(user);
+        }
     }
 
     public void clickDeploymentRepositoriesTab() {

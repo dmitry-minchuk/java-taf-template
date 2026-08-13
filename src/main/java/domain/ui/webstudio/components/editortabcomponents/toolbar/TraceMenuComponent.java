@@ -6,10 +6,6 @@ import domain.ui.webstudio.components.BaseComponent;
 
 import java.util.List;
 
-/**
- * The Trace dropdown of the table toolbar. Scoped under {@code form#inputArgsForm}, same as
- * {@link RunMenuComponent} — the Trace launcher shares the input-parameters form.
- */
 public class TraceMenuComponent extends BaseComponent implements ITraceMenu {
 
     private final WebElement traceInsideMenuBtn;
@@ -42,6 +38,23 @@ public class TraceMenuComponent extends BaseComponent implements ITraceMenu {
     }
 
     @Override
+    public ITraceMenu setParameterField(String parameterName, String value) {
+        createScopedElement("xpath=.//span[text()='" + parameterName + " = ']/input", "traceParameterField")
+                .waitForVisible(DEFAULT_TIMEOUT_MS)
+                .fill(value);
+        return this;
+    }
+
+    @Override
+    public ITraceWindow clickTraceInsideMenuBusiness() {
+        traceInsideMenuBtn.waitForVisible();
+        Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceInsideMenuBtn.click());
+        popup.waitForLoadState();
+        popup.waitForSelector("xpath=//div[@id='trace-view']", new Page.WaitForSelectorOptions().setTimeout(10000));
+        return new TraceWindowComponent(popup);
+    }
+
+    @Override
     public ITraceMenu selectJSONTrace(String json) {
         jsonRadioBtn.click();
         jsonTextField.fill(json);
@@ -63,10 +76,6 @@ public class TraceMenuComponent extends BaseComponent implements ITraceMenu {
     public ITraceWindow clickTraceInsideMenu(boolean isPopupExpected) {
         traceInsideMenuBtn.waitForVisible();
         if (isPopupExpected) {
-            // EPBDS-15551 made the trace popup chain async: click → JSF Ajax `fetchParamsForTrace`
-            // (execute="@form") → /web/projects/{id} fetch → CustomEvent → React window.open.
-            // On loaded CI agents this can exceed the default 10s timeout — match the 60s
-            // already used by clickTraceExpectTraceWindow.
             boolean switchSet = AdvancedTracerSupport.requestAdvancedTracer(page);
             Page popup = page.waitForPopup(new Page.WaitForPopupOptions().setTimeout(60000), () -> traceInsideMenuBtn.click());
             popup.waitForLoadState();

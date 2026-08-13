@@ -9,6 +9,14 @@
     <!-- Core rules editor tests -->
     <test name="TestMethodTable"><classes><class name="tests.ui.webstudio.rules_editor.TestMethodTable"/></classes></test>
     <test name="TestCopyTableVersioningUi"><classes><class name="tests.ui.webstudio.rules_editor.TestCopyTableVersioningUi"/></classes></test>
+    <test name="TestCreateTableTypesUi"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateTableTypesUi"/></classes></test>
+    <test name="TestCreateTableNameValidationUi"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateTableNameValidationUi"/></classes></test>
+    <test name="TestCreateTableRangeConditionUi"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateTableRangeConditionUi"/></classes></test>
+    <test name="TestCopyTableStylePreservedUi"><classes><class name="tests.ui.webstudio.rules_editor.TestCopyTableStylePreservedUi"/></classes></test>
+    <test name="TestCopyTableWizardGuaranteesUi"><classes><class name="tests.ui.webstudio.rules_editor.TestCopyTableWizardGuaranteesUi"/></classes></test>
+    <test name="TestTraceBusinessModeUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceBusinessModeUi"/></classes></test>
+    <test name="TestTraceDebuggerBreakpointsUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceDebuggerBreakpointsUi"/></classes></test>
+    <test name="TestTraceDebuggerNeverHitRuleUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceDebuggerNeverHitRuleUi"/></classes></test>
     <test name="TestMigratedMethodFilterReloadUi"><classes><class name="tests.ui.webstudio.rules_editor.TestMigratedMethodFilterReloadUi"/></classes></test>
     <test name="TestSmartLookupSmartRules"><classes><class name="tests.ui.webstudio.rules_editor.TestSmartLookupSmartRules"/></classes></test>
     <test name="TestSimpleLookupSimpleRules"><classes><class name="tests.ui.webstudio.rules_editor.TestSimpleLookupSimpleRules"/></classes></test>

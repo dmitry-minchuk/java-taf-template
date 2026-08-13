@@ -24,6 +24,10 @@ Analysis date: 2026-08-13. Purpose of this file: these tickets are NOT included 
   2. If new code appears — diff it against the current row-action model; our tests already rely on `ProjectsTableComponent.clickRowAction`/`getProjectActionLabels`, and any action reshuffle will hit them.
 - Where it goes: row-action coverage already exists (`TestRepositoryTableActions`, the ACL cluster); most likely no new cases — only page-object updates.
 
+## Open question for the dev team (found while automating, 2026-08-13)
+
+On `webstudio:6.4.0-71e2caea5c3b`, `GET /web/projects/{id}/migration` reports `migratable=false` for a project whose rules.xml declares a NAMED `.xlsx` module at the project root (single module, no filter), while the same shape with an `.xls` module and the template project (root `Main.xlsx`) are `migratable=true`. If withholding the offer for named root `.xlsx` modules is intentional, the rule is undocumented; if not, it is a gap in the EPBDS-16363/16364 offer logic. Ask the dev team before automating that shape.
+
 ## Other unfinished release tickets (a short checklist)
 
 | Ticket | Status | Essence | Note |

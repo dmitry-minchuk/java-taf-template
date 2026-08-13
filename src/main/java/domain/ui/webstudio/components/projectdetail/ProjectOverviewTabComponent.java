@@ -141,6 +141,19 @@ public class ProjectOverviewTabComponent extends BaseComponent {
         waitUntilSpinnerLoaded();
     }
 
+    public boolean isMigrateOffered() {
+        return migrateBtn.isVisible(DEFAULT_TIMEOUT_MS / 2);
+    }
+
+    public boolean isEditOffered() {
+        return editBtn.isVisible(DEFAULT_TIMEOUT_MS / 2);
+    }
+
+    public boolean isMigrateEnabled() {
+        migrateBtn.waitForVisible(DEFAULT_TIMEOUT_MS);
+        return migrateBtn.isEnabled();
+    }
+
     public String getModifiedBy() {
         String whole = modifiedValue.getText().trim();
         String date = modifiedDate.getText().trim();
