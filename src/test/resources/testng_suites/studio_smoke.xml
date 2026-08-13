@@ -25,6 +25,7 @@
     <test name="TestDeployProjectMessagesAndValidationUi"><classes><class name="tests.ui.webstudio.repository.TestDeployProjectMessagesAndValidationUi"/></classes></test>
     <test name="TestMainPageHasNoHorizontalScrollUi"><classes><class name="tests.ui.webstudio.repository.TestMainPageHasNoHorizontalScrollUi"/></classes></test>
     <test name="TestUploadModulePreservesExistingUi"><classes><class name="tests.ui.webstudio.repository.TestUploadModulePreservesExistingUi"/></classes></test>
+    <test name="TestReactSaveProjectSmoke"><classes><class name="tests.ui.webstudio.repository.TestReactSaveProjectSmoke"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionOracle"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnectionMsSql"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionMsSql"/></classes></test>
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>

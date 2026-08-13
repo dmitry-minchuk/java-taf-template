@@ -14,6 +14,9 @@
     <test name="TestGitCopyProjectIntoExistingBranchViaEditorTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaEditorTab"/></classes></test>
     <test name="TestGitSwitchToDeletedBranch"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/></classes></test>
     <test name="TestGitSwitchDeletedBranchPreset"><classes><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
+    <test name="TestReactBranchesSmoke"><classes><class name="tests.ui.webstudio.git.TestReactBranchesSmoke"/></classes></test>
+    <test name="TestReactMergeSmoke"><classes><class name="tests.ui.webstudio.git.TestReactMergeSmoke"/></classes></test>
+    <test name="TestReactMergeConflictSmoke"><classes><class name="tests.ui.webstudio.git.TestReactMergeConflictSmoke"/></classes></test>
     <test name="TestMergeBranchesNoConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesNoConflicts"/></classes></test>
     <test name="TestMergeBranchesWithConflicts"><classes><class name="tests.ui.webstudio.git.TestMergeBranchesWithConflicts"/></classes></test>
     <test name="TestProtectedBranchMergeProtection"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchMergeProtection"/></classes></test>
