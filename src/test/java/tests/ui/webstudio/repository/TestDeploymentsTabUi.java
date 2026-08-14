@@ -30,8 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestDeploymentsTabUi extends BaseTest {
 
-    private static final String PROJECT = "Тест-оПА Deploy";
-    private static final String DEPLOYMENT = "QaJourneyАо";
+    private static final String PROJECT = "Тестовый проект Deploy";
+    private static final String DEPLOYMENT = "QaJourneyДеплой";
     private static final String TEMPLATE = "Sample Project";
     private static final String EMPTY_CELL = "—";
 

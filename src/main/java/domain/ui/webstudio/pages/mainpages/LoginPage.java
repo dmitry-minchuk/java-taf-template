@@ -9,26 +9,18 @@ import helpers.utils.WaitUtil;
 
 public class LoginPage extends BasePage {
 
-    // Studio 6.4.0 raises a mandatory "Complete Your Profile" modal on the first login of every user;
-    // it blocks the whole shell (its overlay swallows top-nav clicks) until the profile is saved.
     private static final String COMPLETE_PROFILE_MODAL = "xpath=//div[@role='dialog']"
             + "[.//div[contains(@class,'ant-modal-title') and normalize-space()='Complete Your Profile']]";
     private static final String SHELL_READY_SELECTOR = ".ant-modal-wrap, ul.ant-menu-horizontal";
+    private static final int PROFILE_SAVE_ATTEMPTS = 3;
+    private static final int PROFILE_MODAL_PROBE_MS = DEFAULT_TIMEOUT_MS;
+    private static final int PROFILE_MODAL_LATE_PROBE_MS = 3000;
+    private static final int MODAL_CLOSED_POLL_MS = 500;
 
     private WebElement usernameField;
     private WebElement passwordField;
     private WebElement loginButton;
     private WebElement loginErrorMessage;
-    private static final int PROFILE_SAVE_ATTEMPTS = 3;
-    /**
-     * How long a user without a profile is given to have the modal rendered. The shell reports itself
-     * ready before React has decided whether the profile is complete, so the modal lands a beat later —
-     * measured at just over a second on CI. A shorter probe misses it, the login step walks away, and the
-     * modal then opens over the app and swallows every later click as
-     * "<div class=ant-modal-wrap> intercepts pointer events".
-     */
-    private static final int PROFILE_MODAL_PROBE_MS = DEFAULT_TIMEOUT_MS / 2;
-
     private WebElement completeProfileModal;
     private ConfigureCommitInfoComponent completeProfileComponent;
 
@@ -64,36 +56,29 @@ public class LoginPage extends BasePage {
         return new EditorPage();
     }
 
-    /**
-     * Fills the 6.4.0 "Complete Your Profile" modal when the logged-in user has no profile yet.
-     * Waits for either the modal or the loaded shell so a returning user costs no extra timeout.
-     */
     public void completeProfileIfRequested() {
         try {
             page.waitForSelector(SHELL_READY_SELECTOR,
                     new Page.WaitForSelectorOptions().setTimeout(DEFAULT_TIMEOUT_MS));
         } catch (RuntimeException notSignedIn) {
-            // Wrong credentials leave us on the login form: there is no shell and no profile modal to fill.
             return;
         }
-        if (!completeProfileModal.isVisible(PROFILE_MODAL_PROBE_MS)) {
-            return;
-        }
-        // Saving the profile occasionally leaves the modal on screen - a save that raced the shell finishing its
-        // own load. Filling it again is harmless and cheaper than failing the login step.
         for (int attempt = 1; attempt <= PROFILE_SAVE_ATTEMPTS; attempt++) {
-            completeProfileComponent.fillCommitInfoWithRandomData();
-            if (WaitUtil.waitForCondition(() -> !completeProfileModal.isVisible(500),
-                    DEFAULT_TIMEOUT_MS, 250, "Waiting for the Complete Your Profile modal to close")) {
+            int probeMs = attempt == 1 ? PROFILE_MODAL_PROBE_MS : PROFILE_MODAL_LATE_PROBE_MS;
+            if (!completeProfileModal.isVisible(probeMs)) {
                 return;
             }
-            LOGGER.info("The Complete Your Profile modal is still on screen, filling it again");
+            LOGGER.info("Filling the Complete Your Profile modal, attempt {}", attempt);
+            completeProfileComponent.fillCommitInfoWithRandomData();
+            WaitUtil.waitForCondition(() -> !completeProfileModal.isVisible(MODAL_CLOSED_POLL_MS),
+                    DEFAULT_TIMEOUT_MS, 250, "Waiting for the Complete Your Profile modal to close");
         }
-        throw new IllegalStateException("The Complete Your Profile modal did not close after "
-                + PROFILE_SAVE_ATTEMPTS + " attempts");
+        if (completeProfileModal.isVisible(MODAL_CLOSED_POLL_MS)) {
+            throw new IllegalStateException("The Complete Your Profile modal did not close after "
+                    + PROFILE_SAVE_ATTEMPTS + " attempts");
+        }
     }
 
-    /** True if the Studio login form is shown within the timeout (e.g. after sign-out). */
     public boolean isLoginFormDisplayed(int timeoutInMillis) {
         return usernameField.isVisible(timeoutInMillis);
     }

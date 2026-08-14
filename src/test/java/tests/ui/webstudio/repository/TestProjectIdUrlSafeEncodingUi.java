@@ -13,17 +13,18 @@ import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.LoginService;
 import helpers.service.UserService;
+import helpers.utils.EntityIdUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestProjectIdUrlSafeEncodingUi extends BaseTest {
 
-    private static final String PROJECT = "Тест-оПА";
+    private static final String PROJECT = "Тестовый проект";
     private static final String MODULE = "Main";
 
     @Test
@@ -40,12 +41,17 @@ public class TestProjectIdUrlSafeEncodingUi extends BaseTest {
 
         ProjectDetailPage detail = repositoryPage.openProjectsList().openProjectDetail(PROJECT);
         String detailUrl = DriverPool.getPage().url();
-        String idSegment = detailUrl.substring(detailUrl.lastIndexOf('/') + 1);
+        String idSegment = URLDecoder.decode(EntityIdUtil.lastUrlSegment(detailUrl), StandardCharsets.UTF_8);
         assertThat(idSegment)
-                .as("The project id in the URL must use only the URL-safe Base64 alphabet")
-                .matches("[A-Za-z0-9_=-]+");
-        String paddedId = idSegment + "=".repeat((4 - idSegment.length() % 4) % 4);
-        assertThat(new String(Base64.getUrlDecoder().decode(paddedId), StandardCharsets.UTF_8))
+                .as("The project id in the URL must use only the URL-safe Base64 alphabet, with the "
+                        + "padding percent-escaped at most")
+                .matches(EntityIdUtil.URL_SAFE_BASE64_PATTERN)
+                .doesNotContain("+", "/");
+        assertThat(idSegment)
+                .as("This project name must force a character the URL-safe alphabet replaces, otherwise the "
+                        + "check above proves nothing")
+                .containsAnyOf("-", "_");
+        assertThat(EntityIdUtil.decodeUrlSafeId(idSegment))
                 .as("The URL segment must decode as the URL-safe Base64 of the real project id")
                 .contains(PROJECT);
 
