@@ -9,6 +9,8 @@ import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
+import java.util.List;
+
 public class TabSwitcherComponent extends BaseComponent {
 
     private WebElement tabTemplate;
@@ -25,14 +27,18 @@ public class TabSwitcherComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        // The <li> carries the state class, so it is what "is this tab active?" is read from.
         tabTemplate = createScopedElement("xpath=./li[./span[text()='%s']]", "selectedTab");
-        // ...but the click goes to the label inside it. The <li> is 48.5px tall in a 49px header and sits at
-        // y=-1.3, i.e. its top pixel is above the viewport, and the page has nothing to scroll (scrollHeight
-        // == clientHeight). Playwright's scrollIntoViewIfNeeded therefore keeps trying to bring the <li>
-        // fully into view, never succeeds, and the click times out with "element is not stable". The label
-        // sits at y=14.8 and is fully inside the viewport, so clicking it lands every time.
         tabLabelTemplate = createScopedElement("xpath=./li[./span[text()='%s']]/span", "selectedTabLabel");
+    }
+
+    public List<String> getVisibleTabNames() {
+        return rootLocator.getLocator().locator("xpath=./li//span[not(*)]")
+                .allInnerTexts().stream().map(String::trim).filter(name -> !name.isEmpty()).toList();
+    }
+
+    public boolean isTabOfferedWithin(String tabName, long timeoutMs) {
+        return WaitUtil.waitForCondition(() -> getVisibleTabNames().contains(tabName),
+                timeoutMs, 500, "Waiting for the '" + tabName + "' tab to be offered");
     }
 
     @SuppressWarnings("unchecked")
@@ -55,7 +61,6 @@ public class TabSwitcherComponent extends BaseComponent {
     @Getter
     public enum TabName {
         EDITOR("Editor"),
-        // Renamed from "Repository" to "Projects" in the React nav (build 032c60a664ce+).
         REPOSITORY("Projects");
 
         private String value;

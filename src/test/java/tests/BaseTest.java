@@ -35,10 +35,12 @@ public abstract class BaseTest implements ITest {
 
     private static final ExecutionMode EXECUTION_MODE = ExecutionMode.current();
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void beforeMethod(ITestResult result) {
         setUniqueTestName(result);
         ReportPortalArtifactUtil.startTest(result, getTestName());
+
+        startAuxiliaryContainers();
 
         switch (EXECUTION_MODE) {
             case PLAYWRIGHT_LOCAL -> initializePlaywrightLocalTest(result);
@@ -48,7 +50,7 @@ public abstract class BaseTest implements ITest {
         LOGGER.info(new GetApplicationInfoMethod().getApplicationInfoOneLiner());
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void afterMethod(ITestResult result) {
         try {
             switch (EXECUTION_MODE) {
@@ -56,8 +58,21 @@ public abstract class BaseTest implements ITest {
                 case PLAYWRIGHT_DOCKER -> cleanupPlaywrightDockerTest(result);
             }
         } finally {
-            ReportPortalArtifactUtil.finishTest(result);
+            try {
+                ReportPortalArtifactUtil.finishTest(result);
+                stopAuxiliaryContainers();
+            } finally {
+                if (NetworkPool.getNetwork() != null) {
+                    NetworkPool.closeNetwork();
+                }
+            }
         }
+    }
+
+    protected void startAuxiliaryContainers() {
+    }
+
+    protected void stopAuxiliaryContainers() {
     }
 
     private void initializePlaywrightLocalTest(ITestResult result) {
@@ -146,10 +161,6 @@ public abstract class BaseTest implements ITest {
         DriverPool.closePlaywright();
 
         AppContainerPool.closeAppContainer();
-
-        if (NetworkPool.getNetwork() != null) {
-            NetworkPool.closeNetwork();
-        }
     }
 
     private void cleanupPlaywrightDockerTest(ITestResult result) {
@@ -170,7 +181,6 @@ public abstract class BaseTest implements ITest {
         DockerDriverPool.closePlaywrightDocker();
 
         AppContainerPool.closeAppContainer();
-        NetworkPool.closeNetwork();
 
         WaitUtil.sleep(2000, "Waiting for Docker daemon to complete resource cleanup");
     }

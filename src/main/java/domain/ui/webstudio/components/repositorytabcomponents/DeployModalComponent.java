@@ -5,6 +5,7 @@ import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
+
 public class DeployModalComponent extends BaseComponent {
 
     private static final String MODAL_BASE = "//div[contains(@class,'ant-modal-container') and .//form[@id='deploy_form']]";
@@ -39,7 +40,6 @@ public class DeployModalComponent extends BaseComponent {
         commentTextarea = new WebElement(page, "xpath=" + MODAL_BASE + "//textarea[@id='deploy_form_comment']", "commentTextarea");
         deployButton = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-modal-footer')]//button[contains(@class,'ant-btn-primary')]", "deployButton");
         cancelButton = new WebElement(page, "xpath=" + MODAL_BASE + "//div[contains(@class,'ant-modal-footer')]//button[not(contains(@class,'ant-btn-primary'))]", "cancelButton");
-        // Ant Design dropdown options render at body level
         firstDropdownOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item') and contains(@class,'ant-select-item-option') and @title]", "firstDropdownOption");
         dropdownOption = new WebElement(page, "xpath=//div[contains(@class,'ant-select-item') and contains(@class,'ant-select-item-option') and @title='%s']", "dropdownOption");
         successNotification = new WebElement(page, "xpath=//div[contains(@class,'ant-notification')]//div[contains(@class,'ant-notification-notice-success')]", "successNotification");
@@ -71,9 +71,21 @@ public class DeployModalComponent extends BaseComponent {
     public DeployModalComponent fillDeploymentName(String name) {
         deploymentNameSelect.click();
         deploymentNameSearchInput.fillSequentially(name).press("Tab");
-        // Click outside to trigger onBlur which sets the new deployment name
-        //commentTextarea.click();
         return this;
+    }
+
+    public DeployModalComponent selectExistingDeploymentName(String name) {
+        deploymentNameSelect.click();
+        dropdownOption.format(name).waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        return this;
+    }
+
+    public void deployToExistingDeployment(String repository, String deploymentName, String comment) {
+        waitForModal();
+        selectRepository(repository);
+        selectExistingDeploymentName(deploymentName);
+        fillComment(comment);
+        clickDeploy();
     }
 
     public DeployModalComponent fillComment(String comment) {
@@ -105,8 +117,6 @@ public class DeployModalComponent extends BaseComponent {
     public boolean isSuccessNotificationVisible() {
         return successNotification.isVisible(DEFAULT_TIMEOUT_MS);
     }
-
-    /** The wording of the notification the deploy raised, title and description together. */
     public String getSuccessNotificationText() {
         successNotification.waitForVisible(DEFAULT_TIMEOUT_MS);
         return successNotification.getText().trim();

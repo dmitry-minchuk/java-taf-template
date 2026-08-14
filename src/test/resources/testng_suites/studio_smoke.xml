@@ -30,6 +30,11 @@
     <test name="TestFilesTabStaleSelectionUi"><classes><class name="tests.ui.webstudio.repository.TestFilesTabStaleSelectionUi"/></classes></test>
     <test name="TestDatatypeRoundTripUi"><classes><class name="tests.ui.webstudio.repository.TestDatatypeRoundTripUi"/></classes></test>
     <test name="TestDeploymentsTabUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentsTabUi"/></classes></test>
+    <test name="TestDeploymentsEmptyStateUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentsEmptyStateUi"/></classes></test>
+    <test name="TestDeploymentsListUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentsListUi"/></classes></test>
+    <test name="TestDeploymentWorkspaceUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentWorkspaceUi"/></classes></test>
+    <test name="TestDeploymentReplacesContentUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentReplacesContentUi"/></classes></test>
+    <test name="TestDeploymentRepositoryIsolationUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentRepositoryIsolationUi"/></classes></test>
     <test name="TestLiveProjectsUpdatesUi"><classes><class name="tests.ui.webstudio.repository.TestLiveProjectsUpdatesUi"/></classes></test>
     <test name="TestDeployProjectMessagesAndValidationUi"><classes><class name="tests.ui.webstudio.repository.TestDeployProjectMessagesAndValidationUi"/></classes></test>
     <test name="TestMainPageHasNoHorizontalScrollUi"><classes><class name="tests.ui.webstudio.repository.TestMainPageHasNoHorizontalScrollUi"/></classes></test>

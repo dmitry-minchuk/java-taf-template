@@ -46,6 +46,7 @@ public class DeployInfrastructureService {
     private static final int MSSQL_PORT = 1433;
     private static final String POSTGRES_ALIAS = "postgres";
     private static final String POSTGRES_JDBC_URL = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/openl?currentSchema=repository";
+    private static final String POSTGRES_SECOND_JDBC_URL = "jdbc:postgresql://" + POSTGRES_ALIAS + ":5432/openl?currentSchema=repository_second";
     private static final String ORACLE_ALIAS = "oracle";
     private static final String MSSQL_ALIAS = "sqlserver";
     private static final String MSSQL_DB_NAME = "openl";
@@ -63,6 +64,7 @@ public class DeployInfrastructureService {
     private final PostgresMode postgresMode;
     private final boolean withWs;
     private final boolean withS3Mock;
+    private final boolean withSecondProductionRepository;
 
     private Network network;
     private PostgreSQLContainer<?> postgresContainer;
@@ -73,11 +75,13 @@ public class DeployInfrastructureService {
     private S3Client s3Client;
     private String bucketName;
 
-    private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs, boolean withS3Mock) {
+    private DeployInfrastructureService(DbType dbType, PostgresMode postgresMode, boolean withWs, boolean withS3Mock,
+                                        boolean withSecondProductionRepository) {
         this.dbType = dbType;
         this.postgresMode = postgresMode;
         this.withWs = withWs;
         this.withS3Mock = withS3Mock;
+        this.withSecondProductionRepository = withSecondProductionRepository;
     }
 
     public static Builder builder() {
@@ -134,14 +138,7 @@ public class DeployInfrastructureService {
         if (s3Client != null) {
             s3Client.close();
         }
-        if (network != null) {
-            // Without this the per-test bridge networks accumulate for the whole run and Docker's
-            // address pool runs dry ("all predefined address pools have been fully subnetted")
-            // after ~30 tests — Ryuk only reaps networks when the JVM exits.
-            LOGGER.info("Removing test network...");
-            network.close();
-            network = null;
-        }
+        network = null;
     }
 
     public Map<String, String> getFilesToCopy() {
@@ -298,8 +295,6 @@ public class DeployInfrastructureService {
         }
     }
 
-    // ==================== Private ====================
-
     private void startPostgres() {
         LOGGER.info("Starting PostgreSQL container...");
         postgresContainer = new PostgreSQLContainer<>(
@@ -332,8 +327,11 @@ public class DeployInfrastructureService {
                 postgresContainer.getPassword());
              var stmt = conn.createStatement()) {
             stmt.execute("CREATE SCHEMA IF NOT EXISTS repository");
+            if (withSecondProductionRepository) {
+                stmt.execute("CREATE SCHEMA IF NOT EXISTS repository_second");
+            }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create 'repository' schema", e);
+            throw new RuntimeException("Failed to create the repository schemas", e);
         }
     }
 
@@ -425,14 +423,28 @@ public class DeployInfrastructureService {
     private Path createProductionRepoProperties() {
         try {
             Path propsFile = Files.createTempFile("openl-deploy-", ".properties");
-            Files.writeString(propsFile, String.join("\n",
+            String primaryOnly = String.join("\n",
                     "production-repository-configs = production",
                     "repository.production.name = Deployment",
                     "repository.production.$$ref = repo-jdbc",
                     "repository.production.uri = " + POSTGRES_JDBC_URL,
                     "repository.production.login = openl",
                     "repository.production.password = openl",
-                    ""));
+                    "");
+            String withSecond = String.join("\n",
+                    "production-repository-configs = production,production-second",
+                    "repository.production.name = Deployment",
+                    "repository.production.$$ref = repo-jdbc",
+                    "repository.production.uri = " + POSTGRES_JDBC_URL,
+                    "repository.production.login = openl",
+                    "repository.production.password = openl",
+                    "repository.production-second.name = Deployment Two",
+                    "repository.production-second.$ref = repo-jdbc",
+                    "repository.production-second.uri = " + POSTGRES_SECOND_JDBC_URL,
+                    "repository.production-second.login = openl",
+                    "repository.production-second.password = openl",
+                    "");
+            Files.writeString(propsFile, withSecondProductionRepository ? withSecond : primaryOnly);
             propsFile.toFile().setReadable(true, false);
             return propsFile;
         } catch (IOException e) {
@@ -493,8 +505,6 @@ public class DeployInfrastructureService {
         }
     }
 
-    // ==================== Builder ====================
-
     public record ObjectSnapshot(String versionId, Instant lastModified, long size, String etag) {
         private static ObjectSnapshot from(HeadObjectResponse response) {
             return new ObjectSnapshot(
@@ -510,6 +520,7 @@ public class DeployInfrastructureService {
         private PostgresMode postgresMode = PostgresMode.PRODUCTION_REPO;
         private boolean withWs = false;
         private boolean withS3Mock = false;
+        private boolean withSecondProductionRepository = false;
 
         public Builder withS3Mock() {
             this.withS3Mock = true;
@@ -543,6 +554,11 @@ public class DeployInfrastructureService {
             return this;
         }
 
+        public Builder withSecondProductionRepository() {
+            this.withSecondProductionRepository = true;
+            return this;
+        }
+
         public DeployInfrastructureService build() {
             if (withWs && dbType != DbType.POSTGRES) {
                 throw new IllegalStateException("WS container requires PostgreSQL");
@@ -550,7 +566,11 @@ public class DeployInfrastructureService {
             if (withWs && postgresMode == PostgresMode.SECURITY_DB) {
                 throw new IllegalStateException("WS container requires PostgreSQL in PRODUCTION_REPO mode");
             }
-            return new DeployInfrastructureService(dbType, postgresMode, withWs, withS3Mock);
+            if (withSecondProductionRepository && postgresMode != PostgresMode.PRODUCTION_REPO) {
+                throw new IllegalStateException("A second production repository requires PostgreSQL in PRODUCTION_REPO mode");
+            }
+            return new DeployInfrastructureService(dbType, postgresMode, withWs, withS3Mock,
+                    withSecondProductionRepository);
         }
     }
 }
