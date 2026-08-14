@@ -18,8 +18,8 @@ public class TestCreateTableTypesUi extends BaseTest {
     private static final String MODULE = "Main";
 
     @Test
-    @TestCaseId("EPBDS-16313")
-    @Description("The Create Table modal must create a decision Rules table that compiles and renders in the module.")
+    @TestCaseId("IPBQA-33020")
+    @Description("EPBDS-16313 The Create Table modal must create a decision Rules table that compiles and renders in the module.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateRulesTableViaModal() {
         EditorPage editorPage = openEditor();
@@ -39,8 +39,8 @@ public class TestCreateTableTypesUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16313")
-    @Description("The Create Table modal must create a Spreadsheet table that compiles and renders in the module.")
+    @TestCaseId("IPBQA-33021")
+    @Description("EPBDS-16313 The Create Table modal must create a Spreadsheet table that compiles and renders in the module.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateSpreadsheetTableViaModal() {
         EditorPage editorPage = openEditor();
@@ -58,7 +58,7 @@ public class TestCreateTableTypesUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16313")
+    @TestCaseId("IPBQA-33022")
     @Description("The Create Table modal must create a transposed Test table for the template's Hello table "
             + "(the transposed orientation is the EPBDS-6912 addition).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

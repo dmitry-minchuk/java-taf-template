@@ -21,7 +21,7 @@ public class TestCreateTableRangeConditionUi extends BaseTest {
     private static final String RANGE = "18-30";
 
     @Test
-    @TestCaseId("EPBDS-16359")
+    @TestCaseId("IPBQA-33024")
     @Description("EPBDS-16359: a rules condition column typed Integer must accept the range 18-30 and write it "
             + "as the range OpenL matches by, not as a mangled number like 181.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

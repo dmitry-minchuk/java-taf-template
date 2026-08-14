@@ -21,7 +21,7 @@ public class TestTraceDebuggerBreakpointsUi extends BaseTest {
     private static final String TABLE_NAME = "Hello";
 
     @Test
-    @TestCaseId("EPBDS-16195")
+    @TestCaseId("IPBQA-33032")
     @Description("EPBDS-16195: the advanced trace opens the step debugger suspended at the start; a rule-fire "
             + "breakpoint suspends the run when the rule fires, a watch shows its value, stepping and resuming "
             + "finish the run, and rerun starts the session again.")

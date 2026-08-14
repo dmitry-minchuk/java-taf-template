@@ -26,7 +26,7 @@ public class TestDeleteBranchDialogUi extends BaseTest {
     private static final String MASTER = "master";
 
     @Test
-    @TestCaseId("EPBDS-16378")
+    @TestCaseId("IPBQA-33015")
     @Description("Delete Branch happy path: the dialog names the branch it is about to delete (guards the "
             + "EPBDS-16440 stale-target defect on a settled page), the branch disappears from the UI and from "
             + "Git after confirmation, and the project falls back to the default branch.")

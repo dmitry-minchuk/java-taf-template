@@ -21,7 +21,7 @@ public class TestTraceBusinessModeUi extends BaseTest {
     private static final String TABLE_NAME = "Hello";
 
     @Test
-    @TestCaseId("EPBDS-16292")
+    @TestCaseId("IPBQA-33031")
     @Description("EPBDS-16292: without the Advanced tracer switch the trace opens in the business view - no "
             + "debugger toolbar, the result-oriented tree names the fired rule, and the detailed toggle breaks "
             + "the decision table into its conditions; closing and relaunching works cleanly.")

@@ -26,8 +26,8 @@ public class TestDeleteBranchLastProjectCopyUi extends BaseTest {
     private static final String UNSAFE_CONFIRM_LABEL = "I understand the consequences, delete this branch";
 
     @Test
-    @TestCaseId("EPBDS-16378")
-    @Description("Deleting the only branch that holds a project must warn that the project goes with it, require "
+    @TestCaseId("IPBQA-33016")
+    @Description("EPBDS-16378 Deleting the only branch that holds a project must warn that the project goes with it, require "
             + "the explicit unsafe confirmation, leave everything intact on Cancel, and on confirm delete the "
             + "branch together with the project while other projects survive.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

@@ -23,8 +23,8 @@ public class TestTraceDebuggerNeverHitRuleUi extends BaseTest {
     private static final String NEVER_FIRED_RULE = "R40";
 
     @Test
-    @TestCaseId("EPBDS-16406")
-    @Description("Negative: a breakpoint on a rule the input never fires must not suspend the run - with "
+    @TestCaseId("IPBQA-33033")
+    @Description("EPBDS-16406 Negative: a breakpoint on a rule the input never fires must not suspend the run - with "
             + "hour=10 only R10 fires, so breaking on R40 lets the run finish without an extra stop.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testBreakpointOnNeverFiredRuleDoesNotSuspend() {

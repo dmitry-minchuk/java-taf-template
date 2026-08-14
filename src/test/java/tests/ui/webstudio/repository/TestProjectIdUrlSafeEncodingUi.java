@@ -27,7 +27,7 @@ public class TestProjectIdUrlSafeEncodingUi extends BaseTest {
     private static final String MODULE = "Main";
 
     @Test
-    @TestCaseId("EPBDS-16402")
+    @TestCaseId("IPBQA-33034")
     @Description("EPBDS-16402: the standard Base64 of this project's id contains both '+' and '/', so a regression "
             + "to non-URL-safe ids breaks every screen with HTTP 400. The id in the URL must stay URL-safe through "
             + "create, project detail, Files, Revisions, the editor bridge, a deep link and delete.")

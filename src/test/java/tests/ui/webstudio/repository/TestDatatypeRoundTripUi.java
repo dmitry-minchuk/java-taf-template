@@ -34,7 +34,7 @@ public class TestDatatypeRoundTripUi extends BaseTest {
     private static final String RENAMED_FIELD = "renamedName";
 
     @Test
-    @TestCaseId("EPBDS-16428")
+    @TestCaseId("IPBQA-33041")
     @Description("EPBDS-16428 and EPBDS-16426: a titled datatype whose columns are REORDERED (Name before Type) "
             + "must survive an editor round-trip - the title row stays a title, the first field stays a field, "
             + "the edited field name persists, and the Type cell keeps its link to the datatype it names.")

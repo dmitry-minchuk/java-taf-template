@@ -49,7 +49,7 @@ public class TestDeploymentsListUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16307")
+    @TestCaseId("IPBQA-33012")
     @Description("EPBDS-16307: the Deployments list filters by its search box, states when nothing matches, "
             + "restores on Clear search, keeps reporting the repository total, pages through ?size, and a "
             + "search made from a later page shows the match instead of an empty page.")

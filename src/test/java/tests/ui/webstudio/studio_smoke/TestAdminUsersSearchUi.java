@@ -23,7 +23,7 @@ public class TestAdminUsersSearchUi extends BaseTest {
     private static final String SECOND_USER = "searchable_15806";
 
     @Test
-    @TestCaseId("EPBDS-16214")
+    @TestCaseId("IPBQA-33038")
     @Description("EPBDS-15806 ordered by EPBDS-16233: the admin Users table must filter by the search input - a "
             + "matching fragment keeps only the matching user, a garbage query hides every user, and clearing "
             + "the search restores the full list.")

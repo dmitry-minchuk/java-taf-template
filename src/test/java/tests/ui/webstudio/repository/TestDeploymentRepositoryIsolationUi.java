@@ -48,7 +48,7 @@ public class TestDeploymentRepositoryIsolationUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16307")
+    @TestCaseId("IPBQA-33011")
     @Description("Two deployment repositories holding a deployment of the very same name must stay isolated: "
             + "each list shows its own single row, the rail switch is reflected in the URL, and the URL-safe "
             + "id of each deployment decodes to its own repository, not to the other one (EPBDS-16403).")

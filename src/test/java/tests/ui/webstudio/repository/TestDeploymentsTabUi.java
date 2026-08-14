@@ -53,7 +53,7 @@ public class TestDeploymentsTabUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16307")
+    @TestCaseId("IPBQA-33010")
     @Description("EPBDS-16307 with the EPBDS-16403 guard: the Deployments tab starts empty, shows a deployed "
             + "project, isolates repositories, opens a deployment by its URL-safe id, survives a deep-link "
             + "reload, and a redeploy selected from the dropdown updates the same configuration through "

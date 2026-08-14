@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestDeploymentsEmptyStateUi extends BaseTest {
 
     @Test
-    @TestCaseId("EPBDS-16307")
-    @Description("Negative: without a deployment repository the Deployments screen states that none is "
+    @TestCaseId("IPBQA-33009")
+    @Description("EPBDS-16307 Negative: without a deployment repository the Deployments screen states that none is "
             + "configured, the header does not offer the Deployments tab, and a project row offers no Deploy "
             + "action while other row actions are still listed.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

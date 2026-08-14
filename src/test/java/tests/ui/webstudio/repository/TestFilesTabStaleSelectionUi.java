@@ -23,7 +23,7 @@ public class TestFilesTabStaleSelectionUi extends BaseTest {
     private static final String MISSING_TEXT_FILE = "NeverExisted.xml";
 
     @Test
-    @TestCaseId("EPBDS-16437")
+    @TestCaseId("IPBQA-33039")
     @Description("EPBDS-16437: deleting the file the Files tab has selected must drop that selection - the file "
             + "pane must not be left with the 'The resource is not found.' banner.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
@@ -45,7 +45,7 @@ public class TestFilesTabStaleSelectionUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16441")
+    @TestCaseId("IPBQA-33040")
     @Description("EPBDS-16441 (open defect, expected to fail until fixed): a deep link naming a file the tree "
             + "does not hold must have its stale selection dropped, but the Files pane opens that phantom file "
             + "and shows the 'The resource is not found.' banner instead.")

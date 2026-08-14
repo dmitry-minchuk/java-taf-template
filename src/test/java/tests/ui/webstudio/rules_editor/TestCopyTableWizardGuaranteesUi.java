@@ -22,7 +22,7 @@ public class TestCopyTableWizardGuaranteesUi extends BaseTest {
     private static final String VERSION = "0.0.2";
 
     @Test
-    @TestCaseId("EPBDS-16388")
+    @TestCaseId("IPBQA-33026")
     @Description("The copy wizard guaranteed version uniqueness; the React modal must reject copying a table "
             + "as a version that already exists. KNOWN-FAILING: the modal accepts the duplicate version."
             + " Known bug: EPBDS-16388.")

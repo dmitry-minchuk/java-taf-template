@@ -22,7 +22,7 @@ public class TestCopyTableStylePreservedUi extends BaseTest {
     private static final String COPY_NAME = "HelloStyledCopy";
 
     @Test
-    @TestCaseId("EPBDS-16412")
+    @TestCaseId("IPBQA-33025")
     @Description("EPBDS-16354 verification ordered by EPBDS-16412: copying a table must preserve the table style - "
             + "the copy's rendered header carries the same background as the original's.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

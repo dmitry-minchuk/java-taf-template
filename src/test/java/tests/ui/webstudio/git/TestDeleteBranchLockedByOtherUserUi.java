@@ -28,7 +28,7 @@ public class TestDeleteBranchLockedByOtherUserUi extends BaseTest {
     private static final String UPLOAD_FILE = "TestFileAddDelete.rules.xls";
 
     @Test
-    @TestCaseId("EPBDS-16255")
+    @TestCaseId("IPBQA-33017")
     @Description("EPBDS-16255: a branch on which the project is locked by another user must not be deletable - "
             + "the attempt is rejected with the lock message naming the locking user and the branch survives.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

@@ -23,7 +23,7 @@ public class TestProjectNonAsciiNameDeepLinkUi extends BaseTest {
     private static final String PROJECT = "Ставки 🚀 Проверка";
 
     @Test
-    @TestCaseId("EPBDS-16402")
+    @TestCaseId("IPBQA-33035")
     @Description("EPBDS-16402: a project named with Cyrillic and an emoji must render correctly on the list, "
             + "the detail header and the Overview panel, and its deep link must survive a fresh login session.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

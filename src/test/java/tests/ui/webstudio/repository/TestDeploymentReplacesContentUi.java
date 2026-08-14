@@ -47,8 +47,8 @@ public class TestDeploymentReplacesContentUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16307")
-    @Description("Deploying another project into an existing deployment REPLACES its content: the deployment "
+    @TestCaseId("IPBQA-33014")
+    @Description("EPBDS-16307 Deploying another project into an existing deployment REPLACES its content: the deployment "
             + "holds the newly deployed project alone and the previously deployed one is gone. This is "
             + "destructive behaviour, so the test pins it against a silent change.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)

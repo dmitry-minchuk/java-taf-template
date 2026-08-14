@@ -29,7 +29,7 @@ public class TestMigrateKeepsFormatsAndFiltersUi extends BaseTest {
     private static final String FILTER_PATTERN = "foo*";
 
     @Test
-    @TestCaseId("EPBDS-16364")
+    @TestCaseId("IPBQA-33029")
     @Description("EPBDS-16364 and EPBDS-16365: migrating a legacy descriptor with a declared .xls module and a "
             + "module method-filter must keep the .xls module reachable and must not drop the method "
             + "restriction - the filter pattern survives in the rewritten rules.xml.")

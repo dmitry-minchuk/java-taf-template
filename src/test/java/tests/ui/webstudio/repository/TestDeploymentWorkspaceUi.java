@@ -42,7 +42,7 @@ public class TestDeploymentWorkspaceUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16403")
+    @TestCaseId("IPBQA-33013")
     @Description("EPBDS-16403: a well-formed deployment id that names no existing deployment must land on the "
             + "application 404 page rather than a broken detail screen, and the Deployments list must keep "
             + "working afterwards.")

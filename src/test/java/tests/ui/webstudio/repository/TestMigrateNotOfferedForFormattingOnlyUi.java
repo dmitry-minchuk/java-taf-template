@@ -24,7 +24,7 @@ public class TestMigrateNotOfferedForFormattingOnlyUi extends BaseTest {
     private static final String FIXTURE_ZIP = "MigrateModernProject.zip";
 
     @Test
-    @TestCaseId("EPBDS-16408")
+    @TestCaseId("IPBQA-33030")
     @Description("EPBDS-16408: a modern project whose rules.xml differs from the canonical form only by "
             + "formatting must get Edit, not a Migrate offer - migration is about declarations, not bytes.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

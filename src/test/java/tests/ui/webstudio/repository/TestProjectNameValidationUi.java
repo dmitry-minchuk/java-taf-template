@@ -27,8 +27,8 @@ public class TestProjectNameValidationUi extends BaseTest {
     private static final String TRIMMED_NAME = "SpacedName";
 
     @Test
-    @TestCaseId("EPBDS-16402")
-    @Description("Negative: the Create Project modal must reject a name ending with a dot and a name with a "
+    @TestCaseId("IPBQA-33036")
+    @Description("EPBDS-16402 Negative: the Create Project modal must reject a name ending with a dot and a name with a "
             + "forbidden ':' character using the specific server validation message, must not create anything, "
             + "and must trim leading/trailing spaces from an otherwise valid name.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
@@ -71,7 +71,7 @@ public class TestProjectNameValidationUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16439")
+    @TestCaseId("IPBQA-33037")
     @Description("EPBDS-16439 (open defect, expected to fail until fixed): a name containing '/' must get the same "
             + "specific forbidden-characters validation message as every other forbidden character, but the create "
             + "request dies on URL routing with a blank 400 and the modal shows the generic "

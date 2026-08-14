@@ -20,7 +20,7 @@ public class TestCreateTableNameValidationUi extends BaseTest {
     private static final String LONG_NAME = "QaVeryLongTableNameOverThirtyOneChars";
 
     @Test
-    @TestCaseId("EPBDS-16313")
+    @TestCaseId("IPBQA-33023")
     @Description("Negative: the Create Table modal must block creation while the name is empty or starts with a "
             + "digit, showing the specific naming hint; a name longer than Excel's 31-symbol sheet limit must "
             + "still create cleanly because the mirrored sheet name is clipped (EPBDS-16355).")

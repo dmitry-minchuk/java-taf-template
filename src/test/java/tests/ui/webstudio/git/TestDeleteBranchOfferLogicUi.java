@@ -20,8 +20,8 @@ public class TestDeleteBranchOfferLogicUi extends BaseTest {
     private static final String PROTECTED_BRANCH = "release-guard";
 
     @Test
-    @TestCaseId("EPBDS-16378")
-    @Description("Negative: Delete Branch must not be offered on the default branch - deleting it can never succeed.")
+    @TestCaseId("IPBQA-33018")
+    @Description("EPBDS-16378 Negative: Delete Branch must not be offered on the default branch - deleting it can never succeed.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDeleteBranchNotOfferedOnDefaultBranch() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
@@ -41,8 +41,8 @@ public class TestDeleteBranchOfferLogicUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16378")
-    @Description("Negative: with the protected-branch bypass disabled, Delete Branch must not be offered on a "
+    @TestCaseId("IPBQA-33019")
+    @Description("EPBDS-16378 Negative: with the protected-branch bypass disabled, Delete Branch must not be offered on a "
             + "protected branch - the server would refuse the deletion with HTTP 403.")
     @AppContainerConfig(startParams = AppContainerStartParameters.STUDIO_PROTECTED_NO_BYPASS_PARAMS)
     public void testDeleteBranchNotOfferedOnProtectedBranch() {

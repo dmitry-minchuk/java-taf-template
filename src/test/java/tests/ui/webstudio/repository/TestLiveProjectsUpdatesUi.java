@@ -30,7 +30,7 @@ public class TestLiveProjectsUpdatesUi extends BaseTest {
     private static final String TEMPLATE = "Sample Project";
 
     @Test
-    @TestCaseId("EPBDS-16314")
+    @TestCaseId("IPBQA-33042")
     @Description("EPBDS-16314: the Projects list must refresh itself when a project is created through another "
             + "origin (REST) - a change notification arrives over the WebSocket and the new row appears without "
             + "any reload action, and a manual reload then shows the very same list.")
@@ -65,7 +65,7 @@ public class TestLiveProjectsUpdatesUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16384")
+    @TestCaseId("IPBQA-33043")
     @Description("EPBDS-16384 guard: change pings arriving while the Projects screen reloads must leave it "
             + "interactive - every pushed project lands in the list and the name filter still narrows it.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)

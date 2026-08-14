@@ -27,7 +27,7 @@ public class TestMigrateBlockedByUndeclaredWorkbookUi extends BaseTest {
     private static final String FIXTURE_ZIP = "MigrateBlockedProject.zip";
 
     @Test
-    @TestCaseId("EPBDS-16363")
+    @TestCaseId("IPBQA-33028")
     @Description("EPBDS-16363: a project with an undeclared root workbook must not be silently widened - the "
             + "Migrate offer is withheld because the rewrite would turn Extra.xls into a module, Edit stays "
             + "available, and rules.xml keeps its original explicit module declaration.")
