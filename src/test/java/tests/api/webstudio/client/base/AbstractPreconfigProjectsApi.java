@@ -25,6 +25,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,20 +35,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-/**
- * Per-preconfig-project lifecycle:
- *   @BeforeClass → start deploy infrastructure (PostgreSQL production repo + ruleservice WS
- *                  container) and a fresh WebStudio wired to it, upload the project ZIP
- *   @Test        → open, compile (errors == 0), deploy to the production repository, verify the
- *                  service is served by ruleservice (GET /admin/services is 200 and lists it)
- *   @AfterClass  → stop all containers
- *
- * Subclasses are created dynamically via {@link tests.api.webstudio.client.preconfig.TestPreconfigProjects} {@code @Factory}, one
- * instance per OpenL project discovered in the local Mercurial preconfig clones. The compile
- * part mirrors {@link AbstractZippedProjectsApi}; the deploy part goes through
- * {@code POST /rest/deployments} (same operation as the UI DeployModal) and asserts the
- * ruleservice side, which the zip and central regressions do not cover.
- */
 public abstract class AbstractPreconfigProjectsApi implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(AbstractPreconfigProjectsApi.class);
     private static final Duration CONTAINER_STARTUP_TIMEOUT = Duration.ofMinutes(10);
@@ -61,6 +49,7 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
     private final PreconfigProject project;
     private DeployInfrastructureService deployInfra;
     private String uploadFailure;
+    private String infrastructureFailure;
 
     protected AbstractPreconfigProjectsApi(PreconfigProject project) {
         this.project = project;
@@ -72,31 +61,53 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
 
     @BeforeClass
     public void setUp() {
-        startDeployInfraWithRetry();
-        startStudioContainer();
-        AuthorizedApiMethod.startSession();
-        configureCommitIdentity();
-
-        LOGGER.info("Uploading preconfig [{}] (project [{}]) from {}",
-                project.label(), project.projectName(), project.zip().getName());
-        Response upload = new RepositoryProjectsMethod()
-                .uploadProject(DESIGN_REPO, project.projectName(), project.zip());
-        if (upload.getStatusCode() >= 300) {
-            uploadFailure = String.format("Upload failed for %s (project name [%s]): HTTP %d — %s",
-                    project.zip().getAbsolutePath(), project.projectName(),
-                    upload.getStatusCode(), upload.getBody().asString());
-            LOGGER.warn(uploadFailure);
+        if (project.buildFailure() != null) {
+            LOGGER.warn("No infrastructure is started for preconfig [{}]: its sources never became an uploadable "
+                    + "ZIP, so the test reports the build failure instead", project.label());
+            return;
         }
+        try {
+            startDeployInfraWithRetry();
+            startStudioContainer();
+            AuthorizedApiMethod.startSession();
+            configureCommitIdentity();
+
+            LOGGER.info("Uploading preconfig [{}] (project [{}]) from {}",
+                    project.label(), project.projectName(), project.zip().getName());
+            Response upload = new RepositoryProjectsMethod()
+                    .uploadProject(DESIGN_REPO, project.projectName(), project.zip());
+            if (upload.getStatusCode() >= 300) {
+                uploadFailure = String.format("Upload failed for %s (project name [%s]): HTTP %d — %s",
+                        project.zip().getAbsolutePath(), project.projectName(),
+                        upload.getStatusCode(), upload.getBody().asString());
+                LOGGER.warn(uploadFailure);
+            }
+        } catch (Throwable e) {
+            infrastructureFailure = describe(e);
+            LOGGER.warn("Could not prepare the environment for preconfig [{}] — it will be reported as a failed "
+                    + "test instead of taking the whole launch down. {}", project.label(), infrastructureFailure);
+        }
+    }
+
+    private static String describe(Throwable e) {
+        StringWriter trace = new StringWriter();
+        e.printStackTrace(new PrintWriter(trace));
+        return trace.toString();
     }
 
     @AfterClass(alwaysRun = true)
     public void tearDown() {
-        AuthorizedApiMethod.clearSession();
-        if (AppContainerPool.get() != null) {
-            AppContainerPool.closeAppContainer();
-        }
-        if (deployInfra != null) {
-            deployInfra.cleanup();
+        try {
+            AuthorizedApiMethod.clearSession();
+            if (AppContainerPool.get() != null) {
+                AppContainerPool.closeAppContainer();
+            }
+            if (deployInfra != null) {
+                deployInfra.cleanup();
+            }
+        } catch (Throwable e) {
+            LOGGER.warn("Cleanup failed for preconfig [{}]; its own result stands and the other projects keep "
+                    + "running. {}", project.label(), describe(e));
         }
     }
 
@@ -107,6 +118,17 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
 
     @Test
     public void testPreconfigProject() {
+        if (project.buildFailure() != null) {
+            fail(String.format("Preconfig [%s] (project [%s]) could not be validated — preparing its sources "
+                            + "failed:%n%s", project.label(), project.projectName(), project.buildFailure()));
+        }
+
+        if (infrastructureFailure != null) {
+            fail(String.format("Preconfig [%s] (project [%s]) could not be validated — its WebStudio, PostgreSQL "
+                            + "and ruleservice environment never came up:%n%s",
+                    project.label(), project.projectName(), infrastructureFailure));
+        }
+
         if (uploadFailure != null) {
             fail(String.format("Preconfig [%s] — upload failed:%n  %s%nSources: %s",
                     project.label(), uploadFailure, project.zip().getAbsolutePath()));
@@ -119,8 +141,6 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
         assertThat(open.getStatusCode() < 300).as("%s", String.format("Failed to open project [%s]: HTTP %d — %s",
                         project.projectName(), open.getStatusCode(), open.getBody().asString())).isTrue();
 
-        // tests/run opens the module and awaits compilation server-side — it is the compile
-        // trigger; a plain open leaves compileState 'idle' forever.
         Response run = new ProjectTestsMethod().runAllTests(projectId);
         assertThat(run.getStatusCode() == 200 || run.getStatusCode() == 202 || run.getStatusCode() == 404).as("%s", String.format("Failed to trigger compile for [%s]: HTTP %d — %s",
                         project.projectName(), run.getStatusCode(), run.getBody().asString())).isTrue();
@@ -171,7 +191,6 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
                 project.serviceName(), project.projectName(), lastSeen));
     }
 
-    /** Ruleservice names the service from rules-deploy.xml serviceName, or falls back to project naming. */
     private boolean matchesThisProject(String serviceName) {
         if (serviceName == null) {
             return false;
@@ -197,7 +216,6 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
                 });
     }
 
-    /** Parallel container starts occasionally flake on the Docker daemon — one clean retry fixes it. */
     private void startDeployInfraWithRetry() {
         for (int attempt = 1; ; attempt++) {
             deployInfra = DeployInfrastructureService.builder()
@@ -224,8 +242,6 @@ public abstract class AbstractPreconfigProjectsApi implements ITest {
         Map<String, String> envVars = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS.getParameterMap();
         String dockerImage = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
         LOGGER.info("Starting WebStudio container for preconfig [{}]", project.label());
-        // Same network as the deploy infra (registered in NetworkPool by deployInfra.start()) so the
-        // studio reaches PostgreSQL by alias; production-repo config arrives as a copied .properties.
         AppContainerPool.setAppContainer(containerName, NetworkPool.getNetwork(), envVars,
                 deployInfra.getFilesToCopy(), dockerImage, CONTAINER_STARTUP_TIMEOUT);
     }

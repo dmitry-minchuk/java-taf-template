@@ -115,30 +115,32 @@ public class DeployInfrastructureService {
     }
 
     public void cleanup() {
-        if (wsContainer != null && wsContainer.isRunning()) {
-            LOGGER.info("Stopping WebService container...");
-            wsContainer.stop();
-        }
-        if (postgresContainer != null && postgresContainer.isRunning()) {
-            LOGGER.info("Stopping PostgreSQL container...");
-            postgresContainer.stop();
-        }
-        if (oracleContainer != null && oracleContainer.isRunning()) {
-            LOGGER.info("Stopping Oracle container...");
-            oracleContainer.stop();
-        }
-        if (msSqlContainer != null && msSqlContainer.isRunning()) {
-            LOGGER.info("Stopping MS SQL container...");
-            msSqlContainer.stop();
-        }
-        if (s3MockContainer != null && s3MockContainer.isRunning()) {
-            LOGGER.info("Stopping S3Mock container...");
-            s3MockContainer.stop();
-        }
+        stopQuietly("WebService", wsContainer);
+        stopQuietly("PostgreSQL", postgresContainer);
+        stopQuietly("Oracle", oracleContainer);
+        stopQuietly("MS SQL", msSqlContainer);
+        stopQuietly("S3Mock", s3MockContainer);
         if (s3Client != null) {
-            s3Client.close();
+            try {
+                s3Client.close();
+            } catch (RuntimeException e) {
+                LOGGER.warn("Could not close the S3 client: {}", e.getMessage());
+            }
         }
         network = null;
+    }
+
+    private static void stopQuietly(String name, GenericContainer<?> container) {
+        try {
+            if (container == null || !container.isRunning()) {
+                return;
+            }
+            LOGGER.info("Stopping {} container...", name);
+            container.stop();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not stop the {} container, so it may be left running; the remaining containers are "
+                    + "still stopped: {}", name, e.getMessage());
+        }
     }
 
     public Map<String, String> getFilesToCopy() {

@@ -19,27 +19,12 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-/**
- * Source provider for the preconfig-projects regression: syncs the local Mercurial clones of the
- * EIS preconfig product repositories ({@code hg pull -u}), discovers every OpenL project inside
- * them ({@code <module>/src/main/openl/rules.xml}) and packs each one into a flat ZIP that
- * WebStudio's {@code PUT /rest/repos/{repo}/projects/{name}} accepts.
- * <p>
- * Unlike the client zip regression (static ZIP snapshots) and the central-studio regression
- * (git design repos cloned by Studio itself), preconfigs live in Mercurial inside Maven modules —
- * Studio cannot mount hg as a design repository, so the sources are zipped and uploaded instead.
- * <p>
- * Projects whose rules.xml declares a {@code <classpath>} need domain JARs that only exist after
- * a Maven build ({@code mvn package} of the {@code openl}-packaging module); they are skipped
- * unless {@code -Dpreconfig.include.jar.dependent=true} is set.
- */
 public class PreconfigSourcesService {
 
     private static final Logger LOGGER = LogManager.getLogger(PreconfigSourcesService.class);
 
     public static final String REPOS_ROOT = System.getProperty("preconfig.repos.root",
             "/Users/dmitryminchuk/Projects/eis/preconfigs");
-    /** Product repos that actually contain OpenL projects (commercial-claim is a pure Java product). */
     public static final List<String> HG_REPOS = List.of(
             "eis-preconfig-benefits-policy",
             "eis-preconfig-commercial-policy",
@@ -51,7 +36,7 @@ public class PreconfigSourcesService {
     private static final boolean INCLUDE_JAR_DEPENDENT = Boolean.parseBoolean(
             System.getProperty("preconfig.include.jar.dependent", "true"));
     private static final int MAVEN_BUILD_TIMEOUT_MINUTES = 30;
-    /** Optional substring filter over project labels (repo/module) — handy for debugging one case. */
+    private static final int MAVEN_VERSION_TIMEOUT_MINUTES = 1;
     private static final String MODULE_FILTER = System.getProperty("preconfig.module.filter", "");
     private static final int HG_PULL_TIMEOUT_MINUTES = 15;
     private static final int HG_CLONE_TIMEOUT_MINUTES = 60;
@@ -61,16 +46,38 @@ public class PreconfigSourcesService {
     private static final Pattern PROJECT_NAME = Pattern.compile("<name>([^<]+)</name>");
     private static final Pattern SERVICE_NAME = Pattern.compile("<serviceName>([^<]+)</serviceName>");
 
-    /** One discovered OpenL preconfig project, already packed as an uploadable flat ZIP. */
     public record PreconfigProject(String repoName, String moduleName, String projectName,
-                                   String serviceName, String label, File zip) {
+                                   String serviceName, String label, File zip, String buildFailure) {
+
+        public PreconfigProject {
+            if ((zip == null) == (buildFailure == null)) {
+                throw new IllegalArgumentException("A preconfig project carries either an uploadable ZIP or the "
+                        + "reason it has none, never both and never neither: " + label);
+            }
+        }
+
+        public static PreconfigProject packed(String repoName, String moduleName, String projectName,
+                                              String serviceName, String label, File zip) {
+            return new PreconfigProject(repoName, moduleName, projectName, serviceName, label, zip, null);
+        }
+
+        public static PreconfigProject unbuildable(String repoName, String moduleName, String projectName,
+                                                   String serviceName, String label, String buildFailure) {
+            return new PreconfigProject(repoName, moduleName, projectName, serviceName, label, null, buildFailure);
+        }
     }
 
-    /**
-     * Brings every known repo up to date: clones it if missing (first run on a fresh machine),
-     * otherwise {@code hg pull -u}. A failed pull logs a warning and the local copy is used;
-     * a failed clone leaves the repo out of this run (discovery logs the absence).
-     */
+    private record BuildOutcome(File zip, String failure) {
+
+        static BuildOutcome built(File zip) {
+            return new BuildOutcome(zip, null);
+        }
+
+        static BuildOutcome failed(String failure) {
+            return new BuildOutcome(null, failure);
+        }
+    }
+
     public void syncRepositories() {
         if (!SYNC_ENABLED) {
             LOGGER.info("Preconfig hg sync disabled (-Dpreconfig.hg.sync=false); using local working copies");
@@ -115,48 +122,85 @@ public class PreconfigSourcesService {
         }
     }
 
-    /** Scans all repos for {@code src/main/openl/rules.xml} and zips each project for upload. */
     public List<PreconfigProject> discoverProjects() {
         List<PreconfigProject> result = new ArrayList<>();
         int skippedJarDependent = 0;
+        int failedPreparations = 0;
+        int filteredOut = 0;
+        if (INCLUDE_JAR_DEPENDENT) {
+            LOGGER.info("The Maven stage will run with [{}] (JAVA_HOME={}); the EIS preconfig modules need JDK 25",
+                    mavenJavaVersion(), System.getenv("JAVA_HOME"));
+        }
         for (String repo : HG_REPOS) {
             File repoDir = new File(REPOS_ROOT, repo);
             if (!repoDir.isDirectory()) {
                 LOGGER.warn("Preconfig repo [{}] not found under {} — skipping discovery", repo, REPOS_ROOT);
                 continue;
             }
-            for (Path rulesXml : findRulesXml(repoDir.toPath())) {
-                Path openlDir = rulesXml.getParent();
-                Path moduleDir = openlDir.getParent().getParent().getParent();
-                String moduleName = moduleDir.getFileName().toString();
-                String rulesContent = readQuietly(rulesXml);
-                String label = repo + "/" + moduleName;
-                if (!MODULE_FILTER.isEmpty() && !label.contains(MODULE_FILTER)) {
+            List<Path> rulesFiles;
+            try {
+                rulesFiles = findRulesXml(repoDir.toPath());
+            } catch (RuntimeException e) {
+                String scanLabel = repo + "/(repository scan)";
+                if (!MODULE_FILTER.isEmpty() && !scanLabel.contains(MODULE_FILTER)) {
+                    filteredOut++;
                     continue;
                 }
-                File zip;
-                if (isJarDependent(rulesContent, moduleDir)) {
-                    if (!INCLUDE_JAR_DEPENDENT) {
-                        skippedJarDependent++;
-                        LOGGER.info("Skipping [{}] — needs domain JARs from a Maven build "
-                                + "(-Dpreconfig.include.jar.dependent=false)", label);
+                failedPreparations++;
+                String failure = String.format("Scanning %s for OpenL projects failed, so none of its projects "
+                        + "could be validated: %s", repoDir, e);
+                LOGGER.warn("[{}] — it will be reported as a failed test. {}", scanLabel, failure);
+                result.add(PreconfigProject.unbuildable(repo, "(repository scan)", repo, null, scanLabel, failure));
+                continue;
+            }
+            for (Path rulesXml : rulesFiles) {
+                String label = repo + "/" + repoDir.toPath().relativize(rulesXml);
+                try {
+                    Path openlDir = rulesXml.getParent();
+                    Path moduleDir = openlDir.getParent().getParent().getParent();
+                    String moduleName = moduleDir.getFileName().toString();
+                    label = repo + "/" + moduleName;
+                    if (!MODULE_FILTER.isEmpty() && !label.contains(MODULE_FILTER)) {
+                        filteredOut++;
                         continue;
                     }
-                    zip = mavenBuildZip(moduleDir, label);
-                    if (zip == null) {
-                        skippedJarDependent++;
-                        continue;
+                    String rulesContent = readQuietly(rulesXml);
+                    String projectName = extractProjectName(rulesContent, moduleName);
+                    String serviceName = extractServiceName(openlDir.resolve("rules-deploy.xml"));
+                    if (isJarDependent(rulesContent, moduleDir)) {
+                        if (!INCLUDE_JAR_DEPENDENT) {
+                            skippedJarDependent++;
+                            LOGGER.info("Skipping [{}] — needs domain JARs from a Maven build "
+                                    + "(-Dpreconfig.include.jar.dependent=false)", label);
+                            continue;
+                        }
+                        BuildOutcome outcome = mavenBuildZip(moduleDir, label);
+                        if (outcome.failure() != null) {
+                            failedPreparations++;
+                            result.add(PreconfigProject.unbuildable(repo, moduleName, projectName, serviceName,
+                                    label, outcome.failure()));
+                            continue;
+                        }
+                        result.add(PreconfigProject.packed(repo, moduleName, projectName, serviceName,
+                                label, outcome.zip()));
+                    } else {
+                        result.add(PreconfigProject.packed(repo, moduleName, projectName, serviceName,
+                                label, zipOpenlDir(openlDir, moduleName)));
                     }
-                } else {
-                    zip = zipOpenlDir(openlDir, moduleName);
+                } catch (RuntimeException e) {
+                    failedPreparations++;
+                    String moduleName = label.substring(label.indexOf('/') + 1);
+                    String failure = String.format("Preparing the sources at %s failed: %s", rulesXml, e);
+                    LOGGER.warn("[{}] — it will be reported as a failed test. {}", label, failure);
+                    result.add(PreconfigProject.unbuildable(repo, moduleName, moduleName, null, label, failure));
                 }
-                String projectName = extractProjectName(rulesContent, moduleName);
-                String serviceName = extractServiceName(openlDir.resolve("rules-deploy.xml"));
-                result.add(new PreconfigProject(repo, moduleName, projectName, serviceName, label, zip));
             }
         }
-        LOGGER.info("Discovered {} preconfig OpenL project(s) ({} jar-dependent project(s) skipped)",
-                result.size(), skippedJarDependent);
+        LOGGER.info("Discovered {} preconfig OpenL project(s): {} ready to validate, {} that could not be prepared "
+                        + "(reported as failed tests), {} skipped by -Dpreconfig.include.jar.dependent=false, "
+                        + "{} left out by -Dpreconfig.module.filter={}",
+                result.size(), result.size() - failedPreparations, failedPreparations, skippedJarDependent,
+                filteredOut, MODULE_FILTER.isEmpty() ? "(unset)" : MODULE_FILTER);
         return result;
     }
 
@@ -171,11 +215,6 @@ public class PreconfigSourcesService {
         }
     }
 
-    /**
-     * A project needs Maven-built domain JARs when rules.xml declares a {@code <classpath>} OR the
-     * module pom declares {@code <dependency>} entries (provided JARs with Java types the rules use
-     * — e.g. ubx-policy references ExtDimension from preconfig-ubx-policy-domain without a classpath).
-     */
     private static boolean isJarDependent(String rulesXml, Path moduleDir) {
         if (rulesXml.contains("<classpath>")) {
             return true;
@@ -184,70 +223,123 @@ public class PreconfigSourcesService {
         return Files.isRegularFile(pom) && readQuietly(pom).contains("<dependency>");
     }
 
-    /**
-     * Builds the module with Maven and produces a studio-uploadable ZIP with all needed JARs.
-     * <p>
-     * The openl-maven-plugin ZIP contains only the module's own JAR: dependencies are
-     * {@code provided} (in production these preconfigs run inside the EIS platform whose server
-     * classpath has them). A bare WebStudio has no such classpath, so the DIRECT provided
-     * dependencies (e.g. ipb-policy-*-openl with the domain datatypes; transitive tree would be
-     * ~400 jars of the whole EIS and is neither needed nor wanted) are copied next to it and
-     * repacked into the ZIP's lib/ — the exact shape of the historical preconfig snapshots.
-     * <p>
-     * Returns null (and logs) if any step fails — the project is skipped, not the whole run.
-     */
-    private static File mavenBuildZip(Path moduleDir, String label) {
+    private static BuildOutcome mavenBuildZip(Path moduleDir, String label) {
         Path reactorRoot = findReactorRoot(moduleDir);
         String modulePath = reactorRoot.relativize(moduleDir).toString();
         LOGGER.info("Building [{}] with Maven (reactor {}, module {})", label, reactorRoot, modulePath);
-        // install (not package): in-reactor dependencies land in the local m2, so the follow-up
-        // copy-dependencies run from the module alone can resolve them.
-        if (!runMaven(reactorRoot, label, "install", "-pl", modulePath, "-am", "-DskipTests")) {
-            return null;
+        String installFailure = runMaven(reactorRoot, label,
+                "install", "-pl", modulePath, "-am", "-DskipTests");
+        if (installFailure != null) {
+            return BuildOutcome.failed(installFailure);
         }
-        if (!runMaven(moduleDir, label, "dependency:copy-dependencies",
+        String copyFailure = runMaven(moduleDir, label, "dependency:copy-dependencies",
                 "-DincludeScope=provided", "-DexcludeTransitive=true",
-                "-DoutputDirectory=target/provided-lib")) {
-            return null;
+                "-DoutputDirectory=target/provided-lib");
+        if (copyFailure != null) {
+            return BuildOutcome.failed(copyFailure);
         }
         File zip = moduleDir.resolve("target").resolve(moduleDir.getFileName() + ".zip").toFile();
         if (!zip.isFile()) {
-            LOGGER.warn("Maven build of [{}] succeeded but {} is missing — skipping the project", label, zip);
-            return null;
+            String failure = "The Maven build succeeded but produced no deployable ZIP at " + zip;
+            LOGGER.warn("[{}] — it will be reported as a failed test. {}", label, failure);
+            return BuildOutcome.failed(failure);
         }
         return repackWithProvidedJars(zip, moduleDir.resolve("target").resolve("provided-lib"), label);
     }
 
-    private static boolean runMaven(Path workDir, String label, String... goals) {
+    private static String runMaven(Path workDir, String label, String... goals) {
         List<String> cmd = new ArrayList<>(List.of("mvn", "-B"));
         cmd.addAll(List.of(goals));
+        Path outputFile = null;
+        Process p = null;
         try {
-            Process p = new ProcessBuilder(cmd)
+            outputFile = Files.createTempFile("preconfig-maven-", ".log");
+            p = new ProcessBuilder(cmd)
                     .directory(workDir.toFile())
                     .redirectErrorStream(true)
+                    .redirectOutput(outputFile.toFile())
                     .start();
-            String output = new String(p.getInputStream().readAllBytes());
             boolean finished = p.waitFor(MAVEN_BUILD_TIMEOUT_MINUTES, TimeUnit.MINUTES);
-            if (!finished || p.exitValue() != 0) {
-                if (!finished) {
-                    p.destroyForcibly();
-                }
-                LOGGER.warn("Maven {} failed for [{}] ({}); skipping the project. Last output:\n{}",
-                        goals[0], label, finished ? "exit " + p.exitValue() : "timeout", tail(output, 30));
-                return false;
+            if (!finished) {
+                p.destroyForcibly().waitFor();
             }
-            return true;
+            if (!finished || p.exitValue() != 0) {
+                String reason = finished
+                        ? "exit " + p.exitValue()
+                        : "no result within " + MAVEN_BUILD_TIMEOUT_MINUTES + " min, so it was killed";
+                String failure = String.format("Maven %s failed in %s (%s). Last output:%n%s",
+                        goals[0], workDir, reason, tail(readIfPossible(outputFile), 30));
+                LOGGER.warn("Maven {} failed for [{}] — it will be reported as a failed test. {}",
+                        goals[0], label, failure);
+                return failure;
+            }
+            return null;
         } catch (IOException | InterruptedException e) {
-            LOGGER.warn("Maven {} failed for [{}]: {} — skipping the project", goals[0], label, e.getMessage());
+            if (p != null && p.isAlive()) {
+                p.destroyForcibly();
+            }
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
-            return false;
+            String failure = String.format("Maven %s could not be run in %s: %s", goals[0], workDir, e);
+            LOGGER.warn("Maven {} could not be run for [{}] — it will be reported as a failed test. {}",
+                    goals[0], label, failure);
+            return failure;
+        } finally {
+            deleteIfPossible(outputFile);
         }
     }
 
-    /** Adds the direct provided JARs into the built ZIP's lib/ and writes the result under target/preconfig-zips. */
-    private static File repackWithProvidedJars(File builtZip, Path providedLibDir, String label) {
+    private static String mavenJavaVersion() {
+        Path outputFile = null;
+        Process p = null;
+        try {
+            outputFile = Files.createTempFile("preconfig-maven-version-", ".log");
+            p = new ProcessBuilder("mvn", "-v")
+                    .redirectErrorStream(true)
+                    .redirectOutput(outputFile.toFile())
+                    .start();
+            if (!p.waitFor(MAVEN_VERSION_TIMEOUT_MINUTES, TimeUnit.MINUTES)) {
+                p.destroyForcibly().waitFor();
+                return "mvn -v gave no answer within " + MAVEN_VERSION_TIMEOUT_MINUTES + " min";
+            }
+            return readIfPossible(outputFile).lines()
+                    .filter(line -> line.startsWith("Java version:"))
+                    .findFirst()
+                    .orElse("mvn -v printed no Java version");
+        } catch (IOException | InterruptedException e) {
+            if (p != null && p.isAlive()) {
+                p.destroyForcibly();
+            }
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            return "mvn -v could not be run: " + e;
+        } finally {
+            deleteIfPossible(outputFile);
+        }
+    }
+
+    private static String readIfPossible(Path file) {
+        try {
+            return Files.readString(file);
+        } catch (IOException e) {
+            return "(the Maven output could not be read back from " + file + ": " + e.getMessage() + ")";
+        }
+    }
+
+    private static void deleteIfPossible(Path file) {
+        if (file == null) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(file);
+        } catch (IOException e) {
+            LOGGER.warn("Could not delete the temporary Maven log {}: {}", file, e.getMessage());
+        }
+    }
+
+    private static BuildOutcome repackWithProvidedJars(File builtZip, Path providedLibDir, String label) {
         try {
             Files.createDirectories(ZIP_OUTPUT_DIR);
             File result = ZIP_OUTPUT_DIR.resolve(builtZip.getName()).toFile();
@@ -270,19 +362,15 @@ public class PreconfigSourcesService {
                     }
                 }
             }
-            return result;
+            return BuildOutcome.built(result);
         } catch (IOException e) {
-            LOGGER.warn("Failed to repack [{}] with provided JARs: {} — skipping the project", label, e.getMessage());
-            return null;
+            String failure = String.format("Failed to repack %s with the provided JARs from %s: %s",
+                    builtZip, providedLibDir, e.getMessage());
+            LOGGER.warn("[{}] — it will be reported as a failed test. {}", label, failure);
+            return BuildOutcome.failed(failure);
         }
     }
 
-    /**
-     * Topmost ancestor of the module that contains a pom.xml (the multi-module reactor root).
-     * Directories WITHOUT a pom on the way up are skipped rather than stopping the walk —
-     * e.g. personalpolicy nests reactors as policy-components-preconfig/auto/ubx/<module>
-     * where {@code auto/} is a plain folder but the aggregator above it owns the module.
-     */
     private static Path findReactorRoot(Path moduleDir) {
         Path root = moduleDir;
         for (Path dir = moduleDir.getParent(); dir != null; dir = dir.getParent()) {
@@ -315,7 +403,6 @@ public class PreconfigSourcesService {
         return m.find() ? m.group(1).trim() : null;
     }
 
-    /** Packs the content of {@code src/main/openl} into a flat ZIP (rules.xml at zip root). */
     private static File zipOpenlDir(Path openlDir, String moduleName) {
         try {
             Files.createDirectories(ZIP_OUTPUT_DIR);

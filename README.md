@@ -361,7 +361,10 @@ Requirements for the Maven stage: corporate Nexus access in `~/.m2/settings.xml`
 (GENESIS/GENESIS_STAGING servers, profile `genesis-v20` active) with a valid password — the same
 account as for vno-hg. Disable the jar-dependent half with
 `-Dpreconfig.include.jar.dependent=false` (e.g. no Nexus reachable); those projects are then
-skipped with a log line each.
+skipped with a log line each — that opt-out is the only case where a project leaves the run
+silently. A Maven stage that *fails* never hides the project: it still reaches the `@Factory` and
+becomes a failed test carrying the Maven output, so a broken build cannot masquerade as a green
+launch.
 
 EIS preconfigs are Maven multi-module Mercurial repositories; the OpenL project lives in
 `<module>/src/main/openl` (`rules.xml`, `rules/*.xlsx`, `rules-deploy.xml` with a RESTFUL
@@ -385,6 +388,12 @@ Notes:
   openl-maven-plugin + repack with direct provided JARs. Dependency-free ones (9 of 32) are
   zipped straight from sources.
 - Repos with no OpenL content (eis-preconfig-commercial-claim) are excluded from `HG_REPOS`.
+- The whole suite needs **JDK 25**: the EIS modules compile with `release 25`, so on JDK 21 the
+  Maven stage fails for most jar-dependent projects (`invalid target release: 25`) and they all
+  turn red. The Studio and ruleservice images already run Temurin 25.
+- Discovery logs how the projects split — `Discovered N ...: X ready to validate, Y with a failed
+  Maven build (reported as failed tests), Z skipped by -Dpreconfig.include.jar.dependent=false`.
+  Compare the test count against that line to confirm the run covered everything.
 - Run: `mvn -B test -Dsuite=studio_preconfig_projects_regression` with
   `rp.launch=preconfig_projects_regression` in `reportportal.properties`.
 
