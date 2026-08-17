@@ -4,8 +4,6 @@ import configuration.core.ui.WebElement;
 import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 
-// React "Save project" dialog (build 032c60a664ce+), opened from a project row's Save action when the
-// project has uncommitted local changes. Replaces the legacy SaveChangesComponent.
 public class SaveProjectDialogComponent extends BaseComponent {
 
     private static final String MODAL_ROOT =
@@ -44,8 +42,12 @@ public class SaveProjectDialogComponent extends BaseComponent {
         submitBtn.waitForHidden(10000);
     }
 
-    // Click Submit without waiting for the dialog to close — a user's first commit raises the "Configure Git
-    // Commit Info" modal on top, so the caller fills that before the save dialog finalizes.
+    public void submitThroughShade() {
+        submitBtn.clickForce();
+        submitBtn.waitForHidden(10000);
+    }
+
+
     public void clickSubmit() {
         submitBtn.click();
     }

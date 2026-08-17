@@ -6,20 +6,18 @@ import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 import lombok.Getter;
 
-/**
- * The React "Copy table" modal, which EPBDS-16313 put in place of the JSF copy wizard.
- *
- * <p>The modal asks for the copy's name, where it goes (module and sheet) and a list of properties. The
- * legacy "Copy as" selector is gone: a plain copy, a new version and a new business dimension version are all
- * a name plus the property that carries the version or the dimension, so the old three-way choice is
- * expressed by setting those properties.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class CopyTableDialogComponent extends BaseComponent {
 
     private static final String MODAL =
             "//div[contains(@class,'ant-modal')][.//div[contains(@class,'ant-modal-title')][contains(normalize-space(.),'Copy table')]]";
+    private static final String OPEN_DROPDOWN =
+            "//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'ant-select-dropdown-hidden'))]";
     private static final int MAX_PROPERTY_ROWS = 10;
+    private static final int VERSION_PARTS = 3;
 
     private WebElement modal;
     private WebElement dialogTitle;
@@ -27,9 +25,9 @@ public class CopyTableDialogComponent extends BaseComponent {
     private WebElement moduleComboBox;
     private WebElement sheetComboBox;
     private WebElement copyButton;
-    // Property rows, formatted with the row index starting at 0.
     private WebElement propertyNameTemplate;
     private WebElement propertyValueTemplate;
+    private WebElement versionPartTemplate;
     private WebElement insertPropertyTemplate;
 
     public CopyTableDialogComponent() {
@@ -45,7 +43,6 @@ public class CopyTableDialogComponent extends BaseComponent {
     private void initializeElements() {
         modal = new WebElement(page, "xpath=" + MODAL, "copyTableModal");
         dialogTitle = new WebElement(page, "xpath=" + MODAL + "//div[contains(@class,'ant-modal-title')]", "copyTableTitle");
-        // antd wraps these fields, so a testid can sit on the wrapper - reach the inner control either way.
         nameTextBox = new WebElement(page,
                 "css=[data-testid=copy-table-name] input, input[data-testid=copy-table-name]", "copyTableName");
         moduleComboBox = new WebElement(page, "css=[data-testid=copy-table-module]", "copyTableModule");
@@ -59,7 +56,9 @@ public class CopyTableDialogComponent extends BaseComponent {
         propertyValueTemplate = new WebElement(page,
                 "css=[data-testid=copy-table-property-value-%1$s] input, input[data-testid=copy-table-property-value-%1$s]",
                 "copyTablePropertyValue");
-        // The row controls carry their label in aria-label, not title.
+        versionPartTemplate = new WebElement(page,
+                "css=input[data-testid=copy-table-property-value-%1$s-%2$s]",
+                "copyTableVersionPart");
         insertPropertyTemplate = new WebElement(page,
                 "css=[data-testid=copy-table-property-row-%s] button[aria-label='Insert property above']",
                 "copyTableInsertProperty");
@@ -70,18 +69,12 @@ public class CopyTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /**
-     * Kept for callers written against the legacy wizard: the modal has no "Copy as" selector any more, so
-     * what is filled in afterwards decides whether this is a plain copy, a version or a dimension.
-     */
     public CopyTableDialogComponent selectCopyAs(String value) {
         return waitForDialogToAppear();
     }
 
     public CopyTableDialogComponent setName(String name) {
         nameTextBox.waitForVisible(DEFAULT_TIMEOUT_MS);
-        // The modal pre-fills the source table's name and does it asynchronously, so a single fill can be
-        // overwritten (or joined) by that value - retype until the field holds only what was asked for.
         boolean accepted = WaitUtil.waitForCondition(() -> {
             retype(nameTextBox, name);
             return name.equals(nameTextBox.getCurrentInputValue());
@@ -93,12 +86,10 @@ public class CopyTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /** A new version is a copy carrying the "version" property. */
     public CopyTableDialogComponent setVersion(String version) {
         return setProperty("version", version);
     }
 
-    /** The sheet the copy lands on; the legacy dialog called this "Save to". */
     public CopyTableDialogComponent setSaveTo(String sheetName) {
         if (sheetName != null && !sheetName.isEmpty()) {
             selectFromDropdown(sheetComboBox, sheetName);
@@ -119,23 +110,17 @@ public class CopyTableDialogComponent extends BaseComponent {
         return setProperty(propertyLabel, value);
     }
 
-    /** Puts a property into the first free row, adding a row when every one already carries a property. */
     public CopyTableDialogComponent setProperty(String propertyLabel, String value) {
         waitForDialogToAppear();
         String row = String.valueOf(firstFreePropertyRow());
-        WebElement name = propertyNameTemplate.format(row);
-        name.waitForVisible(DEFAULT_TIMEOUT_MS);
-        WaitUtil.waitForCondition(() -> {
-            retype(name, propertyLabel);
-            return propertyLabel.equals(name.getCurrentInputValue());
-        }, DEFAULT_TIMEOUT_MS, 300, "Waiting for the property name to hold the requested value");
-        // The name is a suggest input: committing it lets the value editor pick up the property's type.
-        name.press("Enter");
+        selectPropertyName(row, propertyLabel);
+        if (isVersionBacked(row)) {
+            setVersionParts(row, value);
+            return this;
+        }
         WebElement propertyValue = propertyValueTemplate.format(row);
         propertyValue.waitForVisible(DEFAULT_TIMEOUT_MS);
         if (isListBacked(row)) {
-            // A property whose type lists its values (a business dimension, for one) is picked, never typed:
-            // typing only moves the list to the first value starting with that letter.
             pickPropertyValue(row, propertyValue, value);
         } else {
             WaitUtil.waitForCondition(() -> {
@@ -146,7 +131,88 @@ public class CopyTableDialogComponent extends BaseComponent {
         return this;
     }
 
-    /** A property backed by a list of its own values: antd renders it as a select, not as a plain input. */
+    private void selectPropertyName(String row, String propertyLabel) {
+        WebElement name = propertyNameTemplate.format(row);
+        name.waitForVisible(DEFAULT_TIMEOUT_MS);
+        name.click();
+        name.fillSequentially(propertyLabel);
+        WebElement option = new WebElement(page, "xpath=" + OPEN_DROPDOWN
+                + "//div[contains(@class,'ant-select-item-option')][" + lowerCaseOf("@title") + "='"
+                + propertyLabel.toLowerCase() + "']", "copyTablePropertyNameOption");
+        if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS, 200,
+                "Waiting for the property list to offer '" + propertyLabel + "'")) {
+            throw new IllegalStateException("The copy dialog offers no property named '" + propertyLabel
+                    + "'. The list is searched by the property's displayed name, so pass that name, for example"
+                    + " 'Countries' for the country dimension");
+        }
+        option.click(DEFAULT_TIMEOUT_MS / 2);
+        WebElement chosen = new WebElement(page,
+                "css=[data-testid=copy-table-property-name-" + row + "] .ant-select-content", "copyTableChosenProperty");
+        if (!WaitUtil.waitForCondition(
+                () -> propertyLabel.equalsIgnoreCase(chosen.getText().trim()), DEFAULT_TIMEOUT_MS, 200,
+                "Waiting for the property row to hold '" + propertyLabel + "'")) {
+            throw new IllegalStateException("The copy dialog kept the property '" + chosen.getText().trim()
+                    + "' instead of '" + propertyLabel + "'");
+        }
+    }
+
+    private String lowerCaseOf(String expression) {
+        return "translate(" + expression + ",'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
+    }
+
+    private boolean isVersionBacked(String row) {
+        WebElement firstPart = versionPartTemplate.format(row, "0");
+        WaitUtil.waitForCondition(() -> firstPart.exists() || propertyValueTemplate.format(row).exists(),
+                DEFAULT_TIMEOUT_MS, 200, "Waiting for the property value editor to render");
+        return firstPart.exists();
+    }
+
+    private void setVersionParts(String row, String version) {
+        int[] numbers = versionNumbers(version);
+        for (int part = 0; part < VERSION_PARTS; part++) {
+            String expected = String.valueOf(numbers[part]);
+            WebElement field = versionPartTemplate.format(row, String.valueOf(part));
+            field.waitForVisible(DEFAULT_TIMEOUT_MS);
+            boolean accepted = WaitUtil.waitForCondition(() -> {
+                if (expected.equals(field.getCurrentInputValue())) {
+                    return true;
+                }
+                field.fill(expected);
+                return expected.equals(field.getCurrentInputValue());
+            }, DEFAULT_TIMEOUT_MS, 300, "Waiting for the version part to hold the requested number");
+            if (!accepted) {
+                throw new IllegalStateException("The version editor kept '" + field.getCurrentInputValue()
+                        + "' instead of '" + expected + "' in part " + part);
+            }
+        }
+    }
+
+    private int[] versionNumbers(String version) {
+        String[] parts = version == null ? new String[0] : version.trim().split("\\.");
+        if (parts.length > VERSION_PARTS) {
+            throw new IllegalArgumentException("The version editor takes three numbers, so '" + version
+                    + "' cannot be entered");
+        }
+        int[] numbers = new int[VERSION_PARTS];
+        for (int part = 0; part < VERSION_PARTS; part++) {
+            numbers[part] = part < parts.length ? nonNegativeNumberOf(parts[part], version) : 0;
+        }
+        return numbers;
+    }
+
+    private int nonNegativeNumberOf(String text, String version) {
+        try {
+            int number = Integer.parseInt(text.trim());
+            if (number < 0) {
+                throw new NumberFormatException(text);
+            }
+            return number;
+        } catch (NumberFormatException notANumber) {
+            throw new IllegalArgumentException("The version editor takes three non-negative numbers, so '"
+                    + version + "' cannot be entered", notANumber);
+        }
+    }
+
     private boolean isListBacked(String row) {
         return new WebElement(page, "css=[data-testid=copy-table-property-value-" + row + "].ant-select",
                 "copyTablePropertySelect").exists();
@@ -157,7 +223,6 @@ public class CopyTableDialogComponent extends BaseComponent {
                 "css=.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option[title='"
                         + value + "']", "copyTablePropertyOption");
         field.click();
-        // The list can be long (every country, for one), so it is filtered down to the wanted value first.
         field.fillSequentially(value);
         if (!WaitUtil.waitForCondition(option::exists, DEFAULT_TIMEOUT_MS / 2, 200,
                 "Waiting for the property to offer '" + value + "'")) {
@@ -168,7 +233,6 @@ public class CopyTableDialogComponent extends BaseComponent {
             }
         }
         option.click(DEFAULT_TIMEOUT_MS / 2);
-        // A multi-value property shows each picked value as its own tag.
         WebElement selected = new WebElement(page,
                 "css=[data-testid=copy-table-property-value-" + row + "] .ant-select-selection-item[title='"
                         + value + "']", "copyTablePropertySelection");
@@ -178,13 +242,6 @@ public class CopyTableDialogComponent extends BaseComponent {
         }
     }
 
-    /**
-     * Clears the field and types the text key by key.
-     *
-     * <p>The modal keeps its own copy of these values in React state and builds the copy's header from that,
-     * not from the DOM: a single set-value leaves the state on the suggested name, so the copy comes out under
-     * the source table's name. Typing sends the events the modal listens to.
-     */
     private void retype(WebElement field, String text) {
         field.clearByKeyCombination();
         field.fillSequentially(text);
@@ -227,6 +284,13 @@ public class CopyTableDialogComponent extends BaseComponent {
     }
 
     public String getVersion() {
+        if (isVersionBacked("0")) {
+            List<String> numbers = new ArrayList<>();
+            for (int part = 0; part < VERSION_PARTS; part++) {
+                numbers.add(versionPartTemplate.format("0", String.valueOf(part)).getCurrentInputValue());
+            }
+            return String.join(".", numbers);
+        }
         WebElement firstValue = propertyValueTemplate.format("0");
         return firstValue.exists() ? firstValue.getCurrentInputValue() : "";
     }

@@ -89,7 +89,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
         saveTableAndCheckNoProblems(editorPage);
         assertThat(table.getRowsCount()).isEqualTo(5);
 
-        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("country", "Australia");
+        editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("Countries", "Australia");
         editorPage.waitUntilSpinnerLoaded();
         assertThat(rulesTree.getSelectedItemText()).isEqualTo("SimpleREx1 [country=AU]");
         rulesTree.checkRulesTablePresent("Decision", "SimpleREx1");

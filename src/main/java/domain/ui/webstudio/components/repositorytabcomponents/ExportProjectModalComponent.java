@@ -4,28 +4,27 @@ import configuration.core.ui.WebElement;
 import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.DownloadUtil;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
 
-/**
- * The "Export project" window of the React projects screen (Studio 6.4.0), opened from the project's Export
- * action. It offers the same choices as the old JSF dialog — which revision to export, or "Viewing" for the
- * current state — so it keeps the same method names.
- *
- * <p>Each revision entry reads "&lt;author&gt;: &lt;date&gt;", e.g. "Jane Doe: Jul 27, 2026 10:26 AM".
- */
 public class ExportProjectModalComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(ExportProjectModalComponent.class);
+
+    private static final String MODAL =
+            "//div[contains(@class,'ant-modal')][.//*[@data-testid='export-project-revision']]";
+    private static final String OPEN_DROPDOWN = "css=.ant-select-dropdown:not(.ant-select-dropdown-hidden)";
 
     private WebElement revisionSelect;
     private WebElement selectedRevisionLabel;
     private WebElement revisionOption;
     private WebElement exportBtn;
     private WebElement cancelBtn;
+    private WebElement openDropdown;
     private List<WebElement> revisionOptions;
 
     public ExportProjectModalComponent() {
@@ -41,14 +40,18 @@ public class ExportProjectModalComponent extends BaseComponent {
     private void initializeElements() {
         revisionSelect = new WebElement(page, "[data-testid=export-project-revision]", "exportRevisionSelect");
         selectedRevisionLabel = new WebElement(page,
-                "xpath=//*[@data-testid='export-project-revision']//span[contains(@class,'ant-select-selection-item')]",
-                "exportSelectedRevision");
+                "css=[data-testid=export-project-revision] .ant-select-content", "exportSelectedRevision");
         revisionOption = new WebElement(page,
                 "xpath=//div[contains(@class,'ant-select-item-option')][@title='%s']", "exportRevisionOption");
-        revisionOptions = createElementList("xpath=//div[contains(@class,'ant-select-item-option')]", "exportRevisionOptions");
+        revisionOptions = createElementList(
+                "xpath=//div[contains(@class,'ant-select-dropdown') and not(contains(@class,'ant-select-dropdown-hidden'))]"
+                        + "//div[contains(@class,'ant-select-item-option')]",
+                "exportRevisionOptions");
         exportBtn = new WebElement(page, "[data-testid=export-project-submit]", "exportSubmitBtn");
         cancelBtn = new WebElement(page,
-                "xpath=//div[contains(@class,'ant-modal-footer')]//button[normalize-space()='Cancel']", "exportCancelBtn");
+                "xpath=" + MODAL + "//div[contains(@class,'ant-modal-footer')]//button[normalize-space()='Cancel']",
+                "exportCancelBtn");
+        openDropdown = new WebElement(page, OPEN_DROPDOWN, "exportRevisionDropdown");
     }
 
     public void waitForDialogToAppear() {
@@ -60,15 +63,34 @@ public class ExportProjectModalComponent extends BaseComponent {
         return revisionSelect.isVisible(DEFAULT_TIMEOUT_MS / 5);
     }
 
-    /** Every revision offered, including the "Viewing" entry for the project's current state. */
     public List<String> getAllRevisions() {
         revisionSelect.click();
         List<String> revisions = revisionOptions.stream()
                 .map(option -> option.getLocator().getAttribute("title"))
                 .filter(title -> title != null && !title.isBlank())
                 .toList();
-        page.keyboard().press("Escape");
+        closeRevisionDropdown();
         return revisions;
+    }
+
+    private void closeRevisionDropdown() {
+        if (!openDropdown.exists()) {
+            return;
+        }
+        page.keyboard().press("Escape");
+        if (dropdownClosed()) {
+            return;
+        }
+        LOGGER.warn("Escape left a select dropdown open; clicking the revision select to close it");
+        revisionSelect.click();
+        if (!dropdownClosed()) {
+            LOGGER.warn("A select dropdown is still open and may cover the dialog buttons");
+        }
+    }
+
+    private boolean dropdownClosed() {
+        return WaitUtil.waitForCondition(() -> !openDropdown.exists(), DEFAULT_TIMEOUT_MS / 2, 200,
+                "Waiting for the revision list to close");
     }
 
     public String getSelectedRevision() {
@@ -93,6 +115,8 @@ public class ExportProjectModalComponent extends BaseComponent {
     }
 
     public void clickCancel() {
+        closeRevisionDropdown();
         cancelBtn.click();
+        revisionSelect.waitForHidden(DEFAULT_TIMEOUT_MS);
     }
 }

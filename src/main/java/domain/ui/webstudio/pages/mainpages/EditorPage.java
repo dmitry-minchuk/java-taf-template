@@ -86,11 +86,9 @@ public class EditorPage extends BasePage {
         editorMainContentProblemsPanelComponent = createScopedComponent(EditorMainContentProblemsPanelComponent.class, "xpath=//div[@id='content']", "editorMainContentProblemsPanelComponent");
         projectModuleDetailsComponent = createScopedComponent(ProjectModuleDetailsComponent.class, "xpath=//div[contains(@class, 'ui-layout-center') and @id='content']", "projectModuleDetailsComponent");
         syncChangesDialogComponent = createScopedComponent(SyncChangesDialogComponent.class, "xpath=//div[@role='dialog' and .//form[@id='merge_branches_form']]", "syncChangesDialogComponent");
-        // In the React build the commit dialog can be present twice in the DOM during a recompile;
-        // scope to the visible one so child locators don't hit a strict-mode multi-match.
-        saveChangesComponent = createScopedComponent(SaveChangesComponent.class, "div#modalSave_container:visible", "Save Changes Component");
+        saveChangesComponent = new SaveChangesComponent();
         editProjectDialogComponent = createScopedComponent(EditProjectDialogComponent.class, "xpath=//div[@id='editProjectPopup_content']", "editProjectDialogComponent");
-        exportProjectDialogComponent = createScopedComponent(ExportProjectDialogComponent.class, "xpath=//div[@id='exportProject_container']", "exportProjectDialogComponent");
+        exportProjectDialogComponent = new ExportProjectDialogComponent();
         copyModuleDialogComponent = createScopedComponent(CopyModuleDialogComponent.class, "xpath=//div[@id='copyModulePopup_container']", "copyModuleDialogComponent");
         removeModulePopupComponent = createScopedComponent(RemoveModuleDialogComponent.class, "xpath=//div[@id='removeModulePopup_content']", "removeModulePopupComponent");
         createTableDialogComponent = createScopedComponent(CreateTableDialogComponent.class,
@@ -130,9 +128,6 @@ public class EditorPage extends BasePage {
         getEditorToolbarPanelComponent().navigateToProjectsInBreadcrumbs();
     }
 
-    // A full reload rebuilds the editor in one stable render. Use it after a Save, when the React shell
-    // keeps re-rendering the JSF toolbar/breadcrumb on its recompile cycle and in-page navigation clicks
-    // can't land; the reload naturally waits for the server-side recompile and preserves the workspace.
     public EditorPage reloadPage() {
         page.reload();
         waitUntilSpinnerLoaded();
@@ -190,11 +185,6 @@ public class EditorPage extends BasePage {
         refreshBtn.click(DEFAULT_TIMEOUT_MS);
     }
 
-    /**
-     * Open a table from the Table Dependencies graph (React/cytoscape graph, EPBDS-15473):
-     * find it via the search box, then open it via the node panel's "Open in editor" button.
-     * The graph must be opened first via More -> Table Dependencies.
-     */
     public void clickTableInDependenciesView(String tableName) {
         dependencyGraphSearch.click(); // open the antd Select so its search input becomes active
         dependencyGraphSearchInput.fill(tableName);
