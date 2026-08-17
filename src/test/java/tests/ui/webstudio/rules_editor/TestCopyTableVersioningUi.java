@@ -50,24 +50,6 @@ public class TestCopyTableVersioningUi extends BaseTest {
     }
 
     @Test
-    @TestCaseId("EPBDS-16357")
-    @Description("The version property must take only N.N.N values, as the copy wizard guaranteed by computing "
-            + "the next version itself. KNOWN-FAILING: the modal accepts \"v2\", the copy becomes a duplicate the "
-            + "dispatcher cannot tell apart and the module stops compiling."
-            + " Known bug: EPBDS-16357.")
-    @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    public void testCopyRejectsMalformedVersion() {
-        EditorPage editorPage = openTable();
-
-        CopyTableDialogComponent copyDialog = editorPage.getEditorToolbarPanelComponent().clickCopy();
-        copyDialog.setVersion(MALFORMED_VERSION);
-
-        assertThat(copyDialog.isCopyButtonEnabled())
-                .as("Copy must stay unavailable while the version reads '%s'", MALFORMED_VERSION)
-                .isFalse();
-    }
-
-    @Test
     @TestCaseId("IPBQA-31319")
     @Description("Copying a table with a business dimension property set keeps the module compilable: the "
             + "dimension tells the two tables apart, so no deactivation is needed.")

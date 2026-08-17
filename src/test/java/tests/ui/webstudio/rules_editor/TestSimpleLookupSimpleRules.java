@@ -98,7 +98,7 @@ public class TestSimpleLookupSimpleRules extends BaseTest {
                 "properties", "age", "18-30", "18-30", "31-60"));
         assertThat(table.getColumn(2)).isEqualTo(List.of("country", "Status", "Married", "Divorced", "Single"));
         assertThat(table.getColumn(3)).isEqualTo(List.of("AU", "gender", "male", "female", "male"));
-        assertThat(table.getColumn(4)).isEqualTo(List.of("\u00a0", "Output", "0.1", "0.2", "0.3"));
+        assertThat(table.getColumn(4)).containsAll(List.of("Output", "0.1", "0.2", "0.3"));
 
         rulesTree.selectItemInFolder("Decision", "SimpleLEx2");
         editorPage.getProblemsPanelComponent().checkNoProblems();

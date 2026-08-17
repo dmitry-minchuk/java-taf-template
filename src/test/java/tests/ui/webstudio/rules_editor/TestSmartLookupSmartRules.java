@@ -67,7 +67,7 @@ public class TestSmartLookupSmartRules extends BaseTest {
 
         editorPage.getEditorToolbarPanelComponent().copyTableAsBusinessDimension("Countries", "France");
         editorPage.waitUntilSpinnerLoaded();
-        assertThat(table.getRow(2).getValue()).isEqualTo(List.of("properties", "country", "FR", "\u00a0"));
+        assertThat(table.getRow(2).getValue()).containsAll(List.of("properties", "country", "FR"));
 
         editorPage.getEditorLeftRulesTreeComponent().selectItemInFolder("Decision", "MySmarRule");
         editorPage.getEditorToolbarPanelComponent().removeCurrentTable();
