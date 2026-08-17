@@ -1,24 +1,25 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<!-- PLAYWRIGHT_DOCKER suite: SSO / external-IdP UI tests. The browser runs inside the
-     Docker network so it can reach Keycloak by the same alias as Studio and the token issuer.
-     Run with: mvn test -Dsurefire.suiteXmlFiles=...studio_sso.xml -Dexecution.mode=PLAYWRIGHT_DOCKER -Djava.net.preferIPv4Stack=true -->
-<suite verbose="1" name="WebStudio SSO Tests" annotations="JDK" parallel="tests" thread-count="1">
+<suite verbose="1" name="WebStudio SSO Tests" annotations="JDK" parallel="tests" thread-count="2">
 
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="TestProtectedBranchBypassGroupMembershipUi"><classes><class name="tests.ui.webstudio.sso.TestProtectedBranchBypassGroupMembershipUi"/></classes></test>
-    <test name="TestUsersViewRolesOauth2Ui"><classes><class name="tests.ui.webstudio.sso.TestUsersViewRolesOauth2Ui"/></classes></test>
-    <test name="TestUsersViewRolesSamlUi"><classes><class name="tests.ui.webstudio.sso.TestUsersViewRolesSamlUi"/></classes></test>
-    <test name="TestSamlLogoutUi"><classes><class name="tests.ui.webstudio.sso.TestSamlLogoutUi"/></classes></test>
-    <test name="TestOidcLogoutUi"><classes><class name="tests.ui.webstudio.sso.TestOidcLogoutUi"/></classes></test>
-    <test name="TestAdAuthUi"><classes><class name="tests.ui.webstudio.ad.TestAdAuthUi"/></classes></test>
-    <test name="TestPersonalAccessTokenAdUi"><classes><class name="tests.ui.webstudio.ad.TestPersonalAccessTokenAdUi"/></classes></test>
-    <test name="TestPersonalAccessTokenMultiUserUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestPersonalAccessTokenMultiUserUi"/></classes></test>
-    <test name="TestSingleModeAuthUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeAuthUi"/></classes></test>
-    <test name="TestSingleModeProfileEditUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestSingleModeProfileEditUi"/></classes></test>
-    <test name="TestProtectedBranchBypassSecuritySettingsUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
+    <test name="SsoSequential"><classes><class name="tests.ui.webstudio.sso.TestProtectedBranchBypassGroupMembershipUi"/><class name="tests.ui.webstudio.sso.TestUsersViewRolesOauth2Ui"/><class name="tests.ui.webstudio.sso.TestUsersViewRolesSamlUi"/><class name="tests.ui.webstudio.sso.TestSamlLogoutUi"/><class name="tests.ui.webstudio.sso.TestOidcLogoutUi"/><class name="tests.ui.webstudio.ad.TestAdAuthUi"/><class name="tests.ui.webstudio.ad.TestPersonalAccessTokenAdUi"/><class name="tests.ui.webstudio.studio_smoke.TestPersonalAccessTokenMultiUserUi"/><class name="tests.ui.webstudio.studio_smoke.TestSingleModeAuthUi"/><class name="tests.ui.webstudio.studio_smoke.TestSingleModeProfileEditUi"/><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
+    <test name="TestTraceBusinessModeUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceBusinessModeUi"/></classes></test>
+    <test name="TestTraceDebuggerBreakpointsUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceDebuggerBreakpointsUi"/></classes></test>
+    <test name="TestTraceDebuggerNeverHitRuleUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceDebuggerNeverHitRuleUi"/></classes></test>
+    <test name="TestMigratedMethodFilterReloadUi"><classes><class name="tests.ui.webstudio.rules_editor.TestMigratedMethodFilterReloadUi"/></classes></test>
+    <test name="TestSmartLookupSmartRules"><classes><class name="tests.ui.webstudio.rules_editor.TestSmartLookupSmartRules"/></classes></test>
+    <test name="TestSimpleLookupSimpleRules"><classes><class name="tests.ui.webstudio.rules_editor.TestSimpleLookupSimpleRules"/></classes></test>
+    <test name="TestViewStackTraceFunctionality"><classes><class name="tests.ui.webstudio.rules_editor.TestViewStackTraceFunctionality"/></classes></test>
+    <test name="TestTestButtonAvailable"><classes><class name="tests.ui.webstudio.rules_editor.TestTestButtonAvailable"/></classes></test>
+    <test name="TestSwitchModuleViaBreadcrumbsNavigation"><classes><class name="tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation"/></classes></test>
+    <test name="TestSearchOnProjectLevel"><classes><class name="tests.ui.webstudio.rules_editor.TestSearchOnProjectLevel"/></classes></test>
+    <test name="TestNavigationToTable"><classes><class name="tests.ui.webstudio.rules_editor.TestNavigationToTable"/></classes></test>
+    <test name="TestRefreshButton"><classes><class name="tests.ui.webstudio.rules_editor.TestRefreshButton"/></classes></test>
+    <test name="TestRunContextualMenuRunAll"><classes><class name="tests.ui.webstudio.rules_editor.TestRunContextualMenuRunAll"/></classes></test>
+    <test name="TestProjectNonAsciiNameDeepLinkUi"><classes><class name="tests.ui.webstudio.repository.TestProjectNonAsciiNameDeepLinkUi"/></classes></test>
 
 </suite>

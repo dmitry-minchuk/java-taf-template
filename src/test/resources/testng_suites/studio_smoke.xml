@@ -6,27 +6,9 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <test name="TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
-    <test name="TestUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUserSettings"/></classes></test>
-    <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettings"/></classes></test>
-    <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettingsDBValidation"/></classes></test>
-    <test name="TestNotifications"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminNotifications"/></classes></test>
-    <test name="TestProjectTagsCreationNonExistingValue"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingValue"/></classes></test>
-    <test name="TestProjectTagsCreationNonExistingType"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingType"/></classes></test>
-    <test name="TestProjectTagsCreationFromWorkspace"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationFromWorkspace"/></classes></test>
-    <test name="TestFillTagsForProject"><classes><class name="tests.ui.webstudio.studio_smoke.TestFillTagsForProject"/></classes></test>
     <test name="TestRepositoryBrowsingFilterStatus"><classes><class name="tests.ui.webstudio.repository.TestRepositoryBrowsingFilterStatus"/></classes></test>
     <test name="TestRepositoryTableActionsOpenClose"><classes><class name="tests.ui.webstudio.repository.TestRepositoryTableActions"/></classes></test>
     <test name="TestMultipleDesignRepositoriesWithPostgres"><classes><class name="tests.ui.webstudio.repository.TestMultipleDesignRepositoriesWithPostgres"/></classes></test>
-    <test name="TestPermanentDeleteAfterRefreshUi"><classes><class name="tests.ui.webstudio.repository.TestPermanentDeleteAfterRefreshUi"/></classes></test>
-    <test name="TestProjectDeleteClosedProjectNameUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteClosedProjectNameUi"/></classes></test>
-    <test name="TestProjectDeleteUnsavedEditUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteUnsavedEditUi"/></classes></test>
-    <test name="TestProjectOverviewEditKeepsModulesUi"><classes><class name="tests.ui.webstudio.repository.TestProjectOverviewEditKeepsModulesUi"/></classes></test>
-    <test name="TestMigrateLegacyProjectUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateLegacyProjectUi"/></classes></test>
-    <test name="TestMigrateBlockedByUndeclaredWorkbookUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateBlockedByUndeclaredWorkbookUi"/></classes></test>
-    <test name="TestMigrateKeepsFormatsAndFiltersUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateKeepsFormatsAndFiltersUi"/></classes></test>
-    <test name="TestMigrateNotOfferedForFormattingOnlyUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateNotOfferedForFormattingOnlyUi"/></classes></test>
-    <test name="TestAdminUsersSearchUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUsersSearchUi"/></classes></test>
     <test name="TestFilesTabStaleSelectionUi"><classes><class name="tests.ui.webstudio.repository.TestFilesTabStaleSelectionUi"/></classes></test>
     <test name="TestDatatypeRoundTripUi"><classes><class name="tests.ui.webstudio.repository.TestDatatypeRoundTripUi"/></classes></test>
     <test name="TestDeploymentsTabUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentsTabUi"/></classes></test>
@@ -41,12 +23,9 @@
     <test name="TestUploadModulePreservesExistingUi"><classes><class name="tests.ui.webstudio.repository.TestUploadModulePreservesExistingUi"/></classes></test>
     <test name="TestReactSaveProjectSmoke"><classes><class name="tests.ui.webstudio.repository.TestReactSaveProjectSmoke"/></classes></test>
     <test name="TestProjectIdUrlSafeEncodingUi"><classes><class name="tests.ui.webstudio.repository.TestProjectIdUrlSafeEncodingUi"/></classes></test>
-    <test name="TestProjectNonAsciiNameDeepLinkUi"><classes><class name="tests.ui.webstudio.repository.TestProjectNonAsciiNameDeepLinkUi"/></classes></test>
-    <test name="TestProjectNameValidationUi"><classes><class name="tests.ui.webstudio.repository.TestProjectNameValidationUi"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnection"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionOracle"/></classes></test>
     <test name="TestDeploymentConfigurationRepositoryConnectionMsSql"><classes><class name="tests.ui.webstudio.repository.TestDeploymentConfigurationRepositoryConnectionMsSql"/></classes></test>
     <test name="TestNewDeployPopup"><classes><class name="tests.ui.webstudio.repository.TestNewDeployPopup"/></classes></test>
-    <test name="TestAddDeleteDesignRepository"><classes><class name="tests.ui.webstudio.studio_smoke.TestAddDeleteDesignRepository"/></classes></test>
     <test name="TestSupportedRepositories"><classes><class name="tests.ui.webstudio.studio_smoke.TestSupportedRepositories"/></classes></test>
 
 </suite>

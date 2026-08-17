@@ -1,5 +1,6 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="WebStudio Git Tests" annotations="JDK" parallel="tests" thread-count="1">
+<suite verbose="1" name="WebStudio Git Tests" annotations="JDK" parallel="tests" thread-count="2">
+
     <listeners>
         <listener class-name="configuration.listeners.AnnotationTransformer"/>
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
@@ -12,8 +13,7 @@
     <test name="TestGitNewBranchCreatedFromMaster"><classes><class name="tests.ui.webstudio.git.TestGitNewBranchCreatedFromMaster"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaRepositoryTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaRepositoryTab"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaEditorTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaEditorTab"/></classes></test>
-    <test name="TestGitSwitchToDeletedBranch"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/></classes></test>
-    <test name="TestGitSwitchDeletedBranchPreset"><classes><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
+    <test name="GitSharedRemoteBranches"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
     <test name="TestDeleteBranchDialogUi"><classes><class name="tests.ui.webstudio.git.TestDeleteBranchDialogUi"/></classes></test>
     <test name="TestDeleteBranchOfferLogicUi"><classes><class name="tests.ui.webstudio.git.TestDeleteBranchOfferLogicUi"/></classes></test>
     <test name="TestDeleteBranchLastProjectCopyUi"><classes><class name="tests.ui.webstudio.git.TestDeleteBranchLastProjectCopyUi"/></classes></test>
@@ -31,5 +31,14 @@
     <test name="TestProtectedBranchBypassIdempotentRetryUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassIdempotentRetryUi"/></classes></test>
     <test name="TestProtectedBranchBypassLegacyEditorUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassLegacyEditorUi"/></classes></test>
     <test name="TestProtectedBranchBypassSettingOffUi"><classes><class name="tests.ui.webstudio.git.TestProtectedBranchBypassSettingOffUi"/></classes></test>
+    <test name="TestLocalChangesCoreMechanics"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesCoreMechanics"/></classes></test>
+    <test name="TestLocalChangesLifecycleAndSettings"><classes><class name="tests.ui.webstudio.rules_editor.TestLocalChangesLifecycleAndSettings"/></classes></test>
+    <test name="TestOrderingModeDefaults"><classes><class name="tests.ui.webstudio.rules_editor.TestOrderingModeDefaults"/></classes></test>
+    <test name="TestOrderingModeTableList"><classes><class name="tests.ui.webstudio.rules_editor.TestOrderingModeTableList"/></classes></test>
+    <test name="TestProjectTagsCreationNonExistingValue"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingValue"/></classes></test>
+    <test name="TestProjectTagsCreationNonExistingType"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationNonExistingType"/></classes></test>
+    <test name="TestProjectTagsCreationFromWorkspace"><classes><class name="tests.ui.webstudio.studio_smoke.TestProjectTagsCreationFromWorkspace"/></classes></test>
+    <test name="TestFillTagsForProject"><classes><class name="tests.ui.webstudio.studio_smoke.TestFillTagsForProject"/></classes></test>
+    <test name="TestProjectDeleteClosedProjectNameUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteClosedProjectNameUi"/></classes></test>
 
 </suite>

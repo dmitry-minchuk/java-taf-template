@@ -16,5 +16,12 @@
     <test name="TestACLLockUnlockDeprecated"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLLockUnlockDeprecated"/></classes></test>
     <test name="TestACLNoAccessWarning"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLNoAccessWarning"/></classes></test>
     <test name="TestACLParsedGroupsUserView"><classes><class name="tests.ui.webstudio.studio_smoke.TestACLParsedGroupsUserView"/></classes></test>
+    <test name="TestAdminEmail"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminEmail"/></classes></test>
+    <test name="TestUserSettingsAndDetails"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUserSettings"/></classes></test>
+    <test name="TestSystemSettings"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettings"/></classes></test>
+    <test name="TestSystemSettingsDBValidation"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminSystemSettingsDBValidation"/></classes></test>
+    <test name="TestNotifications"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminNotifications"/></classes></test>
+    <test name="TestAdminUsersSearchUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestAdminUsersSearchUi"/></classes></test>
+    <test name="TestProjectDeleteUnsavedEditUi"><classes><class name="tests.ui.webstudio.repository.TestProjectDeleteUnsavedEditUi"/></classes></test>
 
 </suite>

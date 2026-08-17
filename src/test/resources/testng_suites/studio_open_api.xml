@@ -6,7 +6,6 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
-    <!-- OpenAPI: Create project tests (moved from studio_smoke.xml) -->
     <test name="TestCreateProjectFromOpenApiDefaultFormValues"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiDefaultFormValues"/></classes></test>
     <test name="TestCreateProjectFromOpenApiJsonFile"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiJsonFile"/></classes></test>
     <test name="TestCreateProjectFromOpenApiYamlWithCustomModuleNames"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateProjectFromOpenApiYamlWithCustomModuleNames"/></classes></test>
@@ -14,8 +13,6 @@
     <test name="TestDeleteOpenApiFileRemovesProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestDeleteOpenApiFileRemovesProperties"/></classes></test>
     <test name="TestCreateDataTablesFromOpenApiGetMethodWithRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodWithRuntime"/></classes></test>
     <test name="TestCreateDataTablesFromOpenApiGetMethodNoRuntime"><classes><class name="tests.ui.webstudio.rules_editor.TestCreateDataTablesFromOpenApiGetMethodNoRuntime"/></classes></test>
-
-    <!-- OpenAPI: Import tests (moved from studio_issues.xml) -->
     <test name="TestImportOpenApiReconciliationMode"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiReconciliationMode"/></classes></test>
     <test name="TestImportOpenApiModuleNamesValidation"><classes><class name="tests.ui.webstudio.rules_editor.TestImportOpenApiModuleNamesValidation"/></classes></test>
     <test name="TestImportModuleNamesRetentionOnModeSwitching"><classes><class name="tests.ui.webstudio.rules_editor.TestImportModuleNamesRetentionOnModeSwitching"/></classes></test>
@@ -36,5 +33,14 @@
     <test name="TestOpenApiReconciliationDependentProject"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationDependentProject"/></classes></test>
     <test name="TestOpenApiReconciliationSpreadsheetErrors"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationSpreadsheetErrors"/></classes></test>
     <test name="TestOpenApiReconciliationMultipleMergedFiles"><classes><class name="tests.ui.webstudio.rules_editor.TestOpenApiReconciliationMultipleMergedFiles"/></classes></test>
+    <test name="TestReturnCellsMarksWithStar"><classes><class name="tests.ui.webstudio.rules_editor.TestReturnCellsMarksWithStar"/></classes></test>
+    <test name="TestDetermineSpreadsheetResultCellType"><classes><class name="tests.ui.webstudio.rules_editor.TestDetermineSpreadsheetResultCellType"/></classes></test>
+    <test name="TestEditingProperties"><classes><class name="tests.ui.webstudio.rules_editor.TestEditingProperties"/></classes></test>
+    <test name="TestRangeDataTypes"><classes><class name="tests.ui.webstudio.rules_editor.TestRangeDataTypes"/></classes></test>
+    <test name="TestEditingCommaSeparatedArrayValues"><classes><class name="tests.ui.webstudio.rules_editor.TestEditingCommaSeparatedArrayValues"/></classes></test>
+    <test name="TestMigrateLegacyProjectUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateLegacyProjectUi"/></classes></test>
+    <test name="TestMigrateBlockedByUndeclaredWorkbookUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateBlockedByUndeclaredWorkbookUi"/></classes></test>
+    <test name="TestMigrateKeepsFormatsAndFiltersUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateKeepsFormatsAndFiltersUi"/></classes></test>
+    <test name="TestMigrateNotOfferedForFormattingOnlyUi"><classes><class name="tests.ui.webstudio.repository.TestMigrateNotOfferedForFormattingOnlyUi"/></classes></test>
 
 </suite>

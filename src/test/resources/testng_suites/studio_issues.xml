@@ -40,5 +40,8 @@
     <test name="TestTableIcons"><classes><class name="tests.ui.webstudio.studio_smoke.TestTableIcons"/></classes></test>
     <test name="TestFileAddDelete"><classes><class name="tests.ui.webstudio.studio_smoke.TestFileAddDelete"/></classes></test>
     <test name="CreateDataTypeTableTest"><classes><class name="tests.ui.webstudio.studio_smoke.CreateDataTypeTableTest"/></classes></test>
+    <test name="TestPermanentDeleteAfterRefreshUi"><classes><class name="tests.ui.webstudio.repository.TestPermanentDeleteAfterRefreshUi"/></classes></test>
+    <test name="TestProjectNameValidationUi"><classes><class name="tests.ui.webstudio.repository.TestProjectNameValidationUi"/></classes></test>
+    <test name="TestProjectOverviewEditKeepsModulesUi"><classes><class name="tests.ui.webstudio.repository.TestProjectOverviewEditKeepsModulesUi"/></classes></test>
 
 </suite>
