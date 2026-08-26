@@ -6,6 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import domain.serviceclasses.constants.User;
+import domain.serviceclasses.models.UserData;
 import domain.ui.webstudio.components.admincomponents.EmailPageComponent;
 import domain.ui.webstudio.pages.mainpages.AdminPage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
@@ -91,5 +92,21 @@ public class TestAdminEmail extends BaseTest {
         assertThat(emailPageComponent.isPasswordVisible())
                 .as("Password should not be hidden after clicking eye icon")
                 .isTrue();
+
+        // Mailpit is the SMTP backend for the just-applied settings: creating a user with an email
+        // must deliver a verification message to it, proving the mock is actually reachable end-to-end.
+        int messagesBefore = mailMock.getReceivedMessagesCount();
+        UserData mailUser = new UserData("mailTestUser", "password123");
+        adminPage.navigateToUsersPage()
+                .clickAddUser()
+                .setUsername(mailUser.getLogin())
+                .setPassword(mailUser.getPassword())
+                .saveUser();
+
+        WaitUtil.waitForCondition(() -> mailMock.getReceivedMessagesCount() > messagesBefore, 15000, 500,
+                "Waiting for the verification email to be delivered to Mailpit");
+        assertThat(mailMock.getReceivedMessagesCount())
+                .as("Mailpit should have received the verification email for the newly created user")
+                .isGreaterThan(messagesBefore);
     }
 }
