@@ -12,12 +12,16 @@ import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogC
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.GitActionsService;
+import helpers.service.GitDaemonInfrastructureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.WaitUtil;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import tests.BaseTest;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,9 +31,34 @@ public class TestGitSwitchToDeletedBranch extends BaseTest {
     private static final String TEMPLATE_NAME = "Sample Project";
     private static final String EXPECTED_ERROR_MESSAGE = "branchSelector: Validation Error: Value is not valid";
 
+    private static GitDaemonInfrastructureService gitDaemon;
+
     @BeforeClass
     public static void beforeClass() {
+        gitDaemon = new GitDaemonInfrastructureService();
+        gitDaemon.start();
+        System.setProperty("git.url", gitDaemon.getHostUrl());
+        // The local git daemon is anonymous, but JGit's UsernamePasswordCredentialsProvider
+        // requires a non-null password (git.password is not defined in config.properties).
+        System.setProperty("git.password", "password");
         GitActionsService.deleteAllRemoteBranchesExceptMaster();
+    }
+
+    @AfterClass(alwaysRun = true)
+    public static void afterClass() {
+        if (gitDaemon != null) {
+            gitDaemon.stop();
+        }
+        System.clearProperty("git.url");
+        System.clearProperty("git.password");
+    }
+
+    @Override
+    protected Map<String, String> additionalContainerConfig() {
+        // The in-network URL resolves via the shared Docker network's "git-daemon" alias. BaseTest
+        // closes that network after each test method, so this class must keep a single @Test method
+        // (the daemon is (re)started per class in @BeforeClass).
+        return Map.of("repository.design.uri", gitDaemon.getInNetworkUrl());
     }
 
     @Test
