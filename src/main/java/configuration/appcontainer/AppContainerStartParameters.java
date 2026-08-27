@@ -53,9 +53,6 @@ public enum AppContainerStartParameters {
                 break;
             case STUDIO_GIT:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
-                config.put("repository.design.login", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_LOGIN));
-                config.put("repository.design.password", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_PASSWORD));
-                config.put("repository.design.uri", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_URL));
                 break;
             case STUDIO_CENTRAL_GROUP_1_PARAMS:
                 config.putAll(DEFAULT_STUDIO_PARAMS.getParameterMap());
@@ -74,13 +71,10 @@ public enum AppContainerStartParameters {
                 config.putAll(EMPTY.getParameterMap());
                 config.put("ruleservice.deployer.enabled", "true");
                 config.put("production-repository.factory", "repo-git");
-                config.put("production-repository.uri", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_URL_RULESERVICE));
                 config.put("production-repository.local-repository-path", "/opt/openl/local");
                 config.put("production-repository.listener-timer-period", "10");
                 config.put("production-repository.branch", "main");
                 config.put("production-repository.tag-prefix", "Rules_");
-                config.put("production-repository.login", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_LOGIN_RULESERVICE));
-                config.put("production-repository.password", ProjectConfiguration.getProperty(PropertyNameSpace.GIT_TOKEN_RULESERVICE));
                 break;
             case SERVICE_FILE_PARAMS:
                 config.putAll(EMPTY.getParameterMap());

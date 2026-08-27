@@ -7,11 +7,11 @@ import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import domain.ui.webservice.pages.ServicePage;
+import helpers.service.GitContainerService;
 import helpers.utils.LogsUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,15 +24,33 @@ public class TestWebservicesDeployUI extends BaseTest {
     private static final String MULTIPLE_PROJECT_2 = "multiple-deployment/project2";
     private static final String HELLO_RULE = "someDeployment/Hello_Rule";
 
-    private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
-            Map.entry("production-repository.base.path", "TestWebservicesDeployUI")
-            //For local run git.token.ruleservice HERE!!!
-            //Map.entry("production-repository.password", "ghp_token_here")
-    ));
+    private static final String BASE_PATH = "TestWebservicesDeployUI";
+
+    private static final String GIT_CONTAINER_ALIAS = "git-container-deploy-ui";
+
+    private GitContainerService gitContainer;
+
+    @Override
+    protected void startAuxiliaryContainers() {
+        gitContainer = new GitContainerService(
+                GIT_CONTAINER_ALIAS, "ruleServiceTestData", "main", "/ruleservice_repo");
+        gitContainer.start();
+    }
+
+    @Override
+    protected void stopAuxiliaryContainers() {
+        if (gitContainer != null) {
+            gitContainer.stop();
+            gitContainer = null;
+        }
+    }
 
     @Override
     protected Map<String, String> additionalContainerConfig() {
-        return additionalContainerConfig;
+        return Map.of(
+                "production-repository.base.path", BASE_PATH,
+                "production-repository.uri", gitContainer.getInNetworkUrl()
+        );
     }
 
     @Test
@@ -40,37 +58,29 @@ public class TestWebservicesDeployUI extends BaseTest {
     @Description("Test WebService deployment UI - verify projects are deployed and accessible")
     @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
     public void testWebservicesDeployUi() {
-        // Initialize ServicePage
         ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
 
-        // Part 1: Verify SimpleProject is present and accessible
         assertThat(servicePage.getProjectElement(SIMPLE_PROJECT).isVisible(5000))
                 .as("SimpleProject should be visible in the services list")
                 .isTrue();
 
-        // Part 1.2: Download SimpleProject
         servicePage.downloadProject(SIMPLE_PROJECT);
 
-        // Refresh page to see updated state
         DriverPool.getPage().reload();
         servicePage = new ServicePage(DriverPool.getPage());
 
-        // Part 1.3: Verify SimpleProject2 manifest link is present
         assertThat(servicePage.getManifestLink(SIMPLE_PROJECT_2).isVisible(5000))
                 .as("SimpleProject2 manifest link should be visible")
                 .isTrue();
 
-        // Part 1.4: Verify Example 3 project is present
         assertThat(servicePage.getProjectElement(EXAMPLE_3_PROJECT).isVisible(5000))
                 .as("Example 3 project should be visible")
                 .isTrue();
 
-        // Refresh page
         DriverPool.getPage().reload();
         servicePage = new ServicePage(DriverPool.getPage());
 
-        // Part 2: Verify multiple deployments are present
         assertThat(servicePage.getProjectElement(MULTIPLE_PROJECT).isVisible(5000))
                 .as("multiple-deployment/project1 should be visible")
                 .isTrue();
@@ -78,20 +88,16 @@ public class TestWebservicesDeployUI extends BaseTest {
                 .as("multiple-deployment/project2 should be visible")
                 .isTrue();
 
-        // Download multiple deployment projects
         servicePage.downloadProject(MULTIPLE_PROJECT);
         servicePage.downloadProject(MULTIPLE_PROJECT_2);
 
-        // Refresh page
         DriverPool.getPage().reload();
         servicePage = new ServicePage(DriverPool.getPage());
 
-        // Part 3: Verify someDeployment/Hello_Rule is present
         assertThat(servicePage.getProjectElement(HELLO_RULE).isVisible(5000))
                 .as("someDeployment/Hello_Rule should be visible")
                 .isTrue();
 
-        // Refresh page
         DriverPool.getPage().reload();
         LogsUtil.inspectLogFile(AppContainerPool.get());
     }

@@ -12,12 +12,11 @@ import domain.ui.webstudio.components.repositorytabcomponents.CopyProjectDialogC
 import domain.ui.webstudio.pages.mainpages.EditorPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.GitActionsService;
-import helpers.service.GitDaemonInfrastructureService;
+import helpers.service.GitContainerService;
+import helpers.service.GitRemote;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.WaitUtil;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -29,36 +28,35 @@ public class TestGitSwitchToDeletedBranch extends BaseTest {
 
     private static final String PROJECT_NAME = "Empty Project";
     private static final String TEMPLATE_NAME = "Sample Project";
-    private static final String EXPECTED_ERROR_MESSAGE = "branchSelector: Validation Error: Value is not valid";
+    private static final String GIT_CONTAINER_ALIAS = "git-container-switch-to-deleted";
 
-    private static GitDaemonInfrastructureService gitDaemon;
+    private GitContainerService gitContainer;
+    private GitRemote gitRemote;
 
-    @BeforeClass
-    public static void beforeClass() {
-        gitDaemon = new GitDaemonInfrastructureService();
-        gitDaemon.start();
-        System.setProperty("git.url", gitDaemon.getHostUrl());
-        // The local git daemon is anonymous, but JGit's UsernamePasswordCredentialsProvider
-        // requires a non-null password (git.password is not defined in config.properties).
-        System.setProperty("git.password", "password");
-        GitActionsService.deleteAllRemoteBranchesExceptMaster();
+    @Override
+    protected void startAuxiliaryContainers() {
+        gitContainer = new GitContainerService(GIT_CONTAINER_ALIAS);
+        gitContainer.start();
+        gitRemote = gitContainer.asRemote();
+        GitActionsService.deleteAllRemoteBranchesExceptMaster(gitRemote);
     }
 
-    @AfterClass(alwaysRun = true)
-    public static void afterClass() {
-        if (gitDaemon != null) {
-            gitDaemon.stop();
+    @Override
+    protected void stopAuxiliaryContainers() {
+        if (gitContainer != null) {
+            gitContainer.stop();
+            gitContainer = null;
         }
-        System.clearProperty("git.url");
-        System.clearProperty("git.password");
+        gitRemote = null;
     }
 
     @Override
     protected Map<String, String> additionalContainerConfig() {
-        // The in-network URL resolves via the shared Docker network's "git-daemon" alias. BaseTest
-        // closes that network after each test method, so this class must keep a single @Test method
-        // (the daemon is (re)started per class in @BeforeClass).
-        return Map.of("repository.design.uri", gitDaemon.getInNetworkUrl());
+        return Map.of(
+                "repository.design.uri", gitContainer.getInNetworkUrl(),
+                "repository.design.login", GitRemote.ANONYMOUS,
+                "repository.design.password", GitRemote.ANONYMOUS
+        );
     }
 
     @Test
@@ -97,17 +95,15 @@ public class TestGitSwitchToDeletedBranch extends BaseTest {
     }
 
     private String createBranchAndDeleteIt(RepositoryPage repositoryPage, String projectName) {
-        // Branching happens in the Copy dialog, which suggests the new branch name.
         CopyProjectDialogComponent copyDialog = repositoryPage.openProjectsList().clickCopyAction(projectName);
         String newBranchName = copyDialog.getNewBranchName();
         copyDialog.clickCopyButton();
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
 
-        // Move the project back onto master before the branch is removed underneath it.
         repositoryPage.openProjectsList().openProjectDetail(projectName).switchBranch("master");
 
-        GitActionsService.deleteRemoteBranchDirect(newBranchName);
+        GitActionsService.deleteRemoteBranchDirect(gitRemote, newBranchName);
 
         return newBranchName;
     }

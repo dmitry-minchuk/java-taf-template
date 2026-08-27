@@ -16,10 +16,7 @@ DEFAULT_PARALLEL_SUITES = [
     "studio_open_api",
 ]
 
-DEFAULT_EXCLUDED_CLASSES = {
-    "tests.ui.webstudio.git.TestGitSwitchToDeletedBranch",
-    "tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset",
-}
+DEFAULT_EXCLUDED_CLASSES: set[str] = set()
 
 DEFAULT_CLASS_WEIGHTS = {
     # This test is much longer than a regular class on GHA. Treat it as a full

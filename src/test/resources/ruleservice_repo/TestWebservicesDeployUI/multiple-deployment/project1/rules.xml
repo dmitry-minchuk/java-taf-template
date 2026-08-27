@@ -1,0 +1,17 @@
+<project>
+	<name>project1</name>
+	<modules>
+		<module>
+			<rules-root path="*.xlsx"/>
+		</module>
+	</modules>
+	<dependencies>
+		<dependency>
+			<name>project2</name>
+			<autoIncluded>false</autoIncluded>
+		</dependency>
+	</dependencies>
+	<classpath>
+		<entry path="lib/*.jar"/>
+	</classpath>
+</project>

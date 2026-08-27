@@ -1,0 +1,10 @@
+<project>
+    <name>SimpleGitProject</name>
+    <comment>For the tesing</comment>
+    <modules>
+        <module>
+            <name>Main</name>
+            <rules-root path="Main.xlsx"/>
+        </module>
+    </modules>
+</project>

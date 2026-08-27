@@ -1,0 +1,10 @@
+<project>
+  <name>Tutorial 1 - Introduction to Decision Tables</name>
+  <comment>test1</comment>
+  <modules>
+    <module>
+      <name>Tutorial1 - Intro to Decision Tables</name>
+      <rules-root path="Tutorial1 - Intro to Decision Tables.xlsx"/>
+    </module>
+  </modules>
+</project>

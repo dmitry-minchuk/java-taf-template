@@ -1,0 +1,17 @@
+<rules-deploy>
+  <isProvideRuntimeContext>true</isProvideRuntimeContext>
+  <isProvideVariations>false</isProvideVariations>
+  <serviceName>Hello_Rule</serviceName>
+  <publishers>
+    <publisher>WEBSERVICE</publisher>
+    <publisher>RESTFUL</publisher>
+  </publishers>
+  <logStorages/>
+  <interceptingTemplateClassName></interceptingTemplateClassName>
+  <annotationTemplateClassName></annotationTemplateClassName>
+  <serviceClass></serviceClass>
+  <rmiServiceClass></rmiServiceClass>
+  <url></url>
+  <version></version>
+  <groups></groups>
+</rules-deploy>

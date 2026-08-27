@@ -38,8 +38,16 @@ public class AppContainerPool {
     }
 
     public static void closeAppContainer() {
-        threadLocalAppContainer.get().getAppContainer().stop();
-        threadLocalAppContainer.remove();
+        AppContainerData appContainerData = threadLocalAppContainer.get();
+        if (appContainerData == null) {
+            LOGGER.warn("No app container is registered for this thread, nothing to close");
+            return;
+        }
+        try {
+            appContainerData.getAppContainer().stop();
+        } finally {
+            threadLocalAppContainer.remove();
+        }
     }
 
     public static AppContainerData get() {

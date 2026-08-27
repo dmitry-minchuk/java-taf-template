@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Build-Date: 2024-06-19T16:45:33.7597071+02:00
+Created-By: OpenL WebStudio v.5.27.8-SNAPSHOT
+Implementation-Title: SimpleGitProject
+Build-Branch: master
+Build-Number: 563f4efec0fb33b85b464ada37a004ba61db470f
+Implementation-Version: DEFAULT-2024-06-19_16-45-06
+Built-By: DEFAULT
+

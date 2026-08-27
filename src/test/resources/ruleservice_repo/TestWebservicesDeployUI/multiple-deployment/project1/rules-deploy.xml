@@ -1,0 +1,10 @@
+<rules-deploy>
+    <isProvideRuntimeContext>false</isProvideRuntimeContext>
+    <isProvideVariations>false</isProvideVariations>
+    <serviceName>project1</serviceName>
+    <publishers>
+        <publisher>RESTFUL</publisher>
+		<publisher>WEBSERVICE</publisher>
+    </publishers>
+    <url>project1</url>
+</rules-deploy>

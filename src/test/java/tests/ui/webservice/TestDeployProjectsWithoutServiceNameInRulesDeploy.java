@@ -6,10 +6,10 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import domain.ui.webservice.pages.ServicePage;
+import helpers.service.GitContainerService;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,15 +20,33 @@ public class TestDeployProjectsWithoutServiceNameInRulesDeploy extends BaseTest 
     private static final String INTRODUCTION_PROJECT = "Introduction to Decision Tables";
     private static final String ADVANCED_DECISION_PROJECT = "Advanced Decision";
 
-    private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
-            Map.entry("production-repository.base.path", "TestDeployProjectsWithoutServiceNameInRulesDeploy")
-            //For local run git.token.ruleservice HERE!!!
-            //Map.entry("production-repository.password", "ghp_token_here")
-    ));
+    private static final String BASE_PATH = "TestDeployProjectsWithoutServiceNameInRulesDeploy";
+
+    private static final String GIT_CONTAINER_ALIAS = "git-container-no-service-name";
+
+    private GitContainerService gitContainer;
+
+    @Override
+    protected void startAuxiliaryContainers() {
+        gitContainer = new GitContainerService(
+                GIT_CONTAINER_ALIAS, "ruleServiceTestData", "main", "/ruleservice_repo");
+        gitContainer.start();
+    }
+
+    @Override
+    protected void stopAuxiliaryContainers() {
+        if (gitContainer != null) {
+            gitContainer.stop();
+            gitContainer = null;
+        }
+    }
 
     @Override
     protected Map<String, String> additionalContainerConfig() {
-        return additionalContainerConfig;
+        return Map.of(
+                "production-repository.base.path", BASE_PATH,
+                "production-repository.uri", gitContainer.getInNetworkUrl()
+        );
     }
 
     @Test

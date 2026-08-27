@@ -1,0 +1,1 @@
+{"entries":{},"mainAttributes":{"Manifest-Version":"1.0","Build-Date":"2023-05-05T04:27:36.166756-07:00","Created-By":"OpenL WebStudio v.5.26.7","Implementation-Title":"Tutorial 1 - Introduction to Decision Tables","Build-Branch":"master","Build-Number":"950301ad230427ae8a42ddf97f3fd5836d13a9b8","Implementation-Version":"DEFAULT-2023-05-04_22-02-45","Built-By":"DEFAULT"}}

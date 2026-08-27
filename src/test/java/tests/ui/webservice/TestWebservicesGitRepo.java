@@ -7,11 +7,11 @@ import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
 import domain.api.ServiceHelloMethod;
 import domain.ui.webservice.pages.ServicePage;
+import helpers.service.GitContainerService;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,16 +19,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestWebservicesGitRepo extends BaseTest {
 
     private static final String GIT_PROJECT_NAME = "SimpleGitProject";
+    private static final String BASE_PATH = "deploy/";
 
-    private static final Map<String, String> additionalContainerConfig = new HashMap<>(Map.ofEntries(
-            Map.entry("production-repository.base.path", "deploy/")
-            //For local run git.token.ruleservice HERE!!! Or add it to config.properties
-            //Map.entry("production-repository.password", "ghp_token_here")
-    ));
+    private static final String GIT_CONTAINER_ALIAS = "git-container-git-repo";
+
+    private GitContainerService gitContainer;
+
+    @Override
+    protected void startAuxiliaryContainers() {
+        gitContainer = new GitContainerService(
+                GIT_CONTAINER_ALIAS, "ruleServiceTestData", "main", "/ruleservice_repo");
+        gitContainer.start();
+    }
+
+    @Override
+    protected void stopAuxiliaryContainers() {
+        if (gitContainer != null) {
+            gitContainer.stop();
+            gitContainer = null;
+        }
+    }
 
     @Override
     protected Map<String, String> additionalContainerConfig() {
-        return additionalContainerConfig;
+        return Map.of(
+                "production-repository.base.path", BASE_PATH,
+                "production-repository.uri", gitContainer.getInNetworkUrl()
+        );
     }
 
     @Test

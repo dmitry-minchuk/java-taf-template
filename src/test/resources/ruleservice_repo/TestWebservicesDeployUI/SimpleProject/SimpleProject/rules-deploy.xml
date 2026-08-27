@@ -1,0 +1,16 @@
+<rules-deploy>
+  <isProvideRuntimeContext>true</isProvideRuntimeContext>
+  <isProvideVariations>false</isProvideVariations>
+  <serviceName>Simple_Project</serviceName>
+  <publishers>
+    <publisher>WEBSERVICE</publisher>
+    <publisher>RESTFUL</publisher>
+  </publishers>
+  <interceptingTemplateClassName></interceptingTemplateClassName>
+  <annotationTemplateClassName></annotationTemplateClassName>
+  <serviceClass></serviceClass>
+  <rmiServiceClass></rmiServiceClass>
+  <url></url>
+  <version></version>
+  <groups></groups>
+</rules-deploy>

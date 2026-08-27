@@ -1,0 +1,10 @@
+<project>
+  <name>Tutorial 3 - More Advanced Decision and Data Tables</name>
+  <comment>test</comment>
+  <modules>
+    <module>
+      <name>Tutorial3 - Advanced Decision and Data Tables</name>
+      <rules-root path="Tutorial3 - Advanced Decision and Data Tables.xlsx"/>
+    </module>
+  </modules>
+</project>

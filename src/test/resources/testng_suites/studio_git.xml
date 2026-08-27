@@ -13,7 +13,8 @@
     <test name="TestGitNewBranchCreatedFromMaster"><classes><class name="tests.ui.webstudio.git.TestGitNewBranchCreatedFromMaster"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaRepositoryTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaRepositoryTab"/></classes></test>
     <test name="TestGitCopyProjectIntoExistingBranchViaEditorTab"><classes><class name="tests.ui.webstudio.git.TestGitCopyProjectIntoExistingBranchViaEditorTab"/></classes></test>
-    <test name="GitSharedRemoteBranches"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
+    <test name="TestGitSwitchToDeletedBranch"><classes><class name="tests.ui.webstudio.git.TestGitSwitchToDeletedBranch"/></classes></test>
+    <test name="TestGitSwitchDeletedBranchPreset"><classes><class name="tests.ui.webstudio.git.TestGitSwitchDeletedBranchPreset"/></classes></test>
     <test name="TestDeleteBranchDialogUi"><classes><class name="tests.ui.webstudio.git.TestDeleteBranchDialogUi"/></classes></test>
     <test name="TestDeleteBranchOfferLogicUi"><classes><class name="tests.ui.webstudio.git.TestDeleteBranchOfferLogicUi"/></classes></test>
     <test name="TestDeleteBranchLastProjectCopyUi"><classes><class name="tests.ui.webstudio.git.TestDeleteBranchLastProjectCopyUi"/></classes></test>

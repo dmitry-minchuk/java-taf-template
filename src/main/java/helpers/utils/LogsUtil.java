@@ -22,6 +22,10 @@ public class LogsUtil {
     private final static String HOST_APP_LOGS_RELATIVE_PATH = ProjectConfiguration.getProperty(PropertyNameSpace.HOST_APP_LOGS_PATH);
 
     public static File saveAppLogs(AppContainerData appContainerData) {
+        if (appContainerData == null) {
+            LOGGER.warn("No app container is registered for this thread, no logs to save");
+            return null;
+        }
         String logs = appContainerData.getAppContainer().getLogs();
         byte[] logsBytes = logs.getBytes();
         String logFileName = StringUtil.generateUniqueName("app-log") + ".txt";
