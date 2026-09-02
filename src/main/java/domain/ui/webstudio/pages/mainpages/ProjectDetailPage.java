@@ -245,6 +245,12 @@ public class ProjectDetailPage extends BasePage {
         return this;
     }
 
+    public ProjectDetailPage editOverviewDescriptionAndSave(String description) {
+        openOverviewTab();
+        overview.editDescriptionAndSave(description);
+        return this;
+    }
+
     public String getOverviewRevision() {
         return extractOverviewField("Revision ID", "Modified");
     }

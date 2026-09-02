@@ -6,6 +6,7 @@
         <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
     </listeners>
 
+    <test name="TestPersonalAccessTokenCopyToClipboardUi"><classes><class name="tests.ui.webstudio.studio_smoke.TestPersonalAccessTokenCopyToClipboardUi"/></classes></test>
     <test name="SsoSequential"><classes><class name="tests.ui.webstudio.sso.TestProtectedBranchBypassGroupMembershipUi"/><class name="tests.ui.webstudio.sso.TestUsersViewRolesOauth2Ui"/><class name="tests.ui.webstudio.sso.TestUsersViewRolesSamlUi"/><class name="tests.ui.webstudio.sso.TestSamlLogoutUi"/><class name="tests.ui.webstudio.sso.TestOidcLogoutUi"/><class name="tests.ui.webstudio.ad.TestAdAuthUi"/><class name="tests.ui.webstudio.ad.TestPersonalAccessTokenAdUi"/><class name="tests.ui.webstudio.studio_smoke.TestPersonalAccessTokenMultiUserUi"/><class name="tests.ui.webstudio.studio_smoke.TestSingleModeAuthUi"/><class name="tests.ui.webstudio.studio_smoke.TestSingleModeProfileEditUi"/><class name="tests.ui.webstudio.studio_smoke.TestProtectedBranchBypassSecuritySettingsUi"/></classes></test>
     <test name="TestTraceBusinessModeUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceBusinessModeUi"/></classes></test>
     <test name="TestTraceDebuggerBreakpointsUi"><classes><class name="tests.ui.webstudio.rules_editor.TestTraceDebuggerBreakpointsUi"/></classes></test>

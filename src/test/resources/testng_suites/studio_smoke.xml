@@ -10,6 +10,7 @@
     <test name="TestRepositoryTableActionsOpenClose"><classes><class name="tests.ui.webstudio.repository.TestRepositoryTableActions"/></classes></test>
     <test name="TestMultipleDesignRepositoriesWithPostgres"><classes><class name="tests.ui.webstudio.repository.TestMultipleDesignRepositoriesWithPostgres"/></classes></test>
     <test name="TestFilesTabStaleSelectionUi"><classes><class name="tests.ui.webstudio.repository.TestFilesTabStaleSelectionUi"/></classes></test>
+    <test name="TestProjectInfoModulesFromRulesDirectoryUi"><classes><class name="tests.ui.webstudio.repository.TestProjectInfoModulesFromRulesDirectoryUi"/></classes></test>
     <test name="TestDatatypeRoundTripUi"><classes><class name="tests.ui.webstudio.repository.TestDatatypeRoundTripUi"/></classes></test>
     <test name="TestDeploymentsTabUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentsTabUi"/></classes></test>
     <test name="TestDeploymentsEmptyStateUi"><classes><class name="tests.ui.webstudio.repository.TestDeploymentsEmptyStateUi"/></classes></test>

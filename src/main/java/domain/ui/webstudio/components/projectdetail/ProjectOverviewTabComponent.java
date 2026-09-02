@@ -23,6 +23,7 @@ public class ProjectOverviewTabComponent extends BaseComponent {
     private final WebElement moduleRows;
     private final WebElement editBtn;
     private final WebElement saveBtn;
+    private final WebElement descriptionInput;
     private final WebElement migrateBtn;
     private final WebElement migrateConfirmOkBtn;
     private final WebElement descriptorActionsMarker;
@@ -50,6 +51,7 @@ public class ProjectOverviewTabComponent extends BaseComponent {
                 "overviewModuleRows");
         editBtn = createScopedElement("[data-testid=overview-edit]", "overviewEditBtn");
         saveBtn = createScopedElement("[data-testid=overview-save]", "overviewSaveBtn");
+        descriptionInput = createScopedElement("[data-testid=edit-description]", "overviewDescriptionInput");
         migrateBtn = createScopedElement("[data-testid=overview-migrate]", "overviewMigrateBtn");
         migrateConfirmOkBtn = new WebElement(page,
                 "xpath=//div[contains(@class,'ant-modal-confirm')]//div[contains(@class,'ant-modal-confirm-btns')]//button[contains(@class,'ant-btn-primary')]",
@@ -130,6 +132,13 @@ public class ProjectOverviewTabComponent extends BaseComponent {
 
     public void editAndSave() {
         editBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        saveBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        waitUntilSpinnerLoaded();
+    }
+
+    public void editDescriptionAndSave(String description) {
+        editBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
+        descriptionInput.waitForVisible(DEFAULT_TIMEOUT_MS).fill(description);
         saveBtn.waitForVisible(DEFAULT_TIMEOUT_MS).click();
         waitUntilSpinnerLoaded();
     }
