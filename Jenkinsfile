@@ -79,8 +79,27 @@ pipeline {
     parameters {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Tested application version (openl-tablets). Special chars like : or | or [] not allowed here!')
         string(name: 'TESTS_BRANCH', defaultValue: 'main', description: 'Autotests repository branch')
+        string(name: 'TESTS', defaultValue: '', description: 'Selective run. Leave EMPTY to run the full regression (all 8 suites of this job). To run only some tests, list their test CLASS names separated by commas or spaces: simple names (TestMethodTable) or fully qualified ones (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be selected, the whole class runs. Every listed class is looked up in the 8 suite XML files this job runs (src/test/resources/testng_suites, the *_regression suites are not part of this job): it runs inside its own suite with that suite\'s Studio and Rule Services images, TestNG listeners, retry analyzer and ReportPortal launch name, so the results stay in the same RP history as the full regression; the RP launch gets the extra attribute run:selective. Suites that contain none of the listed classes only check out the repository and are skipped without starting Maven or containers. The build fails before pulling images if a name contains characters other than letters, digits, dots and underscores, and fails after the run if any listed class was not found in a suite (check the spelling). The Docker image pull stage still runs, so a selective run takes the pull time plus the selected tests instead of the whole regression.')
     }
     stages {
+        stage('Validate Parameters') {
+            steps {
+                script {
+                    selectedTests = (params.TESTS ?: '').split(/[\s,;]+/).findAll { it }
+                    def invalidNames = selectedTests.findAll { !(it ==~ /[A-Za-z0-9_.]+/) }
+                    if (!invalidNames.isEmpty()) {
+                        error("TESTS accepts only class names made of letters, digits, dots and underscores, got: ${invalidNames}")
+                    }
+                    selectiveRun = !selectedTests.isEmpty()
+                    selectedClassPattern = selectedTests.collect { it.contains('.') ? it.replace('.', '\\.') : '([^"]*\\.)?' + it }.join('|')
+                    matchedClasses = []
+                    rpRunAttribute = selectiveRun ? ';run:selective' : ''
+                    if (selectiveRun) {
+                        echo "Selective run requested for: ${selectedTests}"
+                    }
+                }
+            }
+        }
         stage('Pull Docker Images') {
             steps {
                 script {
@@ -148,7 +167,36 @@ pipeline {
                                 ])
                                 env.BUILD_NUMBER = buildNumber
                                 env.TESTS_BRANCH = params.TESTS_BRANCH
-                                echo "RP attributes will be: build:${env.BUILD_NUMBER};tests_branch:${env.TESTS_BRANCH}"
+                                echo "RP attributes will be: build:${env.BUILD_NUMBER};tests_branch:${env.TESTS_BRANCH}${rpRunAttribute}"
+                                def suiteXmlOption = ''
+                                if (selectiveRun) {
+                                    def selectiveXml = "${pwd()}/selective_${suite.suiteName}.xml"
+                                    def matched = sh(returnStdout: true, script: """
+                                        SRC='src/test/resources/testng_suites/${suite.suiteName}.xml'
+                                        OUT='${selectiveXml}'
+                                        test -f "\$SRC"
+                                        TESTS_TOTAL=\$(grep -c '<test ' "\$SRC" || true)
+                                        TESTS_ONE_LINE=\$(grep '<test ' "\$SRC" | grep -c 'class name=' || true)
+                                        if [ "\$TESTS_TOTAL" -ne "\$TESTS_ONE_LINE" ]; then
+                                            echo "Every <test> of \$SRC must declare its class on the same line for the selective filter" >&2
+                                            exit 1
+                                        fi
+                                        {
+                                            grep -v '<test ' "\$SRC" | grep -v '</suite>' || true
+                                            grep '<test ' "\$SRC" | grep -E 'class name="(${selectedClassPattern})"' || true
+                                            echo '</suite>'
+                                        } > "\$OUT"
+                                        grep '<test ' "\$OUT" | grep -oE 'class name="[^"]*"' | sed 's/class name="//; s/"//' || true
+                                    """).trim()
+                                    def classes = matched ? matched.split(/\s+/).toList() : []
+                                    if (classes.isEmpty()) {
+                                        echo "Suite ${suite.suiteName} holds none of the selected tests, skipping"
+                                        return
+                                    }
+                                    echo "Suite ${suite.suiteName} will run ${classes.size()} selected class(es): ${classes}"
+                                    matchedClasses.addAll(classes)
+                                    suiteXmlOption = "-DsuiteXmlFile=\"${selectiveXml}\""
+                                }
                                 // Testcontainers hard-codes a 2-min pull timeout — too short for ~700MB Keycloak on a cold agent.
                                 if (suite.suiteName == "studio_sso") {
                                     sh '''
@@ -174,8 +222,9 @@ pipeline {
                                             -Drp.project=OpenL_Tests \\
                                             -Drp.launch=${suite.suiteName} \\
                                             -Drp.uuid=${RP_UUID} \\
-                                            -Drp.attributes="build:${env.BUILD_NUMBER};tests_branch:${env.TESTS_BRANCH}" \\
+                                            -Drp.attributes="build:${env.BUILD_NUMBER};tests_branch:${env.TESTS_BRANCH}${rpRunAttribute}" \\
                                             -Dsuite=${suite.suiteName} \\
+                                            ${suiteXmlOption} \\
                                             -Ddeployed_app_path=${suite.containerAppPath} \\
                                             -Ddocker_image_name=${suite.studioImageName} \\
                                             -Dws_docker_image_name=${suite.wsImageName} \\
@@ -192,6 +241,14 @@ pipeline {
                                              useWrapperFileDirectly: true])
                             }
                         }]
+                    }
+                    if (selectiveRun) {
+                        def notFound = selectedTests.findAll { name ->
+                            !matchedClasses.any { it == name || it.endsWith('.' + name) }
+                        }
+                        if (!notFound.isEmpty()) {
+                            error("Selected tests not found in any suite of this job (check the spelling): ${notFound}")
+                        }
                     }
                 }
             }
