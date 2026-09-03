@@ -76,6 +76,10 @@ public class ChangesDialogComponent extends BaseComponent {
         return view.isVisible();
     }
 
+    public boolean isViewShown(int timeoutInMillis) {
+        return view.isVisible(timeoutInMillis);
+    }
+
     public String getChangesTitle() {
         return title.waitForVisible(DEFAULT_TIMEOUT_MS).getText().trim();
     }

@@ -48,8 +48,17 @@ public class MoreMenuComponent extends BaseComponent implements IMoreMenu {
     @Override
     public ChangesDialogComponent clickChanges() {
         waitUntilSpinnerLoaded();
-        clickMenuItem(changesBtn, "Local Changes");
-        return new ChangesDialogComponent().waitForLoaded();
+        ChangesDialogComponent changes = new ChangesDialogComponent();
+        boolean opened = WaitUtil.retryAction(() -> {
+            clickMenuItem(changesBtn, "Local Changes");
+            if (!changes.isViewShown(DEFAULT_TIMEOUT_MS)) {
+                throw new IllegalStateException("Local Changes view did not open after clicking the menu item");
+            }
+        }, MENU_RETRY_TIMEOUT_MS + DEFAULT_TIMEOUT_MS, 500, "Opening Local Changes from the More menu");
+        if (!opened) {
+            throw new IllegalStateException("Local Changes view did not open within " + (MENU_RETRY_TIMEOUT_MS + DEFAULT_TIMEOUT_MS) + " ms");
+        }
+        return changes.waitForLoaded();
     }
 
     @Override
