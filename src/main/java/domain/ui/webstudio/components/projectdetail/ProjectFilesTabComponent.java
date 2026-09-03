@@ -32,6 +32,8 @@ public class ProjectFilesTabComponent extends BaseComponent {
     private final WebElement folderPathInput;
     private final WebElement folderSubmitBtn;
     private final WebElement filePreviewEmpty;
+    private final WebElement filePreviewError;
+    private final WebElement filePaneLoading;
 
     public ProjectFilesTabComponent(Page page) {
         this(new WebElement(page, "[data-testid=project-detail]", "projectDetail"));
@@ -56,6 +58,8 @@ public class ProjectFilesTabComponent extends BaseComponent {
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path] input", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
         filePreviewEmpty = createScopedElement("[data-testid=file-preview-empty]", "filePreviewEmpty");
+        filePreviewError = createScopedElement("[data-testid=file-preview-error]", "filePreviewError");
+        filePaneLoading = createScopedElement("[data-testid=file-pane-loading]", "filePaneLoading");
     }
 
     public boolean isOpen(int timeoutInMillis) {
@@ -85,8 +89,17 @@ public class ProjectFilesTabComponent extends BaseComponent {
     }
 
     public boolean waitForFileSelectionDropped(String fileName) {
-        return WaitUtil.waitForCondition(() -> !selectedFileParam().contains(fileName), DEFAULT_TIMEOUT_MS, 200,
+        return WaitUtil.waitForCondition(() -> !selectedFileParam().contains(fileName), FILE_DIALOG_TIMEOUT_MS, 200,
                 "Waiting for the Files tab to drop '" + fileName + "' from the URL selection");
+    }
+
+    public String describeFilePaneState(String expectedFileName) {
+        String pane = filePaneLoading.exists() ? "loading"
+                : filePreviewError.exists() ? "error: " + filePreviewError.getText().replaceAll("\\s+", " ").trim()
+                : filePreviewEmpty.exists() ? "empty"
+                : "preview";
+        return "tree lists '" + expectedFileName + "': " + fileNodeByName.format(expectedFileName).exists()
+                + ", file pane: " + pane + ", url file param: '" + selectedFileParam() + "'";
     }
 
     public String selectedFileParam() {

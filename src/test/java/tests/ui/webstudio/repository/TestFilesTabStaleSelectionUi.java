@@ -64,8 +64,10 @@ public class TestFilesTabStaleSelectionUi extends BaseTest {
         assertThat(detail.isFilesTabOpen())
                 .as("A deep link naming a missing file must still open the Files tab")
                 .isTrue();
-        assertThat(detail.waitForFileSelectionDropped(MISSING_TEXT_FILE))
-                .as("The Files tab must drop the missing file from the URL once the tree is loaded (EPBDS-16441)")
+        boolean dropped = detail.waitForFileSelectionDropped(MISSING_TEXT_FILE);
+        assertThat(dropped)
+                .as("The Files tab must drop the missing file from the URL once the tree is loaded (EPBDS-16441); state: %s",
+                        detail.describeFilePaneState(UPLOAD_FILE))
                 .isTrue();
         assertThat(detail.getSelectedFileFromUrl())
                 .as("No file may stay selected in the URL after the stale selection is dropped")

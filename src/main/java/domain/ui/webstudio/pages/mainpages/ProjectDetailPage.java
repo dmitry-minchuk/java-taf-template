@@ -390,6 +390,10 @@ public class ProjectDetailPage extends BasePage {
         return files.selectedFileParam();
     }
 
+    public String describeFilePaneState(String expectedFileName) {
+        return files.describeFilePaneState(expectedFileName);
+    }
+
     public boolean isFilePreviewEmptyShown() {
         return files.isFilePreviewEmptyShown();
     }
