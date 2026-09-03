@@ -1,14 +1,45 @@
 package domain.ui.webstudio.components.editortabcomponents;
 
-import domain.ui.webstudio.components.BaseComponent;
 import configuration.core.ui.WebElement;
 import configuration.driver.DriverPool;
+import domain.ui.webstudio.components.BaseComponent;
 import helpers.utils.WaitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProblemsPanelComponent extends BaseComponent {
+
+    private static final String COMPILATION_COMPLETE = "Loaded 100%";
+    private static final Pattern PROGRESS_BAR_TEXT = Pattern.compile("Loaded \\d+% \\((\\d+)/(\\d+)\\)");
+    private static final Set<String> FINISHED_STATES = Set.of("ok", "warnings", "errors");
+    private static final int QUIET_POLLS_BEFORE_COMPILED = 4;
+    private static final long COMPILATION_TIMEOUT_MS = 30000;
+    private static final long COMPILATION_POLL_MS = 250;
+    private static final String SERVER_STATUS_SCRIPT = """
+            async () => {
+                const api = globalThis.openl && globalThis.openl.projectStatus;
+                const id = globalThis.projectId;
+                if (!api || !id) {
+                    return null;
+                }
+                const status = await api.fetch(id);
+                const compilation = status.compilation || {};
+                const messages = compilation.messages || {};
+                const modules = compilation.modules || {};
+                return {
+                    compileState: status.compileState || '',
+                    errors: messages.errors || 0,
+                    warnings: messages.warnings || 0,
+                    compiled: modules.compiled || 0,
+                    total: modules.total || 0
+                };
+            }
+            """;
 
     private WebElement showProblemsLink;
     private WebElement hideProblemPanelLink;
@@ -40,6 +71,16 @@ public class ProblemsPanelComponent extends BaseComponent {
         warningElements = createScopedElementList("xpath=.//div[@id='warnings-panel']//a", "warningElements");
     }
 
+    public record ServerCompileStatus(String compileState, int errors, int warnings, int compiled, int total) {
+        public boolean isCompiling() {
+            return "compiling".equals(compileState);
+        }
+
+        public boolean isFinished() {
+            return FINISHED_STATES.contains(compileState) && compiled == total;
+        }
+    }
+
     public void showProblemsPanel() {
         if (showProblemsLink.isVisible()) {
             showProblemsLink.click();
@@ -55,26 +96,41 @@ public class ProblemsPanelComponent extends BaseComponent {
     public int getErrorsCount() {
         showProblemsPanel();
         waitForCompilationToComplete();
-        String errorText = errorsCounter.sleep(200).getText();
-        return errorText != null && !errorText.isEmpty() ? Integer.parseInt(errorText.trim()) : 0;
+        return parseCounter(errorsCounter.sleep(200).getText());
     }
 
     public int getWarningsCount() {
         showProblemsPanel();
         waitForCompilationToComplete();
-        String warningText = warningsCounter.getText();
-        return warningText != null && !warningText.isEmpty() ? Integer.parseInt(warningText.trim()) : 0;
+        return parseCounter(warningsCounter.getText());
+    }
+
+    private static int parseCounter(String text) {
+        return text != null && !text.isBlank() ? Integer.parseInt(text.trim()) : 0;
     }
 
     public boolean isCompilationInProgress() {
-        String compilationComplete = "Loaded 100%";
-        String compilationStatus;
+        return !getCompilationProgressBarText().contains(COMPILATION_COMPLETE);
+    }
+
+    private boolean areAllModulesCompiled() {
+        Matcher matcher = PROGRESS_BAR_TEXT.matcher(getCompilationProgressBarText());
+        return matcher.find() && matcher.group(1).equals(matcher.group(2));
+    }
+
+    public ServerCompileStatus fetchServerCompileStatusViaPage() {
         try {
-            compilationStatus = compilationProgressBar.getText();
-        } catch (Exception e) {
-            compilationStatus = compilationComplete;
+            Object result = page.evaluate(SERVER_STATUS_SCRIPT);
+            if (!(result instanceof Map<?, ?> map)) {
+                return null;
+            }
+            return new ServerCompileStatus(String.valueOf(map.get("compileState")),
+                    ((Number) map.get("errors")).intValue(), ((Number) map.get("warnings")).intValue(),
+                    ((Number) map.get("compiled")).intValue(), ((Number) map.get("total")).intValue());
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not read the project status from the server: {}", e.getMessage());
+            return null;
         }
-        return !compilationStatus.contains(compilationComplete);
     }
 
     public boolean hasErrors() {
@@ -95,82 +151,92 @@ public class ProblemsPanelComponent extends BaseComponent {
 
     public void checkNoProblems() {
         showProblemsPanel();
+        boolean compiled = waitForCompilationToComplete(COMPILATION_TIMEOUT_MS, COMPILATION_POLL_MS);
+        if (!compiled) {
+            throw new AssertionError("Compilation did not finish within " + COMPILATION_TIMEOUT_MS + " ms, progress bar: '"
+                    + getCompilationProgressBarText() + "', server status: " + fetchServerCompileStatusViaPage());
+        }
         boolean noProblems = WaitUtil.waitForCondition(
                 () -> {
                     try {
-                        if (isCompilationInProgress()) return false;
-                        String errorText = errorsCounter.getText();
-                        String warningText = warningsCounter.getText();
-                        int errors = (errorText != null && !errorText.isEmpty()) ? Integer.parseInt(errorText.trim()) : 0;
-                        int warnings = (warningText != null && !warningText.isEmpty()) ? Integer.parseInt(warningText.trim()) : 0;
-                        return errors == 0 && warnings == 0;
-                    } catch (Exception e) {
+                        return parseCounter(errorsCounter.getText()) == 0 && parseCounter(warningsCounter.getText()) == 0;
+                    } catch (RuntimeException e) {
                         return false;
                     }
                 },
-                30000, 500,
-                "Waiting for compilation to complete with no problems"
-        );
+                DEFAULT_TIMEOUT_MS, 500, "Waiting for the problems panel to report no errors and no warnings");
         if (!noProblems) {
             throw new AssertionError("Expected no problems but found: " + getProblemsInfo());
+        }
+        ServerCompileStatus server = fetchServerCompileStatusViaPage();
+        if (server != null && !server.isCompiling() && (server.errors() != 0 || server.warnings() != 0)) {
+            throw new AssertionError("The problems panel shows no problems but the server reports " + server);
         }
     }
 
     public List<String> getAllErrors() {
         showProblemsPanel();
         waitForCompilationToComplete();
-        List<String> errors = errorElements.stream()
+        return errorElements.stream()
                 .map(WebElement::getText)
                 .toList();
-        return errors;
     }
 
     public List<String> getAllWarnings() {
         showProblemsPanel();
         waitForCompilationToComplete();
-        List<String> warnings = warningElements.stream()
+        return warningElements.stream()
                 .map(WebElement::getText)
                 .toList();
-        return warnings;
     }
-
-    // "Not compiling" is believed only after this many polls in a row: the bar keeps the previous result briefly.
-    private static final int QUIET_POLLS_BEFORE_COMPILED = 4;
 
     public void waitForCompilationToComplete() {
-        waitForCompilationToComplete(30000, 250);
+        waitForCompilationToComplete(COMPILATION_TIMEOUT_MS, COMPILATION_POLL_MS);
     }
-    
-    /**
-     * Waits for the project to be compiled.
-     *
-     * <p>The progress bar still shows the previous run's "Loaded 100%" for a moment after an edit is saved, so
-     * "not in progress" is only trusted once it holds over a few polls in a row - otherwise the problems panel
-     * is read while the recompile is only starting and reports no problems at all.
-     */
-    public void waitForCompilationToComplete(long timeoutMillis, long pollIntervalMillis) {
+
+    public boolean waitForCompilationToComplete(long timeoutMillis, long pollIntervalMillis) {
         long deadline = System.currentTimeMillis() + timeoutMillis;
         int quietPolls = 0;
+        int allCompiledPolls = 0;
         while (System.currentTimeMillis() < deadline) {
-            if (isCompilationInProgress()) {
+            if (!isCompilationInProgress()) {
+                allCompiledPolls = 0;
+                if (++quietPolls >= QUIET_POLLS_BEFORE_COMPILED) {
+                    LOGGER.info("Compilation completed");
+                    return true;
+                }
+            } else {
                 quietPolls = 0;
-            } else if (++quietPolls >= QUIET_POLLS_BEFORE_COMPILED) {
-                LOGGER.info("Compilation completed");
-                return;
+                if (areAllModulesCompiled()) {
+                    if (++allCompiledPolls >= QUIET_POLLS_BEFORE_COMPILED && isFinishedOnServer()) {
+                        return true;
+                    }
+                } else {
+                    allCompiledPolls = 0;
+                }
             }
             WaitUtil.sleep((int) pollIntervalMillis, "Waiting for project compilation to complete (polling)");
         }
-        LOGGER.info("Compilation timeout reached");
+        LOGGER.warn("Compilation timeout reached, progress bar: '{}'", getCompilationProgressBarText());
+        return false;
+    }
+
+    private boolean isFinishedOnServer() {
+        ServerCompileStatus server = fetchServerCompileStatusViaPage();
+        if (server == null || !server.isFinished()) {
+            return false;
+        }
+        LOGGER.warn("Progress bar is stuck at '{}' although the server reports {}; the terminal status push was not delivered to the page",
+                getCompilationProgressBarText(), server);
+        return true;
     }
 
     public void selectProblemByText(String text) {
         showProblemsPanel();
         waitForCompilationToComplete();
-        
         List<WebElement> allProblems = new ArrayList<>();
         allProblems.addAll(errorElements);
         allProblems.addAll(warningElements);
-        
         allProblems.stream()
                 .filter(element -> element.getText().contains(text))
                 .findFirst()
@@ -180,7 +246,6 @@ public class ProblemsPanelComponent extends BaseComponent {
     public void selectProblemByIndex(int index) {
         showProblemsPanel();
         waitForCompilationToComplete();
-
         if (index > 0 && index <= errorElements.size()) {
             errorElements.get(index - 1).click();
         }
@@ -214,7 +279,8 @@ public class ProblemsPanelComponent extends BaseComponent {
         try {
             return compilationProgressBar.getText();
         } catch (Exception e) {
-            return "";
+            LOGGER.warn("Compilation progress bar is not present, treating the compilation as finished");
+            return COMPILATION_COMPLETE;
         }
     }
 
