@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 public class ProjectFilesTabComponent extends BaseComponent {
 
     private static final int FILE_DIALOG_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
+    private static final int TREE_LOAD_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 6;
     private static final Pattern FILE_PARAM = Pattern.compile("[?&]file=([^&#]*)");
 
     private final WebElement fileNodeByName;
@@ -89,8 +90,16 @@ public class ProjectFilesTabComponent extends BaseComponent {
     }
 
     public boolean waitForFileSelectionDropped(String fileName) {
-        return WaitUtil.waitForCondition(() -> !selectedFileParam().contains(fileName), FILE_DIALOG_TIMEOUT_MS, 200,
+        return WaitUtil.waitForCondition(() -> !selectedFileParam().contains(fileName), DEFAULT_TIMEOUT_MS, 200,
                 "Waiting for the Files tab to drop '" + fileName + "' from the URL selection");
+    }
+
+    public long waitForTreeToList(String fileName) {
+        long started = System.currentTimeMillis();
+        fileNodeByName.format(fileName).waitForVisible(TREE_LOAD_TIMEOUT_MS);
+        long elapsed = System.currentTimeMillis() - started;
+        LOGGER.info("Files tree listed '{}' after {} ms", fileName, elapsed);
+        return elapsed;
     }
 
     public String describeFilePaneState(String expectedFileName) {

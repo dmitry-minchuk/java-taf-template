@@ -386,6 +386,10 @@ public class ProjectDetailPage extends BasePage {
         return files.waitForFileSelectionDropped(fileName);
     }
 
+    public long waitForFileTreeToList(String fileName) {
+        return files.waitForTreeToList(fileName);
+    }
+
     public String getSelectedFileFromUrl() {
         return files.selectedFileParam();
     }
