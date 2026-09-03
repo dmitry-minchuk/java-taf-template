@@ -46,9 +46,9 @@ public class TestFilesTabStaleSelectionUi extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-33040")
-    @Description("EPBDS-16441 (open defect, expected to fail until fixed): a deep link naming a file the tree "
-            + "does not hold must have its stale selection dropped, but the Files pane opens that phantom file "
-            + "and shows the 'The resource is not found.' banner instead.")
+    @Description("EPBDS-16441: a deep link naming a file the tree does not hold must have its stale selection "
+            + "dropped from the URL, leave the Files tab open on its empty pane and never keep the "
+            + "'The resource is not found.' banner.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testStaleDeepLinkSelectionIsDropped() {
         ProjectDetailPage detail = openProjectWithUploadedFile();
@@ -64,10 +64,21 @@ public class TestFilesTabStaleSelectionUi extends BaseTest {
         assertThat(detail.isFilesTabOpen())
                 .as("A deep link naming a missing file must still open the Files tab")
                 .isTrue();
+        assertThat(detail.waitForFileSelectionDropped(MISSING_TEXT_FILE))
+                .as("The Files tab must drop the missing file from the URL once the tree is loaded (EPBDS-16441)")
+                .isTrue();
+        assertThat(detail.getSelectedFileFromUrl())
+                .as("No file may stay selected in the URL after the stale selection is dropped")
+                .isEmpty();
+        assertThat(detail.isFilePreviewEmptyShown())
+                .as("The file pane must fall back to its empty state instead of opening the phantom file")
+                .isTrue();
         assertThat(detail.isResourceNotFoundShown())
-                .as("The stale deep-link selection must be dropped, not shown as the not-found banner "
-                        + "(EPBDS-16441)")
+                .as("The dropped selection must not leave the not-found banner in the file pane (EPBDS-16441)")
                 .isFalse();
+        assertThat(detail.isFilePresent(UPLOAD_FILE))
+                .as("The tree must still list the real file next to the dropped phantom selection")
+                .isTrue();
     }
 
     private ProjectDetailPage openProjectWithUploadedFile() {

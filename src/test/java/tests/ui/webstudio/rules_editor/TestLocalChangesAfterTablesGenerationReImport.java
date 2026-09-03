@@ -62,7 +62,10 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
 
         assertThat(changesDialog.getChangesTitle())
                 .as("Changes title should show 1 local change for Algorithms")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Changes title should show 1 local change for Algorithms")
+                .isEqualTo(1);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 2 rows in history (current + previous)")
                 .isEqualTo(2);
@@ -73,7 +76,10 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
 
         assertThat(changesDialog.getChangesTitle())
                 .as("Changes title should show 1 local change for Models")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Changes title should show 1 local change for Models")
+                .isEqualTo(1);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 2 rows in history (current + previous)")
                 .isEqualTo(2);
@@ -87,6 +93,9 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Models");
         changesDialog = editorPage.getEditorToolbarPanelComponent().clickMore().clickChanges();
+        assertThat(changesDialog.isRowCurrent(1))
+                .as("Local Changes must show the history of the selected module: its latest import is still current")
+                .isTrue();
         changesDialog.clickRestoreAtRow(2);
         editorPage.waitUntilSpinnerLoaded();
 
@@ -119,7 +128,6 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName,
                                      String sourceFileName, String targetFileName) {
-        // React Files tab: upload (renaming to the target name), then commit from the projects list.
         repositoryPage.openProjectsList().openProjectDetail(projectName)
                 .uploadFileAs(TestDataUtil.getFilePathFromResources(sourceFileName), targetFileName);
         repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + targetFileName);

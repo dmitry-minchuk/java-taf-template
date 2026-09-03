@@ -3,22 +3,22 @@ package domain.ui.webstudio.components.common;
 import configuration.core.ui.WebElement;
 import configuration.driver.DriverPool;
 import domain.ui.webstudio.components.BaseComponent;
+import helpers.utils.WaitUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * EPBDS-15960 sections G/H: secondary "Bypass branch protection?" confirmation
- * shown above the Sync dialog when a bypass-eligible user tries to send into a
- * protected target branch.
- */
+import java.util.concurrent.atomic.AtomicReference;
+
 public class BypassConfirmDialogComponent extends BaseComponent {
 
     private static final Logger LOGGER = LogManager.getLogger(BypassConfirmDialogComponent.class);
+    private static final int MERGE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
 
     private WebElement title;
     private WebElement confirmBtn;
     private WebElement cancelBtn;
     private WebElement mergeSuccessNotice;
+    private WebElement errorNotice;
 
     public BypassConfirmDialogComponent() {
         super(DriverPool.getPage());
@@ -26,9 +26,6 @@ public class BypassConfirmDialogComponent extends BaseComponent {
     }
 
     private void initializeElements() {
-        // Anchor inside the ant-modal whose title is "Bypass branch protection?" — that
-        // scopes Cancel + Confirm to this specific confirmation, away from the parent
-        // Sync dialog and any other modals.
         String modalRoot = "//div[contains(@class,'ant-modal') and "
                 + ".//div[contains(@class,'ant-modal-title') and "
                 + "normalize-space(text())='Bypass branch protection?']]";
@@ -44,6 +41,9 @@ public class BypassConfirmDialogComponent extends BaseComponent {
         mergeSuccessNotice = new WebElement(DriverPool.getPage(),
                 "xpath=//div[contains(@class,'ant-notification')]//*[normalize-space(text())='Merge Successful']",
                 "mergeSuccessNotice");
+        errorNotice = new WebElement(DriverPool.getPage(),
+                "xpath=//div[contains(@class,'ant-notification-notice-error')] | //div[contains(@class,'ant-modal-container')]//div[contains(@class,'ant-alert-error')]",
+                "mergeErrorNotice");
     }
 
     public BypassConfirmDialogComponent waitForDialogToAppear() {
@@ -55,8 +55,6 @@ public class BypassConfirmDialogComponent extends BaseComponent {
         return confirmBtn.isVisible();
     }
 
-    /** Waits for the modal to disappear (with the modal's animation grace period) and
-     *  returns true if it did so within that window, false otherwise. */
     public boolean waitForDialogToDisappear() {
         try {
             confirmBtn.waitForHidden(2_000);
@@ -72,6 +70,7 @@ public class BypassConfirmDialogComponent extends BaseComponent {
 
     public void clickConfirmBypassAndMerge() {
         LOGGER.info("Clicking 'Confirm bypass and merge' on bypass confirmation dialog");
+        closeAllMessages();
         confirmBtn.click();
     }
 
@@ -80,16 +79,33 @@ public class BypassConfirmDialogComponent extends BaseComponent {
         cancelBtn.click();
     }
 
-    public boolean isMergeSuccessNoticeVisible() {
-        try {
-            mergeSuccessNotice.waitForVisible();
-            return true;
-        } catch (RuntimeException e) {
+    public String waitForMergeOutcome() {
+        AtomicReference<String> outcome = new AtomicReference<>();
+        WaitUtil.waitForCondition(() -> {
+            if (mergeSuccessNotice.exists()) {
+                outcome.set("");
+                return true;
+            }
+            if (errorNotice.exists()) {
+                outcome.set(errorNotice.getText().replaceAll("\\s+", " ").trim());
+                return true;
+            }
             return false;
+        }, MERGE_TIMEOUT_MS, 250, "Waiting for the merge to finish with a success toast or an error");
+        String result = outcome.get();
+        if (result == null) {
+            return "No merge outcome within " + MERGE_TIMEOUT_MS + " ms";
         }
+        if (!result.isEmpty()) {
+            LOGGER.warn("Merge reported an error: {}", result);
+        }
+        return result;
     }
 
-    /** True if the success toast is NOT visible within a short window (negative assertion). */
+    public boolean isMergeSuccessNoticeVisible() {
+        return waitForMergeOutcome().isEmpty();
+    }
+
     public boolean isMergeSuccessNoticeAbsent() {
         try {
             mergeSuccessNotice.waitForHidden(2_000);

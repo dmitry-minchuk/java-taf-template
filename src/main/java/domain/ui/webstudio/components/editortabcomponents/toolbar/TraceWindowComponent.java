@@ -13,6 +13,7 @@ public class TraceWindowComponent extends BasePage implements ITraceWindow {
 
     private static final Logger LOGGER = LogManager.getLogger(TraceWindowComponent.class);
 
+    private static final int CALL_TREE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
     private static final String TREE_NODE = "//*[@data-testid='trace-tree']//div[starts-with(@data-testid,'tree-frame-') or starts-with(@data-testid,'tree-step-')]";
 
     private final List<WebElement> callTreeNodes;
@@ -70,7 +71,12 @@ public class TraceWindowComponent extends BasePage implements ITraceWindow {
 
     @Override
     public List<String> getCallTreeTitles() {
-        WaitUtil.waitForCondition(() -> !callTreeNodes.isEmpty(), 10000, 200, "Waiting for trace call-tree nodes to appear");
+        boolean loaded = WaitUtil.waitForCondition(() -> !callTreeNodes.isEmpty(), CALL_TREE_TIMEOUT_MS, 200,
+                "Waiting for trace call-tree nodes to appear");
+        if (!loaded) {
+            LOGGER.warn("Trace call tree is still empty after {} ms, debugger status: '{}'", CALL_TREE_TIMEOUT_MS,
+                    status.exists() ? status.getText().trim() : "<none>");
+        }
         return callTreeNodes.stream().map(n -> n.getText().replaceAll("\\s+", " ").trim()).toList();
     }
 

@@ -34,7 +34,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Step 1: Fresh project shows no changes
         ChangesDialogComponent changesDialog = editorPage.getEditorToolbarPanelComponent()
                 .clickMore()
                 .clickChanges();
@@ -46,7 +45,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Step 2: Undone edit does not create history
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(6, 4, "Good Morning1");
         editorPage.getEditorTableActionsPanelComponent().undoClickChanges();
@@ -62,7 +60,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Steps 3-4: Single edit creates Local Changes (1); compare shows highlighted cell
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(6, 4, "Good Morning1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
@@ -72,7 +69,10 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("Changes title should show 1 local change")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Changes title should show 1 local change")
+                .isEqualTo(1);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 2 rows in history (current + previous)")
                 .isEqualTo(2);
@@ -102,7 +102,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Steps 5-6: Second edit creates Local Changes (2); compare shows second edit diff
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(7, 4, "Good Afternoon1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
@@ -112,7 +111,10 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("Changes title should show 2 local changes")
-                .isEqualTo("Local Changes (2)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Changes title should show 2 local changes")
+                .isEqualTo(2);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 3 rows in history")
                 .isEqualTo(3);
@@ -138,13 +140,11 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .isTrue();
         compareDialog.close();
 
-        // Step 7: .history folder is absent in repository while local changes exist
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         assertThat(repositoryPage.openProjectDetail(projectName).openFilesTab().isFolderPresent(".history"))
                 .as(".history folder should not be visible in repository while local changes exist (not committed)")
                 .isFalse();
 
-        // Steps 8-8.1: Restore to row 2 reverts only the second edit
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
         editorPage.getEditorLeftRulesTreeComponent()
@@ -183,7 +183,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Steps 9-10.1: Three edits; check LC(3)/4 rows; restore to row 2; verify 3 cells
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(6, 4, "Good Morning1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
@@ -201,7 +200,10 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("Changes title should show 3 local changes")
-                .isEqualTo("Local Changes (3)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Changes title should show 3 local changes")
+                .isEqualTo(3);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 4 rows in history")
                 .isEqualTo(4);
@@ -224,7 +226,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .as("Cell (8,4) should be reverted to original after restoring to row 2")
                 .isEqualTo("Good Evening");
 
-        // Step 11: Save project clears local history, creates 2 revisions, no .history in repo
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
@@ -255,7 +256,6 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .as(".history folder should not be visible in the repository tree after save")
                 .isFalse();
 
-        // Steps 12-13: New edit after save creates Local Changes (1) with compare dialog
         editorPage = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Main");
         editorPage.getEditorLeftRulesTreeComponent()
@@ -272,7 +272,10 @@ public class TestLocalChangesCoreMechanics extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("Should show 1 local change after editing a saved project")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Should show 1 local change after editing a saved project")
+                .isEqualTo(1);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 2 rows in history")
                 .isEqualTo(2);

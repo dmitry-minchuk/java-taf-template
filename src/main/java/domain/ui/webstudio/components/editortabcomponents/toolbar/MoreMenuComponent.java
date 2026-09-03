@@ -1,5 +1,6 @@
 package domain.ui.webstudio.components.editortabcomponents.toolbar;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.BaseComponent;
@@ -10,11 +11,6 @@ import helpers.utils.WaitUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The More dropdown of the editor's top toolbar (Revisions / Local Changes / Table Dependencies /
- * Compare Excel files). Scoped under {@code span#topMorePanel} — its menu renders inside the span
- * (verified against the live 6.4.0 DOM), so the items no longer collide with other open dropdowns.
- */
 public class MoreMenuComponent extends BaseComponent implements IMoreMenu {
 
     private final WebElement toggle;
@@ -47,10 +43,9 @@ public class MoreMenuComponent extends BaseComponent implements IMoreMenu {
 
     @Override
     public ChangesDialogComponent clickChanges() {
-        waitUntilSpinnerLoaded(); // loadingPanel can still intercept the click right after a save under CI load
+        waitUntilSpinnerLoaded();
         changesBtn.click();
-        WaitUtil.sleep(1500, "Waiting for Changes dialog to open");
-        return new ChangesDialogComponent();
+        return new ChangesDialogComponent().waitForLoaded();
     }
 
     @Override
@@ -72,12 +67,11 @@ public class MoreMenuComponent extends BaseComponent implements IMoreMenu {
         return new CompareExcelFilesDialogComponent(popup);
     }
 
-    /** Visible item texts of the opened More menu. */
     public List<String> getMenuItems() {
         List<String> items = new ArrayList<>();
-        com.microsoft.playwright.Locator menuItems = allMenuLinks.getLocator();
+        Locator menuItems = allMenuLinks.getLocator();
         for (int i = 0; i < menuItems.count(); i++) {
-            com.microsoft.playwright.Locator item = menuItems.nth(i);
+            Locator item = menuItems.nth(i);
             if (item.isVisible()) {
                 String text = item.textContent().trim();
                 if (!text.isEmpty()) {

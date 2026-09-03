@@ -2,11 +2,15 @@ package domain.ui.webstudio.pages.mainpages;
 
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.pages.BasePage;
+import helpers.utils.WaitUtil;
 
 import java.net.URI;
 import java.util.List;
 
 public class DeploymentWorkspacePage extends BasePage {
+
+    private static final String EMPTY_REVISION = "—";
+    private static final int REVISION_INDEX_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
 
     private WebElement workspaceRoot;
     private WebElement title;
@@ -78,6 +82,28 @@ public class DeploymentWorkspacePage extends BasePage {
         projectsTable.waitForVisible(DEFAULT_TIMEOUT_MS);
         return projectRowTemplate.format(projectName).waitForVisible(DEFAULT_TIMEOUT_MS).getLocator()
                 .locator("xpath=./td").allInnerTexts().stream().map(String::trim).toList();
+    }
+
+    public List<String> waitForProjectRevision(String projectName) {
+        return waitForProjectRevisionOtherThan(projectName, EMPTY_REVISION);
+    }
+
+    public List<String> waitForProjectRevisionOtherThan(String projectName, String previousRevision) {
+        boolean resolved = WaitUtil.waitForCondition(() -> {
+            String revision = getProjectRowCells(projectName).get(1);
+            if (!revision.isBlank() && !EMPTY_REVISION.equals(revision) && !previousRevision.equals(revision)) {
+                return true;
+            }
+            page.reload();
+            waitForLoaded();
+            return false;
+        }, REVISION_INDEX_TIMEOUT_MS, 1_000, "Waiting for the design revision of '" + projectName + "' to be resolved");
+        List<String> cells = getProjectRowCells(projectName);
+        if (!resolved) {
+            throw new IllegalStateException("Design revision of '" + projectName + "' stayed '" + cells.get(1)
+                    + "' for " + REVISION_INDEX_TIMEOUT_MS + " ms");
+        }
+        return cells;
     }
 
 }

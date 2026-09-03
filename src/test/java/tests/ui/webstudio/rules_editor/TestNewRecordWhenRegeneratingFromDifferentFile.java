@@ -72,7 +72,10 @@ public class TestNewRecordWhenRegeneratingFromDifferentFile extends BaseTest {
 
         assertThat(changesDialog.getChangesTitle())
                 .as("Two different file imports should create 2 local change records")
-                .isEqualTo("Local Changes (2)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Two different file imports should create 2 local change records")
+                .isEqualTo(2);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 3 rows: current + 2 previous versions")
                 .isEqualTo(3);
@@ -80,7 +83,6 @@ public class TestNewRecordWhenRegeneratingFromDifferentFile extends BaseTest {
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName,
                                      String sourceFileName, String targetFileName) {
-        // React Files tab: upload (renaming to the target name), then commit from the projects list.
         repositoryPage.openProjectsList().openProjectDetail(projectName)
                 .uploadFileAs(TestDataUtil.getFilePathFromResources(sourceFileName), targetFileName);
         repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + targetFileName);

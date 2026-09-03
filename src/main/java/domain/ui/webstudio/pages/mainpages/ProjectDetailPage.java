@@ -382,6 +382,18 @@ public class ProjectDetailPage extends BasePage {
         return files.isResourceNotFoundShown();
     }
 
+    public boolean waitForFileSelectionDropped(String fileName) {
+        return files.waitForFileSelectionDropped(fileName);
+    }
+
+    public String getSelectedFileFromUrl() {
+        return files.selectedFileParam();
+    }
+
+    public boolean isFilePreviewEmptyShown() {
+        return files.isFilePreviewEmptyShown();
+    }
+
     public ProjectDetailPage uploadFile(String filePath) {
         return uploadFileAs(filePath, null);
     }

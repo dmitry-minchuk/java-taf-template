@@ -3,10 +3,17 @@ package domain.ui.webstudio.components.projectdetail;
 import com.microsoft.playwright.Page;
 import configuration.core.ui.WebElement;
 import domain.ui.webstudio.components.BaseComponent;
+import helpers.utils.WaitUtil;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProjectFilesTabComponent extends BaseComponent {
 
     private static final int FILE_DIALOG_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 3;
+    private static final Pattern FILE_PARAM = Pattern.compile("[?&]file=([^&#]*)");
 
     private final WebElement fileNodeByName;
     private final WebElement addBtn;
@@ -24,6 +31,7 @@ public class ProjectFilesTabComponent extends BaseComponent {
     private final WebElement uploadSubmitBtn;
     private final WebElement folderPathInput;
     private final WebElement folderSubmitBtn;
+    private final WebElement filePreviewEmpty;
 
     public ProjectFilesTabComponent(Page page) {
         this(new WebElement(page, "[data-testid=project-detail]", "projectDetail"));
@@ -47,6 +55,7 @@ public class ProjectFilesTabComponent extends BaseComponent {
         uploadSubmitBtn = new WebElement(page, "[data-testid=files-upload-submit]", "filesUploadSubmitBtn");
         folderPathInput = new WebElement(page, "[data-testid=files-folder-path] input", "folderPathInput");
         folderSubmitBtn = new WebElement(page, "[data-testid=files-folder-submit]", "folderSubmitBtn");
+        filePreviewEmpty = createScopedElement("[data-testid=file-preview-empty]", "filePreviewEmpty");
     }
 
     public boolean isOpen(int timeoutInMillis) {
@@ -71,7 +80,22 @@ public class ProjectFilesTabComponent extends BaseComponent {
     }
 
     public boolean isResourceNotFoundShown() {
-        return page.locator("xpath=//*[not(*)][contains(normalize-space(.),'The resource is not found')]").count() > 0;
+        return getRootLocator().getLocator()
+                .locator("xpath=.//*[not(*)][contains(normalize-space(.),'The resource is not found')]").count() > 0;
+    }
+
+    public boolean waitForFileSelectionDropped(String fileName) {
+        return WaitUtil.waitForCondition(() -> !selectedFileParam().contains(fileName), DEFAULT_TIMEOUT_MS, 200,
+                "Waiting for the Files tab to drop '" + fileName + "' from the URL selection");
+    }
+
+    public String selectedFileParam() {
+        Matcher matcher = FILE_PARAM.matcher(page.url());
+        return matcher.find() ? URLDecoder.decode(matcher.group(1), StandardCharsets.UTF_8) : "";
+    }
+
+    public boolean isFilePreviewEmptyShown() {
+        return filePreviewEmpty.isVisible(DEFAULT_TIMEOUT_MS);
     }
 
     public boolean isNodePresent(String nodeName) {

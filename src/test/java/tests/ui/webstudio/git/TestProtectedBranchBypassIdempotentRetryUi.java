@@ -57,8 +57,11 @@ public class TestProtectedBranchBypassIdempotentRetryUi extends BaseTest {
         BypassConfirmDialogComponent confirmDialog = repositoryPage.getBypassConfirmDialogComponent()
                 .waitForDialogToAppear();
         confirmDialog.clickConfirmBypassAndMerge();
-        assertThat(confirmDialog.isMergeSuccessNoticeVisible())
-                .as("first bypass merge succeeds with a '%s' toast", MERGE_SUCCESS_TOAST)
+        assertThat(confirmDialog.waitForMergeOutcome())
+                .as("first bypass merge must finish with the '%s' toast and no error", MERGE_SUCCESS_TOAST)
+                .isEmpty();
+        assertThat(confirmDialog.waitForDialogToDisappear())
+                .as("the bypass confirmation must close once the merge is done")
                 .isTrue();
 
         repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);

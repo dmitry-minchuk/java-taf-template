@@ -13,11 +13,13 @@ import domain.ui.webstudio.components.repositorytabcomponents.DeployModalCompone
 import domain.ui.webstudio.pages.mainpages.DeploymentWorkspacePage;
 import domain.ui.webstudio.pages.mainpages.DeploymentsHomePage;
 import domain.ui.webstudio.pages.mainpages.EditorPage;
+import domain.ui.webstudio.pages.mainpages.ProjectDetailPage;
 import domain.ui.webstudio.pages.mainpages.RepositoryPage;
 import helpers.service.DeployFixtureService;
 import helpers.service.LoginService;
 import helpers.service.UserService;
 import helpers.utils.EntityIdUtil;
+import helpers.utils.TestDataUtil;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
@@ -34,6 +36,7 @@ public class TestDeploymentsTabUi extends BaseTest {
     private static final String DEPLOYMENT = "QaJourneyДеплой";
     private static final String TEMPLATE = "Sample Project";
     private static final String EMPTY_CELL = "—";
+    private static final String CHANGED_FILE = "TestFileAddDelete.rules.xls";
 
     private final DeployFixtureService deployFixture = new DeployFixtureService();
 
@@ -80,6 +83,8 @@ public class TestDeploymentsTabUi extends BaseTest {
                 .as("The summary must report an empty repository as zero deployments")
                 .isEqualTo("0 deployments");
 
+        ProjectDetailPage detail = repositoryPage.openProjectsList().openProjectDetail(PROJECT);
+        String designRevisionBeforeDeploy = detail.getModifiedBy() + "\n" + detail.getModifiedAt();
         repositoryPage.openProjectsList();
         repositoryPage.clickDeploy(PROJECT)
                 .deployWithAllFields(DeployFixtureService.PRIMARY_REPOSITORY_NAME, DEPLOYMENT, "First deploy");
@@ -121,11 +126,12 @@ public class TestDeploymentsTabUi extends BaseTest {
         assertThat(workspace.isProjectPresent(PROJECT))
                 .as("The deployed project must be listed on the detail screen")
                 .isTrue();
-        List<String> projectCells = workspace.getProjectRowCells(PROJECT);
+        List<String> projectCells = workspace.waitForProjectRevision(PROJECT);
         assertThat(projectCells.get(1))
-                .as("The deployed project must carry a revision, not the empty-value placeholder")
+                .as("The deployed project must show the design revision it was built from, not the placeholder")
                 .isNotBlank()
-                .isNotEqualTo(EMPTY_CELL);
+                .isNotEqualTo(EMPTY_CELL)
+                .isEqualTo(designRevisionBeforeDeploy);
         assertThat(projectCells.get(2))
                 .as("The deployed project must name the user who deployed it")
                 .isNotEqualTo(EMPTY_CELL)
@@ -155,8 +161,38 @@ public class TestDeploymentsTabUi extends BaseTest {
                 .as("Redeploying must update the same configuration, not duplicate it")
                 .containsExactly(DEPLOYMENT);
         workspace = deployments.openDeployment(DEPLOYMENT);
-        assertThat(workspace.getProjectRowCells(PROJECT).get(1))
-                .as("Redeploying must publish a new revision of the project")
-                .isNotEqualTo(revisionAfterFirstDeploy);
+        assertThat(workspace.waitForProjectRevision(PROJECT).get(1))
+                .as("Redeploying an unchanged project must keep showing the same design revision (EPBDS-16452)")
+                .isEqualTo(revisionAfterFirstDeploy);
+
+        detail = repositoryPage.openProjectsList().openProjectDetail(PROJECT);
+        detail.uploadFile(TestDataUtil.getFilePathFromResources(CHANGED_FILE));
+        repositoryPage.openProjectsList().saveProject(PROJECT, "Design change before redeploy");
+        detail = repositoryPage.openProjectsList().openProjectDetail(PROJECT);
+        String designRevisionAfterChange = detail.getModifiedBy() + "\n" + detail.getModifiedAt();
+        assertThat(designRevisionAfterChange)
+                .as("Saving the uploaded file must produce a new design revision to redeploy")
+                .isNotEqualTo(designRevisionBeforeDeploy);
+
+        repositoryPage.openProjectsList();
+        DeployModalComponent changedRedeployModal = repositoryPage.clickDeploy(PROJECT);
+        Response changedRedeployResponse = DriverPool.getPage().waitForResponse(
+                response -> "POST".equals(response.request().method())
+                        && response.url().endsWith("/deployments/" + idSegment),
+                () -> changedRedeployModal.deployToExistingDeployment(
+                        DeployFixtureService.PRIMARY_REPOSITORY_NAME, DEPLOYMENT, "Redeploy after change"));
+        assertThat(changedRedeployResponse.status())
+                .as("Redeploying the changed project by id must succeed")
+                .isEqualTo(204);
+        repositoryPage.closeAllMessages();
+
+        deployments = new DeploymentsHomePage().open();
+        assertThat(deployments.getVisibleDeploymentNames())
+                .as("Redeploying the changed project must still update the same configuration")
+                .containsExactly(DEPLOYMENT);
+        workspace = deployments.openDeployment(DEPLOYMENT);
+        assertThat(workspace.waitForProjectRevisionOtherThan(PROJECT, revisionAfterFirstDeploy).get(1))
+                .as("Redeploying a changed project must show the new design revision it was built from")
+                .isEqualTo(designRevisionAfterChange);
     }
 }

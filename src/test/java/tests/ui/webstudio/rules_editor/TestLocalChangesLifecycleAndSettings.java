@@ -35,13 +35,11 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Step 14: Close project discards local changes; cell reverts; history cleared
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(6, 4, "Good Morning1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
-        // Close discards the uncommitted change (confirmed via the "Discard unsaved changes?" prompt).
         repositoryPage.closeProject(projectName);
         repositoryPage.waitUntilAppIdle();
 
@@ -74,7 +72,6 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "Hello");
 
-        // Step 15: New edit after close/reopen creates fresh Local Changes (1)
         editorPage.getEditorToolbarPanelComponent().getEditTableBtn().click();
         editorPage.getCenterTable().editCell(7, 4, "Good Afternoon1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
@@ -84,7 +81,10 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("After close/reopen, new edit should create fresh Local Changes (1)")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("After close/reopen, new edit should create fresh Local Changes (1)")
+                .isEqualTo(1);
         assertThat(changesDialog.getRowCount())
                 .as("Should be 2 rows in fresh history after close/reopen")
                 .isEqualTo(2);
@@ -111,7 +111,6 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
         editorPage.getCenterTable().editCell(6, 4, "Good Morning1");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
-        // Before Step 19: Cancel Clear All History does not remove history
         AdminPage adminPage = editorPage.openUserMenu().navigateToAdministration();
         SystemSettingsPageComponent systemSettings = adminPage.navigateToSystemSettingsPage();
         systemSettings.cancelClearAllHistory();
@@ -129,12 +128,14 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("Cancel should not clear local change history")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Cancel should not clear local change history")
+                .isEqualTo(1);
         assertThat(changesDialog.getRowCount())
                 .as("Should still have 2 rows after cancel")
                 .isEqualTo(2);
 
-        // Step 19: Clear All History removes all entries
         adminPage = editorPage.openUserMenu().navigateToAdministration();
         systemSettings = adminPage.navigateToSystemSettingsPage();
         systemSettings.clearAllHistory();
@@ -154,7 +155,6 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .as("Clear All History should remove all local change history")
                 .isEqualTo("No changes in history");
 
-        // Step 17: historyCount=0 disables local change tracking
         adminPage = editorPage.openUserMenu().navigateToAdministration();
         systemSettings = adminPage.navigateToSystemSettingsPage();
         systemSettings.setProjectHistoryCount("0");
@@ -178,7 +178,6 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .as("historyCount=0 should disable local change tracking")
                 .isEqualTo("No changes in history");
 
-        // Steps 17.1-18: historyCount=10 re-enables tracking; compare dialog shows highlighted cell
         adminPage = editorPage.openUserMenu().navigateToAdministration();
         systemSettings = adminPage.navigateToSystemSettingsPage();
         systemSettings.setProjectHistoryCount("10");
@@ -200,7 +199,10 @@ public class TestLocalChangesLifecycleAndSettings extends BaseTest {
                 .clickChanges();
         assertThat(changesDialog.getChangesTitle())
                 .as("historyCount=10 should re-enable local change tracking")
-                .isEqualTo("Local Changes (1)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("historyCount=10 should re-enable local change tracking")
+                .isEqualTo(1);
 
         changesDialog.setCompareCheckbox(1, true);
         changesDialog.setCompareCheckbox(2, true);

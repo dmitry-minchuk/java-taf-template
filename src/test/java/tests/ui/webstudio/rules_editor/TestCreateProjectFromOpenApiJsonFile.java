@@ -29,8 +29,9 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30678")
-    @Description("Create project from OpenAPI JSON file and verify repository tree structure and Editor module properties."
-            + " Known bug: EPBDS-16227.")
+    @Description("Create project from OpenAPI JSON file and verify repository tree structure and Editor module properties;"
+            + " copying a module keeps the modules the descriptor already declares (EPBDS-16227) and an uploaded"
+            + " workbook does not rewrite an explicit rules.xml.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromOpenApiJsonFile() {
         String projectName = "JsonOpenApiProject_" + System.currentTimeMillis();
@@ -93,12 +94,9 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         datatypeTable.editCell(3, 1, "String[]");
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
         editorPage.waitUntilSpinnerLoaded();
-        // Read the problems panel here, on the module: it is part of the module view.
         editorPage.waitUntilAppIdle();
         editorPage.getProblemsPanelComponent().checkNoProblems();
 
-        // Export is a project-level action, so go to the project root. The breadcrumb keeps re-rendering
-        // while the project recompiles and its click never lands, so reload and come back via the tabs.
         editorPage.reloadPage();
         editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         editorPage = new EditorPage().getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
@@ -156,7 +154,15 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         editorPage.waitUntilSpinnerLoaded();
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         assertThat(editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
-                .as("Algorithms2 module should be present after copy").contains("Algorithms2");
+                .as("Copying a module must add it next to the modules the descriptor already declared (EPBDS-16227)")
+                .containsExactlyInAnyOrder("Algorithms2", "Algorithms_test", "Models_test");
+        editorPage.getEditorToolbarPanelComponent().clickExport();
+        File exportedZipAfterCopy = editorPage.getExportProjectDialogComponent().clickExportAndDownload();
+        String rulesXmlAfterCopy = ZipUtil.readFileFromZip(exportedZipAfterCopy, "rules.xml");
+        assertThat(rulesXmlAfterCopy).as("rules.xml must declare the copied module and keep the renamed ones (EPBDS-16227)")
+                .contains("<name>Algorithms2</name>")
+                .contains("<name>Algorithms_test</name>")
+                .contains("<name>Models_test</name>");
 
         repositoryPage = editorPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         ProjectDetailPage detailAfterUpload = repositoryPage.openProjectsList().openProjectDetail(projectName);
@@ -168,20 +174,18 @@ public class TestCreateProjectFromOpenApiJsonFile extends BaseTest {
         EditorPage editorPageAfterUpload = repositoryPage.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPageAfterUpload.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
-        // Known-failing (product bug EPBDS-16227): an uploaded Excel file must be registered as a module and
-        // must not cost the project the modules it already had. Today the upload leaves the descriptor with
-        // the uploaded file only, so both checks below fail.
         assertThat(editorPageAfterUpload.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName))
-                .as("Module 'rules' should appear after uploading rules.xlsx, next to the modules already there")
-                .contains("rules", "Algorithms2");
+                .as("Uploading a workbook must keep every module the explicit rules.xml declares and declare none itself")
+                .containsExactlyInAnyOrder("Algorithms2", "Algorithms_test", "Models_test");
 
         editorPageAfterUpload.getEditorToolbarPanelComponent().clickExport();
         File exportedZipAfterUpload = editorPageAfterUpload.getExportProjectDialogComponent().clickExportAndDownload();
         String rulesXmlAfterUpload = ZipUtil.readFileFromZip(exportedZipAfterUpload, "rules.xml");
-        assertThat(rulesXmlAfterUpload).as("rules.xml should contain Algorithms2 module after copy")
-                .contains("<name>Algorithms2</name>");
-        assertThat(rulesXmlAfterUpload).as("rules.xml should contain the rules module after upload (EPBDS-16227)")
-                .contains("<name>rules</name>");
+        assertThat(rulesXmlAfterUpload).as("rules.xml must be left as the copy wrote it after the upload")
+                .isEqualTo(rulesXmlAfterCopy);
+        assertThat(ZipUtil.listFiles(exportedZipAfterUpload))
+                .as("The uploaded workbook must be part of the saved project")
+                .contains("rules/rules.xlsx");
 
         repositoryPage = editorPageAfterUpload.getTabSwitcherComponent().selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.openProjectsList().copyProject(projectName, projectName + "-Copy");

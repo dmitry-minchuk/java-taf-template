@@ -59,7 +59,10 @@ public class TestNoNewRecordWhenRegeneratingFromSameFile extends BaseTest {
 
         assertThat(changesDialog.getChangesTitle())
                 .as("Reimporting same content should not create a new local change record")
-                .isEqualTo("Local Changes (0)");
+                .isEqualTo("Local Changes");
+        assertThat(changesDialog.getChangesCount())
+                .as("Reimporting same content should not create a new local change record")
+                .isEqualTo(0);
         assertThat(changesDialog.getNoChangesMessage())
                 .as("No history entries should exist when content is unchanged")
                 .isEqualTo("No changes in history");
@@ -67,7 +70,6 @@ public class TestNoNewRecordWhenRegeneratingFromSameFile extends BaseTest {
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName,
                                      String sourceFileName, String targetFileName) {
-        // React Files tab: upload (renaming to the target name), then commit from the projects list.
         repositoryPage.openProjectsList().openProjectDetail(projectName)
                 .uploadFileAs(TestDataUtil.getFilePathFromResources(sourceFileName), targetFileName);
         repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + targetFileName);
