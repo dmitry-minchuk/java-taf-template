@@ -13,6 +13,10 @@ import java.util.List;
 
 public class MoreMenuComponent extends BaseComponent implements IMoreMenu {
 
+    private static final int MENU_ITEM_VISIBLE_TIMEOUT_MS = 500;
+    private static final int MENU_ITEM_CLICK_TIMEOUT_MS = 2000;
+    private static final long MENU_RETRY_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 2L;
+
     private final WebElement toggle;
     private final WebElement changesBtn;
     private final WebElement revisionsBtn;
@@ -44,20 +48,32 @@ public class MoreMenuComponent extends BaseComponent implements IMoreMenu {
     @Override
     public ChangesDialogComponent clickChanges() {
         waitUntilSpinnerLoaded();
-        changesBtn.click();
+        clickMenuItem(changesBtn, "Local Changes");
         return new ChangesDialogComponent().waitForLoaded();
     }
 
     @Override
     public void clickRevisions() {
-        revisionsBtn.click();
+        clickMenuItem(revisionsBtn, "Revisions");
         WaitUtil.sleep(500, "Waiting for Revisions dialog to open");
     }
 
     @Override
     public void clickTableDependencies() {
-        tableDependenciesBtn.click();
+        clickMenuItem(tableDependenciesBtn, "Table Dependencies");
         WaitUtil.sleep(1000, "Waiting for Table Dependencies view to load");
+    }
+
+    private void clickMenuItem(WebElement item, String itemName) {
+        boolean clicked = WaitUtil.retryAction(() -> {
+            if (!item.isVisible(MENU_ITEM_VISIBLE_TIMEOUT_MS)) {
+                toggle.click();
+            }
+            item.click(MENU_ITEM_CLICK_TIMEOUT_MS);
+        }, MENU_RETRY_TIMEOUT_MS, 500, "Clicking '" + itemName + "' in the More menu, re-opening the menu if a toolbar refresh closed it");
+        if (!clicked) {
+            throw new IllegalStateException("'" + itemName + "' in the More menu could not be clicked within " + MENU_RETRY_TIMEOUT_MS + " ms");
+        }
     }
 
     @Override
