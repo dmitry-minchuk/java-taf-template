@@ -16,9 +16,22 @@ on:
         description: "ReportPortal launch name"
         required: true
         default: "webstudio_tests"
+      tests:
+        description: >-
+          Selective run. Leave EMPTY to run every suite of the workflow. To run only some tests, list their test
+          CLASS names separated by commas or spaces: simple names (TestMethodTable) or fully qualified ones
+          (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be selected, the whole
+          class runs. Each listed class stays in its own suite with that suite's Studio and Rule Services images,
+          so the shards, the rp-export and the merged report look exactly like in a full run; the export gets the
+          attribute run:selective. Suites holding none of the listed classes are not started at all. The
+          "Discover test shards" job fails immediately when a name contains characters other than letters, digits,
+          dots and underscores, or when a name is not found in any suite (check the spelling).
+        required: false
+        default: ""
 
 env:
   RP_LAUNCH_NAME: ${{ inputs.rp_launch_name }}
+  SELECTED_TESTS: ${{ inputs.tests }}
 
 jobs:
   discover-tests:
@@ -34,7 +47,10 @@ jobs:
       - name: Generate test matrix
         id: matrix
         run: |
-          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --max-shard-size 8)"
+          if [ -n "${SELECTED_TESTS}" ]; then
+            echo "Selective run requested for: ${SELECTED_TESTS}"
+          fi
+          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --max-shard-size 8 --classes="${SELECTED_TESTS}")"
           echo "matrix=${MATRIX}" >> "${GITHUB_OUTPUT}"
           echo "${MATRIX}"
 
@@ -83,8 +99,13 @@ jobs:
           }
           STUDIO_IMAGE="$(resolve_image "${STUDIO_IMAGE_KIND}")"
           WS_IMAGE="$(resolve_image "${WS_IMAGE_KIND}")"
+          RP_ATTRIBUTES="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}"
+          if [ -n "${SELECTED_TESTS}" ]; then
+            RP_ATTRIBUTES="${RP_ATTRIBUTES};run:selective"
+          fi
           echo "Using docker_image_name=${STUDIO_IMAGE}"
           echo "Using ws_docker_image_name=${WS_IMAGE}"
+          echo "Using rp.attributes=${RP_ATTRIBUTES}"
 
           mvn clean test \
             -Drp.enable=false \
@@ -98,7 +119,7 @@ jobs:
             -Dapp_container_startup_timeout_minutes=10 \
             -Drp.project=OpenL_Tests \
             -Drp.launch="${RP_LAUNCH_NAME}" \
-            -Drp.attributes="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}" \
+            -Drp.attributes="${RP_ATTRIBUTES}" \
             -Drp.export.dir=target/rp-export
 
       - name: Fail on failed TestNG results
@@ -126,7 +147,7 @@ jobs:
             generated-testng/**
 
   merge-reportportal-export:
-    name: Merge ReportPortal export
+    name: Merge ReportPortal export and test report
     needs:
       - test-shard
     if: always()
@@ -157,3 +178,25 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           path: merged-rp-export/**
+
+      - name: Build merged test report
+        if: always()
+        env:
+          BUILD_LABEL: ${{ inputs.application_version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 scripts/github-actions/generate-merged-report.py \
+            --input-root downloaded-artifacts \
+            --output-dir merged-report \
+            --title "OpenL Tests [${BUILD_LABEL}]" \
+            --build "${BUILD_LABEL}" \
+            --run-url "${RUN_URL}"
+
+      - name: Upload merged test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-merged
+          if-no-files-found: error
+          retention-days: 14
+          path: merged-report/**

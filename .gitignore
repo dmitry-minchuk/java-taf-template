@@ -89,3 +89,4 @@ promptfoo/package-lock.json
 /.factorypath
 .playwright-mcp/
 .claude/
+__pycache__/

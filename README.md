@@ -711,6 +711,19 @@ bash scripts/reportportal-import/import-rp-export.sh \
 
 Use `Jenkinsfile.reportportal-import` for the manual Jenkins job that downloads GitHub Actions artifacts and imports every `rp-export` manifest it finds.
 
+### Selective runs on Jenkins and GitHub Actions
+
+Both pipelines accept an optional list of test class names, so a fix can be verified in minutes instead of a full regression:
+
+- Jenkins job `Webstudio_6.x.x_Tests`: parameter `TESTS`.
+- GitHub Actions workflow `OpenL Tests`: input `tests`.
+
+Names are separated by commas or spaces and may be simple (`TestMethodTable`) or fully qualified (`tests.ui.webstudio.git.TestGitBranchSwitching`). A whole class runs, single `@Test` methods cannot be selected. Every class stays inside its own TestNG suite with that suite's Studio and Rule Services images, listeners, retry analyzer and ReportPortal launch name, and the launch (or the rp-export) carries the attribute `run:selective`. Suites without a selected class are skipped. A name that no suite contains fails the build with the list of unknown names. An empty value runs the full regression.
+
+### Merged test report on GitHub Actions
+
+After the shards finish, the `Merge ReportPortal export and test report` job publishes two artifacts: `rp-export-merged` for the later ReportPortal import and `test-report-merged`, a self-contained `index.html` built by `scripts/github-actions/generate-merged-report.py` from every shard's rp-export (with `testng-results.xml` as a fallback). The report lists all tests with status, suite, shard, duration, `@TestCaseId`, the failure message and stack trace, and the failure screenshots and videos copied next to it; the same numbers and the list of failed and skipped tests are appended to the workflow job summary.
+
 ### Debug Information
 
 ```java
