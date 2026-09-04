@@ -29,10 +29,8 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
 
     @Test
     @TestCaseId("IPBQA-30678")
-    @Description("Create project from YAML file with custom module names and paths, verify structure. "
-            + "KNOWN-FAILING: saving the project after a module is removed fails server-side with "
-            + "ProjectException \"Object ... is not a tree\", so the Save dialog never closes."
-            + " Known bug: EPBDS-16361.")
+    @Description("Create project from YAML file with custom module names and paths, verify structure and that the "
+            + "project saves after a module is removed (regression guard for EPBDS-16361).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCreateProjectFromOpenApiYamlWithCustomModuleNames() {
         String projectName = "YamlOpenApiProject_" + System.currentTimeMillis();
@@ -53,8 +51,6 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
         assertThat(openApiComponent.isCreateEnabled())
                 .as("Create button should be enabled after uploading file and setting project name").isTrue();
 
-        // In the React wizard the module name and its path are independent inputs: renaming the module no
-        // longer rewrites the path, so both are set explicitly.
         openApiComponent.setDataModuleName("Data_Types");
         openApiComponent.setDataModulePath("rules/Data_Types.xlsx");
         assertThat(openApiComponent.getDataModulePath())
@@ -67,7 +63,6 @@ public class TestCreateProjectFromOpenApiYamlWithCustomModuleNames extends BaseT
         openApiComponent.setDataModulePath("rules1/Data_Types_file.xlsx");
         assertThat(openApiComponent.getDataModulePathInputValue())
                 .as("Data module path input should reflect custom path").isEqualTo("rules1/Data_Types_file.xlsx");
-        // The React wizard has no "reset path" button — the path is a plain input, so it is typed back.
         openApiComponent.setRulesModulePath("rules/Spreadsheets_file.xlsx");
         openApiComponent.setRulesModulePath("rules/Spreadsheets.xlsx");
         assertThat(openApiComponent.getRulesModulePath())

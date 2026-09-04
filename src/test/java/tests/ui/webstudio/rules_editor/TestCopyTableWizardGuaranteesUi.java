@@ -24,8 +24,7 @@ public class TestCopyTableWizardGuaranteesUi extends BaseTest {
     @Test
     @TestCaseId("IPBQA-33026")
     @Description("The copy wizard guaranteed version uniqueness; the React modal must reject copying a table "
-            + "as a version that already exists. KNOWN-FAILING: the modal accepts the duplicate version."
-            + " Known bug: EPBDS-16388.")
+            + "as a version that already exists (regression guard for EPBDS-16388).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testDuplicateVersionCopyIsRejected() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");

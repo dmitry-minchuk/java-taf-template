@@ -29,8 +29,7 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
 
     @Test
     @TestCaseId("IPBQA-31035")
-    @Description("Steps 4-5.2: Import new modules with path editing/reset, module names retained after cancel, mixed new/existing modules scenario."
-            + " Known bug: EPBDS-16323.")
+    @Description("Steps 4-5.2: Import new modules with path editing/reset, module names retained after cancel, mixed new/existing modules scenario.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testImportNewModulesWithPathEditingAndMixedScenarios() {
         String projectName = "TestNewModulesPath_" + System.currentTimeMillis();
@@ -39,7 +38,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        // Setup: create project from openapi1.json with custom module names and paths
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.getCreateProjectLink().click();
@@ -55,14 +53,12 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         repositoryPage.fillCommitInfo();
         repositoryPage.waitUntilSpinnerLoaded();
 
-        // Upload openapi2.json for later use in step 5
         uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
 
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
-        // Reconciliation import of openapi2.json to establish module state
         ImportOpenApiDialogComponent importDialog = editorPage.openImportOpenApiDialog();
         importDialog.selectUploadInRepository();
         importDialog.setOpenApiFilePath(OPENAPI_FILE);
@@ -72,7 +68,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Algorithms_test");
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
 
-        // Tables Generation overwrite to confirm paths (step 3.1 equivalent)
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         importDialog = editorPage.openImportOpenApiDialog();
         importDialog.selectTablesGenerationMode();
@@ -84,7 +79,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
-        // === Step 4: Import with new modules Alg and Mod-123 from openapi1.json ===
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         importDialog = editorPage.openImportOpenApiDialog();
         importDialog.selectUploadInRepository();
@@ -109,7 +103,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .as("Import button should say 'Import' when only creating new modules")
                 .isEqualTo("Import");
 
-        // === Step 4.1: Edit rules path, then reset and verify default restored ===
         settingsDialog.clickEditRulesPath();
         settingsDialog.setNewRulesPath("rules/Alg12.xlsx");
         settingsDialog.clickResetRulesPath();
@@ -131,7 +124,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .as("Data path display should revert to default after reset")
                 .isEqualTo(String.format("rules/%s.xlsx", moduleName));
 
-        // === Step 4.2: Cancel, re-open, verify module names retained, set custom paths ===
         settingsDialog.clickCancel();
         importDialog.selectTablesGenerationMode();
 
@@ -150,15 +142,12 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules1/Mod1.xlsx");
 
-        // === Step 4.3: Import and verify module list and OpenAPI properties ===
         settingsDialog.clickImportAndOverride();
         editorPage.waitUntilSpinnerLoaded();
 
         List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
         assertThat(modules).as("Algorithms_test should still be present").contains("Algorithms_test");
         assertThat(modules).as("Models_test should still be present").contains("Models_test");
-        // Known-failing (product bug EPBDS-16323): OpenAPI import updates the <openapi> block but the
-        // modules it generates are stripped again on descriptor save, so they never reach rules.xml.
         assertThat(modules).as("Alg should be created").contains("Alg");
         assertThat(modules).as("Mod-123 should be created").contains(moduleName);
 
@@ -167,7 +156,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         assertThat(editorPage.getOpenApiPropertyValue("Rules Module:")).isEqualTo("Alg");
         assertThat(editorPage.getOpenApiPropertyValue("Data Module:")).isEqualTo(moduleName);
 
-        // === Step 5: Import with openapi2.json – new rules Alg1 + existing data Mod-123 ===
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         importDialog = editorPage.openImportOpenApiDialog();
         importDialog.selectUploadInRepository();
@@ -191,7 +179,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
                 .as("Import button should say 'Import and overwrite' for mixed scenario")
                 .isEqualTo("Import and overwrite");
 
-        // === Step 5.1: Cancel, then import Alg (existing) + Mod1 (new) with custom data path ===
         settingsDialog.clickCancel();
         importDialog.selectTablesGenerationMode();
         importDialog.setRulesModuleName("Alg");
@@ -212,7 +199,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
         settingsDialog.clickEditDataPath();
         settingsDialog.setNewDataPath("rules/Mod5.xlsx");
 
-        // === Step 5.2: Import and verify final module list and properties ===
         settingsDialog.clickImportAndOverride();
         editorPage.waitUntilSpinnerLoaded();
 
@@ -228,7 +214,6 @@ public class TestImportNewModulesWithPathEditingAndMixedScenarios extends BaseTe
     }
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName, String fileName) {
-        // React Files tab: upload through the project's own screen, then commit from the projects list.
         repositoryPage.openProjectsList().openProjectDetail(projectName)
                 .uploadFileAs(TestDataUtil.getFilePathFromResources(fileName), fileName);
         repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + fileName);

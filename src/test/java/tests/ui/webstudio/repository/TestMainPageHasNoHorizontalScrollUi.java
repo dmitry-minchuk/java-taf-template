@@ -23,8 +23,7 @@ public class TestMainPageHasNoHorizontalScrollUi extends BaseTest {
     @Description("Studio pages must fit the window width. Guards the horizontal scroll bar reported in "
             + "EPBDS-16274, which carries no steps beyond a screenshot; measured at 1280 and below it does not "
             + "appear on 6.4.0-ef53e0bec1d7, so the test is green here and turns red if the page outgrows the "
-            + "window."
-            + " Known bug: EPBDS-16274.")
+            + "window.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testStudioPagesFitTheWindowWidth() {
         EditorPage editorPage = new LoginService(DriverPool.getPage())

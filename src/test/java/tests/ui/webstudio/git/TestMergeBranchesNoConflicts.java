@@ -36,10 +36,9 @@ public class TestMergeBranchesNoConflicts extends BaseTest {
     @Test
     @TestCaseId("IPBQA-29455")
     @Description("Git - Merge branches without conflicts between master and MyBranch. Verifies EPBDS-8488: the "
-            + "merge commit is authored by the WebStudio user's display name, not a .gitconfig identity. "
-            + "KNOWN-FAILING: the first save on MyBranch - after Module4 is deleted and Module6 uploaded - fails "
-            + "server-side with ProjectException \"Object ... is not a tree\", so the Save dialog never closes."
-            + " Known bug: EPBDS-16361.")
+            + "merge commit is authored by the WebStudio user's display name, not a .gitconfig identity, and the "
+            + "first save on MyBranch after a module is deleted and another uploaded succeeds (regression guard for "
+            + "EPBDS-16361).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testMergeBranchesNoConflicts() {
         LoginService loginService = new LoginService(DriverPool.getPage());

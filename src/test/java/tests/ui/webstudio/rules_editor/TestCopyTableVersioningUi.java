@@ -14,12 +14,6 @@ import tests.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Versioning through the "Copy table" modal, which EPBDS-16313 put in place of the JSF copy wizard.
- *
- * <p>The wizard's "Copy as New Version" mode also deactivated the source table; the modal only writes the copy,
- * so the module is left with two active tables of the same name.
- */
 public class TestCopyTableVersioningUi extends BaseTest {
 
     private static final String MODULE_NAME = "TestMethodTable";
@@ -27,16 +21,13 @@ public class TestCopyTableVersioningUi extends BaseTest {
     private static final String TABLE_NAME = "getGreetings";
     private static final String NEXT_VERSION = "0.0.2";
     private static final String MALFORMED_VERSION = "v2";
-    // The modal takes the property's technical name, which is what the table header carries.
     private static final String BUSINESS_DIMENSION = "lob";
     private static final String BUSINESS_DIMENSION_VALUE = "test";
 
     @Test
     @TestCaseId("EPBDS-16357")
-    @Description("Copying a table as a new version must leave the module compilable. KNOWN-FAILING: the modal does "
-            + "not deactivate the source table, so both versions stay active and the module reports "
-            + "\"There can be only one active table.\""
-            + " Known bug: EPBDS-16357.")
+    @Description("Copying a table as a new version must deactivate the source table and leave the module "
+            + "compilable (regression guard for EPBDS-16357).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testCopyAsNewVersionKeepsModuleCompilable() {
         EditorPage editorPage = openTable();

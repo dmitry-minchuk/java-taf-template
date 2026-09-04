@@ -20,10 +20,8 @@ public class TestRenameProjectFromOldRevisionConflictUi extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-16269")
-    @Description("Renaming a project, then renaming it again from an older revision must offer Resolve Conflicts. "
-            + "KNOWN-FAILING: the save is refused and no dialog appears — the conflicts request still uses the "
-            + "previous project name, so it answers 404."
-            + " Known bug: EPBDS-16269.")
+    @Description("Renaming a project, then renaming it again from an older revision must offer Resolve Conflicts "
+            + "instead of refusing the save (regression guard for EPBDS-16269).")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testRenameFromOldRevisionOffersConflictResolution() {
         String projectName = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, TEMPLATE_NAME);
@@ -33,19 +31,16 @@ public class TestRenameProjectFromOldRevisionConflictUi extends BaseTest {
 
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
-        // Rename and save → revision 2, the project now lives under its new name.
         editorPage.openEditProjectDialog(projectName).setProjectName(renamedOnce).clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
 
-        // Go back to the revision the project was created in.
         editorPage.getEditorToolbarPanelComponent().clickMore().clickRevisions();
         EditorRevisionsTabComponent revisionsTab = new EditorRevisionsTabComponent();
         revisionsTab.waitForTableToLoad();
         revisionsTab.openRevision(2);
 
-        // The revision being viewed carries the name the project had back then, so it is addressed by that.
         editorPage.openEditProjectDialog(projectName).setProjectName(renamedTwice).clickUpdateButton();
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().clickSave();

@@ -29,8 +29,7 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-31035")
-    @Description("Tables Generation import for non-OpenAPI project: overwrite existing module and create new Data module; verify module list and properties."
-            + " Known bug: EPBDS-16323.")
+    @Description("Tables Generation import for non-OpenAPI project: overwrite existing module and create new Data module; verify module list and properties.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     public void testImportTablesGenerationForNonOpenApiProject() {
         String projectName = "TestNonOpenApiGen_" + System.currentTimeMillis();
@@ -38,13 +37,11 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
 
-        // Setup: Create Bank Rating template project and upload openapi2.json
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.REPOSITORY);
         repositoryPage.createProject(CreateNewProjectComponent.TabName.TEMPLATE, projectName, TEMPLATE_NAME);
         uploadFileToProject(repositoryPage, projectName, OPENAPI_FILE);
 
-        // Step 9: Reconciliation import of openapi2.json
         editorPage = repositoryPage.getTabSwitcherComponent()
                 .selectTab(TabSwitcherComponent.TabName.EDITOR);
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
@@ -63,15 +60,12 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
                 .as("OpenAPI File should be 'openapi2.json'")
                 .isEqualTo(OPENAPI_FILE);
 
-        // Step 9: Navigate to Bank Rating module — reconciliation errors must be present
-        // openapi2.json doesn't match Bank Rating rules, so errors are expected
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectModule(projectName, "Bank Rating");
         editorPage.getProblemsPanelComponent().waitForCompilationToComplete();
         assertThat(editorPage.getProblemsPanelComponent().hasErrors())
                 .as("Bank Rating module should have reconciliation errors after openapi2.json Reconciliation import")
                 .isTrue();
 
-        // Step 10: Navigate back to project, Tables Generation import with Bank Rating as Rules module
         editorPage.getEditorToolbarPanelComponent().navigateToProjectRoot(projectName);
         importDialog = editorPage.openImportOpenApiDialog();
         importDialog.selectTablesGenerationMode();
@@ -90,15 +84,10 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
                         "rules/Models.xlsx");
         settingsDialog.clickImportAndOverride();
 
-        // The import rewrites the project descriptor; give the editor time to settle and re-read the project
-        // so the module list is the new one.
         editorPage.waitUntilAppIdle();
         editorPage.reloadPage();
         editorPage.getEditorLeftProjectModuleSelectorComponent().selectProject(projectName);
 
-        // Known-failing (product bug EPBDS-16323): the import writes the <openapi> block but the modules it
-        // generates are stripped again when the descriptor is saved, so "Models" never reaches rules.xml.
-        // Verify module list: Models and Bank Rating present, Algorithms absent
         List<String> modules = editorPage.getEditorLeftProjectModuleSelectorComponent().getAllModuleNames(projectName);
         assertThat(modules)
                 .as("Models module should be present after Tables Generation import")
@@ -123,7 +112,6 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
                 .as("Data Module should be 'Models'")
                 .isEqualTo("Models");
 
-        // Step 10.1: Save project and verify no problems in each new module
         editorPage.getEditorToolbarPanelComponent().clickSave();
         editorPage.getSaveChangesComponent().clickSave();
         editorPage.waitUntilSpinnerLoaded();
@@ -137,7 +125,6 @@ public class TestImportTablesGenerationForNonOpenApiProject extends BaseTest {
     }
 
     private void uploadFileToProject(RepositoryPage repositoryPage, String projectName, String fileName) {
-        // React Files tab: upload through the project's own screen, then commit from the projects list.
         repositoryPage.openProjectsList().openProjectDetail(projectName)
                 .uploadFileAs(TestDataUtil.getFilePathFromResources(fileName), fileName);
         repositoryPage.openProjectsList().saveProject(projectName, "Uploaded " + fileName);
