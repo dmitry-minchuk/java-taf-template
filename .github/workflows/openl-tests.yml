@@ -18,20 +18,30 @@ on:
         default: "webstudio_tests"
       tests:
         description: >-
-          Selective run. Leave EMPTY to run every suite of the workflow (the same 8 suites as the Jenkins regression). To run only some tests, list their test
-          CLASS names separated by commas or spaces: simple names (TestMethodTable) or fully qualified ones
-          (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be selected, the whole
-          class runs. Each listed class stays in its own suite with that suite's Studio and Rule Services images,
-          so the shards, the rp-export and the merged report look exactly like in a full run; the export gets the
-          attribute run:selective. Suites holding none of the listed classes are not started at all. The
-          "Discover test shards" job fails immediately when a name contains characters other than letters, digits,
-          dots and underscores, or when a name is not found in any suite (check the spelling).
+          Selective run. Leave EMPTY to run every test class of the 8 regression suites. To run only some tests,
+          list their test CLASS names separated by commas or spaces: simple names (TestMethodTable) or fully
+          qualified ones (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be
+          selected, the whole class runs. The listed classes are pooled and balanced over min(shards, classes)
+          jobs; every job has both the Studio and the Rule Services image, a class picks the one it declares.
+          The rp-export and the merged report label every test with the suite its class is declared in and
+          carry the attribute run:selective. The "Discover test shards" job fails immediately when a name
+          contains characters other than letters, digits, dots and underscores, or when a name is not found in
+          any suite (check the spelling).
         required: false
         default: ""
+      shards:
+        description: >-
+          Number of parallel shards for a full run. All test classes of the 8 regression suites are pooled and
+          spread over this many GitHub jobs by their measured duration (scripts/github-actions/test-weights.json),
+          so every job finishes at about the same time. The default matches max-parallel of the workflow; a
+          selective run never uses more shards than it has classes.
+        required: false
+        default: "20"
 
 env:
   RP_LAUNCH_NAME: ${{ inputs.rp_launch_name }}
   SELECTED_TESTS: ${{ inputs.tests }}
+  SHARDS: ${{ inputs.shards }}
   # Keep the image tag and the npm package in step with PLAYWRIGHT_VERSION / PLAYWRIGHT_NPM_PACKAGE in DockerDriverPool.java
   PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.52.0-noble
   PLAYWRIGHT_NPM_PACKAGE: playwright@1.52.0
@@ -53,7 +63,7 @@ jobs:
           if [ -n "${SELECTED_TESTS}" ]; then
             echo "Selective run requested for: ${SELECTED_TESTS}"
           fi
-          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --max-shard-size 8 --classes="${SELECTED_TESTS}")"
+          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --shards "${SHARDS:-20}" --classes="${SELECTED_TESTS}")"
           echo "matrix=${MATRIX}" >> "${GITHUB_OUTPUT}"
           echo "${MATRIX}"
 
@@ -184,6 +194,7 @@ jobs:
           python3 scripts/github-actions/merge-rp-exports.py \
             --input-root downloaded-artifacts \
             --output-dir merged-rp-export \
+            --suite-dir src/test/resources/testng_suites \
             --launch-name "${RP_LAUNCH_NAME}"
 
       - name: Upload merged ReportPortal export

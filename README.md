@@ -728,9 +728,17 @@ Names are separated by commas or spaces and may be simple (`TestMethodTable`) or
 
 In `PLAYWRIGHT_DOCKER` mode every test starts a `mcr.microsoft.com/playwright` container whose entry command downloads the `playwright` npm package before the server listens; a cold download takes about 90 seconds and on a slow runner can exceed the default 120-second startup timeout. Two properties tune this: `playwright_server_startup_timeout_seconds` (default 120) and `playwright_npm_cache_dir`, a host directory mounted as the container's npm cache so only the warm-up, or the first cold start, downloads the package (a cold start with a shared cache is serialized across threads). GitHub Actions sets both and warms the cache once per shard before Maven starts; locally the same warm-up is `docker run --rm -v <cache>:/root/.npm mcr.microsoft.com/playwright:v1.52.0-noble sh -c "npx -y playwright@1.52.0 --version"`. When the container still fails to start, its own output is written to the test log.
 
+### Shard balancing on GitHub Actions
+
+The workflow does not run the TestNG suites one by one. `scripts/github-actions/generate-test-matrix.py` takes the union of the test classes declared in the 8 regression suite files (the suites stay the source of truth for what belongs to the regression, and Jenkins keeps running them as suites), pools the classes and spreads them over `shards` jobs (default 20) by their measured duration from `scripts/github-actions/test-weights.json` (summed test durations plus a fixed 60 seconds per test for the container start-up), largest first onto the least loaded shard. A class missing from the weights gets the median weight; a selective run never uses more shards than it has classes. The merged rp-export and the merged report label every test with the suite its class is declared in, so the ReportPortal import keeps the 8 suite nodes. Every shard runs with both images available: Studio from `docker_image_name` and Rule Services from `ws_docker_image_name`; a class that needs Rule Services as its application declares `dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME` in its `@AppContainerConfig`, so nothing depends on the suite a class came from. Refresh the weights after a full run with:
+
+```bash
+python3 scripts/github-actions/update-test-weights.py --summary merged-report/summary.json
+```
+
 ### Merged test report on GitHub Actions
 
-After the shards finish, the `Merge ReportPortal export and test report` job publishes two artifacts: `rp-export-merged` for the later ReportPortal import and `test-report-merged`, a self-contained `index.html` built by `scripts/github-actions/generate-merged-report.py` from every shard's rp-export (with `testng-results.xml` as a fallback). The report lists all tests with status, suite, shard, duration, `@TestCaseId`, the failure message and stack trace, and the failure screenshots and videos copied next to it; the same numbers and the list of failed and skipped tests are appended to the workflow job summary.
+After the shards finish, the `Merge ReportPortal export and test report` job publishes two artifacts: `rp-export-merged` for the later ReportPortal import and `test-report-merged`, a self-contained `index.html` built by `scripts/github-actions/generate-merged-report.py` from every shard's rp-export (with `testng-results.xml` as a fallback). The report lists all tests with status, the suite the class is declared in, shard, duration, `@TestCaseId`, the failure message and stack trace, and the failure screenshots and videos copied next to it; the same numbers and the list of failed and skipped tests are appended to the workflow job summary.
 
 ### Debug Information
 

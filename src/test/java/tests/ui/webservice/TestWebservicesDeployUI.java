@@ -6,6 +6,7 @@ import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerPool;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.service.GitContainerService;
 import helpers.utils.LogsUtil;
@@ -56,7 +57,7 @@ public class TestWebservicesDeployUI extends BaseTest {
     @Test
     @TestCaseId("IPBQA-28640")
     @Description("Test WebService deployment UI - verify projects are deployed and accessible")
-    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testWebservicesDeployUi() {
         ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();

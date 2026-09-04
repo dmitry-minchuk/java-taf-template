@@ -1,58 +1,19 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import math
 import re
-import xml.etree.ElementTree as ET
+import statistics
+import sys
 from pathlib import Path
 
-
-DEFAULT_PARALLEL_SUITES = [
-    "studio_issues",
-    "studio_smoke",
-    "studio_acl",
-    "studio_rules_editor",
-    "studio_git",
-    "studio_sso",
-    "service_smoke",
-    "studio_open_api",
-]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from suites import DEFAULT_SUITE_DIR, REGRESSION_SUITES, read_regression_classes  # noqa: E402
 
 DEFAULT_EXCLUDED_CLASSES: set[str] = set()
-
-DEFAULT_CLASS_WEIGHTS = {
-    # This test is much longer than a regular class on GHA. Treat it as a full
-    # shard so the remaining rules_editor tests can finish in parallel.
-    "tests.ui.webstudio.rules_editor.TestSwitchModuleViaBreadcrumbsNavigation": 8,
-}
-
-# Mirrors the (studioImageName, wsImageName) pairs from Jenkinsfile's
-# functionalJobList. The "kind" picks which docker image template the
-# workflow resolves at run time: "webstudio" -> webstudio:VERSION,
-# "ws" -> ws:VERSION-all.
-SUITE_IMAGE_KINDS: dict[str, tuple[str, str]] = {
-    "studio_issues": ("webstudio", "webstudio"),
-    "studio_smoke": ("webstudio", "ws"),
-    "studio_acl": ("webstudio", "ws"),
-    "studio_rules_editor": ("webstudio", "webstudio"),
-    "studio_git": ("webstudio", "webstudio"),
-    "studio_sso": ("webstudio", "webstudio"),
-    "service_smoke": ("ws", "ws"),
-    "studio_open_api": ("webstudio", "webstudio"),
-}
-
-
-def read_suite_classes(suite_dir: Path, suite: str, excluded: set[str]) -> list[str]:
-    root = ET.parse(suite_dir / f"{suite}.xml").getroot()
-    classes: list[str] = []
-    seen: set[str] = set()
-    for class_node in root.findall(".//class"):
-        name = class_node.attrib["name"]
-        if name in excluded or name in seen:
-            continue
-        seen.add(name)
-        classes.append(name)
-    return classes
+DEFAULT_SHARDS = 20
+DEFAULT_WEIGHTS_FILE = Path(__file__).with_name("test-weights.json")
+STUDIO_IMAGE_KIND = "webstudio"
+WS_IMAGE_KIND = "ws"
 
 
 def parse_selected_classes(raw: str) -> list[str]:
@@ -74,113 +35,104 @@ def selected_names_for(class_name: str, selected: list[str]) -> list[str]:
     ]
 
 
-def shard_within_suite(classes: list[str], max_shard_size: int) -> list[list[str]]:
+def load_weights(weights_file: Path) -> dict[str, float]:
+    if not weights_file.exists():
+        return {}
+    return {name: float(seconds) for name, seconds in json.loads(weights_file.read_text(encoding="utf-8")).items()}
+
+
+def fallback_weight(classes: list[str], weights: dict[str, float]) -> float:
+    known = [weights[name] for name in classes if name in weights]
+    return statistics.median(known) if known else 60.0
+
+
+def balance(classes: list[str], weights: dict[str, float], shard_count: int) -> list[list[str]]:
     if not classes:
         return []
-
-    weights = {name: DEFAULT_CLASS_WEIGHTS.get(name, 1) for name in classes}
-    if all(weight == 1 for weight in weights.values()):
-        shard_count = max(1, math.ceil(len(classes) / max_shard_size))
-        unweighted_shards: list[list[str]] = [[] for _ in range(shard_count)]
-        for index, name in enumerate(classes):
-            unweighted_shards[index % shard_count].append(name)
-        return [shard for shard in unweighted_shards if shard]
-
-    shard_count = max(
-        1,
-        math.ceil(len(classes) / max_shard_size),
-        math.ceil(sum(weights.values()) / max_shard_size),
-    )
-    weighted_shards: list[list[str]] = [[] for _ in range(shard_count)]
-    shard_weights = [0] * shard_count
-    weighted_classes = sorted(
-        enumerate(classes), key=lambda item: (-weights[item[1]], item[0])
-    )
-    for _, name in weighted_classes:
-        candidates = [
-            index
-            for index, shard in enumerate(weighted_shards)
-            if len(shard) < max_shard_size
-        ]
-        target_index = min(
-            candidates,
-            key=lambda index: (
-                shard_weights[index],
-                len(weighted_shards[index]),
-                index,
-            ),
-        )
-        weighted_shards[target_index].append(name)
-        shard_weights[target_index] += weights[name]
-    return [shard for shard in weighted_shards if shard]
+    fallback = fallback_weight(classes, weights)
+    shard_count = max(1, min(shard_count, len(classes)))
+    shards: list[list[str]] = [[] for _ in range(shard_count)]
+    loads = [0.0] * shard_count
+    ordered = sorted(classes, key=lambda name: (-weights.get(name, fallback), name))
+    for name in ordered:
+        target = min(range(shard_count), key=lambda index: (loads[index], len(shards[index]), index))
+        shards[target].append(name)
+        loads[target] += weights.get(name, fallback)
+    return [shard for shard in shards if shard]
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build a GitHub Actions matrix sharded within each TestNG suite."
+        description=(
+            "Build a GitHub Actions matrix: the test classes of every regression suite are pooled "
+            "and spread over a fixed number of shards by their measured duration."
+        )
     )
+    parser.add_argument("--suite-dir", default=DEFAULT_SUITE_DIR, type=Path)
+    parser.add_argument("--suites", nargs="*", default=REGRESSION_SUITES)
+    parser.add_argument("--exclude-classes", nargs="*", default=sorted(DEFAULT_EXCLUDED_CLASSES))
     parser.add_argument(
-        "--suite-dir", default="src/test/resources/testng_suites", type=Path
-    )
-    parser.add_argument(
-        "--max-shard-size",
-        default=8,
+        "--shards",
+        default=DEFAULT_SHARDS,
         type=int,
-        help=(
-            "Upper bound on the number of test classes per shard within a single "
-            "suite; weighted classes can also increase the shard count."
-        ),
+        help="Number of shards the pooled classes are balanced over (never more than there are classes).",
     )
-    parser.add_argument("--suites", nargs="*", default=DEFAULT_PARALLEL_SUITES)
     parser.add_argument(
-        "--exclude-classes", nargs="*", default=sorted(DEFAULT_EXCLUDED_CLASSES)
+        "--weights-file",
+        default=DEFAULT_WEIGHTS_FILE,
+        type=Path,
+        help="JSON map of fully qualified test class -> measured duration in seconds; unknown classes get the median.",
     )
     parser.add_argument(
         "--classes",
         default="",
         help=(
             "Optional selective run: test class names separated by commas, spaces or "
-            "semicolons, simple (TestMethodTable) or fully qualified. Only suites holding "
-            "at least one of them produce shards; a name found in no suite is an error."
+            "semicolons, simple (TestMethodTable) or fully qualified. A name found in no suite is an error."
         ),
     )
     args = parser.parse_args()
 
-    excluded = set(args.exclude_classes)
+    if args.shards < 1:
+        raise SystemExit("--shards must be at least 1")
+    suite_of = read_regression_classes(args.suite_dir, args.suites, set(args.exclude_classes))
+    classes = list(suite_of)
     selected = parse_selected_classes(args.classes)
-    matched: set[str] = set()
-    include: list[dict[str, object]] = []
-    for suite in args.suites:
-        studio_kind, ws_kind = SUITE_IMAGE_KINDS[suite]
-        classes = read_suite_classes(args.suite_dir, suite, excluded)
-        if selected:
-            classes = [name for name in classes if selected_names_for(name, selected)]
-            for name in classes:
-                matched.update(selected_names_for(name, selected))
-        shards = shard_within_suite(classes, args.max_shard_size)
-        for shard_index, shard in enumerate(shards, start=1):
-            display = f"{suite}-{shard_index:02d}" if len(shards) > 1 else suite
-            include.append(
-                {
-                    "suite": suite,
-                    "shard": shard_index,
-                    "classes": ",".join(shard),
-                    "display": display,
-                    "studio_image_kind": studio_kind,
-                    "ws_image_kind": ws_kind,
-                }
-            )
-
     if selected:
+        matched: set[str] = set()
+        filtered = []
+        for name in classes:
+            hits = selected_names_for(name, selected)
+            if hits:
+                filtered.append(name)
+                matched.update(hits)
         missing = sorted(set(selected) - matched)
         if missing:
             raise SystemExit(
                 "Selected test classes not found in any suite of this workflow "
                 f"(check the spelling): {', '.join(missing)}"
             )
-        if not include:
-            raise SystemExit("No shards left after applying the selected test classes")
+        classes = filtered
 
+    weights = load_weights(args.weights_file)
+    fallback = fallback_weight(classes, weights)
+    shards = balance(classes, weights, args.shards)
+    if not shards:
+        raise SystemExit("No test classes to run")
+    width = max(2, len(str(len(shards))))
+    include = []
+    for index, shard in enumerate(shards, start=1):
+        include.append(
+            {
+                "shard": index,
+                "display": f"shard-{index:0{width}d}",
+                "classes": ",".join(shard),
+                "suites": ",".join(sorted({suite_of[name] for name in shard})),
+                "weight_seconds": round(sum(weights.get(name, fallback) for name in shard)),
+                "studio_image_kind": STUDIO_IMAGE_KIND,
+                "ws_image_kind": WS_IMAGE_KIND,
+            }
+        )
     print(json.dumps({"include": include}, separators=(",", ":")))
 
 

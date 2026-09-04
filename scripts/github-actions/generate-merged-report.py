@@ -5,10 +5,14 @@ import json
 import os
 import re
 import shutil
+import sys
 import xml.etree.ElementTree as ET
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from suites import DEFAULT_SUITE_DIR, read_regression_classes  # noqa: E402
 
 STATUS_ORDER = {"FAILED": 0, "SKIPPED": 1, "PASSED": 2}
 STATUS_STYLE = {
@@ -48,13 +52,21 @@ def shard_name(artifact_dir: Path, input_root: Path) -> str:
     return relative[0].removeprefix("openl-tests-") if relative else artifact_dir.name
 
 
-def suite_name(shard: str, declared_suite: str) -> str:
+def load_suite_index(suite_dir: Path | None) -> dict[str, str]:
+    if suite_dir is None or not suite_dir.exists():
+        return {}
+    return read_regression_classes(suite_dir)
+
+
+def suite_name(shard: str, declared_suite: str, class_name: str, suite_index: dict[str, str]) -> str:
+    if class_name in suite_index:
+        return suite_index[class_name]
     if declared_suite and declared_suite != "ad-hoc":
         return declared_suite
-    return re.sub(r"-\d+$", "", shard)
+    return "unknown"
 
 
-def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[TestRecord], set[Path]]:
+def collect_from_rp_export(input_root: Path, output_dir: Path, suite_index: dict[str, str]) -> tuple[list[TestRecord], set[Path]]:
     records: list[TestRecord] = []
     covered_artifacts: set[Path] = set()
     for manifest in sorted(input_root.rglob("manifest.json")):
@@ -62,7 +74,7 @@ def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[Tes
         artifact_dir = input_root / export_dir.relative_to(input_root).parts[0]
         manifest_data = read_json(manifest)
         shard = shard_name(export_dir, input_root)
-        suite = suite_name(shard, str(manifest_data.get("suite") or ""))
+        declared_suite = str(manifest_data.get("suite") or "")
         exported_before = len(records)
         for result_file in sorted(export_dir.rglob("result.json")):
             test_dir = result_file.parent
@@ -73,7 +85,7 @@ def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[Tes
             method = str(metadata.get("methodName") or test_dir.name)
             record = TestRecord(
                 shard=shard,
-                suite=suite,
+                suite=suite_name(shard, declared_suite, class_name, suite_index),
                 class_name=class_name,
                 method=method,
                 display_name=str(metadata.get("displayName") or method),
@@ -127,7 +139,7 @@ def attachment_kind(suffix: str) -> str:
     return "file"
 
 
-def collect_from_testng(input_root: Path, covered_artifacts: set[Path]) -> list[TestRecord]:
+def collect_from_testng(input_root: Path, covered_artifacts: set[Path], suite_index: dict[str, str]) -> list[TestRecord]:
     records: list[TestRecord] = []
     for results_file in sorted(input_root.rglob("testng-results.xml")):
         artifact_dir = input_root / results_file.relative_to(input_root).parts[0]
@@ -146,7 +158,7 @@ def collect_from_testng(input_root: Path, covered_artifacts: set[Path]) -> list[
                 records.append(
                     TestRecord(
                         shard=shard,
-                        suite=suite_name(shard, ""),
+                        suite=suite_name(shard, "", class_name, suite_index),
                         class_name=class_name,
                         method=method.attrib.get("name", ""),
                         display_name=method.attrib.get("name", ""),
@@ -287,13 +299,16 @@ def main() -> None:
     parser.add_argument("--build", default="")
     parser.add_argument("--run-url", default="")
     parser.add_argument("--step-summary", default=os.environ.get("GITHUB_STEP_SUMMARY"))
+    parser.add_argument("--suite-dir", default=DEFAULT_SUITE_DIR, type=Path,
+                        help="TestNG suite XML directory used to label every test with the suite it belongs to.")
     args = parser.parse_args()
+    suite_index = load_suite_index(args.suite_dir)
 
     if args.output_dir.exists():
         shutil.rmtree(args.output_dir)
     args.output_dir.mkdir(parents=True)
-    rp_records, covered = collect_from_rp_export(args.input_root, args.output_dir)
-    records = sort_records(rp_records + collect_from_testng(args.input_root, covered))
+    rp_records, covered = collect_from_rp_export(args.input_root, args.output_dir, suite_index)
+    records = sort_records(rp_records + collect_from_testng(args.input_root, covered, suite_index))
     if not records:
         message = f"No test results found under {args.input_root}"
         if args.step_summary:

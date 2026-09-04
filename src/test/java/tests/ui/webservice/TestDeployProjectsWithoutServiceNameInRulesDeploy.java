@@ -5,6 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.service.GitContainerService;
 import org.testng.annotations.Test;
@@ -52,7 +53,7 @@ public class TestDeployProjectsWithoutServiceNameInRulesDeploy extends BaseTest 
     @Test
     @TestCaseId("EPBDS-9881")
     @Description("Test that projects are compiled and deployed as services without service name configuration in rules deploy")
-    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testDeployProjectsWithoutServiceNameInRulesDeploy() {
         ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();

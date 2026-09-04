@@ -5,6 +5,7 @@ import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
 import configuration.appcontainer.AppContainerStartParameters;
 import configuration.driver.DriverPool;
+import configuration.projectconfig.PropertyNameSpace;
 import domain.api.ServiceHelloMethod;
 import domain.ui.webservice.pages.ServicePage;
 import helpers.service.GitContainerService;
@@ -51,7 +52,7 @@ public class TestWebservicesGitRepo extends BaseTest {
     @Test
     @TestCaseId("EPBDS-14497")
     @Description("Test that SimpleGitProject from Git repository is deployed and service endpoint works")
-    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS)
+    @AppContainerConfig(startParams = AppContainerStartParameters.SERVICE_PARAMS, dockerImageProperty = PropertyNameSpace.WS_DOCKER_IMAGE_NAME)
     public void testWebservicesGitRepo() {
         ServicePage servicePage = new ServicePage(DriverPool.getPage());
         servicePage.open();
