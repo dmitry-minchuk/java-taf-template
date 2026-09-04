@@ -26,8 +26,7 @@ public class TestAdminNotifications extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30617")
-    @Description("Test notifications: send to all users, display, delete, validate message length and empty messages."
-            + " Known bug: EPBDS-15703.")
+    @Description("Test notifications: send to all users, display, delete, validate message length and empty messages.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     @KnownIssue("EPBDS-15703")
     public void testNotifications() {

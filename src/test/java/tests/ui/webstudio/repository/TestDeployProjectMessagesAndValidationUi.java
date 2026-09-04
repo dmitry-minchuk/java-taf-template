@@ -60,9 +60,8 @@ public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-16273")
-    @Description("A successful deploy must report that the project was deployed. KNOWN-FAILING: the toast still "
-            + "names the removed \"Deploy Configuration\" feature."
-            + " Known bug: EPBDS-16273.")
+    @Description("A successful deploy must report that the project was deployed and must not name the removed "
+            + "\"Deploy Configuration\" feature.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     @KnownIssue("EPBDS-16273")
     public void testDeploySuccessMessageNamesTheProject() {
@@ -83,9 +82,7 @@ public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
 
     @Test
     @TestCaseId("EPBDS-16271")
-    @Description("The Deployment Name field must reject forbidden characters, as the REST deploy API does. "
-            + "KNOWN-FAILING: the field takes any value and the invalid name becomes the deployment folder."
-            + " Known bug: EPBDS-16271.")
+    @Description("The Deployment Name field must reject forbidden characters, as the REST deploy API does.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
     @KnownIssue("EPBDS-16271")
     public void testDeploymentNameRejectsForbiddenCharacters() {

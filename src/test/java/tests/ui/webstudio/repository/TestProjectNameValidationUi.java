@@ -73,10 +73,8 @@ public class TestProjectNameValidationUi extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-33037")
-    @Description("EPBDS-16439 (open defect, expected to fail until fixed): a name containing '/' must get the same "
-            + "specific forbidden-characters validation message as every other forbidden character, but the create "
-            + "request dies on URL routing with a blank 400 and the modal shows the generic "
-            + "'Something went wrong on API server!' instead.")
+    @Description("A name containing '/' must get the same specific forbidden-characters validation message as every "
+            + "other forbidden character instead of a generic API error.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     @KnownIssue("EPBDS-16439")
     public void testSlashNameShowsSpecificValidationMessage() {

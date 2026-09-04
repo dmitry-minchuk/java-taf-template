@@ -29,8 +29,7 @@ public class TestAdminSystemSettings extends BaseTest {
 
     @Test
     @TestCaseId("IPBQA-30651")
-    @Description("System Settings - Test Dispatching Validation, Verify on Edit, and Thread Number validation."
-            + " Known bug: EPBDS-15704.")
+    @Description("System Settings - Test Dispatching Validation, Verify on Edit, and Thread Number validation.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
     @KnownIssue("EPBDS-15704")
     public void testSystemSettings() {
