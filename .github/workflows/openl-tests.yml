@@ -35,7 +35,6 @@ env:
   # Keep the image tag and the npm package in step with PLAYWRIGHT_VERSION / PLAYWRIGHT_NPM_PACKAGE in DockerDriverPool.java
   PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.52.0-noble
   PLAYWRIGHT_NPM_PACKAGE: playwright@1.52.0
-  PLAYWRIGHT_NPM_CACHE_DIR: ${{ runner.temp }}/playwright-npm-cache
 
 jobs:
   discover-tests:
@@ -89,6 +88,7 @@ jobs:
       - name: Warm up the Playwright Server image and its npm cache
         continue-on-error: true
         run: |
+          PLAYWRIGHT_NPM_CACHE_DIR="${RUNNER_TEMP}/playwright-npm-cache"
           mkdir -p "${PLAYWRIGHT_NPM_CACHE_DIR}"
           docker pull -q "${PLAYWRIGHT_IMAGE}"
           time docker run --rm -v "${PLAYWRIGHT_NPM_CACHE_DIR}:/root/.npm" "${PLAYWRIGHT_IMAGE}" \
@@ -111,6 +111,7 @@ jobs:
           }
           STUDIO_IMAGE="$(resolve_image "${STUDIO_IMAGE_KIND}")"
           WS_IMAGE="$(resolve_image "${WS_IMAGE_KIND}")"
+          PLAYWRIGHT_NPM_CACHE_DIR="${RUNNER_TEMP}/playwright-npm-cache"
           RP_ATTRIBUTES="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}"
           if [ -n "${SELECTED_TESTS}" ]; then
             RP_ATTRIBUTES="${RP_ATTRIBUTES};run:selective"
