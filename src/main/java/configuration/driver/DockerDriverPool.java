@@ -154,6 +154,8 @@ public class DockerDriverPool {
             LOGGER.info("npm cache of the Playwright Server container is shared from {}", npmCache);
         }
 
+        bindTraceSources(container);
+
         LOGGER.info("Creating Playwright Server Docker container with image: {}", dockerImageName);
         LOGGER.info("Volume mapping configured: {} (host) -> {} (container)", HOST_RESOURCE_PATH, CONTAINER_RESOURCE_PATH);
 
@@ -229,6 +231,25 @@ public class DockerDriverPool {
         }
         LOGGER.error("Failed to connect to Playwright Server after {} attempts", maxAttempts);
         throw new RuntimeException("Playwright Server browser connection failed", lastException);
+    }
+
+    private static void bindTraceSources(GenericContainer<?> container) {
+        String traceSources = System.getenv("PLAYWRIGHT_JAVA_SRC");
+        if (traceSources == null || traceSources.isBlank()) {
+            return;
+        }
+        for (String entry : traceSources.split(java.io.File.pathSeparator)) {
+            if (entry.isBlank()) {
+                continue;
+            }
+            Path sourceDir = Paths.get(entry).toAbsolutePath().normalize();
+            if (!Files.isDirectory(sourceDir)) {
+                LOGGER.warn("PLAYWRIGHT_JAVA_SRC entry is not a directory and is not mounted into the Playwright Server container: {}", sourceDir);
+                continue;
+            }
+            container.withFileSystemBind(sourceDir.toString(), sourceDir.toString(), BindMode.READ_ONLY);
+            LOGGER.info("Test sources mounted read-only into the Playwright Server container for trace sources: {}", sourceDir);
+        }
     }
 
     private static BrowserContext createContainerizedBrowserContext(Browser browser, Network network) {
