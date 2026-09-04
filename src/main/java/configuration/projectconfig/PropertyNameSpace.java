@@ -7,6 +7,8 @@ public enum PropertyNameSpace {
     PLAYWRIGHT_DEFAULT_TIMEOUT("playwright_default_timeout"),
     OVERLAY_IDLE_TIMEOUT("overlay_idle_timeout"),
     APP_CONTAINER_STARTUP_TIMEOUT_MINUTES("app_container_startup_timeout_minutes"),
+    PLAYWRIGHT_SERVER_STARTUP_TIMEOUT_SECONDS("playwright_server_startup_timeout_seconds"),
+    PLAYWRIGHT_NPM_CACHE_DIR("playwright_npm_cache_dir"),
     DEFAULT_APP_PORT("default_app_port"),
     DOCKER_IMAGE_NAME("docker_image_name"),
     DEPLOYED_APP_PATH("deployed_app_path"),

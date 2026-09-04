@@ -32,6 +32,10 @@ on:
 env:
   RP_LAUNCH_NAME: ${{ inputs.rp_launch_name }}
   SELECTED_TESTS: ${{ inputs.tests }}
+  # Keep the image tag and the npm package in step with PLAYWRIGHT_VERSION / PLAYWRIGHT_NPM_PACKAGE in DockerDriverPool.java
+  PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.52.0-noble
+  PLAYWRIGHT_NPM_PACKAGE: playwright@1.52.0
+  PLAYWRIGHT_NPM_CACHE_DIR: ${{ runner.temp }}/playwright-npm-cache
 
 jobs:
   discover-tests:
@@ -82,6 +86,14 @@ jobs:
             --output "generated-testng/${{ matrix.display }}.xml" \
             --suite-name "OpenL GHA ${{ matrix.display }}"
 
+      - name: Warm up the Playwright Server image and its npm cache
+        continue-on-error: true
+        run: |
+          mkdir -p "${PLAYWRIGHT_NPM_CACHE_DIR}"
+          docker pull -q "${PLAYWRIGHT_IMAGE}"
+          time docker run --rm -v "${PLAYWRIGHT_NPM_CACHE_DIR}:/root/.npm" "${PLAYWRIGHT_IMAGE}" \
+            sh -c "npx -y ${PLAYWRIGHT_NPM_PACKAGE} --version"
+
       - name: Run shard
         env:
           BUILD_LABEL: ${{ inputs.application_version }}
@@ -117,6 +129,8 @@ jobs:
             -Dws_docker_image_name="${WS_IMAGE}" \
             -Dplaywright_default_timeout=20000 \
             -Dapp_container_startup_timeout_minutes=10 \
+            -Dplaywright_server_startup_timeout_seconds=300 \
+            -Dplaywright_npm_cache_dir="${PLAYWRIGHT_NPM_CACHE_DIR}" \
             -Drp.project=OpenL_Tests \
             -Drp.launch="${RP_LAUNCH_NAME}" \
             -Drp.attributes="${RP_ATTRIBUTES}" \
