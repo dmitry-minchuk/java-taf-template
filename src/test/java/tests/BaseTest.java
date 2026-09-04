@@ -59,8 +59,11 @@ public abstract class BaseTest implements ITest {
             }
         } finally {
             try {
-                ReportPortalArtifactUtil.finishTest(result);
-                stopAuxiliaryContainers();
+                try {
+                    stopAuxiliaryContainers();
+                } finally {
+                    ReportPortalArtifactUtil.finishTest(result);
+                }
             } finally {
                 if (NetworkPool.getNetwork() != null) {
                     NetworkPool.closeNetwork();
@@ -146,17 +149,7 @@ public abstract class BaseTest implements ITest {
     }
 
     private void cleanupPlaywrightLocalTest(ITestResult result) {
-        String testName = getTestName();
-
-        if (result.getStatus() == ITestResult.FAILURE) {
-            ReportPortalUtil.attachScreenshotOnFailure(testName);
-            ReportPortalUtil.attachPageContent("Page Content at Failure");
-            ReportPortalUtil.attachExecutionInfo();
-
-            File appLog = LogsUtil.saveAppLogs(AppContainerPool.get());
-            ReportPortalArtifactUtil.recordAttachment("Application LOG", "INFO", appLog);
-            ReportPortalArtifactUtil.emitLog("Application LOG", "INFO", appLog);
-        }
+        attachDebugArtifacts(result, false);
 
         DriverPool.closePlaywright();
 
@@ -164,25 +157,37 @@ public abstract class BaseTest implements ITest {
     }
 
     private void cleanupPlaywrightDockerTest(ITestResult result) {
-        String testName = getTestName();
-
-        if (result.getStatus() == ITestResult.FAILURE) {
-            ReportPortalUtil.attachScreenshotOnFailure(testName);
-            ReportPortalUtil.attachPageContent("Page Content at Failure");
-            ReportPortalUtil.attachExecutionInfo();
-
-            ReportPortalUtil.attachVideoOnFailure(testName);
-
-            File appLog = LogsUtil.saveAppLogs(AppContainerPool.get());
-            ReportPortalArtifactUtil.recordAttachment("Application LOG", "INFO", appLog);
-            ReportPortalArtifactUtil.emitLog("Application LOG", "INFO", appLog);
-        }
+        attachDebugArtifacts(result, true);
 
         DockerDriverPool.closePlaywrightDocker();
 
         AppContainerPool.closeAppContainer();
 
         WaitUtil.sleep(2000, "Waiting for Docker daemon to complete resource cleanup");
+    }
+
+    private void attachDebugArtifacts(ITestResult result, boolean videoRecorded) {
+        String testName = getTestName();
+        boolean failed = result.getStatus() == ITestResult.FAILURE;
+        boolean keepDebugArtifacts = result.getStatus() != ITestResult.SUCCESS || ReportPortalUtil.isDebugArtifactsOnSuccessEnabled();
+
+        if (failed) {
+            ReportPortalUtil.attachScreenshotOnFailure(testName);
+            ReportPortalUtil.attachPageContent("Page Content at Failure");
+            ReportPortalUtil.attachExecutionInfo();
+        }
+
+        ReportPortalUtil.attachTrace(testName, keepDebugArtifacts);
+
+        if (failed && videoRecorded) {
+            ReportPortalUtil.attachVideoOnFailure(testName);
+        }
+
+        if (keepDebugArtifacts) {
+            File appLog = LogsUtil.saveAppLogs(AppContainerPool.get());
+            ReportPortalArtifactUtil.recordAttachment("Application LOG", "INFO", appLog);
+            ReportPortalArtifactUtil.emitLog("Application LOG", "INFO", appLog);
+        }
     }
 
     private void setUniqueTestName(ITestResult result) {

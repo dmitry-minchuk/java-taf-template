@@ -17,6 +17,8 @@ public enum PropertyNameSpace {
     HOST_SCREENSHOTS_PATH("host_screenshot_path"),
     HOST_APP_LOGS_PATH("host_app_logs_path"),
     ENABLE_VIDEO_RECORDING("enable_video_recording"),
+    ENABLE_PLAYWRIGHT_TRACING("enable_playwright_tracing"),
+    DEBUG_ARTIFACTS_ON_SUCCESS("debug_artifacts_on_success"),
     ENABLE_SCREENSHOT_ON_FAILURE("enable_screenshot_on_failure"),
     PLAYWRIGHT_DOWNLOADS_PATH("playwright_downloads_path"),
     PLAYWRIGHT_VIDEOS_PATH("playwright_videos_path"),

@@ -7,17 +7,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.testng.ITestResult;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ReportPortalArtifactUtil {
@@ -27,6 +41,12 @@ public final class ReportPortalArtifactUtil {
     private static final Path EXPORT_ROOT = Path.of(System.getProperty("rp.export.dir", "target/rp-export"));
     private static final ThreadLocal<TestContext> CURRENT_TEST = new ThreadLocal<>();
     private static final AtomicBoolean RUN_MANIFEST_WRITTEN = new AtomicBoolean(false);
+    private static final AtomicBoolean STEP_LOG_APPENDER_INSTALLED = new AtomicBoolean(false);
+    private static final String STEP_LOG_CONTEXT_KEY = "rpExportTestDir";
+    private static final String STEP_LOG_FILE_NAME = "test-steps.log";
+    private static final String STEP_LOG_MESSAGE = "Test Steps Log";
+    private static final String STEP_LOG_PATTERN = "%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%p] %c{1} - %m%n%throwable{full}";
+    private static final Map<String, Writer> STEP_LOG_WRITERS = new ConcurrentHashMap<>();
 
     private ReportPortalArtifactUtil() {
     }
@@ -55,6 +75,111 @@ public final class ReportPortalArtifactUtil {
         CURRENT_TEST.set(context);
 
         writeMetadata(result, method, context);
+        startStepLog(context);
+    }
+
+    private static void startStepLog(TestContext context) {
+        installStepLogAppender();
+        ThreadContext.put(STEP_LOG_CONTEXT_KEY, context.testDirectory().toString());
+    }
+
+    private static synchronized void installStepLogAppender() {
+        if (STEP_LOG_APPENDER_INSTALLED.get()) {
+            return;
+        }
+        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = loggerContext.getConfiguration();
+        PatternLayout layout = PatternLayout.newBuilder()
+                .withPattern(STEP_LOG_PATTERN)
+                .withConfiguration(configuration)
+                .build();
+        TestStepLogAppender appender = new TestStepLogAppender(layout);
+        appender.start();
+        configuration.addAppender(appender);
+
+        Set<LoggerConfig> targets = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
+        targets.add(configuration.getRootLogger());
+        configuration.getLoggers().values().stream()
+                .filter(loggerConfig -> !loggerConfig.isAdditive())
+                .forEach(targets::add);
+        targets.forEach(loggerConfig -> loggerConfig.addAppender(appender, null, null));
+        loggerContext.updateLoggers();
+        STEP_LOG_APPENDER_INSTALLED.set(true);
+    }
+
+    private static Writer stepLogWriter(String testDirectory) throws IOException {
+        Writer existing = STEP_LOG_WRITERS.get(testDirectory);
+        if (existing != null) {
+            return existing;
+        }
+        Path logFile = Path.of(testDirectory).resolve("attachments").resolve(STEP_LOG_FILE_NAME);
+        Files.createDirectories(logFile.getParent());
+        Writer opened = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+        Writer raced = STEP_LOG_WRITERS.putIfAbsent(testDirectory, opened);
+        if (raced != null) {
+            opened.close();
+            return raced;
+        }
+        return opened;
+    }
+
+    private static void finishStepLog(TestContext context) {
+        ThreadContext.remove(STEP_LOG_CONTEXT_KEY);
+        String testDirectory = context.testDirectory().toString();
+        Writer writer = STEP_LOG_WRITERS.remove(testDirectory);
+        if (writer != null) {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LOGGER.warn("Failed to close test steps log in {}: {}", testDirectory, e.getMessage());
+            }
+        }
+        Path logFile = context.testDirectory().resolve("attachments").resolve(STEP_LOG_FILE_NAME);
+        if (Files.exists(logFile) && !isIndexed(context, logFile)) {
+            registerAttachment(context, STEP_LOG_MESSAGE, "INFO", logFile, STEP_LOG_FILE_NAME);
+        }
+    }
+
+    private static boolean isIndexed(TestContext context, Path attachment) {
+        Path index = context.testDirectory().resolve("attachments.jsonl");
+        if (!Files.exists(index)) {
+            return false;
+        }
+        try {
+            return Files.readString(index).contains(EXPORT_ROOT.relativize(attachment).toString());
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static final class TestStepLogAppender extends AbstractAppender {
+
+        private final PatternLayout patternLayout;
+
+        private TestStepLogAppender(PatternLayout layout) {
+            super("RpExportTestStepLog", null, layout, true, Property.EMPTY_ARRAY);
+            this.patternLayout = layout;
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            String testDirectory = event.getContextData().getValue(STEP_LOG_CONTEXT_KEY);
+            if (testDirectory == null) {
+                return;
+            }
+            String line = patternLayout.toSerializable(event);
+            try {
+                Writer writer = stepLogWriter(testDirectory);
+                synchronized (writer) {
+                    writer.write(line);
+                    writer.flush();
+                }
+            } catch (IOException e) {
+                STEP_LOG_WRITERS.remove(testDirectory);
+                getHandler().error("Failed to write test steps log in " + testDirectory, e);
+            }
+        }
     }
 
     public static void recordTestResultIfMissing(ITestResult result) {
@@ -98,6 +223,7 @@ public final class ReportPortalArtifactUtil {
         }
 
         writeResult(result, context);
+        finishStepLog(context);
         CURRENT_TEST.remove();
     }
 
@@ -137,19 +263,25 @@ public final class ReportPortalArtifactUtil {
             String fileName = System.currentTimeMillis() + "-" + StringUtil.sanitizeFileName(source.getName());
             Path target = attachmentsDir.resolve(fileName);
             Files.copy(source.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
-
-            Map<String, Object> attachment = new LinkedHashMap<>();
-            attachment.put("message", message);
-            attachment.put("level", level);
-            attachment.put("createdAt", Instant.now().toString());
-            attachment.put("sourceFileName", source.getName());
-            attachment.put("path", EXPORT_ROOT.relativize(target).toString());
-            appendJsonLine(context.testDirectory().resolve("attachments.jsonl"), attachment);
-
+            registerAttachment(context, message, level, target, source.getName());
             return target.toFile();
         } catch (IOException e) {
             LOGGER.warn("Failed to record ReportPortal export attachment {}: {}", source, e.getMessage());
             return source;
+        }
+    }
+
+    private static void registerAttachment(TestContext context, String message, String level, Path target, String sourceFileName) {
+        Map<String, Object> attachment = new LinkedHashMap<>();
+        attachment.put("message", message);
+        attachment.put("level", level);
+        attachment.put("createdAt", Instant.now().toString());
+        attachment.put("sourceFileName", sourceFileName);
+        attachment.put("path", EXPORT_ROOT.relativize(target).toString());
+        try {
+            appendJsonLine(context.testDirectory().resolve("attachments.jsonl"), attachment);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to index ReportPortal export attachment {}: {}", target, e.getMessage());
         }
     }
 

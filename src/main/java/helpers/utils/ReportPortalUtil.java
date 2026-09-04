@@ -3,6 +3,7 @@ package helpers.utils;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.ScreenshotType;
 import configuration.driver.DriverPool;
+import configuration.driver.PlaywrightTracing;
 import configuration.projectconfig.ProjectConfiguration;
 import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
@@ -88,7 +89,6 @@ public class ReportPortalUtil {
         }
     }
     
-    // Get video as byte array using Playwright Page.video() API - works in memory without files
     public static byte[] getVideoBytes(String testName) {
         try {
             if (!isVideoRecordingEnabled()) {
@@ -98,7 +98,6 @@ public class ReportPortalUtil {
             
             Page page = DriverPool.getPage();
             
-            // Check if video is available (only works if BrowserContext was configured with recordVideoDir)
             if (page.video() == null) {
                 LOGGER.warn("No video recording found for page - ensure BrowserContext was configured with recordVideoDir");
                 return null;
@@ -106,29 +105,23 @@ public class ReportPortalUtil {
             
             LOGGER.info("Retrieving video bytes for test: {}", testName);
             
-            // Store video reference BEFORE closing page - REQUIRED by Playwright
             com.microsoft.playwright.Video video = page.video();
             
-            // Close page to finalize video recording - REQUIRED by Playwright before saveAs
             page.close();
             LOGGER.debug("Page closed to finalize video recording for test: {}", testName);
             
-            // Create temporary file for video extraction, then read as bytes
             File tempVideoFile = null;
             try {
                 tempVideoFile = File.createTempFile("playwright_video_" + testName, ".webm");
                 tempVideoFile.deleteOnExit();
                 
-                // Save video to temporary file - now page is closed so this should work
                 video.saveAs(Paths.get(tempVideoFile.getAbsolutePath()));
                 
-                // Read file as bytes
                 byte[] videoBytes = Files.readAllBytes(tempVideoFile.toPath());
                 LOGGER.info("Successfully retrieved {} bytes of video data for test: {}", videoBytes.length, testName);
                 return videoBytes;
                 
             } finally {
-                // Clean up temporary file
                 if (tempVideoFile != null && tempVideoFile.exists()) {
                     tempVideoFile.delete();
                 }
@@ -140,7 +133,6 @@ public class ReportPortalUtil {
         }
     }
     
-    // Attach video to ReportPortal using byte array (no temporary files on Jenkins)
     public static void attachVideoOnFailure(String testName) {
         try {
             if (!isVideoRecordingEnabled()) {
@@ -150,7 +142,6 @@ public class ReportPortalUtil {
             
             byte[] videoBytes = getVideoBytes(testName);
             if (videoBytes != null && videoBytes.length > 0) {
-                // Create temporary file for ReportPortal attachment
                 File tempFile = File.createTempFile("test_failure_video_" + testName, ".webm");
                 tempFile.deleteOnExit();
                 
@@ -160,7 +151,6 @@ public class ReportPortalUtil {
                     ReportPortalArtifactUtil.emitLog("Test Failure Video", "ERROR", tempFile);
                     LOGGER.info("Video attached to ReportPortal for test: {} (size: {} bytes)", testName, videoBytes.length);
                 } finally {
-                    // Clean up temp file after ReportPortal processes it
                     tempFile.delete();
                 }
             } else {
@@ -172,6 +162,35 @@ public class ReportPortalUtil {
         }
     }
     
+    public static boolean isDebugArtifactsOnSuccessEnabled() {
+        return Boolean.parseBoolean(ProjectConfiguration.getProperty(PropertyNameSpace.DEBUG_ARTIFACTS_ON_SUCCESS));
+    }
+
+    public static void attachTrace(String testName, boolean keep) {
+        if (!PlaywrightTracing.isEnabled()) {
+            return;
+        }
+        File traceFile = null;
+        try {
+            traceFile = PlaywrightTracing.stop(DriverPool.getBrowserContext(), testName, keep);
+            if (traceFile == null) {
+                return;
+            }
+            ReportPortalArtifactUtil.recordAttachment("Playwright Trace", "INFO", traceFile);
+            ReportPortalArtifactUtil.emitLog("Playwright Trace (open with: npx playwright show-trace trace.zip)", "INFO", traceFile);
+            LOGGER.info("Playwright trace attached to ReportPortal for test: {} (size: {} bytes)", testName, traceFile.length());
+        } catch (IllegalStateException e) {
+            LOGGER.debug("No Playwright context for test {}, trace skipped: {}", testName, e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("Failed to attach Playwright trace for test {}: {}", testName, e.getMessage());
+        } finally {
+            if (traceFile != null) {
+                traceFile.delete();
+                traceFile.getParentFile().delete();
+            }
+        }
+    }
+
     public static void attachPageContent(String description) {
         try {
             Page page = DriverPool.getPage();
@@ -191,8 +210,6 @@ public class ReportPortalUtil {
     
     public static void attachBrowserLogs(String description) {
         try {
-            // Note: Playwright doesn't have direct console log access like Selenium
-            // This is a placeholder for browser log collection implementation
             String logs = "Browser logs collection not yet implemented for Playwright";
             
             File tempFile = createTempFile("browser-logs-", ".txt", logs);
@@ -321,6 +338,6 @@ public class ReportPortalUtil {
     
     public static boolean isScreenshotOnFailureEnabled() {
         String enabled = ProjectConfiguration.getProperty(PropertyNameSpace.ENABLE_SCREENSHOT_ON_FAILURE);
-        return enabled == null || Boolean.parseBoolean(enabled); // Default to true
+        return enabled == null || Boolean.parseBoolean(enabled);
     }
 }

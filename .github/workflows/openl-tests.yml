@@ -111,6 +111,7 @@ jobs:
           STUDIO_IMAGE_KIND: ${{ matrix.studio_image_kind }}
           WS_IMAGE_KIND: ${{ matrix.ws_image_kind }}
           APPLICATION_VERSION: ${{ inputs.application_version }}
+          PLAYWRIGHT_JAVA_SRC: src/test/java:src/main/java
         run: |
           resolve_image() {
             case "$1" in

@@ -251,7 +251,9 @@ public class DockerDriverPool {
             LOGGER.debug("Browser context configured for container network: {}", network.getId());
         }
 
-        return browser.newContext(contextOptions);
+        BrowserContext browserContext = browser.newContext(contextOptions);
+        PlaywrightTracing.start(browserContext);
+        return browserContext;
     }
 
     public static Page getPage() {

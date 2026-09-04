@@ -75,6 +75,7 @@ pipeline {
         JAVA_HOME = "${env.JAVA_HOME}"
         M2_HOME = "${env.M2_HOME}"
         PATH = "${env.M2_HOME}/bin:${env.PATH}"
+        PLAYWRIGHT_JAVA_SRC = "src/test/java:src/main/java"
     }
     parameters {
         string(name: 'APPLICATION_GIT_COMMIT_HASH_VERSION', defaultValue: '', description: 'Tested application version (openl-tablets). Special chars like : or | or [] not allowed here!')

@@ -6,10 +6,6 @@ import configuration.projectconfig.PropertyNameSpace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Playwright lifecycle for {@link ExecutionMode#PLAYWRIGHT_LOCAL}: the browser is launched
- * directly on the host machine. Mode-agnostic callers should go through {@link DriverPool}.
- */
 public class LocalDriverPool {
 
     protected static final Logger LOGGER = LogManager.getLogger(LocalDriverPool.class);
@@ -17,7 +13,6 @@ public class LocalDriverPool {
 
     private static final ThreadLocal<PlaywrightContext> threadLocalContext = new ThreadLocal<>();
 
-    // Container for Playwright components per thread
     private static class PlaywrightContext {
         private final Playwright playwright;
         private final Browser browser;
@@ -36,8 +31,6 @@ public class LocalDriverPool {
         public BrowserContext getBrowserContext() { return browserContext; }
         public Page getPage() { return page; }
 
-        // Each step is closed independently: a failure on one (e.g. a flaky page.close())
-        // must not leak the browser or the Playwright process behind it.
         public void close() {
             DriverPool.closeQuietly("page", () -> {
                 if (page != null && !page.isClosed()) {
@@ -62,7 +55,6 @@ public class LocalDriverPool {
         }
     }
 
-    // Initialize Playwright for local execution with direct browser launch
     public static void setPlaywright() {
         if (threadLocalContext.get() == null) {
             try {
@@ -90,11 +82,10 @@ public class LocalDriverPool {
     private static Browser launchBrowser(Playwright playwright, String browserName) {
         boolean headless = Boolean.parseBoolean(System.getProperty("headless", "false"));
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
-                .setHeadless(headless) // -Dheadless=true for CI / unattended local runs
-                .setSlowMo(0) // No slow motion for normal execution
-                .setDevtools(false); // Disable devtools by default
+                .setHeadless(headless)
+                .setSlowMo(0)
+                .setDevtools(false);
 
-        // Add browser-specific arguments
         launchOptions.setArgs(java.util.List.of(
                 "--disable-blink-features=AutomationControlled",
                 "--disable-dev-shm-usage",
@@ -124,24 +115,22 @@ public class LocalDriverPool {
     }
 
     private static BrowserContext createBrowserContext(Browser browser) {
-        // The default user agent of the launched browser is kept on purpose:
-        // faking a Chrome UA under Firefox/WebKit would test a configuration no real user has.
         Browser.NewContextOptions contextOptions = new Browser.NewContextOptions()
-                .setViewportSize(1280, 720) // Default viewport size
+                .setViewportSize(1280, 720)
                 .setLocale("en-US")
                 .setTimezoneId("America/New_York")
                 .setAcceptDownloads(true)
-                .setIgnoreHTTPSErrors(true); // Ignore SSL errors for testing
+                .setIgnoreHTTPSErrors(true);
 
-        return browser.newContext(contextOptions);
+        BrowserContext browserContext = browser.newContext(contextOptions);
+        PlaywrightTracing.start(browserContext);
+        return browserContext;
     }
 
-    // Get Page for LOCAL mode
     public static Page getPage() {
         return requireContext().getPage();
     }
 
-    // Get BrowserContext for LOCAL mode
     public static BrowserContext getBrowserContext() {
         return requireContext().getBrowserContext();
     }
@@ -158,7 +147,6 @@ public class LocalDriverPool {
         return context;
     }
 
-    // Close Playwright for LOCAL mode
     public static void closePlaywright() {
         PlaywrightContext context = threadLocalContext.get();
         if (context != null) {
