@@ -10,6 +10,7 @@ from pathlib import Path
 DEFAULT_PARALLEL_SUITES = [
     "studio_issues",
     "studio_smoke",
+    "studio_acl",
     "studio_rules_editor",
     "studio_git",
     "studio_sso",
@@ -32,6 +33,7 @@ DEFAULT_CLASS_WEIGHTS = {
 SUITE_IMAGE_KINDS: dict[str, tuple[str, str]] = {
     "studio_issues": ("webstudio", "webstudio"),
     "studio_smoke": ("webstudio", "ws"),
+    "studio_acl": ("webstudio", "ws"),
     "studio_rules_editor": ("webstudio", "webstudio"),
     "studio_git": ("webstudio", "webstudio"),
     "studio_sso": ("webstudio", "webstudio"),

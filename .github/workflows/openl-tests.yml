@@ -18,7 +18,7 @@ on:
         default: "webstudio_tests"
       tests:
         description: >-
-          Selective run. Leave EMPTY to run every suite of the workflow. To run only some tests, list their test
+          Selective run. Leave EMPTY to run every suite of the workflow (the same 8 suites as the Jenkins regression). To run only some tests, list their test
           CLASS names separated by commas or spaces: simple names (TestMethodTable) or fully qualified ones
           (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be selected, the whole
           class runs. Each listed class stays in its own suite with that suite's Studio and Rule Services images,
