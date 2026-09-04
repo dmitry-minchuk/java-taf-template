@@ -1,5 +1,6 @@
 package tests.ui.webstudio.studio_smoke;
 
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -31,8 +32,8 @@ public class TestAdminSystemSettings extends BaseTest {
     @Description("System Settings - Test Dispatching Validation, Verify on Edit, and Thread Number validation."
             + " Known bug: EPBDS-15704.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-15704")
     public void testSystemSettings() {
-        // Step 1 & 2: Create project and test Verify on Edit = true
         String projectNameForVerification = WorkflowService.loginCreateProjectFromTemplate(User.ADMIN, "Sample Project");
         EditorPage editorPage = new EditorPage();
 
@@ -55,7 +56,6 @@ public class TestAdminSystemSettings extends BaseTest {
         editorPage.getCenterTable().editCell(6, 2, "1000", true);
         editorPage.getEditorTableActionsPanelComponent().clickSaveChanges();
 
-        // Step 3: Test Verify on Edit = false
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -81,7 +81,6 @@ public class TestAdminSystemSettings extends BaseTest {
         WaitUtil.waitForCondition(() -> editorPage.getProblemsPanelComponent().getErrorsCount() == 1, 5000, 100, "Waiting for errors ti be listed...");
         assertThat(editorPage.getProblemsPanelComponent().getErrorsCount()).as("Should have 1 error after clicking Verify button").isEqualTo(1);
 
-        // Step 4: Test Dispatching Validation = true
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -99,7 +98,6 @@ public class TestAdminSystemSettings extends BaseTest {
 
         assertThat(editorPage.getTestResultValidationComponent().isTestTableFailed()).as("Tests should fail with dispatching validation enabled").isTrue();
 
-        // Step 5: Test Dispatching Validation = false
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -116,7 +114,6 @@ public class TestAdminSystemSettings extends BaseTest {
 
         assertThat(editorPage.getTestResultValidationComponent().isTestTablePassed()).as("Tests should pass with dispatching validation disabled").isTrue();
 
-        // Step 6: Test Thread Number validation // BUG: no errors shown
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -125,7 +122,6 @@ public class TestAdminSystemSettings extends BaseTest {
             validateThreadCountError(systemSettings, testData[0], testData[1]);
         }
 
-        // Step 7: Test Date/Time Format changes
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -137,19 +133,16 @@ public class TestAdminSystemSettings extends BaseTest {
         systemSettings.setTimeFormat("HH:mm:ss");
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
-        // Verify formats changed
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
         assertThat(systemSettings.getDateFormat()).isEqualTo("yyyy-MM-dd");
         assertThat(systemSettings.getTimeFormat()).isEqualTo("HH:mm:ss");
 
-        // Restore original formats
         systemSettings.setDateFormat(originalDateFormat);
         systemSettings.setTimeFormat(originalTimeFormat);
         systemSettings.applySettingsAndRelogin(User.ADMIN);
 
-        // Step 8: Test Invalid Date Format // // BUG: no errors shown
         systemSettings = editorPage.openUserMenu()
                 .navigateToAdministration()
                 .navigateToSystemSettingsPage();
@@ -157,20 +150,18 @@ public class TestAdminSystemSettings extends BaseTest {
         systemSettings.clickApplyButton();
         assertThat(systemSettings.getAllMessages()).contains("Error: Invalid date pattern");
 
-        // Step 9: Test Invalid Time Format
-        systemSettings.setDateFormat(originalDateFormat); // Reset to valid
+        systemSettings.setDateFormat(originalDateFormat);
         systemSettings.setTimeFormat("xyz");
         systemSettings.clickApplyButton();
         assertThat(systemSettings.getAllMessages()).contains("Error: Invalid time pattern");
 
-        // Step 10: Test Empty Date/Time Formats
-        systemSettings.setTimeFormat(originalTimeFormat); // Reset to valid
+        systemSettings.setTimeFormat(originalTimeFormat);
         systemSettings.setDateFormat("");
         systemSettings.clickApplyButton();
         assertThat(systemSettings.getAllMessages()).contains("Error: Cannot be empty.");
 
         systemSettings.closeAllMessages();
-        systemSettings.setDateFormat(originalDateFormat); // Reset to valid
+        systemSettings.setDateFormat(originalDateFormat);
         systemSettings.setTimeFormat("");
         systemSettings.clickApplyButton();
         assertThat(systemSettings.getAllMessages()).contains("Error: Cannot be empty.");
@@ -181,8 +172,6 @@ public class TestAdminSystemSettings extends BaseTest {
                                          String expectedErrorMessage) {
         systemSettings.setTestThreadCount(invalidValue);
         systemSettings.clickApplyButton();
-        // Known-failing regression for EPBDS-15704: an invalid Test Run Thread Count is accepted
-        // with no validation error. Asserts the correct behaviour; stays red until EPBDS-15704 is fixed.
         assertThat(systemSettings.getAllMessages()).contains(expectedErrorMessage);
     }
 }

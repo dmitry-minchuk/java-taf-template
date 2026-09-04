@@ -2,13 +2,8 @@
 import argparse
 import json
 import shutil
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from suites import DEFAULT_SUITE_DIR, read_regression_classes  # noqa: E402
-
 
 def find_export_dirs(input_root: Path) -> list[Path]:
     return sorted(path.parent for path in input_root.rglob("manifest.json"))
@@ -18,7 +13,7 @@ def read_json(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def merge_tests(export_dirs: list[Path], output_dir: Path, suite_index: dict[str, str]) -> None:
+def merge_tests(export_dirs: list[Path], output_dir: Path) -> None:
     tests_output = output_dir / "tests"
     tests_output.mkdir(parents=True, exist_ok=True)
 
@@ -33,18 +28,7 @@ def merge_tests(export_dirs: list[Path], output_dir: Path, suite_index: dict[str
             relative = source.relative_to(tests_dir)
             target = tests_output / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            if source.name == "metadata.json" and suite_index:
-                write_metadata_with_declared_suite(source, target, suite_index)
-            else:
-                shutil.copy2(source, target)
-
-
-def write_metadata_with_declared_suite(source: Path, target: Path, suite_index: dict[str, str]) -> None:
-    metadata = read_json(source)
-    declared = suite_index.get(str(metadata.get("className", "")))
-    if declared:
-        metadata["suite"] = declared
-    target.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+            shutil.copy2(source, target)
 
 
 def write_manifest(
@@ -93,8 +77,6 @@ def main() -> None:
     )
     parser.add_argument("--input-root", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
-    parser.add_argument("--suite-dir", default=DEFAULT_SUITE_DIR, type=Path,
-                        help="TestNG suite XML directory; every exported test gets the suite its class is declared in.")
     parser.add_argument("--launch-name")
     args = parser.parse_args()
 
@@ -107,7 +89,7 @@ def main() -> None:
     args.output_dir.mkdir(parents=True)
 
     write_manifest(export_dirs, args.output_dir, args.launch_name)
-    merge_tests(export_dirs, args.output_dir, read_regression_classes(args.suite_dir) if args.suite_dir.exists() else {})
+    merge_tests(export_dirs, args.output_dir)
     write_summary(export_dirs, args.output_dir)
 
     test_count = len(list((args.output_dir / "tests").rglob("result.json")))

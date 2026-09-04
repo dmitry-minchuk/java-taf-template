@@ -1,5 +1,6 @@
 package tests.ui.webstudio.studio_smoke;
 
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -28,6 +29,7 @@ public class TestAdminNotifications extends BaseTest {
     @Description("Test notifications: send to all users, display, delete, validate message length and empty messages."
             + " Known bug: EPBDS-15703.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-15703")
     public void testNotifications() {
         LoginService loginService = new LoginService(DriverPool.getPage());
         EditorPage editorPage = loginService.login(UserService.getUser(User.ADMIN));
@@ -50,7 +52,6 @@ public class TestAdminNotifications extends BaseTest {
 
         editorPage.openUserMenu().signOut();
         editorPage = loginService.login(newUser);
-        // A broadcast notification renders after the page finishes loading post-login, so wait for it.
         assertThat(editorPage.isNotificationVisible(15000)).isTrue();
         assertThat(editorPage.getNotificationText()).isEqualTo(testMessage);
 
@@ -83,7 +84,7 @@ public class TestAdminNotifications extends BaseTest {
                 .navigateToNotificationPage();
 
         notificationComponent.sendNotification(message256);
-        assertThat(notificationComponent.getNotificationText()).isEqualTo(message256); // No limitation currently
+        assertThat(notificationComponent.getNotificationText()).isEqualTo(message256);
         assertThat(notificationComponent.getNotificationText().length()).isEqualTo(256);
 
         notificationComponent.clearNotification();
@@ -92,9 +93,6 @@ public class TestAdminNotifications extends BaseTest {
                 .as("an empty notification must not be shown").isTrue();
 
         notificationComponent.sendNotification("   ");
-        // Known-failing regression for EPBDS-15703: a whitespace-only notification is displayed
-        // instead of being rejected like an empty one. Asserts the correct behaviour; stays red
-        // until EPBDS-15703 is fixed.
         assertThat(notificationComponent.isNotificationVisible()).isFalse();
     }
 }

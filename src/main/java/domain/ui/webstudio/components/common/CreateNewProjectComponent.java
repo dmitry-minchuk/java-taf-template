@@ -14,6 +14,8 @@ import lombok.Getter;
 public class CreateNewProjectComponent extends BaseComponent {
 
     private static final int BRANCH_FIELD_PROBE_MS = DEFAULT_TIMEOUT_MS / 5;
+    private static final int METHOD_STEP_PROBE_MS = 3000;
+    private static final int METHOD_STEP_RETRY_TIMEOUT_MS = DEFAULT_TIMEOUT_MS * 2;
 
     private ExcelFilesComponent excelFilesComponent;
     private ZipArchiveComponent zipArchiveComponent;
@@ -30,6 +32,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     private WebElement cancelBtn;
     private WebElement submitBtn;
     private WebElement nameField;
+    private WebElement templateGroups;
     private WebElement templateGroup;
     private WebElement templateItem;
     private WebElement excelUpload;
@@ -72,6 +75,7 @@ public class CreateNewProjectComponent extends BaseComponent {
         cancelBtn = new WebElement(DriverPool.getPage(), "[data-testid=new-project-cancel]", "newProjectCancel");
         submitBtn = new WebElement(DriverPool.getPage(), "[data-testid=new-project-submit]", "newProjectSubmit");
         nameField = new WebElement(DriverPool.getPage(), "[data-testid=new-project-name]", "newProjectName");
+        templateGroups = new WebElement(DriverPool.getPage(), "[data-testid=new-project-template-groups]", "templateGroups");
         templateGroup = new WebElement(DriverPool.getPage(), "[data-testid=template-group-%s]", "templateGroup");
         templateItem = new WebElement(DriverPool.getPage(), "xpath=//div[@data-testid='new-project-template']//button[.//span[normalize-space()='%s']]", "templateItem");
         excelUpload = new WebElement(DriverPool.getPage(), "[data-testid=new-project-excel-upload]", "excelUpload");
@@ -155,7 +159,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void createProjectFromTemplate(String templateName, String projectName, boolean submit) {
-        methodTemplate.click();
+        chooseMethod(methodTemplate, templateGroups, "From template");
         if (templateName != null && !templateName.isEmpty()) {
             templateGroup.format(groupOf(templateName)).click();
             templateItem.format(templateName).click();
@@ -168,6 +172,20 @@ public class CreateNewProjectComponent extends BaseComponent {
         }
     }
 
+    private void chooseMethod(WebElement methodCard, WebElement methodStepElement, String methodName) {
+        boolean opened = WaitUtil.retryAction(() -> {
+            methodCard.click();
+            if (!WaitUtil.waitForCondition(methodStepElement::exists, METHOD_STEP_PROBE_MS, 250,
+                    "Waiting for the '" + methodName + "' step to render")) {
+                throw new IllegalStateException("The '" + methodName + "' step is not rendered yet");
+            }
+        }, METHOD_STEP_RETRY_TIMEOUT_MS, 250, "Opening the '" + methodName + "' step of the Create project wizard");
+        if (!opened) {
+            throw new IllegalStateException("The '" + methodName + "' step of the Create project wizard did not open within "
+                    + METHOD_STEP_RETRY_TIMEOUT_MS + " ms after clicking its card");
+        }
+    }
+
     private static String groupOf(String templateName) {
         if (templateName.startsWith("Example")) return "examples";
         if (templateName.startsWith("Tutorial")) return "tutorials";
@@ -175,7 +193,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void createProjectFromExcel(String excelFileName, String projectName) {
-        methodExcel.click();
+        chooseMethod(methodExcel, excelUpload, "From Excel files");
         excelUpload.setInputFiles(TestDataUtil.getFilePathFromResources(excelFileName));
         if (projectName != null && !projectName.isEmpty()) {
             typeProjectName(projectName);
@@ -184,7 +202,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void createProjectFromZip(String zipFileName, String projectName) {
-        methodArchive.click();
+        chooseMethod(methodArchive, archiveUpload, "From archive");
         archiveUpload.setInputFiles(TestDataUtil.getFilePathFromResources(zipFileName));
         if (projectName != null && !projectName.isEmpty()) {
             typeProjectName(projectName);
@@ -194,10 +212,10 @@ public class CreateNewProjectComponent extends BaseComponent {
 
     public CreateNewProjectComponent selectMethod(TabName method) {
         switch (method) {
-            case TEMPLATE -> methodTemplate.click();
-            case ZIP_ARCHIVE -> methodArchive.click();
-            case EXCEL_FILES -> methodExcel.click();
-            case OPEN_API -> methodOpenApi.click();
+            case TEMPLATE -> chooseMethod(methodTemplate, templateGroups, "From template");
+            case ZIP_ARCHIVE -> chooseMethod(methodArchive, archiveUpload, "From archive");
+            case EXCEL_FILES -> chooseMethod(methodExcel, excelUpload, "From Excel files");
+            case OPEN_API -> chooseMethod(methodOpenApi, openApiUpload, "From OpenAPI");
             default -> throw new IllegalArgumentException("Unsupported create method: " + method);
         }
         return this;
@@ -283,7 +301,7 @@ public class CreateNewProjectComponent extends BaseComponent {
     }
 
     public void createProjectFromOpenApi(String fileName, String projectName, boolean submit) {
-        methodOpenApi.click();
+        chooseMethod(methodOpenApi, openApiUpload, "From OpenAPI");
         openApiUpload.setInputFiles(TestDataUtil.getFilePathFromResources(fileName));
         if (projectName != null && !projectName.isEmpty()) {
             typeProjectName(projectName);

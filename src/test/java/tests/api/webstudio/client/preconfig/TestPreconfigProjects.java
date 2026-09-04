@@ -1,5 +1,6 @@
 package tests.api.webstudio.client.preconfig;
 
+import configuration.annotations.LocalOnly;
 import tests.api.webstudio.client.base.AbstractPreconfigProjectsApi;
 
 import helpers.service.PreconfigSourcesService;
@@ -8,16 +9,7 @@ import org.testng.annotations.Factory;
 
 import java.util.List;
 
-/**
- * Preconfig-projects regression: syncs the local Mercurial clones of the EIS preconfig product
- * repositories (hg pull -u), discovers every OpenL project inside them and creates one
- * test-class instance per project via {@code @Factory}. Each instance gets its own
- * WebStudio + PostgreSQL(production repo) + ruleservice trio and validates
- * upload → compile → deploy → service availability.
- *
- * In ReportPortal each factory-created instance becomes its own test named
- * {@code testPreconfigProject[<repo>/<module>]}.
- */
+@LocalOnly(reason = "Needs JDK 25 and the preconfigured project set, see studio_preconfig_projects_regression.xml")
 public class TestPreconfigProjects extends AbstractPreconfigProjectsApi {
 
     public TestPreconfigProjects(PreconfigProject project) {

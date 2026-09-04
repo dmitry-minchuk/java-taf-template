@@ -1,5 +1,6 @@
 package tests.ui.webstudio.repository;
 
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -77,6 +78,7 @@ public class TestProjectNameValidationUi extends BaseTest {
             + "request dies on URL routing with a blank 400 and the modal shows the generic "
             + "'Something went wrong on API server!' instead.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-16439")
     public void testSlashNameShowsSpecificValidationMessage() {
         EditorPage editorPage = new LoginService(DriverPool.getPage()).login(UserService.getUser(User.ADMIN));
         RepositoryPage repositoryPage = editorPage.getTabSwitcherComponent()

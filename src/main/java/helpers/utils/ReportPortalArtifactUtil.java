@@ -2,6 +2,7 @@ package helpers.utils;
 
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.service.ReportPortal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -30,6 +31,7 @@ import java.time.Instant;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,6 +49,7 @@ public final class ReportPortalArtifactUtil {
     private static final String STEP_LOG_MESSAGE = "Test Steps Log";
     private static final String STEP_LOG_PATTERN = "%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%p] %c{1} - %m%n%throwable{full}";
     private static final Map<String, Writer> STEP_LOG_WRITERS = new ConcurrentHashMap<>();
+    private static final String ISSUE_TRACKER_BROWSE_URL = System.getProperty("issue.tracker.browse.url", "https://jira.eisgroup.com/browse/");
 
     private ReportPortalArtifactUtil() {
     }
@@ -241,7 +244,29 @@ public final class ReportPortalArtifactUtil {
             payload.put("stackTrace", stackTrace(throwable));
         }
 
+        knownIssueOf(result).ifPresent(ticket -> {
+            Map<String, Object> knownIssue = new LinkedHashMap<>();
+            knownIssue.put("ticket", ticket);
+            knownIssue.put("url", ISSUE_TRACKER_BROWSE_URL + ticket);
+            knownIssue.put("outcome", statusName(result.getStatus()) + "_WITH_KNOWN_ISSUE");
+            payload.put("knownIssue", knownIssue);
+        });
+
         writeJson(context.testDirectory().resolve("result.json"), payload);
+    }
+
+    public static Optional<String> knownIssueOf(ITestResult result) {
+        Method method = result.getMethod().getConstructorOrMethod().getMethod();
+        KnownIssue onMethod = method.getAnnotation(KnownIssue.class);
+        if (onMethod != null) {
+            return Optional.of(onMethod.value());
+        }
+        KnownIssue onClass = testClassOf(result, method).getAnnotation(KnownIssue.class);
+        return Optional.ofNullable(onClass).map(KnownIssue::value);
+    }
+
+    private static Class<?> testClassOf(ITestResult result, Method method) {
+        return result.getTestClass() != null ? result.getTestClass().getRealClass() : method.getDeclaringClass();
     }
 
     public static File recordAttachment(String message, String level, File source) {
@@ -350,12 +375,12 @@ public final class ReportPortalArtifactUtil {
 
     private static TestContext contextFor(ITestResult result, Method method, String displayName) {
         org.testng.ITestContext testContext = result.getTestContext();
-        String suiteName = testContext != null ? testContext.getSuite().getName() : "ad-hoc";
-        String testName = testContext != null ? testContext.getName() : method.getDeclaringClass().getSimpleName();
+        Class<?> testClass = testClassOf(result, method);
+        String testName = testContext != null ? testContext.getName() : testClass.getSimpleName();
         return new TestContext(
-                suiteName,
+                TestGroupUtil.groupOf(testClass.getName()),
                 testName,
-                method.getDeclaringClass().getName(),
+                testClass.getName(),
                 method.getName(),
                 displayName
         );

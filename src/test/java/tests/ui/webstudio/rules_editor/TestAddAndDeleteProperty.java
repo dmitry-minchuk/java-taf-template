@@ -1,5 +1,6 @@
 package tests.ui.webstudio.rules_editor;
 
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -34,6 +35,7 @@ public class TestAddAndDeleteProperty extends BaseTest {
     @Description("Rules Editor - Add and delete properties in table details."
             + " Known bug: EPBDS-15705.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-15705")
     public void testAddAndDeleteProperty() {
         EditorPage editorPage = loginAndCreateProject();
 
@@ -44,10 +46,6 @@ public class TestAddAndDeleteProperty extends BaseTest {
                 .expandFolderInTree("Decision")
                 .selectItemInFolder("Decision", "MyRules2");
 
-        // Known-failing (product bug EPBDS-15705): the Table Details panel / table view disappears
-        // after ~7 properties are added sequentially, so reading the 8th property (lob) times out.
-        // Confirmed by hand in the browser (lob alone saves fine; it breaks cumulatively at the 8th).
-        // Red until EPBDS-15705 is fixed.
         addAndCheckProperty(editorPage, "Category", "category", "MyCategory");
         addAndCheckProperty(editorPage, "Description", "description", "TestDescription");
         addAndCheckProperty(editorPage, "Tags", "tags", "Tag1,Tag2");

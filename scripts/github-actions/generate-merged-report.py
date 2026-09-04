@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import sys
-import xml.etree.ElementTree as ET
 from urllib.parse import quote
 from collections import Counter
 from dataclasses import dataclass, field
@@ -14,13 +13,17 @@ from pathlib import Path
 from string import Template
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from suites import DEFAULT_SUITE_DIR, read_regression_classes  # noqa: E402
+from testgroups import group_of  # noqa: E402
 
-STATUS_ORDER = {"FAILED": 0, "SKIPPED": 1, "PASSED": 2}
+KNOWN_ISSUE = "KNOWN ISSUE"
+FIXED_CANDIDATE = "FIXED?"
+STATUS_ORDER = {"FAILED": 0, "SKIPPED": 1, KNOWN_ISSUE: 2, FIXED_CANDIDATE: 3, "PASSED": 4}
 STATUS_STYLE = {
     "PASSED": ("passed", "#1a7f37", "#dafbe1"),
     "FAILED": ("failed", "#cf222e", "#ffebe9"),
     "SKIPPED": ("skipped", "#9a6700", "#fff8c5"),
+    KNOWN_ISSUE: ("known", "#bc4c00", "#fff1e5"),
+    FIXED_CANDIDATE: ("fixed", "#0969da", "#ddf4ff"),
 }
 STEPS_TAIL_LINES = 250
 APP_LOG_EXTRACT_LINES = 200
@@ -57,7 +60,17 @@ class TestRecord:
     git_sha: str = ""
     git_branch: str = ""
     repository: str = ""
+    known_issue: str = ""
+    known_issue_url: str = ""
     attachments: list[Attachment] = field(default_factory=list)
+
+    @property
+    def outcome(self) -> str:
+        if self.known_issue and self.status == "FAILED":
+            return KNOWN_ISSUE
+        if self.known_issue and self.status == "PASSED":
+            return FIXED_CANDIDATE
+        return self.status
 
     @property
     def short_class(self) -> str:
@@ -92,21 +105,13 @@ def shard_name(artifact_dir: Path, input_root: Path) -> str:
     return relative[0].removeprefix("openl-tests-") if relative else artifact_dir.name
 
 
-def load_suite_index(suite_dir: Path | None) -> dict[str, str]:
-    if suite_dir is None or not suite_dir.exists():
-        return {}
-    return read_regression_classes(suite_dir)
+def group_label(declared: str, class_name: str) -> str:
+    if not declared or declared == "ad-hoc" or declared.startswith("OpenL GHA "):
+        return group_of(class_name)
+    return declared
 
 
-def suite_name(declared_suite: str, class_name: str, suite_index: dict[str, str]) -> str:
-    if class_name in suite_index:
-        return suite_index[class_name]
-    if declared_suite and declared_suite != "ad-hoc":
-        return declared_suite
-    return "unknown"
-
-
-def collect_from_rp_export(input_root: Path, output_dir: Path, suite_index: dict[str, str]) -> tuple[list[TestRecord], set[Path]]:
+def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[TestRecord], set[Path]]:
     records: list[TestRecord] = []
     covered_artifacts: set[Path] = set()
     for manifest in sorted(input_root.rglob("manifest.json")):
@@ -114,18 +119,18 @@ def collect_from_rp_export(input_root: Path, output_dir: Path, suite_index: dict
         artifact_dir = input_root / export_dir.relative_to(input_root).parts[0]
         manifest_data = read_json(manifest)
         shard = shard_name(export_dir, input_root)
-        declared_suite = str(manifest_data.get("suite") or "")
         exported_before = len(records)
         for result_file in sorted(export_dir.rglob("result.json")):
             test_dir = result_file.parent
             result = read_json(result_file)
             metadata_file = test_dir / "metadata.json"
             metadata = read_json(metadata_file) if metadata_file.exists() else {}
+            known_issue = result.get("knownIssue") or {}
             class_name = str(metadata.get("className") or test_dir.parent.name)
             method = str(metadata.get("methodName") or test_dir.name)
             record = TestRecord(
                 shard=shard,
-                suite=suite_name(declared_suite, class_name, suite_index),
+                suite=group_label(str(metadata.get("suite") or ""), class_name),
                 class_name=class_name,
                 method=method,
                 display_name=str(metadata.get("displayName") or method),
@@ -141,6 +146,8 @@ def collect_from_rp_export(input_root: Path, output_dir: Path, suite_index: dict
                 git_sha=str(manifest_data.get("gitSha") or ""),
                 git_branch=str(manifest_data.get("gitBranch") or ""),
                 repository=str(manifest_data.get("githubRepository") or ""),
+                known_issue=str(known_issue.get("ticket") or ""),
+                known_issue_url=str(known_issue.get("url") or ""),
             )
             record.attachments = copy_attachments(test_dir, record, output_dir)
             records.append(record)
@@ -198,47 +205,20 @@ def attachment_kind(message: str, file_name: str) -> str:
     return "file"
 
 
-def collect_from_testng(input_root: Path, covered_artifacts: set[Path], suite_index: dict[str, str]) -> list[TestRecord]:
-    records: list[TestRecord] = []
-    for results_file in sorted(input_root.rglob("testng-results.xml")):
-        artifact_dir = input_root / results_file.relative_to(input_root).parts[0]
-        if artifact_dir in covered_artifacts:
-            continue
-        shard = shard_name(results_file.parent, input_root)
-        root = ET.parse(results_file).getroot()
-        for class_node in root.iter("class"):
-            class_name = class_node.attrib.get("name", "")
-            for method in class_node.findall("test-method"):
-                if method.attrib.get("is-config") == "true":
-                    continue
-                exception = method.find("exception")
-                message = exception.findtext("message", default="") if exception is not None else ""
-                trace = exception.findtext("full-stacktrace", default="") if exception is not None else ""
-                records.append(
-                    TestRecord(
-                        shard=shard,
-                        suite=suite_name("", class_name, suite_index),
-                        class_name=class_name,
-                        method=method.attrib.get("name", ""),
-                        display_name=method.attrib.get("name", ""),
-                        status={"PASS": "PASSED", "FAIL": "FAILED", "SKIP": "SKIPPED"}.get(method.attrib.get("status", ""), "SKIPPED"),
-                        duration_ms=int(method.attrib.get("duration-ms", "0")),
-                        error_type=exception.attrib.get("class", "") if exception is not None else "",
-                        error_message=(message or "").strip(),
-                        stack_trace=(trace or "").strip(),
-                        started_at=method.attrib.get("started-at", ""),
-                        finished_at=method.attrib.get("finished-at", ""),
-                    )
-                )
-    return records
-
-
 def status_rank(status: str) -> int:
     return STATUS_ORDER.get(status, 1)
 
 
 def sort_records(records: list[TestRecord]) -> list[TestRecord]:
-    return sorted(records, key=lambda r: (status_rank(r.status), r.suite, r.shard, r.class_name, r.method))
+    return sorted(records, key=lambda r: (status_rank(r.outcome), r.suite, r.shard, r.class_name, r.method))
+
+
+def known_issue_link(record: TestRecord) -> str:
+    if not record.known_issue:
+        return ""
+    if record.known_issue_url:
+        return f"<a href='{e(record.known_issue_url)}' target='_blank'>{e(record.known_issue)}</a>"
+    return e(record.known_issue)
 
 
 def format_duration(duration_ms: int) -> str:
@@ -297,10 +277,11 @@ def render_tabs(record: TestRecord, index: int, build: str) -> str:
     tabs: list[tuple[str, str]] = []
 
     overview_rows = [
-        ("Suite / shard", f"{e(record.suite)} / {e(record.shard)}"),
+        ("Group / shard", f"{e(record.suite)} / {e(record.shard)}"),
         ("Class", f"<code>{e(record.class_name)}</code>" + (f" · <a href='{e(record.source_url())}' target='_blank'>source</a>" if record.source_url() else "")),
         ("Method", f"<code>{e(record.display_name)}</code>"),
         ("Test case", e(record.test_case_id) or "—"),
+        ("Known issue", (known_issue_link(record) + (" — the test still fails as expected" if record.outcome == KNOWN_ISSUE else " — the test PASSED: verify the fix and remove @KnownIssue")) if record.known_issue else "—"),
         ("Description", e(record.description) or "—"),
         ("Started / finished", f"{e(record.started_at) or '—'} → {e(record.finished_at) or '—'} ({format_duration(record.duration_ms)})"),
         ("Application build", e(build) or "—"),
@@ -388,10 +369,10 @@ tr.details-row td{background:#f6f8fa}
 </style></head><body>
 <h1>$title</h1>
 <div class="meta">Build $build · $total tests · $total_duration of test time · <a href="$run_url">workflow run</a> · <a href="debug/index.json">debug/index.json</a> · <a href="debug/README.md">how to debug with an AI assistant</a></div>
-<div class="cards"><div class="card">Passed<b style="color:#1a7f37">$passed</b></div><div class="card">Failed<b style="color:#cf222e">$failed</b></div><div class="card">Skipped<b style="color:#9a6700">$skipped</b></div><div class="card">Shards<b>$shards</b></div></div>
-<div class="controls"><label>Status <select id="status"><option value="">all</option><option value="failed">failed</option><option value="skipped">skipped</option><option value="passed">passed</option></select></label>
-<label>Suite <select id="suite"><option value="">all</option>$suite_options</select></label><input id="search" placeholder="filter by class, test name or error" size="40"><button id="expand-failed">expand all failed</button></div>
-<table class="tests"><thead><tr><th>Status</th><th>Suite / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody>$rows</tbody></table>
+<div class="cards"><div class="card">Passed<b style="color:#1a7f37">$passed</b></div><div class="card">Failed<b style="color:#cf222e">$failed</b></div><div class="card">Skipped<b style="color:#9a6700">$skipped</b></div><div class="card">Known issues<b style="color:#bc4c00">$known</b></div><div class="card">Fixed?<b style="color:#0969da">$fixed</b></div><div class="card">Shards<b>$shards</b></div></div>
+<div class="controls"><label>Status <select id="status"><option value="">all</option><option value="failed">failed</option><option value="skipped">skipped</option><option value="known">known issue</option><option value="fixed">fixed?</option><option value="passed">passed</option></select></label>
+<label>Group <select id="suite"><option value="">all</option>$suite_options</select></label><input id="search" placeholder="filter by class, test name or error" size="40"><button id="expand-failed">expand all failed</button></div>
+<table class="tests"><thead><tr><th>Status</th><th>Group / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody>$rows</tbody></table>
 <script>
 const rows=[...document.querySelectorAll('tr.row')];
 function apply(){const s=document.getElementById('status').value,u=document.getElementById('suite').value,q=document.getElementById('search').value.toLowerCase();
@@ -413,16 +394,17 @@ def artifact_badges(record: TestRecord) -> str:
 
 
 def render_html(records: list[TestRecord], title: str, run_url: str, build: str) -> str:
-    counts = Counter(record.status for record in records)
+    counts = Counter(record.outcome for record in records)
     rows = []
     for index, record in enumerate(records):
-        css, color, background = STATUS_STYLE.get(record.status, STATUS_STYLE["SKIPPED"])
+        css, color, background = STATUS_STYLE.get(record.outcome, STATUS_STYLE["SKIPPED"])
         detail_html = render_tabs(record, index, build)
         case_id = e(record.test_case_id)
         error_line = first_error_line(record, 160)
+        badge = record.outcome + (f" · {known_issue_link(record)}" if record.known_issue else "")
         rows.append(
             f"<tr class='row {css}' data-status='{css}' data-suite='{e(record.suite)}' data-error='{e(record.error_message[:2000])}'>"
-            f"<td><span class='badge' style='color:{color};background:{background}'>{record.status}</span></td>"
+            f"<td><span class='badge' style='color:{color};background:{background}'>{badge}</span></td>"
             f"<td>{e(record.suite)}<br><small>{e(record.shard)}</small></td>"
             f"<td><strong>{e(record.short_class)}</strong><br>{e(record.display_name)}"
             + (f"<br><small>{case_id}</small>" if case_id else "")
@@ -442,6 +424,8 @@ def render_html(records: list[TestRecord], title: str, run_url: str, build: str)
         passed=counts.get("PASSED", 0),
         failed=counts.get("FAILED", 0),
         skipped=counts.get("SKIPPED", 0),
+        known=counts.get(KNOWN_ISSUE, 0),
+        fixed=counts.get(FIXED_CANDIDATE, 0),
         shards=len({record.shard for record in records}),
         suite_options="".join(f"<option value='{e(s)}'>{e(s)}</option>" for s in suites),
         rows="".join(rows),
@@ -472,6 +456,9 @@ def debug_bundle(record: TestRecord, build: str, run_url: str) -> dict:
         },
         "result": {
             "status": record.status,
+            "outcome": record.outcome,
+            "knownIssue": record.known_issue,
+            "knownIssueUrl": record.known_issue_url,
             "startedAt": record.started_at,
             "finishedAt": record.finished_at,
             "durationMs": record.duration_ms,
@@ -541,6 +528,8 @@ def write_debug_bundles(records: list[TestRecord], output_dir: Path, build: str,
             "durationMs": record.duration_ms,
             "testCaseId": record.test_case_id,
             "errorMessage": record.error_message,
+            "outcome": record.outcome,
+            "knownIssue": record.known_issue,
             "bundle": "",
         }
         if record.status != "PASSED":
@@ -560,21 +549,28 @@ def write_debug_bundles(records: list[TestRecord], output_dir: Path, build: str,
 
 
 def write_step_summary(records: list[TestRecord], title: str, build: str, summary_path: str | None) -> str:
-    counts = Counter(record.status for record in records)
+    counts = Counter(record.outcome for record in records)
     lines = [
         f"## {title}",
         "",
-        f"Build `{build}` · {len(records)} tests · ✅ {counts.get('PASSED', 0)} passed · ❌ {counts.get('FAILED', 0)} failed · ⏭️ {counts.get('SKIPPED', 0)} skipped",
+        f"Build `{build}` · {len(records)} tests · ✅ {counts.get('PASSED', 0)} passed · ❌ {counts.get('FAILED', 0)} failed · ⏭️ {counts.get('SKIPPED', 0)} skipped"
+        f" · 🟠 {counts.get(KNOWN_ISSUE, 0)} known issues · 🔵 {counts.get(FIXED_CANDIDATE, 0)} passed despite a known issue",
         "",
     ]
-    failed = [record for record in records if record.status != "PASSED"]
-    if failed:
-        lines += ["| Status | Suite | Test | Error |", "|---|---|---|---|"]
-        for record in failed:
+    blocking = [record for record in records if record.outcome in {"FAILED", "SKIPPED"}]
+    if blocking:
+        lines += ["| Status | Group | Test | Error |", "|---|---|---|---|"]
+        for record in blocking:
             first_line = first_error_line(record, 200).replace("|", "\\|")
             lines.append(f"| {record.status} | {record.suite} | `{record.short_class}.{record.method}` | {first_line} |")
     else:
-        lines.append("All tests passed.")
+        lines.append("No failures without a known issue.")
+    known = [record for record in records if record.known_issue]
+    if known:
+        lines += ["", "| Known issue | Outcome | Test |", "|---|---|---|"]
+        for record in known:
+            ticket = f"[{record.known_issue}]({record.known_issue_url})" if record.known_issue_url else record.known_issue
+            lines.append(f"| {ticket} | {record.outcome} | `{record.short_class}.{record.method}` |")
     lines += [
         "",
         "The `test-report-merged` artifact holds `index.html` with per-test step logs, Playwright traces, application logs, "
@@ -589,7 +585,7 @@ def write_step_summary(records: list[TestRecord], title: str, build: str, summar
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Merge shard results (rp-export or testng-results.xml) into one HTML report, per-test debug bundles and a job summary."
+        description="Merge the shard rp-exports into one HTML report, per-test debug bundles and a job summary."
     )
     parser.add_argument("--input-root", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
@@ -597,16 +593,13 @@ def main() -> None:
     parser.add_argument("--build", default="")
     parser.add_argument("--run-url", default="")
     parser.add_argument("--step-summary", default=os.environ.get("GITHUB_STEP_SUMMARY"))
-    parser.add_argument("--suite-dir", default=DEFAULT_SUITE_DIR, type=Path,
-                        help="TestNG suite XML directory used to label every test with the suite it belongs to.")
     args = parser.parse_args()
-    suite_index = load_suite_index(args.suite_dir)
 
     if args.output_dir.exists():
         shutil.rmtree(args.output_dir)
     args.output_dir.mkdir(parents=True)
-    rp_records, covered = collect_from_rp_export(args.input_root, args.output_dir, suite_index)
-    records = sort_records(rp_records + collect_from_testng(args.input_root, covered, suite_index))
+    rp_records, _ = collect_from_rp_export(args.input_root, args.output_dir)
+    records = sort_records(rp_records)
     if not records:
         message = f"No test results found under {args.input_root}"
         if args.step_summary:
@@ -629,6 +622,8 @@ def main() -> None:
                         "class": r.class_name,
                         "method": r.method,
                         "status": r.status,
+                        "outcome": r.outcome,
+                        "knownIssue": r.known_issue,
                         "durationMs": r.duration_ms,
                         "testCaseId": r.test_case_id,
                         "errorMessage": r.error_message,

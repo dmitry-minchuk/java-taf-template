@@ -1,5 +1,6 @@
 package tests.api.webstudio.client.zip;
 
+import configuration.annotations.LocalOnly;
 import tests.api.webstudio.client.base.AbstractZippedProjectsApi;
 
 import org.apache.commons.io.FileUtils;
@@ -16,15 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Walks the local client_projects tree, groups ZIP archives the same way the
- * legacy UI test did (all zips in a folder whose name ends with "deployment"
- * belong to one group; every other zip is its own group), and creates one
- * test-class instance per group via {@code @Factory}.
- *
- * In ReportPortal each factory-created instance becomes its own &lt;test&gt;
- * with one @Test row per uploaded project inside the group.
- */
+@LocalOnly(reason = "Runs the zipped project set from the local file system, see studio_zip_projects_regression.xml")
 public class TestZippedProjects extends AbstractZippedProjectsApi {
 
     private static final String ROOT_DIR = System.getProperty("zip.projects.root",

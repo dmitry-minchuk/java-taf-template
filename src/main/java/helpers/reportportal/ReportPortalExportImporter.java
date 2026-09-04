@@ -8,6 +8,7 @@ import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
+import com.epam.ta.reportportal.ws.model.issue.Issue;
 import com.epam.ta.reportportal.ws.model.item.ItemCreatedRS;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 public class ReportPortalExportImporter {
 
+    private static final String KNOWN_ISSUE_DEFECT_TYPE = "pb001";
     private static final ObjectMapper JSON = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP = new TypeReference<>() {
     };
@@ -213,6 +215,12 @@ public class ReportPortalExportImporter {
         request.setLaunchUuid(launchUuid);
         request.setStatus(test.status());
         request.setEndTime(test.finishedAt());
+        if ("FAILED".equals(test.status()) && !test.knownIssue().isBlank()) {
+            Issue issue = new Issue();
+            issue.setIssueType(KNOWN_ISSUE_DEFECT_TYPE);
+            issue.setComment("Known issue " + test.knownIssue() + (test.knownIssueUrl().isBlank() ? "" : " " + test.knownIssueUrl()));
+            request.setIssue(issue);
+        }
         client.finishTestItem(itemUuid, request).blockingGet();
     }
 
@@ -343,6 +351,12 @@ public class ReportPortalExportImporter {
         return value == null || value.toString().isBlank() ? "" : System.lineSeparator() + "- " + label + ": `" + value + "`";
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> knownIssueOf(Map<String, Object> result) {
+        Object value = result.get("knownIssue");
+        return value instanceof Map<?, ?> map ? (Map<String, Object>) map : Map.of();
+    }
+
     private static String stringValue(Map<String, Object> map, String key, String fallback) {
         Object value = map.get(key);
         return value == null ? fallback : value.toString();
@@ -365,6 +379,8 @@ public class ReportPortalExportImporter {
             Date finishedAt,
             String errorMessage,
             String stackTrace,
+            String knownIssue,
+            String knownIssueUrl,
             List<Map<String, Object>> attachments
     ) {
         static TestExport from(Path exportDir, Path testDir, Map<String, Object> metadata, Map<String, Object> result) throws IOException {
@@ -381,6 +397,8 @@ public class ReportPortalExportImporter {
                     parseDate(stringValue(result, "finishedAt", null), new Date()),
                     stringValue(result, "errorMessage", ""),
                     stringValue(result, "stackTrace", ""),
+                    stringValue(knownIssueOf(result), "ticket", ""),
+                    stringValue(knownIssueOf(result), "url", ""),
                     readJsonLines(testDir.resolve("attachments.jsonl"))
             );
         }

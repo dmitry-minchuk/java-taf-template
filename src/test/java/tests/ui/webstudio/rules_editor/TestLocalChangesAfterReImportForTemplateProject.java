@@ -1,5 +1,6 @@
 package tests.ui.webstudio.rules_editor;
 
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -33,6 +34,7 @@ public class TestLocalChangesAfterReImportForTemplateProject extends BaseTest {
     @TestCaseId("IPBQA-31512")
     @Description("Steps 2-2.2: Local Changes appear after Tables Generation re-import for template project. Restore shows reconciliation warning. Compare window shows changed items.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-16528")
     public void testLocalChangesAfterReImportForTemplateProject() {
         String projectName = "TestLocalChanges2_" + System.currentTimeMillis();
         String rulesModuleName = "AutoPolicyCalculation";

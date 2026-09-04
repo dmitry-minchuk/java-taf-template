@@ -1,5 +1,6 @@
 package tests.ui.webstudio.repository;
 
+import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -26,16 +27,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Deploy Project modal: the wording it reports with and the validation of the deployment name.
- *
- * Both checks are red on 6.4.0 and each guards a filed bug — see the per-test descriptions.
- */
 public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
 
     private static final String TEMPLATE_NAME = "Example 1 - Bank Rating";
     private static final String REMOVED_FEATURE_NAME = "Deploy Configuration";
-    // Forbidden by the same NameChecker rules the REST deploy API enforces.
     private static final String INVALID_DEPLOYMENT_NAME = "bad:name?*";
 
     private static final Map<String, String> additionalContainerFiles = new HashMap<>();
@@ -69,6 +64,7 @@ public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
             + "names the removed \"Deploy Configuration\" feature."
             + " Known bug: EPBDS-16273.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-16273")
     public void testDeploySuccessMessageNamesTheProject() {
         RepositoryPage repositoryPage = openRepositoryWithProject("DeployMsg");
         String projectName = lastCreatedProject;
@@ -91,6 +87,7 @@ public class TestDeployProjectMessagesAndValidationUi extends BaseTest {
             + "KNOWN-FAILING: the field takes any value and the invalid name becomes the deployment folder."
             + " Known bug: EPBDS-16271.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEPLOY_STUDIO_PARAMS)
+    @KnownIssue("EPBDS-16271")
     public void testDeploymentNameRejectsForbiddenCharacters() {
         RepositoryPage repositoryPage = openRepositoryWithProject("DeployName");
         String projectName = lastCreatedProject;

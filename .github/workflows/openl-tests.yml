@@ -18,25 +18,25 @@ on:
         default: "webstudio_tests"
       tests:
         description: >-
-          Selective run. Leave EMPTY to run every test class of the 8 regression suites. To run only some tests,
-          list their test CLASS names separated by commas or spaces: simple names (TestMethodTable) or fully
-          qualified ones (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be
-          selected, the whole class runs. The listed classes are pooled and balanced over min(shards, classes)
-          jobs; every job has both the Studio and the Rule Services image, a class picks the one it declares.
-          The rp-export and the merged report label every test with the suite its class is declared in and
-          carry the attribute run:selective. The "Discover test shards" job fails immediately when a name
-          contains characters other than letters, digits, dots and underscores, or when a name is not found in
-          any suite (check the spelling).
+          Selective run. Leave EMPTY to run every test class under src/test/java that has @Test methods (own or
+          inherited) and is not annotated @LocalOnly. To run only some tests, list their test CLASS names separated
+          by commas or spaces: simple names (TestMethodTable) or fully qualified ones
+          (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be selected, the whole
+          class runs. A selected class runs even when it is @LocalOnly. The rp-export and the merged report carry the
+          attribute run:selective. The "Discover tests" job fails immediately when a name contains characters other
+          than letters, digits, dots and underscores, or when no class with that name exists (check the spelling).
         required: false
         default: ""
       shards:
         description: >-
-          Number of parallel shards for a full run. All test classes of the 8 regression suites are pooled and
-          spread over this many GitHub jobs by their measured duration (scripts/github-actions/test-weights.json),
-          so every job finishes at about the same time. The default matches max-parallel of the workflow; a
-          selective run never uses more shards than it has classes.
+          Number of parallel shard jobs. The classes form one queue: every shard claims the next unclaimed class,
+          runs it and claims again until the queue is empty, so all shards finish at about the same time without
+          any manual balancing. A selective run never starts more shards than it has classes.
         required: false
         default: "20"
+
+permissions:
+  contents: read
 
 env:
   RP_LAUNCH_NAME: ${{ inputs.rp_launch_name }}
@@ -48,30 +48,30 @@ env:
 
 jobs:
   discover-tests:
-    name: Discover test shards
+    name: Discover tests
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
+      classes: ${{ steps.discover.outputs.classes }}
+      matrix: ${{ steps.discover.outputs.matrix }}
+      selective: ${{ steps.discover.outputs.selective }}
 
     steps:
       - name: Checkout tests
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Generate test matrix
-        id: matrix
-        run: |
-          if [ -n "${SELECTED_TESTS}" ]; then
-            echo "Selective run requested for: ${SELECTED_TESTS}"
-          fi
-          MATRIX="$(python3 scripts/github-actions/generate-test-matrix.py --shards "${SHARDS:-20}" --classes="${SELECTED_TESTS}")"
-          echo "matrix=${MATRIX}" >> "${GITHUB_OUTPUT}"
-          echo "${MATRIX}"
+      - name: Discover test classes
+        id: discover
+        run: python3 scripts/github-actions/discover-tests.py --shards "${SHARDS:-20}" --classes="${SELECTED_TESTS}"
 
   test-shard:
     name: ${{ matrix.display }}
     needs: discover-tests
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       max-parallel: 20
@@ -80,6 +80,8 @@ jobs:
     steps:
       - name: Checkout tests
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -87,13 +89,6 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-
-      - name: Generate TestNG shard suite
-        run: |
-          python3 scripts/github-actions/generate-testng-suite.py \
-            --classes "${{ matrix.classes }}" \
-            --output "generated-testng/${{ matrix.display }}.xml" \
-            --suite-name "OpenL GHA ${{ matrix.display }}"
 
       - name: Warm up the Playwright Server image and its npm cache
         continue-on-error: true
@@ -104,39 +99,45 @@ jobs:
           time docker run --rm -v "${PLAYWRIGHT_NPM_CACHE_DIR}:/root/.npm" "${PLAYWRIGHT_IMAGE}" \
             sh -c "npx -y ${PLAYWRIGHT_NPM_PACKAGE} --version"
 
-      - name: Run shard
+      - name: Compile tests
+        run: mvn --batch-mode --quiet test-compile
+
+      - name: Run the test queue
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           BUILD_LABEL: ${{ inputs.application_version }}
           TESTS_BRANCH: ${{ inputs.tests_branch }}
-          STUDIO_IMAGE_KIND: ${{ matrix.studio_image_kind }}
-          WS_IMAGE_KIND: ${{ matrix.ws_image_kind }}
           APPLICATION_VERSION: ${{ inputs.application_version }}
+          SELECTIVE_RUN: ${{ needs.discover-tests.outputs.selective }}
+          QUEUED_CLASSES: ${{ needs.discover-tests.outputs.classes }}
+          SHARD_DISPLAY: ${{ matrix.display }}
           PLAYWRIGHT_JAVA_SRC: src/test/java:src/main/java
         run: |
-          resolve_image() {
-            case "$1" in
-              webstudio) echo "ghcr.io/openl-tablets/webstudio:${APPLICATION_VERSION}" ;;
-              ws)        echo "ghcr.io/openl-tablets/ws:${APPLICATION_VERSION}-all" ;;
-              *) echo "Unknown image kind: $1" >&2; exit 1 ;;
-            esac
-          }
-          STUDIO_IMAGE="$(resolve_image "${STUDIO_IMAGE_KIND}")"
-          WS_IMAGE="$(resolve_image "${WS_IMAGE_KIND}")"
+          STUDIO_IMAGE="ghcr.io/openl-tablets/webstudio:${APPLICATION_VERSION}"
+          WS_IMAGE="ghcr.io/openl-tablets/ws:${APPLICATION_VERSION}-all"
           PLAYWRIGHT_NPM_CACHE_DIR="${RUNNER_TEMP}/playwright-npm-cache"
           RP_ATTRIBUTES="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}"
-          if [ -n "${SELECTED_TESTS}" ]; then
+          if [ "${SELECTIVE_RUN}" = "true" ]; then
             RP_ATTRIBUTES="${RP_ATTRIBUTES};run:selective"
           fi
           echo "Using docker_image_name=${STUDIO_IMAGE}"
           echo "Using ws_docker_image_name=${WS_IMAGE}"
           echo "Using rp.attributes=${RP_ATTRIBUTES}"
+          printf '%s' "${QUEUED_CLASSES}" > "${RUNNER_TEMP}/queued-classes.json"
 
-          mvn clean test \
+          python3 scripts/github-actions/run-test-queue.py run \
+            --repo "${GITHUB_REPOSITORY}" \
+            --run-key "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --sha "${GITHUB_SHA}" \
+            --shard "${SHARD_DISPLAY}" \
+            --classes-file "${RUNNER_TEMP}/queued-classes.json" \
+            --suite-dir generated-testng \
+            --report-dir target/queue \
+            -- \
             -Drp.enable=false \
             -Dlog4j.configurationFile=src/test/resources/log4j2-gha.xml \
             -Dexecution.mode=PLAYWRIGHT_DOCKER \
             -Djava.net.preferIPv4Stack=true \
-            -DsuiteXmlFile=generated-testng/${{ matrix.display }}.xml \
             -Ddocker_image_name="${STUDIO_IMAGE}" \
             -Dws_docker_image_name="${WS_IMAGE}" \
             -Dplaywright_default_timeout=20000 \
@@ -148,13 +149,14 @@ jobs:
             -Drp.attributes="${RP_ATTRIBUTES}" \
             -Drp.export.dir=target/rp-export
 
-      - name: Fail on failed TestNG results
+      - name: Gate on the shard results
         if: always()
+        env:
+          SHARD_DISPLAY: ${{ matrix.display }}
         run: |
-          if [ -f target/surefire-reports/testng-results.xml ] && grep -Eq 'failed="[1-9]|skipped="[1-9]' target/surefire-reports/testng-results.xml; then
-            echo "TestNG reported failed or skipped tests"
-            exit 1
-          fi
+          python3 scripts/github-actions/gate-shard-results.py \
+            --export-dir target/rp-export \
+            --queue-file "target/queue/${SHARD_DISPLAY}.json"
 
       - name: Upload test artifacts
         if: always()
@@ -165,7 +167,7 @@ jobs:
           retention-days: 14
           path: |
             target/rp-export/**
-            target/surefire-reports/**
+            target/queue/**
             target/screenshots/**
             target/videos/**
             target/logs/**
@@ -178,10 +180,14 @@ jobs:
       - test-shard
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout tests
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Download shard artifacts
         uses: actions/download-artifact@v4
@@ -195,7 +201,6 @@ jobs:
           python3 scripts/github-actions/merge-rp-exports.py \
             --input-root downloaded-artifacts \
             --output-dir merged-rp-export \
-            --suite-dir src/test/resources/testng_suites \
             --launch-name "${RP_LAUNCH_NAME}"
 
       - name: Upload merged ReportPortal export
@@ -227,3 +232,13 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           path: merged-report/**
+
+      - name: Remove the queue refs of this run attempt
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/github-actions/run-test-queue.py cleanup \
+            --repo "${GITHUB_REPOSITORY}" \
+            --run-key "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
