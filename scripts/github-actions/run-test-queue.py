@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import base64
 import email.utils
 import json
 import os
@@ -16,6 +17,7 @@ from testngsuite import write_suite  # noqa: E402
 API_ROOT = "https://api.github.com"
 QUEUE_REF_PREFIX = "openl-queue"
 TRANSIENT_RETRIES = 8
+DELETE_BATCH_SIZE = 100
 RATE_LIMIT_MAX_WAIT_SECONDS = 900
 
 
@@ -94,19 +96,27 @@ def queue_ref(run_key: str, class_name: str) -> str:
     return f"{QUEUE_REF_PREFIX}/{run_key}/{class_name}"
 
 
-def claimed_classes(api: GitHubApi, run_key: str) -> set[str]:
+def git_remote(repo: str) -> str:
+    return f"https://github.com/{repo}.git"
+
+
+def git_command(token: str, *args: str) -> list[str]:
+    basic = base64.b64encode(f"x-access-token:{token}".encode("utf-8")).decode("ascii")
+    return ["git", "-c", f"http.extraheader=AUTHORIZATION: basic {basic}", *args]
+
+
+def claimed_classes(repo: str, token: str, run_key: str) -> set[str]:
     prefix = f"refs/{QUEUE_REF_PREFIX}/{run_key}/"
-    claimed: set[str] = set()
-    page = 1
-    while True:
-        response = api.request("GET", f"git/matching-refs/{QUEUE_REF_PREFIX}/{run_key}/?per_page=100&page={page}")
-        if response.status != 200 or not isinstance(response.body, list):
-            raise SystemExit(f"Could not list queue refs: HTTP {response.status} {response.body}")
-        for ref in response.body:
-            claimed.add(str(ref.get("ref", "")).removeprefix(prefix))
-        if len(response.body) < 100:
-            return claimed
-        page += 1
+    for attempt in range(1, TRANSIENT_RETRIES + 1):
+        completed = subprocess.run(
+            git_command(token, "ls-remote", git_remote(repo), f"{prefix}*"),
+            capture_output=True, text=True,
+        )
+        if completed.returncode == 0:
+            return {line.split("\t", 1)[1].removeprefix(prefix) for line in completed.stdout.splitlines() if "\t" in line}
+        print(f"git ls-remote failed (attempt {attempt}/{TRANSIENT_RETRIES}): {completed.stderr.strip()}", file=sys.stderr, flush=True)
+        time.sleep(min(60, 2 ** attempt))
+    raise SystemExit("Could not list the queue refs with git ls-remote")
 
 
 def claim(api: GitHubApi, run_key: str, sha: str, class_name: str) -> bool:
@@ -119,7 +129,7 @@ def claim(api: GitHubApi, run_key: str, sha: str, class_name: str) -> bool:
 
 
 def claim_next(api: GitHubApi, run_key: str, sha: str, classes: list[str], skipped: set[str]) -> str | None:
-    skipped.update(claimed_classes(api, run_key))
+    skipped.update(claimed_classes(api.repo, api.token, run_key))
     for class_name in classes:
         if class_name in skipped:
             continue
@@ -162,15 +172,22 @@ def run(args: argparse.Namespace, maven_args: list[str]) -> None:
 
 
 def cleanup(args: argparse.Namespace) -> None:
-    api = GitHubApi(args.repo, required_token())
-    refs = claimed_classes(api, args.run_key)
+    token = required_token()
+    refs = sorted(claimed_classes(args.repo, token, args.run_key))
+    if not refs:
+        print(f"No queue refs left for run {args.run_key}")
+        return
     deleted = 0
-    for class_name in sorted(refs):
-        response = api.request("DELETE", f"git/refs/{queue_ref(args.run_key, class_name)}")
-        if response.status in (204, 422):
-            deleted += 1
+    for start in range(0, len(refs), DELETE_BATCH_SIZE):
+        batch = refs[start:start + DELETE_BATCH_SIZE]
+        completed = subprocess.run(
+            git_command(token, "push", git_remote(args.repo), "--delete", *[f"refs/{queue_ref(args.run_key, name)}" for name in batch]),
+            capture_output=True, text=True,
+        )
+        if completed.returncode == 0:
+            deleted += len(batch)
         else:
-            print(f"Could not delete the queue ref of {class_name}: HTTP {response.status} {response.body}", file=sys.stderr)
+            print(f"Could not delete {len(batch)} queue ref(s): {completed.stderr.strip()}", file=sys.stderr)
     print(f"Deleted {deleted} of {len(refs)} queue ref(s) for run {args.run_key}")
 
 
@@ -185,7 +202,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Work queue for GitHub Actions shards: every shard claims the next unclaimed test class by creating the "
                     "git ref refs/openl-queue/<run key>/<class> (creation is atomic, a second shard gets HTTP 422), runs the "
-                    "class with Maven surefire:test and continues until no class is left. Maven arguments after -- are passed through."
+                    "class with Maven surefire:test and continues until no class is left. Claimed refs are listed with git ls-remote "
+                    "and deleted with git push --delete, so only the claims count against the REST API rate limit. "
+                    "Maven arguments after -- are passed through."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     runner = subparsers.add_parser("run")
