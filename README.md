@@ -711,6 +711,10 @@ bash scripts/reportportal-import/import-rp-export.sh \
 
 Use `Jenkinsfile.reportportal-import` for the manual Jenkins job that downloads GitHub Actions artifacts and imports every `rp-export` manifest it finds.
 
+### Test isolation rule: a fresh application container for every test
+
+Each test starts its own Studio or Rule Services container and stops it afterwards. Reusing an application container between tests, classes or shards is forbidden in the framework and in every CI pipeline; regression speed is gained only through parallelism and shard balancing. The rule is also recorded in `CLAUDE.md`.
+
 ### Selective runs on Jenkins and GitHub Actions
 
 Both pipelines accept an optional list of test class names, so a fix can be verified in minutes instead of a full regression:
