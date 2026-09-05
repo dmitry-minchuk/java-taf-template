@@ -171,13 +171,15 @@ public abstract class BaseTest implements ITest {
         boolean failed = result.getStatus() == ITestResult.FAILURE;
         boolean keepDebugArtifacts = result.getStatus() != ITestResult.SUCCESS || ReportPortalUtil.isDebugArtifactsOnSuccessEnabled();
 
+        boolean traceAttached = ReportPortalUtil.attachTrace(testName, keepDebugArtifacts);
+
         if (failed) {
             ReportPortalUtil.attachScreenshotOnFailure(testName);
-            ReportPortalUtil.attachPageContent("Page Content at Failure");
+            if (!traceAttached) {
+                ReportPortalUtil.attachPageContent("Page Content at Failure");
+            }
             ReportPortalUtil.attachExecutionInfo();
         }
-
-        ReportPortalUtil.attachTrace(testName, keepDebugArtifacts);
 
         if (failed && videoRecorded) {
             ReportPortalUtil.attachVideoOnFailure(testName);

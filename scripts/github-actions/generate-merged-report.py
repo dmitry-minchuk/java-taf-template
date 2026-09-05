@@ -30,6 +30,7 @@ APP_LOG_EXTRACT_LINES = 200
 APP_LOG_MARKERS = re.compile(r"\b(ERROR|WARN|WARNING|SEVERE)\b|\w*(Exception|Error)\b|^Caused by")
 STEPS_TAIL_LINES_PASSED = 50
 TRACE_HINT = "npx playwright show-trace trace.zip (or drop the file onto https://trace.playwright.dev)"
+REPORT_EXCLUDED_KINDS = {"video"}
 
 
 @dataclass
@@ -169,16 +170,19 @@ def copy_attachments(test_dir: Path, record: TestRecord, output_dir: Path) -> li
         source = test_dir / "attachments" / Path(str(entry.get("path", ""))).name
         if not source.exists():
             continue
+        message = str(entry.get("message") or source.name)
+        kind = attachment_kind(message, source.name)
+        if kind in REPORT_EXCLUDED_KINDS:
+            continue
         target_dir.mkdir(parents=True, exist_ok=True)
         target = target_dir / source.name
         shutil.copy2(source, target)
-        message = str(entry.get("message") or source.name)
         copied.append(
             Attachment(
                 message=message,
                 level=str(entry.get("level") or "INFO"),
                 href=quote(target.relative_to(output_dir).as_posix()),
-                kind=attachment_kind(message, source.name),
+                kind=kind,
                 path=target,
             )
         )
@@ -319,7 +323,7 @@ def render_tabs(record: TestRecord, index: int, build: str) -> str:
         size_kb = max(1, trace.path.stat().st_size // 1024)
         body = (
             f"<p><a class='button' href='{e(trace.href)}' download>Download trace.zip ({size_kb} KB)</a></p>"
-            f"<p class='hint'>Playwright trace with DOM snapshots before and after every action, screenshots, network and console. Open it with <code>{e(TRACE_HINT)}</code>.</p>"
+            f"<p class='hint'>Playwright trace with DOM snapshots before and after every action, network and console. Open it with <code>{e(TRACE_HINT)}</code>.</p>"
         )
         tabs.append(("Trace", body))
 
@@ -498,9 +502,11 @@ What a bundle holds:
   before it failed; the last lines show the failing step.
 - `applicationLog` — every WARN, ERROR and exception (with the following stack lines) from the
   OpenL Studio or Rule Services container that served this test, plus the path to the full log.
-- `trace.path` — the Playwright trace: DOM snapshots before and after every action, screenshots, network
-  and console. Open it with `npx playwright show-trace trace.zip` or drop it onto https://trace.playwright.dev.
-- `attachments` — failure screenshot, video, page HTML at failure and downloaded files.
+- `trace.path` — the Playwright trace: DOM snapshots before and after every action (the page at every step,
+  including the failure), network and console. Open it with `npx playwright show-trace trace.zip` or drop it
+  onto https://trace.playwright.dev.
+- `attachments` — failure screenshot and downloaded files; the failure video is not copied into the report,
+  it stays in the rp-export artifact and in ReportPortal.
 
 Suggested prompt:
 
@@ -573,8 +579,9 @@ def write_step_summary(records: list[TestRecord], title: str, build: str, summar
             lines.append(f"| {ticket} | {record.outcome} | `{record.short_class}.{record.method}` |")
     lines += [
         "",
-        "The `test-report-merged` artifact holds `index.html` with per-test step logs, Playwright traces, application logs, "
-        "screenshots and videos, and `debug/<TestClass>.<method>.json` bundles for every failed test (see `debug/README.md`).",
+        "The `test-report-merged` artifact holds `index.html` with per-test step logs, Playwright traces, application logs "
+        "and failure screenshots, and `debug/<TestClass>.<method>.json` bundles for every failed test (see `debug/README.md`); "
+        "failure videos stay in the rp-export and in ReportPortal.",
     ]
     text = "\n".join(lines) + "\n"
     if summary_path:

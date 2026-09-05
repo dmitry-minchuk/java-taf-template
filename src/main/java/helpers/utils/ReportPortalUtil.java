@@ -166,23 +166,26 @@ public class ReportPortalUtil {
         return Boolean.parseBoolean(ProjectConfiguration.getProperty(PropertyNameSpace.DEBUG_ARTIFACTS_ON_SUCCESS));
     }
 
-    public static void attachTrace(String testName, boolean keep) {
+    public static boolean attachTrace(String testName, boolean keep) {
         if (!PlaywrightTracing.isEnabled()) {
-            return;
+            return false;
         }
         File traceFile = null;
         try {
             traceFile = PlaywrightTracing.stop(DriverPool.getBrowserContext(), testName, keep);
             if (traceFile == null) {
-                return;
+                return false;
             }
             ReportPortalArtifactUtil.recordAttachment("Playwright Trace", "INFO", traceFile);
             ReportPortalArtifactUtil.emitLog("Playwright Trace (open with: npx playwright show-trace trace.zip)", "INFO", traceFile);
             LOGGER.info("Playwright trace attached to ReportPortal for test: {} (size: {} bytes)", testName, traceFile.length());
+            return true;
         } catch (IllegalStateException e) {
             LOGGER.debug("No Playwright context for test {}, trace skipped: {}", testName, e.getMessage());
+            return false;
         } catch (Exception e) {
             LOGGER.error("Failed to attach Playwright trace for test {}: {}", testName, e.getMessage());
+            return false;
         } finally {
             if (traceFile != null) {
                 traceFile.delete();

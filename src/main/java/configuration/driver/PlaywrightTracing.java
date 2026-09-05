@@ -29,10 +29,10 @@ public final class PlaywrightTracing {
         }
         try {
             context.tracing().start(new Tracing.StartOptions()
-                    .setScreenshots(true)
+                    .setScreenshots(false)
                     .setSnapshots(true)
                     .setSources(true));
-            LOGGER.info("Playwright tracing started (screenshots, DOM snapshots, sources)");
+            LOGGER.info("Playwright tracing started (DOM snapshots, network, console, sources)");
         } catch (RuntimeException e) {
             LOGGER.warn("Playwright tracing could not be started: {}", e.getMessage());
         }
