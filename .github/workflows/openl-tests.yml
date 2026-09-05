@@ -185,8 +185,9 @@ jobs:
   merge-reportportal-export:
     name: Merge ReportPortal export and test report
     needs:
+      - discover-tests
       - test-shard
-    if: always()
+    if: always() && needs.discover-tests.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
