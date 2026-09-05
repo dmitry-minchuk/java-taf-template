@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       application_version:
-        description: "OpenL Docker image tag"
+        description: "OpenL Docker image tag (ghcr.io/openl-tablets/webstudio:<tag> and ws:<tag>-all); latest = the newest published build"
         required: true
-        default: "x"
+        default: "latest"
       tests_branch:
         description: "Autotests branch label for reporting"
         required: true
@@ -53,6 +53,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+      - name: Check that the application images exist
+        env:
+          APPLICATION_VERSION: ${{ inputs.application_version }}
+        run: |
+          missing=0
+          for image in "ghcr.io/openl-tablets/webstudio:${APPLICATION_VERSION}" "ghcr.io/openl-tablets/ws:${APPLICATION_VERSION}-all"; do
+            if docker manifest inspect "${image}" > /dev/null 2>&1; then
+              echo "Found ${image}"
+            else
+              echo "::error::Image ${image} does not exist in ghcr.io; check the application_version input"
+              missing=1
+            fi
+          done
+          exit "${missing}"
 
       - name: Discover test classes
         id: discover
