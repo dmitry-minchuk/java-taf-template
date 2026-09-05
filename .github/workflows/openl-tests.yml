@@ -18,20 +18,13 @@ on:
         default: "webstudio_tests"
       tests:
         description: >-
-          Selective run. Leave EMPTY to run every test class under src/test/java that has @Test methods (own or
-          inherited) and is not annotated @LocalOnly. To run only some tests, list their test CLASS names separated
-          by commas or spaces: simple names (TestMethodTable) or fully qualified ones
-          (tests.ui.webstudio.git.TestGitBranchSwitching). Individual @Test methods cannot be selected, the whole
-          class runs. A selected class runs even when it is @LocalOnly. The rp-export and the merged report carry the
-          attribute run:selective. The "Discover tests" job fails immediately when a name contains characters other
-          than letters, digits, dots and underscores, or when no class with that name exists (check the spelling).
+          Test CLASS names to run, separated by commas or spaces (TestMethodTable or tests.ui.webstudio.git.TestGitBranchSwitching).
+          Empty runs every test class except @LocalOnly ones; see README "Selective runs".
         required: false
         default: ""
       shards:
         description: >-
-          Number of parallel shard jobs. The classes form one queue: every shard claims the next unclaimed class,
-          runs it and claims again until the queue is empty, so all shards finish at about the same time without
-          any manual balancing. A selective run never starts more shards than it has classes.
+          Number of parallel jobs. Classes are pulled from one shared queue, so shards finish together; see README.
         required: false
         default: "20"
 
