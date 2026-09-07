@@ -223,6 +223,18 @@ jobs:
           retention-days: 14
           path: merged-report/**
 
+      - name: Publish the report to GitHub Pages
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/github-actions/publish-report-pages.py \
+            --repo "${GITHUB_REPOSITORY}" \
+            --run-id "${GITHUB_RUN_ID}" \
+            --report-dir merged-report \
+            --pages-url "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" \
+            --keep 30
+
       - name: Remove the queue refs of this run attempt
         if: always()
         continue-on-error: true
