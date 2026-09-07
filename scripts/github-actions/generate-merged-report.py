@@ -351,39 +351,76 @@ def render_tabs(record: TestRecord, index: int, build: str) -> str:
 
 
 PAGE_TEMPLATE = Template("""<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><title>$title</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>$title</title>
 <style>
-body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:24px;color:#1f2328;background:#f6f8fa}
-h1{margin:0 0 4px} .meta{color:#59636e;margin-bottom:16px} a{color:#0969da}
-.cards{display:flex;gap:12px;margin:16px 0;flex-wrap:wrap} .card{background:#fff;border:1px solid #d0d7de;border-radius:8px;padding:12px 16px;min-width:120px}
-.card b{display:block;font-size:24px} .controls{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-table.tests{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d0d7de;border-radius:8px} table.tests th,table.tests td{padding:8px 10px;border-top:1px solid #d0d7de;text-align:left;vertical-align:top}
-table.tests th{background:#f6f8fa} .badge{font-weight:600;padding:2px 8px;border-radius:12px;font-size:12px}
-pre{white-space:pre-wrap;word-break:break-word;background:#f6f8fa;padding:8px;border-radius:6px;max-height:520px;overflow:auto;font-size:12px;line-height:1.4}
-pre.error{background:#ffebe9;color:#82071e} pre.log{background:#0d1117;color:#e6edf3} pre.small{max-height:200px}
-.error-type{font-weight:600;margin:0 0 6px;color:#cf222e}
-.attachments{display:flex;flex-wrap:wrap;gap:12px} figure{margin:0;max-width:420px} figure img,figure video{max-width:420px;border:1px solid #d0d7de;border-radius:6px}
-figcaption,small,.hint{color:#59636e;font-size:12px} .toggle{cursor:pointer}
-.tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap} .tab{cursor:pointer;border:1px solid #d0d7de;background:#fff;border-radius:6px;padding:4px 10px} .tab.active{background:#0969da;color:#fff;border-color:#0969da}
-.panel{background:#fff;border:1px solid #d0d7de;border-radius:8px;padding:12px}
-table.kv{border-collapse:collapse} table.kv th{text-align:left;padding:4px 12px 4px 0;color:#59636e;white-space:nowrap;vertical-align:top;font-weight:500} table.kv td{padding:4px 0}
-.button{display:inline-block;background:#1f883d;color:#fff;padding:6px 12px;border-radius:6px;text-decoration:none}
-code{background:#eff1f3;padding:1px 4px;border-radius:4px;font-size:12px}
-tr.details-row td{background:#f6f8fa}
+:root{--bg:#f3f5f9;--surface:#ffffff;--surface-2:#f8fafc;--line:#e3e8ef;--line-strong:#d0d7e2;--text:#0f172a;--muted:#64748b;--accent:#2563eb;--accent-soft:#e8f0fe;--shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.04);--radius:14px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+.page{max-width:1440px;margin:0 auto;padding:32px 28px 64px}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+.meta .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 20px}
+.card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 14px 20px;box-shadow:var(--shadow);color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--card-color,var(--line-strong))}
+.card b{display:block;margin-top:4px;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.02em;color:var(--card-color,var(--text))}
+.controls{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px;padding:12px 14px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.controls label{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.controls select,.controls input{height:36px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:13px}
+.controls input{flex:1 1 260px;min-width:200px}
+.controls select:focus,.controls input:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.controls button{height:36px;padding:0 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.controls button:hover{border-color:var(--accent);color:var(--accent)}
+.table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto}
+table.tests{width:100%;border-collapse:separate;border-spacing:0}
+table.tests>thead th{padding:12px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--line)}
+table.tests>tbody>tr>td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.row:hover td{background:var(--surface-2)}
+tr.row td:first-child{white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:7px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;line-height:1.4}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.badge a{color:inherit;text-decoration:underline;text-decoration-color:rgba(0,0,0,.25)}
+strong{font-weight:600}
+small,.hint,figcaption{color:var(--muted);font-size:12px}
+small.err{display:inline-block;margin-top:2px;color:#b42318;font-family:var(--mono);font-size:11px;overflow-wrap:anywhere}
+.artifacts small{display:inline-block;margin:0 6px 4px 0;padding:1px 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:11px}
+button.toggle{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px 0 12px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+button.toggle::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-1px);transition:transform .15s ease}
+button.toggle:hover{border-color:var(--accent);color:var(--accent)}
+button.toggle.open{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)} button.toggle.open::after{transform:rotate(-135deg) translateY(-1px)}
+table.tests>tbody>tr.details-row>td{padding:16px 18px 20px;background:var(--surface-2)}
+.tabs{display:inline-flex;flex-wrap:wrap;gap:2px;margin-bottom:12px;padding:4px;background:#e9edf3;border-radius:12px}
+.tab{padding:6px 14px;border:0;border-radius:9px;background:transparent;color:#475569;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.tab:hover{color:var(--text)} .tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+table.kv{border-collapse:collapse;width:100%} table.kv th{width:180px;text-align:left;padding:6px 16px 6px 0;color:var(--muted);font-weight:500;vertical-align:top;font-size:13px} table.kv td{padding:6px 0;border-bottom:1px solid var(--line)} table.kv tr:last-child td{border-bottom:0}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line);padding:12px 14px;border-radius:10px;max-height:520px;overflow:auto;font-family:var(--mono);font-size:12px;line-height:1.5}
+pre.error{background:#fff1f0;border-color:#fecdca;color:#912018} pre.log{background:#0b1220;border-color:#1e293b;color:#dbe4f0} pre.small{max-height:200px}
+.error-type{margin:0 0 8px;font-weight:600;color:#b42318;font-family:var(--mono);font-size:12px}
+details summary{cursor:pointer;margin:12px 0 8px;font-weight:600;color:var(--muted)}
+.hint{margin:0 0 10px}
+.attachments{display:flex;flex-wrap:wrap;gap:16px} figure{margin:0;max-width:420px} figure img,figure video{display:block;max-width:420px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)} figcaption{margin-top:6px}
+.button{display:inline-flex;align-items:center;height:36px;padding:0 16px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;text-decoration:none;box-shadow:var(--shadow)} .button:hover{text-decoration:none;filter:brightness(1.05)}
+code{padding:1px 6px;border-radius:6px;background:#eef2f6;font-family:var(--mono);font-size:12px}
+@media (max-width:900px){.page{padding:20px 14px 48px} h1{font-size:22px} .controls{position:static}}
 </style></head><body>
-<h1>$title</h1>
-<div class="meta">Build $build · $total tests · $total_duration of test time · <a href="$run_url">workflow run</a> · <a href="debug/index.json">debug/index.json</a> · <a href="debug/README.md">how to debug with an AI assistant</a></div>
-<div class="cards"><div class="card">Passed<b style="color:#1a7f37">$passed</b></div><div class="card">Failed<b style="color:#cf222e">$failed</b></div><div class="card">Skipped<b style="color:#9a6700">$skipped</b></div><div class="card">Known issues<b style="color:#bc4c00">$known</b></div><div class="card">Fixed?<b style="color:#0969da">$fixed</b></div><div class="card">Shards<b>$shards</b></div></div>
+<div class="page">
+<header class="top"><h1>$title</h1>
+<div class="meta"><span class="chip">Build $build</span><span class="chip">$total tests</span><span class="chip">$total_duration of test time</span><a href="$run_url">workflow run</a> · <a href="debug/index.json">debug/index.json</a> · <a href="debug/README.md">how to debug with an AI assistant</a></div></header>
+<div class="cards"><div class="card" style="--card-color:#15803d">Passed<b>$passed</b></div><div class="card" style="--card-color:#dc2626">Failed<b>$failed</b></div><div class="card" style="--card-color:#ca8a04">Skipped<b>$skipped</b></div><div class="card" style="--card-color:#ea580c">Known issues<b>$known</b></div><div class="card" style="--card-color:#2563eb">Fixed?<b>$fixed</b></div><div class="card">Shards<b>$shards</b></div></div>
 <div class="controls"><label>Status <select id="status"><option value="">all</option><option value="failed">failed</option><option value="skipped">skipped</option><option value="known">known issue</option><option value="fixed">fixed?</option><option value="passed">passed</option></select></label>
 <label>Group <select id="suite"><option value="">all</option>$suite_options</select></label><input id="search" placeholder="filter by class, test name or error" size="40"><button id="expand-failed">expand all failed</button></div>
-<table class="tests"><thead><tr><th>Status</th><th>Group / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody>$rows</tbody></table>
+<div class="table-wrap"><table class="tests"><thead><tr><th>Status</th><th>Group / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody>$rows</tbody></table></div>
+</div>
 <script>
 const rows=[...document.querySelectorAll('tr.row')];
 function apply(){const s=document.getElementById('status').value,u=document.getElementById('suite').value,q=document.getElementById('search').value.toLowerCase();
-rows.forEach(r=>{const ok=(!s||r.dataset.status===s)&&(!u||r.dataset.suite===u)&&(!q||(r.textContent+' '+(r.dataset.error||'')).toLowerCase().includes(q));r.hidden=!ok;const d=r.nextElementSibling;if(d&&d.classList.contains('details-row')&&!ok)d.hidden=true;});}
+rows.forEach(r=>{const ok=(!s||r.dataset.status===s)&&(!u||r.dataset.suite===u)&&(!q||(r.textContent+' '+(r.dataset.error||'')).toLowerCase().includes(q));r.hidden=!ok;const d=r.nextElementSibling;if(d&&d.classList.contains('details-row')&&!ok){d.hidden=true;r.querySelector('button.toggle')?.classList.remove('open');}});}
 ['status','suite'].forEach(id=>document.getElementById(id).addEventListener('change',apply));document.getElementById('search').addEventListener('input',apply);
-document.querySelectorAll('button.toggle').forEach(b=>b.addEventListener('click',()=>{const d=document.getElementById(b.dataset.target);d.hidden=!d.hidden;}));
-document.getElementById('expand-failed').addEventListener('click',()=>{document.querySelectorAll('tr.details-row.failed').forEach(d=>{d.hidden=false;});});
+document.querySelectorAll('button.toggle').forEach(b=>b.addEventListener('click',()=>{const d=document.getElementById(b.dataset.target);d.hidden=!d.hidden;b.classList.toggle('open',!d.hidden);}));
+document.getElementById('expand-failed').addEventListener('click',()=>{document.querySelectorAll('tr.details-row.failed').forEach(d=>{d.hidden=false;const b=d.previousElementSibling.querySelector('button.toggle');if(b)b.classList.add('open');});});
 document.querySelectorAll('button.tab').forEach(b=>b.addEventListener('click',()=>{const panel=document.getElementById(b.dataset.tab);const box=b.closest('td');box.querySelectorAll('.panel').forEach(p=>p.hidden=true);box.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));panel.hidden=false;b.classList.add('active');}));
 </script></body></html>
 """)
@@ -394,7 +431,7 @@ def artifact_badges(record: TestRecord) -> str:
     for kind, label in (("steps", "steps"), ("trace", "trace"), ("applog", "app log"), ("image", "screenshot"), ("video", "video")):
         if record.first(kind) is not None:
             labels.append(f"<small>{label}</small>")
-    return " · ".join(labels)
+    return "".join(labels)
 
 
 def render_html(records: list[TestRecord], title: str, run_url: str, build: str) -> str:
@@ -414,7 +451,7 @@ def render_html(records: list[TestRecord], title: str, run_url: str, build: str)
             + (f"<br><small>{case_id}</small>" if case_id else "")
             + (f"<br><small class='err'>{e(error_line)}</small>" if error_line else "")
             + f"</td><td>{format_duration(record.duration_ms)}</td>"
-            f"<td>{artifact_badges(record)}</td>"
+            f"<td class='artifacts'>{artifact_badges(record)}</td>"
             f"<td><button class='toggle' data-target='d{index}'>details</button></td></tr>"
             f"<tr class='details-row {css}' id='d{index}' hidden><td colspan='6'>{detail_html}</td></tr>"
         )
