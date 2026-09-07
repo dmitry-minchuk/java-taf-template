@@ -194,6 +194,7 @@ jobs:
           merge-multiple: false
 
       - name: Build merged test report
+        id: report
         if: always()
         env:
           BUILD_LABEL: ${{ inputs.application_version }}
@@ -224,7 +225,7 @@ jobs:
           path: merged-report/**
 
       - name: Publish the report to GitHub Pages
-        if: always()
+        if: always() && steps.report.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -233,7 +234,7 @@ jobs:
             --run-id "${GITHUB_RUN_ID}" \
             --report-dir merged-report \
             --pages-url "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" \
-            --keep 30
+            --keep 15
 
       - name: Remove the queue refs of this run attempt
         if: always()
