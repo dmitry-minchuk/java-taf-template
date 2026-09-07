@@ -362,10 +362,10 @@ header.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:spac
 h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em}
 .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:13px}
 .meta .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--text)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 20px}
-.card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 14px 20px;box-shadow:var(--shadow);color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:0 0 20px}
+.card{position:relative;overflow:hidden;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 14px 18px;box-shadow:var(--shadow);color:var(--muted);font-size:clamp(10px,.85vw,12px);font-weight:600;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;text-overflow:ellipsis}
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--card-color,var(--line-strong))}
-.card b{display:block;margin-top:4px;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.02em;color:var(--card-color,var(--text))}
+.card b{display:block;margin-top:4px;font-size:clamp(20px,2vw,28px);line-height:1.1;font-weight:700;letter-spacing:-.02em;color:var(--card-color,var(--text))}
 .controls{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px;padding:12px 14px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
 .controls label{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
 .controls select,.controls input{height:36px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:13px}
@@ -374,12 +374,13 @@ h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em}
 .controls button{height:36px;padding:0 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .controls button:hover{border-color:var(--accent);color:var(--accent)}
 .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto}
-table.tests{width:100%;border-collapse:separate;border-spacing:0}
+.table-wrap table.tests{min-width:760px}
+table.tests{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0}
+table.tests col.c-status{width:19%} table.tests col.c-group{width:10%} table.tests col.c-duration{width:88px} table.tests col.c-artifacts{width:13%} table.tests col.c-details{width:112px}
 table.tests>thead th{padding:12px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--line)}
-table.tests>tbody>tr>td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.tests>tbody>tr>td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere;min-width:0}
 tr.row:hover td{background:var(--surface-2)}
-tr.row td:first-child{white-space:nowrap}
-.badge{display:inline-flex;align-items:center;gap:7px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;line-height:1.4}
+.badge{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 7px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;line-height:1.4}
 .badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
 .badge a{color:inherit;text-decoration:underline;text-decoration-color:rgba(0,0,0,.25)}
 strong{font-weight:600}
@@ -404,7 +405,7 @@ details summary{cursor:pointer;margin:12px 0 8px;font-weight:600;color:var(--mut
 .attachments{display:flex;flex-wrap:wrap;gap:16px} figure{margin:0;max-width:420px} figure img,figure video{display:block;max-width:420px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)} figcaption{margin-top:6px}
 .button{display:inline-flex;align-items:center;height:36px;padding:0 16px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;text-decoration:none;box-shadow:var(--shadow)} .button:hover{text-decoration:none;filter:brightness(1.05)}
 code{padding:1px 6px;border-radius:6px;background:#eef2f6;font-family:var(--mono);font-size:12px}
-@media (max-width:900px){.page{padding:20px 14px 48px} h1{font-size:22px} .controls{position:static}}
+@media (max-width:900px){.page{padding:20px 14px 48px} h1{font-size:22px} .controls{position:static} .cards{gap:8px} .card{padding:10px 10px 10px 14px}}
 </style></head><body>
 <div class="page">
 <header class="top"><h1>$title</h1>
@@ -412,7 +413,7 @@ code{padding:1px 6px;border-radius:6px;background:#eef2f6;font-family:var(--mono
 <div class="cards"><div class="card" style="--card-color:#15803d">Passed<b>$passed</b></div><div class="card" style="--card-color:#dc2626">Failed<b>$failed</b></div><div class="card" style="--card-color:#ca8a04">Skipped<b>$skipped</b></div><div class="card" style="--card-color:#ea580c">Known issues<b>$known</b></div><div class="card" style="--card-color:#2563eb">Fixed?<b>$fixed</b></div><div class="card">Shards<b>$shards</b></div></div>
 <div class="controls"><label>Status <select id="status"><option value="">all</option><option value="failed">failed</option><option value="skipped">skipped</option><option value="known">known issue</option><option value="fixed">fixed?</option><option value="passed">passed</option></select></label>
 <label>Group <select id="suite"><option value="">all</option>$suite_options</select></label><input id="search" placeholder="filter by class, test name or error" size="40"><button id="expand-failed">expand all failed</button></div>
-<div class="table-wrap"><table class="tests"><thead><tr><th>Status</th><th>Group / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody>$rows</tbody></table></div>
+<div class="table-wrap"><table class="tests"><colgroup><col class="c-status"><col class="c-group"><col class="c-test"><col class="c-duration"><col class="c-artifacts"><col class="c-details"></colgroup><thead><tr><th>Status</th><th>Group / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody>$rows</tbody></table></div>
 </div>
 <script>
 const rows=[...document.querySelectorAll('tr.row')];
