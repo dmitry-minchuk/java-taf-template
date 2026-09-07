@@ -1,0 +1,348 @@
+2026-09-07 13:31:13.667 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testDefaultProperties
+2026-09-07 13:31:13.677 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:31:13.677 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:31:13.677 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:31:13.710 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-980748 (startup timeout: PT10M)
+2026-09-07 13:31:33.622 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-980748: http://localhost:32783
+2026-09-07 13:31:33.622 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-980748:8080
+2026-09-07 13:31:33.623 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:31:36.624 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:31:36.628 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:31:36.628 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:31:37.630 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:31:37.633 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:31:37.633 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:31:37.633 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:31:37.633 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:31:39.107 [main] [INFO] DockerDriverPool - Playwright Server container started in 1473 ms
+2026-09-07 13:31:39.107 [main] [INFO] DockerDriverPool - Container started - ID: 1acc20ac30671557612ab1422c2e8c016b4ee54df4ddb1e0cb58e219ffe292cd
+2026-09-07 13:31:39.107 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32784 -> 3000
+2026-09-07 13:31:39.108 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:31:39.120 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:31:39.121 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32784
+2026-09-07 13:31:40.638 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:31:40.832 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32784/
+2026-09-07 13:31:40.833 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:31:40.873 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:31:40.936 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:31:40.937 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:31:42.115 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:31:42.124 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-980748:8080
+2026-09-07 13:31:42.125 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:31:42.125 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:31:43.151 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-980748:8080
+2026-09-07 13:31:43.154 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:31:43.168 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:31:43.255 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:43.267 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:43.268 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:31:43.303 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:31:43.350 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:43.358 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:43.358 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:31:43.368 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:31:43.396 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:43.401 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:43.401 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:31:43.416 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:31:46.138 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:31:46.157 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:31:46.374 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.378 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.379 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:31:46.391 [main] [INFO] WebElement - Filling firstNameField with text: 'Kenneth'
+2026-09-07 13:31:46.422 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.424 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.425 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:31:46.435 [main] [INFO] WebElement - Filling lastNameField with text: 'Hermiston'
+2026-09-07 13:31:46.478 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.482 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.482 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:31:46.498 [main] [INFO] WebElement - Filling emailField with text: 'lela.littel@gmail.com'
+2026-09-07 13:31:46.521 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.524 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.524 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:31:46.531 [main] [INFO] WebElement - Filling displayNameField with text: 'Nicky Leuschke'
+2026-09-07 13:31:46.548 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.550 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:46.550 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:31:46.558 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:31:47.457 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:31:47.458 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:31:47.532 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:31:47.783 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:31:48.321 [main] [INFO] WaitUtil - Condition met after 864ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:31:48.321 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:31:51.329 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:31:51.342 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:31:51.354 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:31:51.354 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:51.357 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:51.357 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:31:51.370 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:31:52.060 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:31:52.060 [main] [INFO] WaitUtil - Condition met after 718ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:31:52.062 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:31:52.069 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:52.089 [main] [INFO] WaitUtil - Condition met after 20ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:52.089 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:31:52.176 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:31:52.337 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From Excel files' step of the Create project wizard
+2026-09-07 13:31:52.338 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:52.354 [main] [INFO] WaitUtil - Condition met after 16ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:52.355 [main] [INFO] WebElement - Waiting for methodExcel to be visible (timeout: 250ms)
+2026-09-07 13:31:52.433 [main] [INFO] WebElement - Clicking methodExcel 
+2026-09-07 13:31:52.978 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From Excel files' step to render
+2026-09-07 13:31:52.982 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the 'From Excel files' step to render
+2026-09-07 13:31:52.982 [main] [INFO] WaitUtil - Action succeeded after 644ms: Opening the 'From Excel files' step of the Create project wizard
+2026-09-07 13:31:53.002 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestDefaultProperties/TestDefaultProperties.xlsx] to excelUpload
+2026-09-07 13:31:53.069 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:31:53.070 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:53.073 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:53.074 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:31:53.085 [main] [INFO] WebElement - Filling newProjectName with text: 'TestDefaultProperties'
+2026-09-07 13:31:53.179 [main] [INFO] WebElement - Getting current input value from newProjectName: 'TestDefaultProperties'
+2026-09-07 13:31:53.180 [main] [INFO] WaitUtil - Condition met after 110ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:31:53.180 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:53.197 [main] [INFO] WaitUtil - Condition met after 16ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:53.197 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:31:53.234 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:31:53.562 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:31:53.616 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:53.625 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:53.625 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:31:56.651 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:31:56.660 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:56.663 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:56.787 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:31:56.851 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:56.857 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:56.857 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:31:56.862 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:31:57.136 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:31:57.390 [main] [INFO] WaitUtil - Condition met after 532ms: Waiting for project row actions
+2026-09-07 13:31:57.433 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:31:57.441 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:57.442 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:57.443 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:31:57.450 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:31:57.521 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:31:57.534 [main] [INFO] WaitUtil - Condition met after 13ms: Waiting for the row overflow menu
+2026-09-07 13:31:57.616 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:31:57.628 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:31:57.628 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:57.636 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:57.636 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:31:57.651 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:31:58.360 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:31:58.360 [main] [INFO] WaitUtil - Condition met after 743ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:31:58.360 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:31:58.361 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:31:58.391 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.402 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.402 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:31:58.415 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.418 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.418 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:31:58.425 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.427 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.427 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:31:58.436 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:31:58.517 [main] [INFO] WaitUtil - Sleeping for 200ms: Waiting for module list to expand after project selection
+2026-09-07 13:31:58.726 [main] [INFO] WebElement - Waiting for projectModuleLink to be visible
+2026-09-07 13:31:58.807 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.826 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:31:58.993 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:31:59.282 [main] [INFO] WaitUtil - Condition met after 474ms: Waiting for the loading overlay to disappear
+2026-09-07 13:31:59.282 [main] [INFO] WebElement - Waiting for projectModuleLink to be visible (timeout: 250ms)
+2026-09-07 13:31:59.359 [main] [INFO] WebElement - Clicking projectModuleLink 
+2026-09-07 13:31:59.470 [main] [INFO] WaitUtil - Sleeping for 200ms: Waiting for module to open
+2026-09-07 13:31:59.670 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:32:01.353 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:32:01.359 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:32:01.609 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:32:01.911 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:32:01.912 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:32:02.162 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:32:02.453 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:32:02.454 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:32:02.704 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:32:02.998 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:32:02.998 [main] [INFO] CoreComponent - Compilation completed
+2026-09-07 13:32:02.999 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:03.017 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:03.020 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:03.021 [main] [INFO] WaitUtil - Sleeping for 1000ms: Huge sleep just to make sure viewFilterLink is accessible
+2026-09-07 13:32:04.021 [main] [INFO] WaitUtil - Waiting for condition (timeout: 15000ms, polling: 200ms): Waiting for filter 'By Type' to be applied
+2026-09-07 13:32:04.022 [main] [INFO] WaitUtil - Waiting for condition (timeout: 5000ms, polling: 200ms): Waiting for filter option 'By Type' to be visible
+2026-09-07 13:32:04.022 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting before clicking view filter link
+2026-09-07 13:32:04.272 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:04.276 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:04.276 [main] [INFO] WebElement - Waiting for viewFilterLink to be visible (timeout: 250ms)
+2026-09-07 13:32:04.297 [main] [INFO] WebElement - Clicking viewFilterLink 
+2026-09-07 13:32:04.335 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for filter dropdown to appear
+2026-09-07 13:32:04.585 [main] [INFO] WebElement - Waiting for filterOptionLink to be visible (timeout: 250ms)
+2026-09-07 13:32:04.622 [main] [INFO] WaitUtil - Condition met after 600ms: Waiting for filter option 'By Type' to be visible
+2026-09-07 13:32:04.623 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:04.635 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:04.635 [main] [INFO] WebElement - Waiting for filterOptionLink to be visible (timeout: 250ms)
+2026-09-07 13:32:04.662 [main] [INFO] WebElement - Clicking filterOptionLink 
+2026-09-07 13:32:04.801 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:04.855 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:04.876 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.031 [main] [INFO] WaitUtil - Condition met after 176ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.031 [main] [INFO] WebElement - Waiting for viewFilterLink to be visible (timeout: 250ms)
+2026-09-07 13:32:05.081 [main] [INFO] WebElement - Getting text from viewFilterLink: 'By Type'
+2026-09-07 13:32:05.082 [main] [INFO] WaitUtil - Condition met after 1060ms: Waiting for filter 'By Type' to be applied
+2026-09-07 13:32:05.082 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:05.106 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.109 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.109 [main] [INFO] WaitUtil - Waiting for result (timeout: 20000ms, polling: 100ms): Searching for folder 'Run' in editor tree
+2026-09-07 13:32:05.110 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 20000ms, polling: 100ms): Waiting for editor tree folders to load
+2026-09-07 13:32:05.113 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for editor tree folders to load
+2026-09-07 13:32:05.115 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.136 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.177 [main] [INFO] WebElement - Getting text from folderName: 'Decision'
+2026-09-07 13:32:05.177 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.199 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.242 [main] [INFO] WebElement - Getting text from folderName: 'Spreadsheet'
+2026-09-07 13:32:05.242 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.270 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.309 [main] [INFO] WebElement - Getting text from folderName: 'Column Match'
+2026-09-07 13:32:05.309 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.329 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.368 [main] [INFO] WebElement - Getting text from folderName: 'Data'
+2026-09-07 13:32:05.368 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.389 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.427 [main] [INFO] WebElement - Getting text from folderName: 'Run'
+2026-09-07 13:32:05.428 [main] [INFO] WaitUtil - Result found after 319ms: Searching for folder 'Run' in editor tree
+2026-09-07 13:32:05.428 [main] [INFO] WaitUtil - Waiting for condition (timeout: 1000ms, polling: 100ms): Waiting for folder expander to be visible and expanding tree folder
+2026-09-07 13:32:05.428 [main] [INFO] WebElement - Waiting for expanderClosed to be visible (timeout: 250ms)
+2026-09-07 13:32:05.448 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.451 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.451 [main] [INFO] WebElement - Waiting for expanderClosed to be visible (timeout: 250ms)
+2026-09-07 13:32:05.471 [main] [INFO] WebElement - Clicking expanderClosed 
+2026-09-07 13:32:05.536 [main] [INFO] WaitUtil - Condition met after 108ms: Waiting for folder expander to be visible and expanding tree folder
+2026-09-07 13:32:05.537 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:05.584 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.591 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:05.592 [main] [INFO] WaitUtil - Waiting for result (timeout: 20000ms, polling: 100ms): Searching for folder 'Run' in editor tree
+2026-09-07 13:32:05.592 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 20000ms, polling: 100ms): Waiting for editor tree folders to load
+2026-09-07 13:32:05.596 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for editor tree folders to load
+2026-09-07 13:32:05.599 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.636 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.681 [main] [INFO] WebElement - Getting text from folderName: 'Decision'
+2026-09-07 13:32:05.681 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.702 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.742 [main] [INFO] WebElement - Getting text from folderName: 'Spreadsheet'
+2026-09-07 13:32:05.742 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.762 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.807 [main] [INFO] WebElement - Getting text from folderName: 'Column Match'
+2026-09-07 13:32:05.807 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.828 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.867 [main] [INFO] WebElement - Getting text from folderName: 'Data'
+2026-09-07 13:32:05.867 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.887 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:05.924 [main] [INFO] WebElement - Getting text from folderName: 'Run'
+2026-09-07 13:32:05.925 [main] [INFO] WaitUtil - Result found after 333ms: Searching for folder 'Run' in editor tree
+2026-09-07 13:32:05.926 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:05.929 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:06.083 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:06.237 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:06.391 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:06.545 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:06.700 [main] [INFO] WaitUtil - Condition met after 773ms: Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:06.700 [main] [INFO] WebElement - Dispatching click (after app settled) treeItem
+2026-09-07 13:32:06.735 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:06.825 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:06.833 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:32:06.994 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.193 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.363 [main] [INFO] WaitUtil - Condition met after 536ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.364 [main] [INFO] WaitUtil - Waiting for condition (timeout: 2000ms, polling: 100ms): Waiting for property rows to load
+2026-09-07 13:32:07.372 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for property rows to load
+2026-09-07 13:32:07.415 [main] [INFO] WebElement - Waiting for propertyRows_0 to be visible (timeout: 250ms)
+2026-09-07 13:32:07.466 [main] [INFO] WebElement - Getting text from propertyRows_0: '
+                Name
+                SpreadsheetTable$Run$0
+            '
+2026-09-07 13:32:07.469 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:07.489 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.492 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.492 [main] [INFO] WaitUtil - Waiting for result (timeout: 20000ms, polling: 100ms): Searching for folder 'Test' in editor tree
+2026-09-07 13:32:07.493 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 20000ms, polling: 100ms): Waiting for editor tree folders to load
+2026-09-07 13:32:07.495 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for editor tree folders to load
+2026-09-07 13:32:07.497 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.519 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.564 [main] [INFO] WebElement - Getting text from folderName: 'Decision'
+2026-09-07 13:32:07.564 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.585 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.626 [main] [INFO] WebElement - Getting text from folderName: 'Spreadsheet'
+2026-09-07 13:32:07.627 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.646 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.685 [main] [INFO] WebElement - Getting text from folderName: 'Column Match'
+2026-09-07 13:32:07.686 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.706 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.746 [main] [INFO] WebElement - Getting text from folderName: 'Data'
+2026-09-07 13:32:07.747 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.768 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.811 [main] [INFO] WebElement - Getting text from folderName: 'Run'
+2026-09-07 13:32:07.811 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.855 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:07.901 [main] [INFO] WebElement - Getting text from folderName: 'Test'
+2026-09-07 13:32:07.901 [main] [INFO] WaitUtil - Result found after 409ms: Searching for folder 'Test' in editor tree
+2026-09-07 13:32:07.902 [main] [INFO] WaitUtil - Waiting for condition (timeout: 1000ms, polling: 100ms): Waiting for folder expander to be visible and expanding tree folder
+2026-09-07 13:32:07.902 [main] [INFO] WebElement - Waiting for expanderClosed to be visible (timeout: 250ms)
+2026-09-07 13:32:07.921 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.924 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:07.924 [main] [INFO] WebElement - Waiting for expanderClosed to be visible (timeout: 250ms)
+2026-09-07 13:32:07.943 [main] [INFO] WebElement - Clicking expanderClosed 
+2026-09-07 13:32:07.985 [main] [INFO] WaitUtil - Condition met after 83ms: Waiting for folder expander to be visible and expanding tree folder
+2026-09-07 13:32:07.985 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:08.015 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:08.021 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:08.022 [main] [INFO] WaitUtil - Waiting for result (timeout: 20000ms, polling: 100ms): Searching for folder 'Test' in editor tree
+2026-09-07 13:32:08.022 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 20000ms, polling: 100ms): Waiting for editor tree folders to load
+2026-09-07 13:32:08.026 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for editor tree folders to load
+2026-09-07 13:32:08.031 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.070 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.121 [main] [INFO] WebElement - Getting text from folderName: 'Decision'
+2026-09-07 13:32:08.122 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.142 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.181 [main] [INFO] WebElement - Getting text from folderName: 'Spreadsheet'
+2026-09-07 13:32:08.181 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.200 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.240 [main] [INFO] WebElement - Getting text from folderName: 'Column Match'
+2026-09-07 13:32:08.240 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.259 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.297 [main] [INFO] WebElement - Getting text from folderName: 'Data'
+2026-09-07 13:32:08.297 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.315 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.352 [main] [INFO] WebElement - Getting text from folderName: 'Run'
+2026-09-07 13:32:08.353 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.372 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:32:08.410 [main] [INFO] WebElement - Getting text from folderName: 'Test'
+2026-09-07 13:32:08.410 [main] [INFO] WaitUtil - Result found after 388ms: Searching for folder 'Test' in editor tree
+2026-09-07 13:32:08.410 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:08.413 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:08.567 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:08.721 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:08.875 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:09.029 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:09.183 [main] [INFO] WaitUtil - Condition met after 773ms: Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:32:09.183 [main] [INFO] WebElement - Dispatching click (after app settled) treeItem
+2026-09-07 13:32:09.233 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:32:09.390 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:32:09.401 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:32:09.557 [main] [INFO] WaitUtil - Condition met after 167ms: Waiting for the loading overlay to disappear
+2026-09-07 13:32:09.557 [main] [INFO] WaitUtil - Waiting for condition (timeout: 2000ms, polling: 100ms): Waiting for property rows to load
+2026-09-07 13:32:09.561 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for property rows to load
+2026-09-07 13:32:09.570 [main] [INFO] WebElement - Waiting for propertyRows_0 to be visible (timeout: 250ms)
+2026-09-07 13:32:09.631 [main] [INFO] WebElement - Getting text from propertyRows_0: '
+                Name
+                SpreadsheetTable$Test$1
+            '
+2026-09-07 13:32:09.642 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:32:10.079 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

@@ -1,0 +1,12 @@
+Execution Mode: PLAYWRIGHT_DOCKER
+
+Execution Mode: PLAYWRIGHT_DOCKER
+Playwright Docker Architecture:
+  Network: e7aa4997b60cd9301c4523bf0864bee3994e657bc0e0ed3434a9c7c57eb3ff2d
+  Playwright Container: 06f8483e98773e3815301343349de36f1c196283706d55a767f829418d21ed28
+  Browser: chromium
+  Current Page: http://appcontainer-006831:8080/projects
+  App Container: 32800530ca202a08bd936604828eecd7d3286a1aabe9f018e71fa834b14601b4
+  Container Network URL: http:///funny_allen:8080
+Configuration:
+Host Resource Path: src/test/resources

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenL Tests [latest]</title>
+<style>
+:root{--bg:#f3f5f9;--surface:#ffffff;--surface-2:#f8fafc;--line:#e3e8ef;--line-strong:#d0d7e2;--text:#0f172a;--muted:#64748b;--accent:#2563eb;--accent-soft:#e8f0fe;--shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.04);--radius:14px;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+.page{max-width:1440px;margin:0 auto;padding:32px 28px 64px}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+.meta .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:0 0 20px}
+.card{position:relative;overflow:hidden;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 14px 18px;box-shadow:var(--shadow);color:var(--muted);font-size:clamp(10px,.85vw,12px);font-weight:600;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;text-overflow:ellipsis}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--card-color,var(--line-strong))}
+.card b{display:block;margin-top:4px;font-size:clamp(20px,2vw,28px);line-height:1.1;font-weight:700;letter-spacing:-.02em;color:var(--card-color,var(--text))}
+.controls{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px;padding:12px 14px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.controls label{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.controls select,.controls input{height:36px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:13px}
+.controls input{flex:1 1 260px;min-width:200px}
+.controls select:focus,.controls input:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.controls button{height:36px;padding:0 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.controls button:hover{border-color:var(--accent);color:var(--accent)}
+.table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto}
+.table-wrap table.tests{min-width:760px}
+table.tests{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0}
+table.tests col.c-status{width:19%} table.tests col.c-group{width:10%} table.tests col.c-duration{width:88px} table.tests col.c-artifacts{width:13%} table.tests col.c-details{width:112px}
+table.tests>thead th{padding:12px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--line)}
+table.tests>tbody>tr>td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere;min-width:0}
+tr.row:hover td{background:var(--surface-2)}
+.badge{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 7px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;line-height:1.4}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.badge a{color:inherit;text-decoration:underline;text-decoration-color:rgba(0,0,0,.25)}
+strong{font-weight:600}
+small,.hint,figcaption{color:var(--muted);font-size:12px}
+small.err{display:inline-block;margin-top:2px;color:#b42318;font-family:var(--mono);font-size:11px;overflow-wrap:anywhere}
+.artifacts small{display:inline-block;margin:0 6px 4px 0;padding:1px 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:11px}
+button.toggle{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px 0 12px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+button.toggle::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-1px);transition:transform .15s ease}
+button.toggle:hover{border-color:var(--accent);color:var(--accent)}
+button.toggle.open{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)} button.toggle.open::after{transform:rotate(-135deg) translateY(-1px)}
+table.tests>tbody>tr.details-row>td{padding:16px 18px 20px;background:var(--surface-2)}
+.tabs{display:inline-flex;flex-wrap:wrap;gap:2px;margin-bottom:12px;padding:4px;background:#e9edf3;border-radius:12px}
+.tab{padding:6px 14px;border:0;border-radius:9px;background:transparent;color:#475569;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.tab:hover{color:var(--text)} .tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.run{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 18px;margin:0 0 20px;box-shadow:var(--shadow)}
+.run table.kv th{width:210px}
+table.kv{border-collapse:collapse;width:100%} table.kv th{width:180px;text-align:left;padding:6px 16px 6px 0;color:var(--muted);font-weight:500;vertical-align:top;font-size:13px} table.kv td{padding:6px 0;border-bottom:1px solid var(--line)} table.kv tr:last-child td{border-bottom:0}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line);padding:12px 14px;border-radius:10px;max-height:520px;overflow:auto;font-family:var(--mono);font-size:12px;line-height:1.5}
+pre.error{background:#fff1f0;border-color:#fecdca;color:#912018} pre.log{background:#0b1220;border-color:#1e293b;color:#dbe4f0} pre.small{max-height:200px}
+.error-type{margin:0 0 8px;font-weight:600;color:#b42318;font-family:var(--mono);font-size:12px}
+details summary{cursor:pointer;margin:12px 0 8px;font-weight:600;color:var(--muted)}
+.hint{margin:0 0 10px}
+.attachments{display:flex;flex-wrap:wrap;gap:16px} figure{margin:0;max-width:420px} figure img,figure video{display:block;max-width:420px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)} figcaption{margin-top:6px}
+.button{display:inline-flex;align-items:center;height:36px;padding:0 16px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;text-decoration:none;box-shadow:var(--shadow)} .button:hover{text-decoration:none;filter:brightness(1.05)}
+code{padding:1px 6px;border-radius:6px;background:#eef2f6;font-family:var(--mono);font-size:12px}
+@media (max-width:900px){.page{padding:20px 14px 48px} h1{font-size:22px} .controls{position:static} .cards{gap:8px} .card{padding:10px 10px 10px 14px}}
+</style></head><body>
+<div class="page">
+<header class="top"><h1>OpenL Tests [latest]</h1>
+<div class="meta"><span class="chip">Build latest</span><span class="chip">1 tests</span><span class="chip">20 s of test time</span><a href="https://github.com/dmitry-minchuk/java-taf-template/actions/runs/34125995868">workflow run</a> · <a href="debug/index.json">debug/index.json</a> · <a href="debug/README.md">how to debug with an AI assistant</a></div></header>
+<section class='run'><table class='kv'><tr><th>Run</th><td>2026-09-07 13:13:39 UTC → 2026-09-07 13:13:59 UTC · 19 s wall time · selective run</td></tr><tr><th>Image <code>ghcr.io/openl-tablets/webstudio:latest</code></th><td>OpenL Studio 6.5.0-SNAPSHOT, build 4a45294cf0d6, built 2026-09-06</td></tr><tr><th>Image <code>ghcr.io/openl-tablets/ws:latest-all</code></th><td><span class='hint'>not used by any test in this run</span></td></tr><tr><th>Tests</th><td>main @ <a href='https://github.com/dmitry-minchuk/java-taf-template/commit/b6bbe0f5a755daf602e7ba5c26979165aff3b333' target='_blank'>b6bbe0f5a755</a></td></tr><tr><th>Stack</th><td>Playwright 1.52.0 · Java 21</td></tr></table></section>
+<div class="cards"><div class="card" style="--card-color:#15803d">Passed<b>1</b></div><div class="card" style="--card-color:#dc2626">Failed<b>0</b></div><div class="card" style="--card-color:#ca8a04">Skipped<b>0</b></div><div class="card" style="--card-color:#ea580c">Known issues<b>0</b></div><div class="card" style="--card-color:#2563eb">Fixed?<b>0</b></div><div class="card">Shards<b>1</b></div></div>
+<div class="controls"><label>Status <select id="status"><option value="">all</option><option value="failed">failed</option><option value="skipped">skipped</option><option value="known">known issue</option><option value="fixed">fixed?</option><option value="passed">passed</option></select></label>
+<label>Group <select id="suite"><option value="">all</option><option value='repository'>repository</option></select></label><input id="search" placeholder="filter by class, test name or error" size="40"><button id="expand-failed">expand all failed</button></div>
+<div class="table-wrap"><table class="tests"><colgroup><col class="c-status"><col class="c-group"><col class="c-test"><col class="c-duration"><col class="c-artifacts"><col class="c-details"></colgroup><thead><tr><th>Status</th><th>Group / shard</th><th>Test</th><th>Duration</th><th>Artifacts</th><th></th></tr></thead><tbody><tr class='row passed' data-status='passed' data-suite='repository' data-error=''><td><span class='badge' style='color:#1a7f37;background:#dafbe1'>PASSED</span></td><td>repository<br><small>shard-01</small></td><td><strong>TestProjectInfoModulesFromRulesDirectoryUi</strong><br>testModulesAreShownAndDescriptorKeepsNoDeclaredModules<br><small>EPBDS-16272</small></td><td>20 s</td><td class='artifacts'><small>steps</small></td><td><button class='toggle' data-target='d0'>details</button></td></tr><tr class='details-row passed' id='d0' hidden><td colspan='6'><div class='tabs'><button class='tab active' data-tab='t0-0'>Overview</button><button class='tab' data-tab='t0-1'>Steps (206)</button></div><div class='panel' id='t0-0'><table class='kv'><tr><th>Group / shard</th><td>repository / shard-01</td></tr><tr><th>Class</th><td><code>tests.ui.webstudio.repository.TestProjectInfoModulesFromRulesDirectoryUi</code> · <a href='https://github.com/dmitry-minchuk/java-taf-template/blob/b6bbe0f5a755daf602e7ba5c26979165aff3b333/src/test/java/tests/ui/webstudio/repository/TestProjectInfoModulesFromRulesDirectoryUi.java' target='_blank'>source</a></td></tr><tr><th>Method</th><td><code>testModulesAreShownAndDescriptorKeepsNoDeclaredModules</code></td></tr><tr><th>Test case</th><td>EPBDS-16272</td></tr><tr><th>Known issue</th><td>—</td></tr><tr><th>Description</th><td>EPBDS-16224 verification ordered by EPBDS-16272: a descriptor that declares no modules while the rules directory holds them must still show those modules on Project Info, and editing project information other than the modules must leave the descriptor&#x27;s modules block alone.</td></tr><tr><th>Started / finished</th><td>2026-09-07T13:13:39.823Z → 2026-09-07T13:13:59.515Z (20 s)</td></tr><tr><th>Application build</th><td>latest</td></tr><tr><th>Tests revision</th><td>main @ b6bbe0f5a755</td></tr></table></div><div class='panel' id='t0-1' hidden><p class='hint'>Framework log of this test: container start, every page action, waits, REST calls and assertions. Showing the last 50 of 206 lines · <a href='attachments/shard-01/tests.ui.webstudio.repository.TestProjectInfoModulesFromRulesDirectoryUi/testModulesAreShownAndDescriptorKeepsNoDeclaredModules/test-steps.log' target='_blank'>full log</a></p><pre class='log'>2026-09-07 13:13:57.634 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.636 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.637 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:13:57.654 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:13:57.723 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:13:57.741 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.745 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.745 [main] [INFO] WebElement - Waiting for overviewEditBtn to be visible (timeout: 20000ms)
+2026-09-07 13:13:57.777 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.785 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.785 [main] [INFO] WebElement - Waiting for overviewEditBtn to be visible (timeout: 250ms)
+2026-09-07 13:13:57.798 [main] [INFO] WebElement - Clicking overviewEditBtn 
+2026-09-07 13:13:57.953 [main] [INFO] WebElement - Waiting for overviewDescriptionInput to be visible (timeout: 20000ms)
+2026-09-07 13:13:57.988 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.995 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:57.995 [main] [INFO] WebElement - Waiting for overviewDescriptionInput to be visible (timeout: 250ms)
+2026-09-07 13:13:58.021 [main] [INFO] WebElement - Filling overviewDescriptionInput with text: &#x27;Description edited by AQA&#x27;
+2026-09-07 13:13:58.087 [main] [INFO] WebElement - Waiting for overviewSaveBtn to be visible (timeout: 20000ms)
+2026-09-07 13:13:58.124 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.128 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.128 [main] [INFO] WebElement - Waiting for overviewSaveBtn to be visible (timeout: 250ms)
+2026-09-07 13:13:58.160 [main] [INFO] WebElement - Clicking overviewSaveBtn 
+2026-09-07 13:13:58.282 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:13:58.523 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.550 [main] [INFO] WaitUtil - Condition met after 27ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.551 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.559 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.559 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:13:58.599 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:13:58.674 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:13:58.691 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.695 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.695 [main] [INFO] WebElement - Waiting for descriptorActionsMarker to be visible (timeout: 20000ms)
+2026-09-07 13:13:58.827 [main] [INFO] WebElement - Waiting for headerAction to be visible (timeout: 4000ms)
+2026-09-07 13:13:58.856 [main] [INFO] CoreComponent - Header action &#x27;Export&#x27; clicked on the bar
+2026-09-07 13:13:58.856 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.866 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:13:58.867 [main] [INFO] WebElement - Waiting for headerAction to be visible (timeout: 250ms)
+2026-09-07 13:13:58.884 [main] [INFO] WebElement - Clicking headerAction 
+2026-09-07 13:13:59.057 [main] [INFO] WebElement - Waiting for exportRevisionSelect to be visible (timeout: 20000ms)
+2026-09-07 13:13:59.091 [main] [INFO] WebElement - Waiting for exportSubmitBtn to be visible (timeout: 20000ms)
+2026-09-07 13:13:59.120 [main] [INFO] WebElement - Waiting for exportRevisionSelect to be visible (timeout: 20000ms)
+2026-09-07 13:13:59.141 [main] [INFO] WebElement - Waiting for exportSubmitBtn to be visible (timeout: 20000ms)
+2026-09-07 13:13:59.161 [main] [INFO] DownloadUtil - Downloading file in DOCKER mode using createReadStream()
+2026-09-07 13:13:59.482 [main] [INFO] DownloadUtil - Download started in container: EmptyModulesDescriptorProject-Porter Maggio-2026-09-07_13-13-51.zip
+2026-09-07 13:13:59.509 [main] [INFO] DownloadUtil - Download completed in DOCKER mode: playwright_container_download_6755154692234721652_EmptyModulesDescriptorProject-Porter_Maggio-2026-09-07_13-13-51.zip (size: 9643 bytes)
+2026-09-07 13:13:59.510 [main] [INFO] ExportProjectModalComponent - Downloaded file: playwright_container_download_6755154692234721652_EmptyModulesDescriptorProject-Porter_Maggio-2026-09-07_13-13-51.zip (9643 bytes)
+2026-09-07 13:13:59.511 [main] [INFO] ZipUtil - Read file &#x27;rules.xml&#x27; from archive playwright_container_download_6755154692234721652_EmptyModulesDescriptorProject-Porter_Maggio-2026-09-07_13-13-51.zip (117 chars)
+2026-09-07 13:13:59.537 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:14:01.465 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup</pre></div></td></tr></tbody></table></div>
+</div>
+<script>
+const rows=[...document.querySelectorAll('tr.row')];
+function apply(){const s=document.getElementById('status').value,u=document.getElementById('suite').value,q=document.getElementById('search').value.toLowerCase();
+rows.forEach(r=>{const ok=(!s||r.dataset.status===s)&&(!u||r.dataset.suite===u)&&(!q||(r.textContent+' '+(r.dataset.error||'')).toLowerCase().includes(q));r.hidden=!ok;const d=r.nextElementSibling;if(d&&d.classList.contains('details-row')&&!ok){d.hidden=true;r.querySelector('button.toggle')?.classList.remove('open');}});}
+['status','suite'].forEach(id=>document.getElementById(id).addEventListener('change',apply));document.getElementById('search').addEventListener('input',apply);
+document.querySelectorAll('button.toggle').forEach(b=>b.addEventListener('click',()=>{const d=document.getElementById(b.dataset.target);d.hidden=!d.hidden;b.classList.toggle('open',!d.hidden);}));
+document.getElementById('expand-failed').addEventListener('click',()=>{document.querySelectorAll('tr.details-row.failed').forEach(d=>{d.hidden=false;const b=d.previousElementSibling.querySelector('button.toggle');if(b)b.classList.add('open');});});
+document.querySelectorAll('button.tab').forEach(b=>b.addEventListener('click',()=>{const panel=document.getElementById(b.dataset.tab);const box=b.closest('td');box.querySelectorAll('.panel').forEach(p=>p.hidden=true);box.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));panel.hidden=false;b.classList.add('active');}));
+</script></body></html>

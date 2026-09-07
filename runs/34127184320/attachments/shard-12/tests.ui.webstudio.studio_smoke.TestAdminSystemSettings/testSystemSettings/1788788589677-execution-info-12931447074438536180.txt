@@ -1,0 +1,12 @@
+Execution Mode: PLAYWRIGHT_DOCKER
+
+Execution Mode: PLAYWRIGHT_DOCKER
+Playwright Docker Architecture:
+  Network: e706735e2b3b41772228a36b7d2a93c5caecd88d0c05f3fb372e0e233d31c7b0
+  Playwright Container: bd971171b95e295827d2340e241381bb983c9c96a4eaed4ca2057da7a0de3896
+  Browser: chromium
+  Current Page: http://appcontainer-293447:8080/login
+  App Container: 68f1952b9e88a2ccc39fe428cd62a2bf2b331246f57607cd74b27382c8f17de6
+  Container Network URL: http:///nice_ganguly:8080
+Configuration:
+Host Resource Path: src/test/resources

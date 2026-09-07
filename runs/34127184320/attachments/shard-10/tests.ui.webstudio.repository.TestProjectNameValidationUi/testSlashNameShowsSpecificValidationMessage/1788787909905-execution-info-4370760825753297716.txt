@@ -1,0 +1,12 @@
+Execution Mode: PLAYWRIGHT_DOCKER
+
+Execution Mode: PLAYWRIGHT_DOCKER
+Playwright Docker Architecture:
+  Network: 17f42474aad887e0ce7415e6d35a6b57482df57675c392e9f85d064f575d21f9
+  Playwright Container: 8d874cb2cee59307dc415c969f2472c6cf0fb9558bfd40874c497c8256e2b0fb
+  Browser: chromium
+  Current Page: http://appcontainer-729188:8080/projects
+  App Container: ace2f94d6a2ef74e9864cc278ec30f96d3dfbad04d52abf0e3f9225c87835cea
+  Container Network URL: http:///beautiful_volhard:8080
+Configuration:
+Host Resource Path: src/test/resources

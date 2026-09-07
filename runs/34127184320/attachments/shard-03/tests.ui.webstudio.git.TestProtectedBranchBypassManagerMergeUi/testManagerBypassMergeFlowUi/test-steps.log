@@ -1,0 +1,189 @@
+2026-09-07 13:26:50.094 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testManagerBypassMergeFlowUi
+2026-09-07 13:26:50.101 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:26:50.102 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:26:50.102 [main] [INFO] BaseTest - [repository.design.protected-branches] -> [release-**]
+2026-09-07 13:26:50.102 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:26:50.102 [main] [INFO] BaseTest - [security.allow-bypass-protected-branches] -> [true]
+2026-09-07 13:26:50.127 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-555637 (startup timeout: PT10M)
+2026-09-07 13:27:07.440 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-555637: http://localhost:32773
+2026-09-07 13:27:07.443 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-555637:8080
+2026-09-07 13:27:07.444 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:27:10.445 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:27:10.448 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:27:10.449 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:27:11.450 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:27:11.453 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:27:11.453 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:27:11.454 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:27:11.454 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:27:12.740 [main] [INFO] DockerDriverPool - Playwright Server container started in 1286 ms
+2026-09-07 13:27:12.740 [main] [INFO] DockerDriverPool - Container started - ID: 06dd845d12ea573312d39312e8c40fe8d77465403b5644b900664c8e57ba5210
+2026-09-07 13:27:12.740 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32774 -> 3000
+2026-09-07 13:27:12.740 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:27:12.753 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:27:12.754 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32774
+2026-09-07 13:27:13.961 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:27:14.115 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32774/
+2026-09-07 13:27:14.117 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:27:14.146 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:27:14.196 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:27:14.196 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:27:15.262 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:27:17.526 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+GET http://localhost:32773/rest/projects/ZGVzaWduOkJ5cGFzc01lcmdlVWlQcm9qZWN0OjEzYWZkMGQ2OGRlZGM1NDk4MTQwMDkyMjVmYjAyYmI4MDdlNmIxMjYyMzFiOGJlZWExMDY4N2NlYjAwMWE3N2U%3D/files/rules.xml
+Header: Accept : application/json
+Header: Authorization : Basic YWRtaW46YWRtaW4=
+
+2026-09-07 13:27:17.527 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+200 HTTP/1.1 200 OKHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:27:17 GMT
+Header: Set-Cookie : JSESSIONID=node03odbgii1mte16rraepw7n1jd6.node0; Path=/; HttpOnly
+Header: Expires : Thu, 01 Jan 1970 00:00:00 GMT
+Header: Content-Type : application/xml
+Header: Content-Disposition : attachment; filename=rules.xml; filename*=UTF-8''rules.xml
+Header: X-Content-Type-Options : nosniff
+Header: X-XSS-Protection : 0
+Header: X-Frame-Options : DENY
+Header: Content-Length : 210
+Body: 
+<project>
+    <name>BypassMergeUiProject</name>
+    <modules>
+        <module>
+            <name>Bank Rating</name>
+            <rules-root path="Bank Rating.xlsx"/>
+        </module>
+    </modules>
+</project>
+
+2026-09-07 13:27:18.342 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-555637:8080
+2026-09-07 13:27:18.343 [main] [INFO] LoginService - Logging in with user: manager_15960
+2026-09-07 13:27:18.343 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:27:19.257 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-555637:8080
+2026-09-07 13:27:19.258 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:27:19.268 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:27:19.309 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:19.320 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:19.321 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:27:19.343 [main] [INFO] WebElement - Filling usernameField with text: 'manager_15960'
+2026-09-07 13:27:19.391 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:19.401 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:19.401 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:27:19.412 [main] [INFO] WebElement - Filling passwordField with text: 'manager_15960'
+2026-09-07 13:27:19.448 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:19.452 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:19.452 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:27:19.461 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:27:21.705 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:27:41.726 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:27:41.737 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:27:41.748 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:27:41.748 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:41.750 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:41.750 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:27:41.758 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:27:42.246 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:27:42.246 [main] [INFO] WaitUtil - Condition met after 509ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:27:42.247 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:27:42.253 [main] [INFO] WebElement - Waiting for projectRowAction to be visible (timeout: 4000ms)
+2026-09-07 13:27:42.390 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:42.396 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:42.396 [main] [INFO] WebElement - Waiting for projectRowAction to be visible (timeout: 10000ms)
+2026-09-07 13:27:42.408 [main] [INFO] WebElement - Clicking with increased timeout projectRowAction 
+2026-09-07 13:27:42.588 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project BypassMergeUiProject to finish opening
+2026-09-07 13:27:42.609 [main] [INFO] WaitUtil - Condition met after 20ms: Waiting for project BypassMergeUiProject to finish opening
+2026-09-07 13:27:42.609 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:42.624 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:42.635 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:42.636 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:27:42.664 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:27:42.665 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:42.668 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:42.668 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:27:42.698 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:27:43.456 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:27:43.457 [main] [INFO] WaitUtil - Condition met after 821ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:27:43.457 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:27:43.458 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:43.500 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:43.505 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:43.506 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:27:43.515 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:43.518 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:43.518 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:27:43.528 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:27:43.648 [main] [INFO] WaitUtil - Waiting for condition (timeout: 15000ms, polling: 1000ms): Click Sync until the merge dialog appears
+2026-09-07 13:27:43.648 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:43.727 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:43.736 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:27:43.896 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:27:44.060 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:27:44.217 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:27:44.520 [main] [INFO] WaitUtil - Condition met after 793ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:44.521 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:44.540 [main] [INFO] WaitUtil - Condition met after 19ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:44.541 [main] [INFO] WebElement - Waiting for syncBtn to be visible (timeout: 250ms)
+2026-09-07 13:27:44.594 [main] [INFO] WebElement - Clicking syncBtn 
+2026-09-07 13:27:44.753 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for Sync dialog to open
+2026-09-07 13:27:45.254 [main] [INFO] WebElement - Waiting for dialogHeader to be visible (timeout: 1000ms)
+2026-09-07 13:27:45.287 [main] [INFO] WaitUtil - Condition met after 1639ms: Click Sync until the merge dialog appears
+2026-09-07 13:27:45.288 [main] [INFO] SyncChangesDialogComponent - Selecting branch: release-EPBDS-15818
+2026-09-07 13:27:45.288 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:45.294 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:45.294 [main] [INFO] WebElement - Waiting for branchSelector to be visible (timeout: 250ms)
+2026-09-07 13:27:45.325 [main] [INFO] WebElement - Clicking branchSelector 
+2026-09-07 13:27:45.446 [main] [INFO] WaitUtil - Waiting for condition (timeout: 2000ms, polling: 100ms): Waiting for selector options to appear
+2026-09-07 13:27:45.459 [main] [INFO] WaitUtil - Condition met after 13ms: Waiting for selector options to appear
+2026-09-07 13:27:45.469 [main] [INFO] WebElement - Waiting for branchSelector_0 to be visible (timeout: 250ms)
+2026-09-07 13:27:45.551 [main] [INFO] WebElement - Getting text from branchSelector_0: 'masterDefault'
+2026-09-07 13:27:45.551 [main] [INFO] WebElement - Waiting for branchSelector_1 to be visible (timeout: 250ms)
+2026-09-07 13:27:45.649 [main] [INFO] WebElement - Getting text from branchSelector_1: 'release-EPBDS-15818'
+2026-09-07 13:27:45.650 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:45.670 [main] [INFO] WaitUtil - Condition met after 20ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:45.671 [main] [INFO] WebElement - Waiting for branchSelector_1 to be visible (timeout: 250ms)
+2026-09-07 13:27:45.719 [main] [INFO] WebElement - Clicking branchSelector_1 
+2026-09-07 13:27:45.856 [main] [INFO] WaitUtil - Waiting for condition (timeout: 5000ms, polling: 200ms): Waiting for bypass warning alert
+2026-09-07 13:27:45.856 [main] [INFO] WebElement - Waiting for bypassWarningAlert to be visible (timeout: 250ms)
+2026-09-07 13:27:45.905 [main] [INFO] WaitUtil - Condition met after 49ms: Waiting for bypass warning alert
+2026-09-07 13:27:45.906 [main] [INFO] WebElement - Waiting for bypassWarningAlert to be visible (timeout: 250ms)
+2026-09-07 13:27:46.009 [main] [INFO] WebElement - Getting text from bypassWarningAlert: 'Bypass branch protection?The branch "release-EPBDS-15818" is protected. Confirming will merge into it anyway. This action cannot be undone.'
+2026-09-07 13:27:46.012 [main] [INFO] SyncChangesDialogComponent - Clicking 'Send your updates' button
+2026-09-07 13:27:46.012 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:46.018 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:46.018 [main] [INFO] WebElement - Waiting for exportYourChangesBtn to be visible (timeout: 250ms)
+2026-09-07 13:27:46.065 [main] [INFO] WebElement - Clicking exportYourChangesBtn 
+2026-09-07 13:27:46.239 [main] [INFO] WebElement - Waiting for bypassConfirmBtn to be visible
+2026-09-07 13:27:46.290 [main] [INFO] WebElement - Waiting for bypassConfirmTitle to be visible (timeout: 250ms)
+2026-09-07 13:27:46.636 [main] [INFO] WebElement - Getting text from bypassConfirmTitle: 'Bypass branch protection?'
+2026-09-07 13:27:46.637 [main] [INFO] BypassConfirmDialogComponent - Clicking 'Confirm bypass and merge' on bypass confirmation dialog
+2026-09-07 13:27:46.642 [main] [INFO] CoreComponent - Messages currently open: 0
+2026-09-07 13:27:46.646 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:27:46.751 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:27:46.856 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:27:46.956 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:46.965 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:46.965 [main] [INFO] WebElement - Waiting for bypassConfirmBtn to be visible (timeout: 250ms)
+2026-09-07 13:27:47.010 [main] [INFO] WebElement - Clicking bypassConfirmBtn 
+2026-09-07 13:27:47.145 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 250ms): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:47.168 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:47.436 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:47.712 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:47.973 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:48.233 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:48.493 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:48.750 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:49.006 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:49.272 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:49.531 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:49.788 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:50.055 [main] [INFO] WaitUtil - Condition met after 2910ms: Waiting for the merge to finish with a success toast or an error
+2026-09-07 13:27:50.071 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:27:50.528 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

@@ -1,0 +1,867 @@
+2026-09-07 13:36:32.432 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testSimpleSearchOnProjectLevel
+2026-09-07 13:36:32.433 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:36:32.433 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:36:32.433 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:36:32.434 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-588648 (startup timeout: PT10M)
+2026-09-07 13:36:52.548 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-588648: http://localhost:32788
+2026-09-07 13:36:52.548 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-588648:8080
+2026-09-07 13:36:52.548 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:36:55.549 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:36:55.552 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:36:55.552 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:36:56.552 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:36:56.553 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:36:56.553 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:36:56.553 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:36:56.553 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:36:57.811 [main] [INFO] DockerDriverPool - Playwright Server container started in 1258 ms
+2026-09-07 13:36:57.811 [main] [INFO] DockerDriverPool - Container started - ID: 49f8a225180b7f5199b6c5b45e44d17fc42a9dd25f1f45d0d446231fdae3274e
+2026-09-07 13:36:57.811 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32789 -> 3000
+2026-09-07 13:36:57.812 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:36:57.823 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:36:57.823 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32789
+2026-09-07 13:36:58.100 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:36:58.281 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32789/
+2026-09-07 13:36:58.281 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:36:58.296 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:36:58.353 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:36:58.353 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:36:58.473 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:36:58.475 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-588648:8080
+2026-09-07 13:36:58.475 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:36:58.475 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:36:59.303 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-588648:8080
+2026-09-07 13:36:59.304 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:36:59.304 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:36:59.472 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.490 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.490 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:36:59.526 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:36:59.584 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.591 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.592 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:36:59.607 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:36:59.644 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.649 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.649 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:36:59.670 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:37:02.954 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:37:03.000 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:37:03.001 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.012 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.012 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:37:03.037 [main] [INFO] WebElement - Filling firstNameField with text: 'Pedro'
+2026-09-07 13:37:03.100 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.113 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.113 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:37:03.136 [main] [INFO] WebElement - Filling lastNameField with text: 'Reilly'
+2026-09-07 13:37:03.191 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.195 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.195 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:37:03.214 [main] [INFO] WebElement - Filling emailField with text: 'jonas.ullrich@hotmail.com'
+2026-09-07 13:37:03.291 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.301 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.303 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:37:03.326 [main] [INFO] WebElement - Filling displayNameField with text: 'Bernardina Jones'
+2026-09-07 13:37:03.380 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.387 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:03.387 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:03.412 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:37:03.535 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:37:03.535 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:37:03.585 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:37:03.835 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:37:03.882 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:37:04.133 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:37:04.641 [main] [INFO] WaitUtil - Condition met after 1106ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:37:04.641 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:37:07.648 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:07.649 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:37:07.663 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:37:07.663 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:07.671 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:07.671 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:37:07.687 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:37:08.331 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:37:08.331 [main] [INFO] WaitUtil - Condition met after 682ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:37:08.331 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:37:08.332 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:08.364 [main] [INFO] WaitUtil - Condition met after 32ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:08.364 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:37:08.487 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:37:08.657 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:37:08.657 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:08.679 [main] [INFO] WaitUtil - Condition met after 22ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:08.679 [main] [INFO] WebElement - Waiting for methodArchive to be visible (timeout: 250ms)
+2026-09-07 13:37:08.743 [main] [INFO] WebElement - Clicking methodArchive 
+2026-09-07 13:37:09.180 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From archive' step to render
+2026-09-07 13:37:09.184 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the 'From archive' step to render
+2026-09-07 13:37:09.184 [main] [INFO] WaitUtil - Action succeeded after 527ms: Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:37:09.198 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestSearchOnProjectLevel/RulesEditor.TestSearchOnProjectLevel.SpreadsheetSalary.zip] to archiveUpload
+2026-09-07 13:37:09.248 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:37:09.248 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:09.255 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:09.255 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:37:09.301 [main] [INFO] WebElement - Filling newProjectName with text: 'SpreadsheetSalary'
+2026-09-07 13:37:09.394 [main] [INFO] WebElement - Getting current input value from newProjectName: 'SpreadsheetSalary'
+2026-09-07 13:37:09.394 [main] [INFO] WaitUtil - Condition met after 146ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:37:09.394 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:09.399 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:09.400 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:37:09.429 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:37:09.739 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:09.782 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:09.801 [main] [INFO] WaitUtil - Condition met after 19ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:09.801 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:37:12.835 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:12.844 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:12.846 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.008 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:13.028 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.031 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.031 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:37:13.034 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:13.322 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:13.575 [main] [INFO] WaitUtil - Condition met after 544ms: Waiting for project row actions
+2026-09-07 13:37:13.631 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:37:13.641 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.644 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.644 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:13.651 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:37:13.719 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:37:13.722 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the row overflow menu
+2026-09-07 13:37:13.806 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.811 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.811 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:37:13.827 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:37:13.945 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:37:13.945 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.952 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:13.952 [main] [INFO] WebElement - Waiting for methodArchive to be visible (timeout: 250ms)
+2026-09-07 13:37:13.993 [main] [INFO] WebElement - Clicking methodArchive 
+2026-09-07 13:37:14.488 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From archive' step to render
+2026-09-07 13:37:14.500 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the 'From archive' step to render
+2026-09-07 13:37:14.500 [main] [INFO] WaitUtil - Action succeeded after 555ms: Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:37:14.513 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestSearchOnProjectLevel/RulesEditor.TestSearchOnProjectLevel.SearchingByTag.zip] to archiveUpload
+2026-09-07 13:37:14.548 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:37:14.548 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:14.551 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:14.551 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:37:14.610 [main] [INFO] WebElement - Filling newProjectName with text: 'SearchingByTag'
+2026-09-07 13:37:14.705 [main] [INFO] WebElement - Getting current input value from newProjectName: 'SearchingByTag'
+2026-09-07 13:37:14.705 [main] [INFO] WaitUtil - Condition met after 157ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:37:14.705 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:14.708 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:14.708 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:37:14.737 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:37:15.053 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:15.087 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:15.099 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:15.099 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:37:18.129 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:18.136 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:18.138 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:18.271 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:18.322 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:18.325 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:18.325 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:37:18.328 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:18.657 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:18.911 [main] [INFO] WaitUtil - Condition met after 586ms: Waiting for project row actions
+2026-09-07 13:37:18.946 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:37:18.952 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:18.954 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:18.954 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:18.960 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:37:19.032 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:37:19.035 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the row overflow menu
+2026-09-07 13:37:19.118 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.126 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.126 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:37:19.143 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:37:19.265 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:37:19.265 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.269 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.269 [main] [INFO] WebElement - Waiting for methodArchive to be visible (timeout: 250ms)
+2026-09-07 13:37:19.302 [main] [INFO] WebElement - Clicking methodArchive 
+2026-09-07 13:37:19.804 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From archive' step to render
+2026-09-07 13:37:19.830 [main] [INFO] WaitUtil - Condition met after 25ms: Waiting for the 'From archive' step to render
+2026-09-07 13:37:19.831 [main] [INFO] WaitUtil - Action succeeded after 566ms: Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:37:19.840 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestSearchOnProjectLevel/RulesEditor.TestSearchOnProjectLevel.Example1BankRating.zip] to archiveUpload
+2026-09-07 13:37:19.884 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:37:19.884 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.888 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.889 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:37:19.931 [main] [INFO] WebElement - Filling newProjectName with text: 'Example1BankRating'
+2026-09-07 13:37:20.011 [main] [INFO] WebElement - Getting current input value from newProjectName: 'Example1BankRating'
+2026-09-07 13:37:20.011 [main] [INFO] WaitUtil - Condition met after 127ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:37:20.011 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:20.019 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:20.019 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:37:20.042 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:37:20.374 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:20.410 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:20.421 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:20.422 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:37:23.446 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:23.454 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:23.457 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:23.600 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:23.647 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:23.652 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:23.652 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:37:23.654 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:23.947 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:24.201 [main] [INFO] WaitUtil - Condition met after 549ms: Waiting for project row actions
+2026-09-07 13:37:24.234 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:37:24.241 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:24.242 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:24.243 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:24.251 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:37:24.305 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:37:24.312 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the row overflow menu
+2026-09-07 13:37:24.375 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:37:24.388 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:37:24.388 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:24.392 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:24.392 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:37:24.407 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:37:25.222 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:37:25.222 [main] [INFO] WaitUtil - Condition met after 847ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:37:25.222 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:25.223 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:25.223 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:25.261 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:25.275 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:25.275 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:25.286 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:25.289 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:25.289 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:25.299 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:25.402 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:26.402 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.407 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.407 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:26.470 [main] [INFO] WebElement - Filling Sequentially searchName with text: ''
+2026-09-07 13:37:26.525 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:27.525 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:27.530 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:27.530 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:27.562 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:27.631 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:27.631 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:27.781 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:27.781 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:27.932 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:27.932 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:28.183 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:28.278 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:28.278 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:28.422 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:28.422 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:28.673 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:28.780 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:28.780 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:28.913 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:28.913 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:29.164 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:29.352 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:29.352 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:29.583 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:29.584 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:29.834 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:29.958 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:29.958 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:30.208 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:30.208 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:30.458 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:30.653 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:30.654 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:30.791 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:30.791 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:31.043 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:31.214 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:31.215 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:31.310 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                SpreadsheetSalary
+                    
+            '
+2026-09-07 13:37:31.310 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:31.560 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:31.651 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                2 tables found
+            
+        '
+2026-09-07 13:37:31.651 [main] [INFO] WaitUtil - Condition met after 4020ms: Waiting for search results to appear
+2026-09-07 13:37:31.651 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:31.693 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                2 tables found
+            
+        '
+2026-09-07 13:37:31.697 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:31.736 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double[] SalaryCalc( Double [] salary )'
+2026-09-07 13:37:31.737 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:31.804 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:31.807 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:31.838 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double[] SalaryCalc( Double [] salary )'
+2026-09-07 13:37:31.838 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:31.870 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:31.870 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:31.885 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.887 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.887 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:31.903 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.905 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.905 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:31.920 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:31.978 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:32.979 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:32.983 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:32.983 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:33.024 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'median'
+2026-09-07 13:37:33.066 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:34.067 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.071 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.071 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:34.110 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:34.171 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:34.171 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:34.380 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                1 tables found
+            
+        '
+2026-09-07 13:37:34.380 [main] [INFO] WaitUtil - Condition met after 209ms: Waiting for search results to appear
+2026-09-07 13:37:34.384 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:34.417 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double[] SalaryCalc( Double [] salary )'
+2026-09-07 13:37:34.417 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:34.437 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.441 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.441 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:34.458 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.460 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.460 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:34.475 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:34.527 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:35.527 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.532 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.533 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:35.579 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'step1'
+2026-09-07 13:37:35.625 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:36.625 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:36.629 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:36.629 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:36.664 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:36.795 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:36.795 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:36.971 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                1 tables found
+            
+        '
+2026-09-07 13:37:36.971 [main] [INFO] WaitUtil - Condition met after 176ms: Waiting for search results to appear
+2026-09-07 13:37:36.975 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:37.026 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:37.026 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:37.045 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.049 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.049 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:37.068 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.071 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.071 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:37.091 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:37.146 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:38.146 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:38.151 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:38.151 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:38.191 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'SalaryCalc'
+2026-09-07 13:37:38.246 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:39.246 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.253 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.253 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:39.288 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:39.371 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:39.371 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:39.573 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                2 tables found
+            
+        '
+2026-09-07 13:37:39.573 [main] [INFO] WaitUtil - Condition met after 202ms: Waiting for search results to appear
+2026-09-07 13:37:39.577 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.615 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double[] SalaryCalc( Double [] salary )'
+2026-09-07 13:37:39.616 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.659 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:39.662 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.695 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double[] SalaryCalc( Double [] salary )'
+2026-09-07 13:37:39.695 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.726 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:39.726 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:39.742 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.745 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.745 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:39.767 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.771 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.771 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:39.791 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:39.848 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:40.848 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:40.853 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:40.853 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:40.893 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:41.106 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:42.106 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.111 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.111 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:42.161 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:42.260 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:42.261 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:42.359 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                1 tables found
+            
+        '
+2026-09-07 13:37:42.359 [main] [INFO] WaitUtil - Condition met after 98ms: Waiting for search results to appear
+2026-09-07 13:37:42.362 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:42.397 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double SalaryInfo ( String name, Double [] salary )'
+2026-09-07 13:37:42.397 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:42.418 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.422 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.422 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:42.439 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.441 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.441 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:42.460 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:42.518 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:43.518 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:43.523 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:43.523 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:43.566 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'resul'
+2026-09-07 13:37:43.613 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:44.613 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:44.618 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:44.618 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:44.661 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:44.753 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:44.753 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:44.966 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                1 tables found
+            
+        '
+2026-09-07 13:37:44.966 [main] [INFO] WaitUtil - Condition met after 213ms: Waiting for search results to appear
+2026-09-07 13:37:44.970 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:45.037 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double[] SalaryCalc( Double [] salary )'
+2026-09-07 13:37:45.037 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:45.067 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.070 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.070 [main] [INFO] WebElement - Waiting for breadcrumbsAllProjects to be visible (timeout: 1000ms)
+2026-09-07 13:37:45.091 [main] [INFO] CoreComponent - Navigating back to projects list via breadcrumb...
+2026-09-07 13:37:45.091 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.094 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.094 [main] [INFO] WebElement - Waiting for breadcrumbsAllProjects to be visible (timeout: 250ms)
+2026-09-07 13:37:45.118 [main] [INFO] WebElement - Clicking breadcrumbsAllProjects 
+2026-09-07 13:37:45.372 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for projects list to load
+2026-09-07 13:37:45.872 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:45.902 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.905 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.905 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:45.914 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.916 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:45.916 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:45.926 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:46.002 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:47.003 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:47.008 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:47.008 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:47.073 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'MONEY'
+2026-09-07 13:37:47.147 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:48.147 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:48.152 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:48.152 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:48.188 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:48.290 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:48.290 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:48.515 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                Example1BankRating
+                    
+            '
+2026-09-07 13:37:48.515 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:48.866 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                2 tables found
+            
+        '
+2026-09-07 13:37:48.867 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:49.117 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:49.163 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                2 tables found
+            
+        '
+2026-09-07 13:37:49.163 [main] [INFO] WaitUtil - Condition met after 873ms: Waiting for search results to appear
+2026-09-07 13:37:49.163 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:49.214 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                2 tables found
+            
+        '
+2026-09-07 13:37:49.218 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:49.268 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet SpreadsheetResult BalanceQualityIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData)'
+2026-09-07 13:37:49.268 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:49.320 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'SimpleRules Double NetMoneyMarketLiabilitiesScore (Double  netMoneyMarketLiabilities)'
+2026-09-07 13:37:49.323 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:49.364 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet SpreadsheetResult BalanceQualityIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData)'
+2026-09-07 13:37:49.364 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:49.404 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'SimpleRules Double NetMoneyMarketLiabilitiesScore (Double  netMoneyMarketLiabilities)'
+2026-09-07 13:37:49.404 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:49.422 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:49.425 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:49.425 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:49.444 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:49.447 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:49.447 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:49.464 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:49.533 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:50.534 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:50.539 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:50.540 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:50.586 [main] [INFO] WebElement - Filling Sequentially searchName with text: ' Balance'
+2026-09-07 13:37:50.647 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:51.647 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:51.653 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:51.653 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:51.692 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:51.799 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:51.799 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:51.930 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                Example1BankRating
+                    
+            '
+2026-09-07 13:37:51.930 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:52.083 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                Example1BankRating
+                    
+            '
+2026-09-07 13:37:52.083 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:52.335 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:52.514 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                10 tables found
+            
+        '
+2026-09-07 13:37:52.514 [main] [INFO] WaitUtil - Condition met after 715ms: Waiting for search results to appear
+2026-09-07 13:37:52.514 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:52.566 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                10 tables found
+            
+        '
+2026-09-07 13:37:52.569 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.612 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double BalanceDynamicIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData, FinancialDataDatatype FinancialData previousFinancialData)'
+2026-09-07 13:37:52.613 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.662 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet SpreadsheetResult BalanceQualityIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData)'
+2026-09-07 13:37:52.662 [main] [INFO] WebElement - Waiting for tableNameCells_2 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.726 [main] [INFO] WebElement - Getting text from tableNameCells_2: 'Spreadsheet SpreadsheetResult BankRatingCalculation (BankDatatype Bank bank)'
+2026-09-07 13:37:52.726 [main] [INFO] WebElement - Waiting for tableNameCells_3 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.770 [main] [INFO] WebElement - Getting text from tableNameCells_3: 'Test BalanceDynamicIndexCalculation DynamicIndexTest'
+2026-09-07 13:37:52.770 [main] [INFO] WebElement - Waiting for tableNameCells_4 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.813 [main] [INFO] WebElement - Getting text from tableNameCells_4: 'Test BalanceQualityIndexCalculation QualityIndexTest'
+2026-09-07 13:37:52.813 [main] [INFO] WebElement - Waiting for tableNameCells_5 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.873 [main] [INFO] WebElement - Getting text from tableNameCells_5: 'SimpleRules Double TotalBalanceScore (Double totalBalance, CountryCodeDatatype CountryCode <String> countryCode)'
+2026-09-07 13:37:52.873 [main] [INFO] WebElement - Waiting for tableNameCells_6 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.919 [main] [INFO] WebElement - Getting text from tableNameCells_6: 'Test  TotalBalanceScore TotalBalanceScoreTest'
+2026-09-07 13:37:52.919 [main] [INFO] WebElement - Waiting for tableNameCells_7 to be visible (timeout: 250ms)
+2026-09-07 13:37:52.969 [main] [INFO] WebElement - Getting text from tableNameCells_7: 'Use the following table to determine Bank Rating Group according to Bank Rating of the bank.          Depending on calculated Bank Rating the bank-counterparty refers to one of five Bank Rating Groups (categories of reliability):• if the Bank Rating is more then 0.9, it means that the counterparty has perfect credit history and reputation, stable balance sheets, high turnover and solid liabilities to customers (R1);• if the Bank Rating belongs to the range (0.7, 0.9] then the counterparty is constant and dynamically developing, without factors of financial difficulties (R2);• if the Bank Rating belongs to the range (0.4, 0.7] then financial status of the counterparty is satisfactory but requires monthly monitoring (R3);• if the Bank Rating belongs to the range (0.25, 0.4] then financial statements of the counterparty requires monthly monitoring by reason of negative tendency (R4);• if the Bank Rating is less or equal to 0.25, it means that the counterparty is in critical financial situation.'
+2026-09-07 13:37:52.970 [main] [INFO] WebElement - Waiting for tableNameCells_8 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.015 [main] [INFO] WebElement - Getting text from tableNameCells_8: 'Use the following tables to determine scores of 10 finantial indicators (Q1, Q2, …, Q10) applied for calculating the Balance Quality Index B.  The scores are to assess the quality of the bank-counterparty's balance sheet.'
+2026-09-07 13:37:53.016 [main] [INFO] WebElement - Waiting for tableNameCells_9 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.061 [main] [INFO] WebElement - Getting text from tableNameCells_9: 'This document is designed to calculate the final value of the Limit for transactions that are subject to credit risk from bank-counterparties. The Limit is calculated according to the country of a bank-counterparty, total assets of the bank, its rating group, credit ratings assigned by The Big Three credit rating agencies and the maximum limit allowed on a bank-counterparty.          To assess the risk of default on the bank-counterparty obligations the financial statement analysis is carried out for determining of the creditworthiness of the bank-counterparty and assigning a rating by internal ranking system to it. This analysis consists of a qualitative and a quantitative analysis of the bank's state.          The main methods of the quantitative analysis are a structural analysis of a balance sheet, the analysis of the relative performance of financial and prudential reports (liquidity, profitability, asset quality, liabilities).         Components of the qualitative analysis are monitoring of bank-counterparty’s ratings assigned by international rating agencies, the existence and nature of the bank's credit history, current level of relationships with the bank, its shareholders and management, the business reputational analysis of the bank, monitoring of relations with a financial supervisory authority.'
+2026-09-07 13:37:53.065 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.108 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double BalanceDynamicIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData, FinancialDataDatatype FinancialData previousFinancialData)'
+2026-09-07 13:37:53.108 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.170 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet SpreadsheetResult BalanceQualityIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData)'
+2026-09-07 13:37:53.170 [main] [INFO] WebElement - Waiting for tableNameCells_2 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.243 [main] [INFO] WebElement - Getting text from tableNameCells_2: 'Spreadsheet SpreadsheetResult BankRatingCalculation (BankDatatype Bank bank)'
+2026-09-07 13:37:53.243 [main] [INFO] WebElement - Waiting for tableNameCells_3 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.291 [main] [INFO] WebElement - Getting text from tableNameCells_3: 'Test BalanceDynamicIndexCalculation DynamicIndexTest'
+2026-09-07 13:37:53.291 [main] [INFO] WebElement - Waiting for tableNameCells_4 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.339 [main] [INFO] WebElement - Getting text from tableNameCells_4: 'Test BalanceQualityIndexCalculation QualityIndexTest'
+2026-09-07 13:37:53.339 [main] [INFO] WebElement - Waiting for tableNameCells_5 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.385 [main] [INFO] WebElement - Getting text from tableNameCells_5: 'SimpleRules Double TotalBalanceScore (Double totalBalance, CountryCodeDatatype CountryCode <String> countryCode)'
+2026-09-07 13:37:53.385 [main] [INFO] WebElement - Waiting for tableNameCells_6 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.429 [main] [INFO] WebElement - Getting text from tableNameCells_6: 'Test  TotalBalanceScore TotalBalanceScoreTest'
+2026-09-07 13:37:53.429 [main] [INFO] WebElement - Waiting for tableNameCells_7 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.478 [main] [INFO] WebElement - Getting text from tableNameCells_7: 'Use the following table to determine Bank Rating Group according to Bank Rating of the bank.          Depending on calculated Bank Rating the bank-counterparty refers to one of five Bank Rating Groups (categories of reliability):• if the Bank Rating is more then 0.9, it means that the counterparty has perfect credit history and reputation, stable balance sheets, high turnover and solid liabilities to customers (R1);• if the Bank Rating belongs to the range (0.7, 0.9] then the counterparty is constant and dynamically developing, without factors of financial difficulties (R2);• if the Bank Rating belongs to the range (0.4, 0.7] then financial status of the counterparty is satisfactory but requires monthly monitoring (R3);• if the Bank Rating belongs to the range (0.25, 0.4] then financial statements of the counterparty requires monthly monitoring by reason of negative tendency (R4);• if the Bank Rating is less or equal to 0.25, it means that the counterparty is in critical financial situation.'
+2026-09-07 13:37:53.479 [main] [INFO] WebElement - Waiting for tableNameCells_8 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.524 [main] [INFO] WebElement - Getting text from tableNameCells_8: 'Use the following tables to determine scores of 10 finantial indicators (Q1, Q2, …, Q10) applied for calculating the Balance Quality Index B.  The scores are to assess the quality of the bank-counterparty's balance sheet.'
+2026-09-07 13:37:53.524 [main] [INFO] WebElement - Waiting for tableNameCells_9 to be visible (timeout: 250ms)
+2026-09-07 13:37:53.582 [main] [INFO] WebElement - Getting text from tableNameCells_9: 'This document is designed to calculate the final value of the Limit for transactions that are subject to credit risk from bank-counterparties. The Limit is calculated according to the country of a bank-counterparty, total assets of the bank, its rating group, credit ratings assigned by The Big Three credit rating agencies and the maximum limit allowed on a bank-counterparty.          To assess the risk of default on the bank-counterparty obligations the financial statement analysis is carried out for determining of the creditworthiness of the bank-counterparty and assigning a rating by internal ranking system to it. This analysis consists of a qualitative and a quantitative analysis of the bank's state.          The main methods of the quantitative analysis are a structural analysis of a balance sheet, the analysis of the relative performance of financial and prudential reports (liquidity, profitability, asset quality, liabilities).         Components of the qualitative analysis are monitoring of bank-counterparty’s ratings assigned by international rating agencies, the existence and nature of the bank's credit history, current level of relationships with the bank, its shareholders and management, the business reputational analysis of the bank, monitoring of relations with a financial supervisory authority.'
+2026-09-07 13:37:53.583 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:53.626 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:53.630 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:53.631 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:53.666 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:53.672 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:53.672 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:53.709 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:37:53.789 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:37:54.789 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:54.794 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:54.794 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:54.852 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'Balance '
+2026-09-07 13:37:54.907 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:37:55.908 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:55.915 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:55.915 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:37:55.953 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:37:56.028 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:37:56.029 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:56.177 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                Example1BankRating
+                    
+            '
+2026-09-07 13:37:56.177 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:56.328 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                Example1BankRating
+                    
+            '
+2026-09-07 13:37:56.329 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:56.579 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:56.734 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                Example1BankRating
+                    
+            '
+2026-09-07 13:37:56.735 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:57.040 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                16 tables found
+            
+        '
+2026-09-07 13:37:57.040 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for search results to appear
+2026-09-07 13:37:57.290 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:57.349 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                16 tables found
+            
+        '
+2026-09-07 13:37:57.350 [main] [INFO] WaitUtil - Condition met after 1321ms: Waiting for search results to appear
+2026-09-07 13:37:57.350 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:37:57.399 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                16 tables found
+            
+        '
+2026-09-07 13:37:57.403 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.475 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double BalanceDynamicIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData, FinancialDataDatatype FinancialData previousFinancialData)'
+2026-09-07 13:37:57.476 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.537 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet SpreadsheetResult BalanceQualityIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData)'
+2026-09-07 13:37:57.538 [main] [INFO] WebElement - Waiting for tableNameCells_2 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.589 [main] [INFO] WebElement - Getting text from tableNameCells_2: 'Test BalanceDynamicIndexCalculation DynamicIndexTest'
+2026-09-07 13:37:57.589 [main] [INFO] WebElement - Waiting for tableNameCells_3 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.633 [main] [INFO] WebElement - Getting text from tableNameCells_3: 'Test BalanceQualityIndexCalculation QualityIndexTest'
+2026-09-07 13:37:57.633 [main] [INFO] WebElement - Waiting for tableNameCells_4 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.679 [main] [INFO] WebElement - Getting text from tableNameCells_4: 'SimpleRules Double TotalBalanceScore (Double totalBalance, CountryCodeDatatype CountryCode <String> countryCode)'
+2026-09-07 13:37:57.680 [main] [INFO] WebElement - Waiting for tableNameCells_5 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.728 [main] [INFO] WebElement - Getting text from tableNameCells_5: 'Test  TotalBalanceScore TotalBalanceScoreTest'
+2026-09-07 13:37:57.728 [main] [INFO] WebElement - Waiting for tableNameCells_6 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.775 [main] [INFO] WebElement - Getting text from tableNameCells_6: 'Use the following table to determine Bank Rating Group according to Bank Rating of the bank.          Depending on calculated Bank Rating the bank-counterparty refers to one of five Bank Rating Groups (categories of reliability):• if the Bank Rating is more then 0.9, it means that the counterparty has perfect credit history and reputation, stable balance sheets, high turnover and solid liabilities to customers (R1);• if the Bank Rating belongs to the range (0.7, 0.9] then the counterparty is constant and dynamically developing, without factors of financial difficulties (R2);• if the Bank Rating belongs to the range (0.4, 0.7] then financial status of the counterparty is satisfactory but requires monthly monitoring (R3);• if the Bank Rating belongs to the range (0.25, 0.4] then financial statements of the counterparty requires monthly monitoring by reason of negative tendency (R4);• if the Bank Rating is less or equal to 0.25, it means that the counterparty is in critical financial situation.'
+2026-09-07 13:37:57.776 [main] [INFO] WebElement - Waiting for tableNameCells_7 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.826 [main] [INFO] WebElement - Getting text from tableNameCells_7: 'Balance Quality'!A1'
+2026-09-07 13:37:57.826 [main] [INFO] WebElement - Waiting for tableNameCells_8 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.876 [main] [INFO] WebElement - Getting text from tableNameCells_8: 'Tests for "Balance Quality in Dynamic"'
+2026-09-07 13:37:57.876 [main] [INFO] WebElement - Waiting for tableNameCells_9 to be visible (timeout: 250ms)
+2026-09-07 13:37:57.930 [main] [INFO] WebElement - Getting text from tableNameCells_9: 'Balance Quality in Dynamic'!A1'
+2026-09-07 13:37:57.930 [main] [INFO] WebElement - Waiting for tableNameCells_10 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.000 [main] [INFO] WebElement - Getting text from tableNameCells_10: 'Tests for "Balance Quality"'
+2026-09-07 13:37:58.000 [main] [INFO] WebElement - Waiting for tableNameCells_11 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.051 [main] [INFO] WebElement - Getting text from tableNameCells_11: 'Use the following tables to determine scores of 10 finantial indicators (Q1, Q2, …, Q10) applied for calculating the Balance Quality Index B.  The scores are to assess the quality of the bank-counterparty's balance sheet.'
+2026-09-07 13:37:58.051 [main] [INFO] WebElement - Waiting for tableNameCells_12 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.096 [main] [INFO] WebElement - Getting text from tableNameCells_12: 'Balance Quality'
+2026-09-07 13:37:58.096 [main] [INFO] WebElement - Waiting for tableNameCells_13 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.140 [main] [INFO] WebElement - Getting text from tableNameCells_13: 'Use the following tables to determine scores of dynamic factors (D1, D2, …, D5) applied for calculating the first correction index B1 (Balance Dynamic Index). The scores are to assess dynamic performance of capital, liquidity, profit and liabilities to customers.'
+2026-09-07 13:37:58.140 [main] [INFO] WebElement - Waiting for tableNameCells_14 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.185 [main] [INFO] WebElement - Getting text from tableNameCells_14: 'This document is designed to calculate the final value of the Limit for transactions that are subject to credit risk from bank-counterparties. The Limit is calculated according to the country of a bank-counterparty, total assets of the bank, its rating group, credit ratings assigned by The Big Three credit rating agencies and the maximum limit allowed on a bank-counterparty.          To assess the risk of default on the bank-counterparty obligations the financial statement analysis is carried out for determining of the creditworthiness of the bank-counterparty and assigning a rating by internal ranking system to it. This analysis consists of a qualitative and a quantitative analysis of the bank's state.          The main methods of the quantitative analysis are a structural analysis of a balance sheet, the analysis of the relative performance of financial and prudential reports (liquidity, profitability, asset quality, liabilities).         Components of the qualitative analysis are monitoring of bank-counterparty’s ratings assigned by international rating agencies, the existence and nature of the bank's credit history, current level of relationships with the bank, its shareholders and management, the business reputational analysis of the bank, monitoring of relations with a financial supervisory authority.'
+2026-09-07 13:37:58.185 [main] [INFO] WebElement - Waiting for tableNameCells_15 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.228 [main] [INFO] WebElement - Getting text from tableNameCells_15: 'Balance Quality in Dynamic'
+2026-09-07 13:37:58.231 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.279 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'Spreadsheet Double BalanceDynamicIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData, FinancialDataDatatype FinancialData previousFinancialData)'
+2026-09-07 13:37:58.279 [main] [INFO] WebElement - Waiting for tableNameCells_1 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.335 [main] [INFO] WebElement - Getting text from tableNameCells_1: 'Spreadsheet SpreadsheetResult BalanceQualityIndexCalculation (FinancialDataDatatype FinancialData currentFinancialData)'
+2026-09-07 13:37:58.335 [main] [INFO] WebElement - Waiting for tableNameCells_2 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.381 [main] [INFO] WebElement - Getting text from tableNameCells_2: 'Test BalanceDynamicIndexCalculation DynamicIndexTest'
+2026-09-07 13:37:58.381 [main] [INFO] WebElement - Waiting for tableNameCells_3 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.426 [main] [INFO] WebElement - Getting text from tableNameCells_3: 'Test BalanceQualityIndexCalculation QualityIndexTest'
+2026-09-07 13:37:58.426 [main] [INFO] WebElement - Waiting for tableNameCells_4 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.509 [main] [INFO] WebElement - Getting text from tableNameCells_4: 'SimpleRules Double TotalBalanceScore (Double totalBalance, CountryCodeDatatype CountryCode <String> countryCode)'
+2026-09-07 13:37:58.509 [main] [INFO] WebElement - Waiting for tableNameCells_5 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.556 [main] [INFO] WebElement - Getting text from tableNameCells_5: 'Test  TotalBalanceScore TotalBalanceScoreTest'
+2026-09-07 13:37:58.556 [main] [INFO] WebElement - Waiting for tableNameCells_6 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.601 [main] [INFO] WebElement - Getting text from tableNameCells_6: 'Use the following table to determine Bank Rating Group according to Bank Rating of the bank.          Depending on calculated Bank Rating the bank-counterparty refers to one of five Bank Rating Groups (categories of reliability):• if the Bank Rating is more then 0.9, it means that the counterparty has perfect credit history and reputation, stable balance sheets, high turnover and solid liabilities to customers (R1);• if the Bank Rating belongs to the range (0.7, 0.9] then the counterparty is constant and dynamically developing, without factors of financial difficulties (R2);• if the Bank Rating belongs to the range (0.4, 0.7] then financial status of the counterparty is satisfactory but requires monthly monitoring (R3);• if the Bank Rating belongs to the range (0.25, 0.4] then financial statements of the counterparty requires monthly monitoring by reason of negative tendency (R4);• if the Bank Rating is less or equal to 0.25, it means that the counterparty is in critical financial situation.'
+2026-09-07 13:37:58.601 [main] [INFO] WebElement - Waiting for tableNameCells_7 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.644 [main] [INFO] WebElement - Getting text from tableNameCells_7: 'Balance Quality'!A1'
+2026-09-07 13:37:58.644 [main] [INFO] WebElement - Waiting for tableNameCells_8 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.688 [main] [INFO] WebElement - Getting text from tableNameCells_8: 'Tests for "Balance Quality in Dynamic"'
+2026-09-07 13:37:58.688 [main] [INFO] WebElement - Waiting for tableNameCells_9 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.731 [main] [INFO] WebElement - Getting text from tableNameCells_9: 'Balance Quality in Dynamic'!A1'
+2026-09-07 13:37:58.732 [main] [INFO] WebElement - Waiting for tableNameCells_10 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.775 [main] [INFO] WebElement - Getting text from tableNameCells_10: 'Tests for "Balance Quality"'
+2026-09-07 13:37:58.776 [main] [INFO] WebElement - Waiting for tableNameCells_11 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.819 [main] [INFO] WebElement - Getting text from tableNameCells_11: 'Use the following tables to determine scores of 10 finantial indicators (Q1, Q2, …, Q10) applied for calculating the Balance Quality Index B.  The scores are to assess the quality of the bank-counterparty's balance sheet.'
+2026-09-07 13:37:58.820 [main] [INFO] WebElement - Waiting for tableNameCells_12 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.904 [main] [INFO] WebElement - Getting text from tableNameCells_12: 'Balance Quality'
+2026-09-07 13:37:58.904 [main] [INFO] WebElement - Waiting for tableNameCells_13 to be visible (timeout: 250ms)
+2026-09-07 13:37:58.968 [main] [INFO] WebElement - Getting text from tableNameCells_13: 'Use the following tables to determine scores of dynamic factors (D1, D2, …, D5) applied for calculating the first correction index B1 (Balance Dynamic Index). The scores are to assess dynamic performance of capital, liquidity, profit and liabilities to customers.'
+2026-09-07 13:37:58.968 [main] [INFO] WebElement - Waiting for tableNameCells_14 to be visible (timeout: 250ms)
+2026-09-07 13:37:59.055 [main] [INFO] WebElement - Getting text from tableNameCells_14: 'This document is designed to calculate the final value of the Limit for transactions that are subject to credit risk from bank-counterparties. The Limit is calculated according to the country of a bank-counterparty, total assets of the bank, its rating group, credit ratings assigned by The Big Three credit rating agencies and the maximum limit allowed on a bank-counterparty.          To assess the risk of default on the bank-counterparty obligations the financial statement analysis is carried out for determining of the creditworthiness of the bank-counterparty and assigning a rating by internal ranking system to it. This analysis consists of a qualitative and a quantitative analysis of the bank's state.          The main methods of the quantitative analysis are a structural analysis of a balance sheet, the analysis of the relative performance of financial and prudential reports (liquidity, profitability, asset quality, liabilities).         Components of the qualitative analysis are monitoring of bank-counterparty’s ratings assigned by international rating agencies, the existence and nature of the bank's credit history, current level of relationships with the bank, its shareholders and management, the business reputational analysis of the bank, monitoring of relations with a financial supervisory authority.'
+2026-09-07 13:37:59.055 [main] [INFO] WebElement - Waiting for tableNameCells_15 to be visible (timeout: 250ms)
+2026-09-07 13:37:59.101 [main] [INFO] WebElement - Getting text from tableNameCells_15: 'Balance Quality in Dynamic'
+2026-09-07 13:37:59.101 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:59.122 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.126 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.126 [main] [INFO] WebElement - Waiting for breadcrumbsAllProjects to be visible (timeout: 1000ms)
+2026-09-07 13:37:59.148 [main] [INFO] CoreComponent - Navigating back to projects list via breadcrumb...
+2026-09-07 13:37:59.148 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.150 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.150 [main] [INFO] WebElement - Waiting for breadcrumbsAllProjects to be visible (timeout: 250ms)
+2026-09-07 13:37:59.172 [main] [INFO] WebElement - Clicking breadcrumbsAllProjects 
+2026-09-07 13:37:59.392 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for projects list to load
+2026-09-07 13:37:59.893 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:37:59.917 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.920 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.920 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:37:59.928 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.929 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:59.929 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:37:59.936 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:38:00.003 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:38:01.005 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:01.010 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:01.010 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:01.052 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'testingFirst'
+2026-09-07 13:38:01.112 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:38:02.112 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:02.118 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:02.118 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:02.160 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:38:02.287 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:38:02.287 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:02.629 [main] [INFO] WebElement - Getting text from searchResultCounter: '
+                1 tables found
+            
+        '
+2026-09-07 13:38:02.629 [main] [INFO] WaitUtil - Condition met after 342ms: Waiting for search results to appear
+2026-09-07 13:38:02.639 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:38:02.721 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'SimpleRules String RulesName (String[] param1)'
+2026-09-07 13:38:02.793 [main] [INFO] WebElement - Waiting for tableNameCells_0 to be visible (timeout: 250ms)
+2026-09-07 13:38:02.910 [main] [INFO] WebElement - Getting text from tableNameCells_0: 'SimpleRules String RulesName (String[] param1)'
+2026-09-07 13:38:02.910 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:38:03.911 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:03.916 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:03.916 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:03.969 [main] [INFO] WebElement - Filling Sequentially searchName with text: 'money'
+2026-09-07 13:38:04.006 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:38:05.006 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:05.011 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:05.011 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:05.039 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:38:05.236 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:38:05.236 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:05.401 [main] [INFO] WebElement - Getting text from searchResultCounter: 'No results found
+        '
+2026-09-07 13:38:05.401 [main] [INFO] WaitUtil - Condition met after 165ms: Waiting for search results to appear
+2026-09-07 13:38:05.401 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:05.430 [main] [INFO] WebElement - Getting text from searchResultCounter: 'No results found
+        '
+2026-09-07 13:38:05.430 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:05.445 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:05.448 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:05.448 [main] [INFO] WebElement - Waiting for breadcrumbsAllProjects to be visible (timeout: 1000ms)
+2026-09-07 13:38:05.462 [main] [INFO] CoreComponent - Navigating back to projects list via breadcrumb...
+2026-09-07 13:38:05.462 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:05.464 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:05.464 [main] [INFO] WebElement - Waiting for breadcrumbsAllProjects to be visible (timeout: 250ms)
+2026-09-07 13:38:05.478 [main] [INFO] WebElement - Clicking breadcrumbsAllProjects 
+2026-09-07 13:38:05.711 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for projects list to load
+2026-09-07 13:38:06.211 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:06.240 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:06.243 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:06.243 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:38:06.251 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:06.252 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:06.253 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:38:06.261 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:38:06.320 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:38:07.320 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:07.328 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:07.328 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:07.384 [main] [INFO] WebElement - Filling Sequentially searchName with text: ''''
+2026-09-07 13:38:07.499 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:38:08.500 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:08.506 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:08.506 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:08.545 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:38:08.627 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:38:08.627 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:08.760 [main] [INFO] WebElement - Getting text from searchResultCounter: 'No results found
+        '
+2026-09-07 13:38:08.760 [main] [INFO] WaitUtil - Condition met after 133ms: Waiting for search results to appear
+2026-09-07 13:38:08.760 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:08.805 [main] [INFO] WebElement - Getting text from searchResultCounter: 'No results found
+        '
+2026-09-07 13:38:08.805 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:08.824 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:08.827 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:08.827 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:38:08.845 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:08.848 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:08.848 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:38:08.866 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:38:08.927 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before type search
+2026-09-07 13:38:09.927 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:09.932 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:09.932 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:09.986 [main] [INFO] WebElement - Filling Sequentially searchName with text: ' alert("zzz") '
+2026-09-07 13:38:10.049 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting after type search
+2026-09-07 13:38:11.049 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:11.055 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:11.056 [main] [INFO] WebElement - Waiting for searchName to be visible (timeout: 250ms)
+2026-09-07 13:38:11.097 [main] [INFO] WebElement - Pressing Enter on searchName
+2026-09-07 13:38:11.181 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for search results to appear
+2026-09-07 13:38:11.181 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:11.374 [main] [INFO] WebElement - Getting text from searchResultCounter: 'No results found
+        '
+2026-09-07 13:38:11.374 [main] [INFO] WaitUtil - Condition met after 193ms: Waiting for search results to appear
+2026-09-07 13:38:11.374 [main] [INFO] WebElement - Waiting for searchResultCounter to be visible (timeout: 250ms)
+2026-09-07 13:38:11.413 [main] [INFO] WebElement - Getting text from searchResultCounter: 'No results found
+        '
+2026-09-07 13:38:11.419 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:38:11.812 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

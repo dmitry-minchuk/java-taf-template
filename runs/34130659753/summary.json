@@ -1,0 +1,66 @@
+{
+  "build": "latest",
+  "run": {
+    "startedAt": "2026-09-07 14:03:39 UTC",
+    "finishedAt": "2026-09-07 14:05:34 UTC",
+    "wallSeconds": 115,
+    "applications": [
+      {
+        "image": "ghcr.io/openl-tablets/webstudio:latest",
+        "versions": [
+          {
+            "title": "OpenL Studio",
+            "version": "6.5.0-SNAPSHOT",
+            "buildNumber": "4a45294cf0d6",
+            "buildDate": "2026-09-06"
+          }
+        ],
+        "tests": 2,
+        "errors": []
+      },
+      {
+        "image": "ghcr.io/openl-tablets/ws:latest-all",
+        "versions": [],
+        "tests": 0,
+        "errors": []
+      }
+    ],
+    "testsRepository": "dmitry-minchuk/java-taf-template",
+    "testsBranch": "main",
+    "testsCommit": "cf799636d469f444b79eb36cf73c5f42e0a6f689",
+    "playwrightVersion": "1.52.0",
+    "javaVersion": "21",
+    "selective": true,
+    "workflowRunUrl": "https://github.com/dmitry-minchuk/java-taf-template/actions/runs/34130659753"
+  },
+  "total": 2,
+  "counts": {
+    "PASSED": 2
+  },
+  "tests": [
+    {
+      "suite": "rules_editor",
+      "shard": "shard-01",
+      "class": "tests.ui.webstudio.rules_editor.TestLocalChangesAfterReImportForTemplateProject",
+      "method": "testLocalChangesAfterReImportForTemplateProject",
+      "status": "PASSED",
+      "outcome": "PASSED",
+      "knownIssue": "",
+      "durationMs": 104958,
+      "testCaseId": "IPBQA-31512",
+      "errorMessage": ""
+    },
+    {
+      "suite": "rules_editor",
+      "shard": "shard-02",
+      "class": "tests.ui.webstudio.rules_editor.TestLocalChangesAfterTablesGenerationReImport",
+      "method": "testLocalChangesAfterTablesGenerationReImport",
+      "status": "PASSED",
+      "outcome": "PASSED",
+      "knownIssue": "",
+      "durationMs": 95437,
+      "testCaseId": "IPBQA-31512",
+      "errorMessage": ""
+    }
+  ]
+}

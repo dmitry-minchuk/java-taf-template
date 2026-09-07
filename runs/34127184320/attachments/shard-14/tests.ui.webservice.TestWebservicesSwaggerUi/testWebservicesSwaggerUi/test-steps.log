@@ -1,0 +1,67 @@
+2026-09-07 13:25:16.401 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testWebservicesSwaggerUi
+2026-09-07 13:25:16.409 [main] [INFO] BaseTest - [ruleservice.deployer.enabled] -> [true]
+2026-09-07 13:25:16.410 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:25:16.410 [main] [INFO] BaseTest - [production-repository.factory] -> [repo-file]
+2026-09-07 13:25:16.410 [main] [INFO] BaseTest - [production-repository.uri] -> [/opt/openl/shared]
+2026-09-07 13:25:16.441 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-963945 (startup timeout: PT10M)
+2026-09-07 13:25:31.330 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-963945: http://localhost:32769
+2026-09-07 13:25:31.330 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-963945:8080
+2026-09-07 13:25:31.331 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:25:34.332 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:34.335 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:34.336 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:25:35.337 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:25:35.339 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:25:35.339 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:25:35.340 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:25:35.340 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:25:38.145 [main] [INFO] DockerDriverPool - Playwright Server container started in 2805 ms
+2026-09-07 13:25:38.145 [main] [INFO] DockerDriverPool - Container started - ID: ef59eeaa6eb748fb71124c9b56d32be55c6d94089c0d76ea1c4e1f995af0ac6d
+2026-09-07 13:25:38.145 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32770 -> 3000
+2026-09-07 13:25:38.146 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:25:38.158 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:25:38.158 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32770
+2026-09-07 13:25:52.390 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:25:52.602 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32770/
+2026-09-07 13:25:52.603 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:25:52.651 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:25:52.714 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:25:52.715 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:25:53.597 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+GET http://localhost:32769/web/public/info/openl.json
+Header: Accept : */*
+
+2026-09-07 13:25:53.597 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+404 HTTP/1.1 404 Not FoundHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:25:53 GMT
+Header: Content-Type : text/html;charset=utf-8
+Header: Content-Length : 47
+Body: 
+<html><body>No service was found.</body></html>
+2026-09-07 13:25:54.088 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:25:54.099 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:54.102 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-963945:8080
+2026-09-07 13:25:54.157 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 10000ms)
+2026-09-07 13:25:54.329 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.356 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.417 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:25:54.424 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:25:54.424 [main] [INFO] WebElement - Waiting for Project Title Link to be visible (timeout: 250ms)
+2026-09-07 13:25:54.439 [main] [INFO] WebElement - Clicking Project Title Link 
+2026-09-07 13:25:54.528 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:54.528 [main] [INFO] WebElement - Waiting for Swagger UI Container to be visible (timeout: 15000ms)
+2026-09-07 13:25:54.773 [main] [INFO] WaitUtil - Waiting for condition (timeout: 15000ms, polling: 1000ms): Waiting for API selector options to be populated
+2026-09-07 13:25:54.830 [main] [INFO] WaitUtil - Condition met after 57ms: Waiting for API selector options to be populated
+2026-09-07 13:25:54.831 [main] [INFO] WaitUtil - Waiting for condition (timeout: 15000ms, polling: 1000ms): Waiting for 'Download OpenAPI spec' button to appear
+2026-09-07 13:25:54.853 [main] [INFO] WaitUtil - Sleeping for 1000ms: Polling for condition (attempt): Waiting for 'Download OpenAPI spec' button to appear
+2026-09-07 13:25:55.876 [main] [INFO] WaitUtil - Condition met after 1045ms: Waiting for 'Download OpenAPI spec' button to appear
+2026-09-07 13:25:55.918 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:25:58.791 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

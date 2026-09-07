@@ -1,0 +1,34 @@
+{
+  "build": "latest",
+  "workflowRunUrl": "https://github.com/dmitry-minchuk/java-taf-template/actions/runs/34130659753",
+  "tests": [
+    {
+      "class": "tests.ui.webstudio.rules_editor.TestLocalChangesAfterReImportForTemplateProject",
+      "method": "testLocalChangesAfterReImportForTemplateProject",
+      "displayName": "testLocalChangesAfterReImportForTemplateProject",
+      "suite": "rules_editor",
+      "shard": "shard-01",
+      "status": "PASSED",
+      "durationMs": 104958,
+      "testCaseId": "IPBQA-31512",
+      "errorMessage": "",
+      "outcome": "PASSED",
+      "knownIssue": "",
+      "bundle": ""
+    },
+    {
+      "class": "tests.ui.webstudio.rules_editor.TestLocalChangesAfterTablesGenerationReImport",
+      "method": "testLocalChangesAfterTablesGenerationReImport",
+      "displayName": "testLocalChangesAfterTablesGenerationReImport",
+      "suite": "rules_editor",
+      "shard": "shard-02",
+      "status": "PASSED",
+      "durationMs": 95437,
+      "testCaseId": "IPBQA-31512",
+      "errorMessage": "",
+      "outcome": "PASSED",
+      "knownIssue": "",
+      "bundle": ""
+    }
+  ]
+}

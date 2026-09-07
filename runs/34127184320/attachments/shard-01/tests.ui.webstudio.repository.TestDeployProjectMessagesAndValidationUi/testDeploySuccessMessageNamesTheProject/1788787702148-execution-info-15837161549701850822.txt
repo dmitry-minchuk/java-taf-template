@@ -1,0 +1,12 @@
+Execution Mode: PLAYWRIGHT_DOCKER
+
+Execution Mode: PLAYWRIGHT_DOCKER
+Playwright Docker Architecture:
+  Network: 7d7a3c1a3dd41e0e55f761104dc1a2d4e87452dbbdf193d85c4b6c495c283247
+  Playwright Container: 07b241165c48bb7acb6102c6d111e8f92c92d05cee6cebaf7cc7c3f9c27a66c6
+  Browser: chromium
+  Current Page: http://appcontainer-856585:8080/projects
+  App Container: 3dd7735d6ad048d1a45c213716dcc8f5d3e47943d678bad772a0bea24c0e62f6
+  Container Network URL: http:///dreamy_cohen:8080
+Configuration:
+Host Resource Path: src/test/resources

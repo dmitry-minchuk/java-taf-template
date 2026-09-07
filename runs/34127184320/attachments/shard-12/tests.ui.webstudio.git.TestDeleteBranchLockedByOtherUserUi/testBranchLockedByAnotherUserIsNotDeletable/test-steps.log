@@ -1,0 +1,414 @@
+2026-09-07 13:25:21.271 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testBranchLockedByAnotherUserIsNotDeletable
+2026-09-07 13:25:21.280 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:25:21.281 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:25:21.281 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:25:21.322 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-641881 (startup timeout: PT10M)
+2026-09-07 13:25:52.459 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-641881: http://localhost:32769
+2026-09-07 13:25:52.460 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-641881:8080
+2026-09-07 13:25:52.461 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:25:55.461 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:55.465 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:55.465 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:25:56.467 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:25:56.470 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:25:56.470 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:25:56.470 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:25:56.470 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:25:59.634 [main] [INFO] DockerDriverPool - Playwright Server container started in 3164 ms
+2026-09-07 13:25:59.634 [main] [INFO] DockerDriverPool - Container started - ID: 126e16be6e17d489d0959a284b7c0ec2242112efe387224efa530879d9b13086
+2026-09-07 13:25:59.634 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32770 -> 3000
+2026-09-07 13:25:59.635 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:25:59.647 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:25:59.647 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32770
+2026-09-07 13:26:14.210 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:26:14.400 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32770/
+2026-09-07 13:26:14.401 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:26:14.439 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:26:14.503 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:26:14.503 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:26:15.905 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:26:15.921 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-641881:8080
+2026-09-07 13:26:15.921 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:26:15.921 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:26:16.972 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-641881:8080
+2026-09-07 13:26:16.976 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:26:16.981 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:26:17.089 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:17.100 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:17.101 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:26:17.140 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:26:17.184 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:17.188 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:17.188 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:26:17.202 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:26:17.232 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:17.239 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:17.240 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:26:17.257 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:26:20.605 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:26:20.670 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:26:20.993 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:20.998 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:20.998 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:26:21.015 [main] [INFO] WebElement - Filling firstNameField with text: 'Carlos'
+2026-09-07 13:26:21.054 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.069 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.069 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:26:21.110 [main] [INFO] WebElement - Filling lastNameField with text: 'Abbott'
+2026-09-07 13:26:21.287 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.297 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.298 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:26:21.321 [main] [INFO] WebElement - Filling emailField with text: 'jesus.mohr@hotmail.com'
+2026-09-07 13:26:21.402 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.416 [main] [INFO] WaitUtil - Condition met after 13ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.416 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:26:21.440 [main] [INFO] WebElement - Filling displayNameField with text: 'Samella Schneider Sr.'
+2026-09-07 13:26:21.517 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.527 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:21.528 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:26:21.567 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:26:21.698 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:26:21.698 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:26:21.730 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:26:21.980 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:26:22.508 [main] [INFO] WaitUtil - Condition met after 810ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:26:22.509 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:26:25.517 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:26:25.528 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:26:25.538 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:26:25.539 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:25.541 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:25.541 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:26:25.549 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:26:26.191 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:26:26.191 [main] [INFO] WaitUtil - Condition met after 662ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:26:26.192 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:26:26.209 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:26.252 [main] [INFO] WaitUtil - Condition met after 43ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:26.253 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:26:26.427 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:26:26.587 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From template' step of the Create project wizard
+2026-09-07 13:26:26.588 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:26.602 [main] [INFO] WaitUtil - Condition met after 14ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:26.603 [main] [INFO] WebElement - Waiting for methodTemplate to be visible (timeout: 250ms)
+2026-09-07 13:26:26.677 [main] [INFO] WebElement - Clicking methodTemplate 
+2026-09-07 13:26:27.079 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From template' step to render
+2026-09-07 13:26:27.084 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the 'From template' step to render
+2026-09-07 13:26:27.085 [main] [INFO] WaitUtil - Action succeeded after 497ms: Opening the 'From template' step of the Create project wizard
+2026-09-07 13:26:27.085 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.095 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.096 [main] [INFO] WebElement - Waiting for templateGroup to be visible (timeout: 250ms)
+2026-09-07 13:26:27.122 [main] [INFO] WebElement - Clicking templateGroup 
+2026-09-07 13:26:27.203 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.208 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.209 [main] [INFO] WebElement - Waiting for templateItem to be visible (timeout: 250ms)
+2026-09-07 13:26:27.225 [main] [INFO] WebElement - Clicking templateItem 
+2026-09-07 13:26:27.324 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:26:27.324 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.334 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.335 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:26:27.357 [main] [INFO] WebElement - Filling newProjectName with text: 'project-529783'
+2026-09-07 13:26:27.437 [main] [INFO] WebElement - Getting current input value from newProjectName: 'project-529783'
+2026-09-07 13:26:27.437 [main] [INFO] WaitUtil - Condition met after 113ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:26:27.437 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.440 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.440 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:26:27.458 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:26:27.548 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:26:27.579 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.587 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:27.587 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:26:30.615 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:26:30.626 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:30.628 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:30.750 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:26:30.793 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:30.809 [main] [INFO] WaitUtil - Condition met after 14ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:30.810 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:26:30.817 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:26:31.109 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:26:31.363 [main] [INFO] WaitUtil - Condition met after 553ms: Waiting for project row actions
+2026-09-07 13:26:31.399 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:26:31.406 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:31.408 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:31.408 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:26:31.416 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:26:31.489 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:26:31.500 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the row overflow menu
+2026-09-07 13:26:31.593 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:26:31.609 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:26:31.610 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:31.621 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:31.621 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:26:31.651 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:26:32.392 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:26:32.393 [main] [INFO] WaitUtil - Condition met after 800ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:26:32.393 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:26:32.394 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:26:32.395 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:26:32.429 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:26:32.429 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:32.433 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:32.433 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:26:32.450 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:26:32.936 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:26:32.936 [main] [INFO] WaitUtil - Condition met after 541ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:26:32.936 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:26:32.938 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:32.960 [main] [INFO] WaitUtil - Condition met after 22ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:32.960 [main] [INFO] WebElement - Waiting for projectNameInRow to be visible (timeout: 250ms)
+2026-09-07 13:26:33.071 [main] [INFO] WebElement - Clicking projectNameInRow 
+2026-09-07 13:26:33.144 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.ProjectDetailPage was opened.
+2026-09-07 13:26:33.148 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:33.166 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:33.167 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:26:33.427 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:26:33.904 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:26:33.938 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:33.945 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:33.946 [main] [INFO] WebElement - Waiting for branchLabel to be visible (timeout: 250ms)
+2026-09-07 13:26:34.013 [main] [INFO] WebElement - Getting text from branchLabel: 'masterDefault'
+2026-09-07 13:26:34.014 [main] [INFO] WebElement - Waiting for headerAction to be visible (timeout: 4000ms)
+2026-09-07 13:26:34.034 [main] [INFO] CoreComponent - Header action 'Copy' clicked on the bar
+2026-09-07 13:26:34.034 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:34.039 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:34.040 [main] [INFO] WebElement - Waiting for headerAction to be visible (timeout: 250ms)
+2026-09-07 13:26:34.055 [main] [INFO] WebElement - Clicking headerAction 
+2026-09-07 13:26:34.166 [main] [INFO] WebElement - Waiting for copyProjectSubmit to be visible (timeout: 20000ms)
+2026-09-07 13:26:34.196 [main] [INFO] WebElement - Waiting for copyProjectBranch to be visible (timeout: 20000ms)
+2026-09-07 13:26:34.218 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 200ms): Waiting for the copy dialog's suggested branch name
+2026-09-07 13:26:34.241 [main] [INFO] WebElement - Getting current input value from copyProjectBranch: 'project-529783/admin/20260907'
+2026-09-07 13:26:34.242 [main] [INFO] WaitUtil - Condition met after 24ms: Waiting for the copy dialog's suggested branch name
+2026-09-07 13:26:34.242 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:34.246 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:34.246 [main] [INFO] WebElement - Waiting for copyProjectBranch to be visible (timeout: 250ms)
+2026-09-07 13:26:34.274 [main] [INFO] WebElement - Filling copyProjectBranch with text: 'locked-branch'
+2026-09-07 13:26:34.319 [main] [INFO] CopyProjectDialogComponent - Clicking Copy button
+2026-09-07 13:26:34.319 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:34.324 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:34.324 [main] [INFO] WebElement - Waiting for copyProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:26:34.344 [main] [INFO] WebElement - Clicking copyProjectSubmit 
+2026-09-07 13:26:34.634 [main] [INFO] WebElement - Waiting for copyProjectSubmit to be hidden
+2026-09-07 13:26:35.594 [main] [INFO] WebElement - Waiting for configureCommitInfoShade to be visible (timeout: 4000ms)
+2026-09-07 13:26:39.608 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:26:39.630 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:39.636 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:39.637 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 500ms): Waiting for the project to land on branch locked-branch
+2026-09-07 13:26:39.637 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:39.645 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:39.646 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:26:39.679 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:26:39.747 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:26:39.768 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:39.771 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:39.771 [main] [INFO] WebElement - Waiting for branchLabel to be visible (timeout: 250ms)
+2026-09-07 13:26:39.825 [main] [INFO] WebElement - Getting text from branchLabel: 'locked-branch'
+2026-09-07 13:26:39.826 [main] [INFO] WaitUtil - Condition met after 189ms: Waiting for the project to land on branch locked-branch
+2026-09-07 13:26:40.379 [main] [INFO] CorePage - Messages currently open: 0
+2026-09-07 13:26:40.382 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:26:40.485 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:26:40.588 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:26:40.688 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:40.691 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:40.691 [main] [INFO] WebElement - Waiting for User Logo to be visible (timeout: 250ms)
+2026-09-07 13:26:40.701 [main] [INFO] WebElement - Clicking User Logo 
+2026-09-07 13:26:40.754 [main] [INFO] WebElement - Waiting for User Menu Drawer to be visible
+2026-09-07 13:26:40.767 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:40.773 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:40.773 [main] [INFO] WebElement - Waiting for Sign Out Menu Item to be visible (timeout: 250ms)
+2026-09-07 13:26:40.805 [main] [INFO] WebElement - Clicking Sign Out Menu Item 
+2026-09-07 13:26:41.340 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-641881:8080
+2026-09-07 13:26:41.341 [main] [INFO] LoginService - Logging in with user: locker_16255
+2026-09-07 13:26:41.341 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:26:41.843 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-641881:8080
+2026-09-07 13:26:41.844 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:26:41.844 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:26:41.864 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:41.866 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:41.866 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:26:41.885 [main] [INFO] WebElement - Filling usernameField with text: 'locker_16255'
+2026-09-07 13:26:41.900 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:41.902 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:41.903 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:26:41.911 [main] [INFO] WebElement - Filling passwordField with text: 'locker_16255'
+2026-09-07 13:26:41.935 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:41.941 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:41.941 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:26:41.955 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:26:43.085 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:27:03.093 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:27:03.095 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:27:03.095 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:27:03.104 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:27:03.104 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:03.107 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:03.107 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:27:03.118 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:27:03.709 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:27:03.710 [main] [INFO] WaitUtil - Condition met after 615ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:27:03.710 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:27:03.711 [main] [INFO] WebElement - Waiting for projectRowAction to be visible (timeout: 4000ms)
+2026-09-07 13:27:03.901 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:03.910 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:03.910 [main] [INFO] WebElement - Waiting for projectRowAction to be visible (timeout: 10000ms)
+2026-09-07 13:27:03.929 [main] [INFO] WebElement - Clicking with increased timeout projectRowAction 
+2026-09-07 13:27:04.137 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project project-529783 to finish opening
+2026-09-07 13:27:04.145 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project project-529783 to finish opening
+2026-09-07 13:27:04.402 [main] [INFO] WaitUtil - Condition met after 265ms: Waiting for project project-529783 to finish opening
+2026-09-07 13:27:04.403 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:04.421 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:04.425 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:04.426 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:04.433 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:04.433 [main] [INFO] WebElement - Waiting for projectNameInRow to be visible (timeout: 250ms)
+2026-09-07 13:27:04.481 [main] [INFO] WebElement - Clicking projectNameInRow 
+2026-09-07 13:27:04.588 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.ProjectDetailPage was opened.
+2026-09-07 13:27:04.589 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:04.603 [main] [INFO] WaitUtil - Condition met after 14ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:04.604 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:27:04.880 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:27:05.332 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:05.396 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:05.407 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:05.407 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:05.413 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:05.413 [main] [INFO] WebElement - Waiting for branchSwitcherTrigger to be visible (timeout: 250ms)
+2026-09-07 13:27:05.443 [main] [INFO] WebElement - Clicking branchSwitcherTrigger 
+2026-09-07 13:27:05.618 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:05.621 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:05.621 [main] [INFO] WebElement - Waiting for branchMenuItem to be visible (timeout: 250ms)
+2026-09-07 13:27:05.657 [main] [INFO] WebElement - Clicking branchMenuItem 
+2026-09-07 13:27:06.032 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:06.193 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.206 [main] [INFO] WaitUtil - Condition met after 13ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.251 [main] [INFO] WebElement - Waiting for detailRoot to be visible (timeout: 20000ms)
+2026-09-07 13:27:06.292 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.295 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.295 [main] [INFO] WebElement - Waiting for filesTab to be visible (timeout: 250ms)
+2026-09-07 13:27:06.321 [main] [INFO] WebElement - Clicking filesTab 
+2026-09-07 13:27:06.390 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:06.491 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.511 [main] [INFO] WaitUtil - Condition met after 20ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.512 [main] [INFO] WebElement - Waiting for filesSearchField to be visible (timeout: 10000ms)
+2026-09-07 13:27:06.595 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.598 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.598 [main] [INFO] WebElement - Hovering over filesAddBtn
+2026-09-07 13:27:06.685 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.692 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:06.693 [main] [INFO] WebElement - Waiting for filesAddMenuItem to be visible (timeout: 250ms)
+2026-09-07 13:27:06.913 [main] [INFO] WebElement - Clicking filesAddMenuItem 
+2026-09-07 13:27:07.244 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestFileAddDelete/TestFileAddDelete.rules.xls] to filesUploadInput
+2026-09-07 13:27:07.337 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:07.352 [main] [INFO] WaitUtil - Condition met after 15ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:07.352 [main] [INFO] WebElement - Waiting for filesUploadSubmitBtn to be visible (timeout: 250ms)
+2026-09-07 13:27:07.386 [main] [INFO] WebElement - Clicking filesUploadSubmitBtn 
+2026-09-07 13:27:07.854 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:07.886 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:07.894 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:07.894 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:07.898 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:07.898 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:27:08.026 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:27:08.457 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:08.496 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:08.502 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:08.502 [main] [INFO] WebElement - Waiting for overviewRight to be visible (timeout: 250ms)
+2026-09-07 13:27:08.586 [main] [INFO] WebElement - Getting text from overviewRight: 'StatusIn EditingRepositoryDesignPathproject-529783Branchlocked-branchRevision ID92da19ModifiedSamella Schneider Sr.Sep 7, 2026 9:26:27 AMCommentProject project-529783 is created.TagsNot tagged'
+2026-09-07 13:27:08.595 [main] [INFO] CorePage - Messages currently open: 0
+2026-09-07 13:27:08.602 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:27:08.707 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:27:08.810 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:27:08.911 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:08.915 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:08.915 [main] [INFO] WebElement - Waiting for User Logo to be visible (timeout: 250ms)
+2026-09-07 13:27:08.928 [main] [INFO] WebElement - Clicking User Logo 
+2026-09-07 13:27:08.999 [main] [INFO] WebElement - Waiting for User Menu Drawer to be visible
+2026-09-07 13:27:09.039 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:09.043 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:09.043 [main] [INFO] WebElement - Waiting for Sign Out Menu Item to be visible (timeout: 250ms)
+2026-09-07 13:27:09.064 [main] [INFO] WebElement - Clicking Sign Out Menu Item 
+2026-09-07 13:27:09.490 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-641881:8080
+2026-09-07 13:27:09.490 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:27:09.490 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:27:09.997 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-641881:8080
+2026-09-07 13:27:09.997 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:27:09.997 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:27:10.018 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:10.022 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:10.022 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:27:10.027 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:27:10.046 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:10.052 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:10.052 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:27:10.069 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:27:10.103 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:10.109 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:10.109 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:27:10.125 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:27:11.318 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:27:31.325 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:27:31.326 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:27:31.326 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:27:31.333 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:27:31.333 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:31.335 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:31.336 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:27:31.344 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:27:31.939 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:27:31.939 [main] [INFO] WaitUtil - Condition met after 613ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:27:31.939 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:27:31.940 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:31.970 [main] [INFO] WaitUtil - Condition met after 30ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:31.970 [main] [INFO] WebElement - Waiting for projectNameInRow to be visible (timeout: 250ms)
+2026-09-07 13:27:32.138 [main] [INFO] WebElement - Clicking projectNameInRow 
+2026-09-07 13:27:32.218 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.ProjectDetailPage was opened.
+2026-09-07 13:27:32.219 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:32.231 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:32.232 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:27:32.509 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:27:33.034 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:33.077 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.094 [main] [INFO] WaitUtil - Condition met after 17ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.094 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.103 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.103 [main] [INFO] WebElement - Waiting for branchSwitcherTrigger to be visible (timeout: 250ms)
+2026-09-07 13:27:33.136 [main] [INFO] WebElement - Clicking branchSwitcherTrigger 
+2026-09-07 13:27:33.271 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.274 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.274 [main] [INFO] WebElement - Waiting for branchMenuItem to be visible (timeout: 250ms)
+2026-09-07 13:27:33.292 [main] [INFO] WebElement - Clicking branchMenuItem 
+2026-09-07 13:27:33.591 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:33.617 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.621 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.622 [main] [INFO] WebElement - Waiting for headerAction to be visible (timeout: 4000ms)
+2026-09-07 13:27:33.652 [main] [INFO] CoreComponent - Header action 'Delete Branch' clicked on the bar
+2026-09-07 13:27:33.653 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.658 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:33.658 [main] [INFO] WebElement - Waiting for headerAction to be visible (timeout: 250ms)
+2026-09-07 13:27:33.688 [main] [INFO] WebElement - Clicking headerAction 
+2026-09-07 13:27:33.951 [main] [INFO] WebElement - Waiting for deleteBranchConfirmBtn to be visible (timeout: 20000ms)
+2026-09-07 13:27:34.023 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:34.041 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:34.041 [main] [INFO] WebElement - Waiting for deleteBranchConfirmBtn to be visible (timeout: 250ms)
+2026-09-07 13:27:34.075 [main] [INFO] WebElement - Clicking deleteBranchConfirmBtn 
+2026-09-07 13:27:34.390 [main] [INFO] WebElement - Waiting for errorNotification to be visible (timeout: 20000ms)
+2026-09-07 13:27:34.500 [main] [INFO] WebElement - Waiting for errorNotification to be visible (timeout: 250ms)
+2026-09-07 13:27:34.540 [main] [INFO] WebElement - Getting text from errorNotification: 'Cannot delete the branch: the project is locked by user 'locker_16255'.'
+2026-09-07 13:27:34.540 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:34.544 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:34.544 [main] [INFO] WebElement - Waiting for deleteBranchCancelBtn to be visible (timeout: 250ms)
+2026-09-07 13:27:34.574 [main] [INFO] WebElement - Clicking deleteBranchCancelBtn 
+2026-09-07 13:27:34.673 [main] [INFO] WebElement - Waiting for deleteBranchConfirmBtn to be hidden
+2026-09-07 13:27:35.018 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:35.023 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:35.023 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:27:35.050 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:27:35.145 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:27:35.175 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:27:35.178 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:27:35.178 [main] [INFO] WebElement - Waiting for branchLabel to be visible (timeout: 250ms)
+2026-09-07 13:27:35.222 [main] [INFO] WebElement - Getting text from branchLabel: 'locked-branch'
+2026-09-07 13:27:35.242 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:27:36.626 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

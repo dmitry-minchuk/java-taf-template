@@ -1,0 +1,613 @@
+2026-09-07 13:41:05.855 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testEqualRowsCheckboxInTableCreationComparison
+2026-09-07 13:41:05.855 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:41:05.855 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:41:05.855 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:41:05.856 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-560905 (startup timeout: PT10M)
+2026-09-07 13:41:25.861 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-560905: http://localhost:32801
+2026-09-07 13:41:25.861 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-560905:8080
+2026-09-07 13:41:25.861 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:41:28.861 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:41:28.864 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:41:28.864 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:41:29.865 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:41:29.866 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:41:29.866 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:41:29.866 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:41:29.866 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:41:31.135 [main] [INFO] DockerDriverPool - Playwright Server container started in 1269 ms
+2026-09-07 13:41:31.135 [main] [INFO] DockerDriverPool - Container started - ID: 0e06d190a09a80ed92f4607d03f709d7fabaa921650d925b56f030d97ad5a600
+2026-09-07 13:41:31.135 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32802 -> 3000
+2026-09-07 13:41:31.135 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:41:31.147 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:41:31.147 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32802
+2026-09-07 13:41:31.438 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:41:31.644 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32802/
+2026-09-07 13:41:31.644 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:41:31.666 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:41:31.731 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:41:31.731 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:41:31.872 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:41:31.874 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-560905:8080
+2026-09-07 13:41:31.874 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:41:31.874 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:41:32.722 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-560905:8080
+2026-09-07 13:41:32.722 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:41:32.722 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:41:32.891 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:32.904 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:32.905 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:41:32.944 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:41:33.042 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:33.054 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:33.054 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:41:33.066 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:41:33.100 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:33.104 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:33.104 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:41:33.122 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:41:36.402 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:41:36.481 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:41:36.482 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.492 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.493 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:41:36.544 [main] [INFO] WebElement - Filling firstNameField with text: 'Hubert'
+2026-09-07 13:41:36.645 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.656 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.656 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:41:36.699 [main] [INFO] WebElement - Filling lastNameField with text: 'Corwin'
+2026-09-07 13:41:36.759 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.763 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.763 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:41:36.785 [main] [INFO] WebElement - Filling emailField with text: 'machelle.armstrong@gmail.com'
+2026-09-07 13:41:36.829 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.840 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.840 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:41:36.860 [main] [INFO] WebElement - Filling displayNameField with text: 'Lorenzo Jacobson'
+2026-09-07 13:41:36.899 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.903 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:36.903 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:41:36.925 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:41:37.032 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:41:37.032 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:41:37.058 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:41:37.308 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:41:37.345 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:41:37.595 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:41:38.104 [main] [INFO] WaitUtil - Condition met after 1072ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:41:38.104 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:41:41.109 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:41:41.110 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:41:41.118 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:41:41.118 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:41.120 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:41.120 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:41:41.127 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:41:41.771 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:41:41.771 [main] [INFO] WaitUtil - Condition met after 661ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:41:41.771 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:41:41.772 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:41.778 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:41.778 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:41:41.881 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:41:42.025 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From template' step of the Create project wizard
+2026-09-07 13:41:42.025 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.034 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.034 [main] [INFO] WebElement - Waiting for methodTemplate to be visible (timeout: 250ms)
+2026-09-07 13:41:42.087 [main] [INFO] WebElement - Clicking methodTemplate 
+2026-09-07 13:41:42.574 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From template' step to render
+2026-09-07 13:41:42.584 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the 'From template' step to render
+2026-09-07 13:41:42.584 [main] [INFO] WaitUtil - Action succeeded after 559ms: Opening the 'From template' step of the Create project wizard
+2026-09-07 13:41:42.584 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.588 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.588 [main] [INFO] WebElement - Waiting for templateGroup to be visible (timeout: 250ms)
+2026-09-07 13:41:42.606 [main] [INFO] WebElement - Clicking templateGroup 
+2026-09-07 13:41:42.692 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.699 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.699 [main] [INFO] WebElement - Waiting for templateItem to be visible (timeout: 250ms)
+2026-09-07 13:41:42.712 [main] [INFO] WebElement - Clicking templateItem 
+2026-09-07 13:41:42.822 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:41:42.823 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.826 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.826 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:41:42.842 [main] [INFO] WebElement - Filling newProjectName with text: 'project-264915'
+2026-09-07 13:41:42.917 [main] [INFO] WebElement - Getting current input value from newProjectName: 'project-264915'
+2026-09-07 13:41:42.917 [main] [INFO] WaitUtil - Condition met after 94ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:41:42.917 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.927 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:42.927 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:41:42.947 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:41:43.056 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:43.088 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:43.093 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:43.093 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:41:46.130 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:46.138 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:46.140 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:46.264 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:46.285 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:46.288 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:46.288 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:41:46.290 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:41:46.589 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:41:46.843 [main] [INFO] WaitUtil - Condition met after 555ms: Waiting for project row actions
+2026-09-07 13:41:46.876 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:41:46.882 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:46.883 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:46.884 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:41:46.892 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:41:46.955 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:41:46.962 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the row overflow menu
+2026-09-07 13:41:47.038 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:41:47.051 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:41:47.051 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.056 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.056 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:41:47.076 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:41:47.823 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:41:47.823 [main] [INFO] WaitUtil - Condition met after 785ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:41:47.823 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:41:47.823 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:41:47.824 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:47.849 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.852 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.852 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:47.873 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.875 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.875 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:41:47.884 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.885 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:47.885 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:41:47.893 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:41:47.995 [main] [INFO] WaitUtil - Sleeping for 200ms: Waiting for module list to expand after project selection
+2026-09-07 13:41:48.195 [main] [INFO] WebElement - Waiting for projectModuleLink to be visible
+2026-09-07 13:41:48.231 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:48.235 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:48.391 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:48.555 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:48.737 [main] [INFO] WaitUtil - Condition met after 505ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:48.737 [main] [INFO] WebElement - Waiting for projectModuleLink to be visible (timeout: 250ms)
+2026-09-07 13:41:48.813 [main] [INFO] WebElement - Clicking projectModuleLink 
+2026-09-07 13:41:48.923 [main] [INFO] WaitUtil - Sleeping for 200ms: Waiting for module to open
+2026-09-07 13:41:49.123 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:41:51.822 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:41:51.822 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:41:52.072 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:41:52.374 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:41:52.375 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:41:52.625 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:41:52.922 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:41:52.922 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:41:53.173 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:41:53.465 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (1/1)'
+2026-09-07 13:41:53.466 [main] [INFO] CoreComponent - Compilation completed
+2026-09-07 13:41:53.466 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:53.486 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:53.489 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:53.489 [main] [INFO] WaitUtil - Sleeping for 1000ms: Huge sleep just to make sure viewFilterLink is accessible
+2026-09-07 13:41:54.490 [main] [INFO] WaitUtil - Waiting for condition (timeout: 15000ms, polling: 200ms): Waiting for filter 'By Type' to be applied
+2026-09-07 13:41:54.490 [main] [INFO] WaitUtil - Waiting for condition (timeout: 5000ms, polling: 200ms): Waiting for filter option 'By Type' to be visible
+2026-09-07 13:41:54.490 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting before clicking view filter link
+2026-09-07 13:41:54.740 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:54.744 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:54.744 [main] [INFO] WebElement - Waiting for viewFilterLink to be visible (timeout: 250ms)
+2026-09-07 13:41:54.766 [main] [INFO] WebElement - Clicking viewFilterLink 
+2026-09-07 13:41:54.816 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for filter dropdown to appear
+2026-09-07 13:41:55.066 [main] [INFO] WebElement - Waiting for filterOptionLink to be visible (timeout: 250ms)
+2026-09-07 13:41:55.113 [main] [INFO] WaitUtil - Condition met after 623ms: Waiting for filter option 'By Type' to be visible
+2026-09-07 13:41:55.113 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.118 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.118 [main] [INFO] WebElement - Waiting for filterOptionLink to be visible (timeout: 250ms)
+2026-09-07 13:41:55.159 [main] [INFO] WebElement - Clicking filterOptionLink 
+2026-09-07 13:41:55.286 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:55.387 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.398 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.552 [main] [INFO] WaitUtil - Condition met after 164ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.552 [main] [INFO] WebElement - Waiting for viewFilterLink to be visible (timeout: 250ms)
+2026-09-07 13:41:55.598 [main] [INFO] WebElement - Getting text from viewFilterLink: 'By Type'
+2026-09-07 13:41:55.598 [main] [INFO] WaitUtil - Condition met after 1108ms: Waiting for filter 'By Type' to be applied
+2026-09-07 13:41:55.598 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:55.620 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.623 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.623 [main] [INFO] WaitUtil - Waiting for result (timeout: 20000ms, polling: 100ms): Searching for folder 'Decision' in editor tree
+2026-09-07 13:41:55.623 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 20000ms, polling: 100ms): Waiting for editor tree folders to load
+2026-09-07 13:41:55.625 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for editor tree folders to load
+2026-09-07 13:41:55.628 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:41:55.650 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:41:55.693 [main] [INFO] WebElement - Getting text from folderName: 'Decision'
+2026-09-07 13:41:55.693 [main] [INFO] WaitUtil - Result found after 70ms: Searching for folder 'Decision' in editor tree
+2026-09-07 13:41:55.693 [main] [INFO] WaitUtil - Waiting for condition (timeout: 1000ms, polling: 100ms): Waiting for folder expander to be visible and expanding tree folder
+2026-09-07 13:41:55.693 [main] [INFO] WebElement - Waiting for expanderClosed to be visible (timeout: 250ms)
+2026-09-07 13:41:55.717 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.719 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.719 [main] [INFO] WebElement - Waiting for expanderClosed to be visible (timeout: 250ms)
+2026-09-07 13:41:55.741 [main] [INFO] WebElement - Clicking expanderClosed 
+2026-09-07 13:41:55.804 [main] [INFO] WaitUtil - Condition met after 111ms: Waiting for folder expander to be visible and expanding tree folder
+2026-09-07 13:41:55.804 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:55.853 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.859 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:55.859 [main] [INFO] WaitUtil - Waiting for result (timeout: 20000ms, polling: 100ms): Searching for folder 'Decision' in editor tree
+2026-09-07 13:41:55.859 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 20000ms, polling: 100ms): Waiting for editor tree folders to load
+2026-09-07 13:41:55.862 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for editor tree folders to load
+2026-09-07 13:41:55.865 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:41:55.896 [main] [INFO] WebElement - Waiting for folderName to be visible (timeout: 250ms)
+2026-09-07 13:41:55.939 [main] [INFO] WebElement - Getting text from folderName: 'Decision'
+2026-09-07 13:41:55.939 [main] [INFO] WaitUtil - Result found after 80ms: Searching for folder 'Decision' in editor tree
+2026-09-07 13:41:55.939 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:55.942 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:56.096 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:56.250 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:56.404 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:56.558 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:56.712 [main] [INFO] WaitUtil - Condition met after 773ms: Waiting for the loading overlay to stay absent for a quiet window
+2026-09-07 13:41:56.712 [main] [INFO] WebElement - Dispatching click (after app settled) treeItem
+2026-09-07 13:41:56.753 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:56.842 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:56.867 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.026 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.191 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.348 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.556 [main] [INFO] WaitUtil - Condition met after 714ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.556 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:41:57.657 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.663 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.663 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.666 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:57.666 [main] [INFO] WebElement - Waiting for copyBtn to be visible (timeout: 250ms)
+2026-09-07 13:41:57.697 [main] [INFO] WebElement - Clicking copyBtn 
+2026-09-07 13:41:57.889 [main] [INFO] WebElement - Waiting for copyTableSubmit to be visible (timeout: 20000ms)
+2026-09-07 13:41:57.964 [main] [INFO] WebElement - Waiting for copyTableName to be visible (timeout: 20000ms)
+2026-09-07 13:41:58.092 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the copy dialog to hold only the requested table name
+2026-09-07 13:41:58.092 [main] [INFO] WebElement - Clearing copyTableName via 'Control+a' + 'Backspace'
+2026-09-07 13:41:58.928 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:58.934 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:58.934 [main] [INFO] WebElement - Waiting for copyTableName to be visible (timeout: 250ms)
+2026-09-07 13:41:58.985 [main] [INFO] WebElement - Filling Sequentially copyTableName with text: 'newTable'
+2026-09-07 13:41:59.208 [main] [INFO] WebElement - Getting current input value from copyTableName: 'newTable'
+2026-09-07 13:41:59.208 [main] [INFO] WaitUtil - Condition met after 1116ms: Waiting for the copy dialog to hold only the requested table name
+2026-09-07 13:41:59.208 [main] [INFO] WebElement - Waiting for copyTableSubmit to be visible (timeout: 20000ms)
+2026-09-07 13:41:59.256 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:41:59.278 [main] [INFO] WaitUtil - Condition met after 22ms: Waiting for the loading overlay to disappear
+2026-09-07 13:41:59.278 [main] [INFO] WebElement - Waiting for copyTableSubmit to be visible (timeout: 250ms)
+2026-09-07 13:41:59.340 [main] [INFO] WebElement - Clicking copyTableSubmit 
+2026-09-07 13:41:59.439 [main] [INFO] WebElement - Waiting for copyTableSubmit to be hidden
+2026-09-07 13:42:01.398 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:42:01.681 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:01.706 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:42:02.027 [main] [INFO] WaitUtil - Condition met after 346ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:02.027 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:42:02.269 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:02.277 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:02.278 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:42:02.353 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:02.363 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:02.364 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before clicking More dropdown
+2026-09-07 13:42:03.364 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:03.368 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:03.368 [main] [INFO] WebElement - Waiting for moreBtn to be visible (timeout: 250ms)
+2026-09-07 13:42:03.393 [main] [INFO] WebElement - Clicking moreBtn 
+2026-09-07 13:42:03.470 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for More dropdown to open
+2026-09-07 13:42:03.970 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:42:03.997 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:03.999 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:03.999 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 60000ms, polling: 500ms): Opening Local Changes from the More menu
+2026-09-07 13:42:04.000 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 500ms): Clicking 'Local Changes' in the More menu, re-opening the menu if a toolbar refresh closed it
+2026-09-07 13:42:04.000 [main] [INFO] WebElement - Waiting for changesBtn to be visible (timeout: 500ms)
+2026-09-07 13:42:04.025 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:04.028 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:04.028 [main] [INFO] WebElement - Waiting for changesBtn to be visible (timeout: 2000ms)
+2026-09-07 13:42:04.052 [main] [INFO] WebElement - Clicking with increased timeout changesBtn 
+2026-09-07 13:42:04.205 [main] [INFO] WaitUtil - Action succeeded after 205ms: Clicking 'Local Changes' in the More menu, re-opening the menu if a toolbar refresh closed it
+2026-09-07 13:42:04.205 [main] [INFO] WebElement - Waiting for localChangesView to be visible (timeout: 20000ms)
+2026-09-07 13:42:04.346 [main] [INFO] WaitUtil - Action succeeded after 346ms: Opening Local Changes from the More menu
+2026-09-07 13:42:04.346 [main] [INFO] WebElement - Waiting for localChangesView to be visible (timeout: 20000ms)
+2026-09-07 13:42:04.416 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 200ms): Waiting for the local history to load
+2026-09-07 13:42:04.425 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the local history to load
+2026-09-07 13:42:04.425 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 200ms): Waiting for the local history rows or the empty state
+2026-09-07 13:42:04.432 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the local history rows or the empty state
+2026-09-07 13:42:04.446 [main] [INFO] WebElement - Waiting for compareCheckboxTemplate to be visible (timeout: 250ms)
+2026-09-07 13:42:04.552 [main] [INFO] WebElement - Waiting for compareCheckboxTemplate to be visible (timeout: 250ms)
+2026-09-07 13:42:04.658 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:04.665 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:04.665 [main] [INFO] WebElement - Waiting for compareCheckboxTemplate to be visible (timeout: 250ms)
+2026-09-07 13:42:04.708 [main] [INFO] WebElement - Clicking compareCheckboxTemplate 
+2026-09-07 13:42:04.787 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 100ms): Waiting for the compare checkbox at row 2 to become true
+2026-09-07 13:42:04.787 [main] [INFO] WebElement - Waiting for compareCheckboxTemplate to be visible (timeout: 250ms)
+2026-09-07 13:42:04.867 [main] [INFO] WaitUtil - Condition met after 80ms: Waiting for the compare checkbox at row 2 to become true
+2026-09-07 13:42:04.867 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 100ms): Waiting for the Compare button to accept the two selected versions
+2026-09-07 13:42:04.868 [main] [INFO] WebElement - Waiting for compareBtn to be visible (timeout: 20000ms)
+2026-09-07 13:42:04.906 [main] [INFO] WebElement - Checking if compareBtn is enabled
+2026-09-07 13:42:04.947 [main] [INFO] WaitUtil - Condition met after 80ms: Waiting for the Compare button to accept the two selected versions
+2026-09-07 13:42:04.949 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:04.966 [main] [INFO] WaitUtil - Condition met after 17ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:04.967 [main] [INFO] WebElement - Waiting for compareBtn to be visible (timeout: 250ms)
+2026-09-07 13:42:05.015 [main] [INFO] WebElement - Clicking compareBtn 
+2026-09-07 13:42:06.778 [main] [INFO] WaitUtil - Waiting for condition (timeout: 15000ms, polling: 250ms): Waiting for Local Changes Compare dialog tree to appear
+2026-09-07 13:42:06.778 [main] [INFO] WebElement - Waiting for treeContainer to be visible (timeout: 1000ms)
+2026-09-07 13:42:06.816 [main] [INFO] WaitUtil - Condition met after 38ms: Waiting for Local Changes Compare dialog tree to appear
+2026-09-07 13:42:06.816 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 15000ms, polling: 250ms): Waiting for Local Changes Compare tree items to load
+2026-09-07 13:42:06.832 [main] [INFO] WaitUtil - List became non-empty after 16ms: Waiting for Local Changes Compare tree items to load
+2026-09-07 13:42:06.832 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:06.838 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:06.838 [main] [INFO] WebElement - Waiting for treeNodeExpanderTemplate to be visible (timeout: 250ms)
+2026-09-07 13:42:06.868 [main] [INFO] WebElement - Clicking treeNodeExpanderTemplate 
+2026-09-07 13:42:06.932 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for tree node to expand: Rating Algorithm
+2026-09-07 13:42:07.432 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:07.435 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:07.435 [main] [INFO] WebElement - Waiting for treeNodeLinkTemplate to be visible (timeout: 250ms)
+2026-09-07 13:42:07.440 [main] [INFO] WebElement - Clicking treeNodeLinkTemplate 
+2026-09-07 13:42:07.460 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting after clicking tree node: Rules Double newTable (Bank bank, RatingGroup bankRatingGroup)
+2026-09-07 13:42:07.960 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:42:07.986 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:07.989 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:08.243 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:08.497 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:08.751 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:09.005 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:09.259 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:09.513 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:09.768 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:10.022 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:10.276 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:10.530 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:10.784 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:11.038 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:11.292 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:11.546 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:11.800 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:12.054 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:12.310 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:12.564 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:12.818 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:13.072 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:13.327 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:13.581 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:13.835 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:14.089 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:14.343 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:14.597 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:14.851 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:15.105 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:15.359 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:15.613 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:15.867 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:16.121 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:16.375 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:16.629 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:16.883 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:17.137 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:17.392 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:17.646 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:17.900 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:18.154 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:18.408 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:18.662 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:18.916 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:19.170 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:19.424 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:19.678 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:19.932 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:20.186 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:20.440 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:20.694 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:20.948 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:21.202 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:21.456 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:21.710 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:21.964 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:22.218 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:22.472 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:22.726 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:22.979 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:23.234 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:23.488 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:23.742 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:23.996 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:24.250 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:24.504 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:24.758 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:25.012 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:25.266 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:25.520 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:25.774 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:26.028 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:26.282 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:26.536 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:26.789 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:27.043 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:27.297 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:27.551 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:27.805 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:28.056 [main] [WARN] WaitUtil - Condition not met after 20000ms timeout: Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:28.056 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 1 to settle
+2026-09-07 13:42:28.060 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 1 to settle
+2026-09-07 13:42:28.314 [main] [INFO] WaitUtil - Size stabilized at 0 : Waiting for the row count of fragment 1 to settle
+2026-09-07 13:42:28.316 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:42:28.317 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:42:28.317 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 2 to settle
+2026-09-07 13:42:28.319 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 2 to settle
+2026-09-07 13:42:28.572 [main] [INFO] WaitUtil - Size stabilized at 17 : Waiting for the row count of fragment 2 to settle
+2026-09-07 13:42:28.573 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:42:28.588 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:28.590 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:28.590 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:42:28.596 [main] [INFO] WebElement - Clicking showEqualRowsCheckbox 
+2026-09-07 13:42:28.626 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 200ms): Waiting for the equal rows checkbox to read true
+2026-09-07 13:42:28.626 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:42:28.647 [main] [INFO] WaitUtil - Condition met after 21ms: Waiting for the equal rows checkbox to read true
+2026-09-07 13:42:28.647 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:28.656 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:28.910 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:29.165 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:29.422 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:29.678 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:29.932 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:30.188 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:30.442 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:30.697 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:30.954 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:31.210 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:31.464 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:31.718 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:31.972 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:32.226 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:32.480 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:32.734 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:32.987 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:33.241 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:33.495 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:33.749 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:34.003 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:34.257 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:34.511 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:34.766 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:35.020 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:35.274 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:35.528 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:35.782 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:36.036 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:36.290 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:36.544 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:36.798 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:37.052 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:37.306 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:37.560 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:37.814 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:38.068 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:38.322 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:38.576 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:38.830 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:39.083 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:39.337 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:39.591 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:39.845 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:40.099 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:40.353 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:40.607 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:40.863 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:41.117 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:41.371 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:41.625 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:41.879 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:42.133 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:42.387 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:42.641 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:42.895 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:43.149 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:43.403 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:43.657 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:43.911 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:44.165 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:44.420 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:44.674 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:44.928 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:45.182 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:45.436 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:45.690 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:45.943 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:46.198 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:46.452 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:46.706 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:46.960 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:47.214 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:47.467 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:47.721 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:47.975 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:48.229 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:48.483 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:48.733 [main] [WARN] WaitUtil - Condition not met after 20000ms timeout: Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:42:48.733 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the redrawn comparison to settle
+2026-09-07 13:42:48.737 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the redrawn comparison to settle
+2026-09-07 13:42:48.991 [main] [INFO] WaitUtil - Size stabilized at 0 : Waiting for the redrawn comparison to settle
+2026-09-07 13:42:48.991 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:48.993 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:49.247 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:49.501 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:49.755 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:50.009 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:50.263 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:50.517 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:50.771 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:51.025 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:51.279 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:51.533 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:51.787 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:52.041 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:52.295 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:52.549 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:52.803 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:53.057 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:53.311 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:53.564 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:53.818 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:54.072 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:54.326 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:54.581 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:54.835 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:55.089 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:55.342 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:55.596 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:55.850 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:56.104 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:56.358 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:56.612 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:56.866 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:57.120 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:57.374 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:57.628 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:57.882 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:58.136 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:58.390 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:58.643 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:58.897 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:59.151 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:59.405 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:59.659 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:42:59.912 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:00.166 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:00.421 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:00.675 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:00.929 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:01.183 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:01.437 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:01.691 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:01.945 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:02.199 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:02.453 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:02.706 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:02.960 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:03.213 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:03.467 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:03.722 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:03.976 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:04.230 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:04.483 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:04.737 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:04.991 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:05.245 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:05.499 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:05.753 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:06.007 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:06.260 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:06.514 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:06.768 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:07.022 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:07.275 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:07.529 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:07.783 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:08.037 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:08.291 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:08.545 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:08.799 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:09.050 [main] [WARN] WaitUtil - Condition not met after 20000ms timeout: Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:43:09.050 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 1 to settle
+2026-09-07 13:43:09.054 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 1 to settle
+2026-09-07 13:43:09.308 [main] [INFO] WaitUtil - Size stabilized at 0 : Waiting for the row count of fragment 1 to settle
+2026-09-07 13:43:09.310 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:43:09.312 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:43:09.312 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 2 to settle
+2026-09-07 13:43:09.313 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 2 to settle
+2026-09-07 13:43:09.566 [main] [INFO] WaitUtil - Size stabilized at 17 : Waiting for the row count of fragment 2 to settle
+2026-09-07 13:43:09.590 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:43:19.375 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

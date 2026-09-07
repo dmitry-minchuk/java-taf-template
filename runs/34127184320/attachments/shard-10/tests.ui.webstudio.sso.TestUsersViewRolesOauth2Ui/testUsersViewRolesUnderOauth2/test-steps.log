@@ -1,0 +1,443 @@
+2026-09-07 13:36:46.077 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testUsersViewRolesUnderOauth2
+2026-09-07 13:36:46.081 [main] [INFO] BaseTest - [security.oauth2.issuer-uri] -> [http://keycloak:8080/realms/openlstudio]
+2026-09-07 13:36:46.081 [main] [INFO] BaseTest - [user.mode] -> [oauth2]
+2026-09-07 13:36:46.081 [main] [INFO] BaseTest - [security.oauth2.scope] -> [openid,profile,email]
+2026-09-07 13:36:46.082 [main] [INFO] BaseTest - [security.oauth2.client-id] -> [openlstudio]
+2026-09-07 13:36:46.082 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:36:46.082 [main] [INFO] BaseTest - [security.oauth2.attribute.username] -> [preferred_username]
+2026-09-07 13:36:46.082 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:36:46.082 [main] [INFO] BaseTest - [webstudio.configured] -> [true]
+2026-09-07 13:36:46.082 [main] [INFO] BaseTest - [security.oauth2.client-secret] -> [openlstudiosecret]
+2026-09-07 13:36:46.083 [main] [INFO] BaseTest - [security.oauth2.attribute.groups] -> [groups]
+2026-09-07 13:36:46.086 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-774252 (startup timeout: PT10M)
+2026-09-07 13:37:05.592 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-774252: http://localhost:32790
+2026-09-07 13:37:05.596 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-774252:8080
+2026-09-07 13:37:05.602 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:37:08.603 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:37:08.607 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:37:08.607 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:37:09.609 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:37:09.610 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:37:09.610 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:37:09.611 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:37:09.611 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:37:11.065 [main] [INFO] DockerDriverPool - Playwright Server container started in 1454 ms
+2026-09-07 13:37:11.065 [main] [INFO] DockerDriverPool - Container started - ID: ac63d929493b17f9d154e6cbc755cff291d78da21149a30e427f9f454b2494b2
+2026-09-07 13:37:11.065 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32791 -> 3000
+2026-09-07 13:37:11.066 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:37:11.079 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:37:11.079 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32791
+2026-09-07 13:37:12.434 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:37:12.603 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32791/
+2026-09-07 13:37:12.607 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:37:12.651 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:37:12.710 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:37:12.710 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:37:13.985 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:37:14.002 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-774252:8080
+2026-09-07 13:37:14.877 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:37:14.885 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:37:14.947 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:14.961 [main] [INFO] WaitUtil - Condition met after 14ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:14.961 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:37:14.974 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'admin'
+2026-09-07 13:37:15.022 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:15.035 [main] [INFO] WaitUtil - Condition met after 13ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:15.035 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:37:15.061 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'admin'
+2026-09-07 13:37:15.099 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:15.115 [main] [INFO] WaitUtil - Condition met after 15ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:15.115 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:37:15.129 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:37:16.677 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:17.493 [main] [INFO] WaitUtil - Condition met after 816ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:17.494 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:18.829 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-774252:8080
+2026-09-07 13:37:19.134 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:37:19.134 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:37:19.208 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.213 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.213 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:37:19.251 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'studiouser'
+2026-09-07 13:37:19.307 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.319 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.320 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:37:19.342 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'studiouser'
+2026-09-07 13:37:19.370 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.374 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:19.375 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:37:19.385 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:37:19.633 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:20.055 [main] [INFO] WaitUtil - Condition met after 422ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:20.056 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:20.056 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:20.057 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:37:20.450 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:37:20.450 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:20.475 [main] [INFO] WaitUtil - Condition met after 25ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:20.475 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:37:20.512 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:37:21.100 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:37:21.101 [main] [INFO] WaitUtil - Condition met after 1043ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:37:21.103 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:37:21.130 [main] [INFO] WaitUtil - Waiting for condition (timeout: 5000ms, polling: 250ms): Waiting for projects to load
+2026-09-07 13:37:21.192 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:21.445 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:21.699 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:21.952 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:22.206 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:22.459 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:22.712 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:22.970 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:23.223 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:23.477 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:23.731 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:23.984 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:24.237 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:24.492 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:24.746 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:25.000 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:25.253 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:25.506 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:25.760 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:26.013 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for projects to load
+2026-09-07 13:37:26.264 [main] [WARN] WaitUtil - Condition not met after 5000ms timeout: Waiting for projects to load
+2026-09-07 13:37:26.276 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-774252:8080
+2026-09-07 13:37:26.536 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:37:26.537 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:37:26.581 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.587 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.588 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:37:26.605 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'admin'
+2026-09-07 13:37:26.644 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.651 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.652 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:37:26.670 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'admin'
+2026-09-07 13:37:26.689 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.692 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:26.692 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:37:26.706 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:37:26.916 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:27.502 [main] [INFO] WaitUtil - Condition met after 585ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:27.503 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:27.596 [main] [INFO] CorePage - Messages currently open: 0
+2026-09-07 13:37:27.609 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:37:27.889 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:37:27.993 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:37:28.094 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:28.103 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:28.103 [main] [INFO] WebElement - Waiting for User Logo to be visible (timeout: 250ms)
+2026-09-07 13:37:28.123 [main] [INFO] WebElement - Clicking User Logo 
+2026-09-07 13:37:28.212 [main] [INFO] WebElement - Waiting for User Menu Drawer to be visible
+2026-09-07 13:37:28.228 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:28.232 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:28.232 [main] [INFO] WebElement - Waiting for Administration Menu Item to be visible (timeout: 250ms)
+2026-09-07 13:37:28.261 [main] [INFO] WebElement - Clicking Administration Menu Item 
+2026-09-07 13:37:28.766 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.AdminPage was opened.
+2026-09-07 13:37:28.771 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:28.869 [main] [INFO] WaitUtil - Condition met after 98ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:28.869 [main] [INFO] WebElement - Waiting for navigationItem to be visible (timeout: 250ms)
+2026-09-07 13:37:29.154 [main] [INFO] WebElement - Clicking navigationItem 
+2026-09-07 13:37:29.376 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 100ms): Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:29.377 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:29.389 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for list (attempt): Waiting for table rows before counting
+2026-09-07 13:37:29.642 [main] [INFO] WaitUtil - List became non-empty after 265ms: Waiting for table rows before counting
+2026-09-07 13:37:29.647 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.652 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.656 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.660 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:29.666 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.704 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:29.704 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.706 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.708 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.712 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:29.715 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.729 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:29.729 [main] [INFO] WaitUtil - Condition met after 352ms: Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:29.729 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:29.731 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows before counting
+2026-09-07 13:37:29.732 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.734 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.735 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.738 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:37:29.742 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.754 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:29.755 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.757 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.759 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.763 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:29.767 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.780 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:29.780 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 100ms): Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:29.781 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:29.782 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows before counting
+2026-09-07 13:37:29.784 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.786 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.787 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.790 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:37:29.793 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.805 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:29.805 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.806 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.808 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.810 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:37:29.813 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.826 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:29.827 [main] [INFO] WaitUtil - Condition met after 46ms: Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:29.827 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:29.829 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows before counting
+2026-09-07 13:37:29.830 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.832 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:29.835 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.838 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:37:29.840 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.851 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:29.852 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.853 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.855 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.859 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:29.862 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:29.873 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:29.873 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.875 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:29.877 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:29.879 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:37:30.083 [main] [INFO] WebElement - Waiting for drawer to be visible (timeout: 3000ms)
+2026-09-07 13:37:30.139 [main] [INFO] WaitUtil - Sleeping for 150ms: Waiting for user edit drawer to fully open
+2026-09-07 13:37:30.289 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.294 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.294 [main] [INFO] WebElement - Waiting for projectsTab to be visible (timeout: 250ms)
+2026-09-07 13:37:30.374 [main] [INFO] WebElement - Clicking projectsTab 
+2026-09-07 13:37:30.546 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.552 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.552 [main] [INFO] WebElement - Waiting for addRoleBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:30.592 [main] [INFO] WebElement - Clicking addRoleBtn 
+2026-09-07 13:37:30.740 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.743 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.743 [main] [INFO] WebElement - Waiting for projectSelectorTemplate > xpath=/ancestor::div[contains(@class,'ant-select-content')] to be visible (timeout: 250ms)
+2026-09-07 13:37:30.764 [main] [INFO] WebElement - Clicking projectSelectorTemplate > xpath=/ancestor::div[contains(@class,'ant-select-content')] 
+2026-09-07 13:37:30.902 [main] [INFO] WebElement - Waiting for selectOptionTemplate to be visible
+2026-09-07 13:37:30.944 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.953 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:30.953 [main] [INFO] WebElement - Waiting for selectOptionTemplate to be visible (timeout: 250ms)
+2026-09-07 13:37:30.973 [main] [INFO] WebElement - Clicking selectOptionTemplate 
+2026-09-07 13:37:31.327 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.339 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.340 [main] [INFO] WebElement - Waiting for projectRoleSelectorTemplate > xpath=/ancestor::div[contains(@class,'ant-select-content')] to be visible (timeout: 250ms)
+2026-09-07 13:37:31.382 [main] [INFO] WebElement - Clicking projectRoleSelectorTemplate > xpath=/ancestor::div[contains(@class,'ant-select-content')] 
+2026-09-07 13:37:31.515 [main] [INFO] WebElement - Waiting for selectOptionTemplate to be visible
+2026-09-07 13:37:31.553 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.562 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:31.562 [main] [INFO] WebElement - Waiting for selectOptionTemplate to be visible (timeout: 250ms)
+2026-09-07 13:37:31.601 [main] [INFO] WebElement - Clicking selectOptionTemplate 
+2026-09-07 13:37:31.969 [main] [INFO] WebElement - Checking if emailField is enabled
+2026-09-07 13:37:31.998 [main] [INFO] WebElement - Checking if displayNameField is enabled
+2026-09-07 13:37:32.010 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:32.017 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:32.018 [main] [INFO] WebElement - Waiting for drawerSubmitBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:32.042 [main] [INFO] WebElement - Clicking drawerSubmitBtn 
+2026-09-07 13:37:32.326 [main] [INFO] WebElement - Waiting for drawer to be hidden
+2026-09-07 13:37:32.645 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-774252:8080
+2026-09-07 13:37:32.989 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:37:32.989 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:37:33.036 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:33.042 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:33.042 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:37:33.051 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'studiouser'
+2026-09-07 13:37:33.124 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:33.131 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:33.131 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:37:33.152 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'studiouser'
+2026-09-07 13:37:33.194 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:33.200 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:33.200 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:37:33.213 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:37:33.421 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:33.915 [main] [INFO] WaitUtil - Condition met after 493ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:33.915 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:33.915 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:33.916 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:37:34.344 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:37:34.346 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.387 [main] [INFO] WaitUtil - Condition met after 41ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:34.387 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:37:34.413 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:37:35.025 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:37:35.025 [main] [INFO] WaitUtil - Condition met after 1109ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:37:35.025 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:37:35.028 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:37:35.069 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:35.323 [main] [INFO] WaitUtil - Condition met after 295ms: Waiting for project row actions
+2026-09-07 13:37:35.365 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:37:35.371 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.374 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.374 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:35.381 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:37:35.494 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:37:35.506 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the row overflow menu
+2026-09-07 13:37:35.608 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-774252:8080
+2026-09-07 13:37:35.883 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:37:35.884 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:37:35.938 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.943 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.943 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:37:35.953 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'admin'
+2026-09-07 13:37:35.976 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.995 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:35.996 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:37:36.017 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'admin'
+2026-09-07 13:37:36.037 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:36.042 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:36.043 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:37:36.062 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:37:36.260 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:36.683 [main] [INFO] WaitUtil - Condition met after 423ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:36.683 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:36.754 [main] [INFO] CorePage - Messages currently open: 0
+2026-09-07 13:37:36.759 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:37:37.055 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:37:37.158 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:37:37.259 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.262 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.263 [main] [INFO] WebElement - Waiting for User Logo to be visible (timeout: 250ms)
+2026-09-07 13:37:37.281 [main] [INFO] WebElement - Clicking User Logo 
+2026-09-07 13:37:37.369 [main] [INFO] WebElement - Waiting for User Menu Drawer to be visible
+2026-09-07 13:37:37.413 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.420 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.421 [main] [INFO] WebElement - Waiting for Administration Menu Item to be visible (timeout: 250ms)
+2026-09-07 13:37:37.452 [main] [INFO] WebElement - Clicking Administration Menu Item 
+2026-09-07 13:37:37.883 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.AdminPage was opened.
+2026-09-07 13:37:37.883 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.991 [main] [INFO] WaitUtil - Condition met after 108ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:37.991 [main] [INFO] WebElement - Waiting for navigationItem to be visible (timeout: 250ms)
+2026-09-07 13:37:38.437 [main] [INFO] WebElement - Clicking navigationItem 
+2026-09-07 13:37:38.561 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 100ms): Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:38.561 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:38.576 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for list (attempt): Waiting for table rows before counting
+2026-09-07 13:37:38.835 [main] [INFO] WaitUtil - List became non-empty after 274ms: Waiting for table rows before counting
+2026-09-07 13:37:38.842 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:38.848 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:38.850 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:38.859 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table row cells to load
+2026-09-07 13:37:38.864 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:38.924 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:38.924 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:38.930 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:38.936 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:38.958 [main] [INFO] WaitUtil - List became non-empty after 21ms: Waiting for table row cells to load
+2026-09-07 13:37:38.966 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.020 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:39.021 [main] [INFO] WaitUtil - Condition met after 460ms: Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:39.021 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:39.026 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows before counting
+2026-09-07 13:37:39.038 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:39.041 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:39.048 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.058 [main] [INFO] WaitUtil - List became non-empty after 10ms: Waiting for table row cells to load
+2026-09-07 13:37:39.064 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.092 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:39.092 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.094 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.096 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.099 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:37:39.102 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.116 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:39.117 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 100ms): Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:39.117 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:39.118 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows before counting
+2026-09-07 13:37:39.120 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:39.122 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:39.123 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.126 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:37:39.129 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.142 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:39.142 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.144 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.145 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.149 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:39.151 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.166 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:39.166 [main] [INFO] WaitUtil - Condition met after 49ms: Waiting for user 'studiouser' to appear in users table
+2026-09-07 13:37:39.166 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 250ms): Waiting for table rows before counting
+2026-09-07 13:37:39.169 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows before counting
+2026-09-07 13:37:39.171 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:39.174 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:37:39.176 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.180 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:39.184 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.197 [main] [INFO] WebElement - Getting inner text from cells_0: 'admin'
+2026-09-07 13:37:39.197 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.200 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.203 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.206 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:37:39.208 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:37:39.223 [main] [INFO] WebElement - Getting inner text from cells_0: 'studiouser'
+2026-09-07 13:37:39.223 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.227 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:37:39.229 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:37:39.233 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:37:39.480 [main] [INFO] WebElement - Waiting for drawer to be visible (timeout: 3000ms)
+2026-09-07 13:37:39.568 [main] [INFO] WaitUtil - Sleeping for 150ms: Waiting for user edit drawer to fully open
+2026-09-07 13:37:39.718 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.723 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.723 [main] [INFO] WebElement - Waiting for projectsTab to be visible (timeout: 250ms)
+2026-09-07 13:37:39.745 [main] [INFO] WebElement - Clicking projectsTab 
+2026-09-07 13:37:39.831 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.836 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:39.836 [main] [INFO] WebElement - Waiting for projectRoleSelectorTemplate > xpath=/ancestor::div[contains(@class,'ant-select-content')] to be visible (timeout: 250ms)
+2026-09-07 13:37:39.857 [main] [INFO] WebElement - Clicking projectRoleSelectorTemplate > xpath=/ancestor::div[contains(@class,'ant-select-content')] 
+2026-09-07 13:37:39.976 [main] [INFO] WebElement - Waiting for selectOptionTemplate to be visible
+2026-09-07 13:37:40.016 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:40.023 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:40.023 [main] [INFO] WebElement - Waiting for selectOptionTemplate to be visible (timeout: 250ms)
+2026-09-07 13:37:40.051 [main] [INFO] WebElement - Clicking selectOptionTemplate 
+2026-09-07 13:37:40.422 [main] [INFO] WebElement - Checking if emailField is enabled
+2026-09-07 13:37:40.464 [main] [INFO] WebElement - Checking if displayNameField is enabled
+2026-09-07 13:37:40.482 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:40.494 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:40.494 [main] [INFO] WebElement - Waiting for drawerSubmitBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:40.531 [main] [INFO] WebElement - Clicking drawerSubmitBtn 
+2026-09-07 13:37:40.711 [main] [INFO] WebElement - Waiting for drawer to be hidden
+2026-09-07 13:37:40.920 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-774252:8080
+2026-09-07 13:37:41.273 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:37:41.273 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:37:41.307 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:41.318 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:41.318 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:37:41.327 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'studiouser'
+2026-09-07 13:37:41.379 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:41.385 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:41.385 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:37:41.407 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'studiouser'
+2026-09-07 13:37:41.440 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:41.443 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:41.443 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:37:41.456 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:37:41.630 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:41.993 [main] [INFO] WaitUtil - Condition met after 363ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:37:41.993 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:41.994 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:37:41.994 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:37:42.350 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:37:42.350 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.385 [main] [INFO] WaitUtil - Condition met after 34ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:42.385 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:37:42.405 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:37:42.972 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:37:42.973 [main] [INFO] WaitUtil - Condition met after 979ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:37:42.973 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:37:42.974 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:37:42.999 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:37:43.252 [main] [INFO] WaitUtil - Condition met after 278ms: Waiting for project row actions
+2026-09-07 13:37:43.270 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:37:43.278 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:37:43.279 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:37:43.280 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:37:43.286 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:37:43.377 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:37:43.379 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the row overflow menu
+2026-09-07 13:37:43.464 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:37:43.864 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

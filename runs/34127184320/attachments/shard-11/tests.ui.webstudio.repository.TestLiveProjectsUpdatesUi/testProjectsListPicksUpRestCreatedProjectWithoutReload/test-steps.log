@@ -1,0 +1,98 @@
+2026-09-07 13:28:49.901 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testProjectsListPicksUpRestCreatedProjectWithoutReload
+2026-09-07 13:28:49.901 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:28:49.901 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:28:49.901 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:28:49.902 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-312392 (startup timeout: PT10M)
+2026-09-07 13:29:09.352 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-312392: http://localhost:32778
+2026-09-07 13:29:09.354 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-312392:8080
+2026-09-07 13:29:09.354 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:29:12.354 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:29:12.358 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:29:12.358 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:29:13.358 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:29:13.359 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:29:13.359 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:29:13.359 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:29:13.359 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:29:14.620 [main] [INFO] DockerDriverPool - Playwright Server container started in 1261 ms
+2026-09-07 13:29:14.620 [main] [INFO] DockerDriverPool - Container started - ID: ea20ce20814813ff46831619191d58d22ab80a78063d89ce9042f4d74fd2dd98
+2026-09-07 13:29:14.620 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32779 -> 3000
+2026-09-07 13:29:14.621 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:29:14.633 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:29:14.633 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32779
+2026-09-07 13:29:14.913 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:29:15.106 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32779/
+2026-09-07 13:29:15.106 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:29:15.120 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:29:15.174 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:29:15.174 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:29:15.299 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:29:15.302 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-312392:8080
+2026-09-07 13:29:15.302 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:29:15.302 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:29:16.273 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-312392:8080
+2026-09-07 13:29:16.273 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:29:16.273 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:29:16.328 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:16.339 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:16.339 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:29:16.359 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:29:16.417 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:16.427 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:16.427 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:29:16.439 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:29:16.489 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:16.496 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:16.496 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:29:16.505 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:29:19.987 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:29:20.040 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:29:20.042 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.059 [main] [INFO] WaitUtil - Condition met after 16ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.060 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:29:20.096 [main] [INFO] WebElement - Filling firstNameField with text: 'Carl'
+2026-09-07 13:29:20.196 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.208 [main] [INFO] WaitUtil - Condition met after 11ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.209 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:29:20.237 [main] [INFO] WebElement - Filling lastNameField with text: 'Leannon'
+2026-09-07 13:29:20.320 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.327 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.327 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:29:20.359 [main] [INFO] WebElement - Filling emailField with text: 'matt.streich@gmail.com'
+2026-09-07 13:29:20.402 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.406 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.407 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:29:20.439 [main] [INFO] WebElement - Filling displayNameField with text: 'Bernie Howell'
+2026-09-07 13:29:20.503 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.507 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:20.508 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:29:20.535 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:29:20.646 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:29:20.646 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:29:20.688 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:29:20.939 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:29:21.460 [main] [INFO] WaitUtil - Condition met after 814ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:29:21.460 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:29:24.469 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:29:24.469 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:29:24.470 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:29:24.479 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:29:24.479 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:24.482 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:24.482 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:29:24.491 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:29:25.113 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:29:25.113 [main] [INFO] WaitUtil - Condition met after 643ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:29:25.114 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:29:25.114 [main] [INFO] WebElement - Waiting for projectRow to be visible (timeout: 20000ms)
+2026-09-07 13:29:45.487 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 500ms): Waiting for the projects list to pick up the REST-created project without a reload
+2026-09-07 13:29:45.487 [main] [INFO] WebElement - Waiting for projectRow to be visible (timeout: 20000ms)
+2026-09-07 13:29:46.851 [main] [INFO] WaitUtil - Condition met after 1364ms: Waiting for the projects list to pick up the REST-created project without a reload
+2026-09-07 13:29:47.045 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:29:47.069 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:29:47.079 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:29:47.079 [main] [INFO] WebElement - Waiting for projectRow to be visible (timeout: 20000ms)
+2026-09-07 13:29:47.635 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:29:50.830 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

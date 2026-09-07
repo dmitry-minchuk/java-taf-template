@@ -1,0 +1,148 @@
+2026-09-07 13:28:02.072 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testEligibleManagerCanEditOnProtectedBranchLegacy
+2026-09-07 13:28:02.074 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:28:02.074 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:28:02.074 [main] [INFO] BaseTest - [repository.design.protected-branches] -> [release-**]
+2026-09-07 13:28:02.074 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:28:02.074 [main] [INFO] BaseTest - [security.allow-bypass-protected-branches] -> [true]
+2026-09-07 13:28:02.075 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-842165 (startup timeout: PT10M)
+2026-09-07 13:28:16.158 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-842165: http://localhost:32774
+2026-09-07 13:28:16.158 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-842165:8080
+2026-09-07 13:28:16.159 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:28:19.160 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:28:19.163 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:28:19.163 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:28:20.163 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:28:20.164 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:28:20.164 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:28:20.164 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:28:20.164 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:28:21.305 [main] [INFO] DockerDriverPool - Playwright Server container started in 1141 ms
+2026-09-07 13:28:21.305 [main] [INFO] DockerDriverPool - Container started - ID: 05b64e175b85a5d8d2e22fbfcf43f124f25bc47df2b3bc81e2a6c468efb20591
+2026-09-07 13:28:21.305 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32775 -> 3000
+2026-09-07 13:28:21.305 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:28:21.317 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:28:21.317 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32775
+2026-09-07 13:28:21.491 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:28:21.711 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32775/
+2026-09-07 13:28:21.711 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:28:21.728 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:28:21.780 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:28:21.780 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:28:21.909 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:28:23.521 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-842165:8080
+2026-09-07 13:28:23.521 [main] [INFO] LoginService - Logging in with user: manager_15960_legacy
+2026-09-07 13:28:23.521 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:28:24.264 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-842165:8080
+2026-09-07 13:28:24.264 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:28:24.265 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:28:24.402 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:24.410 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:24.411 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:28:24.422 [main] [INFO] WebElement - Filling usernameField with text: 'manager_15960_legacy'
+2026-09-07 13:28:24.461 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:24.470 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:24.470 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:28:24.482 [main] [INFO] WebElement - Filling passwordField with text: 'manager_15960_legacy'
+2026-09-07 13:28:24.512 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:24.522 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:24.522 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:28:24.535 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:28:26.160 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:28:46.170 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:28:46.170 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:28:46.177 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:28:46.177 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:46.178 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:46.178 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:28:46.183 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:28:46.680 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:28:46.680 [main] [INFO] WaitUtil - Condition met after 510ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:28:46.687 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:28:46.687 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:28:46.811 [main] [INFO] WaitUtil - Condition met after 123ms: Waiting for project row actions
+2026-09-07 13:28:46.882 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:28:46.890 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:46.894 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:46.894 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:28:46.901 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:28:47.047 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:28:47.053 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the row overflow menu
+2026-09-07 13:28:47.127 [main] [INFO] WebElement - Waiting for projectRowAction to be visible (timeout: 4000ms)
+2026-09-07 13:28:47.145 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.154 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.154 [main] [INFO] WebElement - Waiting for projectRowAction to be visible (timeout: 10000ms)
+2026-09-07 13:28:47.173 [main] [INFO] WebElement - Clicking with increased timeout projectRowAction 
+2026-09-07 13:28:47.267 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project BypassLegacyUiProject to finish opening
+2026-09-07 13:28:47.277 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project BypassLegacyUiProject to finish opening
+2026-09-07 13:28:47.532 [main] [INFO] WaitUtil - Condition met after 265ms: Waiting for project BypassLegacyUiProject to finish opening
+2026-09-07 13:28:47.533 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:28:47.552 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.556 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.685 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:28:47.715 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.722 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.722 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.725 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:47.725 [main] [INFO] WebElement - Waiting for projectNameInRow to be visible (timeout: 250ms)
+2026-09-07 13:28:48.010 [main] [INFO] WebElement - Clicking projectNameInRow 
+2026-09-07 13:28:48.147 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.ProjectDetailPage was opened.
+2026-09-07 13:28:48.149 [main] [INFO] WebElement - Waiting for detailRoot to be visible (timeout: 20000ms)
+2026-09-07 13:28:49.004 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:49.012 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:49.012 [main] [INFO] WebElement - Waiting for filesTab to be visible (timeout: 250ms)
+2026-09-07 13:28:49.037 [main] [INFO] WebElement - Clicking filesTab 
+2026-09-07 13:28:49.126 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:28:49.202 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:28:49.262 [main] [INFO] WaitUtil - Condition met after 59ms: Waiting for the loading overlay to disappear
+2026-09-07 13:28:49.262 [main] [INFO] WebElement - Waiting for filesSearchField to be visible (timeout: 10000ms)
+2026-09-07 13:28:49.288 [main] [INFO] WebElement - Waiting for filesAddBtn to be visible (timeout: 20000ms)
+2026-09-07 13:28:49.345 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+DELETE http://localhost:32774/rest/users/manager_15960_legacy
+Header: Accept : application/json
+
+2026-09-07 13:28:49.345 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+403 HTTP/1.1 403 ForbiddenHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:28:49 GMT
+Header: Content-Type : application/json
+Header: X-Content-Type-Options : nosniff
+Header: X-XSS-Protection : 0
+Header: Cache-Control : no-cache, no-store, max-age=0, must-revalidate
+Header: Pragma : no-cache
+Header: Expires : 0
+Header: X-Frame-Options : DENY
+Header: Transfer-Encoding : chunked
+Body: 
+{"message": "Access Denied"}
+2026-09-07 13:28:49.376 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+DELETE http://localhost:32774/rest/users/contributor_15960_legacy
+Header: Accept : application/json
+
+2026-09-07 13:28:49.376 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+403 HTTP/1.1 403 ForbiddenHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:28:49 GMT
+Header: Content-Type : application/json
+Header: X-Content-Type-Options : nosniff
+Header: X-XSS-Protection : 0
+Header: Cache-Control : no-cache, no-store, max-age=0, must-revalidate
+Header: Pragma : no-cache
+Header: Expires : 0
+Header: X-Frame-Options : DENY
+Header: Transfer-Encoding : chunked
+Body: 
+{"message": "Access Denied"}
+2026-09-07 13:28:49.384 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:28:50.267 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

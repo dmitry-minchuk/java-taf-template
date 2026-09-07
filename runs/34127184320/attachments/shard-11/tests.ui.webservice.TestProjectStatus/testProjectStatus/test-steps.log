@@ -1,0 +1,61 @@
+2026-09-07 13:25:13.185 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testProjectStatus
+2026-09-07 13:25:13.193 [main] [INFO] BaseTest - [ruleservice.deployer.enabled] -> [true]
+2026-09-07 13:25:13.194 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:25:13.194 [main] [INFO] BaseTest - [production-repository.factory] -> [repo-zip]
+2026-09-07 13:25:13.194 [main] [INFO] BaseTest - [production-repository.uri] -> [/opt/openl/shared]
+2026-09-07 13:25:13.227 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-939751 (startup timeout: PT10M)
+2026-09-07 13:25:28.411 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-939751: http://localhost:32769
+2026-09-07 13:25:28.413 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-939751:8080
+2026-09-07 13:25:28.414 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:25:31.415 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:31.418 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:31.418 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:25:32.420 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:25:32.422 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:25:32.422 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:25:32.422 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:25:32.422 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:25:34.518 [main] [INFO] DockerDriverPool - Playwright Server container started in 2096 ms
+2026-09-07 13:25:34.518 [main] [INFO] DockerDriverPool - Container started - ID: 94edf44aaf5919779dd91268f908abe09b2c5828b77e67ea563d960ffb55904a
+2026-09-07 13:25:34.519 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32770 -> 3000
+2026-09-07 13:25:34.519 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:25:34.532 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:25:34.532 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32770
+2026-09-07 13:25:47.693 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:25:47.886 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32770/
+2026-09-07 13:25:47.888 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:25:47.927 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:25:47.997 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:25:47.997 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:25:48.941 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+GET http://localhost:32769/web/public/info/openl.json
+Header: Accept : */*
+
+2026-09-07 13:25:48.941 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+404 HTTP/1.1 404 Not FoundHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:25:48 GMT
+Header: Content-Type : text/html;charset=utf-8
+Header: Content-Length : 47
+Body: 
+<html><body>No service was found.</body></html>
+2026-09-07 13:25:49.471 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:25:49.483 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:49.487 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-939751:8080
+2026-09-07 13:25:49.584 [main] [INFO] WebElement - Waiting for Deployment Failed Icon to be visible (timeout: 10000ms)
+2026-09-07 13:25:49.667 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:25:49.673 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:25:49.674 [main] [INFO] WebElement - Waiting for Deployment Failed Icon to be visible (timeout: 250ms)
+2026-09-07 13:25:49.687 [main] [INFO] WebElement - Clicking Deployment Failed Icon 
+2026-09-07 13:25:49.729 [main] [INFO] WebElement - Waiting for Deployment Error Text to be visible (timeout: 250ms)
+2026-09-07 13:25:49.760 [main] [INFO] WebElement - Getting text from Deployment Error Text: 'The value 'Driver&Passenger' is outside of valid domain 'AirbagType'. Valid values: [No, Driver, Driver&Passenger1, Driver&Passenger&Side]The value 'Driver&Passenger' is outside of valid domain 'AirbagType'. Valid values: [No, Driver, Driver&Passenger1, Driver&Passenger&Side]Identifier 'price' is not found.Field 'price' is not found in type 'Vehicle'.The value 'Driver&Passenger' is outside of valid domain 'AirbagType'. Valid values: [No, Driver, Driver&Passenger1, Driver&Passenger&Side]Field 'price' is not found in type 'Vehicle'.The value 'Driver&Passenger' is outside of valid domain 'AirbagType'. Valid values: [No, Driver, Driver&Passenger1, Driver&Passenger&Side]The value 'Driver&Passenger' is outside of valid domain 'AirbagType'. Valid values: [No, Driver, Driver&Passenger1, Driver&Passenger&Side]Field 'price' is not found in type 'Vehicle'.The value 'Driver&Passenger' is outside of valid domain 'AirbagType'. Valid values: [No, Driver, Driver&Passenger1, Driver&Passenger&Side]Field 'price' is not found in type 'Vehicle'.Foreign table 'testVehicles1' has errors.Foreign table 'testVehicles1' has errors.Foreign table 'autoProfiles1' has errors.Foreign table 'autoProfiles2' has errors.Foreign table 'autoProfiles1' has errors.Foreign table 'autoProfiles3' has errors.'
+2026-09-07 13:25:49.764 [main] [INFO] WebElement - Waiting for Deployment Success Icon to be visible (timeout: 10000ms)
+2026-09-07 13:25:49.804 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:25:53.074 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

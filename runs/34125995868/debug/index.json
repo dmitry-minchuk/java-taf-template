@@ -1,0 +1,20 @@
+{
+  "build": "latest",
+  "workflowRunUrl": "https://github.com/dmitry-minchuk/java-taf-template/actions/runs/34125995868",
+  "tests": [
+    {
+      "class": "tests.ui.webstudio.repository.TestProjectInfoModulesFromRulesDirectoryUi",
+      "method": "testModulesAreShownAndDescriptorKeepsNoDeclaredModules",
+      "displayName": "testModulesAreShownAndDescriptorKeepsNoDeclaredModules",
+      "suite": "repository",
+      "shard": "shard-01",
+      "status": "PASSED",
+      "durationMs": 19692,
+      "testCaseId": "EPBDS-16272",
+      "errorMessage": "",
+      "outcome": "PASSED",
+      "knownIssue": "",
+      "bundle": ""
+    }
+  ]
+}

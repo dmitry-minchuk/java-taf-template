@@ -1,0 +1,238 @@
+2026-09-07 13:39:28.556 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testDisplayChangedRowsUploadedFilesCompareScreen
+2026-09-07 13:39:28.556 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:39:28.556 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:39:28.556 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:39:28.557 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-813504 (startup timeout: PT10M)
+2026-09-07 13:39:43.774 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-813504: http://localhost:32796
+2026-09-07 13:39:43.774 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-813504:8080
+2026-09-07 13:39:43.774 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:39:46.774 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:39:46.777 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:39:46.777 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:39:47.777 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:39:47.778 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:39:47.778 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:39:47.778 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:39:47.778 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:39:49.083 [main] [INFO] DockerDriverPool - Playwright Server container started in 1305 ms
+2026-09-07 13:39:49.083 [main] [INFO] DockerDriverPool - Container started - ID: 7696adb73f2ed34b89368b2e125571c9ed14e1c8972771a4b56ac3fbc3dfdc6f
+2026-09-07 13:39:49.083 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32797 -> 3000
+2026-09-07 13:39:49.083 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:39:49.095 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:39:49.095 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32797
+2026-09-07 13:39:49.267 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:39:49.480 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32797/
+2026-09-07 13:39:49.480 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:39:49.489 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:39:49.600 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:39:49.600 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:39:49.728 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:39:49.729 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-813504:8080
+2026-09-07 13:39:49.729 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:39:49.729 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:39:50.461 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-813504:8080
+2026-09-07 13:39:50.462 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:39:50.462 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:39:50.569 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:50.578 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:50.578 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:39:50.594 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:39:50.625 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:50.628 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:50.628 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:39:50.634 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:39:50.651 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:50.654 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:50.654 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:39:50.659 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:39:52.759 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:39:52.785 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:39:52.787 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.793 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.793 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:39:52.820 [main] [INFO] WebElement - Filling firstNameField with text: 'Jessika'
+2026-09-07 13:39:52.884 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.887 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.887 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:39:52.900 [main] [INFO] WebElement - Filling lastNameField with text: 'Koelpin'
+2026-09-07 13:39:52.945 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.949 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.949 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:39:52.958 [main] [INFO] WebElement - Filling emailField with text: 'loyd.nitzsche@yahoo.com'
+2026-09-07 13:39:52.982 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.985 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:52.985 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:39:52.997 [main] [INFO] WebElement - Filling displayNameField with text: 'Clarissa Muller'
+2026-09-07 13:39:53.016 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:53.020 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:53.020 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:39:53.031 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:39:53.117 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:39:53.117 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:39:53.132 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:39:53.382 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:39:53.889 [main] [INFO] WaitUtil - Condition met after 772ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:39:53.889 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:39:56.894 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:39:56.894 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:39:56.902 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:39:56.902 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:56.904 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:56.904 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:39:56.912 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:39:57.400 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:39:57.401 [main] [INFO] WaitUtil - Condition met after 507ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:39:57.401 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:39:57.417 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:57.448 [main] [INFO] WaitUtil - Condition met after 31ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:57.448 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:39:57.514 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:39:57.659 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From template' step of the Create project wizard
+2026-09-07 13:39:57.659 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:57.668 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:57.668 [main] [INFO] WebElement - Waiting for methodTemplate to be visible (timeout: 250ms)
+2026-09-07 13:39:57.683 [main] [INFO] WebElement - Clicking methodTemplate 
+2026-09-07 13:39:58.138 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From template' step to render
+2026-09-07 13:39:58.142 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the 'From template' step to render
+2026-09-07 13:39:58.142 [main] [INFO] WaitUtil - Action succeeded after 483ms: Opening the 'From template' step of the Create project wizard
+2026-09-07 13:39:58.142 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.144 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.144 [main] [INFO] WebElement - Waiting for templateGroup to be visible (timeout: 250ms)
+2026-09-07 13:39:58.154 [main] [INFO] WebElement - Clicking templateGroup 
+2026-09-07 13:39:58.205 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.208 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.208 [main] [INFO] WebElement - Waiting for templateItem to be visible (timeout: 250ms)
+2026-09-07 13:39:58.214 [main] [INFO] WebElement - Clicking templateItem 
+2026-09-07 13:39:58.282 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:39:58.282 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.284 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.284 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:39:58.292 [main] [INFO] WebElement - Filling newProjectName with text: 'project-927222'
+2026-09-07 13:39:58.327 [main] [INFO] WebElement - Getting current input value from newProjectName: 'project-927222'
+2026-09-07 13:39:58.327 [main] [INFO] WaitUtil - Condition met after 45ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:39:58.327 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.329 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.329 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:39:58.335 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:39:58.398 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:39:58.414 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.416 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:58.416 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:40:01.438 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:40:01.448 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:01.450 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:01.530 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:40:01.547 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:01.551 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:01.551 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:40:01.553 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:40:01.884 [main] [INFO] WaitUtil - Condition met after 333ms: Waiting for project row actions
+2026-09-07 13:40:01.923 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:40:01.928 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:01.929 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:01.929 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:40:01.934 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:40:02.004 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:40:02.019 [main] [INFO] WaitUtil - Condition met after 15ms: Waiting for the row overflow menu
+2026-09-07 13:40:02.056 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:40:02.063 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:40:02.063 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:02.071 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:02.071 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:40:02.080 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:40:02.637 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:40:02.637 [main] [INFO] WaitUtil - Condition met after 581ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:40:02.637 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:40:02.637 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:40:02.637 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:40:02.691 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:02.696 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:02.696 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting before clicking More dropdown
+2026-09-07 13:40:03.696 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:03.700 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:03.700 [main] [INFO] WebElement - Waiting for moreBtn to be visible (timeout: 250ms)
+2026-09-07 13:40:03.708 [main] [INFO] WebElement - Clicking moreBtn 
+2026-09-07 13:40:03.743 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for More dropdown to open
+2026-09-07 13:40:04.245 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:04.249 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:04.249 [main] [INFO] WebElement - Waiting for compareExcelFilesBtn to be visible (timeout: 250ms)
+2026-09-07 13:40:04.256 [main] [INFO] WebElement - Clicking compareExcelFilesBtn 
+2026-09-07 13:40:04.573 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting for file to upload: /home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestDisplayChangedRows/Bank_Rating_1.xlsx
+2026-09-07 13:40:05.601 [main] [INFO] WaitUtil - Sleeping for 1000ms: Waiting for file to upload: /home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestDisplayChangedRows/Bank_Rating_2.xlsx
+2026-09-07 13:40:06.601 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:06.605 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:06.605 [main] [INFO] WebElement - Waiting for compareExcelBtn to be visible (timeout: 250ms)
+2026-09-07 13:40:06.611 [main] [INFO] WebElement - Clicking compareExcelBtn 
+2026-09-07 13:40:08.687 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Excel comparison to complete
+2026-09-07 13:40:10.687 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:10.696 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:10.696 [main] [INFO] WebElement - Waiting for treeNodeExpanderTemplate to be visible (timeout: 250ms)
+2026-09-07 13:40:10.705 [main] [INFO] WebElement - Clicking treeNodeExpanderTemplate 
+2026-09-07 13:40:10.741 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for tree node to expand: Limit
+2026-09-07 13:40:11.241 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:11.244 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:11.244 [main] [INFO] WebElement - Waiting for treeNodeLinkTemplate to be visible (timeout: 250ms)
+2026-09-07 13:40:11.250 [main] [INFO] WebElement - Clicking treeNodeLinkTemplate 
+2026-09-07 13:40:11.284 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting after clicking tree node: Rules Double BankLimitIndex (Bank bank, RatingGroup bankRatingGroup)
+2026-09-07 13:40:11.784 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:40:11.786 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:40:11.786 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 1 to settle
+2026-09-07 13:40:11.788 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 1 to settle
+2026-09-07 13:40:12.040 [main] [INFO] WaitUtil - Size stabilized at 4 : Waiting for the row count of fragment 1 to settle
+2026-09-07 13:40:12.042 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:40:12.044 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:40:12.044 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 2 to settle
+2026-09-07 13:40:12.045 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 2 to settle
+2026-09-07 13:40:12.297 [main] [INFO] WaitUtil - Size stabilized at 4 : Waiting for the row count of fragment 2 to settle
+2026-09-07 13:40:12.298 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:12.306 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:12.322 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [7,5] fragment=1: rgb(195, 214, 155)
+2026-09-07 13:40:12.322 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:12.328 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:12.339 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [7,5] fragment=2: rgb(195, 214, 155)
+2026-09-07 13:40:12.339 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:12.343 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:12.353 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [16,11] fragment=1: rgb(195, 214, 155)
+2026-09-07 13:40:12.353 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:12.357 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:12.367 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [16,11] fragment=2: rgb(195, 214, 155)
+2026-09-07 13:40:12.367 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:40:12.378 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:40:12.379 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:40:12.379 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:40:12.384 [main] [INFO] WebElement - Clicking showEqualRowsCheckbox 
+2026-09-07 13:40:12.411 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 200ms): Waiting for the equal rows checkbox to read true
+2026-09-07 13:40:12.411 [main] [INFO] WebElement - Waiting for showEqualRowsCheckbox to be visible (timeout: 250ms)
+2026-09-07 13:40:12.447 [main] [INFO] WaitUtil - Condition met after 36ms: Waiting for the equal rows checkbox to read true
+2026-09-07 13:40:12.447 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:40:12.450 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:40:12.702 [main] [INFO] WaitUtil - Condition met after 255ms: Waiting for the comparison to be redrawn with equal rows shown
+2026-09-07 13:40:12.702 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the redrawn comparison to settle
+2026-09-07 13:40:12.704 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the redrawn comparison to settle
+2026-09-07 13:40:12.956 [main] [INFO] WaitUtil - Size stabilized at 17 : Waiting for the redrawn comparison to settle
+2026-09-07 13:40:12.956 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:40:12.958 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for comparison rows to appear for fragment 1
+2026-09-07 13:40:12.958 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 1 to settle
+2026-09-07 13:40:12.961 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 1 to settle
+2026-09-07 13:40:13.213 [main] [INFO] WaitUtil - Size stabilized at 17 : Waiting for the row count of fragment 1 to settle
+2026-09-07 13:40:13.215 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:40:13.216 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for comparison rows to appear for fragment 2
+2026-09-07 13:40:13.216 [main] [INFO] WaitUtil - Waiting for stable size (timeout: 20000ms, polling: 250ms): Waiting for the row count of fragment 2 to settle
+2026-09-07 13:40:13.218 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for stable size: Waiting for the row count of fragment 2 to settle
+2026-09-07 13:40:13.470 [main] [INFO] WaitUtil - Size stabilized at 17 : Waiting for the row count of fragment 2 to settle
+2026-09-07 13:40:13.471 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:13.481 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:13.494 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [7,5] fragment=1: rgb(195, 214, 155)
+2026-09-07 13:40:13.494 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:13.499 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:13.512 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [7,5] fragment=2: rgb(195, 214, 155)
+2026-09-07 13:40:13.512 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:13.518 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:13.530 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [16,11] fragment=1: rgb(195, 214, 155)
+2026-09-07 13:40:13.530 [main] [INFO] WebElement - Waiting for cellTemplate to be visible (timeout: 5000ms)
+2026-09-07 13:40:13.535 [main] [INFO] WebElement - Getting CSS property 'background-color' from cellTemplate
+2026-09-07 13:40:13.549 [main] [INFO] CompareLocalChangesDialogComponent - Cell background-color at [16,11] fragment=2: rgb(195, 214, 155)
+2026-09-07 13:40:13.570 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:40:15.092 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

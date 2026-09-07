@@ -1,0 +1,101 @@
+2026-09-07 13:25:15.095 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testRuleServicesNewUI
+2026-09-07 13:25:15.105 [main] [INFO] BaseTest - [ruleservice.deployer.enabled] -> [true]
+2026-09-07 13:25:15.105 [main] [INFO] BaseTest - [openl.application.title] -> [🌍 Привет, мир! こんにちは世界 🚀]
+2026-09-07 13:25:15.106 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:25:15.106 [main] [INFO] BaseTest - [production-repository.factory] -> [repo-file]
+2026-09-07 13:25:15.106 [main] [INFO] BaseTest - [production-repository.uri] -> [/opt/openl/shared]
+2026-09-07 13:25:15.146 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-302934 (startup timeout: PT10M)
+2026-09-07 13:25:29.386 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-302934: http://localhost:32769
+2026-09-07 13:25:29.387 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-302934:8080
+2026-09-07 13:25:29.389 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:25:32.390 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:32.393 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:32.393 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:25:33.395 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:25:33.397 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:25:33.397 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:25:33.397 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:25:33.397 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:25:35.432 [main] [INFO] DockerDriverPool - Playwright Server container started in 2033 ms
+2026-09-07 13:25:35.432 [main] [INFO] DockerDriverPool - Container started - ID: 10fc81f7dfe05c074049ed83caa09bd411b16691acd96ccf2088e607833eec3b
+2026-09-07 13:25:35.432 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32770 -> 3000
+2026-09-07 13:25:35.432 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:25:35.445 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:25:35.445 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32770
+2026-09-07 13:25:50.330 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:25:50.519 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32770/
+2026-09-07 13:25:50.521 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:25:50.560 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:25:50.619 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:25:50.620 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:25:51.528 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+GET http://localhost:32769/web/public/info/openl.json
+Header: Accept : */*
+
+2026-09-07 13:25:51.529 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+404 HTTP/1.1 404 Not FoundHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:25:51 GMT
+Header: Content-Type : text/html;charset=utf-8
+Header: Content-Length : 47
+Body: 
+<html><body>No service was found.</body></html>
+2026-09-07 13:25:52.089 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:25:52.100 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:52.110 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-302934:8080
+2026-09-07 13:25:52.183 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:52.327 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:52.351 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:52.376 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 250ms)
+2026-09-07 13:25:52.401 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:25:52.410 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for the loading overlay to disappear
+2026-09-07 13:25:52.411 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 250ms)
+2026-09-07 13:25:52.470 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 2000ms)
+2026-09-07 13:25:54.484 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 3000ms)
+2026-09-07 13:25:54.490 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 3000ms)
+2026-09-07 13:25:54.495 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:25:54.498 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:25:54.498 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 250ms)
+2026-09-07 13:25:54.528 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.534 [main] [INFO] WebElement - Waiting for Deployment Kafka Badge to be visible (timeout: 3000ms)
+2026-09-07 13:25:54.543 [main] [INFO] WebElement - Waiting for Deployment Manifest Link to be visible (timeout: 3000ms)
+2026-09-07 13:25:54.552 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:25:54.554 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:25:54.555 [main] [INFO] WebElement - Waiting for Deployment Manifest Link to be visible (timeout: 250ms)
+2026-09-07 13:25:54.562 [main] [INFO] WebElement - Clicking Deployment Manifest Link 
+2026-09-07 13:25:54.689 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:54.689 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.722 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.731 [main] [INFO] WebElement - Waiting for Deployment Row to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.741 [main] [INFO] WebElement - Waiting for Deployment Kafka Badge to be visible (timeout: 2000ms)
+2026-09-07 13:25:56.747 [main] [INFO] WebElement - Waiting for Deployment RMI Link to be visible (timeout: 2000ms)
+2026-09-07 13:25:58.751 [main] [INFO] WebElement - Waiting for Deployment Manifest Link to be visible (timeout: 2000ms)
+2026-09-07 13:26:00.756 [main] [INFO] WebElement - Waiting for Deployment Success Icon to be visible (timeout: 3000ms)
+2026-09-07 13:26:00.765 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:00.767 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:00.767 [main] [INFO] WebElement - Waiting for Deployment Success Icon to be visible (timeout: 250ms)
+2026-09-07 13:26:00.772 [main] [INFO] WebElement - Clicking Deployment Success Icon 
+2026-09-07 13:26:00.793 [main] [INFO] WebElement - Waiting for List Methods to be visible (timeout: 1000ms)
+2026-09-07 13:26:01.797 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:26:01.800 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:26:01.800 [main] [INFO] WebElement - Waiting for Deployment Failed Icon to be visible (timeout: 250ms)
+2026-09-07 13:26:01.806 [main] [INFO] WebElement - Clicking Deployment Failed Icon 
+2026-09-07 13:26:01.828 [main] [INFO] WebElement - Waiting for Deployment Error Text to be visible (timeout: 3000ms)
+2026-09-07 13:26:01.838 [main] [INFO] WebElement - Waiting for Deployment Error Text to be visible (timeout: 250ms)
+2026-09-07 13:26:01.853 [main] [INFO] WebElement - Getting text from Deployment Error Text: 'Identifier 'max' is not found.'
+2026-09-07 13:26:01.853 [main] [INFO] WebElement - Waiting for Project Title Link to be visible (timeout: 3000ms)
+2026-09-07 13:26:01.861 [main] [INFO] WebElement - Getting CSS property 'pointer-events' from Project Title Link
+2026-09-07 13:26:01.912 [main] [INFO] WebElement - Waiting for Project Title Link to be visible (timeout: 3000ms)
+2026-09-07 13:26:01.921 [main] [INFO] WebElement - Getting CSS property 'pointer-events' from Project Title Link
+2026-09-07 13:26:01.945 [main] [INFO] WebElement - Waiting for Project Title Link to be visible (timeout: 3000ms)
+2026-09-07 13:26:01.954 [main] [INFO] WebElement - Getting CSS property 'pointer-events' from Project Title Link
+2026-09-07 13:26:01.983 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=sample2'
+2026-09-07 13:26:01.995 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:26:05.358 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

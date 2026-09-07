@@ -1,0 +1,54 @@
+{
+  "build": "latest",
+  "run": {
+    "startedAt": "2026-09-07 13:13:39 UTC",
+    "finishedAt": "2026-09-07 13:13:59 UTC",
+    "wallSeconds": 19,
+    "applications": [
+      {
+        "image": "ghcr.io/openl-tablets/webstudio:latest",
+        "versions": [
+          {
+            "title": "OpenL Studio",
+            "version": "6.5.0-SNAPSHOT",
+            "buildNumber": "4a45294cf0d6",
+            "buildDate": "2026-09-06"
+          }
+        ],
+        "tests": 1,
+        "errors": []
+      },
+      {
+        "image": "ghcr.io/openl-tablets/ws:latest-all",
+        "versions": [],
+        "tests": 0,
+        "errors": []
+      }
+    ],
+    "testsRepository": "dmitry-minchuk/java-taf-template",
+    "testsBranch": "main",
+    "testsCommit": "b6bbe0f5a755daf602e7ba5c26979165aff3b333",
+    "playwrightVersion": "1.52.0",
+    "javaVersion": "21",
+    "selective": true,
+    "workflowRunUrl": "https://github.com/dmitry-minchuk/java-taf-template/actions/runs/34125995868"
+  },
+  "total": 1,
+  "counts": {
+    "PASSED": 1
+  },
+  "tests": [
+    {
+      "suite": "repository",
+      "shard": "shard-01",
+      "class": "tests.ui.webstudio.repository.TestProjectInfoModulesFromRulesDirectoryUi",
+      "method": "testModulesAreShownAndDescriptorKeepsNoDeclaredModules",
+      "status": "PASSED",
+      "outcome": "PASSED",
+      "knownIssue": "",
+      "durationMs": 19692,
+      "testCaseId": "EPBDS-16272",
+      "errorMessage": ""
+    }
+  ]
+}

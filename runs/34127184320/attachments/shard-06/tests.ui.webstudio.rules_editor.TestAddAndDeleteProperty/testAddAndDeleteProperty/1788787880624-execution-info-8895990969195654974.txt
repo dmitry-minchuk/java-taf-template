@@ -1,0 +1,12 @@
+Execution Mode: PLAYWRIGHT_DOCKER
+
+Execution Mode: PLAYWRIGHT_DOCKER
+Playwright Docker Architecture:
+  Network: 29ca1f82da648a30b8138a5c15da48d92f1c65a156d2cc59a9d97eba630eea2b
+  Playwright Container: 4b40606fe2918df1124bc37b347e166c656be1f666892d498922266b57e001b3
+  Browser: chromium
+  Current Page: http://appcontainer-114920:8080/#design/TestAddDeleteEditProperties/TestAddDeleteEditProperties
+  App Container: 88093c31dce0a80f6aaf39790d204b6df237022293d9d622ef3fa78a6fa99726
+  Container Network URL: http:///silly_dhawan:8080
+Configuration:
+Host Resource Path: src/test/resources

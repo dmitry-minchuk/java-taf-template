@@ -1,0 +1,69 @@
+2026-09-07 13:25:12.118 [main] [INFO] GitContainerService - Starting git daemon (alpine/git:2.49.1) on network alias 'git-container-no-service-name'
+2026-09-07 13:25:15.920 [main] [INFO] GitContainerService - git daemon ready. Host URL: git://localhost:32769/ruleServiceTestData | in-network URL: git://git-container-no-service-name:9418/ruleServiceTestData
+2026-09-07 13:25:15.921 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testDeployProjectsWithoutServiceNameInRulesDeploy
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [ruleservice.deployer.enabled] -> [true]
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [production-repository.factory] -> [repo-git]
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [production-repository.base.path] -> [TestDeployProjectsWithoutServiceNameInRulesDeploy]
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [production-repository.branch] -> [main]
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [production-repository.uri] -> [git://git-container-no-service-name:9418/ruleServiceTestData]
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [production-repository.tag-prefix] -> [Rules_]
+2026-09-07 13:25:15.924 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:25:15.925 [main] [INFO] BaseTest - [production-repository.listener-timer-period] -> [10]
+2026-09-07 13:25:15.925 [main] [INFO] BaseTest - [production-repository.local-repository-path] -> [/opt/openl/local]
+2026-09-07 13:25:15.928 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-749821 (startup timeout: PT10M)
+2026-09-07 13:25:32.049 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-749821: http://localhost:32770
+2026-09-07 13:25:32.050 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-749821:8080
+2026-09-07 13:25:32.051 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:25:35.051 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:35.055 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:35.055 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:25:36.057 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:25:36.059 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:25:36.059 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:25:36.059 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:25:36.059 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:25:37.984 [main] [INFO] DockerDriverPool - Playwright Server container started in 1925 ms
+2026-09-07 13:25:37.984 [main] [INFO] DockerDriverPool - Container started - ID: edb89c89e569ba5f9c5d181c92f4ea152277f0f029e205f4aa29952502577959
+2026-09-07 13:25:37.984 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32771 -> 3000
+2026-09-07 13:25:37.985 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:25:37.997 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:25:37.997 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32771
+2026-09-07 13:25:52.113 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:25:52.312 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32771/
+2026-09-07 13:25:52.316 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:25:52.356 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:25:52.419 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:25:52.419 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:25:53.284 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+GET http://localhost:32770/web/public/info/openl.json
+Header: Accept : */*
+
+2026-09-07 13:25:53.284 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+404 HTTP/1.1 404 Not FoundHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:25:53 GMT
+Header: Content-Type : text/html;charset=utf-8
+Header: Content-Length : 47
+Body: 
+<html><body>No service was found.</body></html>
+2026-09-07 13:25:53.785 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:25:53.796 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:53.800 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-749821:8080
+2026-09-07 13:25:53.854 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.002 [main] [INFO] WebElement - Waiting for Expand Service Button to be visible (timeout: 5000ms)
+2026-09-07 13:25:54.013 [main] [INFO] WebElement - Waiting for Failed Icon to be visible (timeout: 1000ms)
+2026-09-07 13:25:55.018 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 5000ms)
+2026-09-07 13:25:55.025 [main] [INFO] WebElement - Waiting for Expand Service Button to be visible (timeout: 5000ms)
+2026-09-07 13:25:55.030 [main] [INFO] WebElement - Waiting for Failed Icon to be visible (timeout: 1000ms)
+2026-09-07 13:25:56.034 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 5000ms)
+2026-09-07 13:25:56.039 [main] [INFO] WebElement - Waiting for Expand Service Button to be visible (timeout: 5000ms)
+2026-09-07 13:25:56.044 [main] [INFO] WebElement - Waiting for Failed Icon to be visible (timeout: 1000ms)
+2026-09-07 13:25:57.056 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:26:00.005 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

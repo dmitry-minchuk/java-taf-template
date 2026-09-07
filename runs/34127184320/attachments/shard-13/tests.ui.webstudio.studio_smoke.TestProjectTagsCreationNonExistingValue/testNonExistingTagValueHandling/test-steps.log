@@ -1,0 +1,491 @@
+2026-09-07 13:42:04.743 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testNonExistingTagValueHandling
+2026-09-07 13:42:04.749 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:42:04.749 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:42:04.750 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:42:04.771 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-537277 (startup timeout: PT10M)
+2026-09-07 13:42:21.693 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-537277: http://localhost:32803
+2026-09-07 13:42:21.694 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-537277:8080
+2026-09-07 13:42:21.695 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:42:24.695 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:42:24.699 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:42:24.699 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:42:25.700 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:42:25.703 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:42:25.703 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:42:25.703 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:42:25.704 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:42:27.053 [main] [INFO] DockerDriverPool - Playwright Server container started in 1349 ms
+2026-09-07 13:42:27.053 [main] [INFO] DockerDriverPool - Container started - ID: 75750e9381bf6488d42c96c29ef51c9b3de5df08f23554835c7ce4d687d139b8
+2026-09-07 13:42:27.053 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32804 -> 3000
+2026-09-07 13:42:27.053 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:42:27.065 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:42:27.066 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32804
+2026-09-07 13:42:28.243 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:42:28.427 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32804/
+2026-09-07 13:42:28.429 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:42:28.459 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:42:28.553 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:42:28.553 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:42:29.582 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:42:29.591 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-537277:8080
+2026-09-07 13:42:29.592 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:42:29.592 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:42:30.413 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-537277:8080
+2026-09-07 13:42:30.415 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:42:30.419 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:42:30.569 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:30.581 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:30.582 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:42:30.600 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:42:30.635 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:30.639 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:30.639 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:42:30.651 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:42:30.686 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:30.690 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:30.690 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:42:30.707 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:42:33.025 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:42:33.076 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:42:33.386 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.390 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.391 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:42:33.408 [main] [INFO] WebElement - Filling firstNameField with text: 'Hilaria'
+2026-09-07 13:42:33.448 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.459 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.459 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:42:33.481 [main] [INFO] WebElement - Filling lastNameField with text: 'Willms'
+2026-09-07 13:42:33.576 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.580 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.581 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:42:33.594 [main] [INFO] WebElement - Filling emailField with text: 'dannie.harris@hotmail.com'
+2026-09-07 13:42:33.650 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.656 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.656 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:42:33.671 [main] [INFO] WebElement - Filling displayNameField with text: 'Olin Upton MD'
+2026-09-07 13:42:33.706 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.711 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:33.712 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:42:33.727 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:42:33.867 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:42:33.867 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:42:33.932 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:42:34.183 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:42:34.695 [main] [INFO] WaitUtil - Condition met after 828ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:42:34.695 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:42:37.701 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:42:37.715 [main] [INFO] CorePage - Messages currently open: 1
+2026-09-07 13:42:37.717 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:37.719 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:37.720 [main] [INFO] WebElement - Waiting for Close Message Button to be visible (timeout: 250ms)
+2026-09-07 13:42:37.976 [main] [INFO] WebElement - Clicking Close Message Button 
+2026-09-07 13:42:57.985 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:42:58.088 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:42:58.191 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:42:58.292 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:58.295 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:58.295 [main] [INFO] WebElement - Waiting for User Logo to be visible (timeout: 250ms)
+2026-09-07 13:42:58.303 [main] [INFO] WebElement - Clicking User Logo 
+2026-09-07 13:42:58.353 [main] [INFO] WebElement - Waiting for User Menu Drawer to be visible
+2026-09-07 13:42:58.365 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:58.367 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:58.368 [main] [INFO] WebElement - Waiting for Administration Menu Item to be visible (timeout: 250ms)
+2026-09-07 13:42:58.385 [main] [INFO] WebElement - Clicking Administration Menu Item 
+2026-09-07 13:42:58.916 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.AdminPage was opened.
+2026-09-07 13:42:58.920 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:58.930 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:58.930 [main] [INFO] WebElement - Waiting for navigationItem to be visible (timeout: 250ms)
+2026-09-07 13:42:59.216 [main] [INFO] WebElement - Clicking navigationItem 
+2026-09-07 13:42:59.426 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:59.440 [main] [INFO] WaitUtil - Condition met after 14ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:59.440 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:42:59.640 [main] [INFO] WebElement - Filling newTagTypeInput with text: 'Tag'
+2026-09-07 13:42:59.691 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:42:59.695 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:42:59.695 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:42:59.709 [main] [INFO] WebElement - Pressing Enter on newTagTypeInput
+2026-09-07 13:42:59.806 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiter to let created Tag to appear inside the Tag Table
+2026-09-07 13:43:00.306 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:00.311 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for table rows to be loaded
+2026-09-07 13:43:00.314 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:00.316 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:00.325 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.330 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table row cells to load
+2026-09-07 13:43:00.341 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:00.388 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:00.388 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.392 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.394 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.398 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:00.447 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.456 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.460 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.475 [main] [INFO] WaitUtil - List became non-empty after 15ms: Waiting for table row cells to load
+2026-09-07 13:43:00.510 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.518 [main] [INFO] WaitUtil - List became non-empty after 7ms: Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.521 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.535 [main] [INFO] WaitUtil - List became non-empty after 14ms: Waiting for table row cells to load
+2026-09-07 13:43:00.647 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:00.669 [main] [INFO] WaitUtil - Condition met after 20ms: Waiting for table rows to be loaded
+2026-09-07 13:43:00.682 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:00.696 [main] [INFO] WaitUtil - List became non-empty after 14ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:00.704 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.724 [main] [INFO] WaitUtil - List became non-empty after 20ms: Waiting for table row cells to load
+2026-09-07 13:43:00.734 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:00.765 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:00.765 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.774 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.780 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.798 [main] [INFO] WaitUtil - List became non-empty after 18ms: Waiting for table row cells to load
+2026-09-07 13:43:00.871 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.873 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.877 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.887 [main] [INFO] WaitUtil - List became non-empty after 10ms: Waiting for table row cells to load
+2026-09-07 13:43:00.921 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.926 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows to load before getting cell [1,4]
+2026-09-07 13:43:00.931 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:00.940 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table row cells to load
+2026-09-07 13:43:00.997 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,2]
+2026-09-07 13:43:01.001 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows to load before getting cell [1,2]
+2026-09-07 13:43:01.012 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:01.028 [main] [INFO] WaitUtil - List became non-empty after 16ms: Waiting for table row cells to load
+2026-09-07 13:43:01.076 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,3]
+2026-09-07 13:43:01.080 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [1,3]
+2026-09-07 13:43:01.092 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:01.107 [main] [INFO] WaitUtil - List became non-empty after 15ms: Waiting for table row cells to load
+2026-09-07 13:43:01.147 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:01.153 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:01.154 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:43:01.168 [main] [INFO] WebElement - Filling newTagTypeInput with text: 'TagOpt'
+2026-09-07 13:43:01.207 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:01.213 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:01.214 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:43:01.227 [main] [INFO] WebElement - Pressing Enter on newTagTypeInput
+2026-09-07 13:43:01.278 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiter to let created Tag to appear inside the Tag Table
+2026-09-07 13:43:01.779 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:01.783 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for table rows to be loaded
+2026-09-07 13:43:01.785 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:01.788 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:01.790 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:01.793 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:01.797 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:01.819 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:01.819 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:01.823 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for table rows to be loaded
+2026-09-07 13:43:01.826 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:01.830 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:01.832 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:01.837 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:01.843 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:01.863 [main] [INFO] WebElement - Getting text from cells_0: 'TagOpt'
+2026-09-07 13:43:01.864 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:01.866 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:01.870 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:01.874 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:01.910 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:01.932 [main] [INFO] WaitUtil - List became non-empty after 22ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:01.946 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:01.956 [main] [INFO] WaitUtil - List became non-empty after 10ms: Waiting for table row cells to load
+2026-09-07 13:43:02.013 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.022 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.036 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.048 [main] [INFO] WaitUtil - List became non-empty after 12ms: Waiting for table row cells to load
+2026-09-07 13:43:02.115 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:02.126 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for table rows to be loaded
+2026-09-07 13:43:02.132 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:02.137 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:02.160 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.168 [main] [INFO] WaitUtil - List became non-empty after 7ms: Waiting for table row cells to load
+2026-09-07 13:43:02.196 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:02.249 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:02.250 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:02.254 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for table rows to be loaded
+2026-09-07 13:43:02.258 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:02.262 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:02.263 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.269 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:02.271 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:02.292 [main] [INFO] WebElement - Getting text from cells_0: 'TagOpt'
+2026-09-07 13:43:02.292 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.296 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.297 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.302 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table row cells to load
+2026-09-07 13:43:02.405 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.415 [main] [INFO] WaitUtil - List became non-empty after 10ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.426 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.433 [main] [INFO] WaitUtil - List became non-empty after 7ms: Waiting for table row cells to load
+2026-09-07 13:43:02.480 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.484 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:02.486 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.503 [main] [INFO] WaitUtil - List became non-empty after 16ms: Waiting for table row cells to load
+2026-09-07 13:43:02.595 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,2]
+2026-09-07 13:43:02.601 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table rows to load before getting cell [2,2]
+2026-09-07 13:43:02.620 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.634 [main] [INFO] WaitUtil - List became non-empty after 14ms: Waiting for table row cells to load
+2026-09-07 13:43:02.663 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,3]
+2026-09-07 13:43:02.678 [main] [INFO] WaitUtil - List became non-empty after 15ms: Waiting for table rows to load before getting cell [2,3]
+2026-09-07 13:43:02.686 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.692 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table row cells to load
+2026-09-07 13:43:02.719 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,3]
+2026-09-07 13:43:02.723 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,3]
+2026-09-07 13:43:02.726 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:02.736 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table row cells to load
+2026-09-07 13:43:02.911 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:02.916 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:02.916 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:43:02.951 [main] [INFO] WebElement - Filling newTagTypeInput with text: 'TagExt'
+2026-09-07 13:43:03.015 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:03.025 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:03.025 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:43:03.055 [main] [INFO] WebElement - Pressing Enter on newTagTypeInput
+2026-09-07 13:43:03.136 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiter to let created Tag to appear inside the Tag Table
+2026-09-07 13:43:03.637 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:03.640 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for table rows to be loaded
+2026-09-07 13:43:03.642 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:03.643 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:03.644 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.647 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:03.650 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:03.661 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:03.661 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:03.663 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for table rows to be loaded
+2026-09-07 13:43:03.665 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:03.666 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:03.668 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.678 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table row cells to load
+2026-09-07 13:43:03.685 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:03.700 [main] [INFO] WebElement - Getting text from cells_0: 'TagExt'
+2026-09-07 13:43:03.700 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:03.702 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:03.703 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.706 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:03.731 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:03.733 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:03.735 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.738 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:03.761 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:03.766 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:03.768 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.777 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table row cells to load
+2026-09-07 13:43:03.876 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:03.894 [main] [INFO] WaitUtil - Condition met after 17ms: Waiting for table rows to be loaded
+2026-09-07 13:43:03.902 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:03.915 [main] [INFO] WaitUtil - List became non-empty after 13ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:03.917 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.924 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table row cells to load
+2026-09-07 13:43:03.929 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:03.954 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:03.954 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:03.958 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for table rows to be loaded
+2026-09-07 13:43:03.962 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:03.964 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:03.969 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:03.975 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table row cells to load
+2026-09-07 13:43:03.983 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:04.008 [main] [INFO] WebElement - Getting text from cells_0: 'TagExt'
+2026-09-07 13:43:04.009 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:04.012 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:04.014 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.020 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table row cells to load
+2026-09-07 13:43:04.079 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:04.081 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:04.082 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.084 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:04.100 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:04.103 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table rows to load before getting cell [2,4]
+2026-09-07 13:43:04.105 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.109 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:04.162 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [3,2]
+2026-09-07 13:43:04.170 [main] [INFO] WaitUtil - List became non-empty after 8ms: Waiting for table rows to load before getting cell [3,2]
+2026-09-07 13:43:04.189 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.200 [main] [INFO] WaitUtil - List became non-empty after 11ms: Waiting for table row cells to load
+2026-09-07 13:43:04.220 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [3,2]
+2026-09-07 13:43:04.222 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [3,2]
+2026-09-07 13:43:04.224 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.229 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table row cells to load
+2026-09-07 13:43:04.298 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [3,3]
+2026-09-07 13:43:04.310 [main] [INFO] WaitUtil - List became non-empty after 12ms: Waiting for table rows to load before getting cell [3,3]
+2026-09-07 13:43:04.319 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.338 [main] [INFO] WaitUtil - List became non-empty after 19ms: Waiting for table row cells to load
+2026-09-07 13:43:04.354 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [3,3]
+2026-09-07 13:43:04.363 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table rows to load before getting cell [3,3]
+2026-09-07 13:43:04.375 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:04.380 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:04.460 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:04.471 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:04.472 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:43:04.519 [main] [INFO] WebElement - Filling newTagTypeInput with text: 'TagOptExt'
+2026-09-07 13:43:04.566 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:04.570 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:04.570 [main] [INFO] WebElement - Waiting for newTagTypeInput to be visible (timeout: 250ms)
+2026-09-07 13:43:04.579 [main] [INFO] WebElement - Pressing Enter on newTagTypeInput
+2026-09-07 13:43:04.625 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiter to let created Tag to appear inside the Tag Table
+2026-09-07 13:43:05.126 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.128 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.130 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:05.131 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:05.132 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.134 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.136 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.148 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:05.148 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.149 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.150 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:05.152 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:05.153 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.155 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.157 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.168 [main] [INFO] WebElement - Getting text from cells_0: 'TagExt'
+2026-09-07 13:43:05.168 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.178 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.180 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [3,1]
+2026-09-07 13:43:05.181 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [3,1]
+2026-09-07 13:43:05.183 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.185 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.187 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.199 [main] [INFO] WebElement - Getting text from cells_0: 'TagOpt'
+2026-09-07 13:43:05.199 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.201 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.203 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,1]
+2026-09-07 13:43:05.205 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [4,1]
+2026-09-07 13:43:05.206 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.209 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:05.211 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.223 [main] [INFO] WebElement - Getting text from cells_0: 'TagOptExt'
+2026-09-07 13:43:05.223 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.225 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.226 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.228 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.265 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.267 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.269 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.272 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.313 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.317 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.324 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.331 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table row cells to load
+2026-09-07 13:43:05.404 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.411 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.425 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:05.430 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows to load before getting cell [1,1]
+2026-09-07 13:43:05.438 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.460 [main] [INFO] WaitUtil - List became non-empty after 22ms: Waiting for table row cells to load
+2026-09-07 13:43:05.476 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.508 [main] [INFO] WebElement - Getting text from cells_0: 'Tag'
+2026-09-07 13:43:05.508 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.513 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.515 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:05.516 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [2,1]
+2026-09-07 13:43:05.521 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.524 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:05.531 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.551 [main] [INFO] WebElement - Getting text from cells_0: 'TagExt'
+2026-09-07 13:43:05.551 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.559 [main] [INFO] WaitUtil - Condition met after 8ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.565 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [3,1]
+2026-09-07 13:43:05.570 [main] [INFO] WaitUtil - List became non-empty after 5ms: Waiting for table rows to load before getting cell [3,1]
+2026-09-07 13:43:05.572 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.575 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:05.583 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.608 [main] [INFO] WebElement - Getting text from cells_0: 'TagOpt'
+2026-09-07 13:43:05.608 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for table rows to be loaded
+2026-09-07 13:43:05.610 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for table rows to be loaded
+2026-09-07 13:43:05.612 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,1]
+2026-09-07 13:43:05.614 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [4,1]
+2026-09-07 13:43:05.616 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.618 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.621 [main] [INFO] WebElement - Waiting for cells_0 to be visible (timeout: 250ms)
+2026-09-07 13:43:05.634 [main] [INFO] WebElement - Getting text from cells_0: 'TagOptExt'
+2026-09-07 13:43:05.634 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.635 [main] [INFO] WaitUtil - List became non-empty after 1ms: Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.636 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.639 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table row cells to load
+2026-09-07 13:43:05.680 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.682 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.684 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.687 [main] [INFO] WaitUtil - List became non-empty after 3ms: Waiting for table row cells to load
+2026-09-07 13:43:05.713 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.719 [main] [INFO] WaitUtil - List became non-empty after 6ms: Waiting for table rows to load before getting cell [4,4]
+2026-09-07 13:43:05.725 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.729 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:05.778 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,2]
+2026-09-07 13:43:05.788 [main] [INFO] WaitUtil - List became non-empty after 9ms: Waiting for table rows to load before getting cell [4,2]
+2026-09-07 13:43:05.810 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.828 [main] [INFO] WaitUtil - List became non-empty after 18ms: Waiting for table row cells to load
+2026-09-07 13:43:05.848 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,2]
+2026-09-07 13:43:05.850 [main] [INFO] WaitUtil - List became non-empty after 2ms: Waiting for table rows to load before getting cell [4,2]
+2026-09-07 13:43:05.854 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.858 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:05.939 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,3]
+2026-09-07 13:43:05.960 [main] [INFO] WaitUtil - List became non-empty after 21ms: Waiting for table rows to load before getting cell [4,3]
+2026-09-07 13:43:05.965 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:05.969 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table row cells to load
+2026-09-07 13:43:05.990 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 3000ms, polling: 100ms): Waiting for table rows to load before getting cell [4,3]
+2026-09-07 13:43:05.994 [main] [INFO] WaitUtil - List became non-empty after 4ms: Waiting for table rows to load before getting cell [4,3]
+2026-09-07 13:43:06.000 [main] [INFO] WaitUtil - Waiting for list not to be empty (timeout: 250ms, polling: 50ms): Waiting for table row cells to load
+2026-09-07 13:43:06.007 [main] [INFO] WaitUtil - List became non-empty after 7ms: Waiting for table row cells to load
+2026-09-07 13:43:06.105 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:06.112 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:06.112 [main] [INFO] WebElement - Waiting for saveTemplatesBtn to be visible (timeout: 250ms)
+2026-09-07 13:43:06.134 [main] [INFO] WebElement - Clicking saveTemplatesBtn 
+2026-09-07 13:43:06.277 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:43:06.316 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:43:06.316 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:06.320 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:06.321 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:43:06.336 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:43:06.501 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-only-child'
+2026-09-07 13:43:06.501 [main] [INFO] WaitUtil - Sleeping for 1000ms: Polling for condition (attempt): Waiting for tab 'Projects' to become active
+2026-09-07 13:43:07.510 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:43:07.514 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:43:07.515 [main] [INFO] WaitUtil - Condition met after 1238ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:43:07.515 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:43:07.519 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:07.521 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:07.521 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:43:07.526 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:43:11.174 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:43:11.174 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:11.179 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:11.179 [main] [INFO] WebElement - Waiting for methodArchive to be visible (timeout: 250ms)
+2026-09-07 13:43:11.219 [main] [INFO] WebElement - Clicking methodArchive 
+2026-09-07 13:43:11.732 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From archive' step to render
+2026-09-07 13:43:11.735 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the 'From archive' step to render
+2026-09-07 13:43:11.735 [main] [INFO] WaitUtil - Action succeeded after 561ms: Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:43:11.756 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/AllTagsTests/TagsTestProject5.zip] to archiveUpload
+2026-09-07 13:43:11.797 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:43:11.798 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:11.804 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:11.804 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:43:11.848 [main] [INFO] WebElement - Filling newProjectName with text: 'Project5'
+2026-09-07 13:43:11.941 [main] [INFO] WebElement - Getting current input value from newProjectName: 'Project5'
+2026-09-07 13:43:11.941 [main] [INFO] WaitUtil - Condition met after 143ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:43:11.941 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:11.948 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:11.948 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:43:11.966 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:43:12.248 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:43:12.280 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:12.284 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:12.284 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:43:15.422 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:43:15.456 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:15.459 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:15.459 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:15.460 [main] [INFO] WaitUtil - Condition met after 1ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:15.461 [main] [INFO] WebElement - Waiting for projectNameInRow to be visible (timeout: 250ms)
+2026-09-07 13:43:15.745 [main] [INFO] WebElement - Clicking projectNameInRow 
+2026-09-07 13:43:15.935 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.ProjectDetailPage was opened.
+2026-09-07 13:43:15.938 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:15.940 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:15.941 [main] [INFO] WebElement - Waiting for overviewTab to be visible (timeout: 250ms)
+2026-09-07 13:43:16.200 [main] [INFO] WebElement - Clicking overviewTab 
+2026-09-07 13:43:16.522 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:43:16.539 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:43:16.544 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:43:16.544 [main] [INFO] WebElement - Waiting for tagValueForType to be visible (timeout: 250ms)
+2026-09-07 13:43:16.584 [main] [INFO] WebElement - Getting text from tagValueForType: 'Tag9'
+2026-09-07 13:43:16.631 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:43:17.094 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

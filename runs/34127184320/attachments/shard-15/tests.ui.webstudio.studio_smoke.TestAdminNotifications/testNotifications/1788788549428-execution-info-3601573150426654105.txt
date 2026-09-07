@@ -1,0 +1,12 @@
+Execution Mode: PLAYWRIGHT_DOCKER
+
+Execution Mode: PLAYWRIGHT_DOCKER
+Playwright Docker Architecture:
+  Network: eeac1d178039a193adbf765c5092fb6e976a55cceb106c9d842e52d6954d818f
+  Playwright Container: c187c073ee077da63b0852d89d92efffd939116a1c126c28b8355e7a4a75424d
+  Browser: chromium
+  Current Page: http://appcontainer-930371:8080/administration/notification
+  App Container: df5ecef964b55567c850c54bdab1b81e3e51a1dda2334bc9ae1b71c07e74261f
+  Container Network URL: http:///inspiring_mendeleev:8080
+Configuration:
+Host Resource Path: src/test/resources

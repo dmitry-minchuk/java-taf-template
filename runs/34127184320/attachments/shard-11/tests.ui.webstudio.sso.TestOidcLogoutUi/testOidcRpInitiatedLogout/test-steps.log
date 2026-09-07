@@ -1,0 +1,73 @@
+2026-09-07 13:36:25.998 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testOidcRpInitiatedLogout
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [security.oauth2.issuer-uri] -> [http://keycloak:8080/realms/openlstudio]
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [user.mode] -> [oauth2]
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [security.oauth2.scope] -> [openid,profile,email]
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [security.oauth2.client-id] -> [openlstudio]
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [security.oauth2.attribute.username] -> [preferred_username]
+2026-09-07 13:36:26.002 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:36:26.003 [main] [INFO] BaseTest - [webstudio.configured] -> [true]
+2026-09-07 13:36:26.003 [main] [INFO] BaseTest - [security.oauth2.client-secret] -> [openlstudiosecret]
+2026-09-07 13:36:26.003 [main] [INFO] BaseTest - [security.oauth2.attribute.groups] -> [groups]
+2026-09-07 13:36:26.005 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-513157 (startup timeout: PT10M)
+2026-09-07 13:36:46.054 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-513157: http://localhost:32794
+2026-09-07 13:36:46.054 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-513157:8080
+2026-09-07 13:36:46.056 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:36:49.058 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:36:49.062 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:36:49.062 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:36:50.064 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:36:50.066 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:36:50.066 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:36:50.066 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:36:50.066 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:36:51.577 [main] [INFO] DockerDriverPool - Playwright Server container started in 1511 ms
+2026-09-07 13:36:51.577 [main] [INFO] DockerDriverPool - Container started - ID: ccc7867c55fc58d1c42a24860dae7cd8729c18f17b04c55d6c848d567be32d24
+2026-09-07 13:36:51.578 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32795 -> 3000
+2026-09-07 13:36:51.578 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:36:51.591 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:36:51.591 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32795
+2026-09-07 13:36:53.122 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:36:53.336 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32795/
+2026-09-07 13:36:53.337 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:36:53.373 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:36:53.446 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:36:53.447 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:36:54.781 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:36:54.801 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-513157:8080
+2026-09-07 13:36:55.666 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.KeycloakLoginPage was opened.
+2026-09-07 13:36:55.670 [main] [INFO] WebElement - Waiting for kcUsername to be visible
+2026-09-07 13:36:55.717 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:55.733 [main] [INFO] WaitUtil - Condition met after 16ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:55.734 [main] [INFO] WebElement - Waiting for kcUsername to be visible (timeout: 250ms)
+2026-09-07 13:36:55.769 [main] [INFO] WebElement - Filling Sequentially kcUsername with text: 'admin'
+2026-09-07 13:36:55.805 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:55.815 [main] [INFO] WaitUtil - Condition met after 10ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:55.815 [main] [INFO] WebElement - Waiting for kcPassword to be visible (timeout: 250ms)
+2026-09-07 13:36:55.831 [main] [INFO] WebElement - Filling Sequentially kcPassword with text: 'admin'
+2026-09-07 13:36:55.887 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:55.893 [main] [INFO] WaitUtil - Condition met after 5ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:55.894 [main] [INFO] WebElement - Waiting for kcLogin to be visible (timeout: 250ms)
+2026-09-07 13:36:55.913 [main] [INFO] WebElement - Clicking kcLogin 
+2026-09-07 13:36:57.541 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:36:58.365 [main] [INFO] WaitUtil - Condition met after 824ms: Waiting for SSO login to land back on Studio with a session cookie
+2026-09-07 13:36:58.365 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:36:58.384 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-513157:8080
+2026-09-07 13:36:59.215 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:36:59.268 [main] [INFO] CorePage - Messages currently open: 0
+2026-09-07 13:36:59.280 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:36:59.567 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:36:59.672 [main] [INFO] WaitUtil - Sleeping for 100ms: Waiting between message close attempts
+2026-09-07 13:36:59.772 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.777 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.777 [main] [INFO] WebElement - Waiting for User Logo to be visible (timeout: 250ms)
+2026-09-07 13:36:59.796 [main] [INFO] WebElement - Clicking User Logo 
+2026-09-07 13:36:59.872 [main] [INFO] WebElement - Waiting for User Menu Drawer to be visible
+2026-09-07 13:36:59.890 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.896 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:36:59.897 [main] [INFO] WebElement - Waiting for Sign Out Menu Item to be visible (timeout: 250ms)
+2026-09-07 13:36:59.914 [main] [INFO] WebElement - Clicking Sign Out Menu Item 
+2026-09-07 13:37:00.650 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:37:01.077 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

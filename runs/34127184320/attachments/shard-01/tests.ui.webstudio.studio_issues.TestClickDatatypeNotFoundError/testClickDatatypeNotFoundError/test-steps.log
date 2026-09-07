@@ -1,0 +1,746 @@
+2026-09-07 13:37:41.057 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testClickDatatypeNotFoundError
+2026-09-07 13:37:41.066 [main] [INFO] BaseTest - [user.mode] -> [multi]
+2026-09-07 13:37:41.066 [main] [INFO] BaseTest - [security.administrators] -> [admin]
+2026-09-07 13:37:41.067 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:37:41.099 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-237651 (startup timeout: PT10M)
+2026-09-07 13:38:00.992 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-237651: http://localhost:32794
+2026-09-07 13:38:00.994 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-237651:8080
+2026-09-07 13:38:00.995 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:38:03.995 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:38:03.999 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:38:03.999 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:38:05.001 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:38:05.004 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:38:05.005 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:38:05.005 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:38:05.005 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:38:06.478 [main] [INFO] DockerDriverPool - Playwright Server container started in 1473 ms
+2026-09-07 13:38:06.479 [main] [INFO] DockerDriverPool - Container started - ID: 6ae32399c02637de94459a7cb0fac3ffb8d4fc9f6b9e6a81e44ffbe4257c5b6c
+2026-09-07 13:38:06.479 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32795 -> 3000
+2026-09-07 13:38:06.479 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:38:06.492 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:38:06.492 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32795
+2026-09-07 13:38:07.967 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:38:08.157 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32795/
+2026-09-07 13:38:08.158 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:38:08.190 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:38:08.258 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:38:08.258 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:38:09.457 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:38:09.469 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-237651:8080
+2026-09-07 13:38:09.469 [main] [INFO] LoginService - Logging in with user: admin
+2026-09-07 13:38:09.469 [main] [INFO] WaitUtil - Sleeping for 500ms: Waiting for possible redirects to finish
+2026-09-07 13:38:10.535 [main] [INFO] LoginService - Navigated to login page: http://appcontainer-237651:8080
+2026-09-07 13:38:10.536 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.LoginPage was opened.
+2026-09-07 13:38:10.543 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 15000ms)
+2026-09-07 13:38:10.643 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:10.655 [main] [INFO] WaitUtil - Condition met after 12ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:10.656 [main] [INFO] WebElement - Waiting for usernameField to be visible (timeout: 250ms)
+2026-09-07 13:38:10.689 [main] [INFO] WebElement - Filling usernameField with text: 'admin'
+2026-09-07 13:38:10.769 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:10.776 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:10.776 [main] [INFO] WebElement - Waiting for passwordField to be visible (timeout: 250ms)
+2026-09-07 13:38:10.788 [main] [INFO] WebElement - Filling passwordField with text: 'admin'
+2026-09-07 13:38:10.818 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:10.825 [main] [INFO] WaitUtil - Condition met after 7ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:10.825 [main] [INFO] WebElement - Waiting for loginButton to be visible (timeout: 250ms)
+2026-09-07 13:38:10.861 [main] [INFO] WebElement - Clicking loginButton 
+2026-09-07 13:38:13.693 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 20000ms)
+2026-09-07 13:38:13.713 [main] [INFO] CorePage - Filling the Complete Your Profile modal, attempt 1
+2026-09-07 13:38:13.907 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:13.914 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:13.914 [main] [INFO] WebElement - Waiting for firstNameField to be visible (timeout: 250ms)
+2026-09-07 13:38:13.927 [main] [INFO] WebElement - Filling firstNameField with text: 'Tod'
+2026-09-07 13:38:13.998 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.001 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.002 [main] [INFO] WebElement - Waiting for lastNameField to be visible (timeout: 250ms)
+2026-09-07 13:38:14.017 [main] [INFO] WebElement - Filling lastNameField with text: 'Lesch'
+2026-09-07 13:38:14.090 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.095 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.095 [main] [INFO] WebElement - Waiting for emailField to be visible (timeout: 250ms)
+2026-09-07 13:38:14.109 [main] [INFO] WebElement - Filling emailField with text: 'mitch.sauer@yahoo.com'
+2026-09-07 13:38:14.140 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.143 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.143 [main] [INFO] WebElement - Waiting for displayNameField to be visible (timeout: 250ms)
+2026-09-07 13:38:14.153 [main] [INFO] WebElement - Filling displayNameField with text: 'Mrs. Astrid Marks'
+2026-09-07 13:38:14.172 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.175 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:14.175 [main] [INFO] WebElement - Waiting for saveBtn to be visible (timeout: 250ms)
+2026-09-07 13:38:14.184 [main] [INFO] WebElement - Clicking saveBtn 
+2026-09-07 13:38:14.912 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:38:14.912 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:38:14.974 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for the Complete Your Profile modal to close
+2026-09-07 13:38:15.225 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 500ms)
+2026-09-07 13:38:15.748 [main] [INFO] WaitUtil - Condition met after 836ms: Waiting for the Complete Your Profile modal to close
+2026-09-07 13:38:15.748 [main] [INFO] WebElement - Waiting for completeProfileModal to be visible (timeout: 3000ms)
+2026-09-07 13:38:18.756 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:38:18.768 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Projects' to become active
+2026-09-07 13:38:18.779 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:38:18.780 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:18.782 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:18.782 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:38:18.790 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:38:19.420 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:38:19.420 [main] [INFO] WaitUtil - Condition met after 651ms: Waiting for tab 'Projects' to become active
+2026-09-07 13:38:19.421 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.RepositoryPage was opened.
+2026-09-07 13:38:19.432 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:19.470 [main] [INFO] WaitUtil - Condition met after 38ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:19.471 [main] [INFO] WebElement - Waiting for createProjectLink to be visible (timeout: 250ms)
+2026-09-07 13:38:19.664 [main] [INFO] WebElement - Clicking createProjectLink 
+2026-09-07 13:38:19.830 [main] [INFO] WaitUtil - Retrying action with polling (timeout: 40000ms, polling: 250ms): Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:38:19.830 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:19.849 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:19.849 [main] [INFO] WebElement - Waiting for methodArchive to be visible (timeout: 250ms)
+2026-09-07 13:38:19.880 [main] [INFO] WebElement - Clicking methodArchive 
+2026-09-07 13:38:20.411 [main] [INFO] WaitUtil - Waiting for condition (timeout: 3000ms, polling: 250ms): Waiting for the 'From archive' step to render
+2026-09-07 13:38:20.421 [main] [INFO] WaitUtil - Condition met after 9ms: Waiting for the 'From archive' step to render
+2026-09-07 13:38:20.421 [main] [INFO] WaitUtil - Action succeeded after 591ms: Opening the 'From archive' step of the Create project wizard
+2026-09-07 13:38:20.443 [main] [INFO] WebElement - Setting input files [/home/runner/work/java-taf-template/java-taf-template/src/test/resources/test_data/TestClickDatatypeNotFoundError/TestClickDatatypeNotFoundError.zip] to archiveUpload
+2026-09-07 13:38:23.313 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 300ms): Waiting for the name field to hold only the requested project name
+2026-09-07 13:38:23.314 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.318 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.318 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:38:23.330 [main] [INFO] WebElement - Filling newProjectName with text: 'project-719323'
+2026-09-07 13:38:23.460 [main] [INFO] WebElement - Getting current input value from newProjectName: 'MyProjectproject-719323'
+2026-09-07 13:38:23.461 [main] [INFO] WaitUtil - Sleeping for 300ms: Polling for condition (attempt): Waiting for the name field to hold only the requested project name
+2026-09-07 13:38:23.761 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.764 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.765 [main] [INFO] WebElement - Waiting for newProjectName to be visible (timeout: 250ms)
+2026-09-07 13:38:23.773 [main] [INFO] WebElement - Filling newProjectName with text: 'project-719323'
+2026-09-07 13:38:23.811 [main] [INFO] WebElement - Getting current input value from newProjectName: 'project-719323'
+2026-09-07 13:38:23.811 [main] [INFO] WaitUtil - Condition met after 497ms: Waiting for the name field to hold only the requested project name
+2026-09-07 13:38:23.811 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.813 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.813 [main] [INFO] WebElement - Waiting for newProjectSubmit to be visible (timeout: 250ms)
+2026-09-07 13:38:23.825 [main] [INFO] WebElement - Clicking newProjectSubmit 
+2026-09-07 13:38:23.898 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:23.968 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.987 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:23.987 [main] [INFO] WebElement - Waiting for modalShade to be visible (timeout: 3000ms)
+2026-09-07 13:38:27.016 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:27.068 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:27.087 [main] [INFO] WaitUtil - Condition met after 18ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:27.305 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:27.325 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:27.329 [main] [INFO] WaitUtil - Condition met after 4ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:27.330 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for project row actions
+2026-09-07 13:38:27.333 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:27.661 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:27.915 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:28.168 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:28.423 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:28.677 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:28.932 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:29.186 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:29.444 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:29.698 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:29.954 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:30.207 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:30.460 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:30.713 [main] [INFO] WaitUtil - Sleeping for 250ms: Polling for condition (attempt): Waiting for project row actions
+2026-09-07 13:38:30.973 [main] [INFO] WaitUtil - Condition met after 3643ms: Waiting for project row actions
+2026-09-07 13:38:31.082 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 4000ms)
+2026-09-07 13:38:31.111 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:31.117 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:31.117 [main] [INFO] WebElement - Waiting for projectRowMoreBtn to be visible (timeout: 250ms)
+2026-09-07 13:38:31.143 [main] [INFO] WebElement - Clicking projectRowMoreBtn 
+2026-09-07 13:38:31.258 [main] [INFO] WaitUtil - Waiting for condition (timeout: 20000ms, polling: 250ms): Waiting for the row overflow menu
+2026-09-07 13:38:31.261 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the row overflow menu
+2026-09-07 13:38:31.361 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 1000ms): Waiting for tab 'Editor' to become active
+2026-09-07 13:38:31.379 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-only-child'
+2026-09-07 13:38:31.380 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:31.386 [main] [INFO] WaitUtil - Condition met after 6ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:31.386 [main] [INFO] WebElement - Waiting for selectedTabLabel to be visible (timeout: 250ms)
+2026-09-07 13:38:31.450 [main] [INFO] WebElement - Clicking selectedTabLabel 
+2026-09-07 13:38:32.398 [main] [INFO] WebElement - Getting attribute 'class' from selectedTab: 'ant-menu-overflow-item ant-menu-item ant-menu-item-selected ant-menu-item-only-child'
+2026-09-07 13:38:32.399 [main] [INFO] WaitUtil - Condition met after 1038ms: Waiting for tab 'Editor' to become active
+2026-09-07 13:38:32.399 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:38:32.401 [main] [INFO] CorePage - domain.ui.webstudio.pages.mainpages.EditorPage was opened.
+2026-09-07 13:38:32.402 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:32.439 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.443 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.443 [main] [INFO] WebElement - Waiting for contentLoadingSpinner to be hidden
+2026-09-07 13:38:32.457 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.459 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.459 [main] [INFO] WebElement - Waiting for projectNameLink to be visible
+2026-09-07 13:38:32.472 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.475 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.475 [main] [INFO] WebElement - Waiting for projectNameLink to be visible (timeout: 250ms)
+2026-09-07 13:38:32.486 [main] [INFO] WebElement - Clicking projectNameLink 
+2026-09-07 13:38:32.575 [main] [INFO] WaitUtil - Sleeping for 200ms: Waiting for module list to expand after project selection
+2026-09-07 13:38:32.777 [main] [INFO] WebElement - Waiting for projectModuleLink to be visible
+2026-09-07 13:38:32.834 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:38:32.853 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.040 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.198 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.362 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.516 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.673 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.827 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:33.986 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:34.140 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:34.296 [main] [INFO] WaitUtil - Sleeping for 150ms: Polling for condition (attempt): Waiting for the loading overlay to disappear
+2026-09-07 13:38:34.588 [main] [INFO] WaitUtil - Condition met after 1753ms: Waiting for the loading overlay to disappear
+2026-09-07 13:38:34.588 [main] [INFO] WebElement - Waiting for projectModuleLink to be visible (timeout: 250ms)
+2026-09-07 13:38:34.669 [main] [INFO] WebElement - Clicking projectModuleLink 
+2026-09-07 13:38:34.757 [main] [INFO] WaitUtil - Sleeping for 200ms: Waiting for module to open
+2026-09-07 13:38:34.957 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:41.147 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:41.147 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:41.331 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:41.331 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:41.581 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:41.665 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:41.665 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:41.744 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:41.744 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:41.996 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:42.079 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:42.079 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:42.158 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:42.158 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:42.408 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:42.481 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:42.481 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:42.552 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 6% (2/35)'
+2026-09-07 13:38:42.552 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:42.803 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:42.890 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 9% (3/35)'
+2026-09-07 13:38:42.891 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:42.966 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 9% (3/35)'
+2026-09-07 13:38:42.969 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:43.219 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:43.274 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 9% (3/35)'
+2026-09-07 13:38:43.274 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:43.317 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 9% (3/35)'
+2026-09-07 13:38:43.317 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:43.567 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:43.635 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 9% (3/35)'
+2026-09-07 13:38:43.635 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:43.697 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 9% (3/35)'
+2026-09-07 13:38:43.697 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:43.947 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:44.044 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:44.044 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:44.130 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:44.131 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:44.381 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:44.427 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:44.427 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:44.474 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:44.474 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:44.725 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:44.778 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:44.778 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:44.835 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:44.835 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:45.085 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:45.160 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:45.160 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:45.223 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 11% (4/35)'
+2026-09-07 13:38:45.223 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:45.473 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:45.553 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 14% (5/35)'
+2026-09-07 13:38:45.554 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:45.628 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 14% (5/35)'
+2026-09-07 13:38:45.628 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:45.879 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:45.932 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 14% (5/35)'
+2026-09-07 13:38:45.932 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:45.996 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 14% (5/35)'
+2026-09-07 13:38:45.997 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:46.247 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:46.310 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 14% (5/35)'
+2026-09-07 13:38:46.310 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:46.365 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 14% (5/35)'
+2026-09-07 13:38:46.365 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:46.616 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:46.714 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 17% (6/35)'
+2026-09-07 13:38:46.714 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:46.855 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 17% (6/35)'
+2026-09-07 13:38:46.856 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:47.106 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:47.152 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 17% (6/35)'
+2026-09-07 13:38:47.152 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:47.197 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 17% (6/35)'
+2026-09-07 13:38:47.197 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:47.448 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:47.520 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 17% (6/35)'
+2026-09-07 13:38:47.520 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:47.594 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 17% (6/35)'
+2026-09-07 13:38:47.594 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:47.844 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:47.927 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 20% (7/35)'
+2026-09-07 13:38:47.928 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:48.022 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 20% (7/35)'
+2026-09-07 13:38:48.022 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:48.272 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:48.323 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 20% (7/35)'
+2026-09-07 13:38:48.323 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:48.365 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 20% (7/35)'
+2026-09-07 13:38:48.365 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:48.615 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:48.668 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 20% (7/35)'
+2026-09-07 13:38:48.668 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:48.723 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 20% (7/35)'
+2026-09-07 13:38:48.724 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:48.974 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:49.075 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:49.075 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:49.174 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:49.175 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:49.425 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:49.476 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:49.476 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:49.541 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:49.541 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:49.791 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:49.839 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:49.839 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:49.886 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:49.887 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:50.137 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:50.189 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:50.189 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:50.244 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 23% (8/35)'
+2026-09-07 13:38:50.245 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:50.495 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:50.562 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 26% (9/35)'
+2026-09-07 13:38:50.562 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:50.617 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 26% (9/35)'
+2026-09-07 13:38:50.617 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:50.867 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:50.928 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 26% (9/35)'
+2026-09-07 13:38:50.928 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:50.990 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 26% (9/35)'
+2026-09-07 13:38:50.990 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:51.240 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:51.314 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 26% (9/35)'
+2026-09-07 13:38:51.314 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:51.383 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 26% (9/35)'
+2026-09-07 13:38:51.384 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:51.634 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:51.716 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 29% (10/35)'
+2026-09-07 13:38:51.716 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:51.787 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 29% (10/35)'
+2026-09-07 13:38:51.787 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:52.037 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:52.106 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 29% (10/35)'
+2026-09-07 13:38:52.106 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:52.153 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 29% (10/35)'
+2026-09-07 13:38:52.153 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:52.404 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:52.449 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 29% (10/35)'
+2026-09-07 13:38:52.450 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:52.498 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 29% (10/35)'
+2026-09-07 13:38:52.498 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:52.749 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:52.833 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 31% (11/35)'
+2026-09-07 13:38:52.834 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:52.905 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 31% (11/35)'
+2026-09-07 13:38:52.905 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:53.155 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:53.205 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 31% (11/35)'
+2026-09-07 13:38:53.205 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:53.266 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 31% (11/35)'
+2026-09-07 13:38:53.266 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:53.517 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:53.592 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 31% (11/35)'
+2026-09-07 13:38:53.594 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:53.653 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 31% (11/35)'
+2026-09-07 13:38:53.653 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:53.904 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:54.012 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 34% (12/35)'
+2026-09-07 13:38:54.012 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:54.094 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 34% (12/35)'
+2026-09-07 13:38:54.094 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:54.344 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:54.397 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 34% (12/35)'
+2026-09-07 13:38:54.397 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:54.440 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 34% (12/35)'
+2026-09-07 13:38:54.440 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:54.690 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:54.750 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 34% (12/35)'
+2026-09-07 13:38:54.750 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:54.796 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 34% (12/35)'
+2026-09-07 13:38:54.796 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:55.047 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:55.152 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 37% (13/35)'
+2026-09-07 13:38:55.152 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:55.225 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 37% (13/35)'
+2026-09-07 13:38:55.225 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:55.475 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:55.530 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 37% (13/35)'
+2026-09-07 13:38:55.531 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:55.586 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 37% (13/35)'
+2026-09-07 13:38:55.586 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:55.837 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:55.896 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 37% (13/35)'
+2026-09-07 13:38:55.897 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:55.947 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 37% (13/35)'
+2026-09-07 13:38:55.947 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:56.198 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:56.312 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 40% (14/35)'
+2026-09-07 13:38:56.312 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:56.390 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 40% (14/35)'
+2026-09-07 13:38:56.390 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:56.640 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:56.695 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 40% (14/35)'
+2026-09-07 13:38:56.695 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:56.741 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 40% (14/35)'
+2026-09-07 13:38:56.741 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:56.991 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:57.044 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 40% (14/35)'
+2026-09-07 13:38:57.044 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:57.116 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 40% (14/35)'
+2026-09-07 13:38:57.116 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:57.367 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:57.436 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 43% (15/35)'
+2026-09-07 13:38:57.436 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:57.530 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 43% (15/35)'
+2026-09-07 13:38:57.530 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:57.781 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:57.826 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 43% (15/35)'
+2026-09-07 13:38:57.826 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:57.869 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 43% (15/35)'
+2026-09-07 13:38:57.869 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:58.119 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:58.178 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 43% (15/35)'
+2026-09-07 13:38:58.178 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:58.226 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 43% (15/35)'
+2026-09-07 13:38:58.226 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:58.478 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:58.580 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:58.580 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:58.672 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:58.672 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:58.923 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:59.013 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:59.013 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:59.079 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:59.080 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:59.330 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:59.377 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:59.377 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:59.434 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:59.434 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:38:59.684 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:59.741 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:59.741 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:38:59.806 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 46% (16/35)'
+2026-09-07 13:38:59.806 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:00.057 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:00.134 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 49% (17/35)'
+2026-09-07 13:39:00.134 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:00.184 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 49% (17/35)'
+2026-09-07 13:39:00.184 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:00.434 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:00.480 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 49% (17/35)'
+2026-09-07 13:39:00.480 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:00.531 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 49% (17/35)'
+2026-09-07 13:39:00.532 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:00.782 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:00.851 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 49% (17/35)'
+2026-09-07 13:39:00.851 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:00.900 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 49% (17/35)'
+2026-09-07 13:39:00.900 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:01.150 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:01.195 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 51% (18/35)'
+2026-09-07 13:39:01.196 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:01.240 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 51% (18/35)'
+2026-09-07 13:39:01.240 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:01.490 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:01.547 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 51% (18/35)'
+2026-09-07 13:39:01.547 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:01.591 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 51% (18/35)'
+2026-09-07 13:39:01.591 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:01.841 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:01.906 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 51% (18/35)'
+2026-09-07 13:39:01.906 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:01.955 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 51% (18/35)'
+2026-09-07 13:39:01.955 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:02.205 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:02.285 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 54% (19/35)'
+2026-09-07 13:39:02.286 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:02.371 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 54% (19/35)'
+2026-09-07 13:39:02.371 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:02.622 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:02.700 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 54% (19/35)'
+2026-09-07 13:39:02.700 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:02.773 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 54% (19/35)'
+2026-09-07 13:39:02.773 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:03.023 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:03.092 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 54% (19/35)'
+2026-09-07 13:39:03.092 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:03.141 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 54% (19/35)'
+2026-09-07 13:39:03.141 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:03.392 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:03.466 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 57% (20/35)'
+2026-09-07 13:39:03.467 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:03.549 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 57% (20/35)'
+2026-09-07 13:39:03.549 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:03.800 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:03.850 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 57% (20/35)'
+2026-09-07 13:39:03.850 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:03.903 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 57% (20/35)'
+2026-09-07 13:39:03.903 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:04.154 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:04.224 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 57% (20/35)'
+2026-09-07 13:39:04.225 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:04.275 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 57% (20/35)'
+2026-09-07 13:39:04.276 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:04.526 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:04.623 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:04.623 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:04.690 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:04.690 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:04.941 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:04.985 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:04.985 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:05.034 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:05.034 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:05.285 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:05.351 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:05.351 [main] [WARN] CoreComponent - Compilation timeout reached, progress bar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:05.351 [main] [INFO] WebElement - Waiting for showProblemsLink to be visible (timeout: 250ms)
+2026-09-07 13:39:05.385 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:05.443 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:05.443 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:05.487 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 60% (21/35)'
+2026-09-07 13:39:05.487 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:05.737 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:05.830 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 63% (22/35)'
+2026-09-07 13:39:05.830 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:05.909 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 63% (22/35)'
+2026-09-07 13:39:05.910 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:06.160 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:06.220 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 63% (22/35)'
+2026-09-07 13:39:06.220 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:06.273 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 63% (22/35)'
+2026-09-07 13:39:06.273 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:06.523 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:06.575 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 63% (22/35)'
+2026-09-07 13:39:06.575 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:06.638 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 63% (22/35)'
+2026-09-07 13:39:06.638 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:06.888 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:06.992 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 66% (23/35)'
+2026-09-07 13:39:06.992 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:07.076 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 66% (23/35)'
+2026-09-07 13:39:07.076 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:07.327 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:07.381 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 66% (23/35)'
+2026-09-07 13:39:07.381 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:07.477 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 66% (23/35)'
+2026-09-07 13:39:07.477 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:07.727 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:07.773 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 66% (23/35)'
+2026-09-07 13:39:07.773 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:07.819 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 66% (23/35)'
+2026-09-07 13:39:07.819 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:08.069 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:08.184 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 69% (24/35)'
+2026-09-07 13:39:08.184 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:08.264 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 69% (24/35)'
+2026-09-07 13:39:08.264 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:08.514 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:08.570 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 69% (24/35)'
+2026-09-07 13:39:08.570 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:08.613 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 69% (24/35)'
+2026-09-07 13:39:08.613 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:08.863 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:08.923 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 69% (24/35)'
+2026-09-07 13:39:08.923 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:08.972 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 69% (24/35)'
+2026-09-07 13:39:08.972 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:09.222 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:09.326 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 71% (25/35)'
+2026-09-07 13:39:09.326 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:09.409 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 71% (25/35)'
+2026-09-07 13:39:09.409 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:09.659 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:09.730 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 71% (25/35)'
+2026-09-07 13:39:09.730 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:09.800 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 71% (25/35)'
+2026-09-07 13:39:09.800 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:10.050 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:10.105 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 71% (25/35)'
+2026-09-07 13:39:10.105 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:10.160 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 71% (25/35)'
+2026-09-07 13:39:10.160 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:10.410 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:10.492 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:10.492 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:10.587 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:10.587 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:10.837 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:10.886 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:10.886 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:10.936 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:10.936 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:11.186 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:11.242 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:11.242 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:11.294 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:11.294 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:11.544 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:11.592 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 74% (26/35)'
+2026-09-07 13:39:11.592 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:11.680 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 77% (27/35)'
+2026-09-07 13:39:11.681 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:11.931 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:11.993 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 77% (27/35)'
+2026-09-07 13:39:11.994 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:12.050 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 77% (27/35)'
+2026-09-07 13:39:12.050 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:12.300 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:12.357 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 77% (27/35)'
+2026-09-07 13:39:12.357 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:12.406 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 77% (27/35)'
+2026-09-07 13:39:12.406 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:12.656 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:12.700 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 77% (27/35)'
+2026-09-07 13:39:12.700 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:12.780 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 80% (28/35)'
+2026-09-07 13:39:12.780 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:13.030 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:13.085 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 80% (28/35)'
+2026-09-07 13:39:13.086 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:13.142 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 80% (28/35)'
+2026-09-07 13:39:13.142 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:13.392 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:13.459 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 80% (28/35)'
+2026-09-07 13:39:13.460 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:13.514 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 80% (28/35)'
+2026-09-07 13:39:13.514 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:13.764 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:13.829 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 80% (28/35)'
+2026-09-07 13:39:13.829 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:13.907 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:13.908 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:14.158 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:14.223 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:14.223 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:14.298 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:14.298 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:14.549 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:14.597 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:14.597 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:14.647 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:14.647 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:14.897 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:14.946 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:14.946 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:15.007 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 83% (29/35)'
+2026-09-07 13:39:15.008 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:15.258 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:15.316 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 86% (30/35)'
+2026-09-07 13:39:15.316 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:15.360 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 86% (30/35)'
+2026-09-07 13:39:15.360 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:15.610 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:15.665 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 86% (30/35)'
+2026-09-07 13:39:15.665 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:15.726 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 86% (30/35)'
+2026-09-07 13:39:15.726 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:15.977 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:16.032 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 86% (30/35)'
+2026-09-07 13:39:16.032 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:16.085 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 86% (30/35)'
+2026-09-07 13:39:16.085 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:16.336 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:16.419 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 89% (31/35)'
+2026-09-07 13:39:16.420 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:16.461 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 89% (31/35)'
+2026-09-07 13:39:16.461 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:16.711 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:16.762 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 89% (31/35)'
+2026-09-07 13:39:16.762 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:16.815 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 89% (31/35)'
+2026-09-07 13:39:16.815 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:17.066 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:17.138 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 89% (31/35)'
+2026-09-07 13:39:17.138 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:17.186 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 89% (31/35)'
+2026-09-07 13:39:17.187 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:17.437 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:17.514 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 91% (32/35)'
+2026-09-07 13:39:17.514 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:17.610 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 91% (32/35)'
+2026-09-07 13:39:17.610 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:17.861 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:17.917 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 91% (32/35)'
+2026-09-07 13:39:17.918 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:17.960 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 91% (32/35)'
+2026-09-07 13:39:17.960 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:18.211 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:18.278 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 91% (32/35)'
+2026-09-07 13:39:18.278 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:18.345 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 91% (32/35)'
+2026-09-07 13:39:18.345 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:18.595 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:18.706 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:18.706 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:18.782 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:18.782 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:19.032 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:19.080 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:19.080 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:19.127 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:19.128 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:19.378 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:19.445 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:19.445 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:19.492 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:19.492 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:19.743 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:19.814 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:19.814 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:19.863 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 94% (33/35)'
+2026-09-07 13:39:19.864 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:20.114 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:20.166 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 97% (34/35)'
+2026-09-07 13:39:20.166 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:20.212 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 97% (34/35)'
+2026-09-07 13:39:20.212 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:20.463 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:20.511 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 97% (34/35)'
+2026-09-07 13:39:20.511 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:20.555 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 97% (34/35)'
+2026-09-07 13:39:20.555 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:20.805 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:20.873 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 97% (34/35)'
+2026-09-07 13:39:20.873 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:20.927 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 97% (34/35)'
+2026-09-07 13:39:20.927 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:21.177 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:21.303 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (35/35)'
+2026-09-07 13:39:21.303 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:21.554 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:21.596 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (35/35)'
+2026-09-07 13:39:21.596 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:21.847 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:21.889 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (35/35)'
+2026-09-07 13:39:21.889 [main] [INFO] WaitUtil - Sleeping for 250ms: Waiting for project compilation to complete (polling)
+2026-09-07 13:39:22.139 [main] [INFO] WebElement - Waiting for compilationProgressBar to be visible (timeout: 250ms)
+2026-09-07 13:39:22.181 [main] [INFO] WebElement - Getting text from compilationProgressBar: 'Loaded 100% (35/35)'
+2026-09-07 13:39:22.181 [main] [INFO] CoreComponent - Compilation completed
+2026-09-07 13:39:22.189 [main] [INFO] WebElement - Waiting for errorElements_0 to be visible (timeout: 250ms)
+2026-09-07 13:39:22.229 [main] [INFO] WebElement - Getting text from errorElements_0: 'Type 'Double1' is not found.'
+2026-09-07 13:39:22.230 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 150ms): Waiting for the loading overlay to disappear
+2026-09-07 13:39:22.233 [main] [INFO] WaitUtil - Condition met after 3ms: Waiting for the loading overlay to disappear
+2026-09-07 13:39:22.233 [main] [INFO] WebElement - Waiting for errorElements_0 to be visible (timeout: 250ms)
+2026-09-07 13:39:22.254 [main] [INFO] WebElement - Clicking errorElements_0 
+2026-09-07 13:39:22.314 [main] [INFO] WaitUtil - Waiting for condition (timeout: 5000ms, polling: 100ms): Waiting
+2026-09-07 13:39:22.314 [main] [INFO] WebElement - Waiting for selectedTreeItem to be visible (timeout: 1500ms)
+2026-09-07 13:39:23.721 [main] [INFO] WebElement - Waiting for selectedTreeItem to be visible (timeout: 250ms)
+2026-09-07 13:39:23.864 [main] [INFO] WebElement - Getting text from selectedTreeItem: 'SmartRule2'
+2026-09-07 13:39:23.865 [main] [INFO] WaitUtil - Condition met after 1551ms: Waiting
+2026-09-07 13:39:23.865 [main] [INFO] WebElement - Waiting for selectedTreeItem to be visible (timeout: 1500ms)
+2026-09-07 13:39:23.923 [main] [INFO] WebElement - Waiting for selectedTreeItem to be visible (timeout: 250ms)
+2026-09-07 13:39:24.074 [main] [INFO] WebElement - Getting text from selectedTreeItem: 'SmartRule2'
+2026-09-07 13:39:24.124 [main] [INFO] LogsUtil - Analyzed rows in log file: 222
+2026-09-07 13:39:24.136 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:39:24.594 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup

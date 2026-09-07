@@ -1,0 +1,125 @@
+2026-09-07 13:25:23.171 [main] [INFO] BaseTest - Initializing test with Playwright Docker: testRuleServiceS3DeployClasspathJarProperty
+2026-09-07 13:25:23.174 [main] [INFO] BaseTest - [ruleservice.deployer.enabled] -> [true]
+2026-09-07 13:25:23.174 [main] [INFO] BaseTest - [production-repository.factory] -> [repo-aws-s3]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [production-repository.secret-key] -> [test]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [production-repository.access-key] -> [test]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [production-repository.bucket-name] -> [openl-test-00d163d779f64ce29e1834420e8f7cf1]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [JAVA_OPTS] -> [-Xms32m -XX:MaxRAMPercentage=50.0]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [production-repository.service-endpoint] -> [http://s3mock:9090]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [production-repository.listener-timer-period] -> [2]
+2026-09-07 13:25:23.175 [main] [INFO] BaseTest - [ruleservice.datasource.deploy.classpath.jars] -> [NEVER]
+2026-09-07 13:25:23.176 [main] [INFO] BaseTest - [production-repository.region-name] -> [us-east-1]
+2026-09-07 13:25:23.179 [main] [INFO] AppContainerFactory - Starting app container: appcontainer-541899 (startup timeout: PT10M)
+2026-09-07 13:25:37.943 [main] [INFO] AppContainerFactory - App Localhost accessible url for appcontainer-541899: http://localhost:32770
+2026-09-07 13:25:37.943 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://appcontainer-541899:8080
+2026-09-07 13:25:37.944 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:25:40.944 [main] [INFO] WaitUtil - Waiting for condition (timeout: 10000ms, polling: 250ms): Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:40.948 [main] [INFO] WaitUtil - Condition met after 2ms: Waiting for the app container to be running before Playwright container starts
+2026-09-07 13:25:40.948 [main] [INFO] WaitUtil - Sleeping for 1000ms: Letting Docker DNS propagate the app container hostname across the network
+2026-09-07 13:25:41.950 [main] [INFO] DockerDriverPool - Initializing Playwright Docker container with browser: chrome
+2026-09-07 13:25:41.951 [main] [INFO] DockerDriverPool - npm cache of the Playwright Server container is shared from /home/runner/work/_temp/playwright-npm-cache
+2026-09-07 13:25:41.951 [main] [INFO] DockerDriverPool - Creating Playwright Server Docker container with image: mcr.microsoft.com/playwright:v1.52.0-noble
+2026-09-07 13:25:41.952 [main] [INFO] DockerDriverPool - Volume mapping configured: src/test/resources (host) -> /test_resources (container)
+2026-09-07 13:25:41.952 [main] [INFO] DockerDriverPool - Starting container and waiting for Playwright Server (startup timeout 300 s)...
+2026-09-07 13:25:44.625 [main] [INFO] DockerDriverPool - Playwright Server container started in 2673 ms
+2026-09-07 13:25:44.625 [main] [INFO] DockerDriverPool - Container started - ID: b323e43a371c53f57011fe9e588be147d754213769104b26e83e9a872e5eaaba
+2026-09-07 13:25:44.625 [main] [INFO] DockerDriverPool - Mapped Playwright Server port: localhost:32771 -> 3000
+2026-09-07 13:25:44.625 [main] [INFO] DockerDriverPool - Container is attached to network for service discovery
+2026-09-07 13:25:44.637 [main] [INFO] DockerDriverPool - Container startup logs:
+Listening on ws://0.0.0.0:3000/
+
+2026-09-07 13:25:44.638 [main] [INFO] DockerDriverPool - Playwright Server ready: http://localhost:32771
+2026-09-07 13:25:57.971 [main] [INFO] DockerDriverPool - Created Playwright instance for server connection
+2026-09-07 13:25:58.148 [main] [INFO] DockerDriverPool - Connected to Playwright Server via WebSocket on attempt 1: ws://localhost:32771/
+2026-09-07 13:25:58.149 [main] [INFO] DockerDriverPool - Video recording enabled for Docker container with temp directory: /tmp/playwright-videos
+2026-09-07 13:25:58.188 [main] [INFO] PlaywrightTracing - Playwright tracing started (DOM snapshots, network, console, sources)
+2026-09-07 13:25:58.250 [main] [INFO] DockerDriverPool - Browser container initialized successfully for thread: main
+2026-09-07 13:25:58.251 [main] [INFO] DriverPool - Playwright initialized in PLAYWRIGHT_DOCKER mode
+2026-09-07 13:25:59.096 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP REQUEST=-
+GET http://localhost:32770/web/public/info/openl.json
+Header: Accept : */*
+
+2026-09-07 13:25:59.097 [main] [WARN] RestAssuredFilter - 
+
+
+-=HTTP RESPONSE=-
+404 HTTP/1.1 404 Not FoundHeader: Server : Jetty(12.1.12)
+Header: Date : Mon, 07 Sep 2026 13:25:59 GMT
+Header: Content-Type : text/html;charset=utf-8
+Header: Content-Length : 47
+Body: 
+<html><body>No service was found.</body></html>
+2026-09-07 13:25:59.602 [main] [INFO] BaseTest - Application started: version=6.5.0-SNAPSHOT, build=2026-09-06, commit=4a45294cf0d6
+2026-09-07 13:25:59.610 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-541899:8080
+2026-09-07 13:25:59.646 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:59.651 [main] [INFO] WaitUtil - Waiting for condition (timeout: 30000ms, polling: 1000ms): Waiting for Rule Services page to load
+2026-09-07 13:25:59.651 [main] [INFO] DriverPool - App URL (DOCKER): http://appcontainer-541899:8080
+2026-09-07 13:25:59.739 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:25:59.739 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 1000ms)
+2026-09-07 13:25:59.797 [main] [INFO] WaitUtil - Condition met after 146ms: Waiting for Rule Services page to load
+2026-09-07 13:25:59.839 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 1000ms)
+2026-09-07 13:26:00.902 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:01.412 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:01.920 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:02.429 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:02.937 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:03.445 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:03.955 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:04.464 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:04.972 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:05.481 [main] [INFO] WaitUtil - Sleeping for 500ms: Verifying that S3 bucket stays empty in NEVER mode
+2026-09-07 13:26:08.014 [main] [INFO] AppContainerFactory - Starting app container: wscontainer-212326 (startup timeout: PT10M)
+2026-09-07 13:26:15.224 [main] [INFO] AppContainerFactory - App Localhost accessible url for wscontainer-212326: http://localhost:32772
+2026-09-07 13:26:15.224 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://wscontainer-212326:8080
+2026-09-07 13:26:15.224 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:26:18.225 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 2000ms): Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V1/Example 3 - Auto Policy Calculation' to show version 1
+2026-09-07 13:26:18.226 [main] [INFO] DriverPool - App URL (DOCKER): http://wscontainer-212326:8080
+2026-09-07 13:26:18.330 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:18.330 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 1000ms)
+2026-09-07 13:26:18.564 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 1000ms)
+2026-09-07 13:26:19.592 [main] [INFO] WaitUtil - Sleeping for 2000ms: Polling for condition (attempt): Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V1/Example 3 - Auto Policy Calculation' to show version 1
+2026-09-07 13:26:21.593 [main] [INFO] DriverPool - App URL (DOCKER): http://wscontainer-212326:8080
+2026-09-07 13:26:21.619 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:21.619 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 1000ms)
+2026-09-07 13:26:21.712 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 1000ms)
+2026-09-07 13:26:21.740 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=Example3-AutoPolicyCalculation(version%3D1)'
+2026-09-07 13:26:21.741 [main] [INFO] WaitUtil - Condition met after 3515ms: Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V1/Example 3 - Auto Policy Calculation' to show version 1
+2026-09-07 13:26:21.742 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:21.752 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=Example3-AutoPolicyCalculation(version%3D1)'
+2026-09-07 13:26:21.756 [main] [INFO] WaitUtil - Waiting for condition (timeout: 30000ms, polling: 1000ms): Waiting for S3 deployment objects to appear
+2026-09-07 13:26:21.851 [main] [INFO] WaitUtil - Condition met after 95ms: Waiting for S3 deployment objects to appear
+2026-09-07 13:26:22.041 [main] [INFO] AppContainerFactory - Starting app container: wscontainer-937011 (startup timeout: PT10M)
+2026-09-07 13:26:31.667 [main] [INFO] AppContainerFactory - App Localhost accessible url for wscontainer-937011: http://localhost:32773
+2026-09-07 13:26:31.668 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://wscontainer-937011:8080
+2026-09-07 13:26:31.668 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:26:34.668 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 2000ms): Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V1/Example 3 - Auto Policy Calculation' to show version 1
+2026-09-07 13:26:34.668 [main] [INFO] DriverPool - App URL (DOCKER): http://wscontainer-937011:8080
+2026-09-07 13:26:34.724 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:34.726 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 1000ms)
+2026-09-07 13:26:34.970 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 1000ms)
+2026-09-07 13:26:34.997 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=Example3-AutoPolicyCalculation(version%3D1)'
+2026-09-07 13:26:34.997 [main] [INFO] WaitUtil - Condition met after 329ms: Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V1/Example 3 - Auto Policy Calculation' to show version 1
+2026-09-07 13:26:34.997 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:35.005 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=Example3-AutoPolicyCalculation(version%3D1)'
+2026-09-07 13:26:35.006 [main] [INFO] WaitUtil - Waiting for condition (timeout: 30000ms, polling: 1000ms): Waiting for S3 deployment objects to appear
+2026-09-07 13:26:35.040 [main] [INFO] WaitUtil - Condition met after 34ms: Waiting for S3 deployment objects to appear
+2026-09-07 13:26:35.213 [main] [INFO] AppContainerFactory - Starting app container: wscontainer-563019 (startup timeout: PT10M)
+2026-09-07 13:26:45.764 [main] [INFO] AppContainerFactory - App Localhost accessible url for wscontainer-563019: http://localhost:32774
+2026-09-07 13:26:45.765 [main] [INFO] AppContainerFactory - App Url accessible from the Browser container: http://wscontainer-563019:8080
+2026-09-07 13:26:45.765 [main] [INFO] WaitUtil - Sleeping for 3000ms: Wait 3 seconds for DNS propagation in Docker's embedded DNS server
+2026-09-07 13:26:48.765 [main] [INFO] WaitUtil - Waiting for condition (timeout: 60000ms, polling: 2000ms): Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V2/Example 3 - Auto Policy Calculation' to show version 2
+2026-09-07 13:26:48.766 [main] [INFO] DriverPool - App URL (DOCKER): http://wscontainer-563019:8080
+2026-09-07 13:26:48.817 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:48.818 [main] [INFO] WebElement - Waiting for Show All Deployments Checkbox to be visible (timeout: 1000ms)
+2026-09-07 13:26:49.033 [main] [INFO] WebElement - Waiting for Project Element to be visible (timeout: 1000ms)
+2026-09-07 13:26:49.046 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=Example3-AutoPolicyCalculation(version%3D2)'
+2026-09-07 13:26:49.046 [main] [INFO] WaitUtil - Condition met after 281ms: Waiting for Rule Services deployment 'Example 3 - Auto Policy Calculation_V2/Example 3 - Auto Policy Calculation' to show version 2
+2026-09-07 13:26:49.046 [main] [INFO] CorePage - domain.ui.webservice.pages.ServicePage was opened
+2026-09-07 13:26:49.052 [main] [INFO] WebElement - Getting attribute 'href' from Project Title Link: 'swagger-ui.html?urls.primaryName=Example3-AutoPolicyCalculation(version%3D2)'
+2026-09-07 13:26:49.052 [main] [INFO] WaitUtil - Waiting for condition (timeout: 30000ms, polling: 1000ms): Waiting for S3 deployment objects to appear
+2026-09-07 13:26:49.081 [main] [INFO] WaitUtil - Condition met after 29ms: Waiting for S3 deployment objects to appear
+2026-09-07 13:26:49.100 [main] [INFO] DockerDriverPool - Closing Playwright Docker for thread: main
+2026-09-07 13:26:50.947 [main] [INFO] WaitUtil - Sleeping for 2000ms: Waiting for Docker daemon to complete resource cleanup
