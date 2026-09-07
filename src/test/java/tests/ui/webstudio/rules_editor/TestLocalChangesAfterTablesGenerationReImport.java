@@ -1,6 +1,5 @@
 package tests.ui.webstudio.rules_editor;
 
-import configuration.annotations.KnownIssue;
 import com.epam.reportportal.annotations.Description;
 import com.epam.reportportal.annotations.TestCaseId;
 import configuration.annotations.AppContainerConfig;
@@ -32,7 +31,6 @@ public class TestLocalChangesAfterTablesGenerationReImport extends BaseTest {
     @TestCaseId("IPBQA-31512")
     @Description("Steps 1-1.3: Local Changes appear after Tables Generation re-import for OpenAPI project. Restore to older version gives warnings, restore to latest removes them.")
     @AppContainerConfig(startParams = AppContainerStartParameters.DEFAULT_STUDIO_PARAMS)
-    @KnownIssue("EPBDS-16528")
     public void testLocalChangesAfterTablesGenerationReImport() {
         String projectName = "TestLocalChanges1_" + System.currentTimeMillis();
 
