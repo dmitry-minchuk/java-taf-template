@@ -22,13 +22,24 @@ public class GetApplicationInfoMethod extends ApiBaseMethod {
         Map<String, String> fields = new LinkedHashMap<>();
         try {
             Response response = getApplicationInfo();
-            if (response.getStatusCode() != 200) {
-                throw new RuntimeException("Failed to retrieve application info. Status: " + response.getStatusCode());
+            if (response.getStatusCode() == 200) {
+                JsonPath jsonPath = JsonPath.from(response.asString());
+                putIfPresent(fields, "title", "OpenL Studio");
+                putIfPresent(fields, "version", jsonPath.getString("'openl.version'"));
+                putIfPresent(fields, "buildDate", jsonPath.getString("'openl.build.date'"));
+                putIfPresent(fields, "buildNumber", jsonPath.getString("'openl.build.number'"));
+                return fields;
             }
-            JsonPath jsonPath = JsonPath.from(response.asString());
-            putIfPresent(fields, "version", jsonPath.getString("'openl.version'"));
-            putIfPresent(fields, "buildDate", jsonPath.getString("'openl.build.date'"));
-            putIfPresent(fields, "buildNumber", jsonPath.getString("'openl.build.number'"));
+            Response ruleServices = new GetRuleServicesInfoMethod().getApplicationInfo();
+            if (ruleServices.getStatusCode() != 200) {
+                throw new RuntimeException("Failed to retrieve application info. Studio endpoint status: " + response.getStatusCode()
+                        + ", Rule Services endpoint status: " + ruleServices.getStatusCode());
+            }
+            JsonPath jsonPath = JsonPath.from(ruleServices.asString());
+            putIfPresent(fields, "title", jsonPath.getString("appTitle"));
+            putIfPresent(fields, "version", jsonPath.getString("version"));
+            putIfPresent(fields, "buildDate", jsonPath.getString("buildDate"));
+            putIfPresent(fields, "buildNumber", jsonPath.getString("buildNumber"));
         } catch (Exception e) {
             fields.put("error", String.valueOf(e.getMessage()));
         }

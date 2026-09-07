@@ -69,6 +69,7 @@ class TestRecord:
     app_build_number: str = ""
     app_build_date: str = ""
     app_error: str = ""
+    app_title: str = ""
     attachments: list[Attachment] = field(default_factory=list)
 
     @property
@@ -162,6 +163,7 @@ def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[Tes
                 app_build_number=str(application.get("buildNumber") or ""),
                 app_build_date=str(application.get("buildDate") or ""),
                 app_error=str(application.get("error") or ""),
+                app_title=str(application.get("title") or ""),
             )
             record.attachments = copy_attachments(test_dir, record, output_dir)
             records.append(record)
@@ -329,7 +331,7 @@ def observed_applications(records: list[TestRecord], declared_images: list[str])
         if record.app_error and record.app_error not in entry["errors"]:
             entry["errors"].append(record.app_error)
         if record.app_version or record.app_build_number:
-            version = {"version": record.app_version, "buildNumber": record.app_build_number, "buildDate": record.app_build_date}
+            version = {"title": record.app_title, "version": record.app_version, "buildNumber": record.app_build_number, "buildDate": record.app_build_date}
             if version not in entry["versions"]:
                 entry["versions"].append(version)
     return list(by_image.values())
@@ -357,12 +359,22 @@ def run_info(records: list[TestRecord], args: argparse.Namespace) -> RunInfo:
 
 
 def describe_version(version: dict) -> str:
-    parts = [version.get("version") or ""]
+    parts = [" ".join(part for part in (version.get("title") or "", version.get("version") or "") if part)]
     if version.get("buildNumber"):
         parts.append(f"build {version['buildNumber']}")
     if version.get("buildDate"):
         parts.append(f"built {version['buildDate']}")
     return ", ".join(part for part in parts if part)
+
+
+def describe_application(application: dict) -> str:
+    if application["versions"]:
+        return ", ".join(describe_version(v) for v in application["versions"])
+    if application["errors"]:
+        return f"{application['tests']} test(s), version not observed: " + "; ".join(application["errors"])
+    if application["tests"]:
+        return f"{application['tests']} test(s), version not observed"
+    return "not used by any test in this run"
 
 
 def render_run_block(info: RunInfo) -> str:
@@ -718,9 +730,7 @@ def write_debug_bundles(records: list[TestRecord], output_dir: Path, build: str,
 
 def write_step_summary(records: list[TestRecord], title: str, build: str, summary_path: str | None, info: RunInfo) -> str:
     counts = Counter(record.outcome for record in records)
-    applications = "; ".join(
-        f"`{a['image']}` → " + (", ".join(describe_version(v) for v in a["versions"]) or "not used") for a in info.applications
-    )
+    applications = "; ".join(f"`{a['image']}` → {describe_application(a)}" for a in info.applications)
     facts = [f"Run {info.started_at} → {info.finished_at}"]
     if info.tests_branch or info.tests_sha:
         facts.append("tests " + " @ ".join(part for part in (f"`{info.tests_branch}`" if info.tests_branch else "", f"`{info.tests_sha[:12]}`" if info.tests_sha else "") if part))
