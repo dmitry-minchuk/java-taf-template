@@ -9,6 +9,7 @@ import sys
 from urllib.parse import quote
 from collections import Counter
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from string import Template
 
@@ -63,6 +64,11 @@ class TestRecord:
     repository: str = ""
     known_issue: str = ""
     known_issue_url: str = ""
+    app_image: str = ""
+    app_version: str = ""
+    app_build_number: str = ""
+    app_build_date: str = ""
+    app_error: str = ""
     attachments: list[Attachment] = field(default_factory=list)
 
     @property
@@ -127,6 +133,8 @@ def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[Tes
             metadata_file = test_dir / "metadata.json"
             metadata = read_json(metadata_file) if metadata_file.exists() else {}
             known_issue = result.get("knownIssue") or {}
+            application_file = test_dir / "application.json"
+            application = read_json(application_file) if application_file.exists() else {}
             class_name = str(metadata.get("className") or test_dir.parent.name)
             method = str(metadata.get("methodName") or test_dir.name)
             record = TestRecord(
@@ -149,6 +157,11 @@ def collect_from_rp_export(input_root: Path, output_dir: Path) -> tuple[list[Tes
                 repository=str(manifest_data.get("githubRepository") or ""),
                 known_issue=str(known_issue.get("ticket") or ""),
                 known_issue_url=str(known_issue.get("url") or ""),
+                app_image=str(application.get("image") or ""),
+                app_version=str(application.get("version") or ""),
+                app_build_number=str(application.get("buildNumber") or ""),
+                app_build_date=str(application.get("buildDate") or ""),
+                app_error=str(application.get("error") or ""),
             )
             record.attachments = copy_attachments(test_dir, record, output_dir)
             records.append(record)
@@ -271,6 +284,109 @@ def app_log_extract(text: str, limit: int) -> tuple[list[str], int]:
 
 def e(value: str) -> str:
     return html.escape(value or "")
+
+
+@dataclass
+class RunInfo:
+    started_at: str
+    finished_at: str
+    wall_seconds: int
+    applications: list[dict]
+    tests_repository: str
+    tests_branch: str
+    tests_sha: str
+    playwright_version: str
+    java_version: str
+    selective: bool
+    run_url: str
+
+    def commit_url(self) -> str:
+        if self.tests_repository and self.tests_sha:
+            return f"https://github.com/{self.tests_repository}/commit/{self.tests_sha}"
+        return ""
+
+
+def parse_instant(value: str) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except ValueError:
+        return None
+
+
+def format_instant(value: datetime | None) -> str:
+    return value.strftime("%Y-%m-%d %H:%M:%S UTC") if value else "—"
+
+
+def observed_applications(records: list[TestRecord], declared_images: list[str]) -> list[dict]:
+    by_image: dict[str, dict] = {image: {"image": image, "versions": [], "tests": 0, "errors": []} for image in declared_images if image}
+    for record in records:
+        if not record.app_image:
+            continue
+        entry = by_image.setdefault(record.app_image, {"image": record.app_image, "versions": [], "tests": 0, "errors": []})
+        entry["tests"] += 1
+        if record.app_error and record.app_error not in entry["errors"]:
+            entry["errors"].append(record.app_error)
+        if record.app_version or record.app_build_number:
+            version = {"version": record.app_version, "buildNumber": record.app_build_number, "buildDate": record.app_build_date}
+            if version not in entry["versions"]:
+                entry["versions"].append(version)
+    return list(by_image.values())
+
+
+def run_info(records: list[TestRecord], args: argparse.Namespace) -> RunInfo:
+    starts = [parse_instant(r.started_at) for r in records]
+    ends = [parse_instant(r.finished_at) for r in records]
+    started = min((s for s in starts if s), default=None)
+    finished = max((f for f in ends if f), default=None)
+    first = next((r for r in records if r.repository or r.git_sha), records[0])
+    return RunInfo(
+        started_at=format_instant(started),
+        finished_at=format_instant(finished),
+        wall_seconds=int((finished - started).total_seconds()) if started and finished else 0,
+        applications=observed_applications(records, [args.studio_image, args.ws_image]),
+        tests_repository=first.repository,
+        tests_branch=args.tests_branch or first.git_branch,
+        tests_sha=first.git_sha,
+        playwright_version=args.playwright_version,
+        java_version=args.java_version,
+        selective=str(args.selective).lower() == "true",
+        run_url=args.run_url,
+    )
+
+
+def describe_version(version: dict) -> str:
+    parts = [version.get("version") or ""]
+    if version.get("buildNumber"):
+        parts.append(f"build {version['buildNumber']}")
+    if version.get("buildDate"):
+        parts.append(f"built {version['buildDate']}")
+    return ", ".join(part for part in parts if part)
+
+
+def render_run_block(info: RunInfo) -> str:
+    rows: list[tuple[str, str]] = [
+        ("Run", f"{e(info.started_at)} → {e(info.finished_at)}" + (f" · {format_duration(info.wall_seconds * 1000)} wall time" if info.wall_seconds else "") + (" · selective run" if info.selective else "")),
+    ]
+    for application in info.applications:
+        if application["versions"]:
+            observed = "<br>".join(e(describe_version(v)) for v in application["versions"])
+        elif application["errors"]:
+            observed = f"{application['tests']} test(s), version not observed: " + "; ".join(e(err) for err in application["errors"])
+        elif application["tests"]:
+            observed = f"{application['tests']} test(s), version not observed (the container did not start or the tests stopped before the info call)"
+        else:
+            observed = "<span class='hint'>not used by any test in this run</span>"
+        rows.append((f"Image <code>{e(application['image'])}</code>", observed))
+    tests = f"{e(info.tests_branch) or '—'}"
+    if info.tests_sha:
+        short = e(info.tests_sha[:12])
+        tests += f" @ <a href='{e(info.commit_url())}' target='_blank'>{short}</a>" if info.commit_url() else f" @ {short}"
+    rows.append(("Tests", tests))
+    stack = [f"Playwright {e(info.playwright_version)}" if info.playwright_version else "", f"Java {e(info.java_version)}" if info.java_version else ""]
+    rows.append(("Stack", " · ".join(s for s in stack if s) or "—"))
+    return "<section class='run'><table class='kv'>" + "".join(f"<tr><th>{k}</th><td>{v}</td></tr>" for k, v in rows) + "</table></section>"
 
 
 def render_pre(lines: list[str], css: str = "") -> str:
@@ -396,6 +512,8 @@ table.tests>tbody>tr.details-row>td{padding:16px 18px 20px;background:var(--surf
 .tab{padding:6px 14px;border:0;border-radius:9px;background:transparent;color:#475569;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .tab:hover{color:var(--text)} .tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.run{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 18px;margin:0 0 20px;box-shadow:var(--shadow)}
+.run table.kv th{width:210px}
 table.kv{border-collapse:collapse;width:100%} table.kv th{width:180px;text-align:left;padding:6px 16px 6px 0;color:var(--muted);font-weight:500;vertical-align:top;font-size:13px} table.kv td{padding:6px 0;border-bottom:1px solid var(--line)} table.kv tr:last-child td{border-bottom:0}
 pre{margin:0;white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line);padding:12px 14px;border-radius:10px;max-height:520px;overflow:auto;font-family:var(--mono);font-size:12px;line-height:1.5}
 pre.error{background:#fff1f0;border-color:#fecdca;color:#912018} pre.log{background:#0b1220;border-color:#1e293b;color:#dbe4f0} pre.small{max-height:200px}
@@ -410,6 +528,7 @@ code{padding:1px 6px;border-radius:6px;background:#eef2f6;font-family:var(--mono
 <div class="page">
 <header class="top"><h1>$title</h1>
 <div class="meta"><span class="chip">Build $build</span><span class="chip">$total tests</span><span class="chip">$total_duration of test time</span><a href="$run_url">workflow run</a> · <a href="debug/index.json">debug/index.json</a> · <a href="debug/README.md">how to debug with an AI assistant</a></div></header>
+$run_block
 <div class="cards"><div class="card" style="--card-color:#15803d">Passed<b>$passed</b></div><div class="card" style="--card-color:#dc2626">Failed<b>$failed</b></div><div class="card" style="--card-color:#ca8a04">Skipped<b>$skipped</b></div><div class="card" style="--card-color:#ea580c">Known issues<b>$known</b></div><div class="card" style="--card-color:#2563eb">Fixed?<b>$fixed</b></div><div class="card">Shards<b>$shards</b></div></div>
 <div class="controls"><label>Status <select id="status"><option value="">all</option><option value="failed">failed</option><option value="skipped">skipped</option><option value="known">known issue</option><option value="fixed">fixed?</option><option value="passed">passed</option></select></label>
 <label>Group <select id="suite"><option value="">all</option>$suite_options</select></label><input id="search" placeholder="filter by class, test name or error" size="40"><button id="expand-failed">expand all failed</button></div>
@@ -435,7 +554,7 @@ def artifact_badges(record: TestRecord) -> str:
     return "".join(labels)
 
 
-def render_html(records: list[TestRecord], title: str, run_url: str, build: str) -> str:
+def render_html(records: list[TestRecord], title: str, run_url: str, build: str, info: RunInfo) -> str:
     counts = Counter(record.outcome for record in records)
     rows = []
     for index, record in enumerate(records):
@@ -471,6 +590,7 @@ def render_html(records: list[TestRecord], title: str, run_url: str, build: str)
         shards=len({record.shard for record in records}),
         suite_options="".join(f"<option value='{e(s)}'>{e(s)}</option>" for s in suites),
         rows="".join(rows),
+        run_block=render_run_block(info),
     )
 
 
@@ -491,6 +611,10 @@ def debug_bundle(record: TestRecord, build: str, run_url: str) -> dict:
         },
         "run": {
             "applicationBuild": build,
+            "applicationImage": record.app_image,
+            "applicationVersion": record.app_version,
+            "applicationBuildNumber": record.app_build_number,
+            "applicationBuildDate": record.app_build_date,
             "workflowRunUrl": run_url,
             "testsRepository": record.repository,
             "testsBranch": record.git_branch,
@@ -592,10 +716,24 @@ def write_debug_bundles(records: list[TestRecord], output_dir: Path, build: str,
     (debug_dir / "README.md").write_text(DEBUG_README, encoding="utf-8")
 
 
-def write_step_summary(records: list[TestRecord], title: str, build: str, summary_path: str | None) -> str:
+def write_step_summary(records: list[TestRecord], title: str, build: str, summary_path: str | None, info: RunInfo) -> str:
     counts = Counter(record.outcome for record in records)
+    applications = "; ".join(
+        f"`{a['image']}` → " + (", ".join(describe_version(v) for v in a["versions"]) or "not used") for a in info.applications
+    )
+    facts = [f"Run {info.started_at} → {info.finished_at}"]
+    if info.tests_branch or info.tests_sha:
+        facts.append("tests " + " @ ".join(part for part in (f"`{info.tests_branch}`" if info.tests_branch else "", f"`{info.tests_sha[:12]}`" if info.tests_sha else "") if part))
+    if info.playwright_version:
+        facts.append(f"Playwright {info.playwright_version}")
+    if info.java_version:
+        facts.append(f"Java {info.java_version}")
     lines = [
         f"## {title}",
+        "",
+        " · ".join(facts),
+        "",
+        f"Applications: {applications}",
         "",
         f"Build `{build}` · {len(records)} tests · ✅ {counts.get('PASSED', 0)} passed · ❌ {counts.get('FAILED', 0)} failed · ⏭️ {counts.get('SKIPPED', 0)} skipped"
         f" · 🟠 {counts.get(KNOWN_ISSUE, 0)} known issues · 🔵 {counts.get(FIXED_CANDIDATE, 0)} passed despite a known issue",
@@ -638,6 +776,12 @@ def main() -> None:
     parser.add_argument("--build", default="")
     parser.add_argument("--run-url", default="")
     parser.add_argument("--step-summary", default=os.environ.get("GITHUB_STEP_SUMMARY"))
+    parser.add_argument("--studio-image", default="", help="Declared Studio image; the observed OpenL version is taken from the tests.")
+    parser.add_argument("--ws-image", default="", help="Declared Rule Services image; the observed OpenL version is taken from the tests.")
+    parser.add_argument("--tests-branch", default="")
+    parser.add_argument("--playwright-version", default="")
+    parser.add_argument("--java-version", default="")
+    parser.add_argument("--selective", default="false")
     args = parser.parse_args()
 
     if args.output_dir.exists():
@@ -652,12 +796,26 @@ def main() -> None:
                 handle.write(f"## {args.title}\n\n{message}\n")
         raise SystemExit(message)
 
+    info = run_info(records, args)
     write_debug_bundles(records, args.output_dir, args.build, args.run_url)
-    (args.output_dir / "index.html").write_text(render_html(records, args.title, args.run_url, args.build), encoding="utf-8")
+    (args.output_dir / "index.html").write_text(render_html(records, args.title, args.run_url, args.build, info), encoding="utf-8")
     (args.output_dir / "summary.json").write_text(
         json.dumps(
             {
                 "build": args.build,
+                "run": {
+                    "startedAt": info.started_at,
+                    "finishedAt": info.finished_at,
+                    "wallSeconds": info.wall_seconds,
+                    "applications": info.applications,
+                    "testsRepository": info.tests_repository,
+                    "testsBranch": info.tests_branch,
+                    "testsCommit": info.tests_sha,
+                    "playwrightVersion": info.playwright_version,
+                    "javaVersion": info.java_version,
+                    "selective": info.selective,
+                    "workflowRunUrl": info.run_url,
+                },
                 "total": len(records),
                 "counts": dict(Counter(record.status for record in records)),
                 "tests": [
@@ -681,7 +839,7 @@ def main() -> None:
         + "\n",
         encoding="utf-8",
     )
-    print(write_step_summary(records, args.title, args.build, args.step_summary))
+    print(write_step_summary(records, args.title, args.build, args.step_summary, info))
 
 
 if __name__ == "__main__":

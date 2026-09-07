@@ -4,6 +4,9 @@ import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class GetApplicationInfoMethod extends ApiBaseMethod {
 
     public GetApplicationInfoMethod() {
@@ -15,28 +18,40 @@ public class GetApplicationInfoMethod extends ApiBaseMethod {
         return callApi(Method.GET, null, true);
     }
 
-    public String getApplicationInfoOneLiner() {
+    public Map<String, String> getApplicationInfoFields() {
+        Map<String, String> fields = new LinkedHashMap<>();
         try {
             Response response = getApplicationInfo();
             if (response.getStatusCode() != 200) {
                 throw new RuntimeException("Failed to retrieve application info. Status: " + response.getStatusCode());
             }
-            
-            // Get response body once and parse with JsonPath to avoid consumption issue
-            String responseBody = response.asString();
-            JsonPath jsonPath = JsonPath.from(responseBody);
-            
-            // Extract values using JsonPath - fields with dots need quotes for proper parsing
-            String version = jsonPath.getString("'openl.version'");
-            String buildDate = jsonPath.getString("'openl.build.date'");
-            String buildNumber = jsonPath.getString("'openl.build.number'");
-            
-            return String.format("Application started: version=%s, build=%s, commit=%s", 
-                version != null ? version : "unknown",
-                buildDate != null ? buildDate : "unknown",
-                buildNumber != null ? buildNumber : "unknown");
+            JsonPath jsonPath = JsonPath.from(response.asString());
+            putIfPresent(fields, "version", jsonPath.getString("'openl.version'"));
+            putIfPresent(fields, "buildDate", jsonPath.getString("'openl.build.date'"));
+            putIfPresent(fields, "buildNumber", jsonPath.getString("'openl.build.number'"));
         } catch (Exception e) {
-            return String.format("Application info unavailable: %s", e.getMessage());
+            fields.put("error", String.valueOf(e.getMessage()));
+        }
+        return fields;
+    }
+
+    public String getApplicationInfoOneLiner() {
+        return describe(getApplicationInfoFields());
+    }
+
+    public static String describe(Map<String, String> fields) {
+        if (fields.containsKey("error")) {
+            return "Application info unavailable: " + fields.get("error");
+        }
+        return String.format("Application started: version=%s, build=%s, commit=%s",
+                fields.getOrDefault("version", "unknown"),
+                fields.getOrDefault("buildDate", "unknown"),
+                fields.getOrDefault("buildNumber", "unknown"));
+    }
+
+    private static void putIfPresent(Map<String, String> fields, String key, String value) {
+        if (value != null) {
+            fields.put(key, value);
         }
     }
 }

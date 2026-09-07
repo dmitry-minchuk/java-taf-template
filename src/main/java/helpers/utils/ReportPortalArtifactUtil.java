@@ -185,6 +185,17 @@ public final class ReportPortalArtifactUtil {
         }
     }
 
+    public static void recordApplicationInfo(String dockerImage, Map<String, String> applicationInfo) {
+        TestContext context = CURRENT_TEST.get();
+        if (context == null) {
+            return;
+        }
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("image", dockerImage);
+        payload.putAll(applicationInfo);
+        writeJson(context.testDirectory().resolve("application.json"), payload);
+    }
+
     public static void recordTestResultIfMissing(ITestResult result) {
         Method method = result.getMethod().getConstructorOrMethod().getMethod();
         TestContext context = contextFor(result, method, displayName(result));

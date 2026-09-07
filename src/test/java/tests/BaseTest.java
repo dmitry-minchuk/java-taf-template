@@ -32,6 +32,7 @@ public abstract class BaseTest implements ITest {
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
 
     private final ThreadLocal<String> testName = new ThreadLocal<>();
+    private final ThreadLocal<String> applicationImage = new ThreadLocal<>();
 
     private static final ExecutionMode EXECUTION_MODE = ExecutionMode.current();
 
@@ -47,7 +48,9 @@ public abstract class BaseTest implements ITest {
             case PLAYWRIGHT_DOCKER -> initializePlaywrightDockerTest(result);
         }
 
-        LOGGER.info(new GetApplicationInfoMethod().getApplicationInfoOneLiner());
+        Map<String, String> applicationInfo = new GetApplicationInfoMethod().getApplicationInfoFields();
+        LOGGER.info(GetApplicationInfoMethod.describe(applicationInfo));
+        ReportPortalArtifactUtil.recordApplicationInfo(applicationImage.get(), applicationInfo);
     }
 
     @AfterMethod(alwaysRun = true)
@@ -134,9 +137,14 @@ public abstract class BaseTest implements ITest {
                 filesToCopy.put(configAnnotation.copyFileFromPath(), configAnnotation.copyFileToContainerPath());
             }
             String dockerImageName = ProjectConfiguration.getProperty(configAnnotation.dockerImageProperty());
+            applicationImage.set(dockerImageName);
+            ReportPortalArtifactUtil.recordApplicationInfo(dockerImageName, Map.of());
             AppContainerPool.setAppContainer(appContainerName, network, containerConfig, filesToCopy.isEmpty() ? null : filesToCopy, dockerImageName);
         } else {
-            AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME));
+            String dockerImageName = ProjectConfiguration.getProperty(PropertyNameSpace.DOCKER_IMAGE_NAME);
+            applicationImage.set(dockerImageName);
+            ReportPortalArtifactUtil.recordApplicationInfo(dockerImageName, Map.of());
+            AppContainerPool.setAppContainer(appContainerName, network, AppContainerStartParameters.EMPTY.getParameterMap(), null, dockerImageName);
         }
     }
 

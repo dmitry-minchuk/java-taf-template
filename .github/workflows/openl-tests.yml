@@ -12,10 +12,6 @@ on:
         description: "Autotests branch label for reporting"
         required: true
         default: "main"
-      rp_launch_name:
-        description: "ReportPortal launch name"
-        required: true
-        default: "webstudio_tests"
       tests:
         description: >-
           Test CLASS names to run, separated by commas or spaces (TestMethodTable or tests.ui.webstudio.git.TestGitBranchSwitching).
@@ -32,7 +28,6 @@ permissions:
   contents: read
 
 env:
-  RP_LAUNCH_NAME: ${{ inputs.rp_launch_name }}
   SELECTED_TESTS: ${{ inputs.tests }}
   SHARDS: ${{ inputs.shards }}
   # Keep the image tag and the npm package in step with PLAYWRIGHT_VERSION / PLAYWRIGHT_NPM_PACKAGE in DockerDriverPool.java
@@ -124,13 +119,9 @@ jobs:
           STUDIO_IMAGE="ghcr.io/openl-tablets/webstudio:${APPLICATION_VERSION}"
           WS_IMAGE="ghcr.io/openl-tablets/ws:${APPLICATION_VERSION}-all"
           PLAYWRIGHT_NPM_CACHE_DIR="${RUNNER_TEMP}/playwright-npm-cache"
-          RP_ATTRIBUTES="build:${BUILD_LABEL};tests_branch:${TESTS_BRANCH};github_run_id:${GITHUB_RUN_ID}"
-          if [ "${SELECTIVE_RUN}" = "true" ]; then
-            RP_ATTRIBUTES="${RP_ATTRIBUTES};run:selective"
-          fi
           echo "Using docker_image_name=${STUDIO_IMAGE}"
           echo "Using ws_docker_image_name=${WS_IMAGE}"
-          echo "Using rp.attributes=${RP_ATTRIBUTES}"
+          echo "Selective run: ${SELECTIVE_RUN}"
           printf '%s' "${QUEUED_CLASSES}" > "${RUNNER_TEMP}/queued-classes.json"
 
           python3 scripts/github-actions/run-test-queue.py run \
@@ -152,9 +143,6 @@ jobs:
             -Dapp_container_startup_timeout_minutes=10 \
             -Dplaywright_server_startup_timeout_seconds=300 \
             -Dplaywright_npm_cache_dir="${PLAYWRIGHT_NPM_CACHE_DIR}" \
-            -Drp.project=OpenL_Tests \
-            -Drp.launch="${RP_LAUNCH_NAME}" \
-            -Drp.attributes="${RP_ATTRIBUTES}" \
             -Drp.export.dir=target/rp-export
 
       - name: Gate on the shard results
@@ -182,8 +170,8 @@ jobs:
             target/downloads/**
             generated-testng/**
 
-  merge-reportportal-export:
-    name: Merge ReportPortal export and test report
+  merge-report:
+    name: Merge test report
     needs:
       - discover-tests
       - test-shard
@@ -205,33 +193,26 @@ jobs:
           path: downloaded-artifacts
           merge-multiple: false
 
-      - name: Merge ReportPortal exports
-        run: |
-          python3 scripts/github-actions/merge-rp-exports.py \
-            --input-root downloaded-artifacts \
-            --output-dir merged-rp-export \
-            --launch-name "${RP_LAUNCH_NAME}"
-
-      - name: Upload merged ReportPortal export
-        uses: actions/upload-artifact@v4
-        with:
-          name: rp-export-merged
-          if-no-files-found: error
-          retention-days: 14
-          path: merged-rp-export/**
-
       - name: Build merged test report
         if: always()
         env:
           BUILD_LABEL: ${{ inputs.application_version }}
+          TESTS_BRANCH: ${{ inputs.tests_branch }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SELECTIVE_RUN: ${{ needs.discover-tests.outputs.selective }}
         run: |
           python3 scripts/github-actions/generate-merged-report.py \
             --input-root downloaded-artifacts \
             --output-dir merged-report \
             --title "OpenL Tests [${BUILD_LABEL}]" \
             --build "${BUILD_LABEL}" \
-            --run-url "${RUN_URL}"
+            --run-url "${RUN_URL}" \
+            --studio-image "ghcr.io/openl-tablets/webstudio:${BUILD_LABEL}" \
+            --ws-image "ghcr.io/openl-tablets/ws:${BUILD_LABEL}-all" \
+            --tests-branch "${TESTS_BRANCH}" \
+            --playwright-version "${PLAYWRIGHT_NPM_PACKAGE#playwright@}" \
+            --java-version 21 \
+            --selective "${SELECTIVE_RUN}"
 
       - name: Upload merged test report
         if: always()
