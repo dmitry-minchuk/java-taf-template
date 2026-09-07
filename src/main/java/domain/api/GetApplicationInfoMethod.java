@@ -36,7 +36,7 @@ public class GetApplicationInfoMethod extends ApiBaseMethod {
                         + ", Rule Services endpoint status: " + ruleServices.getStatusCode());
             }
             JsonPath jsonPath = JsonPath.from(ruleServices.asString());
-            putIfPresent(fields, "title", jsonPath.getString("appTitle"));
+            putIfPresent(fields, "title", "OpenL Tablets Rule Services");
             putIfPresent(fields, "version", jsonPath.getString("version"));
             putIfPresent(fields, "buildDate", jsonPath.getString("buildDate"));
             putIfPresent(fields, "buildNumber", jsonPath.getString("buildNumber"));
